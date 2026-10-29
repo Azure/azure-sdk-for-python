@@ -6,8 +6,8 @@ from abc import abstractmethod
 from os import PathLike
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Usage as RestUsage
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
+from azure.ai.ml._restclient.arm_ml_service.models import Usage as RestUsage
+from azure.ai.ml._restclient.arm_ml_service.models import UsageUnit
 from azure.ai.ml._schema.compute.usage import UsageSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -18,10 +18,10 @@ class UsageName:
     def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None) -> None:
         """The usage name.
 
-        :param value: The name of the resource.
-        :type value: Optional[str]
-        :param localized_value: The localized name of the resource.
-        :type localized_value: Optional[str]
+        :keyword value: The name of the resource.
+        :paramtype value: Optional[str]
+        :keyword localized_value: The localized name of the resource.
+        :paramtype localized_value: Optional[str]
         """
         self.value = value
         self.localized_value = localized_value

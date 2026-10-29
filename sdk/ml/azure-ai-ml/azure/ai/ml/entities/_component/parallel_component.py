@@ -31,54 +31,55 @@ class ParallelComponent(
 ):  # pylint: disable=too-many-instance-attributes
     """Parallel component version, used to define a parallel component.
 
-    :param name: Name of the component. Defaults to None
-    :type name: str
-    :param version: Version of the component. Defaults to None
-    :type version: str
-    :param description: Description of the component. Defaults to None
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None
-    :type tags: dict
-    :param display_name: Display name of the component. Defaults to None
-    :type display_name: str
-    :param retry_settings: parallel component run failed retry. Defaults to None
-    :type retry_settings: BatchRetrySettings
-    :param logging_level: A string of the logging level name. Defaults to None
-    :type logging_level: str
-    :param max_concurrency_per_instance: The max parallellism that each compute instance has. Defaults to None
-    :type max_concurrency_per_instance: int
-    :param error_threshold: The number of item processing failures should be ignored. Defaults to None
-    :type error_threshold: int
-    :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored. Defaults to None
-    :type mini_batch_error_threshold: int
-    :param task: The parallel task. Defaults to None
-    :type task: ParallelTask
-    :param mini_batch_size: For FileDataset input, this field is the number of files a user script can process
+    :keyword name: Name of the component. Defaults to None
+    :paramtype name: str
+    :keyword version: Version of the component. Defaults to None
+    :paramtype version: str
+    :keyword description: Description of the component. Defaults to None
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None
+    :paramtype tags: dict
+    :keyword display_name: Display name of the component. Defaults to None
+    :paramtype display_name: str
+    :keyword retry_settings: parallel component run failed retry. Defaults to None
+    :paramtype retry_settings: BatchRetrySettings
+    :keyword logging_level: A string of the logging level name. Defaults to None
+    :paramtype logging_level: str
+    :keyword max_concurrency_per_instance: The max parallellism that each compute instance has. Defaults to None
+    :paramtype max_concurrency_per_instance: int
+    :keyword error_threshold: The number of item processing failures should be ignored. Defaults to None
+    :paramtype error_threshold: int
+    :keyword mini_batch_error_threshold: The number of mini batch processing failures should be ignored.
+        Defaults to None
+    :paramtype mini_batch_error_threshold: int
+    :keyword task: The parallel task. Defaults to None
+    :paramtype task: ParallelTask
+    :keyword mini_batch_size: For FileDataset input, this field is the number of files a user script can process
         in one run() call. For TabularDataset input, this field is the approximate size of data the user script
         can process in one run() call. Example values are 1024, 1024KB, 10MB, and 1GB.
         (optional, default value is 10 files for FileDataset and 1MB for TabularDataset.) This value could be set
         through PipelineParameter.
-    :type mini_batch_size: str
-    :param partition_keys:  The keys used to partition dataset into mini-batches. Defaults to None
+    :paramtype mini_batch_size: str
+    :keyword partition_keys:  The keys used to partition dataset into mini-batches. Defaults to None
         If specified, the data with the same key will be partitioned into the same mini-batch.
         If both partition_keys and mini_batch_size are specified, partition_keys will take effect.
         The input(s) must be partitioned dataset(s),
         and the partition_keys must be a subset of the keys of every input dataset for this to work.
-    :type partition_keys: list
-    :param input_data: The input data. Defaults to None
-    :type input_data: str
-    :param resources: Compute Resource configuration for the component. Defaults to None
-    :type resources: Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]
-    :param inputs: Inputs of the component. Defaults to None
-    :type inputs: dict
-    :param outputs: Outputs of the component. Defaults to None
-    :type outputs: dict
-    :param code: promoted property from task.code
-    :type code: str
-    :param instance_count: promoted property from resources.instance_count. Defaults to None
-    :type instance_count: int
-    :param is_deterministic: Whether the parallel component is deterministic. Defaults to True
-    :type is_deterministic: bool
+    :paramtype partition_keys: list
+    :keyword input_data: The input data. Defaults to None
+    :paramtype input_data: str
+    :keyword resources: Compute Resource configuration for the component. Defaults to None
+    :paramtype resources: Union[dict, ~azure.ai.ml.entities.JobResourceConfiguration]
+    :keyword inputs: Inputs of the component. Defaults to None
+    :paramtype inputs: dict
+    :keyword outputs: Outputs of the component. Defaults to None
+    :paramtype outputs: dict
+    :keyword code: promoted property from task.code
+    :paramtype code: str
+    :keyword instance_count: promoted property from resources.instance_count. Defaults to None
+    :paramtype instance_count: int
+    :keyword is_deterministic: Whether the parallel component is deterministic. Defaults to True
+    :paramtype is_deterministic: bool
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if ParallelComponent cannot be successfully validated.
         Details will be provided in the error message.
     """

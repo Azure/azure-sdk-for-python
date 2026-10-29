@@ -10,7 +10,7 @@ DESCRIPTION:
     evaluator and use it as a testing criterion of an OpenAI evaluation run.
     The sample:
 
-      1. Creates a rubric evaluator with `project_client.beta.evaluators.create_version`,
+    1. Creates a rubric evaluator with `project_client.evaluators.create_version`,
          supplying scoring dimensions (each with an id, description, and integer
          weight from 1-10) and an optional pass threshold.
       2. Creates an OpenAI evaluation referencing the rubric as a testing criterion.
@@ -32,7 +32,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.8.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -47,7 +47,7 @@ import os
 import time
 import uuid
 from datetime import datetime, timezone
-
+from typing import Union
 from dotenv import load_dotenv
 from openai.types.eval_create_params import DataSourceConfigCustom
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
@@ -55,6 +55,8 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     SourceFileContent,
     SourceFileContentContent,
 )
+from openai.types.evals.run_create_response import RunCreateResponse
+from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -87,9 +89,10 @@ with (
     # Each dimension is scored independently on a 1-5 scale by an LLM judge at
     # evaluation time. `weight` (1-10) controls how strongly each dimension
     # contributes to the normalized aggregate score.
-    evaluator = project_client.beta.evaluators.create_version(
+    # TODO: Remove this suppression once TypeSpec typing for EvaluatorVersion is fixed.
+    evaluator = project_client.evaluators.create_version(  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
         name=evaluator_name,
-        evaluator_version={
+        evaluator_version={  # pyright: ignore[reportArgumentType]
             "name": evaluator_name,
             "categories": [EvaluatorCategory.QUALITY],
             "display_name": "Reservation Quality (Manual)",
@@ -165,7 +168,7 @@ with (
     )
 
     # 3. Run the evaluation against inline JSONL sample data.
-    eval_run = openai_client.evals.runs.create(
+    eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
         eval_id=eval_object.id,
         name=f"{evaluator_name}-run",
         metadata={"sample": "evaluator_rubric_manual"},
@@ -224,4 +227,4 @@ with (
     # 4. Clean up.
     print("Cleaning up.")
     openai_client.evals.delete(eval_id=eval_object.id)
-    project_client.beta.evaluators.delete_version(name=evaluator_name, version=evaluator.version)
+    project_client.evaluators.delete_version(name=evaluator_name, version=evaluator.version)

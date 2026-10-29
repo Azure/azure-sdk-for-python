@@ -1,0 +1,25 @@
+# cspell configuration for this service. Words are case-insensitive and
+# kept sorted alphabetically. The import of the central config is required.
+import:
+  - ../../.vscode/cspell.json
+words:
+  - astimezone
+  - BRST
+  - clsid
+  - doesnt
+  - doesntexist
+  - edmtypes
+  - kldtz
+  - mmspecial
+  - myaccount
+  - myasynctable
+  - mydomain
+  - mytable
+  - mytableasync
+  - pytableasync
+  - pytablesync
+  - specifed
+  - testid
+  - tzoffset
+  - tzutc
+  - uttable

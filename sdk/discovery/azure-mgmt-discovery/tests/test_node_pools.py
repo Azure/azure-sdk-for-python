@@ -4,16 +4,23 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for NodePools operations."""
+
+import os
 import pytest
 from azure.mgmt.discovery import DiscoveryMgmtClient, models
 from devtools_testutils import recorded_by_proxy
 
 from .testcase import DiscoveryMgmtTestCase, AZURE_SUBSCRIPTION_ID
 
-# Resource group and supercomputer that contain node pools
-NODE_POOL_RESOURCE_GROUP = "olawal"
-NODE_POOL_SUPERCOMPUTER_NAME = "test-sc-2bbb25b8"
-NODE_POOL_NAME = "nodepool1"
+# Resource group and supercomputer used by the playback-only write tests.
+NODE_POOL_RESOURCE_GROUP = "rgname"
+NODE_POOL_SUPERCOMPUTER_NAME = "sanitized-supercomputer"
+NODE_POOL_NAME = "sanitized-nodepool"
+
+# Live resources for read-only tests (read, never mutated)
+READ_RESOURCE_GROUP = os.environ.get("AZURE_RESOURCE_GROUP", "rgname")
+READ_SUPERCOMPUTER_NAME = os.environ.get("DISCOVERY_SUPERCOMPUTER_NAME", "sanitized-supercomputer")
+READ_NODE_POOL_NAME = os.environ.get("DISCOVERY_NODE_POOL_NAME", "sanitized-nodepool")
 
 
 class TestNodePools(DiscoveryMgmtTestCase):
@@ -26,24 +33,24 @@ class TestNodePools(DiscoveryMgmtTestCase):
     @recorded_by_proxy
     def test_list_node_pools_by_supercomputer(self):
         """Test listing node pools in a supercomputer."""
-        node_pools = list(self.client.node_pools.list_by_supercomputer(NODE_POOL_RESOURCE_GROUP, NODE_POOL_SUPERCOMPUTER_NAME))
+        node_pools = list(self.client.node_pools.list_by_supercomputer(READ_RESOURCE_GROUP, READ_SUPERCOMPUTER_NAME))
         assert isinstance(node_pools, list)
 
     @recorded_by_proxy
     def test_get_node_pool(self):
         """Test getting a specific node pool by name."""
-        supercomputer_name = NODE_POOL_SUPERCOMPUTER_NAME
-        node_pool = self.client.node_pools.get(self.resource_group, supercomputer_name, NODE_POOL_NAME)
+        node_pool = self.client.node_pools.get(READ_RESOURCE_GROUP, READ_SUPERCOMPUTER_NAME, READ_NODE_POOL_NAME)
         assert node_pool is not None
         assert hasattr(node_pool, "name")
 
+    @pytest.mark.playback_only
     @recorded_by_proxy
     def test_create_node_pool(self):
         """Test creating a node pool."""
         node_pool_data = models.NodePool(
             location="uksouth",
             properties=models.NodePoolProperties(
-                subnet_id=f"/subscriptions/{AZURE_SUBSCRIPTION_ID}/resourceGroups/olawal/providers/Microsoft.Network/virtualNetworks/newapiv/subnets/default",
+                subnet_id=f"/subscriptions/{AZURE_SUBSCRIPTION_ID}/resourceGroups/rgname/providers/Microsoft.Network/virtualNetworks/sanitized-vnet/subnets/sanitized-subnet",
                 vm_size="Standard_D4s_v6",
                 max_node_count=3,
                 min_node_count=1,
@@ -59,22 +66,7 @@ class TestNodePools(DiscoveryMgmtTestCase):
         node_pool = operation.result()
         assert node_pool is not None
 
-    @pytest.mark.skip(reason="no recording")
-    @recorded_by_proxy
-    def test_update_node_pool(self):
-        """Test updating a node pool."""
-        node_pool_data = models.NodePool(
-            tags={"SkipAutoDeleteTill": "2026-12-31"},
-        ) # type: ignore
-        operation = self.client.node_pools.begin_create_or_update(
-            resource_group_name=self.resource_group,
-            supercomputer_name=NODE_POOL_SUPERCOMPUTER_NAME,
-            node_pool_name=NODE_POOL_NAME,
-            resource=node_pool_data,
-        )
-        updated_node_pool = operation.result()
-        assert updated_node_pool is not None
-
+    @pytest.mark.playback_only
     @recorded_by_proxy
     def test_delete_node_pool(self):
         """Test deleting a node pool."""

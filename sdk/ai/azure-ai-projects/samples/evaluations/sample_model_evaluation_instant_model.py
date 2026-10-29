@@ -13,7 +13,7 @@ DESCRIPTION:
     for more information.
 
 USAGE:
-    python sample_model_evaluation.py
+    python sample_model_evaluation_instant_model.py
 
     Before running the sample:
 

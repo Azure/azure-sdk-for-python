@@ -7,46 +7,24 @@
 import datetime
 from typing import Any, Dict, List, Optional, Union
 
-import isodate
 from typing_extensions import Literal
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_06_01_preview.models import AllFeatures as RestAllFeatures
-from azure.ai.ml._restclient.v2023_06_01_preview.models import CustomMonitoringSignal as RestCustomMonitoringSignal
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
-    DataDriftMonitoringSignal as RestMonitoringDataDriftSignal,
-)
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
-    DataQualityMonitoringSignal as RestMonitoringDataQualitySignal,
-)
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import AllFeatures as RestAllFeatures
+from azure.ai.ml._restclient.arm_ml_service.models import CustomMonitoringSignal as RestCustomMonitoringSignal
+from azure.ai.ml._restclient.arm_ml_service.models import DataDriftMonitoringSignal as RestMonitoringDataDriftSignal
+from azure.ai.ml._restclient.arm_ml_service.models import DataQualityMonitoringSignal as RestMonitoringDataQualitySignal
+from azure.ai.ml._restclient.arm_ml_service.models import (
     FeatureAttributionDriftMonitoringSignal as RestFeatureAttributionDriftMonitoringSignal,
 )
-from azure.ai.ml._restclient.v2023_06_01_preview.models import FeatureSubset as RestFeatureSubset
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
-    GenerationSafetyQualityMonitoringSignal as RestGenerationSafetyQualityMonitoringSignal,
-)
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
-    GenerationTokenStatisticsSignal as RestGenerationTokenStatisticsSignal,
-)
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ModelPerformanceSignal as RestModelPerformanceSignal
-from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringDataSegment as RestMonitoringDataSegment
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
-    MonitoringFeatureFilterBase as RestMonitoringFeatureFilterBase,
-)
-from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringInputDataBase as RestMonitoringInputData
-from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringNotificationMode
-from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringSignalBase as RestMonitoringSignalBase
-from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringSignalType
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
-    MonitoringWorkspaceConnection as RestMonitoringWorkspaceConnection,
-)
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import FeatureSubset as RestFeatureSubset
+from azure.ai.ml._restclient.arm_ml_service.models import MonitoringFeatureFilterBase as RestMonitoringFeatureFilterBase
+from azure.ai.ml._restclient.arm_ml_service.models import MonitoringInputDataBase as RestMonitoringInputData
+from azure.ai.ml._restclient.arm_ml_service.models import MonitoringSignalBase as RestMonitoringSignalBase
+from azure.ai.ml._restclient.arm_ml_service.models import (
     PredictionDriftMonitoringSignal as RestPredictionDriftMonitoringSignal,
 )
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
-    TopNFeaturesByAttribution as RestTopNFeaturesByAttribution,
-)
+from azure.ai.ml._restclient.arm_ml_service.models import TopNFeaturesByAttribution as RestTopNFeaturesByAttribution
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._monitoring import (
     ALL_FEATURES,
@@ -93,14 +71,17 @@ class DataSegment(RestTranslatableMixin):
         self.feature_name = feature_name
         self.feature_values = feature_values
 
-    def _to_rest_object(self) -> RestMonitoringDataSegment:
-        return RestMonitoringDataSegment(feature=self.feature_name, values=self.feature_values)
+    def _to_rest_object(self) -> dict:
+        # ``MonitoringDataSegment`` is not in arm_ml_service; emit the wire dict directly.
+        rest_obj = {"feature": self.feature_name, "values": self.feature_values}
+        return {k: v for k, v in rest_obj.items() if v is not None}
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMonitoringDataSegment) -> "DataSegment":
+    def _from_rest_object(cls, obj) -> "DataSegment":
+        # arm hybrid models and plain dicts both support mapping access.
         return cls(
-            feature_name=obj.feature,
-            feature_values=obj.values,
+            feature_name=obj["feature"],
+            feature_values=obj["values"],
         )
 
 
@@ -134,6 +115,15 @@ class BaselineDataRange:
     This class is used when initializing a data_window for a ReferenceData object.
     For trailing input, set lookback_window_size and lookback_window_offset to a desired value.
     For static input, set window_start and window_end to a desired value.
+
+    :keyword window_start: The start of the static data window (YYYY-MM-DD). Defaults to None.
+    :paramtype window_start: Optional[str]
+    :keyword window_end: The end of the static data window (YYYY-MM-DD). Defaults to None.
+    :paramtype window_end: Optional[str]
+    :keyword lookback_window_size: The trailing lookback window size. Defaults to None.
+    :paramtype lookback_window_size: Optional[str]
+    :keyword lookback_window_offset: The trailing lookback window offset. Defaults to None.
+    :paramtype lookback_window_offset: Optional[str]
     """
 
     def __init__(
@@ -153,16 +143,18 @@ class BaselineDataRange:
 class ProductionData(RestTranslatableMixin):
     """Production Data
 
-    :param input_data: The data for which drift will be calculated
-    :type Input: ~azure.ai.ml.entities._input_outputs
-    :param data_context: The context of the input dataset. Possible values
+    :keyword input_data: The data for which drift will be calculated
+    :paramtype input_data: ~azure.ai.ml.entities.Input
+    :keyword data_context: The context of the input dataset. Possible values
         include: model_inputs, model_outputs, training, test, validation, ground_truth
-    :type MonitorDatasetContext: ~azure.ai.ml.constants.MonitorDatasetContext
-    :param pre_processing_component: ARM resource ID of the component resource used to
+    :paramtype data_context: ~azure.ai.ml.constants.MonitorDatasetContext
+    :keyword pre_processing_component: ARM resource ID of the component resource used to
         preprocess the data.
-    :type pre_processing_component: string
-    :param data_window: The number of days or a time frame that a singal monitor looks back over the target.
-    :type data_window_size: BaselineDataRange
+    :paramtype pre_processing_component: string
+    :keyword data_window: The number of days or a time frame that a signal monitor looks back over the target.
+    :paramtype data_window: BaselineDataRange
+    :keyword data_column_names: The names of the columns in the dataset. Defaults to None.
+    :paramtype data_column_names: Optional[Dict[str, str]]
     """
 
     def __init__(
@@ -185,7 +177,8 @@ class ProductionData(RestTranslatableMixin):
         default_data_window_size = kwargs.get("default_data_window_size")
         if self.data_window is None:
             self.data_window = BaselineDataRange(
-                lookback_window_size=default_data_window_size, lookback_window_offset="P0D"
+                lookback_window_size=default_data_window_size,
+                lookback_window_offset="P0D",
             )
         if self.data_window.lookback_window_size in ["default", None]:
             self.data_window.lookback_window_size = default_data_window_size
@@ -208,19 +201,21 @@ class ProductionData(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringInputData) -> "ProductionData":
+        # ``inputDataType: "Trailing"`` deserializes to the base type; rolling fields are ISO strings
+        # read via camelCase mapping keys.
         data_window = BaselineDataRange(
-            lookback_window_size=isodate.duration_isoformat(obj.window_size),
-            lookback_window_offset=isodate.duration_isoformat(obj.window_offset),
+            lookback_window_size=obj["windowSize"],
+            lookback_window_offset=obj["windowOffset"],
         )
         return cls(
             input_data=Input(
-                path=obj.uri,
-                type=obj.job_input_type,
+                path=obj["uri"],
+                type=obj["jobInputType"],
             ),
-            data_context=obj.data_context,
-            pre_processing_component=obj.preprocessing_component_id,
+            data_context=obj["dataContext"],
+            pre_processing_component=obj.get("preprocessingComponentId"),
             data_window=data_window,
-            data_column_names=obj.columns,
+            data_column_names=obj.get("columns"),
         )
 
     def _validate(self) -> None:
@@ -240,18 +235,18 @@ class ProductionData(RestTranslatableMixin):
 class ReferenceData(RestTranslatableMixin):
     """Reference Data
 
-    :param input_data: The data for which drift will be calculated
-    :type Input: ~azure.ai.ml.entities._input_outputs
-    :param data_context: The context of the input dataset. Possible values
+    :keyword input_data: The data for which drift will be calculated
+    :paramtype input_data: ~azure.ai.ml.entities.Input
+    :keyword data_context: The context of the input dataset. Possible values
         include: model_inputs, model_outputs, training, test, validation, ground_truth
-    :type MonitorDatasetContext: ~azure.ai.ml.constants.MonitorDatasetContext
-    :param pre_processing_component: ARM resource ID of the component resource used to
+    :paramtype data_context: ~azure.ai.ml.constants.MonitorDatasetContext
+    :keyword pre_processing_component: ARM resource ID of the component resource used to
         preprocess the data.
-    :type pre_processing_component: string
-    :param target_column_name: The name of the target column in the dataset.
-    :type target_column_name: string
-    :param data_window: The number of days or a time frame that a single monitor looks back over the target.
-    :type data_window_size: BaselineDataRange
+    :paramtype pre_processing_component: string
+    :keyword data_window: The number of days or a time frame that a single monitor looks back over the target.
+    :paramtype data_window: BaselineDataRange
+    :keyword data_column_names: The names of the columns in the dataset. Defaults to None.
+    :paramtype data_column_names: Optional[Dict[str, str]]
     """
 
     def __init__(
@@ -311,27 +306,31 @@ class ReferenceData(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringInputData) -> "ReferenceData":
+        # ``inputDataType: "Trailing"`` deserializes to the base ``MonitoringInputDataBase`` (arm uses
+        # "Rolling"); read its rolling fields via camelCase mapping keys. Static/Fixed are valid arm
+        # discriminators and keep typed attribute access.
+        input_data_type = obj["inputDataType"]
         data_window = None
-        if obj.input_data_type == "Static":
+        if input_data_type == "Static":
             data_window = BaselineDataRange(
                 window_start=datetime.datetime.strftime(obj.window_start, "%Y-%m-%d"),
                 window_end=datetime.datetime.strftime(obj.window_end, "%Y-%m-%d"),
             )
-        if obj.input_data_type == "Trailing":
+        if input_data_type == "Trailing":
             data_window = BaselineDataRange(
-                lookback_window_size=isodate.duration_isoformat(obj.window_size),
-                lookback_window_offset=isodate.duration_isoformat(obj.window_offset),
+                lookback_window_size=obj["windowSize"],
+                lookback_window_offset=obj["windowOffset"],
             )
 
         return cls(
             input_data=Input(
-                path=obj.uri,
-                type=obj.job_input_type,
+                path=obj["uri"],
+                type=obj["jobInputType"],
             ),
-            data_context=obj.data_context,
-            pre_processing_component=obj.preprocessing_component_id if obj.input_data_type != "Fixed" else None,
+            data_context=obj["dataContext"],
+            pre_processing_component=(obj.get("preprocessingComponentId") if input_data_type != "Fixed" else None),
             data_window=data_window,
-            data_column_names=obj.columns,
+            data_column_names=obj.get("columns"),
         )
 
 
@@ -341,8 +340,10 @@ class MonitoringSignal(RestTranslatableMixin):
 
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
-    :keyword baseline_dataset: The baseline dataset definition for monitor input.
-    :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
+    :keyword production_data: The production data definition for monitor input.
+    :paramtype production_data: ~azure.ai.ml.entities.ProductionData
+    :keyword reference_data: The reference data definition for monitor input.
+    :paramtype reference_data: ~azure.ai.ml.entities.ReferenceData
     :keyword metric_thresholds: The metric thresholds for the signal.
     :paramtype metric_thresholds: Union[
         ~azure.ai.ml.entities.DataDriftMetricThreshold,
@@ -362,6 +363,8 @@ class MonitoringSignal(RestTranslatableMixin):
         ]]]
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
+    :keyword properties: A dictionary of custom properties for the signal. Defaults to None.
+    :paramtype properties: Optional[Dict[str, str]]
     """
 
     def __init__(
@@ -392,23 +395,25 @@ class MonitoringSignal(RestTranslatableMixin):
             "GenerationTokenStatisticsSignal",
         ]
     ]:
-        if obj.signal_type == MonitoringSignalType.DATA_DRIFT:
+        # Read the discriminator via its wire key: signals removed from arm_ml_service (ModelPerformance,
+        # GenerationSafetyQuality, GenerationTokenStatistics) deserialize to the base type, so attribute
+        # access and the arm ``MonitoringSignalType`` enum (which lacks those members) are not available.
+        signal_type = obj.get("signalType")
+        if signal_type == "DataDrift":
             return DataDriftSignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.DATA_QUALITY:
+        if signal_type == "DataQuality":
             return DataQualitySignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.PREDICTION_DRIFT:
+        if signal_type == "PredictionDrift":
             return PredictionDriftSignal._from_rest_object(obj)
-        if obj.signal_type == "ModelPerformanceSignalBase":
+        if signal_type == "ModelPerformance":
             return ModelPerformanceSignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.FEATURE_ATTRIBUTION_DRIFT:
+        if signal_type == "FeatureAttributionDrift":
             return FeatureAttributionDriftSignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.CUSTOM:
+        if signal_type == "Custom":
             return CustomMonitoringSignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.GENERATION_SAFETY_QUALITY:
+        if signal_type == "GenerationSafetyQuality":
             return GenerationSafetyQualitySignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.MODEL_PERFORMANCE:
-            return ModelPerformanceSignal._from_rest_object(obj)
-        if obj.signal_type == MonitoringSignalType.GENERATION_TOKEN_STATISTICS:
+        if signal_type == "GenerationTokenStatistics":
             return GenerationTokenStatisticsSignal._from_rest_object(obj)
 
         return None
@@ -419,10 +424,14 @@ class DataSignal(MonitoringSignal):
 
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
-    :keyword baseline_dataset: The baseline dataset definition for monitor input.
-    :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
+    :keyword production_data: The production data definition for monitor input.
+    :paramtype production_data: ~azure.ai.ml.entities.ProductionData
+    :keyword reference_data: The reference data definition for monitor input.
+    :paramtype reference_data: ~azure.ai.ml.entities.ReferenceData
     :keyword features: The features to include in the signal.
     :paramtype features: Union[List[str], ~azure.ai.ml.entities.MonitorFeatureFilter, Literal[ALL_FEATURES]]
+    :keyword feature_type_override: Dictionary of features and their data types overrides.
+    :paramtype feature_type_override: Optional[Dict[str, Union[str, ~azure.ai.ml.constants.MonitorFeatureDataType]]]
     :keyword metric_thresholds: The metric thresholds for the signal.
     :paramtype metric_thresholds: List[Union[
         ~azure.ai.ml.entities.DataDriftMetricThreshold,
@@ -435,6 +444,8 @@ class DataSignal(MonitoringSignal):
     ]]
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
+    :keyword properties: A dictionary of custom properties for the signal. Defaults to None.
+    :paramtype properties: Optional[Dict[str, str]]
     """
 
     def __init__(
@@ -464,21 +475,21 @@ class DataDriftSignal(DataSignal):
 
     :ivar type: The type of the signal, set to "data_drift" for this class.
     :vartype type: str
-    :param production_data: The data for which drift will be calculated
+    :keyword production_data: The data for which drift will be calculated
     :paramtype production_data: ~azure.ai.ml.entities.ProductionData
-    :param reference_data: The data to calculate drift against
+    :keyword reference_data: The data to calculate drift against
     :paramtype reference_data: ~azure.ai.ml.entities.ReferenceData
-    :param metric_thresholds: Metrics to calculate and their associated thresholds
+    :keyword metric_thresholds: Metrics to calculate and their associated thresholds
     :paramtype metric_thresholds: ~azure.ai.ml.entities.DataDriftMetricThreshold
-    :param alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
+    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
-    :param data_segment: The data segment used for scoping on a subset of the data population.
+    :keyword data_segment: The data segment used for scoping on a subset of the data population.
     :paramtype data_segment: ~azure.ai.ml.entities.DataSegment
     :keyword features: The feature filter identifying which feature(s) to calculate drift over.
     :paramtype features: Union[List[str], ~azure.ai.ml.entities.MonitorFeatureFilter, Literal['all_features']]
-    :param feature_type_override: Dictionary of features and what they should be overridden to.
+    :keyword feature_type_override: Dictionary of features and what they should be overridden to.
     :paramtype feature_type_override: dict[str, str]
-    :param properties: Dictionary of additional properties.
+    :keyword properties: Dictionary of additional properties.
     :paramtype properties: dict[str, str]
     """
 
@@ -512,7 +523,7 @@ class DataDriftSignal(DataSignal):
         if self.production_data is not None and self.production_data.data_window is None:
             self.production_data.data_window = BaselineDataRange(lookback_window_size=default_data_window_size)
         rest_features = _to_rest_features(self.features) if self.features else None
-        return RestMonitoringDataDriftSignal(
+        rest_signal = RestMonitoringDataDriftSignal(
             production_data=(
                 self.production_data._to_rest_object(default_data_window_size=default_data_window_size)
                 if self.production_data is not None
@@ -520,7 +531,8 @@ class DataDriftSignal(DataSignal):
             ),
             reference_data=(
                 self.reference_data._to_rest_object(
-                    default_data_window=default_data_window_size, ref_data_window_size=ref_data_window_size
+                    default_data_window=default_data_window_size,
+                    ref_data_window_size=ref_data_window_size,
                 )
                 if self.reference_data is not None
                 else None
@@ -532,26 +544,27 @@ class DataDriftSignal(DataSignal):
                 if isinstance(self.metric_thresholds, MetricThreshold)
                 else None
             ),
-            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            data_segment=self.data_segment._to_rest_object() if self.data_segment else None,
-            properties=self.properties,
         )
+        # ``mode``, ``dataSegment`` and ``properties`` are not typed on the arm model; set wire keys.
+        rest_signal["mode"] = "Enabled" if self.alert_enabled else "Disabled"
+        if self.data_segment:
+            rest_signal["dataSegment"] = self.data_segment._to_rest_object()
+        if self.properties is not None:
+            rest_signal["properties"] = self.properties
+        return rest_signal
 
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringDataDriftSignal) -> "DataDriftSignal":
+        data_segment = obj.get("dataSegment")
         return cls(
             production_data=ProductionData._from_rest_object(obj.production_data),
             reference_data=ReferenceData._from_rest_object(obj.reference_data),
             features=_from_rest_features(obj.features),
             feature_type_override=obj.feature_data_type_override,
             metric_thresholds=DataDriftMetricThreshold._from_rest_object(obj.metric_thresholds),
-            alert_enabled=(
-                False
-                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-                else MonitoringNotificationMode.ENABLED
-            ),
-            data_segment=DataSegment._from_rest_object(obj.data_segment) if obj.data_segment else None,
-            properties=obj.properties,
+            alert_enabled=bool(obj.get("mode") == "Enabled"),
+            data_segment=(DataSegment._from_rest_object(data_segment) if data_segment else None),
+            properties=obj.get("properties"),
         )
 
     @classmethod
@@ -567,15 +580,15 @@ class PredictionDriftSignal(MonitoringSignal):
 
     :ivar type: The type of the signal, set to "prediction_drift" for this class.
     :vartype type: str
-    :param production_data: The data for which drift will be calculated
+    :keyword production_data: The data for which drift will be calculated
     :paramtype production_data: ~azure.ai.ml.entities.ProductionData
-    :param reference_data: The data to calculate drift against
+    :keyword reference_data: The data to calculate drift against
     :paramtype reference_data: ~azure.ai.ml.entities.ReferenceData
-    :param metric_thresholds: Metrics to calculate and their associated thresholds
+    :keyword metric_thresholds: Metrics to calculate and their associated thresholds
     :paramtype metric_thresholds: ~azure.ai.ml.entities.DataDriftMetricThreshold
-    :param alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
+    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
-    :param properties: Dictionary of additional properties.
+    :keyword properties: Dictionary of additional properties.
     :paramtype properties: dict[str, str]
     """
 
@@ -602,7 +615,7 @@ class PredictionDriftSignal(MonitoringSignal):
         ref_data_window_size = kwargs.get("ref_data_window_size")
         if self.production_data is not None and self.production_data.data_window is None:
             self.production_data.data_window = BaselineDataRange(lookback_window_size=default_data_window_size)
-        return RestPredictionDriftMonitoringSignal(
+        rest_signal = RestPredictionDriftMonitoringSignal(
             production_data=(
                 self.production_data._to_rest_object(default_data_window_size=default_data_window_size)
                 if self.production_data is not None
@@ -610,7 +623,8 @@ class PredictionDriftSignal(MonitoringSignal):
             ),
             reference_data=(
                 self.reference_data._to_rest_object(
-                    default_data_window=default_data_window_size, ref_data_window_size=ref_data_window_size
+                    default_data_window=default_data_window_size,
+                    ref_data_window_size=ref_data_window_size,
                 )
                 if self.reference_data is not None
                 else None
@@ -620,10 +634,13 @@ class PredictionDriftSignal(MonitoringSignal):
                 if isinstance(self.metric_thresholds, MetricThreshold)
                 else None
             ),
-            properties=self.properties,
-            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            model_type="classification",
         )
+        # ``properties``, ``mode`` and ``modelType`` are not typed on the arm model; set wire keys.
+        if self.properties is not None:
+            rest_signal["properties"] = self.properties
+        rest_signal["mode"] = "Enabled" if self.alert_enabled else "Disabled"
+        rest_signal["modelType"] = "classification"
+        return rest_signal
 
     @classmethod
     def _from_rest_object(cls, obj: RestPredictionDriftMonitoringSignal) -> "PredictionDriftSignal":
@@ -631,12 +648,8 @@ class PredictionDriftSignal(MonitoringSignal):
             production_data=ProductionData._from_rest_object(obj.production_data),
             reference_data=ReferenceData._from_rest_object(obj.reference_data),
             metric_thresholds=PredictionDriftMetricThreshold._from_rest_object(obj.metric_thresholds),
-            alert_enabled=(
-                False
-                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-                else MonitoringNotificationMode.ENABLED
-            ),
-            properties=obj.properties,
+            alert_enabled=bool(obj.get("mode") == "Enabled"),
+            properties=obj.get("properties"),
         )
 
     @classmethod
@@ -651,19 +664,19 @@ class DataQualitySignal(DataSignal):
 
     :ivar type: The type of the signal. Set to "data_quality" for this class.
     :vartype type: str
-    :param production_data: The data for which drift will be calculated
+    :keyword production_data: The data for which drift will be calculated
     :paramtype production_data: ~azure.ai.ml.entities.ProductionData
-    :param reference_data: The data to calculate drift against
+    :keyword reference_data: The data to calculate drift against
     :paramtype reference_data: ~azure.ai.ml.entities.ReferenceData
-    :param metric_thresholds: Metrics to calculate and their associated thresholds
+    :keyword metric_thresholds: Metrics to calculate and their associated thresholds
     :paramtype metric_thresholds: ~azure.ai.ml.entities.DataDriftMetricThreshold
-    :param alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
+    :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
     :keyword features: The feature filter identifying which feature(s) to calculate drift over.
     :paramtype features: Union[List[str], ~azure.ai.ml.entities.MonitorFeatureFilter, Literal['all_features']]
-    :param feature_type_override: Dictionary of features and what they should be overridden to.
+    :keyword feature_type_override: Dictionary of features and what they should be overridden to.
     :paramtype feature_type_override: dict[str, str]
-    :param properties: Dictionary of additional properties.
+    :keyword properties: Dictionary of additional properties.
     :paramtype properties: dict[str, str]
     """
 
@@ -705,7 +718,7 @@ class DataQualitySignal(DataSignal):
             if isinstance(self.metric_thresholds, MetricThreshold)
             else None
         )
-        return RestMonitoringDataQualitySignal(
+        rest_signal = RestMonitoringDataQualitySignal(
             production_data=(
                 self.production_data._to_rest_object(default_data_window_size=default_data_window_size)
                 if self.production_data is not None
@@ -713,7 +726,8 @@ class DataQualitySignal(DataSignal):
             ),
             reference_data=(
                 self.reference_data._to_rest_object(
-                    default_data_window=default_data_window_size, ref_data_window_size=ref_data_window_size
+                    default_data_window=default_data_window_size,
+                    ref_data_window_size=ref_data_window_size,
                 )
                 if self.reference_data is not None
                 else None
@@ -721,9 +735,12 @@ class DataQualitySignal(DataSignal):
             features=rest_features,
             feature_data_type_override=self.feature_type_override,
             metric_thresholds=rest_metrics,
-            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            properties=self.properties,
         )
+        # ``mode`` and ``properties`` are not typed on the arm model; set wire keys.
+        rest_signal["mode"] = "Enabled" if self.alert_enabled else "Disabled"
+        if self.properties is not None:
+            rest_signal["properties"] = self.properties
+        return rest_signal
 
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringDataQualitySignal) -> "DataQualitySignal":
@@ -733,12 +750,8 @@ class DataQualitySignal(DataSignal):
             features=_from_rest_features(obj.features),
             feature_type_override=obj.feature_data_type_override,
             metric_thresholds=DataQualityMetricThreshold._from_rest_object(obj.metric_thresholds),
-            alert_enabled=(
-                False
-                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-                else MonitoringNotificationMode.ENABLED
-            ),
-            properties=obj.properties,
+            alert_enabled=bool(obj.get("mode") == "Enabled"),
+            properties=obj.get("properties"),
         )
 
     @classmethod
@@ -765,8 +778,8 @@ class FADProductionData(RestTranslatableMixin):
     :keyword pre_processing_component: The ARM (Azure Resource Manager) resource ID of the component resource used to
         preprocess the data.
     :paramtype pre_processing_component: string
-    :param data_window: The number of days or a time frame that a singal monitor looks back over the target.
-    :type data_window: BaselineDataRange
+    :keyword data_window: The number of days or a time frame that a signal monitor looks back over the target.
+    :paramtype data_window: BaselineDataRange
     """
 
     def __init__(
@@ -788,7 +801,8 @@ class FADProductionData(RestTranslatableMixin):
         default_data_window_size = kwargs.get("default")
         if self.data_window is None:
             self.data_window = BaselineDataRange(
-                lookback_window_size=default_data_window_size, lookback_window_offset="P0D"
+                lookback_window_size=default_data_window_size,
+                lookback_window_offset="P0D",
             )
         if self.data_window.lookback_window_size == "default":
             self.data_window.lookback_window_size = default_data_window_size
@@ -811,18 +825,19 @@ class FADProductionData(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringInputData) -> "FADProductionData":
+        # ``inputDataType: "Trailing"`` deserializes to the base type; read rolling fields via mapping keys.
         data_window = BaselineDataRange(
-            lookback_window_size=isodate.duration_isoformat(obj.window_size),
-            lookback_window_offset=isodate.duration_isoformat(obj.window_offset),
+            lookback_window_size=obj["windowSize"],
+            lookback_window_offset=obj["windowOffset"],
         )
         return cls(
             input_data=Input(
-                path=obj.uri,
-                type=obj.job_input_type,
+                path=obj["uri"],
+                type=obj["jobInputType"],
             ),
-            data_context=obj.data_context,
-            data_column_names=obj.columns,
-            pre_processing_component=obj.preprocessing_component_id,
+            data_context=obj["dataContext"],
+            data_column_names=obj.get("columns"),
+            pre_processing_component=obj.get("preprocessingComponentId"),
             data_window=data_window,
         )
 
@@ -834,7 +849,7 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
     :ivar type: The type of the signal. Set to "feature_attribution_drift" for this class.
     :vartype type: str
     :keyword production_data: The data for which drift will be calculated.
-    :paratype production_data: ~azure.ai.ml.entities.FADProductionData
+    :paramtype production_data: ~azure.ai.ml.entities.FADProductionData
     :keyword reference_data: The data to calculate drift against.
     :paramtype reference_data: ~azure.ai.ml.entities.ReferenceData
     :keyword metric_thresholds: Metrics to calculate and their
@@ -842,6 +857,8 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
     :paramtype metric_thresholds: ~azure.ai.ml.entities.FeatureAttributionDriftMetricThreshold
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
+    :keyword properties: A dictionary of custom properties for the signal. Defaults to None.
+    :paramtype properties: Optional[Dict[str, str]]
     """
 
     def __init__(
@@ -863,19 +880,23 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
     def _to_rest_object(self, **kwargs: Any) -> RestFeatureAttributionDriftMonitoringSignal:
         default_window_size = kwargs.get("default_data_window_size")
         ref_data_window_size = kwargs.get("ref_data_window_size")
-        return RestFeatureAttributionDriftMonitoringSignal(
+        rest_signal = RestFeatureAttributionDriftMonitoringSignal(
             production_data=(
                 [data._to_rest_object(default=default_window_size) for data in self.production_data]
                 if self.production_data is not None
                 else None
             ),
             reference_data=self.reference_data._to_rest_object(
-                default_data_window=default_window_size, ref_data_window_size=ref_data_window_size
+                default_data_window=default_window_size,
+                ref_data_window_size=ref_data_window_size,
             ),
             metric_threshold=self.metric_thresholds._to_rest_object(),
-            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            properties=self.properties,
         )
+        # ``mode`` and ``properties`` are not typed on the arm model; set wire keys.
+        rest_signal["mode"] = "Enabled" if self.alert_enabled else "Disabled"
+        if self.properties is not None:
+            rest_signal["properties"] = self.properties
+        return rest_signal
 
     @classmethod
     def _from_rest_object(cls, obj: RestFeatureAttributionDriftMonitoringSignal) -> "FeatureAttributionDriftSignal":
@@ -883,12 +904,8 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
             production_data=[FADProductionData._from_rest_object(data) for data in obj.production_data],
             reference_data=ReferenceData._from_rest_object(obj.reference_data),
             metric_thresholds=FeatureAttributionDriftMetricThreshold._from_rest_object(obj.metric_threshold),
-            alert_enabled=(
-                False
-                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-                else MonitoringNotificationMode.ENABLED
-            ),
-            properties=obj.properties,
+            alert_enabled=bool(obj.get("mode") == "Enabled"),
+            properties=obj.get("properties"),
         )
 
 
@@ -896,17 +913,19 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
 class ModelPerformanceSignal(RestTranslatableMixin):
     """Model performance signal.
 
-    :keyword baseline_dataset: The data to calculate performance against.
-    :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
+    :keyword production_data: The data for which performance will be calculated.
+    :paramtype production_data: ~azure.ai.ml.entities.ProductionData
+    :keyword reference_data: The data to calculate performance against.
+    :paramtype reference_data: ~azure.ai.ml.entities.ReferenceData
     :keyword metric_thresholds: A list of metrics to calculate and their
         associated thresholds.
     :paramtype metric_thresholds: ~azure.ai.ml.entities.ModelPerformanceMetricThreshold
-    :keyword model_type: The model type.
-    :paramtype model_type: ~azure.ai.ml.constants.MonitorModelType
     :keyword data_segment: The data segment to calculate performance against.
     :paramtype data_segment: ~azure.ai.ml.entities.DataSegment
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to False.
     :paramtype alert_enabled: bool
+    :keyword properties: A dictionary of custom properties for the signal. Defaults to None.
+    :paramtype properties: Optional[Dict[str, str]]
     """
 
     def __init__(
@@ -927,7 +946,7 @@ class ModelPerformanceSignal(RestTranslatableMixin):
         self.data_segment = data_segment
         self.properties = properties
 
-    def _to_rest_object(self, **kwargs: Any) -> RestModelPerformanceSignal:
+    def _to_rest_object(self, **kwargs: Any) -> dict:
         default_data_window_size = kwargs.get("default_data_window_size")
         ref_data_window_size = kwargs.get("ref_data_window_size")
         if self.properties is None:
@@ -937,29 +956,30 @@ class ModelPerformanceSignal(RestTranslatableMixin):
             self.production_data.data_window = BaselineDataRange(
                 lookback_window_size=default_data_window_size,
             )
-        return RestModelPerformanceSignal(
-            production_data=[self.production_data._to_rest_object(default_data_window_size=default_data_window_size)],
-            reference_data=self.reference_data._to_rest_object(
-                default_data_window_size=default_data_window_size, ref_data_window_size=ref_data_window_size
+        # ``ModelPerformanceSignal`` is not in arm_ml_service; emit the wire dict directly.
+        rest_obj = {
+            "signalType": "ModelPerformance",
+            "productionData": [self.production_data._to_rest_object(default_data_window_size=default_data_window_size)],
+            "referenceData": self.reference_data._to_rest_object(
+                default_data_window_size=default_data_window_size,
+                ref_data_window_size=ref_data_window_size,
             ),
-            metric_threshold=self.metric_thresholds._to_rest_object(),
-            data_segment=self.data_segment._to_rest_object() if self.data_segment else None,
-            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            properties=self.properties,
-        )
+            "metricThreshold": self.metric_thresholds._to_rest_object(),
+            "dataSegment": (self.data_segment._to_rest_object() if self.data_segment else None),
+            "mode": "Enabled" if self.alert_enabled else "Disabled",
+            "properties": self.properties,
+        }
+        return {k: v for k, v in rest_obj.items() if v is not None}
 
     @classmethod
-    def _from_rest_object(cls, obj: RestModelPerformanceSignal) -> "ModelPerformanceSignal":
+    def _from_rest_object(cls, obj) -> "ModelPerformanceSignal":
+        data_segment = obj.get("dataSegment")
         return cls(
-            production_data=ProductionData._from_rest_object(obj.production_data[0]),
-            reference_data=ReferenceData._from_rest_object(obj.reference_data),
-            metric_thresholds=ModelPerformanceMetricThreshold._from_rest_object(obj.metric_threshold),
-            data_segment=DataSegment._from_rest_object(obj.data_segment) if obj.data_segment else None,
-            alert_enabled=(
-                False
-                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-                else MonitoringNotificationMode.ENABLED
-            ),
+            production_data=ProductionData._from_rest_object(obj["productionData"][0]),
+            reference_data=ReferenceData._from_rest_object(obj["referenceData"]),
+            metric_thresholds=ModelPerformanceMetricThreshold._from_rest_object(obj["metricThreshold"]),
+            data_segment=(DataSegment._from_rest_object(data_segment) if data_segment else None),
+            alert_enabled=bool(obj.get("mode") == "Enabled"),
         )
 
 
@@ -967,9 +987,9 @@ class ModelPerformanceSignal(RestTranslatableMixin):
 class Connection(RestTranslatableMixin):
     """Monitoring Connection
 
-    :param environment_variables: A dictionary of environment variables to set for the workspace.
+    :keyword environment_variables: A dictionary of environment variables to set for the workspace.
     :paramtype environment_variables: Optional[dict[str, str]]
-    :param secret_config: A dictionary of secrets to set for the workspace.
+    :keyword secret_config: A dictionary of secrets to set for the workspace.
     :paramtype secret_config: Optional[dict[str, str]]
     """
 
@@ -982,17 +1002,20 @@ class Connection(RestTranslatableMixin):
         self.environment_variables = environment_variables
         self.secret_config = secret_config
 
-    def _to_rest_object(self) -> RestMonitoringWorkspaceConnection:
-        return RestMonitoringWorkspaceConnection(
-            environment_variables=self.environment_variables,
-            secrets=self.secret_config,
-        )
+    def _to_rest_object(self) -> dict:
+        # ``MonitoringWorkspaceConnection`` is not in arm_ml_service; emit the wire dict directly.
+        rest_obj = {
+            "environmentVariables": self.environment_variables,
+            "secrets": self.secret_config,
+        }
+        return {k: v for k, v in rest_obj.items() if v is not None}
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMonitoringWorkspaceConnection) -> "Connection":
+    def _from_rest_object(cls, obj) -> "Connection":
+        # arm hybrid models and plain dicts both support mapping access.
         return cls(
-            environment_variables=obj.environment_variables,
-            secret_config=obj.secrets,
+            environment_variables=obj.get("environmentVariables"),
+            secret_config=obj.get("secrets"),
         )
 
 
@@ -1044,36 +1067,42 @@ class CustomMonitoringSignal(RestTranslatableMixin):
     def _to_rest_object(self, **kwargs: Any) -> RestCustomMonitoringSignal:  # pylint:disable=unused-argument
         if self.connection is None:
             self.connection = Connection()
-        return RestCustomMonitoringSignal(
+        # ``inputs`` come from the shared arm_ml_service dataset-literal helper; emit their camelCase wire
+        # dicts (``as_dict`` on the hybrid model) so they fit inside the arm_ml_service signal envelope
+        # without changing the wire body.
+        rest_inputs = to_rest_dataset_literal_inputs(self.inputs, job_type=None) if self.inputs else None
+        if rest_inputs is not None:
+            rest_inputs = {name: value.as_dict() for name, value in rest_inputs.items()}
+        rest_signal = RestCustomMonitoringSignal(
             component_id=self.component_id,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
-            inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=None) if self.inputs else None,
+            inputs=rest_inputs,
             input_assets=(
                 {asset_name: asset_value._to_rest_object() for asset_name, asset_value in self.input_data.items()}
                 if self.input_data
                 else None
             ),
-            workspace_connection=self.connection._to_rest_object(),
-            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            properties=self.properties,
         )
+        # ``workspaceConnection``, ``mode`` and ``properties`` are not typed on the arm model.
+        rest_signal["workspaceConnection"] = self.connection._to_rest_object()
+        rest_signal["mode"] = "Enabled" if self.alert_enabled else "Disabled"
+        if self.properties is not None:
+            rest_signal["properties"] = self.properties
+        return rest_signal
 
     @classmethod
     def _from_rest_object(cls, obj: RestCustomMonitoringSignal) -> "CustomMonitoringSignal":
+        workspace_connection = obj.get("workspaceConnection")
         return cls(
-            inputs=from_rest_inputs_to_dataset_literal(obj.inputs) if obj.inputs else None,
+            inputs=(from_rest_inputs_to_dataset_literal(obj.inputs) if obj.inputs else None),
             input_data={key: ReferenceData._from_rest_object(data) for key, data in obj.input_assets.items()},
             metric_thresholds=[
                 CustomMonitoringMetricThreshold._from_rest_object(metric) for metric in obj.metric_thresholds
             ],
             component_id=obj.component_id,
-            alert_enabled=(
-                False
-                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-                else MonitoringNotificationMode.ENABLED
-            ),
-            properties=obj.properties,
-            connection=Connection._from_rest_object(obj.workspace_connection),
+            alert_enabled=bool(obj.get("mode") == "Enabled"),
+            properties=obj.get("properties"),
+            connection=(Connection._from_rest_object(workspace_connection) if workspace_connection else None),
         )
 
 
@@ -1081,12 +1110,12 @@ class CustomMonitoringSignal(RestTranslatableMixin):
 class LlmData(RestTranslatableMixin):
     """LLM Request Response Data
 
-    :param input_data: Input data used by the monitor.
+    :keyword input_data: Input data used by the monitor.
     :paramtype input_data: ~azure.ai.ml.entities.Input
-    :param data_column_names: The names of columns in the input data.
+    :keyword data_column_names: The names of columns in the input data.
     :paramtype data_column_names: Dict[str, str]
-    :param data_window: The number of days or a time frame that a singal monitor looks back over the target.
-    :type data_window_size: BaselineDataRange
+    :keyword data_window: The number of days or a time frame that a signal monitor looks back over the target.
+    :paramtype data_window: BaselineDataRange
     """
 
     def __init__(
@@ -1119,16 +1148,17 @@ class LlmData(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: RestMonitoringInputData) -> "LlmData":
+        # ``inputDataType: "Trailing"`` deserializes to the base type; read rolling fields via mapping keys.
         data_window = BaselineDataRange(
-            lookback_window_size=isodate.duration_isoformat(obj.window_size),
-            lookback_window_offset=isodate.duration_isoformat(obj.window_offset),
+            lookback_window_size=obj["windowSize"],
+            lookback_window_offset=obj["windowOffset"],
         )
         return cls(
             input_data=Input(
-                path=obj.uri,
-                type=obj.job_input_type,
+                path=obj["uri"],
+                type=obj["jobInputType"],
             ),
-            data_column_names=obj.columns,
+            data_column_names=obj.get("columns"),
             data_window=data_window,
         )
 
@@ -1173,34 +1203,35 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
         self.properties = properties
         self.sampling_rate = sampling_rate
 
-    def _to_rest_object(self, **kwargs: Any) -> RestGenerationSafetyQualityMonitoringSignal:
+    def _to_rest_object(self, **kwargs: Any) -> dict:
         data_window_size = kwargs.get("default_data_window_size")
-        return RestGenerationSafetyQualityMonitoringSignal(
-            production_data=(
+        # ``GenerationSafetyQualityMonitoringSignal`` is not in arm_ml_service; emit the wire dict directly.
+        rest_obj = {
+            "signalType": "GenerationSafetyQuality",
+            "productionData": (
                 [data._to_rest_object(default=data_window_size) for data in self.production_data]
                 if self.production_data is not None
                 else None
             ),
-            workspace_connection_id=self.connection_id,
-            metric_thresholds=self.metric_thresholds._to_rest_object(),
-            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            properties=self.properties,
-            sampling_rate=self.sampling_rate,
-        )
+            "workspaceConnectionId": self.connection_id,
+            "metricThresholds": self.metric_thresholds._to_rest_object(),
+            "mode": "Enabled" if self.alert_enabled else "Disabled",
+            "properties": self.properties,
+            "samplingRate": self.sampling_rate,
+        }
+        return {k: v for k, v in rest_obj.items() if v is not None}
 
     @classmethod
-    def _from_rest_object(cls, obj: RestGenerationSafetyQualityMonitoringSignal) -> "GenerationSafetyQualitySignal":
+    def _from_rest_object(cls, obj) -> "GenerationSafetyQualitySignal":
         return cls(
-            production_data=[LlmData._from_rest_object(data) for data in obj.production_data],
-            connection_id=obj.workspace_connection_id,
-            metric_thresholds=GenerationSafetyQualityMonitoringMetricThreshold._from_rest_object(obj.metric_thresholds),
-            alert_enabled=(
-                False
-                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-                else MonitoringNotificationMode.ENABLED
+            production_data=[LlmData._from_rest_object(data) for data in obj["productionData"]],
+            connection_id=obj.get("workspaceConnectionId"),
+            metric_thresholds=GenerationSafetyQualityMonitoringMetricThreshold._from_rest_object(
+                obj["metricThresholds"]
             ),
-            properties=obj.properties,
-            sampling_rate=obj.sampling_rate,
+            alert_enabled=bool(obj.get("mode") == "Enabled"),
+            properties=obj.get("properties"),
+            sampling_rate=obj.get("samplingRate"),
         )
 
 
@@ -1248,36 +1279,37 @@ class GenerationTokenStatisticsSignal(RestTranslatableMixin):
         self.properties = properties
         self.sampling_rate = sampling_rate
 
-    def _to_rest_object(self, **kwargs: Any) -> RestGenerationTokenStatisticsSignal:
+    def _to_rest_object(self, **kwargs: Any) -> dict:
         data_window_size = kwargs.get("default_data_window_size")
-        return RestGenerationTokenStatisticsSignal(
-            production_data=(
+        # ``GenerationTokenStatisticsSignal`` is not in arm_ml_service; emit the wire dict directly.
+        rest_obj = {
+            "signalType": "GenerationTokenStatistics",
+            "productionData": (
                 self.production_data._to_rest_object(default=data_window_size)
                 if self.production_data is not None
                 else None
             ),
-            metric_thresholds=(
+            "metricThresholds": (
                 self.metric_thresholds._to_rest_object()
                 if self.metric_thresholds
                 else GenerationTokenStatisticsMonitorMetricThreshold._get_default_thresholds()._to_rest_object()
             ),
-            mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
-            properties=self.properties,
-            sampling_rate=self.sampling_rate if self.sampling_rate else 0.1,
-        )
+            "mode": "Enabled" if self.alert_enabled else "Disabled",
+            "properties": self.properties,
+            "samplingRate": self.sampling_rate if self.sampling_rate else 0.1,
+        }
+        return {k: v for k, v in rest_obj.items() if v is not None}
 
     @classmethod
-    def _from_rest_object(cls, obj: RestGenerationTokenStatisticsSignal) -> "GenerationTokenStatisticsSignal":
+    def _from_rest_object(cls, obj) -> "GenerationTokenStatisticsSignal":
         return cls(
-            production_data=LlmData._from_rest_object(obj.production_data),
-            metric_thresholds=GenerationTokenStatisticsMonitorMetricThreshold._from_rest_object(obj.metric_thresholds),
-            alert_enabled=(
-                False
-                if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
-                else MonitoringNotificationMode.ENABLED
+            production_data=LlmData._from_rest_object(obj["productionData"]),
+            metric_thresholds=GenerationTokenStatisticsMonitorMetricThreshold._from_rest_object(
+                obj["metricThresholds"]
             ),
-            properties=obj.properties,
-            sampling_rate=obj.sampling_rate,
+            alert_enabled=bool(obj.get("mode") == "Enabled"),
+            properties=obj.get("properties"),
+            sampling_rate=obj.get("samplingRate"),
         )
 
     @classmethod

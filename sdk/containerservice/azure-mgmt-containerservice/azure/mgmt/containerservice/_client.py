@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -20,7 +21,9 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from ._configuration import ContainerServiceClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
+    AgentFabricMembershipsOperations,
     AgentPoolsOperations,
+    AlertConfigurationsOperations,
     ContainerServiceOperations,
     IdentityBindingsOperations,
     JWTAuthenticatorsOperations,
@@ -40,6 +43,7 @@ from .operations import (
     SnapshotsOperations,
     TrustedAccessRoleBindingsOperations,
     TrustedAccessRolesOperations,
+    UpgradeInsightsOperations,
     VmSkusOperations,
 )
 
@@ -53,7 +57,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
+class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """The Container Service Client.
 
     :ivar agent_pools: AgentPoolsOperations operations
@@ -89,8 +93,16 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
     :vartype jwt_authenticators: azure.mgmt.containerservice.operations.JWTAuthenticatorsOperations
     :ivar mesh_memberships: MeshMembershipsOperations operations
     :vartype mesh_memberships: azure.mgmt.containerservice.operations.MeshMembershipsOperations
+    :ivar agent_fabric_memberships: AgentFabricMembershipsOperations operations
+    :vartype agent_fabric_memberships:
+     azure.mgmt.containerservice.operations.AgentFabricMembershipsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.containerservice.operations.Operations
+    :ivar alert_configurations: AlertConfigurationsOperations operations
+    :vartype alert_configurations:
+     azure.mgmt.containerservice.operations.AlertConfigurationsOperations
+    :ivar upgrade_insights: UpgradeInsightsOperations operations
+    :vartype upgrade_insights: azure.mgmt.containerservice.operations.UpgradeInsightsOperations
     :ivar operation_status_result: OperationStatusResultOperations operations
     :vartype operation_status_result:
      azure.mgmt.containerservice.operations.OperationStatusResultOperations
@@ -117,7 +129,7 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-04-02-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-08-02-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -206,7 +218,16 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
         self.mesh_memberships = MeshMembershipsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.agent_fabric_memberships = AgentFabricMembershipsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.alert_configurations = AlertConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.upgrade_insights = UpgradeInsightsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operation_status_result = OperationStatusResultOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

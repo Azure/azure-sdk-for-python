@@ -27,19 +27,19 @@ from .data_column import DataColumn
 class FeatureStoreEntity(Asset):
     """Feature Store Entity
 
-    :param name: The name of the feature store entity resource.
-    :type name: str
-    :param version: The version of the feature store entity resource.
-    :type version: str
-    :param index_columns: Specifies index columns of the feature-store entity resource.
-    :type index_columns: list[~azure.ai.ml.entities.DataColumn]
-    :param stage: The feature store entity stage. Allowed values: Development, Production, Archived.
+    :keyword name: The name of the feature store entity resource.
+    :paramtype name: str
+    :keyword version: The version of the feature store entity resource.
+    :paramtype version: str
+    :keyword index_columns: Specifies index columns of the feature-store entity resource.
+    :paramtype index_columns: list[~azure.ai.ml.entities.DataColumn]
+    :keyword stage: The feature store entity stage. Allowed values: Development, Production, Archived.
         Defaults to "Development".
-    :type stage: Optional[str]
-    :param description: The description of the feature store entity resource. Defaults to None.
-    :type description: Optional[str]
-    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
-    :type tags: Optional[dict[str, str]]
+    :paramtype stage: Optional[str]
+    :keyword description: The description of the feature store entity resource. Defaults to None.
+    :paramtype description: Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :paramtype tags: Optional[dict[str, str]]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     :raises ValidationException: Raised if stage is specified and is not valid.

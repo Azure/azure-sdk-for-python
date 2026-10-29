@@ -26,7 +26,10 @@ from ._operations import LoadBalancersOperations  # type: ignore
 from ._operations import IdentityBindingsOperations  # type: ignore
 from ._operations import JWTAuthenticatorsOperations  # type: ignore
 from ._operations import MeshMembershipsOperations  # type: ignore
+from ._operations import AgentFabricMembershipsOperations  # type: ignore
 from ._operations import Operations  # type: ignore
+from ._operations import AlertConfigurationsOperations  # type: ignore
+from ._operations import UpgradeInsightsOperations  # type: ignore
 from ._operations import OperationStatusResultOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import ResolvePrivateLinkServiceIdOperations  # type: ignore
@@ -53,7 +56,10 @@ __all__ = [
     "IdentityBindingsOperations",
     "JWTAuthenticatorsOperations",
     "MeshMembershipsOperations",
+    "AgentFabricMembershipsOperations",
     "Operations",
+    "AlertConfigurationsOperations",
+    "UpgradeInsightsOperations",
     "OperationStatusResultOperations",
     "PrivateLinkResourcesOperations",
     "ResolvePrivateLinkServiceIdOperations",

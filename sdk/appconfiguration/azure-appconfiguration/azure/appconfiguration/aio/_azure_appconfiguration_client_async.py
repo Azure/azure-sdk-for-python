@@ -55,8 +55,10 @@ class AzureAppConfigurationClient:
     :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this default
         value may result in unsupported behavior.
     :paramtype api_version: str
-    :keyword audience: The audience to use for authentication with Microsoft Entra. Defaults to the public Azure App
-        Configuration audience. See the supported audience list at https://aka.ms/appconfig/client-token-audience
+    :keyword audience: The audience to use for authentication with Microsoft Entra ID. By default, the audience is
+        inferred from the Azure App Configuration store endpoint. If an audience can't be inferred from the store
+        endpoint, the public Azure App Configuration audience is used.
+        See the supported audience list at https://aka.ms/appconfig/client-token-audience
     :paramtype audience: str
 
 
@@ -669,6 +671,13 @@ class AzureAppConfigurationClient:
         :return: An async iterator of labels.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSettingLabel]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Example
+
+        .. code-block:: python
+
+            async for label in client.list_labels():
+                print(label)
         """
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
@@ -718,6 +727,17 @@ class AzureAppConfigurationClient:
             operation to complete and get the created snapshot.
         :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.ConfigurationSnapshot]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Example
+
+        .. code-block:: python
+
+            from azure.appconfiguration import ConfigurationSettingsFilter
+
+            filters = [ConfigurationSettingsFilter(key="my_key", label="my_label")]
+            response = await client.begin_create_snapshot(name="my_snapshot", filters=filters)
+            created_snapshot = await response.result()
+            print(created_snapshot)
         """
         snapshot = ConfigurationSnapshot(
             filters=filters,
@@ -754,6 +774,13 @@ class AzureAppConfigurationClient:
         :return: The ConfigurationSnapshot returned from the service.
         :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Example
+
+        .. code-block:: python
+
+            archived_snapshot = await client.archive_snapshot(name="my_snapshot")
+            print(archived_snapshot.status)
         """
         generated_snapshot = await self._impl._update_snapshot(
             name=name,
@@ -784,6 +811,13 @@ class AzureAppConfigurationClient:
         :return: The ConfigurationSnapshot returned from the service.
         :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Example
+
+        .. code-block:: python
+
+            recovered_snapshot = await client.recover_snapshot(name="my_snapshot")
+            print(recovered_snapshot.status)
         """
         generated_snapshot = await self._impl._update_snapshot(
             name=name,
@@ -808,6 +842,13 @@ class AzureAppConfigurationClient:
         :return: The ConfigurationSnapshot returned from the service.
         :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Example
+
+        .. code-block:: python
+
+            received_snapshot = await client.get_snapshot(name="my_snapshot")
+            print(received_snapshot)
         """
         generated_snapshot = await self._impl.get_snapshot(name=name, select=fields, **kwargs)
         return ConfigurationSnapshot._from_generated(generated_snapshot)
@@ -835,6 +876,13 @@ class AzureAppConfigurationClient:
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSnapshot`
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSnapshot]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
+
+        Example
+
+        .. code-block:: python
+
+            async for snapshot in client.list_snapshots():
+                print(snapshot)
         """
         return self._impl.get_snapshots(  # type: ignore[return-value]
             name=name,

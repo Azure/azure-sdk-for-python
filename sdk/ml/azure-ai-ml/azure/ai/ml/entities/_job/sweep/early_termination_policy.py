@@ -4,11 +4,17 @@
 from abc import ABC
 from typing import Any, Optional, cast
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2023_04_01_preview.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
-from azure.ai.ml._restclient.v2023_04_01_preview.models import EarlyTerminationPolicyType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MedianStoppingPolicy as RestMedianStoppingPolicy
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    BanditPolicy as RestBanditPolicy,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    EarlyTerminationPolicy as RestEarlyTerminationPolicy,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import EarlyTerminationPolicyType
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    MedianStoppingPolicy as RestMedianStoppingPolicy,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import (
     TruncationSelectionPolicy as RestTruncationSelectionPolicy,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -132,7 +138,8 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
 
     def _to_rest_object(self) -> RestMedianStoppingPolicy:
         return RestMedianStoppingPolicy(
-            delay_evaluation=self.delay_evaluation, evaluation_interval=self.evaluation_interval
+            delay_evaluation=self.delay_evaluation,
+            evaluation_interval=self.evaluation_interval,
         )
 
     @classmethod

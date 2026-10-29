@@ -51,7 +51,7 @@ class TestRealtimeServiceTools(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4o"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_tool_call(self, test_data_dir: Path, model: str, api_version: str, **kwargs):
         audio_file = test_data_dir / "4-1.wav"
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
@@ -106,7 +106,7 @@ class TestRealtimeServiceTools(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4o", "gpt-5-chat"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_tool_choice(self, test_data_dir: Path, model: str, api_version: str, **kwargs):
         if "realtime" in model:
             pytest.skip("Tool choice is not supported in realtime models yet")
@@ -201,7 +201,7 @@ class TestRealtimeServiceTools(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime", "gpt-4.1", "gpt-5", "gpt-5.1", "gpt-5.2", "phi4-mm-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_tool_call_parameter(
         self,
         test_data_dir: Path,
@@ -292,7 +292,7 @@ class TestRealtimeServiceTools(AzureRecordedTestCase):
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.skip()
     @pytest.mark.parametrize("model", ["gpt-4o", "gpt-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_tool_call_no_audio_overlap(
         self,
         test_data_dir: Path,

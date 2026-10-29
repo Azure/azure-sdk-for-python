@@ -40,7 +40,7 @@ class TestRealtimeServiceLifecycle(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_response_cancel(self, model: str, api_version: str, **kwargs):
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
         voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
@@ -59,9 +59,7 @@ class TestRealtimeServiceLifecycle(AzureRecordedTestCase):
 
             # Seed a user message so the model has something to respond to.
             await conn.conversation.item.create(
-                item=UserMessageItem(
-                    content=[InputTextContentPart(text="Tell me a very long story about the ocean.")]
-                )
+                item=UserMessageItem(content=[InputTextContentPart(text="Tell me a very long story about the ocean.")])
             )
             await conn.response.create()
 
@@ -77,7 +75,7 @@ class TestRealtimeServiceLifecycle(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_conversation_item_delete(self, model: str, api_version: str, **kwargs):
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
         voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
@@ -107,7 +105,7 @@ class TestRealtimeServiceLifecycle(AzureRecordedTestCase):
     @VoiceLivePreparer()
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-realtime"])
-    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-04-10"])
+    @pytest.mark.parametrize("api_version", ["2025-10-01", "2026-07-15"])
     async def test_realtime_service_input_audio_buffer_clear(
         self, test_data_dir: Path, model: str, api_version: str, **kwargs
     ):

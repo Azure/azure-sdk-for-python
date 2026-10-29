@@ -24,11 +24,11 @@ from azure.appconfiguration.provider._request_tracing_context import (
 )
 from azure.appconfiguration.provider._constants import (
     REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
-    ServiceFabricEnvironmentVariable,
-    AzureFunctionEnvironmentVariable,
-    AzureWebAppEnvironmentVariable,
-    ContainerAppEnvironmentVariable,
-    KubernetesEnvironmentVariable,
+    SERVICE_FABRIC_ENVIRONMENT_VARIABLE,
+    AZURE_FUNCTION_ENVIRONMENT_VARIABLE,
+    AZURE_WEB_APP_ENVIRONMENT_VARIABLE,
+    CONTAINER_APP_ENVIRONMENT_VARIABLE,
+    KUBERNETES_ENVIRONMENT_VARIABLE,
     APP_CONFIG_AI_MIME_PROFILE,
     APP_CONFIG_AICC_MIME_PROFILE,
     SNAPSHOT_REFERENCE_TAG,
@@ -115,31 +115,31 @@ class TestRequestTracingContext(unittest.TestCase):  # pylint: disable=too-many-
 
     def test_get_host_type_azure_function(self):
         """Test host type detection for Azure Functions."""
-        with patch.dict(os.environ, {AzureFunctionEnvironmentVariable: "test_value"}):
+        with patch.dict(os.environ, {AZURE_FUNCTION_ENVIRONMENT_VARIABLE: "test_value"}):
             result = _RequestTracingContext.get_host_type()
             self.assertEqual(result, HostType.AZURE_FUNCTION)
 
     def test_get_host_type_azure_web_app(self):
         """Test host type detection for Azure Web App."""
-        with patch.dict(os.environ, {AzureWebAppEnvironmentVariable: "test_value"}):
+        with patch.dict(os.environ, {AZURE_WEB_APP_ENVIRONMENT_VARIABLE: "test_value"}):
             result = _RequestTracingContext.get_host_type()
             self.assertEqual(result, HostType.AZURE_WEB_APP)
 
     def test_get_host_type_container_app(self):
         """Test host type detection for Container App."""
-        with patch.dict(os.environ, {ContainerAppEnvironmentVariable: "test_value"}):
+        with patch.dict(os.environ, {CONTAINER_APP_ENVIRONMENT_VARIABLE: "test_value"}):
             result = _RequestTracingContext.get_host_type()
             self.assertEqual(result, HostType.CONTAINER_APP)
 
     def test_get_host_type_kubernetes(self):
         """Test host type detection for Kubernetes."""
-        with patch.dict(os.environ, {KubernetesEnvironmentVariable: "test_value"}):
+        with patch.dict(os.environ, {KUBERNETES_ENVIRONMENT_VARIABLE: "test_value"}):
             result = _RequestTracingContext.get_host_type()
             self.assertEqual(result, HostType.KUBERNETES)
 
     def test_get_host_type_service_fabric(self):
         """Test host type detection for Service Fabric."""
-        with patch.dict(os.environ, {ServiceFabricEnvironmentVariable: "test_value"}):
+        with patch.dict(os.environ, {SERVICE_FABRIC_ENVIRONMENT_VARIABLE: "test_value"}):
             result = _RequestTracingContext.get_host_type()
             self.assertEqual(result, HostType.SERVICE_FABRIC)
 

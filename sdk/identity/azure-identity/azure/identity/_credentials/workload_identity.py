@@ -9,7 +9,7 @@ from typing import Optional
 
 from .client_assertion import ClientAssertionCredential
 from .._constants import EnvironmentVariables
-from .._internal import within_credential_chain
+from .._internal import within_credential_chain, within_dac
 
 
 WORKLOAD_CONFIG_ERROR = (
@@ -20,6 +20,12 @@ WORKLOAD_CONFIG_ERROR = (
 CA_DATA_FILE_ERROR = "Both AZURE_KUBERNETES_CA_FILE and AZURE_KUBERNETES_CA_DATA are set. Only one should be set."
 CUSTOM_PROXY_ENV_ERROR = (
     "AZURE_KUBERNETES_TOKEN_PROXY is not set but other custom endpoint-related environment variables are present."
+)
+_TOKEN_PROXY_TRANSPORT_OPTIONS = (
+    "connection_timeout",
+    "read_timeout",
+    "connection_data_block_size",
+    "use_env_settings",
 )
 
 
@@ -62,6 +68,9 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     :keyword str client_id: The client ID of a Microsoft Entra app registration.
     :keyword str token_file_path: The path to a file containing a Kubernetes service account token that authenticates
         the identity.
+    :keyword bool enable_azure_proxy: Whether to use the AKS identity binding proxy when its configuration is available.
+        Defaults to False. Use this credential directly; identity binding mode isn't supported through
+        DefaultAzureCredential.
 
     .. admonition:: Example:
 
@@ -105,7 +114,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
 
         self._token_file_path = token_file_path
 
-        if kwargs.pop("enable_azure_proxy", False) and not within_credential_chain.get():
+        if kwargs.pop("enable_azure_proxy", False) and not within_dac.get() and not within_credential_chain.get():
             token_proxy_endpoint = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_TOKEN_PROXY)
             sni = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_SNI_NAME)
             ca_file = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_CA_FILE)
@@ -119,6 +128,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
                     token_proxy_endpoint=token_proxy_endpoint,
                     ca_file=ca_file,
                     ca_data=ca_data,
+                    **{name: kwargs[name] for name in _TOKEN_PROXY_TRANSPORT_OPTIONS if name in kwargs},
                 )
 
                 if transport:
@@ -140,7 +150,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
         )
 
 
-def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data):
+def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data, **kwargs):
     try:
         from .._internal.token_binding_transport_requests import CustomRequestsTransport
 
@@ -149,6 +159,7 @@ def _get_transport(sni, token_proxy_endpoint, ca_file, ca_data):
             proxy_endpoint=token_proxy_endpoint,
             ca_file=ca_file,
             ca_data=ca_data,
+            **kwargs,
         )
 
     except ImportError:

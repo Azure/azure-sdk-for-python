@@ -32,4 +32,4 @@ class TestPureStorageBlockMgmtReservationsOperations(AzureMgmtRecordedTestCase):
     def test_reservations_list_by_subscription(self, resource_group):
         response = self.client.reservations.list_by_subscription()
         result = [r for r in response]
-        assert response
+        assert len(result)

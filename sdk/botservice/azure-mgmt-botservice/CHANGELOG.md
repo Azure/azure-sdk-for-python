@@ -1,5 +1,83 @@
 # Release History
 
+## 3.0.0b1 (2026-07-07)
+
+### Features Added
+
+  - Model `Bot` added property `system_data`
+  - Model `BotChannel` added property `system_data`
+  - Model `BotProperties` added property `network_security_perimeter_configurations`
+  - Model `ConnectionSetting` added property `system_data`
+  - Model `ConnectionSettingProperties` added property `id`
+  - Model `ConnectionSettingProperties` added property `name`
+  - Model `DirectLineSite` added property `tenant_id`
+  - Model `DirectLineSite` added property `is_token_enabled`
+  - Model `DirectLineSite` added property `is_endpoint_parameters_enabled`
+  - Model `DirectLineSite` added property `is_detailed_logging_enabled`
+  - Model `DirectLineSite` added property `is_no_storage_enabled`
+  - Model `DirectLineSite` added property `e_tag`
+  - Model `DirectLineSite` added property `app_id`
+  - Model `DirectLineSite` added property `is_web_chat_speech_enabled`
+  - Model `DirectLineSite` added property `is_webchat_preview_enabled`
+  - Model `ListChannelWithKeysResponse` added property `system_data`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Enum `PublicNetworkAccess` added member `SECURED_BY_PERIMETER`
+  - Model `Resource` added property `system_data`
+  - Model `Site` added property `tenant_id`
+  - Model `Site` added property `is_endpoint_parameters_enabled`
+  - Model `Site` added property `is_detailed_logging_enabled`
+  - Model `Site` added property `is_no_storage_enabled`
+  - Model `Site` added property `app_id`
+  - Model `Site` added property `is_web_chat_speech_enabled`
+  - Model `WebChatSite` added property `tenant_id`
+  - Model `WebChatSite` added property `is_token_enabled`
+  - Model `WebChatSite` added property `is_endpoint_parameters_enabled`
+  - Model `WebChatSite` added property `is_detailed_logging_enabled`
+  - Model `WebChatSite` added property `is_block_user_upload_enabled`
+  - Model `WebChatSite` added property `is_no_storage_enabled`
+  - Model `WebChatSite` added property `e_tag`
+  - Model `WebChatSite` added property `app_id`
+  - Model `WebChatSite` added property `is_v1_enabled`
+  - Model `WebChatSite` added property `is_v3_enabled`
+  - Model `WebChatSite` added property `is_secure_site_enabled`
+  - Model `WebChatSite` added property `trusted_origins`
+  - Model `WebChatSite` added property `is_web_chat_speech_enabled`
+  - Added enum `AccessMode`
+  - Added enum `CreatedByType`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added model `NetworkSecurityPerimeter`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added model `NspAccessRule`
+  - Added enum `NspAccessRuleDirection`
+  - Added model `NspAccessRuleProperties`
+  - Added model `NspAccessRulePropertiesSubscriptionsItem`
+  - Added model `Profile`
+  - Added model `ProvisioningIssue`
+  - Added model `ProvisioningIssueProperties`
+  - Added enum `ProvisioningState`
+  - Added model `ProxyResource`
+  - Added model `ResourceAssociation`
+  - Added enum `Severity`
+  - Added model `SystemData`
+  - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Renamed client `AzureBotService` to `AzureBotServiceMgmtClient`
+  - Model `PrivateEndpointConnection` moved instance variable `private_endpoint`, `private_link_service_connection_state`, `provisioning_state` and `group_ids` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members` and `required_zone_names` under property `properties` whose type is `PrivateLinkResourceProperties`
+  - Model `Resource` deleted its instance variable `location`/`tags`/`sku`/`kind`/`etag`/`zones`
+  - Method `BotsOperations.update` grouped its parameter `location`/`tags`/`sku`/`kind`/`etag`/`properties` into a new `positional_or_keyword` parameter `parameters`
+  - Method `ChannelsOperations.update` grouped its parameter `location`/`tags`/`sku`/`kind`/`etag`/`properties` into a new `positional_or_keyword` parameter `parameters`
+
+### Other Changes
+
+  - Deleted model `BotResponseList`/`ChannelResponseList`/`ConnectionItemName`/`ConnectionSettingResponseList`/`OperationEntityListResult`/`PrivateEndpointConnectionListResult` which actually were not used by SDK users
+
 ## 2.0.0 (2023-01-12)
 
 ### Features Added

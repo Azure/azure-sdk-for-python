@@ -34,8 +34,8 @@ class TrafficCollectorMgmtClientConfiguration:  # pylint: disable=too-many-insta
      None.
     :type cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are "2022-11-01"
-     and None. Default value is "2022-11-01". Note that overriding this default value may result in
-     unsupported behavior.
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

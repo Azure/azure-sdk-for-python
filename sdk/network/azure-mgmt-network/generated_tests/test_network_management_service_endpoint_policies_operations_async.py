@@ -26,7 +26,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
         response = await self.client.service_endpoint_policies.get(
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -122,6 +122,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                     "name": "str",
                                                     "properties": {
                                                         "ddosSettings": {
+                                                            "ddosCustomPolicy": {"id": "str"},
                                                             "ddosProtectionPlan": {"id": "str"},
                                                             "protectionMode": "str",
                                                         },
@@ -135,7 +136,13 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                         "idleTimeoutInMinutes": 0,
                                                         "ipAddress": "str",
                                                         "ipConfiguration": ...,
-                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                        "ipTags": [
+                                                            {
+                                                                "firstPartyServiceTagId": "str",
+                                                                "ipTagType": "str",
+                                                                "tag": "str",
+                                                            }
+                                                        ],
                                                         "linkedPublicIPAddress": ...,
                                                         "migrationPhase": "str",
                                                         "natGateway": {
@@ -145,6 +152,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                             "name": "str",
                                                             "properties": {
                                                                 "idleTimeoutInMinutes": 0,
+                                                                "nat64": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -166,6 +174,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                         "publicIPPrefix": {"id": "str"},
                                                         "resourceGuid": "str",
                                                         "servicePublicIPAddress": ...,
+                                                        "upgradedToV2": bool,
                                                     },
                                                     "sku": {"name": "str", "tier": "str"},
                                                     "tags": {"str": "str"},
@@ -440,6 +449,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -465,7 +475,11 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                 },
                                                                             },
                                                                             "ipTags": [
-                                                                                {"ipTagType": "str", "tag": "str"}
+                                                                                {
+                                                                                    "firstPartyServiceTagId": "str",
+                                                                                    "ipTagType": "str",
+                                                                                    "tag": "str",
+                                                                                }
                                                                             ],
                                                                             "linkedPublicIPAddress": ...,
                                                                             "migrationPhase": "str",
@@ -476,6 +490,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -505,6 +520,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                             "publicIPPrefix": {"id": "str"},
                                                                             "resourceGuid": "str",
                                                                             "servicePublicIPAddress": ...,
+                                                                            "upgradedToV2": bool,
                                                                         },
                                                                         "sku": {"name": "str", "tier": "str"},
                                                                         "tags": {"str": "str"},
@@ -524,6 +540,12 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -554,6 +576,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -582,6 +607,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -595,6 +621,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -646,6 +673,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -712,6 +740,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "billingSku": "str",
                                                                 "customDnsConfigs": [
                                                                     {"fqdn": "str", "ipAddresses": ["str"]}
                                                                 ],
@@ -735,6 +764,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -755,6 +787,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -809,6 +844,10 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"}
+                                                                            },
+                                                                            "enableConnectionTracking": bool,
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -829,6 +868,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -857,6 +899,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -870,6 +913,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -903,6 +947,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -948,6 +993,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -974,6 +1020,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -994,6 +1043,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -1050,6 +1102,12 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
+                                                                                    "enableConnectionTracking": bool,
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -1074,6 +1132,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -1102,6 +1163,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -1115,6 +1177,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -1152,6 +1215,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -1325,6 +1389,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -1353,6 +1420,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                             },
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -1366,6 +1434,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -1403,6 +1472,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -1519,6 +1589,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                         "type": "str",
                                                     }
                                                 ],
+                                                "billingSku": "str",
                                                 "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                 "customNetworkInterfaceName": "str",
                                                 "ipConfigurations": [
@@ -1540,6 +1611,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "approvalReference": {"privateEndpointId": "str"},
                                                             "groupIds": ["str"],
                                                             "privateLinkServiceConnectionState": {
                                                                 "actionsRequired": "str",
@@ -1717,6 +1789,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -1742,7 +1815,11 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -1753,6 +1830,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -1784,6 +1862,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -1803,6 +1882,12 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -1833,6 +1918,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -1861,6 +1949,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -1874,6 +1963,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -1927,6 +2017,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -2172,6 +2263,10 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"}
+                                                                                },
+                                                                                "enableConnectionTracking": bool,
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -2192,6 +2287,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -2220,6 +2318,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                         },
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -2233,6 +2332,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -2268,6 +2368,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -2330,6 +2431,12 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -2360,6 +2467,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -2388,6 +2498,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -2401,6 +2512,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -2452,6 +2564,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -2625,6 +2738,9 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -2653,6 +2769,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -2666,6 +2783,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -2717,6 +2835,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -2759,6 +2878,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "approvalReference": {"privateEndpointId": "str"},
                                                             "groupIds": ["str"],
                                                             "privateLinkServiceConnectionState": {
                                                                 "actionsRequired": "str",
@@ -2802,6 +2922,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                         "name": "str",
                                         "properties": {
                                             "disableBgpRoutePropagation": bool,
+                                            "disablePeeringRoute": "str",
                                             "provisioningState": "str",
                                             "resourceGuid": "str",
                                             "routes": [
@@ -2813,6 +2934,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                                                         "nextHopType": "str",
                                                         "addressPrefix": "str",
                                                         "hasBgpOverride": bool,
+                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                         "nextHopIpAddress": "str",
                                                         "provisioningState": "str",
                                                     },
@@ -2858,7 +2980,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-05-01",
+                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2872,7 +2994,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             service_endpoint_policy_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2885,7 +3007,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
             await self.client.service_endpoint_policies.begin_delete(
                 resource_group_name=resource_group.name,
                 service_endpoint_policy_name="str",
-                api_version="2025-05-01",
+                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2897,7 +3019,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
     async def test_service_endpoint_policies_list_by_resource_group(self, resource_group):
         response = self.client.service_endpoint_policies.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -2907,7 +3029,7 @@ class TestNetworkManagementServiceEndpointPoliciesOperationsAsync(AzureMgmtRecor
     @recorded_by_proxy_async
     async def test_service_endpoint_policies_list(self, resource_group):
         response = self.client.service_endpoint_policies.list(
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

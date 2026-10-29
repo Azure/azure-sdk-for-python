@@ -2,9 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import pytest
+# pylint: disable=line-too-long,useless-suppression
 import uuid
 import datetime
+
+import pytest
 
 from azure.core.messaging import CloudEvent
 from azure.core.utils._utils import _convert_to_isoformat

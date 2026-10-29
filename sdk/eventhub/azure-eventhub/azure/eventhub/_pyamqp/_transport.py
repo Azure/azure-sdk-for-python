@@ -99,6 +99,9 @@ SIGNED_INT_MAX = 0x7FFFFFFF
 # Match things like: [fe80::1]:5432, from RFC 2732
 IPV6_LITERAL = re.compile(r"\[([\.0-9a-f:]+)\](?::(\d+))?")
 
+# TCP socket options applied to every new connection.
+# Any option added here must also be present in KNOWN_TCP_OPTS
+# (in _platform.py) for the platforms where it should be set.
 DEFAULT_SOCKET_SETTINGS = {
     "TCP_NODELAY": 1,
     "TCP_USER_TIMEOUT": 1000,
@@ -213,11 +216,11 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
 
     @contextmanager
     def block(self):
-        bocking_timeout = None
+        blocking_timeout = None
         sock = self.sock
         prev = sock.gettimeout()
-        if prev != bocking_timeout:
-            sock.settimeout(bocking_timeout)
+        if prev != blocking_timeout:
+            sock.settimeout(blocking_timeout)
         try:
             yield self.sock
         except SSLError as exc:
@@ -233,16 +236,16 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                 raise socket.timeout()
             raise
         finally:
-            if bocking_timeout != prev:
+            if blocking_timeout != prev:
                 sock.settimeout(prev)
 
     @contextmanager
     def non_blocking(self):
-        non_bocking_timeout = 0.0
+        non_blocking_timeout = 0.0
         sock = self.sock
         prev = sock.gettimeout()
-        if prev != non_bocking_timeout:
-            sock.settimeout(non_bocking_timeout)
+        if prev != non_blocking_timeout:
+            sock.settimeout(non_blocking_timeout)
         try:
             yield self.sock
         except SSLError as exc:
@@ -258,7 +261,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                 raise socket.timeout()
             raise
         finally:
-            if non_bocking_timeout != prev:
+            if non_blocking_timeout != prev:
                 sock.settimeout(prev)
 
 
@@ -280,28 +283,25 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self._setup_transport()
         self.sock.settimeout(socket_timeout)  # set socket to blocking with timeout
 
-    def _get_tcp_socket_defaults(self, sock):
+    def _get_tcp_socket_defaults(self):
         tcp_opts = {}
-        for opt in KNOWN_TCP_OPTS:
+        for opt, val in DEFAULT_SOCKET_SETTINGS.items():
+            if opt not in KNOWN_TCP_OPTS:
+                continue
             enum = None
             if opt == "TCP_USER_TIMEOUT":
                 try:
                     from socket import TCP_USER_TIMEOUT as enum
                 except ImportError:
-                    # should be in Python 3.6+ on Linux.
                     enum = 18
             elif hasattr(socket, opt):
                 enum = getattr(socket, opt)
-
             if enum:
-                if opt in DEFAULT_SOCKET_SETTINGS:
-                    tcp_opts[enum] = DEFAULT_SOCKET_SETTINGS[opt]
-                elif hasattr(socket, opt):
-                    tcp_opts[enum] = sock.getsockopt(SOL_TCP, getattr(socket, opt))
+                tcp_opts[enum] = val
         return tcp_opts
 
     def _set_socket_options(self, socket_settings):
-        tcp_opts = self._get_tcp_socket_defaults(self.sock)
+        tcp_opts = self._get_tcp_socket_defaults()
         if socket_settings:
             tcp_opts.update(socket_settings)
         for opt, val in tcp_opts.items():

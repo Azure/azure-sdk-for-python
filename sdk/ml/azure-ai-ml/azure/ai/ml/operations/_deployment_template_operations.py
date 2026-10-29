@@ -318,33 +318,81 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
             ),
         )
 
-    @distributed_trace
-    @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Get", ActivityType.PUBLICAPI)
-    @experimental
-    def get(self, name: str, version: Optional[str] = None, **kwargs: Any) -> DeploymentTemplate:
-        """Get a deployment template by name and version.
+    def _resolve_latest_version(self, name: str) -> str:
+        """Resolve the latest version of a deployment template by name.
+
+        The deployment-template service does not expose a ``latest`` label and its list endpoint
+        has no server-side ordering, so the latest version is resolved client-side by enumerating
+        the available (active) versions and returning the highest one.
 
         :param name: Name of the deployment template.
         :type name: str
-        :param version: Version of the deployment template. If not provided, gets the latest version.
+        :return: The highest available version.
+        :rtype: str
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if no versions exist for the name.
+        """
+        versions = [template.version for template in self.list(name=name) if template.version is not None]
+        if not versions:
+            raise ResourceNotFoundError(f"DeploymentTemplate {name} not found: no versions available.")
+
+        def _version_sort_key(version: str) -> tuple:
+            # Numeric versions sort above (and among) non-numeric ones so the highest number wins,
+            # while non-numeric versions still resolve deterministically via string comparison.
+            try:
+                return (1, int(version))
+            except (TypeError, ValueError):
+                return (0, str(version))
+
+        return max(versions, key=_version_sort_key)
+
+    @distributed_trace
+    @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.Get", ActivityType.PUBLICAPI)
+    @experimental
+    def get(
+        self,
+        name: str,
+        version: Optional[str] = None,
+        label: Optional[str] = None,
+        **kwargs: Any,
+    ) -> DeploymentTemplate:
+        """Get a deployment template by name and version (or label).
+
+        :param name: Name of the deployment template.
+        :type name: str
+        :param version: Version of the deployment template. If neither ``version`` nor ``label`` is
+            provided, the latest version is returned.
         :type version: Optional[str]
+        :param label: Label of the deployment template. Only the ``latest`` label is supported, which
+            resolves to the latest version. Cannot be used together with ``version``.
+        :type label: Optional[str]
         :return: DeploymentTemplate object.
         :rtype: ~azure.ai.ml.entities.DeploymentTemplate
         :raises: ~azure.core.exceptions.ResourceNotFoundError if deployment template not found.
         """
-        version = version or "latest"
+        if version and label:
+            raise ValueError("Cannot specify both version and label.")
+
+        if label is not None and label != "latest":
+            raise ResourceNotFoundError(
+                f"DeploymentTemplate {name} with label '{label}' not found. Only the 'latest' label is supported."
+            )
+
+        # No explicit version (or label='latest') -> resolve the latest version client-side.
+        resolved_version = version or self._resolve_latest_version(name)
 
         try:
             result = self._service_client.deployment_templates.get(
                 registry_name=self._operation_scope.registry_name,
                 name=name,
-                version=version,
+                version=resolved_version,
                 **kwargs,
             )
             return DeploymentTemplate._from_rest_object(result)
+        except ResourceNotFoundError:
+            raise
         except Exception as e:
             module_logger.debug("DeploymentTemplate get operation failed: %s", e)
-            raise ResourceNotFoundError(f"DeploymentTemplate {name}:{version} not found") from e
+            raise ResourceNotFoundError(f"DeploymentTemplate {name}:{resolved_version} not found") from e
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "DeploymentTemplate.CreateOrUpdate", ActivityType.PUBLICAPI)
@@ -389,7 +437,7 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         :param version: Version of the deployment template to delete. If not provided, deletes the latest version.
         :type version: Optional[str]
         """
-        version = version or "latest"
+        version = version or self._resolve_latest_version(name)
 
         try:
             self._service_client.deployment_templates.delete(

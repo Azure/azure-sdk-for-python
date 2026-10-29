@@ -17,20 +17,36 @@ parameters:
   - name: ArtifactSuffix
     type: string
     default: 'linux'
+  - name: SbomGenerationTimeoutInMinutes
+    type: number
+    default: 30
   - name: BuildTargetingString
     type: string
     default: '*'
   - name: ExcludePaths
     type: object
     default: []
+  - name: InstallMsRustToolchain
+    type: boolean
+    default: false
+  - name: MsRustWorkingDirectory
+    type: string
+    default: ''
+  - name: MsRustToolchainFeed
+    type: string
+    default: ''
+  - name: MsRustAdditionalTargets
+    type: string
+    default: ''
 
 steps:
-  - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-    parameters:
-      ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
-        TokenToUseForAuth: $(azuresdk-github-pat)
-      Paths:
-        - '**'
+  - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+    - checkout: self
+  - ${{ else }}:
+    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+      parameters:
+        Paths:
+          - '**'
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
@@ -49,8 +65,8 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self
     parameters:
-      PackageName: "azure-template"
-      ServiceDirectory: "template"
+      Artifacts: ${{ parameters.Artifacts }}
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestPipeline: ${{ parameters.TestPipeline }}
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml@self
@@ -90,8 +106,8 @@ steps:
       BuildTargetingString: ${{ parameters.BuildTargetingString }}
       PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
-  # todo, walk the artifacts and ensure that one which includes an extension package is present
-  # if not, we only need to build on linux. if so, we need to build on all platforms
+  # Decides whether the mac/windows builds produce anything, based on whether any targeted package
+  # declares compiled binaries. If none do, only the linux build runs.
   - template: /eng/pipelines/templates/steps/resolve-build-platforms.yml
     parameters:
       PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
@@ -117,14 +133,95 @@ steps:
     displayName: 'Install QEMU Dependencies'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
+  - ${{ if parameters.InstallMsRustToolchain }}:
+    - template: /eng/pipelines/templates/steps/install-msrust-toolchain.yml
+      parameters:
+        ToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+        WorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        ${{ if eq(parameters.ArtifactSuffix, 'windows') }}:
+          AdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
+        Condition: and(succeeded(), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
+
+  # Windows: cibuildwheel fetches CPython from api.nuget.org, which is blocked.
+  # Pre-provision the interpreters from the Azure DevOps NuGet feed into the
+  # cibuildwheel cache so it skips the blocked download.
+  - task: NuGetAuthenticate@1
+    displayName: 'Authenticate to NuGet feed'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
+
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $feed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+      $version = "3.10.11"
+      $cache = Join-Path "$(Agent.TempDirectory)" "cibw-cache"
+      $nugetCpython = Join-Path $cache "nuget-cpython"
+      New-Item -ItemType Directory -Force -Path $nugetCpython | Out-Null
+      $nuget = (Get-Command nuget).Source
+      & $nuget install python -Version $version -Source $feed -OutputDirectory $nugetCpython
+      if ($LASTEXITCODE) { 
+        Write-Error "Failed to download python $version"
+        exit 1
+      }
+      & $nuget install pythonarm64 -Version $version -Source $feed -OutputDirectory $nugetCpython
+      if ($LASTEXITCODE) { 
+        Write-Error "Failed to download pythonarm64 $version"
+        exit 1
+      }
+      Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
+
+      if ($env:INSTALL_MS_RUST_TOOLCHAIN -eq 'true') {
+        # Packages use this path as PYO3_CROSS_LIB_DIR when cross-compiling Windows ARM64 wheels.
+        $arm64Libs = Join-Path $nugetCpython "pythonarm64.$version\tools\libs"
+        if (-not (Test-Path $arm64Libs)) {
+          throw "Expected ARM64 Python import libraries at $arm64Libs"
+        }
+        Write-Host "##vso[task.setvariable variable=PYTHON_ARM64_LIB_DIR]$arm64Libs"
+      }
+    displayName: 'Pre-provision CPython for cibuildwheel'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
+    env:
+      INSTALL_MS_RUST_TOOLCHAIN: ${{ format('{0}', parameters.InstallMsRustToolchain) }}
+
+  # Linux: forward PIP_INDEX_URL into the build container so pip fetches build
+  # dependencies from the Azure DevOps feed instead of PyPI. Using
+  # CIBW_ENVIRONMENT_PASS_LINUX (not CIBW_ENVIRONMENT) preserves the package's
+  # own [tool.cibuildwheel].environment (CFLAGS) setting.
+  # This replaces, rather than merges with, the package's environment-pass list.
+  # Include every variable required by its Linux build hooks.
+  - pwsh: |
+      $passVariables = @('PIP_INDEX_URL')
+      if ($env:RUST_ENVIRONMENT_PASS) {
+        $passVariables += $env:RUST_ENVIRONMENT_PASS.Split(' ')
+      }
+      Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT_PASS_LINUX]$($passVariables -join ' ')"
+    displayName: 'Forward build environment to cibuildwheel'
+    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+    env:
+      ${{ if parameters.InstallMsRustToolchain }}:
+        RUST_ENVIRONMENT_PASS: MSRUSTUP_ACCESS_TOKEN MSRUSTUP_FEED_URL CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_INDEX CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER
+
   - pwsh: |
       which python
-      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive --service="${{ parameters.ServiceDirectory }}"
+      python eng/scripts/run_with_1es_proxy_trust.py sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive --service="${{ parameters.ServiceDirectory }}"
+      exit $LASTEXITCODE
     displayName: 'Generate Packages'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
-    timeoutInMinutes: 80
+    ${{ if parameters.InstallMsRustToolchain }}:
+      timeoutInMinutes: 210
+    ${{ else }}:
+      timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
+      # The platform resolver selects DEBUG to stream native build output.
+      LOGLEVEL: $(SDK_BUILD_LOGLEVEL)
+      ${{ if parameters.InstallMsRustToolchain }}:
+        # Map secret tokens explicitly for container feed access. Package hooks can read them;
+        # enforce source-trust and credential permissions through external ADO controls.
+        MSRUSTUP_ACCESS_TOKEN: $(System.AccessToken)
+        MSRUSTUP_FEED_URL: $(MSRUSTUP_FEED_URL)
+        # CargoAuthenticate exports the registry token and credential-provider variables.
+        CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)
+        CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)
 
   - pwsh: |
       which python
@@ -156,15 +253,18 @@ steps:
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)/release_artifact'
         ArtifactName: 'release_artifact'
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
 
   - ${{ if eq(parameters.ArtifactSuffix, '') }}:
     - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'packages'
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
 
   - ${{ if ne(parameters.ArtifactSuffix, '') }}:
     - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'packages_${{ parameters.ArtifactSuffix }}'
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}

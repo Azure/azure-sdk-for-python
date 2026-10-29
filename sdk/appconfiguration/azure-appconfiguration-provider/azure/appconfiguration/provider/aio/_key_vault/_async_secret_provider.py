@@ -4,14 +4,12 @@
 # license information.
 # -------------------------------------------------------------------------
 import inspect
-from typing import Mapping, Any, Dict
+from typing import Any, Dict
 from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:ignore # pylint:disable=no-name-in-module
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
 from azure.keyvault.secrets.aio import SecretClient
 from azure.core.exceptions import ServiceRequestError
 from ..._key_vault._secret_provider_base import _SecretProviderBase
-
-JSON = Mapping[str, Any]
 
 
 class SecretProvider(_SecretProviderBase):

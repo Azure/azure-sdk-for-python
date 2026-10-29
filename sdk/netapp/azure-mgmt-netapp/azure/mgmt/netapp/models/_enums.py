@@ -81,6 +81,30 @@ class BackupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Scheduled backup."""
 
 
+class BindAuthenticationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication level to use when binding to the LDAP server."""
+
+    ANONYMOUS = "Anonymous"
+    """Anonymous bind i.e. no credentials provided."""
+    SIMPLE = "Simple"
+    """Simple bind i.e. plain text credentials provided."""
+
+
+class BreakthroughMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies whether the volume operates in Breakthrough Mode. When set to 'Enabled', the volume
+    runs on the resources configured for this mode, delivering improved performance and higher
+    throughput. If set to 'Disabled' or omitted, the volume uses the basic configuration. This
+    feature is available only in regions where it’s been configured and first-time users must
+    finish onboarding prior to using Breakthrough Mode.
+    """
+
+    ENABLED = "Enabled"
+    """The volume runs on the resources configured for Breakthrough mode which ensures consistent high
+    performance and a higher throughput."""
+    DISABLED = "Disabled"
+    """The volume uses configuration that provides basic performance and throughput."""
+
+
 class BucketPatchPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Access permissions for the bucket. Either ReadOnly or ReadWrite."""
 
@@ -256,9 +280,9 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class CredentialsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The bucket credentials status. There states:
 
-    "NoCredentialsSet": Access and Secret key pair have not been generated.
-    "CredentialsExpired": Access and Secret key pair have expired.
-    "Active": The certificate has been installed and credentials are unexpired.
+    \"NoCredentialsSet\": Access and Secret key pair have not been generated.
+    \"CredentialsExpired\": Access and Secret key pair have expired.
+    \"Active\": The certificate has been installed and credentials are unexpired.
     """
 
     NO_CREDENTIALS_SET = "NoCredentialsSet"
@@ -280,7 +304,9 @@ class DesiredRansomwareProtectionState(str, Enum, metaclass=CaseInsensitiveEnumM
 
 
 class EnableSubvolumes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Flag indicating whether subvolume operations are enabled on the volume."""
+    """Flag indicating whether subvolume operations are enabled on the volume Deprecated. This type
+    will be removed in a future API version.
+    """
 
     ENABLED = "Enabled"
     """subvolumes are enabled."""
@@ -498,6 +524,12 @@ class MultiAdStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class NetAppProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the status of the VolumeQuotaRule at the time the operation was called."""
 
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
     ACCEPTED = "Accepted"
     """Resource has been Accepted."""
     CREATING = "Creating"
@@ -510,10 +542,6 @@ class NetAppProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource is being Deleted."""
     MOVING = "Moving"
     """Resource is being Moved."""
-    FAILED = "Failed"
-    """Resource has Failed."""
-    SUCCEEDED = "Succeeded"
-    """Resource has Succeeded."""
 
 
 class NetworkFeatures(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -677,6 +705,17 @@ class ReplicationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cross region replication."""
     CROSS_ZONE_REPLICATION = "CrossZoneReplication"
     """Cross zone replication."""
+
+
+class SecureLdapType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the secure LDAP mode for encrypting communication between ANF storage and customer
+    LDAP servers.
+    """
+
+    LDAP_OVER_TLS = "LdapOverTLS"
+    """LDAP traffic is encrypted using LDAP over TLS."""
+    NONE = "None"
+    """LDAP traffic is not encrypted."""
 
 
 class SecurityStyle(str, Enum, metaclass=CaseInsensitiveEnumMeta):

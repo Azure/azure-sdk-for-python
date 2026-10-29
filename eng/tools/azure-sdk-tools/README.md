@@ -95,6 +95,29 @@ sdk_build azure-storage* --devbuild=True
 sdk_build azure* --service=core -d "<artifact_folder>"
 ```
 
+### 1ES proxy trust
+
+Artifact-build and build-test pipelines use
+[`run_with_1es_proxy_trust.py`](../../scripts/run_with_1es_proxy_trust.py) for proxy
+trust on Windows and Linux. Trust is enabled only in Azure Pipelines with
+`1ESNI_CONFIG_PATH` and `HTTPS_PROXY` (or `https_proxy`) set.
+
+Infrastructure must supply the proxy CA file through `NODE_EXTRA_CA_CERTS`.
+The wrapper combines it with the existing `SSL_CERT_FILE` or certifi roots,
+validates the certificates, and supplies a temporary `SSL_CERT_FILE` to child
+processes. Missing or invalid certificates fail the command. The bundle is
+removed on exit; system trust and package sources are unchanged.
+
+On Linux, the bundle is mounted read-only inside cibuildwheel containers and
+proxy settings are forwarded without replacing package environment settings.
+Container-engine options come from `CIBW_CONTAINER_ENGINE_LINUX` or
+`CIBW_CONTAINER_ENGINE` (default: Docker); use these variables instead of
+package-level `container-engine` options. Container image pulls still require
+infrastructure-configured trust.
+
+Bare `python` and `python.exe` child commands reuse the wrapper's interpreter,
+preserving the active virtual environment. Other commands are unchanged.
+
 ## Using "versioning" modules
 
 On top of assembling packages, azure-sdk-tools also can be used to complete various tasks with respect to version "maintenance". There are three primary entrypoints, and each fulfills a purpose in the repository.

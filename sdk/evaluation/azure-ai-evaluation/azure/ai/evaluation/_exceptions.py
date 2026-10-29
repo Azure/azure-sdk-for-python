@@ -4,7 +4,7 @@
 """This includes enums and classes for exceptions for use in azure-ai-evaluation."""
 
 from enum import Enum
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from azure.core.exceptions import AzureError
 
@@ -104,6 +104,13 @@ class ErrorTarget(Enum):
     AOAI_GRADER = "AoaiGrader"
     CONVERSATION_HISTORY_PARSING = "_get_conversation_history"
     TOOL_OUTPUT_UTILIZATION_EVALUATOR = "ToolOutputUtilizationEvaluator"
+    QA_EVALUATOR = "QAEvaluator"
+    ROUGE_EVALUATOR = "RougeScoreEvaluator"
+    DOCUMENT_RETRIEVAL_EVALUATOR = "DocumentRetrievalEvaluator"
+    QUALITY_GRADER_EVALUATOR = "QualityGraderEvaluator"
+    CUSTOMER_SATISFACTION_EVALUATOR = "CustomerSatisfactionEvaluator"
+    DEFLECTION_RATE_EVALUATOR = "DeflectionRateEvaluator"
+    REGEX_MATCH_EVALUATOR = "RegexMatchEvaluator"
 
 
 class EvaluationException(AzureError):
@@ -122,6 +129,8 @@ class EvaluationException(AzureError):
     :type balance: ~azure.ai.evaluation._exceptions.ErrorBlame
     :param tsg_link: A link to the TSG page for troubleshooting the error.
     :type tsg_link: str
+    :param properties: Optional known evaluator metadata retained for failed-row persistence.
+    :type properties: Optional[Dict[str, Any]]
     """
 
     def __init__(
@@ -133,6 +142,7 @@ class EvaluationException(AzureError):
         category: ErrorCategory = ErrorCategory.UNKNOWN,
         blame: ErrorBlame = ErrorBlame.UNKNOWN,
         tsg_link: Optional[str] = None,
+        properties: Optional[Dict[str, Any]] = None,
         **kwargs,
     ) -> None:
         self.category = category
@@ -140,6 +150,7 @@ class EvaluationException(AzureError):
         self.blame = blame
         self.internal_message = internal_message
         self.tsg_link = tsg_link
+        self.properties = properties
         super().__init__(message, *args, **kwargs)
 
     def __str__(self):

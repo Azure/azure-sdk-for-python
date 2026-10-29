@@ -14,7 +14,7 @@ from azure.ai.projects.models import PromptAgentDefinition, WebSearchPreviewTool
 class TestAgentWebSearchAsync(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_web_search_async(self, **kwargs):
 
         model = kwargs.get("foundry_model_name")

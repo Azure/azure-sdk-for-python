@@ -27,7 +27,7 @@ class TestAgentFileSearchCodeInterpreterFunction(TestBase):
     """Tests for agents using File Search + Code Interpreter + Function Tool."""
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_complete_analysis_workflow(self, **kwargs):
         """
         Test complete workflow: find data, analyze it, save results.

@@ -69,6 +69,10 @@ def main():
                     "isEnabled": True,
                     "isEnterpriseManaged": True,
                     "maxAllowableEgressInMbps": 27,
+                    "openFirewallPort443": False,
+                    "openFirewallPort5000": False,
+                    "openFirewallPort5001": True,
+                    "openFirewallPort80": True,
                     "shouldMigrate": True,
                 },
                 "error": {},
@@ -82,6 +86,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-11-30-preview/EnterpriseMccCacheNodesOperations_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/EnterpriseMccCacheNodesOperations_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

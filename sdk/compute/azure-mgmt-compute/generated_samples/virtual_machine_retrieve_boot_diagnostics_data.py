@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/virtualMachineExamples/VirtualMachine_RetrieveBootDiagnosticsData.json
+# x-ms-original-file: 2026-04-01/virtualMachineExamples/VirtualMachine_RetrieveBootDiagnosticsData.json
 if __name__ == "__main__":
     main()

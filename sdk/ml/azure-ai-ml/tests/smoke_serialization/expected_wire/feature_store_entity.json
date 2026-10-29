@@ -1,0 +1,20 @@
+{
+  "properties": {
+    "description": "smoke feature store entity",
+    "indexColumns": [
+      {
+        "columnName": "customer_id",
+        "dataType": "String"
+      },
+      {
+        "columnName": "region_id",
+        "dataType": "Integer"
+      }
+    ],
+    "properties": {},
+    "stage": "Development",
+    "tags": {
+      "tag1": "value1"
+    }
+  }
+}

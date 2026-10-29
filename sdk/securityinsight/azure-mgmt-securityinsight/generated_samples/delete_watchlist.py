@@ -30,13 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.watchlists.begin_delete(
+    response = client.watchlists.begin_delete(
         resource_group_name="myRg",
         workspace_name="myWorkspace",
         watchlist_alias="highValueAsset",
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/watchlists/DeleteWatchlist.json
+# x-ms-original-file: 2025-10-01-preview/watchlists/DeleteWatchlist.json
 if __name__ == "__main__":
     main()

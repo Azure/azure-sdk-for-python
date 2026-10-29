@@ -5,7 +5,7 @@
 from abc import ABC
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import LogVerbosity, SamplingAlgorithmType
+from azure.ai.ml._restclient.arm_ml_service.models import LogVerbosity, SamplingAlgorithmType
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
@@ -62,7 +62,7 @@ class AutoMLImage(AutoMLVertical, ABC):
         """Returns the verbosity of the logger.
 
         :return: The log verbosity.
-        :rtype: ~azure.ai.ml._restclient.v2023_04_01_preview.models.LogVerbosity
+        :rtype: ~azure.ai.ml._restclient.arm_ml_service.models.LogVerbosity
         """
         return self._log_verbosity
 
@@ -72,7 +72,7 @@ class AutoMLImage(AutoMLVertical, ABC):
 
         :param value: The value to set the log verbosity to.
                       Possible values include: "NotSet", "Debug", "Info", "Warning", "Error", "Critical".
-        :type value: Union[str, ~azure.ai.ml._restclient.v2023_04_01_preview.models.LogVerbosity]
+        :type value: Union[str, ~azure.ai.ml._restclient.arm_ml_service.models.LogVerbosity]
         """
         self._log_verbosity = None if value is None else LogVerbosity[camel_to_snake(value).upper()]
 
@@ -142,15 +142,15 @@ class AutoMLImage(AutoMLVertical, ABC):
         """Data settings for all AutoML Image jobs.
 
         :keyword training_data: Required. Training data.
-        :type training_data: ~azure.ai.ml.entities.Input
+        :paramtype training_data: ~azure.ai.ml.entities.Input
         :keyword target_column_name: Required. Target column name.
-        :type target_column_name: str
+        :paramtype target_column_name: str
         :keyword validation_data: Optional. Validation data.
-        :type validation_data: Optional[~azure.ai.ml.entities.Input]
+        :paramtype validation_data: Optional[~azure.ai.ml.entities.Input]
         :keyword validation_data_size: Optional. The fraction of training dataset that needs to be set aside for
                                       validation purpose. Values should be in range (0.0 , 1.0).
                                       Applied only when validation dataset is not provided.
-        :type validation_data_size: Optional[float]
+        :paramtype validation_data_size: Optional[float]
         :return: None
         """
         self.target_column_name = self.target_column_name if target_column_name is None else target_column_name
@@ -168,11 +168,11 @@ class AutoMLImage(AutoMLVertical, ABC):
         """Limit settings for all AutoML Image Jobs.
 
         :keyword max_concurrent_trials: Maximum number of trials to run concurrently.
-        :type max_concurrent_trials: Optional[int]. Defaults to None.
+        :paramtype max_concurrent_trials: Optional[int]. Defaults to None.
         :keyword max_trials: Maximum number of trials to run. Defaults to None.
-        :type max_trials: Optional[int]
+        :paramtype max_trials: Optional[int]
         :keyword timeout_minutes: AutoML job timeout.
-        :type timeout_minutes: ~datetime.timedelta
+        :paramtype timeout_minutes: ~datetime.timedelta
         :return: None
         """
         self._limits = self._limits or ImageLimitSettings()
@@ -194,11 +194,12 @@ class AutoMLImage(AutoMLVertical, ABC):
 
         :keyword sampling_algorithm: Required. Type of the hyperparameter sampling
             algorithms. Possible values include: "Grid", "Random", "Bayesian".
-        :type sampling_algorithm: Union[str, ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.RANDOM,
+        :paramtype sampling_algorithm: Union[str,
+            ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.RANDOM,
             ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
             ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN]
         :keyword early_termination: Type of early termination policy.
-        :type early_termination: Union[
+        :paramtype early_termination: Union[
             ~azure.mgmt.machinelearningservices.models.BanditPolicy,
             ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
             ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]

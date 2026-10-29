@@ -50,6 +50,7 @@ def main():
                 "enableAnalyticalStorage": True,
                 "enableFreeTier": False,
                 "enableMaterializedViews": False,
+                "enforceHierarchicalPartitionKeyIdLastLevel": False,
                 "keyVaultKeyUri": "https://myKeyVault.vault.azure.net",
                 "locations": [{"failoverPriority": 0, "isZoneRedundant": False, "locationName": "southcentralus"}],
                 "minimalTlsVersion": "Tls",
@@ -71,6 +72,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/CosmosDBRestoreDatabaseAccountCreateUpdate.json
+# x-ms-original-file: 2026-04-01-preview/CosmosDBRestoreDatabaseAccountCreateUpdate.json
 if __name__ == "__main__":
     main()

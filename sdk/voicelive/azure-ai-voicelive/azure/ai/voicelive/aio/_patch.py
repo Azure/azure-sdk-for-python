@@ -13,6 +13,7 @@ import sys
 import json
 import logging
 from contextlib import AbstractAsyncContextManager
+from types import SimpleNamespace
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
 from typing import Any, Mapping, Optional, Sequence, Union, AsyncIterator, cast, overload
 
@@ -42,7 +43,9 @@ from azure.ai.voicelive.models._models import (
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import AzureError
+from azure.core.pipeline.policies import UserAgentPolicy
 from azure.ai.voicelive.models import ClientEvent, ServerEvent, RequestSession
+from azure.ai.voicelive._version import VERSION
 
 # === Local ===
 
@@ -67,6 +70,7 @@ __all__: list[str] = [
 ]
 
 log = logging.getLogger(__name__)
+_USER_AGENT = UserAgentPolicy(sdk_moniker=f"ai-voicelive/{VERSION}").user_agent
 
 
 def _json_default(o: Any) -> Any:
@@ -662,6 +666,15 @@ class WebsocketConnectionOptions(TypedDict, total=False):
     vendor_options: NotRequired[Mapping[str, Any]]
 
 
+async def _reject_websocket_redirect(
+    _session: aiohttp.ClientSession,
+    _trace_config_ctx: SimpleNamespace,
+    params: aiohttp.TraceRequestRedirectParams,
+) -> None:
+    params.response.close()
+    raise aiohttp.ClientError("WebSocket redirects are not supported.")
+
+
 class _VoiceLiveConnectionManager(
     AbstractAsyncContextManager["VoiceLiveConnection"]
 ):  # pylint: disable=too-many-instance-attributes
@@ -672,7 +685,7 @@ class _VoiceLiveConnectionManager(
         *,
         credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
         endpoint: str,
-        api_version: str = "2026-06-01-preview",
+        api_version: str = "2026-07-15",
         model: Optional[str] = None,
         agent_config: Optional[Mapping[str, str]] = None,
         extra_query: Mapping[str, Any],
@@ -776,8 +789,13 @@ class _VoiceLiveConnectionManager(
 
             auth_headers = await self._get_auth_headers()
             headers = {**auth_headers, **dict(self.__extra_headers)}
+            if not any(name.lower() == "user-agent" for name in headers):
+                headers["User-Agent"] = _USER_AGENT
 
-            session = aiohttp.ClientSession()
+            # ws_connect does not expose allow_redirects; reject before credentials can be forwarded.
+            trace_config = aiohttp.TraceConfig()
+            trace_config.on_request_redirect.append(_reject_websocket_redirect)
+            session = aiohttp.ClientSession(trace_configs=[trace_config])
             try:
                 connection_obj = await session.ws_connect(str(url), headers=headers, **self.__connection_options)
                 self.__connection = VoiceLiveConnection(
@@ -821,7 +839,10 @@ class _VoiceLiveConnectionManager(
             else ("ws" if parsed.scheme.startswith("http") else parsed.scheme)
         )
 
-        params: dict[str, Any] = {"api-version": self.__api_version}
+        params: dict[str, Any] = {
+            "api-version": self.__api_version,
+            "x-ms-client-sdk": _USER_AGENT,
+        }
         if self.__model is not None:
             params["model"] = self.__model
 
@@ -875,7 +896,7 @@ def connect(
     *,
     credential: Union[AzureKeyCredential, AsyncTokenCredential],
     endpoint: str,
-    api_version: str = "2026-06-01-preview",
+    api_version: str = "2026-07-15",
     model: Optional[str] = None,
     query: Optional[Mapping[str, Any]] = None,
     headers: Optional[Mapping[str, Any]] = None,
@@ -889,7 +910,7 @@ def connect(
     *,
     credential: Union[AzureKeyCredential, AsyncTokenCredential],
     endpoint: str,
-    api_version: str = "2026-06-01-preview",
+    api_version: str = "2026-07-15",
     model: Optional[str] = None,
     agent_name: str,
     project_name: str,
@@ -908,7 +929,7 @@ def connect(
     *,
     credential: Union[AzureKeyCredential, AsyncTokenCredential],
     endpoint: str,
-    api_version: str = "2026-06-01-preview",
+    api_version: str = "2026-07-15",
     model: Optional[str] = None,
     agent_name: Optional[str] = None,
     project_name: Optional[str] = None,
@@ -938,7 +959,7 @@ def connect(
     :paramtype credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AsyncTokenCredential
     :keyword endpoint: Service endpoint, e.g., ``https://<region>.api.cognitive.microsoft.com``.
     :paramtype endpoint: str
-    :keyword api_version: The API version to use. Defaults to ``"2026-06-01-preview"``.
+    :keyword api_version: The API version to use. Defaults to ``"2026-07-15"``.
     :paramtype api_version: str
     :keyword model: Model identifier to use for the session.
      In most scenarios, this parameter is required.

@@ -108,5 +108,6 @@
         "azure.mgmt.connectedcache.aio.operations.EnterpriseMccCacheNodesOperationsOperations.get_cache_node_mcc_issue_details_history": "Microsoft.ConnectedCache.EnterpriseMccCacheNodesOperations.getCacheNodeMccIssueDetailsHistory",
         "azure.mgmt.connectedcache.operations.EnterpriseMccCacheNodesOperationsOperations.get_cache_node_tls_certificate_history": "Microsoft.ConnectedCache.EnterpriseMccCacheNodesOperations.getCacheNodeTlsCertificateHistory",
         "azure.mgmt.connectedcache.aio.operations.EnterpriseMccCacheNodesOperationsOperations.get_cache_node_tls_certificate_history": "Microsoft.ConnectedCache.EnterpriseMccCacheNodesOperations.getCacheNodeTlsCertificateHistory"
-    }
+    },
+    "CrossLanguageVersion": "e7f15a6d1a0a"
 }

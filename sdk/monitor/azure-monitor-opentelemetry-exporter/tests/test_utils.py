@@ -1,7 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import base64
 import datetime
+import json
 import platform
 import time
 import unittest
@@ -10,7 +12,17 @@ from unittest.mock import patch
 from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem
-from azure.monitor.opentelemetry.exporter._constants import _GEN_AI_ATTRIBUTES
+from azure.monitor.opentelemetry.exporter._constants import (
+    _CUSTOM_PROPERTY_MAX_LENGTH,
+    _GEN_AI_ATTRIBUTE_INCREASED_MAX_LENGTHS,
+    _GEN_AI_ATTRIBUTE_MAX_LENGTH,
+    _GEN_AI_ATTRIBUTE_MAX_LENGTHS,
+    _GEN_AI_ATTRIBUTES,
+    _GEN_AI_MESSAGES_ATTRIBUTE_MAX_LENGTH,
+    _GEN_AI_MESSAGES_ATTRIBUTES,
+)
+
+_GEN_AI_NON_MESSAGE_ATTRIBUTES = tuple(key for key in _GEN_AI_ATTRIBUTES if key not in _GEN_AI_MESSAGES_ATTRIBUTES)
 
 
 TEST_AI_DEVICE_ID = "TEST_AI_DEVICE_ID"
@@ -53,7 +65,7 @@ class TestUtils(unittest.TestCase):
         self.assertNotIn("k" * 151, filtered)
 
     def test_custom_properties_gen_ai_attributes_not_truncated_at_8kb(self):
-        # All values in _GEN_AI_ATTRIBUTES should not be truncated at > 8kb but at > 256kb
+        # All values in _GEN_AI_ATTRIBUTES should not be truncated at > 8kb
         large_value = "x" * (8 * 1024 + 1000)
         properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
         filtered = _utils._filter_custom_properties(properties)
@@ -79,28 +91,55 @@ class TestUtils(unittest.TestCase):
                 self.assertEqual(len(filtered[key]), max_length)
 
     def test_filter_custom_properties_mixed_gen_ai_and_regular(self):
-        # Gen AI attributes truncated at 256kb, regular ones are truncated at 8kb
+        # Gen AI attributes (including messages) truncated at 256kb, regular ones are truncated at 8kb
         max_length = 8 * 1024
         max_length_for_gen_ai_attributes = 256 * 1024
         large_value = "z" * (1024 * 1024 + 3000)
         properties = {
             "gen_ai.input.messages": large_value,
             "gen_ai.output.messages": large_value,
+            "gen_ai.system_instructions": large_value,
             "gen_ai.agent.version": large_value,
             "span_kind": large_value,
-            "db.statement": large_value,
         }
         filtered = _utils._filter_custom_properties(properties)
 
         self.assertEqual(len(filtered["gen_ai.input.messages"]), max_length_for_gen_ai_attributes)
         self.assertEqual(len(filtered["gen_ai.output.messages"]), max_length_for_gen_ai_attributes)
+        self.assertEqual(len(filtered["gen_ai.system_instructions"]), max_length_for_gen_ai_attributes)
+        self.assertEqual(len(filtered["gen_ai.agent.version"]), max_length)
+        self.assertEqual(len(filtered["span_kind"]), max_length)
+
+    def test_filter_custom_properties_mixed_gen_ai_and_regular_increased_limit(self):
+        # With increase_truncation_limit, Gen AI messages are kept up to 4MiB, other Gen AI
+        # attributes are truncated at 256kb, regular ones are truncated at 8kb
+        max_length = 8 * 1024
+        max_length_for_gen_ai_attributes = 256 * 1024
+        value_length = 1024 * 1024 + 3000
+        large_value = "z" * value_length
+        properties = {
+            "gen_ai.input.messages": large_value,
+            "gen_ai.output.messages": large_value,
+            "gen_ai.system_instructions": large_value,
+            "gen_ai.tool.call.result": large_value,
+            "gen_ai.agent.version": large_value,
+            "span_kind": large_value,
+            "db.statement": large_value,
+        }
+        filtered = _utils._filter_custom_properties(properties, increase_truncation_limit=True)
+
+        self.assertEqual(len(filtered["gen_ai.input.messages"]), value_length)
+        self.assertEqual(len(filtered["gen_ai.output.messages"]), value_length)
+
+        self.assertEqual(len(filtered["gen_ai.system_instructions"]), max_length_for_gen_ai_attributes)
+        self.assertEqual(len(filtered["gen_ai.tool.call.result"]), max_length_for_gen_ai_attributes)
 
         self.assertEqual(len(filtered["gen_ai.agent.version"]), max_length)
         self.assertEqual(len(filtered["span_kind"]), max_length)
         self.assertEqual(len(filtered["db.statement"]), max_length)
 
     def test_custom_properties_gen_ai_attributes_truncated_at_256kb(self):
-        # All values in _GEN_AI_ATTRIBUTES should be truncated when > 256kb
+        # By default, all values in _GEN_AI_ATTRIBUTES should be truncated when > 256kb
         max_length_for_gen_ai_attributes = 256 * 1024
         large_value = "x" * (256 * 1024 + 1000)
         properties = {key: large_value for key in _GEN_AI_ATTRIBUTES}
@@ -109,6 +148,189 @@ class TestUtils(unittest.TestCase):
             with self.subTest(key=key):
                 self.assertIn(key, filtered)
                 self.assertEqual(len(filtered[key]), max_length_for_gen_ai_attributes)
+
+    def test_custom_properties_gen_ai_attributes_truncated_at_256kb_increased_limit(self):
+        # With increase_truncation_limit, Gen AI attributes other than input/output messages
+        # should still be truncated when > 256kb
+        max_length_for_gen_ai_attributes = 256 * 1024
+        large_value = "x" * (256 * 1024 + 1000)
+        properties = {key: large_value for key in _GEN_AI_NON_MESSAGE_ATTRIBUTES}
+        filtered = _utils._filter_custom_properties(properties, increase_truncation_limit=True)
+        for key in _GEN_AI_NON_MESSAGE_ATTRIBUTES:
+            with self.subTest(key=key):
+                self.assertIn(key, filtered)
+                self.assertEqual(len(filtered[key]), max_length_for_gen_ai_attributes)
+
+    def test_gen_ai_messages_attributes_not_truncated_at_256kb(self):
+        value_length = 256 * 1024 + 1000
+        large_value = "m" * value_length
+        properties = {key: large_value for key in _GEN_AI_MESSAGES_ATTRIBUTES}
+        filtered = _utils._filter_custom_properties(properties, increase_truncation_limit=True)
+        for key in _GEN_AI_MESSAGES_ATTRIBUTES:
+            with self.subTest(key=key):
+                self.assertEqual(len(filtered[key]), value_length)
+
+    def test_gen_ai_messages_attributes_truncated_at_4mb(self):
+        max_length_for_gen_ai_messages = 4 * 1024 * 1024
+        large_value = "abc" * ((max_length_for_gen_ai_messages + 1000) // 3)
+        properties = {key: large_value for key in _GEN_AI_MESSAGES_ATTRIBUTES}
+        filtered = _utils._filter_custom_properties(properties, increase_truncation_limit=True)
+        for key in _GEN_AI_MESSAGES_ATTRIBUTES:
+            with self.subTest(key=key):
+                self.assertEqual(len(filtered[key]), max_length_for_gen_ai_messages)
+                self.assertEqual(filtered[key], large_value[:max_length_for_gen_ai_messages])
+
+    def test_gen_ai_attributes_truncation_boundaries(self):
+        cases = (
+            ("gen_ai.input.messages", False, _GEN_AI_ATTRIBUTE_MAX_LENGTH),
+            ("gen_ai.output.messages", False, _GEN_AI_ATTRIBUTE_MAX_LENGTH),
+            ("gen_ai.tool.definitions", False, _GEN_AI_ATTRIBUTE_MAX_LENGTH),
+            ("custom.attribute", False, _CUSTOM_PROPERTY_MAX_LENGTH),
+            ("gen_ai.input.messages", True, _GEN_AI_MESSAGES_ATTRIBUTE_MAX_LENGTH),
+            ("gen_ai.output.messages", True, _GEN_AI_MESSAGES_ATTRIBUTE_MAX_LENGTH),
+            ("gen_ai.tool.definitions", True, _GEN_AI_ATTRIBUTE_MAX_LENGTH),
+            ("custom.attribute", True, _CUSTOM_PROPERTY_MAX_LENGTH),
+        )
+        for key, increase_truncation_limit, limit in cases:
+            base_value = "b" * (limit + 1)
+            for length in (limit - 1, limit, limit + 1):
+                with self.subTest(key=key, increase_truncation_limit=increase_truncation_limit, length=length):
+                    filtered = _utils._filter_custom_properties(
+                        {key: base_value[:length]}, increase_truncation_limit=increase_truncation_limit
+                    )
+                    self.assertEqual(len(filtered[key]), min(length, limit))
+
+    def test_gen_ai_messages_attributes_multimodal_blob(self):
+        # Multimodal blob content (base64 encoded) larger than 256kb must be kept intact
+        blob = base64.b64encode(b"\x89PNG" + bytes(range(256)) * 4096).decode()
+        self.assertGreater(len(blob), 1024 * 1024)
+        messages = [
+            {
+                "role": "user",
+                "parts": [
+                    {"type": "text", "content": "Describe this image"},
+                    {"type": "blob", "modality": "image", "mime_type": "image/png", "content": blob},
+                ],
+            }
+        ]
+        value = json.dumps(messages)
+        filtered = _utils._filter_custom_properties(
+            {"gen_ai.input.messages": value, "gen_ai.output.messages": value}, increase_truncation_limit=True
+        )
+        for key in _GEN_AI_MESSAGES_ATTRIBUTES:
+            with self.subTest(key=key):
+                self.assertEqual(filtered[key], value)
+                self.assertEqual(json.loads(filtered[key]), messages)
+
+    def test_gen_ai_messages_limit_applies_with_filter(self):
+        value_length = 1024 * 1024
+        large_value = "f" * value_length
+        properties = {
+            "gen_ai.input.messages": large_value,
+            "gen_ai.output.messages": large_value,
+            "ignored": large_value,
+        }
+        filtered = _utils._filter_custom_properties(
+            properties, lambda key, val: key != "ignored", increase_truncation_limit=True
+        )
+        self.assertNotIn("ignored", filtered)
+        self.assertEqual(len(filtered["gen_ai.input.messages"]), value_length)
+        self.assertEqual(len(filtered["gen_ai.output.messages"]), value_length)
+
+    def test_gen_ai_attribute_max_lengths_mapping(self):
+        self.assertEqual(_CUSTOM_PROPERTY_MAX_LENGTH, 8 * 1024)
+        self.assertEqual(_GEN_AI_ATTRIBUTE_MAX_LENGTH, 256 * 1024)
+        self.assertEqual(_GEN_AI_MESSAGES_ATTRIBUTE_MAX_LENGTH, 4 * 1024 * 1024)
+        self.assertEqual(set(_GEN_AI_MESSAGES_ATTRIBUTES), {"gen_ai.input.messages", "gen_ai.output.messages"})
+        self.assertEqual(set(_GEN_AI_ATTRIBUTE_MAX_LENGTHS), set(_GEN_AI_ATTRIBUTES))
+        self.assertEqual(set(_GEN_AI_ATTRIBUTE_INCREASED_MAX_LENGTHS), set(_GEN_AI_ATTRIBUTES))
+        for key in _GEN_AI_ATTRIBUTES:
+            self.assertEqual(_GEN_AI_ATTRIBUTE_MAX_LENGTHS[key], _GEN_AI_ATTRIBUTE_MAX_LENGTH)
+        for key in _GEN_AI_MESSAGES_ATTRIBUTES:
+            self.assertEqual(_GEN_AI_ATTRIBUTE_INCREASED_MAX_LENGTHS[key], _GEN_AI_MESSAGES_ATTRIBUTE_MAX_LENGTH)
+        for key in _GEN_AI_NON_MESSAGE_ATTRIBUTES:
+            self.assertEqual(_GEN_AI_ATTRIBUTE_INCREASED_MAX_LENGTHS[key], _GEN_AI_ATTRIBUTE_MAX_LENGTH)
+
+    def test_filter_custom_measurements(self):
+        measurements = _utils._filter_custom_measurements(
+            {"microsoft.custom_measurements": '{"itemsProcessed": 42.0, "queueDepth": 7}'}
+        )
+        self.assertEqual(measurements, {"itemsProcessed": 42.0, "queueDepth": 7.0})
+
+    def test_filter_custom_measurements_accepts_mapping(self):
+        measurements = _utils._filter_custom_measurements({"microsoft.custom_measurements": {"itemsProcessed": 42.0}})
+        self.assertEqual(measurements, {"itemsProcessed": 42.0})
+
+    def test_filter_custom_measurements_invalid_json(self):
+        self.assertEqual(_utils._filter_custom_measurements({"microsoft.custom_measurements": "not json"}), {})
+        self.assertEqual(_utils._filter_custom_measurements({"microsoft.custom_measurements": "[1, 2]"}), {})
+        self.assertEqual(_utils._filter_custom_measurements({"microsoft.custom_measurements": 42}), {})
+
+    def test_filter_custom_measurements_deeply_nested_json(self):
+        # Deeply nested payloads raise RecursionError from json.loads and must be ignored
+        deeply_nested = "[" * 200000 + "]" * 200000
+        self.assertEqual(_utils._filter_custom_measurements({"microsoft.custom_measurements": deeply_nested}), {})
+
+    def test_filter_custom_measurements_drops_invalid_entries(self):
+        measurements = _utils._filter_custom_measurements(
+            {
+                "microsoft.custom_measurements": json.dumps(
+                    {
+                        "valid": 1.5,
+                        "string_value": "asd",
+                        "none_value": None,
+                        "bool_value": True,
+                        "": 1.0,
+                    }
+                )
+            }
+        )
+        self.assertEqual(measurements, {"valid": 1.5})
+
+    def test_filter_custom_measurements_drops_non_finite(self):
+        measurements = _utils._filter_custom_measurements(
+            {"microsoft.custom_measurements": {"nan": float("nan"), "inf": float("inf"), "valid": 1.0}}
+        )
+        self.assertEqual(measurements, {"valid": 1.0})
+
+    def test_filter_custom_measurements_drops_int_outside_double_range(self):
+        # A JSON integer too large to convert to a double must be dropped, not raised
+        measurements = _utils._filter_custom_measurements(
+            {"microsoft.custom_measurements": '{{"huge": {}, "valid": 1.0}}'.format(14**600)}
+        )
+        self.assertEqual(measurements, {"valid": 1.0})
+
+    def test_filter_custom_measurements_truncates_key(self):
+        measurements = _utils._filter_custom_measurements({"microsoft.custom_measurements": {"k" * 151: 1.0}})
+        self.assertEqual(measurements, {"k" * 150: 1.0})
+
+    def test_filter_custom_measurements_key_must_match_exactly(self):
+        # Near-miss attribute names are ignored, even when they carry a valid payload
+        for key in ("microsoft.custom_measurement", "custom_measurements", "Microsoft.Custom_Measurements"):
+            with self.subTest(key=key):
+                self.assertEqual(_utils._filter_custom_measurements({key: '{"itemsProcessed": 42.0}'}), {})
+
+    def test_filter_custom_measurements_attribute_value_not_present(self):
+        for attributes in (None, {}, {"test": "asd"}, {"microsoft.custom_measurements": None}):
+            with self.subTest(attributes=attributes):
+                self.assertEqual(_utils._filter_custom_measurements(attributes), {})
+
+    def test_filter_custom_measurements_keeps_valid_drops_invalid(self):
+        measurements = _utils._filter_custom_measurements(
+            {
+                "microsoft.custom_measurements": json.dumps(
+                    {
+                        "itemsProcessed": 42.0,
+                        "queueDepth": 7,
+                        "retries": "3",
+                        "succeeded": True,
+                        "unset": None,
+                        "nested": {"a": 1},
+                    }
+                )
+            }
+        )
+        self.assertEqual(measurements, {"itemsProcessed": 42.0, "queueDepth": 7.0})
 
     def test_nanoseconds_to_duration(self):
         ns_to_duration = _utils.ns_to_duration
@@ -969,6 +1191,77 @@ class TestUtils(unittest.TestCase):
     def test_attach_type_integrated_auto_aks_no_arm_namespace(self):
         # IntegratedAuto but AKS_ARM_NAMESPACE_ID not set. Should be true. Env var overwrites other factors.
         self.assertTrue(_utils._is_attach_enabled())
+
+    # OneSettings normalization helpers
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    def test_get_os_name_linux(self, mock_system):
+        self.assertEqual(_utils._get_os_name(), "linux")
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
+    def test_get_os_name_windows(self, mock_system):
+        self.assertEqual(_utils._get_os_name(), "windows")
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Darwin")
+    def test_get_os_name_darwin(self, mock_system):
+        self.assertEqual(_utils._get_os_name(), "darwin")
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
+    def test_get_os_name_unknown(self, mock_system):
+        self.assertEqual(_utils._get_os_name(), "unknown")
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"FUNCTIONS_WORKER_RUNTIME": "python"},
+        clear=True,
+    )
+    def test_get_rp_name_functions(self):
+        self.assertEqual(_utils._get_rp_name(), "fn")
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
+    )
+    def test_get_rp_name_app_service(self):
+        self.assertEqual(_utils._get_rp_name(), "appsvc")  # cspell:disable-line
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST},
+        clear=True,
+    )
+    def test_get_rp_name_aks(self):
+        self.assertEqual(_utils._get_rp_name(), "aks")
+
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {}, clear=True)
+    def test_get_rp_name_unknown(self):
+        self.assertEqual(_utils._get_rp_name(), "unknown")
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "FUNCTIONS_WORKER_RUNTIME": "python",
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+        },
+        clear=True,
+    )
+    def test_get_rp_name_functions_takes_priority(self):
+        self.assertEqual(_utils._get_rp_name(), "fn")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
+        return_value=True,
+    )
+    def test_get_attach_type_name_integrated_auto(self, mock_attach):
+        self.assertEqual(_utils._get_attach_type_name(), "integratedauto")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
+        return_value=False,
+    )
+    def test_get_attach_type_name_manual(self, mock_attach):
+        self.assertEqual(_utils._get_attach_type_name(), "manual")
 
     # Synthetic
 

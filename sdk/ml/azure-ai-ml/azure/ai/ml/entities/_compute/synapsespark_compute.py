@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     AutoPauseProperties,
     AutoScaleProperties,
     ComputeResource,
@@ -213,7 +213,6 @@ class SynapseSparkCompute(Compute):
 
     def _to_rest_object(self) -> ComputeResource:
         synapsespark_comp = SynapseSpark(
-            name=self.name,
             compute_type=self.type,
             resource_id=self.resource_id,
             description=self.description,

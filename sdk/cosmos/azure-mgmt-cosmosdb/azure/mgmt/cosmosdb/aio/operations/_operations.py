@@ -33,9 +33,10 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_cassandra_clusters_create_update_request,
     build_cassandra_clusters_deallocate_request,
@@ -270,6 +271,19 @@ from ...operations._operations import (
     build_service_delete_request,
     build_service_get_request,
     build_service_list_request,
+    build_soft_deleted_database_accounts_get_request,
+    build_soft_deleted_database_accounts_list_by_location_request,
+    build_soft_deleted_database_accounts_list_by_resource_group_and_location_request,
+    build_soft_deleted_database_accounts_purge_request,
+    build_soft_deleted_database_accounts_restore_request,
+    build_soft_deleted_sql_containers_get_request,
+    build_soft_deleted_sql_containers_list_request,
+    build_soft_deleted_sql_containers_purge_request,
+    build_soft_deleted_sql_containers_restore_request,
+    build_soft_deleted_sql_databases_get_request,
+    build_soft_deleted_sql_databases_list_request,
+    build_soft_deleted_sql_databases_purge_request,
+    build_soft_deleted_sql_databases_restore_request,
     build_sql_resources_create_update_client_encryption_key_request,
     build_sql_resources_create_update_sql_container_request,
     build_sql_resources_create_update_sql_database_request,
@@ -348,11 +362,10 @@ from .._configuration import CosmosDBManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -416,7 +429,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -459,7 +475,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
+class DatabaseAccountsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -553,7 +569,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        create_update_parameters: Union[_models.DatabaseAccountCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_parameters: Union[
+            _models.DatabaseAccountCreateUpdateParameters, _types.DatabaseAccountCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -659,7 +677,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        create_update_parameters: JSON,
+        create_update_parameters: _types.DatabaseAccountCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -674,7 +692,8 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param create_update_parameters: The parameters to provide for the current database account.
          Required.
-        :type create_update_parameters: JSON
+        :type create_update_parameters:
+         ~azure.mgmt.cosmosdb.types.DatabaseAccountCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -721,7 +740,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        create_update_parameters: Union[_models.DatabaseAccountCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_parameters: Union[
+            _models.DatabaseAccountCreateUpdateParameters, _types.DatabaseAccountCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DatabaseAccountGetResults]:
         """Creates or updates an Azure Cosmos DB database account. The "Update" method is preferred when
@@ -733,9 +754,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
         :param create_update_parameters: The parameters to provide for the current database account. Is
-         one of the following types: DatabaseAccountCreateUpdateParameters, JSON, IO[bytes] Required.
+         either a DatabaseAccountCreateUpdateParameters type or a IO[bytes] type. Required.
         :type create_update_parameters:
-         ~azure.mgmt.cosmosdb.models.DatabaseAccountCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.DatabaseAccountCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.DatabaseAccountCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DatabaseAccountGetResults. The
          DatabaseAccountGetResults is compatible with MutableMapping
         :rtype:
@@ -801,7 +823,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        update_parameters: Union[_models.DatabaseAccountUpdateParameters, JSON, IO[bytes]],
+        update_parameters: Union[
+            _models.DatabaseAccountUpdateParameters, _types.DatabaseAccountUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -904,7 +928,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        update_parameters: JSON,
+        update_parameters: _types.DatabaseAccountUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -917,7 +941,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
         :param update_parameters: The parameters to provide for the current database account. Required.
-        :type update_parameters: JSON
+        :type update_parameters: ~azure.mgmt.cosmosdb.types.DatabaseAccountUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -962,7 +986,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        update_parameters: Union[_models.DatabaseAccountUpdateParameters, JSON, IO[bytes]],
+        update_parameters: Union[
+            _models.DatabaseAccountUpdateParameters, _types.DatabaseAccountUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DatabaseAccountGetResults]:
         """Updates the properties of an existing Azure Cosmos DB database account.
@@ -972,10 +998,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param update_parameters: The parameters to provide for the current database account. Is one of
-         the following types: DatabaseAccountUpdateParameters, JSON, IO[bytes] Required.
-        :type update_parameters: ~azure.mgmt.cosmosdb.models.DatabaseAccountUpdateParameters or JSON or
-         IO[bytes]
+        :param update_parameters: The parameters to provide for the current database account. Is either
+         a DatabaseAccountUpdateParameters type or a IO[bytes] type. Required.
+        :type update_parameters: ~azure.mgmt.cosmosdb.models.DatabaseAccountUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.DatabaseAccountUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DatabaseAccountGetResults. The
          DatabaseAccountGetResults is compatible with MutableMapping
         :rtype:
@@ -1210,7 +1236,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1301,7 +1330,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1347,7 +1379,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        failover_parameters: Union[_models.FailoverPolicies, JSON, IO[bytes]],
+        failover_parameters: Union[_models.FailoverPolicies, _types.FailoverPolicies, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1456,7 +1488,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        failover_parameters: JSON,
+        failover_parameters: _types.FailoverPolicies,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1472,7 +1504,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
         :param failover_parameters: The new failover policies for the database account. Required.
-        :type failover_parameters: JSON
+        :type failover_parameters: ~azure.mgmt.cosmosdb.types.FailoverPolicies
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1516,7 +1548,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        failover_parameters: Union[_models.FailoverPolicies, JSON, IO[bytes]],
+        failover_parameters: Union[_models.FailoverPolicies, _types.FailoverPolicies, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Changes the failover priority for the Azure Cosmos DB database account. A failover priority of
@@ -1529,9 +1561,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param failover_parameters: The new failover policies for the database account. Is one of the
-         following types: FailoverPolicies, JSON, IO[bytes] Required.
-        :type failover_parameters: ~azure.mgmt.cosmosdb.models.FailoverPolicies or JSON or IO[bytes]
+        :param failover_parameters: The new failover policies for the database account. Is either a
+         FailoverPolicies type or a IO[bytes] type. Required.
+        :type failover_parameters: ~azure.mgmt.cosmosdb.models.FailoverPolicies or
+         ~azure.mgmt.cosmosdb.types.FailoverPolicies or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1733,7 +1766,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        region_parameter_for_offline: Union[_models.RegionForOnlineOffline, JSON, IO[bytes]],
+        region_parameter_for_offline: Union[_models.RegionForOnlineOffline, _types.RegionForOnlineOffline, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1840,7 +1873,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        region_parameter_for_offline: JSON,
+        region_parameter_for_offline: _types.RegionForOnlineOffline,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1854,7 +1887,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param region_parameter_for_offline: Cosmos DB region to offline for the database account.
          Required.
-        :type region_parameter_for_offline: JSON
+        :type region_parameter_for_offline: ~azure.mgmt.cosmosdb.types.RegionForOnlineOffline
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1896,7 +1929,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        region_parameter_for_offline: Union[_models.RegionForOnlineOffline, JSON, IO[bytes]],
+        region_parameter_for_offline: Union[_models.RegionForOnlineOffline, _types.RegionForOnlineOffline, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Offline the specified region for the specified Azure Cosmos DB database account.
@@ -1907,9 +1940,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
         :param region_parameter_for_offline: Cosmos DB region to offline for the database account. Is
-         one of the following types: RegionForOnlineOffline, JSON, IO[bytes] Required.
-        :type region_parameter_for_offline: ~azure.mgmt.cosmosdb.models.RegionForOnlineOffline or JSON
-         or IO[bytes]
+         either a RegionForOnlineOffline type or a IO[bytes] type. Required.
+        :type region_parameter_for_offline: ~azure.mgmt.cosmosdb.models.RegionForOnlineOffline or
+         ~azure.mgmt.cosmosdb.types.RegionForOnlineOffline or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1965,7 +1998,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        region_parameter_for_online: Union[_models.RegionForOnlineOffline, JSON, IO[bytes]],
+        region_parameter_for_online: Union[_models.RegionForOnlineOffline, _types.RegionForOnlineOffline, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2072,7 +2105,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        region_parameter_for_online: JSON,
+        region_parameter_for_online: _types.RegionForOnlineOffline,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2086,7 +2119,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param region_parameter_for_online: Cosmos DB region to online for the database account.
          Required.
-        :type region_parameter_for_online: JSON
+        :type region_parameter_for_online: ~azure.mgmt.cosmosdb.types.RegionForOnlineOffline
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2128,7 +2161,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        region_parameter_for_online: Union[_models.RegionForOnlineOffline, JSON, IO[bytes]],
+        region_parameter_for_online: Union[_models.RegionForOnlineOffline, _types.RegionForOnlineOffline, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Online the specified region for the specified Azure Cosmos DB database account.
@@ -2138,10 +2171,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param region_parameter_for_online: Cosmos DB region to online for the database account. Is one
-         of the following types: RegionForOnlineOffline, JSON, IO[bytes] Required.
-        :type region_parameter_for_online: ~azure.mgmt.cosmosdb.models.RegionForOnlineOffline or JSON
-         or IO[bytes]
+        :param region_parameter_for_online: Cosmos DB region to online for the database account. Is
+         either a RegionForOnlineOffline type or a IO[bytes] type. Required.
+        :type region_parameter_for_online: ~azure.mgmt.cosmosdb.models.RegionForOnlineOffline or
+         ~azure.mgmt.cosmosdb.types.RegionForOnlineOffline or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2343,7 +2376,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        key_to_regenerate: Union[_models.DatabaseAccountRegenerateKeyParameters, JSON, IO[bytes]],
+        key_to_regenerate: Union[
+            _models.DatabaseAccountRegenerateKeyParameters, _types.DatabaseAccountRegenerateKeyParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2449,7 +2484,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        key_to_regenerate: JSON,
+        key_to_regenerate: _types.DatabaseAccountRegenerateKeyParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2462,7 +2497,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
         :param key_to_regenerate: The name of the key to regenerate. Required.
-        :type key_to_regenerate: JSON
+        :type key_to_regenerate: ~azure.mgmt.cosmosdb.types.DatabaseAccountRegenerateKeyParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2503,7 +2538,9 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         account_name: str,
-        key_to_regenerate: Union[_models.DatabaseAccountRegenerateKeyParameters, JSON, IO[bytes]],
+        key_to_regenerate: Union[
+            _models.DatabaseAccountRegenerateKeyParameters, _types.DatabaseAccountRegenerateKeyParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Regenerates an access key for the specified Azure Cosmos DB database account.
@@ -2513,10 +2550,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
-        :param key_to_regenerate: The name of the key to regenerate. Is one of the following types:
-         DatabaseAccountRegenerateKeyParameters, JSON, IO[bytes] Required.
+        :param key_to_regenerate: The name of the key to regenerate. Is either a
+         DatabaseAccountRegenerateKeyParameters type or a IO[bytes] type. Required.
         :type key_to_regenerate: ~azure.mgmt.cosmosdb.models.DatabaseAccountRegenerateKeyParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.types.DatabaseAccountRegenerateKeyParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2630,7 +2667,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2734,7 +2774,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2833,7 +2876,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2931,7 +2977,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         return 200 <= response.status_code <= 299
 
 
-class CopyJobsOperations:
+class CopyJobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2949,6 +2995,20 @@ class CopyJobsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def get(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.CopyJobGetResults:
@@ -3059,7 +3119,7 @@ class CopyJobsOperations:
         resource_group_name: str,
         account_name: str,
         job_name: str,
-        job_create_parameters: JSON,
+        job_create_parameters: _types.CopyJobGetResults,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3074,7 +3134,7 @@ class CopyJobsOperations:
         :param job_name: Name of the Copy Job. Required.
         :type job_name: str
         :param job_create_parameters: Required.
-        :type job_create_parameters: JSON
+        :type job_create_parameters: ~azure.mgmt.cosmosdb.types.CopyJobGetResults
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3114,12 +3174,27 @@ class CopyJobsOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def create(
         self,
         resource_group_name: str,
         account_name: str,
         job_name: str,
-        job_create_parameters: Union[_models.CopyJobGetResults, JSON, IO[bytes]],
+        job_create_parameters: Union[_models.CopyJobGetResults, _types.CopyJobGetResults, IO[bytes]],
         **kwargs: Any
     ) -> _models.CopyJobGetResults:
         """Creates a Copy Job.
@@ -3131,9 +3206,9 @@ class CopyJobsOperations:
         :type account_name: str
         :param job_name: Name of the Copy Job. Required.
         :type job_name: str
-        :param job_create_parameters: Is one of the following types: CopyJobGetResults, JSON, IO[bytes]
-         Required.
-        :type job_create_parameters: ~azure.mgmt.cosmosdb.models.CopyJobGetResults or JSON or IO[bytes]
+        :param job_create_parameters: Is either a CopyJobGetResults type or a IO[bytes] type. Required.
+        :type job_create_parameters: ~azure.mgmt.cosmosdb.models.CopyJobGetResults or
+         ~azure.mgmt.cosmosdb.types.CopyJobGetResults or IO[bytes]
         :return: CopyJobGetResults. The CopyJobGetResults is compatible with MutableMapping
         :rtype: ~azure.mgmt.cosmosdb.models.CopyJobGetResults
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3207,6 +3282,13 @@ class CopyJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list_by_database_account(
         self, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.CopyJobGetResults"]:
@@ -3263,7 +3345,10 @@ class CopyJobsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3306,6 +3391,20 @@ class CopyJobsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def pause(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.CopyJobGetResults:
@@ -3381,6 +3480,20 @@ class CopyJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def resume(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.CopyJobGetResults:
@@ -3456,6 +3569,20 @@ class CopyJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def cancel(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.CopyJobGetResults:
@@ -3531,6 +3658,20 @@ class CopyJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def complete(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.CopyJobGetResults:
@@ -3606,7 +3747,7 @@ class CopyJobsOperations:
         return deserialized  # type: ignore
 
 
-class GraphResourcesOperations:
+class GraphResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3624,6 +3765,20 @@ class GraphResourcesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "graph_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def get_graph(
         self, resource_group_name: str, account_name: str, graph_name: str, **kwargs: Any
     ) -> _models.GraphResourceGetResults:
@@ -3699,12 +3854,29 @@ class GraphResourcesOperations:
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "graph_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _create_update_graph_initial(
         self,
         resource_group_name: str,
         account_name: str,
         graph_name: str,
-        create_update_graph_parameters: Union[_models.GraphResourceCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_graph_parameters: Union[
+            _models.GraphResourceCreateUpdateParameters, _types.GraphResourceCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3818,7 +3990,7 @@ class GraphResourcesOperations:
         resource_group_name: str,
         account_name: str,
         graph_name: str,
-        create_update_graph_parameters: JSON,
+        create_update_graph_parameters: _types.GraphResourceCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3834,7 +4006,8 @@ class GraphResourcesOperations:
         :type graph_name: str
         :param create_update_graph_parameters: The parameters to provide for the current graph.
          Required.
-        :type create_update_graph_parameters: JSON
+        :type create_update_graph_parameters:
+         ~azure.mgmt.cosmosdb.types.GraphResourceCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3877,12 +4050,29 @@ class GraphResourcesOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "graph_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_create_update_graph(
         self,
         resource_group_name: str,
         account_name: str,
         graph_name: str,
-        create_update_graph_parameters: Union[_models.GraphResourceCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_graph_parameters: Union[
+            _models.GraphResourceCreateUpdateParameters, _types.GraphResourceCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GraphResourceGetResults]:
         """Create or update an Azure Cosmos DB Graph.
@@ -3894,10 +4084,11 @@ class GraphResourcesOperations:
         :type account_name: str
         :param graph_name: Cosmos DB graph resource name. Required.
         :type graph_name: str
-        :param create_update_graph_parameters: The parameters to provide for the current graph. Is one
-         of the following types: GraphResourceCreateUpdateParameters, JSON, IO[bytes] Required.
+        :param create_update_graph_parameters: The parameters to provide for the current graph. Is
+         either a GraphResourceCreateUpdateParameters type or a IO[bytes] type. Required.
         :type create_update_graph_parameters:
-         ~azure.mgmt.cosmosdb.models.GraphResourceCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.GraphResourceCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.GraphResourceCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns GraphResourceGetResults. The
          GraphResourceGetResults is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.GraphResourceGetResults]
@@ -3956,6 +4147,19 @@ class GraphResourcesOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "graph_name",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _delete_graph_resource_initial(
         self, resource_group_name: str, account_name: str, graph_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -4021,6 +4225,19 @@ class GraphResourcesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "graph_name",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_delete_graph_resource(
         self, resource_group_name: str, account_name: str, graph_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -4083,6 +4300,13 @@ class GraphResourcesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list_graphs(
         self, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.GraphResourceGetResults"]:
@@ -4140,7 +4364,10 @@ class GraphResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4183,7 +4410,7 @@ class GraphResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
+class SqlResourcesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4281,7 +4508,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        create_update_sql_database_parameters: Union[_models.SqlDatabaseCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_sql_database_parameters: Union[
+            _models.SqlDatabaseCreateUpdateParameters, _types.SqlDatabaseCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4395,7 +4624,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        create_update_sql_database_parameters: JSON,
+        create_update_sql_database_parameters: _types.SqlDatabaseCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4411,7 +4640,8 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type database_name: str
         :param create_update_sql_database_parameters: The parameters to provide for the current SQL
          database. Required.
-        :type create_update_sql_database_parameters: JSON
+        :type create_update_sql_database_parameters:
+         ~azure.mgmt.cosmosdb.types.SqlDatabaseCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4459,7 +4689,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        create_update_sql_database_parameters: Union[_models.SqlDatabaseCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_sql_database_parameters: Union[
+            _models.SqlDatabaseCreateUpdateParameters, _types.SqlDatabaseCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SqlDatabaseGetResults]:
         """Create or update an Azure Cosmos DB SQL database.
@@ -4472,10 +4704,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
         :param create_update_sql_database_parameters: The parameters to provide for the current SQL
-         database. Is one of the following types: SqlDatabaseCreateUpdateParameters, JSON, IO[bytes]
-         Required.
+         database. Is either a SqlDatabaseCreateUpdateParameters type or a IO[bytes] type. Required.
         :type create_update_sql_database_parameters:
-         ~azure.mgmt.cosmosdb.models.SqlDatabaseCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.SqlDatabaseCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.SqlDatabaseCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SqlDatabaseGetResults. The
          SqlDatabaseGetResults is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.SqlDatabaseGetResults]
@@ -4718,7 +4950,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4760,12 +4995,27 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _sql_database_partition_merge_initial(
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        merge_parameters: Union[_models.MergeParameters, JSON, IO[bytes]],
+        merge_parameters: Union[_models.MergeParameters, _types.MergeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4878,7 +5128,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        merge_parameters: JSON,
+        merge_parameters: _types.MergeParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4893,7 +5143,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
         :param merge_parameters: The parameters for the merge operation. Required.
-        :type merge_parameters: JSON
+        :type merge_parameters: ~azure.mgmt.cosmosdb.types.MergeParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4937,12 +5187,27 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_sql_database_partition_merge(
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        merge_parameters: Union[_models.MergeParameters, JSON, IO[bytes]],
+        merge_parameters: Union[_models.MergeParameters, _types.MergeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PhysicalPartitionStorageInfoCollection]:
         """Merges the partitions of a SQL database.
@@ -4954,9 +5219,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
-        :param merge_parameters: The parameters for the merge operation. Is one of the following types:
-         MergeParameters, JSON, IO[bytes] Required.
-        :type merge_parameters: ~azure.mgmt.cosmosdb.models.MergeParameters or JSON or IO[bytes]
+        :param merge_parameters: The parameters for the merge operation. Is either a MergeParameters
+         type or a IO[bytes] type. Required.
+        :type merge_parameters: ~azure.mgmt.cosmosdb.models.MergeParameters or
+         ~azure.mgmt.cosmosdb.types.MergeParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PhysicalPartitionStorageInfoCollection. The
          PhysicalPartitionStorageInfoCollection is compatible with MutableMapping
         :rtype:
@@ -5098,7 +5364,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5213,7 +5481,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        update_throughput_parameters: JSON,
+        update_throughput_parameters: _types.ThroughputSettingsUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5229,7 +5497,8 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type database_name: str
         :param update_throughput_parameters: The parameters to provide for the RUs per second of the
          current SQL database. Required.
-        :type update_throughput_parameters: JSON
+        :type update_throughput_parameters:
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5279,7 +5548,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ThroughputSettingsGetResults]:
         """Update RUs per second of an Azure Cosmos DB SQL database.
@@ -5292,10 +5563,11 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
         :param update_throughput_parameters: The parameters to provide for the RUs per second of the
-         current SQL database. Is one of the following types: ThroughputSettingsUpdateParameters, JSON,
-         IO[bytes] Required.
+         current SQL database. Is either a ThroughputSettingsUpdateParameters type or a IO[bytes] type.
+         Required.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ThroughputSettingsGetResults. The
          ThroughputSettingsGetResults is compatible with MutableMapping
         :rtype:
@@ -5623,12 +5895,29 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _sql_database_retrieve_throughput_distribution_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        retrieve_throughput_parameters: Union[_models.RetrieveThroughputParameters, JSON, IO[bytes]],
+        retrieve_throughput_parameters: Union[
+            _models.RetrieveThroughputParameters, _types.RetrieveThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5742,7 +6031,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        retrieve_throughput_parameters: JSON,
+        retrieve_throughput_parameters: _types.RetrieveThroughputParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5758,7 +6047,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type database_name: str
         :param retrieve_throughput_parameters: The parameters to provide for retrieving throughput
          distribution for the current SQL database. Required.
-        :type retrieve_throughput_parameters: JSON
+        :type retrieve_throughput_parameters: ~azure.mgmt.cosmosdb.types.RetrieveThroughputParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5803,12 +6092,29 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_sql_database_retrieve_throughput_distribution(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        retrieve_throughput_parameters: Union[_models.RetrieveThroughputParameters, JSON, IO[bytes]],
+        retrieve_throughput_parameters: Union[
+            _models.RetrieveThroughputParameters, _types.RetrieveThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PhysicalPartitionThroughputInfoResult]:
         """Retrieve throughput distribution for an Azure Cosmos DB SQL database.
@@ -5821,10 +6127,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
         :param retrieve_throughput_parameters: The parameters to provide for retrieving throughput
-         distribution for the current SQL database. Is one of the following types:
-         RetrieveThroughputParameters, JSON, IO[bytes] Required.
+         distribution for the current SQL database. Is either a RetrieveThroughputParameters type or a
+         IO[bytes] type. Required.
         :type retrieve_throughput_parameters: ~azure.mgmt.cosmosdb.models.RetrieveThroughputParameters
-         or JSON or IO[bytes]
+         or ~azure.mgmt.cosmosdb.types.RetrieveThroughputParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PhysicalPartitionThroughputInfoResult. The
          PhysicalPartitionThroughputInfoResult is compatible with MutableMapping
         :rtype:
@@ -5884,12 +6190,29 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _sql_database_redistribute_throughput_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        redistribute_throughput_parameters: Union[_models.RedistributeThroughputParameters, JSON, IO[bytes]],
+        redistribute_throughput_parameters: Union[
+            _models.RedistributeThroughputParameters, _types.RedistributeThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6004,7 +6327,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        redistribute_throughput_parameters: JSON,
+        redistribute_throughput_parameters: _types.RedistributeThroughputParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6020,7 +6343,8 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type database_name: str
         :param redistribute_throughput_parameters: The parameters to provide for redistributing
          throughput for the current SQL database. Required.
-        :type redistribute_throughput_parameters: JSON
+        :type redistribute_throughput_parameters:
+         ~azure.mgmt.cosmosdb.types.RedistributeThroughputParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6065,12 +6389,29 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_sql_database_redistribute_throughput(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        redistribute_throughput_parameters: Union[_models.RedistributeThroughputParameters, JSON, IO[bytes]],
+        redistribute_throughput_parameters: Union[
+            _models.RedistributeThroughputParameters, _types.RedistributeThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PhysicalPartitionThroughputInfoResult]:
         """Redistribute throughput for an Azure Cosmos DB SQL database.
@@ -6083,10 +6424,11 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
         :param redistribute_throughput_parameters: The parameters to provide for redistributing
-         throughput for the current SQL database. Is one of the following types:
-         RedistributeThroughputParameters, JSON, IO[bytes] Required.
+         throughput for the current SQL database. Is either a RedistributeThroughputParameters type or a
+         IO[bytes] type. Required.
         :type redistribute_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.RedistributeThroughputParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.RedistributeThroughputParameters or
+         ~azure.mgmt.cosmosdb.types.RedistributeThroughputParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PhysicalPartitionThroughputInfoResult. The
          PhysicalPartitionThroughputInfoResult is compatible with MutableMapping
         :rtype:
@@ -6232,7 +6574,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         container_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6352,7 +6696,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         container_name: str,
-        update_throughput_parameters: JSON,
+        update_throughput_parameters: _types.ThroughputSettingsUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6370,7 +6714,8 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type container_name: str
         :param update_throughput_parameters: The parameters to provide for the RUs per second of the
          current SQL container. Required.
-        :type update_throughput_parameters: JSON
+        :type update_throughput_parameters:
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6424,7 +6769,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         container_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ThroughputSettingsGetResults]:
         """Update RUs per second of an Azure Cosmos DB SQL container.
@@ -6439,10 +6786,11 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param container_name: Cosmos DB container name. Required.
         :type container_name: str
         :param update_throughput_parameters: The parameters to provide for the RUs per second of the
-         current SQL container. Is one of the following types: ThroughputSettingsUpdateParameters, JSON,
-         IO[bytes] Required.
+         current SQL container. Is either a ThroughputSettingsUpdateParameters type or a IO[bytes] type.
+         Required.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ThroughputSettingsGetResults. The
          ThroughputSettingsGetResults is compatible with MutableMapping
         :rtype:
@@ -6777,13 +7125,31 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _sql_container_retrieve_throughput_distribution_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
         container_name: str,
-        retrieve_throughput_parameters: Union[_models.RetrieveThroughputParameters, JSON, IO[bytes]],
+        retrieve_throughput_parameters: Union[
+            _models.RetrieveThroughputParameters, _types.RetrieveThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6901,7 +7267,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         container_name: str,
-        retrieve_throughput_parameters: JSON,
+        retrieve_throughput_parameters: _types.RetrieveThroughputParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6919,7 +7285,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type container_name: str
         :param retrieve_throughput_parameters: The parameters to provide for retrieving throughput
          distribution for the current SQL container. Required.
-        :type retrieve_throughput_parameters: JSON
+        :type retrieve_throughput_parameters: ~azure.mgmt.cosmosdb.types.RetrieveThroughputParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6967,13 +7333,31 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_sql_container_retrieve_throughput_distribution(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
         container_name: str,
-        retrieve_throughput_parameters: Union[_models.RetrieveThroughputParameters, JSON, IO[bytes]],
+        retrieve_throughput_parameters: Union[
+            _models.RetrieveThroughputParameters, _types.RetrieveThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PhysicalPartitionThroughputInfoResult]:
         """Retrieve throughput distribution for an Azure Cosmos DB SQL container.
@@ -6988,10 +7372,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param container_name: Cosmos DB container name. Required.
         :type container_name: str
         :param retrieve_throughput_parameters: The parameters to provide for retrieving throughput
-         distribution for the current SQL container. Is one of the following types:
-         RetrieveThroughputParameters, JSON, IO[bytes] Required.
+         distribution for the current SQL container. Is either a RetrieveThroughputParameters type or a
+         IO[bytes] type. Required.
         :type retrieve_throughput_parameters: ~azure.mgmt.cosmosdb.models.RetrieveThroughputParameters
-         or JSON or IO[bytes]
+         or ~azure.mgmt.cosmosdb.types.RetrieveThroughputParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PhysicalPartitionThroughputInfoResult. The
          PhysicalPartitionThroughputInfoResult is compatible with MutableMapping
         :rtype:
@@ -7052,13 +7436,31 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _sql_container_redistribute_throughput_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
         container_name: str,
-        redistribute_throughput_parameters: Union[_models.RedistributeThroughputParameters, JSON, IO[bytes]],
+        redistribute_throughput_parameters: Union[
+            _models.RedistributeThroughputParameters, _types.RedistributeThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7177,7 +7579,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         container_name: str,
-        redistribute_throughput_parameters: JSON,
+        redistribute_throughput_parameters: _types.RedistributeThroughputParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7195,7 +7597,8 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type container_name: str
         :param redistribute_throughput_parameters: The parameters to provide for redistributing
          throughput for the current SQL container. Required.
-        :type redistribute_throughput_parameters: JSON
+        :type redistribute_throughput_parameters:
+         ~azure.mgmt.cosmosdb.types.RedistributeThroughputParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7243,13 +7646,31 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_sql_container_redistribute_throughput(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
         container_name: str,
-        redistribute_throughput_parameters: Union[_models.RedistributeThroughputParameters, JSON, IO[bytes]],
+        redistribute_throughput_parameters: Union[
+            _models.RedistributeThroughputParameters, _types.RedistributeThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PhysicalPartitionThroughputInfoResult]:
         """Redistribute throughput for an Azure Cosmos DB SQL container.
@@ -7264,10 +7685,11 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param container_name: Cosmos DB container name. Required.
         :type container_name: str
         :param redistribute_throughput_parameters: The parameters to provide for redistributing
-         throughput for the current SQL container. Is one of the following types:
-         RedistributeThroughputParameters, JSON, IO[bytes] Required.
+         throughput for the current SQL container. Is either a RedistributeThroughputParameters type or
+         a IO[bytes] type. Required.
         :type redistribute_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.RedistributeThroughputParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.RedistributeThroughputParameters or
+         ~azure.mgmt.cosmosdb.types.RedistributeThroughputParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PhysicalPartitionThroughputInfoResult. The
          PhysicalPartitionThroughputInfoResult is compatible with MutableMapping
         :rtype:
@@ -7419,7 +7841,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         database_name: str,
         client_encryption_key_name: str,
         create_update_client_encryption_key_parameters: Union[
-            _models.ClientEncryptionKeyCreateUpdateParameters, JSON, IO[bytes]
+            _models.ClientEncryptionKeyCreateUpdateParameters,
+            _types.ClientEncryptionKeyCreateUpdateParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -7541,7 +7965,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         client_encryption_key_name: str,
-        create_update_client_encryption_key_parameters: JSON,
+        create_update_client_encryption_key_parameters: _types.ClientEncryptionKeyCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7560,7 +7984,8 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type client_encryption_key_name: str
         :param create_update_client_encryption_key_parameters: The parameters to provide for the client
          encryption key. Required.
-        :type create_update_client_encryption_key_parameters: JSON
+        :type create_update_client_encryption_key_parameters:
+         ~azure.mgmt.cosmosdb.types.ClientEncryptionKeyCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7616,7 +8041,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         database_name: str,
         client_encryption_key_name: str,
         create_update_client_encryption_key_parameters: Union[
-            _models.ClientEncryptionKeyCreateUpdateParameters, JSON, IO[bytes]
+            _models.ClientEncryptionKeyCreateUpdateParameters,
+            _types.ClientEncryptionKeyCreateUpdateParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ClientEncryptionKeyGetResults]:
@@ -7633,10 +8060,11 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param client_encryption_key_name: Cosmos DB ClientEncryptionKey name. Required.
         :type client_encryption_key_name: str
         :param create_update_client_encryption_key_parameters: The parameters to provide for the client
-         encryption key. Is one of the following types: ClientEncryptionKeyCreateUpdateParameters, JSON,
-         IO[bytes] Required.
+         encryption key. Is either a ClientEncryptionKeyCreateUpdateParameters type or a IO[bytes] type.
+         Required.
         :type create_update_client_encryption_key_parameters:
-         ~azure.mgmt.cosmosdb.models.ClientEncryptionKeyCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.ClientEncryptionKeyCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.ClientEncryptionKeyCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ClientEncryptionKeyGetResults. The
          ClientEncryptionKeyGetResults is compatible with MutableMapping
         :rtype:
@@ -7758,7 +8186,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7884,7 +8315,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         container_name: str,
-        create_update_sql_container_parameters: Union[_models.SqlContainerCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_sql_container_parameters: Union[
+            _models.SqlContainerCreateUpdateParameters, _types.SqlContainerCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8003,7 +8436,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         container_name: str,
-        create_update_sql_container_parameters: JSON,
+        create_update_sql_container_parameters: _types.SqlContainerCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8021,7 +8454,8 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type container_name: str
         :param create_update_sql_container_parameters: The parameters to provide for the current SQL
          container. Required.
-        :type create_update_sql_container_parameters: JSON
+        :type create_update_sql_container_parameters:
+         ~azure.mgmt.cosmosdb.types.SqlContainerCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8073,7 +8507,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         container_name: str,
-        create_update_sql_container_parameters: Union[_models.SqlContainerCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_sql_container_parameters: Union[
+            _models.SqlContainerCreateUpdateParameters, _types.SqlContainerCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SqlContainerGetResults]:
         """Create or update an Azure Cosmos DB SQL container.
@@ -8088,10 +8524,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param container_name: Cosmos DB container name. Required.
         :type container_name: str
         :param create_update_sql_container_parameters: The parameters to provide for the current SQL
-         container. Is one of the following types: SqlContainerCreateUpdateParameters, JSON, IO[bytes]
-         Required.
+         container. Is either a SqlContainerCreateUpdateParameters type or a IO[bytes] type. Required.
         :type create_update_sql_container_parameters:
-         ~azure.mgmt.cosmosdb.models.SqlContainerCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.SqlContainerCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.SqlContainerCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SqlContainerGetResults. The
          SqlContainerGetResults is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.SqlContainerGetResults]
@@ -8342,7 +8778,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8384,13 +8823,29 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _list_sql_container_partition_merge_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
         container_name: str,
-        merge_parameters: Union[_models.MergeParameters, JSON, IO[bytes]],
+        merge_parameters: Union[_models.MergeParameters, _types.MergeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8507,7 +8962,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         container_name: str,
-        merge_parameters: JSON,
+        merge_parameters: _types.MergeParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8524,7 +8979,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param container_name: Cosmos DB container name. Required.
         :type container_name: str
         :param merge_parameters: The parameters for the merge operation. Required.
-        :type merge_parameters: JSON
+        :type merge_parameters: ~azure.mgmt.cosmosdb.types.MergeParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8571,13 +9026,29 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "container_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_list_sql_container_partition_merge(
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
         container_name: str,
-        merge_parameters: Union[_models.MergeParameters, JSON, IO[bytes]],
+        merge_parameters: Union[_models.MergeParameters, _types.MergeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PhysicalPartitionStorageInfoCollection]:
         """Merges the partitions of a SQL Container.
@@ -8591,9 +9062,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type database_name: str
         :param container_name: Cosmos DB container name. Required.
         :type container_name: str
-        :param merge_parameters: The parameters for the merge operation. Is one of the following types:
-         MergeParameters, JSON, IO[bytes] Required.
-        :type merge_parameters: ~azure.mgmt.cosmosdb.models.MergeParameters or JSON or IO[bytes]
+        :param merge_parameters: The parameters for the merge operation. Is either a MergeParameters
+         type or a IO[bytes] type. Required.
+        :type merge_parameters: ~azure.mgmt.cosmosdb.models.MergeParameters or
+         ~azure.mgmt.cosmosdb.types.MergeParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PhysicalPartitionStorageInfoCollection. The
          PhysicalPartitionStorageInfoCollection is compatible with MutableMapping
         :rtype:
@@ -8660,7 +9132,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         container_name: str,
-        location: Union[_models.ContinuousBackupRestoreLocation, JSON, IO[bytes]],
+        location: Union[_models.ContinuousBackupRestoreLocation, _types.ContinuousBackupRestoreLocation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8774,7 +9246,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         container_name: str,
-        location: JSON,
+        location: _types.ContinuousBackupRestoreLocation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8791,7 +9263,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param container_name: Cosmos DB container name. Required.
         :type container_name: str
         :param location: The name of the continuous backup restore location. Required.
-        :type location: JSON
+        :type location: ~azure.mgmt.cosmosdb.types.ContinuousBackupRestoreLocation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8842,7 +9314,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         container_name: str,
-        location: Union[_models.ContinuousBackupRestoreLocation, JSON, IO[bytes]],
+        location: Union[_models.ContinuousBackupRestoreLocation, _types.ContinuousBackupRestoreLocation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackupInformation]:
         """Retrieves continuous backup information for a container resource.
@@ -8856,10 +9328,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type database_name: str
         :param container_name: Cosmos DB container name. Required.
         :type container_name: str
-        :param location: The name of the continuous backup restore location. Is one of the following
-         types: ContinuousBackupRestoreLocation, JSON, IO[bytes] Required.
-        :type location: ~azure.mgmt.cosmosdb.models.ContinuousBackupRestoreLocation or JSON or
-         IO[bytes]
+        :param location: The name of the continuous backup restore location. Is either a
+         ContinuousBackupRestoreLocation type or a IO[bytes] type. Required.
+        :type location: ~azure.mgmt.cosmosdb.models.ContinuousBackupRestoreLocation or
+         ~azure.mgmt.cosmosdb.types.ContinuousBackupRestoreLocation or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BackupInformation. The BackupInformation is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.BackupInformation]
@@ -8890,14 +9362,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.BackupInformation, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -9019,7 +9487,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         container_name: str,
         stored_procedure_name: str,
         create_update_sql_stored_procedure_parameters: Union[
-            _models.SqlStoredProcedureCreateUpdateParameters, JSON, IO[bytes]
+            _models.SqlStoredProcedureCreateUpdateParameters, _types.SqlStoredProcedureCreateUpdateParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -9145,7 +9613,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         database_name: str,
         container_name: str,
         stored_procedure_name: str,
-        create_update_sql_stored_procedure_parameters: JSON,
+        create_update_sql_stored_procedure_parameters: _types.SqlStoredProcedureCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9165,7 +9633,8 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type stored_procedure_name: str
         :param create_update_sql_stored_procedure_parameters: The parameters to provide for the current
          SQL storedProcedure. Required.
-        :type create_update_sql_stored_procedure_parameters: JSON
+        :type create_update_sql_stored_procedure_parameters:
+         ~azure.mgmt.cosmosdb.types.SqlStoredProcedureCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9224,7 +9693,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         container_name: str,
         stored_procedure_name: str,
         create_update_sql_stored_procedure_parameters: Union[
-            _models.SqlStoredProcedureCreateUpdateParameters, JSON, IO[bytes]
+            _models.SqlStoredProcedureCreateUpdateParameters, _types.SqlStoredProcedureCreateUpdateParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SqlStoredProcedureGetResults]:
@@ -9242,10 +9711,11 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param stored_procedure_name: Cosmos DB storedProcedure name. Required.
         :type stored_procedure_name: str
         :param create_update_sql_stored_procedure_parameters: The parameters to provide for the current
-         SQL storedProcedure. Is one of the following types: SqlStoredProcedureCreateUpdateParameters,
-         JSON, IO[bytes] Required.
+         SQL storedProcedure. Is either a SqlStoredProcedureCreateUpdateParameters type or a IO[bytes]
+         type. Required.
         :type create_update_sql_stored_procedure_parameters:
-         ~azure.mgmt.cosmosdb.models.SqlStoredProcedureCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.SqlStoredProcedureCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.SqlStoredProcedureCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SqlStoredProcedureGetResults. The
          SqlStoredProcedureGetResults is compatible with MutableMapping
         :rtype:
@@ -9517,7 +9987,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9655,7 +10128,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         container_name: str,
         user_defined_function_name: str,
         create_update_sql_user_defined_function_parameters: Union[
-            _models.SqlUserDefinedFunctionCreateUpdateParameters, JSON, IO[bytes]
+            _models.SqlUserDefinedFunctionCreateUpdateParameters,
+            _types.SqlUserDefinedFunctionCreateUpdateParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -9781,7 +10256,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         database_name: str,
         container_name: str,
         user_defined_function_name: str,
-        create_update_sql_user_defined_function_parameters: JSON,
+        create_update_sql_user_defined_function_parameters: _types.SqlUserDefinedFunctionCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9801,7 +10276,8 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type user_defined_function_name: str
         :param create_update_sql_user_defined_function_parameters: The parameters to provide for the
          current SQL userDefinedFunction. Required.
-        :type create_update_sql_user_defined_function_parameters: JSON
+        :type create_update_sql_user_defined_function_parameters:
+         ~azure.mgmt.cosmosdb.types.SqlUserDefinedFunctionCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9860,7 +10336,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         container_name: str,
         user_defined_function_name: str,
         create_update_sql_user_defined_function_parameters: Union[
-            _models.SqlUserDefinedFunctionCreateUpdateParameters, JSON, IO[bytes]
+            _models.SqlUserDefinedFunctionCreateUpdateParameters,
+            _types.SqlUserDefinedFunctionCreateUpdateParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SqlUserDefinedFunctionGetResults]:
@@ -9878,10 +10356,11 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param user_defined_function_name: Cosmos DB userDefinedFunction name. Required.
         :type user_defined_function_name: str
         :param create_update_sql_user_defined_function_parameters: The parameters to provide for the
-         current SQL userDefinedFunction. Is one of the following types:
-         SqlUserDefinedFunctionCreateUpdateParameters, JSON, IO[bytes] Required.
+         current SQL userDefinedFunction. Is either a SqlUserDefinedFunctionCreateUpdateParameters type
+         or a IO[bytes] type. Required.
         :type create_update_sql_user_defined_function_parameters:
-         ~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.SqlUserDefinedFunctionCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SqlUserDefinedFunctionGetResults. The
          SqlUserDefinedFunctionGetResults is compatible with MutableMapping
         :rtype:
@@ -10153,7 +10632,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10289,7 +10771,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         database_name: str,
         container_name: str,
         trigger_name: str,
-        create_update_sql_trigger_parameters: Union[_models.SqlTriggerCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_sql_trigger_parameters: Union[
+            _models.SqlTriggerCreateUpdateParameters, _types.SqlTriggerCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10413,7 +10897,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         database_name: str,
         container_name: str,
         trigger_name: str,
-        create_update_sql_trigger_parameters: JSON,
+        create_update_sql_trigger_parameters: _types.SqlTriggerCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10433,7 +10917,8 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type trigger_name: str
         :param create_update_sql_trigger_parameters: The parameters to provide for the current SQL
          trigger. Required.
-        :type create_update_sql_trigger_parameters: JSON
+        :type create_update_sql_trigger_parameters:
+         ~azure.mgmt.cosmosdb.types.SqlTriggerCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10489,7 +10974,9 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         database_name: str,
         container_name: str,
         trigger_name: str,
-        create_update_sql_trigger_parameters: Union[_models.SqlTriggerCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_sql_trigger_parameters: Union[
+            _models.SqlTriggerCreateUpdateParameters, _types.SqlTriggerCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SqlTriggerGetResults]:
         """Create or update an Azure Cosmos DB SQL trigger.
@@ -10506,10 +10993,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param trigger_name: Cosmos DB trigger name. Required.
         :type trigger_name: str
         :param create_update_sql_trigger_parameters: The parameters to provide for the current SQL
-         trigger. Is one of the following types: SqlTriggerCreateUpdateParameters, JSON, IO[bytes]
-         Required.
+         trigger. Is either a SqlTriggerCreateUpdateParameters type or a IO[bytes] type. Required.
         :type create_update_sql_trigger_parameters:
-         ~azure.mgmt.cosmosdb.models.SqlTriggerCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.SqlTriggerCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.SqlTriggerCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SqlTriggerGetResults. The
          SqlTriggerGetResults is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.SqlTriggerGetResults]
@@ -10780,7 +11267,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10904,7 +11394,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         create_update_sql_role_definition_parameters: Union[
-            _models.SqlRoleDefinitionCreateUpdateParameters, JSON, IO[bytes]
+            _models.SqlRoleDefinitionCreateUpdateParameters, _types.SqlRoleDefinitionCreateUpdateParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -11017,7 +11507,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         role_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        create_update_sql_role_definition_parameters: JSON,
+        create_update_sql_role_definition_parameters: _types.SqlRoleDefinitionCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11033,7 +11523,8 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param create_update_sql_role_definition_parameters: The properties required to create or
          update a Role Definition. Required.
-        :type create_update_sql_role_definition_parameters: JSON
+        :type create_update_sql_role_definition_parameters:
+         ~azure.mgmt.cosmosdb.types.SqlRoleDefinitionCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11084,7 +11575,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         create_update_sql_role_definition_parameters: Union[
-            _models.SqlRoleDefinitionCreateUpdateParameters, JSON, IO[bytes]
+            _models.SqlRoleDefinitionCreateUpdateParameters, _types.SqlRoleDefinitionCreateUpdateParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SqlRoleDefinitionGetResults]:
@@ -11098,10 +11589,11 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
         :param create_update_sql_role_definition_parameters: The properties required to create or
-         update a Role Definition. Is one of the following types:
-         SqlRoleDefinitionCreateUpdateParameters, JSON, IO[bytes] Required.
+         update a Role Definition. Is either a SqlRoleDefinitionCreateUpdateParameters type or a
+         IO[bytes] type. Required.
         :type create_update_sql_role_definition_parameters:
-         ~azure.mgmt.cosmosdb.models.SqlRoleDefinitionCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.SqlRoleDefinitionCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.SqlRoleDefinitionCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SqlRoleDefinitionGetResults. The
          SqlRoleDefinitionGetResults is compatible with MutableMapping
         :rtype:
@@ -11343,7 +11835,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11467,7 +11962,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         create_update_sql_role_assignment_parameters: Union[
-            _models.SqlRoleAssignmentCreateUpdateParameters, JSON, IO[bytes]
+            _models.SqlRoleAssignmentCreateUpdateParameters, _types.SqlRoleAssignmentCreateUpdateParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -11580,7 +12075,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         role_assignment_id: str,
         resource_group_name: str,
         account_name: str,
-        create_update_sql_role_assignment_parameters: JSON,
+        create_update_sql_role_assignment_parameters: _types.SqlRoleAssignmentCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11596,7 +12091,8 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param create_update_sql_role_assignment_parameters: The properties required to create or
          update a Role Assignment. Required.
-        :type create_update_sql_role_assignment_parameters: JSON
+        :type create_update_sql_role_assignment_parameters:
+         ~azure.mgmt.cosmosdb.types.SqlRoleAssignmentCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11647,7 +12143,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         create_update_sql_role_assignment_parameters: Union[
-            _models.SqlRoleAssignmentCreateUpdateParameters, JSON, IO[bytes]
+            _models.SqlRoleAssignmentCreateUpdateParameters, _types.SqlRoleAssignmentCreateUpdateParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SqlRoleAssignmentGetResults]:
@@ -11661,10 +12157,11 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
         :param create_update_sql_role_assignment_parameters: The properties required to create or
-         update a Role Assignment. Is one of the following types:
-         SqlRoleAssignmentCreateUpdateParameters, JSON, IO[bytes] Required.
+         update a Role Assignment. Is either a SqlRoleAssignmentCreateUpdateParameters type or a
+         IO[bytes] type. Required.
         :type create_update_sql_role_assignment_parameters:
-         ~azure.mgmt.cosmosdb.models.SqlRoleAssignmentCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.SqlRoleAssignmentCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.SqlRoleAssignmentCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SqlRoleAssignmentGetResults. The
          SqlRoleAssignmentGetResults is compatible with MutableMapping
         :rtype:
@@ -11906,7 +12403,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11949,7 +12449,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
+class MongoDBResourcesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12048,7 +12548,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12163,7 +12665,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        update_throughput_parameters: JSON,
+        update_throughput_parameters: _types.ThroughputSettingsUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12179,7 +12681,8 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :type database_name: str
         :param update_throughput_parameters: The RUs per second of the parameters to provide for the
          current MongoDB database. Required.
-        :type update_throughput_parameters: JSON
+        :type update_throughput_parameters:
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12229,7 +12732,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ThroughputSettingsGetResults]:
         """Update RUs per second of the an Azure Cosmos DB MongoDB database.
@@ -12242,10 +12747,11 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
         :param update_throughput_parameters: The RUs per second of the parameters to provide for the
-         current MongoDB database. Is one of the following types: ThroughputSettingsUpdateParameters,
-         JSON, IO[bytes] Required.
+         current MongoDB database. Is either a ThroughputSettingsUpdateParameters type or a IO[bytes]
+         type. Required.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ThroughputSettingsGetResults. The
          ThroughputSettingsGetResults is compatible with MutableMapping
         :rtype:
@@ -12573,12 +13079,29 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _mongo_db_database_retrieve_throughput_distribution_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        retrieve_throughput_parameters: Union[_models.RetrieveThroughputParameters, JSON, IO[bytes]],
+        retrieve_throughput_parameters: Union[
+            _models.RetrieveThroughputParameters, _types.RetrieveThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12692,7 +13215,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        retrieve_throughput_parameters: JSON,
+        retrieve_throughput_parameters: _types.RetrieveThroughputParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12708,7 +13231,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :type database_name: str
         :param retrieve_throughput_parameters: The parameters to provide for retrieving throughput
          distribution for the current MongoDB database. Required.
-        :type retrieve_throughput_parameters: JSON
+        :type retrieve_throughput_parameters: ~azure.mgmt.cosmosdb.types.RetrieveThroughputParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12753,12 +13276,29 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_mongo_db_database_retrieve_throughput_distribution(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        retrieve_throughput_parameters: Union[_models.RetrieveThroughputParameters, JSON, IO[bytes]],
+        retrieve_throughput_parameters: Union[
+            _models.RetrieveThroughputParameters, _types.RetrieveThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PhysicalPartitionThroughputInfoResult]:
         """Retrieve throughput distribution for an Azure Cosmos DB MongoDB database.
@@ -12771,10 +13311,10 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
         :param retrieve_throughput_parameters: The parameters to provide for retrieving throughput
-         distribution for the current MongoDB database. Is one of the following types:
-         RetrieveThroughputParameters, JSON, IO[bytes] Required.
+         distribution for the current MongoDB database. Is either a RetrieveThroughputParameters type or
+         a IO[bytes] type. Required.
         :type retrieve_throughput_parameters: ~azure.mgmt.cosmosdb.models.RetrieveThroughputParameters
-         or JSON or IO[bytes]
+         or ~azure.mgmt.cosmosdb.types.RetrieveThroughputParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PhysicalPartitionThroughputInfoResult. The
          PhysicalPartitionThroughputInfoResult is compatible with MutableMapping
         :rtype:
@@ -12834,12 +13374,29 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _mongo_db_database_redistribute_throughput_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        redistribute_throughput_parameters: Union[_models.RedistributeThroughputParameters, JSON, IO[bytes]],
+        redistribute_throughput_parameters: Union[
+            _models.RedistributeThroughputParameters, _types.RedistributeThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12954,7 +13511,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        redistribute_throughput_parameters: JSON,
+        redistribute_throughput_parameters: _types.RedistributeThroughputParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12970,7 +13527,8 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :type database_name: str
         :param redistribute_throughput_parameters: The parameters to provide for redistributing
          throughput for the current MongoDB database. Required.
-        :type redistribute_throughput_parameters: JSON
+        :type redistribute_throughput_parameters:
+         ~azure.mgmt.cosmosdb.types.RedistributeThroughputParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13015,12 +13573,29 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_mongo_db_database_redistribute_throughput(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        redistribute_throughput_parameters: Union[_models.RedistributeThroughputParameters, JSON, IO[bytes]],
+        redistribute_throughput_parameters: Union[
+            _models.RedistributeThroughputParameters, _types.RedistributeThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PhysicalPartitionThroughputInfoResult]:
         """Redistribute throughput for an Azure Cosmos DB MongoDB database.
@@ -13033,10 +13608,11 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
         :param redistribute_throughput_parameters: The parameters to provide for redistributing
-         throughput for the current MongoDB database. Is one of the following types:
-         RedistributeThroughputParameters, JSON, IO[bytes] Required.
+         throughput for the current MongoDB database. Is either a RedistributeThroughputParameters type
+         or a IO[bytes] type. Required.
         :type redistribute_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.RedistributeThroughputParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.RedistributeThroughputParameters or
+         ~azure.mgmt.cosmosdb.types.RedistributeThroughputParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PhysicalPartitionThroughputInfoResult. The
          PhysicalPartitionThroughputInfoResult is compatible with MutableMapping
         :rtype:
@@ -13182,7 +13758,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         collection_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13302,7 +13880,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         collection_name: str,
-        update_throughput_parameters: JSON,
+        update_throughput_parameters: _types.ThroughputSettingsUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13320,7 +13898,8 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :type collection_name: str
         :param update_throughput_parameters: The RUs per second of the parameters to provide for the
          current MongoDB collection. Required.
-        :type update_throughput_parameters: JSON
+        :type update_throughput_parameters:
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13374,7 +13953,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         collection_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ThroughputSettingsGetResults]:
         """Update the RUs per second of an Azure Cosmos DB MongoDB collection.
@@ -13389,10 +13970,11 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :param collection_name: Cosmos DB collection name. Required.
         :type collection_name: str
         :param update_throughput_parameters: The RUs per second of the parameters to provide for the
-         current MongoDB collection. Is one of the following types: ThroughputSettingsUpdateParameters,
-         JSON, IO[bytes] Required.
+         current MongoDB collection. Is either a ThroughputSettingsUpdateParameters type or a IO[bytes]
+         type. Required.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ThroughputSettingsGetResults. The
          ThroughputSettingsGetResults is compatible with MutableMapping
         :rtype:
@@ -13453,13 +14035,31 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "collection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _mongo_db_container_retrieve_throughput_distribution_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
         collection_name: str,
-        retrieve_throughput_parameters: Union[_models.RetrieveThroughputParameters, JSON, IO[bytes]],
+        retrieve_throughput_parameters: Union[
+            _models.RetrieveThroughputParameters, _types.RetrieveThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13578,7 +14178,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         collection_name: str,
-        retrieve_throughput_parameters: JSON,
+        retrieve_throughput_parameters: _types.RetrieveThroughputParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13596,7 +14196,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :type collection_name: str
         :param retrieve_throughput_parameters: The parameters to provide for retrieving throughput
          distribution for the current MongoDB container. Required.
-        :type retrieve_throughput_parameters: JSON
+        :type retrieve_throughput_parameters: ~azure.mgmt.cosmosdb.types.RetrieveThroughputParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13644,13 +14244,31 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "collection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_mongo_db_container_retrieve_throughput_distribution(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
         collection_name: str,
-        retrieve_throughput_parameters: Union[_models.RetrieveThroughputParameters, JSON, IO[bytes]],
+        retrieve_throughput_parameters: Union[
+            _models.RetrieveThroughputParameters, _types.RetrieveThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PhysicalPartitionThroughputInfoResult]:
         """Retrieve throughput distribution for an Azure Cosmos DB MongoDB container.
@@ -13665,10 +14283,10 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :param collection_name: Cosmos DB collection name. Required.
         :type collection_name: str
         :param retrieve_throughput_parameters: The parameters to provide for retrieving throughput
-         distribution for the current MongoDB container. Is one of the following types:
-         RetrieveThroughputParameters, JSON, IO[bytes] Required.
+         distribution for the current MongoDB container. Is either a RetrieveThroughputParameters type
+         or a IO[bytes] type. Required.
         :type retrieve_throughput_parameters: ~azure.mgmt.cosmosdb.models.RetrieveThroughputParameters
-         or JSON or IO[bytes]
+         or ~azure.mgmt.cosmosdb.types.RetrieveThroughputParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PhysicalPartitionThroughputInfoResult. The
          PhysicalPartitionThroughputInfoResult is compatible with MutableMapping
         :rtype:
@@ -13729,13 +14347,31 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "collection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _mongo_db_container_redistribute_throughput_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
         collection_name: str,
-        redistribute_throughput_parameters: Union[_models.RedistributeThroughputParameters, JSON, IO[bytes]],
+        redistribute_throughput_parameters: Union[
+            _models.RedistributeThroughputParameters, _types.RedistributeThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13855,7 +14491,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         collection_name: str,
-        redistribute_throughput_parameters: JSON,
+        redistribute_throughput_parameters: _types.RedistributeThroughputParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13873,7 +14509,8 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :type collection_name: str
         :param redistribute_throughput_parameters: The parameters to provide for redistributing
          throughput for the current MongoDB container. Required.
-        :type redistribute_throughput_parameters: JSON
+        :type redistribute_throughput_parameters:
+         ~azure.mgmt.cosmosdb.types.RedistributeThroughputParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13921,13 +14558,31 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "collection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_mongo_db_container_redistribute_throughput(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
         collection_name: str,
-        redistribute_throughput_parameters: Union[_models.RedistributeThroughputParameters, JSON, IO[bytes]],
+        redistribute_throughput_parameters: Union[
+            _models.RedistributeThroughputParameters, _types.RedistributeThroughputParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PhysicalPartitionThroughputInfoResult]:
         """Redistribute throughput for an Azure Cosmos DB MongoDB container.
@@ -13942,10 +14597,11 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :param collection_name: Cosmos DB collection name. Required.
         :type collection_name: str
         :param redistribute_throughput_parameters: The parameters to provide for redistributing
-         throughput for the current MongoDB container. Is one of the following types:
-         RedistributeThroughputParameters, JSON, IO[bytes] Required.
+         throughput for the current MongoDB container. Is either a RedistributeThroughputParameters type
+         or a IO[bytes] type. Required.
         :type redistribute_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.RedistributeThroughputParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.RedistributeThroughputParameters or
+         ~azure.mgmt.cosmosdb.types.RedistributeThroughputParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PhysicalPartitionThroughputInfoResult. The
          PhysicalPartitionThroughputInfoResult is compatible with MutableMapping
         :rtype:
@@ -14365,7 +15021,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         create_update_mongo_db_database_parameters: Union[
-            _models.MongoDBDatabaseCreateUpdateParameters, JSON, IO[bytes]
+            _models.MongoDBDatabaseCreateUpdateParameters, _types.MongoDBDatabaseCreateUpdateParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -14481,7 +15137,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        create_update_mongo_db_database_parameters: JSON,
+        create_update_mongo_db_database_parameters: _types.MongoDBDatabaseCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14497,7 +15153,8 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :type database_name: str
         :param create_update_mongo_db_database_parameters: The parameters to provide for the current
          MongoDB database. Required.
-        :type create_update_mongo_db_database_parameters: JSON
+        :type create_update_mongo_db_database_parameters:
+         ~azure.mgmt.cosmosdb.types.MongoDBDatabaseCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14548,7 +15205,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         create_update_mongo_db_database_parameters: Union[
-            _models.MongoDBDatabaseCreateUpdateParameters, JSON, IO[bytes]
+            _models.MongoDBDatabaseCreateUpdateParameters, _types.MongoDBDatabaseCreateUpdateParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoDBDatabaseGetResults]:
@@ -14562,10 +15219,11 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
         :param create_update_mongo_db_database_parameters: The parameters to provide for the current
-         MongoDB database. Is one of the following types: MongoDBDatabaseCreateUpdateParameters, JSON,
-         IO[bytes] Required.
+         MongoDB database. Is either a MongoDBDatabaseCreateUpdateParameters type or a IO[bytes] type.
+         Required.
         :type create_update_mongo_db_database_parameters:
-         ~azure.mgmt.cosmosdb.models.MongoDBDatabaseCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.MongoDBDatabaseCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.MongoDBDatabaseCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns MongoDBDatabaseGetResults. The
          MongoDBDatabaseGetResults is compatible with MutableMapping
         :rtype:
@@ -14809,7 +15467,10 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14851,12 +15512,27 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _mongo_db_database_partition_merge_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        merge_parameters: Union[_models.MergeParameters, JSON, IO[bytes]],
+        merge_parameters: Union[_models.MergeParameters, _types.MergeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14969,7 +15645,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        merge_parameters: JSON,
+        merge_parameters: _types.MergeParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14984,7 +15660,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
         :param merge_parameters: The parameters for the merge operation. Required.
-        :type merge_parameters: JSON
+        :type merge_parameters: ~azure.mgmt.cosmosdb.types.MergeParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15028,12 +15704,27 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_mongo_db_database_partition_merge(
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        merge_parameters: Union[_models.MergeParameters, JSON, IO[bytes]],
+        merge_parameters: Union[_models.MergeParameters, _types.MergeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PhysicalPartitionStorageInfoCollection]:
         """Merges the partitions of a MongoDB database.
@@ -15045,9 +15736,10 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
-        :param merge_parameters: The parameters for the merge operation. Is one of the following types:
-         MergeParameters, JSON, IO[bytes] Required.
-        :type merge_parameters: ~azure.mgmt.cosmosdb.models.MergeParameters or JSON or IO[bytes]
+        :param merge_parameters: The parameters for the merge operation. Is either a MergeParameters
+         type or a IO[bytes] type. Required.
+        :type merge_parameters: ~azure.mgmt.cosmosdb.models.MergeParameters or
+         ~azure.mgmt.cosmosdb.types.MergeParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PhysicalPartitionStorageInfoCollection. The
          PhysicalPartitionStorageInfoCollection is compatible with MutableMapping
         :rtype:
@@ -15193,7 +15885,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         database_name: str,
         collection_name: str,
         create_update_mongo_db_collection_parameters: Union[
-            _models.MongoDBCollectionCreateUpdateParameters, JSON, IO[bytes]
+            _models.MongoDBCollectionCreateUpdateParameters, _types.MongoDBCollectionCreateUpdateParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -15314,7 +16006,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         collection_name: str,
-        create_update_mongo_db_collection_parameters: JSON,
+        create_update_mongo_db_collection_parameters: _types.MongoDBCollectionCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15332,7 +16024,8 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :type collection_name: str
         :param create_update_mongo_db_collection_parameters: The parameters to provide for the current
          MongoDB Collection. Required.
-        :type create_update_mongo_db_collection_parameters: JSON
+        :type create_update_mongo_db_collection_parameters:
+         ~azure.mgmt.cosmosdb.types.MongoDBCollectionCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15387,7 +16080,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         database_name: str,
         collection_name: str,
         create_update_mongo_db_collection_parameters: Union[
-            _models.MongoDBCollectionCreateUpdateParameters, JSON, IO[bytes]
+            _models.MongoDBCollectionCreateUpdateParameters, _types.MongoDBCollectionCreateUpdateParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoDBCollectionGetResults]:
@@ -15403,10 +16096,11 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :param collection_name: Cosmos DB collection name. Required.
         :type collection_name: str
         :param create_update_mongo_db_collection_parameters: The parameters to provide for the current
-         MongoDB Collection. Is one of the following types: MongoDBCollectionCreateUpdateParameters,
-         JSON, IO[bytes] Required.
+         MongoDB Collection. Is either a MongoDBCollectionCreateUpdateParameters type or a IO[bytes]
+         type. Required.
         :type create_update_mongo_db_collection_parameters:
-         ~azure.mgmt.cosmosdb.models.MongoDBCollectionCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.MongoDBCollectionCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.MongoDBCollectionCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns MongoDBCollectionGetResults. The
          MongoDBCollectionGetResults is compatible with MutableMapping
         :rtype:
@@ -15658,7 +16352,10 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15700,13 +16397,29 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "collection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _list_mongo_db_collection_partition_merge_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
         collection_name: str,
-        merge_parameters: Union[_models.MergeParameters, JSON, IO[bytes]],
+        merge_parameters: Union[_models.MergeParameters, _types.MergeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15824,7 +16537,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         collection_name: str,
-        merge_parameters: JSON,
+        merge_parameters: _types.MergeParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15841,7 +16554,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :param collection_name: Cosmos DB collection name. Required.
         :type collection_name: str
         :param merge_parameters: The parameters for the merge operation. Required.
-        :type merge_parameters: JSON
+        :type merge_parameters: ~azure.mgmt.cosmosdb.types.MergeParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15888,13 +16601,29 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "database_name",
+                "collection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_list_mongo_db_collection_partition_merge(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
         collection_name: str,
-        merge_parameters: Union[_models.MergeParameters, JSON, IO[bytes]],
+        merge_parameters: Union[_models.MergeParameters, _types.MergeParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PhysicalPartitionStorageInfoCollection]:
         """Merges the partitions of a MongoDB Collection.
@@ -15908,9 +16637,10 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :type database_name: str
         :param collection_name: Cosmos DB collection name. Required.
         :type collection_name: str
-        :param merge_parameters: The parameters for the merge operation. Is one of the following types:
-         MergeParameters, JSON, IO[bytes] Required.
-        :type merge_parameters: ~azure.mgmt.cosmosdb.models.MergeParameters or JSON or IO[bytes]
+        :param merge_parameters: The parameters for the merge operation. Is either a MergeParameters
+         type or a IO[bytes] type. Required.
+        :type merge_parameters: ~azure.mgmt.cosmosdb.models.MergeParameters or
+         ~azure.mgmt.cosmosdb.types.MergeParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PhysicalPartitionStorageInfoCollection. The
          PhysicalPartitionStorageInfoCollection is compatible with MutableMapping
         :rtype:
@@ -15977,7 +16707,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         collection_name: str,
-        location: Union[_models.ContinuousBackupRestoreLocation, JSON, IO[bytes]],
+        location: Union[_models.ContinuousBackupRestoreLocation, _types.ContinuousBackupRestoreLocation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -16091,7 +16821,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         collection_name: str,
-        location: JSON,
+        location: _types.ContinuousBackupRestoreLocation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16108,7 +16838,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :param collection_name: Cosmos DB collection name. Required.
         :type collection_name: str
         :param location: The name of the continuous backup restore location. Required.
-        :type location: JSON
+        :type location: ~azure.mgmt.cosmosdb.types.ContinuousBackupRestoreLocation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16159,7 +16889,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         collection_name: str,
-        location: Union[_models.ContinuousBackupRestoreLocation, JSON, IO[bytes]],
+        location: Union[_models.ContinuousBackupRestoreLocation, _types.ContinuousBackupRestoreLocation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackupInformation]:
         """Retrieves continuous backup information for a Mongodb collection.
@@ -16173,10 +16903,10 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :type database_name: str
         :param collection_name: Cosmos DB collection name. Required.
         :type collection_name: str
-        :param location: The name of the continuous backup restore location. Is one of the following
-         types: ContinuousBackupRestoreLocation, JSON, IO[bytes] Required.
-        :type location: ~azure.mgmt.cosmosdb.models.ContinuousBackupRestoreLocation or JSON or
-         IO[bytes]
+        :param location: The name of the continuous backup restore location. Is either a
+         ContinuousBackupRestoreLocation type or a IO[bytes] type. Required.
+        :type location: ~azure.mgmt.cosmosdb.models.ContinuousBackupRestoreLocation or
+         ~azure.mgmt.cosmosdb.types.ContinuousBackupRestoreLocation or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BackupInformation. The BackupInformation is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.BackupInformation]
@@ -16207,14 +16937,10 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.BackupInformation, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -16323,7 +17049,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         create_update_mongo_role_definition_parameters: Union[
-            _models.MongoRoleDefinitionCreateUpdateParameters, JSON, IO[bytes]
+            _models.MongoRoleDefinitionCreateUpdateParameters,
+            _types.MongoRoleDefinitionCreateUpdateParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -16436,7 +17164,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         mongo_role_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        create_update_mongo_role_definition_parameters: JSON,
+        create_update_mongo_role_definition_parameters: _types.MongoRoleDefinitionCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16452,7 +17180,8 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param create_update_mongo_role_definition_parameters: The properties required to create or
          update a Role Definition. Required.
-        :type create_update_mongo_role_definition_parameters: JSON
+        :type create_update_mongo_role_definition_parameters:
+         ~azure.mgmt.cosmosdb.types.MongoRoleDefinitionCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16503,7 +17232,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         create_update_mongo_role_definition_parameters: Union[
-            _models.MongoRoleDefinitionCreateUpdateParameters, JSON, IO[bytes]
+            _models.MongoRoleDefinitionCreateUpdateParameters,
+            _types.MongoRoleDefinitionCreateUpdateParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoRoleDefinitionGetResults]:
@@ -16517,10 +17248,11 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
         :param create_update_mongo_role_definition_parameters: The properties required to create or
-         update a Role Definition. Is one of the following types:
-         MongoRoleDefinitionCreateUpdateParameters, JSON, IO[bytes] Required.
+         update a Role Definition. Is either a MongoRoleDefinitionCreateUpdateParameters type or a
+         IO[bytes] type. Required.
         :type create_update_mongo_role_definition_parameters:
-         ~azure.mgmt.cosmosdb.models.MongoRoleDefinitionCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.MongoRoleDefinitionCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.MongoRoleDefinitionCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns MongoRoleDefinitionGetResults. The
          MongoRoleDefinitionGetResults is compatible with MutableMapping
         :rtype:
@@ -16762,7 +17494,10 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16887,7 +17622,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         create_update_mongo_user_definition_parameters: Union[
-            _models.MongoUserDefinitionCreateUpdateParameters, JSON, IO[bytes]
+            _models.MongoUserDefinitionCreateUpdateParameters,
+            _types.MongoUserDefinitionCreateUpdateParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -17000,7 +17737,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         mongo_user_definition_id: str,
         resource_group_name: str,
         account_name: str,
-        create_update_mongo_user_definition_parameters: JSON,
+        create_update_mongo_user_definition_parameters: _types.MongoUserDefinitionCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17016,7 +17753,8 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param create_update_mongo_user_definition_parameters: The properties required to create or
          update a User Definition. Required.
-        :type create_update_mongo_user_definition_parameters: JSON
+        :type create_update_mongo_user_definition_parameters:
+         ~azure.mgmt.cosmosdb.types.MongoUserDefinitionCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17067,7 +17805,9 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         create_update_mongo_user_definition_parameters: Union[
-            _models.MongoUserDefinitionCreateUpdateParameters, JSON, IO[bytes]
+            _models.MongoUserDefinitionCreateUpdateParameters,
+            _types.MongoUserDefinitionCreateUpdateParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoUserDefinitionGetResults]:
@@ -17081,10 +17821,11 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         :param account_name: Cosmos DB database account name. Required.
         :type account_name: str
         :param create_update_mongo_user_definition_parameters: The properties required to create or
-         update a User Definition. Is one of the following types:
-         MongoUserDefinitionCreateUpdateParameters, JSON, IO[bytes] Required.
+         update a User Definition. Is either a MongoUserDefinitionCreateUpdateParameters type or a
+         IO[bytes] type. Required.
         :type create_update_mongo_user_definition_parameters:
-         ~azure.mgmt.cosmosdb.models.MongoUserDefinitionCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.MongoUserDefinitionCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.MongoUserDefinitionCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns MongoUserDefinitionGetResults. The
          MongoUserDefinitionGetResults is compatible with MutableMapping
         :rtype:
@@ -17326,7 +18067,10 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -17369,7 +18113,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TableResourcesOperations:  # pylint: disable=too-many-public-methods
+class TableResourcesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17468,7 +18212,9 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -17583,7 +18329,7 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        update_throughput_parameters: JSON,
+        update_throughput_parameters: _types.ThroughputSettingsUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17599,7 +18345,8 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         :type table_name: str
         :param update_throughput_parameters: The parameters to provide for the RUs per second of the
          current Table. Required.
-        :type update_throughput_parameters: JSON
+        :type update_throughput_parameters:
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17649,7 +18396,9 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ThroughputSettingsGetResults]:
         """Update RUs per second of an Azure Cosmos DB Table.
@@ -17662,10 +18411,11 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         :param table_name: Cosmos DB table name. Required.
         :type table_name: str
         :param update_throughput_parameters: The parameters to provide for the RUs per second of the
-         current Table. Is one of the following types: ThroughputSettingsUpdateParameters, JSON,
-         IO[bytes] Required.
+         current Table. Is either a ThroughputSettingsUpdateParameters type or a IO[bytes] type.
+         Required.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ThroughputSettingsGetResults. The
          ThroughputSettingsGetResults is compatible with MutableMapping
         :rtype:
@@ -18073,7 +18823,9 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        create_update_table_parameters: Union[_models.TableCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_table_parameters: Union[
+            _models.TableCreateUpdateParameters, _types.TableCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -18186,7 +18938,7 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        create_update_table_parameters: JSON,
+        create_update_table_parameters: _types.TableCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18202,7 +18954,7 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         :type table_name: str
         :param create_update_table_parameters: The parameters to provide for the current Table.
          Required.
-        :type create_update_table_parameters: JSON
+        :type create_update_table_parameters: ~azure.mgmt.cosmosdb.types.TableCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18250,7 +19002,9 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        create_update_table_parameters: Union[_models.TableCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_table_parameters: Union[
+            _models.TableCreateUpdateParameters, _types.TableCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.TableGetResults]:
         """Create or update an Azure Cosmos DB Table.
@@ -18262,10 +19016,10 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param table_name: Cosmos DB table name. Required.
         :type table_name: str
-        :param create_update_table_parameters: The parameters to provide for the current Table. Is one
-         of the following types: TableCreateUpdateParameters, JSON, IO[bytes] Required.
+        :param create_update_table_parameters: The parameters to provide for the current Table. Is
+         either a TableCreateUpdateParameters type or a IO[bytes] type. Required.
         :type create_update_table_parameters: ~azure.mgmt.cosmosdb.models.TableCreateUpdateParameters
-         or JSON or IO[bytes]
+         or ~azure.mgmt.cosmosdb.types.TableCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns TableGetResults. The TableGetResults is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.TableGetResults]
@@ -18507,7 +19261,10 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -18554,7 +19311,7 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        location: Union[_models.ContinuousBackupRestoreLocation, JSON, IO[bytes]],
+        location: Union[_models.ContinuousBackupRestoreLocation, _types.ContinuousBackupRestoreLocation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -18663,7 +19420,7 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        location: JSON,
+        location: _types.ContinuousBackupRestoreLocation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18678,7 +19435,7 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         :param table_name: Cosmos DB table name. Required.
         :type table_name: str
         :param location: The name of the continuous backup restore location. Required.
-        :type location: JSON
+        :type location: ~azure.mgmt.cosmosdb.types.ContinuousBackupRestoreLocation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18725,7 +19482,7 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         table_name: str,
-        location: Union[_models.ContinuousBackupRestoreLocation, JSON, IO[bytes]],
+        location: Union[_models.ContinuousBackupRestoreLocation, _types.ContinuousBackupRestoreLocation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackupInformation]:
         """Retrieves continuous backup information for a table.
@@ -18737,10 +19494,10 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param table_name: Cosmos DB table name. Required.
         :type table_name: str
-        :param location: The name of the continuous backup restore location. Is one of the following
-         types: ContinuousBackupRestoreLocation, JSON, IO[bytes] Required.
-        :type location: ~azure.mgmt.cosmosdb.models.ContinuousBackupRestoreLocation or JSON or
-         IO[bytes]
+        :param location: The name of the continuous backup restore location. Is either a
+         ContinuousBackupRestoreLocation type or a IO[bytes] type. Required.
+        :type location: ~azure.mgmt.cosmosdb.models.ContinuousBackupRestoreLocation or
+         ~azure.mgmt.cosmosdb.types.ContinuousBackupRestoreLocation or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BackupInformation. The BackupInformation is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.BackupInformation]
@@ -18770,14 +19527,10 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.BackupInformation, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -18885,7 +19638,9 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         role_definition_id: str,
-        create_update_table_role_definition_parameters: Union[_models.TableRoleDefinitionResource, JSON, IO[bytes]],
+        create_update_table_role_definition_parameters: Union[
+            _models.TableRoleDefinitionResource, _types.TableRoleDefinitionResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -18999,7 +19754,7 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         role_definition_id: str,
-        create_update_table_role_definition_parameters: JSON,
+        create_update_table_role_definition_parameters: _types.TableRoleDefinitionResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19015,7 +19770,8 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         :type role_definition_id: str
         :param create_update_table_role_definition_parameters: The properties required to create or
          update a Role Definition. Required.
-        :type create_update_table_role_definition_parameters: JSON
+        :type create_update_table_role_definition_parameters:
+         ~azure.mgmt.cosmosdb.types.TableRoleDefinitionResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19065,7 +19821,9 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         role_definition_id: str,
-        create_update_table_role_definition_parameters: Union[_models.TableRoleDefinitionResource, JSON, IO[bytes]],
+        create_update_table_role_definition_parameters: Union[
+            _models.TableRoleDefinitionResource, _types.TableRoleDefinitionResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.TableRoleDefinitionResource]:
         """Creates or updates an Azure Cosmos DB Table Role Definition.
@@ -19078,10 +19836,11 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         :param role_definition_id: The GUID for the Role Definition. Required.
         :type role_definition_id: str
         :param create_update_table_role_definition_parameters: The properties required to create or
-         update a Role Definition. Is one of the following types: TableRoleDefinitionResource, JSON,
-         IO[bytes] Required.
+         update a Role Definition. Is either a TableRoleDefinitionResource type or a IO[bytes] type.
+         Required.
         :type create_update_table_role_definition_parameters:
-         ~azure.mgmt.cosmosdb.models.TableRoleDefinitionResource or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.TableRoleDefinitionResource or
+         ~azure.mgmt.cosmosdb.types.TableRoleDefinitionResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns TableRoleDefinitionResource. The
          TableRoleDefinitionResource is compatible with MutableMapping
         :rtype:
@@ -19325,7 +20084,10 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -19449,7 +20211,9 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         role_assignment_id: str,
-        create_update_table_role_assignment_parameters: Union[_models.TableRoleAssignmentResource, JSON, IO[bytes]],
+        create_update_table_role_assignment_parameters: Union[
+            _models.TableRoleAssignmentResource, _types.TableRoleAssignmentResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -19564,7 +20328,7 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         role_assignment_id: str,
-        create_update_table_role_assignment_parameters: JSON,
+        create_update_table_role_assignment_parameters: _types.TableRoleAssignmentResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19580,7 +20344,8 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         :type role_assignment_id: str
         :param create_update_table_role_assignment_parameters: The properties required to create or
          update a Role Assignment. Required.
-        :type create_update_table_role_assignment_parameters: JSON
+        :type create_update_table_role_assignment_parameters:
+         ~azure.mgmt.cosmosdb.types.TableRoleAssignmentResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19630,7 +20395,9 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         role_assignment_id: str,
-        create_update_table_role_assignment_parameters: Union[_models.TableRoleAssignmentResource, JSON, IO[bytes]],
+        create_update_table_role_assignment_parameters: Union[
+            _models.TableRoleAssignmentResource, _types.TableRoleAssignmentResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.TableRoleAssignmentResource]:
         """Creates or updates an Azure Cosmos DB Table Role Assignment.
@@ -19643,10 +20410,11 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         :param role_assignment_id: The GUID for the Role Assignment. Required.
         :type role_assignment_id: str
         :param create_update_table_role_assignment_parameters: The properties required to create or
-         update a Role Assignment. Is one of the following types: TableRoleAssignmentResource, JSON,
-         IO[bytes] Required.
+         update a Role Assignment. Is either a TableRoleAssignmentResource type or a IO[bytes] type.
+         Required.
         :type create_update_table_role_assignment_parameters:
-         ~azure.mgmt.cosmosdb.models.TableRoleAssignmentResource or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.TableRoleAssignmentResource or
+         ~azure.mgmt.cosmosdb.types.TableRoleAssignmentResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns TableRoleAssignmentResource. The
          TableRoleAssignmentResource is compatible with MutableMapping
         :rtype:
@@ -19890,7 +20658,10 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -19933,7 +20704,7 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
+class CassandraResourcesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20032,7 +20803,9 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         keyspace_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -20147,7 +20920,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         keyspace_name: str,
-        update_throughput_parameters: JSON,
+        update_throughput_parameters: _types.ThroughputSettingsUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20163,7 +20936,8 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :type keyspace_name: str
         :param update_throughput_parameters: The RUs per second of the parameters to provide for the
          current Cassandra Keyspace. Required.
-        :type update_throughput_parameters: JSON
+        :type update_throughput_parameters:
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20213,7 +20987,9 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         keyspace_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ThroughputSettingsGetResults]:
         """Update RUs per second of an Azure Cosmos DB Cassandra Keyspace.
@@ -20226,10 +21002,11 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :param keyspace_name: Cosmos DB keyspace name. Required.
         :type keyspace_name: str
         :param update_throughput_parameters: The RUs per second of the parameters to provide for the
-         current Cassandra Keyspace. Is one of the following types: ThroughputSettingsUpdateParameters,
-         JSON, IO[bytes] Required.
+         current Cassandra Keyspace. Is either a ThroughputSettingsUpdateParameters type or a IO[bytes]
+         type. Required.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ThroughputSettingsGetResults. The
          ThroughputSettingsGetResults is compatible with MutableMapping
         :rtype:
@@ -20643,7 +21420,9 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         keyspace_name: str,
         table_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -20763,7 +21542,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         keyspace_name: str,
         table_name: str,
-        update_throughput_parameters: JSON,
+        update_throughput_parameters: _types.ThroughputSettingsUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20781,7 +21560,8 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :type table_name: str
         :param update_throughput_parameters: The RUs per second of the parameters to provide for the
          current Cassandra table. Required.
-        :type update_throughput_parameters: JSON
+        :type update_throughput_parameters:
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20835,7 +21615,9 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         keyspace_name: str,
         table_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ThroughputSettingsGetResults]:
         """Update RUs per second of an Azure Cosmos DB Cassandra table.
@@ -20850,10 +21632,11 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :param table_name: Cosmos DB table name. Required.
         :type table_name: str
         :param update_throughput_parameters: The RUs per second of the parameters to provide for the
-         current Cassandra table. Is one of the following types: ThroughputSettingsUpdateParameters,
-         JSON, IO[bytes] Required.
+         current Cassandra table. Is either a ThroughputSettingsUpdateParameters type or a IO[bytes]
+         type. Required.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ThroughputSettingsGetResults. The
          ThroughputSettingsGetResults is compatible with MutableMapping
         :rtype:
@@ -21276,7 +22059,9 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         keyspace_name: str,
         view_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -21396,7 +22181,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         keyspace_name: str,
         view_name: str,
-        update_throughput_parameters: JSON,
+        update_throughput_parameters: _types.ThroughputSettingsUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21414,7 +22199,8 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :type view_name: str
         :param update_throughput_parameters: The RUs per second of the parameters to provide for the
          current Cassandra view. Required.
-        :type update_throughput_parameters: JSON
+        :type update_throughput_parameters:
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21468,7 +22254,9 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         keyspace_name: str,
         view_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ThroughputSettingsGetResults]:
         """Update RUs per second of an Azure Cosmos DB Cassandra view.
@@ -21483,10 +22271,11 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :param view_name: Cosmos DB view name. Required.
         :type view_name: str
         :param update_throughput_parameters: The RUs per second of the parameters to provide for the
-         current Cassandra view. Is one of the following types: ThroughputSettingsUpdateParameters,
-         JSON, IO[bytes] Required.
+         current Cassandra view. Is either a ThroughputSettingsUpdateParameters type or a IO[bytes]
+         type. Required.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ThroughputSettingsGetResults. The
          ThroughputSettingsGetResults is compatible with MutableMapping
         :rtype:
@@ -21906,7 +22695,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         keyspace_name: str,
         create_update_cassandra_keyspace_parameters: Union[
-            _models.CassandraKeyspaceCreateUpdateParameters, JSON, IO[bytes]
+            _models.CassandraKeyspaceCreateUpdateParameters, _types.CassandraKeyspaceCreateUpdateParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -22022,7 +22811,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         keyspace_name: str,
-        create_update_cassandra_keyspace_parameters: JSON,
+        create_update_cassandra_keyspace_parameters: _types.CassandraKeyspaceCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22038,7 +22827,8 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :type keyspace_name: str
         :param create_update_cassandra_keyspace_parameters: The parameters to provide for the current
          Cassandra keyspace. Required.
-        :type create_update_cassandra_keyspace_parameters: JSON
+        :type create_update_cassandra_keyspace_parameters:
+         ~azure.mgmt.cosmosdb.types.CassandraKeyspaceCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22089,7 +22879,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         keyspace_name: str,
         create_update_cassandra_keyspace_parameters: Union[
-            _models.CassandraKeyspaceCreateUpdateParameters, JSON, IO[bytes]
+            _models.CassandraKeyspaceCreateUpdateParameters, _types.CassandraKeyspaceCreateUpdateParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CassandraKeyspaceGetResults]:
@@ -22103,10 +22893,11 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :param keyspace_name: Cosmos DB keyspace name. Required.
         :type keyspace_name: str
         :param create_update_cassandra_keyspace_parameters: The parameters to provide for the current
-         Cassandra keyspace. Is one of the following types: CassandraKeyspaceCreateUpdateParameters,
-         JSON, IO[bytes] Required.
+         Cassandra keyspace. Is either a CassandraKeyspaceCreateUpdateParameters type or a IO[bytes]
+         type. Required.
         :type create_update_cassandra_keyspace_parameters:
-         ~azure.mgmt.cosmosdb.models.CassandraKeyspaceCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.CassandraKeyspaceCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.CassandraKeyspaceCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CassandraKeyspaceGetResults. The
          CassandraKeyspaceGetResults is compatible with MutableMapping
         :rtype:
@@ -22350,7 +23141,10 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -22477,7 +23271,9 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         keyspace_name: str,
         table_name: str,
-        create_update_cassandra_table_parameters: Union[_models.CassandraTableCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_cassandra_table_parameters: Union[
+            _models.CassandraTableCreateUpdateParameters, _types.CassandraTableCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -22597,7 +23393,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         keyspace_name: str,
         table_name: str,
-        create_update_cassandra_table_parameters: JSON,
+        create_update_cassandra_table_parameters: _types.CassandraTableCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22615,7 +23411,8 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :type table_name: str
         :param create_update_cassandra_table_parameters: The parameters to provide for the current
          Cassandra Table. Required.
-        :type create_update_cassandra_table_parameters: JSON
+        :type create_update_cassandra_table_parameters:
+         ~azure.mgmt.cosmosdb.types.CassandraTableCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22669,7 +23466,9 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         keyspace_name: str,
         table_name: str,
-        create_update_cassandra_table_parameters: Union[_models.CassandraTableCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_cassandra_table_parameters: Union[
+            _models.CassandraTableCreateUpdateParameters, _types.CassandraTableCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CassandraTableGetResults]:
         """Create or update an Azure Cosmos DB Cassandra Table.
@@ -22684,10 +23483,11 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :param table_name: Cosmos DB table name. Required.
         :type table_name: str
         :param create_update_cassandra_table_parameters: The parameters to provide for the current
-         Cassandra Table. Is one of the following types: CassandraTableCreateUpdateParameters, JSON,
-         IO[bytes] Required.
+         Cassandra Table. Is either a CassandraTableCreateUpdateParameters type or a IO[bytes] type.
+         Required.
         :type create_update_cassandra_table_parameters:
-         ~azure.mgmt.cosmosdb.models.CassandraTableCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.CassandraTableCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.CassandraTableCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CassandraTableGetResults. The
          CassandraTableGetResults is compatible with MutableMapping
         :rtype:
@@ -22939,7 +23739,10 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -23065,7 +23868,9 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         keyspace_name: str,
         view_name: str,
-        create_update_cassandra_view_parameters: Union[_models.CassandraViewCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_cassandra_view_parameters: Union[
+            _models.CassandraViewCreateUpdateParameters, _types.CassandraViewCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -23184,7 +23989,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         keyspace_name: str,
         view_name: str,
-        create_update_cassandra_view_parameters: JSON,
+        create_update_cassandra_view_parameters: _types.CassandraViewCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23202,7 +24007,8 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :type view_name: str
         :param create_update_cassandra_view_parameters: The parameters to provide for the current
          Cassandra View. Required.
-        :type create_update_cassandra_view_parameters: JSON
+        :type create_update_cassandra_view_parameters:
+         ~azure.mgmt.cosmosdb.types.CassandraViewCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23254,7 +24060,9 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         keyspace_name: str,
         view_name: str,
-        create_update_cassandra_view_parameters: Union[_models.CassandraViewCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_cassandra_view_parameters: Union[
+            _models.CassandraViewCreateUpdateParameters, _types.CassandraViewCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CassandraViewGetResults]:
         """Create or update an Azure Cosmos DB Cassandra View.
@@ -23269,10 +24077,11 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :param view_name: Cosmos DB view name. Required.
         :type view_name: str
         :param create_update_cassandra_view_parameters: The parameters to provide for the current
-         Cassandra View. Is one of the following types: CassandraViewCreateUpdateParameters, JSON,
-         IO[bytes] Required.
+         Cassandra View. Is either a CassandraViewCreateUpdateParameters type or a IO[bytes] type.
+         Required.
         :type create_update_cassandra_view_parameters:
-         ~azure.mgmt.cosmosdb.models.CassandraViewCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.CassandraViewCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.CassandraViewCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CassandraViewGetResults. The
          CassandraViewGetResults is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.CassandraViewGetResults]
@@ -23524,7 +24333,10 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -23649,7 +24461,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         role_definition_id: str,
         create_update_cassandra_role_definition_parameters: Union[
-            _models.CassandraRoleDefinitionResource, JSON, IO[bytes]
+            _models.CassandraRoleDefinitionResource, _types.CassandraRoleDefinitionResource, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -23765,7 +24577,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         role_definition_id: str,
-        create_update_cassandra_role_definition_parameters: JSON,
+        create_update_cassandra_role_definition_parameters: _types.CassandraRoleDefinitionResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23781,7 +24593,8 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :type role_definition_id: str
         :param create_update_cassandra_role_definition_parameters: The properties required to create or
          update a Role Definition. Required.
-        :type create_update_cassandra_role_definition_parameters: JSON
+        :type create_update_cassandra_role_definition_parameters:
+         ~azure.mgmt.cosmosdb.types.CassandraRoleDefinitionResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23832,7 +24645,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         role_definition_id: str,
         create_update_cassandra_role_definition_parameters: Union[
-            _models.CassandraRoleDefinitionResource, JSON, IO[bytes]
+            _models.CassandraRoleDefinitionResource, _types.CassandraRoleDefinitionResource, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CassandraRoleDefinitionResource]:
@@ -23846,10 +24659,11 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :param role_definition_id: The GUID for the Role Definition. Required.
         :type role_definition_id: str
         :param create_update_cassandra_role_definition_parameters: The properties required to create or
-         update a Role Definition. Is one of the following types: CassandraRoleDefinitionResource, JSON,
-         IO[bytes] Required.
+         update a Role Definition. Is either a CassandraRoleDefinitionResource type or a IO[bytes] type.
+         Required.
         :type create_update_cassandra_role_definition_parameters:
-         ~azure.mgmt.cosmosdb.models.CassandraRoleDefinitionResource or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.CassandraRoleDefinitionResource or
+         ~azure.mgmt.cosmosdb.types.CassandraRoleDefinitionResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CassandraRoleDefinitionResource. The
          CassandraRoleDefinitionResource is compatible with MutableMapping
         :rtype:
@@ -24093,7 +24907,10 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24218,7 +25035,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         role_assignment_id: str,
         create_update_cassandra_role_assignment_parameters: Union[
-            _models.CassandraRoleAssignmentResource, JSON, IO[bytes]
+            _models.CassandraRoleAssignmentResource, _types.CassandraRoleAssignmentResource, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -24334,7 +25151,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         role_assignment_id: str,
-        create_update_cassandra_role_assignment_parameters: JSON,
+        create_update_cassandra_role_assignment_parameters: _types.CassandraRoleAssignmentResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24350,7 +25167,8 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :type role_assignment_id: str
         :param create_update_cassandra_role_assignment_parameters: The properties required to create or
          update a Role Assignment. Required.
-        :type create_update_cassandra_role_assignment_parameters: JSON
+        :type create_update_cassandra_role_assignment_parameters:
+         ~azure.mgmt.cosmosdb.types.CassandraRoleAssignmentResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24401,7 +25219,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         role_assignment_id: str,
         create_update_cassandra_role_assignment_parameters: Union[
-            _models.CassandraRoleAssignmentResource, JSON, IO[bytes]
+            _models.CassandraRoleAssignmentResource, _types.CassandraRoleAssignmentResource, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CassandraRoleAssignmentResource]:
@@ -24415,10 +25233,11 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         :param role_assignment_id: The GUID for the Role Assignment. Required.
         :type role_assignment_id: str
         :param create_update_cassandra_role_assignment_parameters: The properties required to create or
-         update a Role Assignment. Is one of the following types: CassandraRoleAssignmentResource, JSON,
-         IO[bytes] Required.
+         update a Role Assignment. Is either a CassandraRoleAssignmentResource type or a IO[bytes] type.
+         Required.
         :type create_update_cassandra_role_assignment_parameters:
-         ~azure.mgmt.cosmosdb.models.CassandraRoleAssignmentResource or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.CassandraRoleAssignmentResource or
+         ~azure.mgmt.cosmosdb.types.CassandraRoleAssignmentResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CassandraRoleAssignmentResource. The
          CassandraRoleAssignmentResource is compatible with MutableMapping
         :rtype:
@@ -24662,7 +25481,10 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24705,7 +25527,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
+class GremlinResourcesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24804,7 +25626,9 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -24919,7 +25743,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        update_throughput_parameters: JSON,
+        update_throughput_parameters: _types.ThroughputSettingsUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24935,7 +25759,8 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :type database_name: str
         :param update_throughput_parameters: The RUs per second of the parameters to provide for the
          current Gremlin database. Required.
-        :type update_throughput_parameters: JSON
+        :type update_throughput_parameters:
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24985,7 +25810,9 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ThroughputSettingsGetResults]:
         """Update RUs per second of an Azure Cosmos DB Gremlin database.
@@ -24998,10 +25825,11 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
         :param update_throughput_parameters: The RUs per second of the parameters to provide for the
-         current Gremlin database. Is one of the following types: ThroughputSettingsUpdateParameters,
-         JSON, IO[bytes] Required.
+         current Gremlin database. Is either a ThroughputSettingsUpdateParameters type or a IO[bytes]
+         type. Required.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ThroughputSettingsGetResults. The
          ThroughputSettingsGetResults is compatible with MutableMapping
         :rtype:
@@ -25415,7 +26243,9 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         graph_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -25535,7 +26365,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         graph_name: str,
-        update_throughput_parameters: JSON,
+        update_throughput_parameters: _types.ThroughputSettingsUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25553,7 +26383,8 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :type graph_name: str
         :param update_throughput_parameters: The RUs per second of the parameters to provide for the
          current Gremlin graph. Required.
-        :type update_throughput_parameters: JSON
+        :type update_throughput_parameters:
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25607,7 +26438,9 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         graph_name: str,
-        update_throughput_parameters: Union[_models.ThroughputSettingsUpdateParameters, JSON, IO[bytes]],
+        update_throughput_parameters: Union[
+            _models.ThroughputSettingsUpdateParameters, _types.ThroughputSettingsUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ThroughputSettingsGetResults]:
         """Update RUs per second of an Azure Cosmos DB Gremlin graph.
@@ -25622,10 +26455,11 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :param graph_name: Cosmos DB graph name. Required.
         :type graph_name: str
         :param update_throughput_parameters: The RUs per second of the parameters to provide for the
-         current Gremlin graph. Is one of the following types: ThroughputSettingsUpdateParameters, JSON,
-         IO[bytes] Required.
+         current Gremlin graph. Is either a ThroughputSettingsUpdateParameters type or a IO[bytes] type.
+         Required.
         :type update_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.ThroughputSettingsUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.ThroughputSettingsUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ThroughputSettingsGetResults. The
          ThroughputSettingsGetResults is compatible with MutableMapping
         :rtype:
@@ -26045,7 +26879,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         create_update_gremlin_database_parameters: Union[
-            _models.GremlinDatabaseCreateUpdateParameters, JSON, IO[bytes]
+            _models.GremlinDatabaseCreateUpdateParameters, _types.GremlinDatabaseCreateUpdateParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -26161,7 +26995,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        create_update_gremlin_database_parameters: JSON,
+        create_update_gremlin_database_parameters: _types.GremlinDatabaseCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26177,7 +27011,8 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :type database_name: str
         :param create_update_gremlin_database_parameters: The parameters to provide for the current
          Gremlin database. Required.
-        :type create_update_gremlin_database_parameters: JSON
+        :type create_update_gremlin_database_parameters:
+         ~azure.mgmt.cosmosdb.types.GremlinDatabaseCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26228,7 +27063,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         create_update_gremlin_database_parameters: Union[
-            _models.GremlinDatabaseCreateUpdateParameters, JSON, IO[bytes]
+            _models.GremlinDatabaseCreateUpdateParameters, _types.GremlinDatabaseCreateUpdateParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GremlinDatabaseGetResults]:
@@ -26242,10 +27077,11 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
         :param create_update_gremlin_database_parameters: The parameters to provide for the current
-         Gremlin database. Is one of the following types: GremlinDatabaseCreateUpdateParameters, JSON,
-         IO[bytes] Required.
+         Gremlin database. Is either a GremlinDatabaseCreateUpdateParameters type or a IO[bytes] type.
+         Required.
         :type create_update_gremlin_database_parameters:
-         ~azure.mgmt.cosmosdb.models.GremlinDatabaseCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.GremlinDatabaseCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.GremlinDatabaseCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns GremlinDatabaseGetResults. The
          GremlinDatabaseGetResults is compatible with MutableMapping
         :rtype:
@@ -26489,7 +27325,10 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -26615,7 +27454,9 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         graph_name: str,
-        create_update_gremlin_graph_parameters: Union[_models.GremlinGraphCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_gremlin_graph_parameters: Union[
+            _models.GremlinGraphCreateUpdateParameters, _types.GremlinGraphCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -26734,7 +27575,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         graph_name: str,
-        create_update_gremlin_graph_parameters: JSON,
+        create_update_gremlin_graph_parameters: _types.GremlinGraphCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26752,7 +27593,8 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :type graph_name: str
         :param create_update_gremlin_graph_parameters: The parameters to provide for the current
          Gremlin graph. Required.
-        :type create_update_gremlin_graph_parameters: JSON
+        :type create_update_gremlin_graph_parameters:
+         ~azure.mgmt.cosmosdb.types.GremlinGraphCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26804,7 +27646,9 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         graph_name: str,
-        create_update_gremlin_graph_parameters: Union[_models.GremlinGraphCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_gremlin_graph_parameters: Union[
+            _models.GremlinGraphCreateUpdateParameters, _types.GremlinGraphCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GremlinGraphGetResults]:
         """Create or update an Azure Cosmos DB Gremlin graph.
@@ -26819,10 +27663,11 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :param graph_name: Cosmos DB graph name. Required.
         :type graph_name: str
         :param create_update_gremlin_graph_parameters: The parameters to provide for the current
-         Gremlin graph. Is one of the following types: GremlinGraphCreateUpdateParameters, JSON,
-         IO[bytes] Required.
+         Gremlin graph. Is either a GremlinGraphCreateUpdateParameters type or a IO[bytes] type.
+         Required.
         :type create_update_gremlin_graph_parameters:
-         ~azure.mgmt.cosmosdb.models.GremlinGraphCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.GremlinGraphCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.GremlinGraphCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns GremlinGraphGetResults. The
          GremlinGraphGetResults is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.GremlinGraphGetResults]
@@ -27073,7 +27918,10 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -27121,7 +27969,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         graph_name: str,
-        location: Union[_models.ContinuousBackupRestoreLocation, JSON, IO[bytes]],
+        location: Union[_models.ContinuousBackupRestoreLocation, _types.ContinuousBackupRestoreLocation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -27235,7 +28083,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         graph_name: str,
-        location: JSON,
+        location: _types.ContinuousBackupRestoreLocation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27252,7 +28100,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :param graph_name: Cosmos DB graph name. Required.
         :type graph_name: str
         :param location: The name of the continuous backup restore location. Required.
-        :type location: JSON
+        :type location: ~azure.mgmt.cosmosdb.types.ContinuousBackupRestoreLocation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27303,7 +28151,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         database_name: str,
         graph_name: str,
-        location: Union[_models.ContinuousBackupRestoreLocation, JSON, IO[bytes]],
+        location: Union[_models.ContinuousBackupRestoreLocation, _types.ContinuousBackupRestoreLocation, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BackupInformation]:
         """Retrieves continuous backup information for a gremlin graph.
@@ -27317,10 +28165,10 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :type database_name: str
         :param graph_name: Cosmos DB graph name. Required.
         :type graph_name: str
-        :param location: The name of the continuous backup restore location. Is one of the following
-         types: ContinuousBackupRestoreLocation, JSON, IO[bytes] Required.
-        :type location: ~azure.mgmt.cosmosdb.models.ContinuousBackupRestoreLocation or JSON or
-         IO[bytes]
+        :param location: The name of the continuous backup restore location. Is either a
+         ContinuousBackupRestoreLocation type or a IO[bytes] type. Required.
+        :type location: ~azure.mgmt.cosmosdb.models.ContinuousBackupRestoreLocation or
+         ~azure.mgmt.cosmosdb.types.ContinuousBackupRestoreLocation or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BackupInformation. The BackupInformation is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.BackupInformation]
@@ -27351,14 +28199,10 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.BackupInformation, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -27466,7 +28310,9 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         role_definition_id: str,
-        create_update_gremlin_role_definition_parameters: Union[_models.GremlinRoleDefinitionResource, JSON, IO[bytes]],
+        create_update_gremlin_role_definition_parameters: Union[
+            _models.GremlinRoleDefinitionResource, _types.GremlinRoleDefinitionResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -27581,7 +28427,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         role_definition_id: str,
-        create_update_gremlin_role_definition_parameters: JSON,
+        create_update_gremlin_role_definition_parameters: _types.GremlinRoleDefinitionResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27597,7 +28443,8 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :type role_definition_id: str
         :param create_update_gremlin_role_definition_parameters: The properties required to create or
          update a Role Definition. Required.
-        :type create_update_gremlin_role_definition_parameters: JSON
+        :type create_update_gremlin_role_definition_parameters:
+         ~azure.mgmt.cosmosdb.types.GremlinRoleDefinitionResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27647,7 +28494,9 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         role_definition_id: str,
-        create_update_gremlin_role_definition_parameters: Union[_models.GremlinRoleDefinitionResource, JSON, IO[bytes]],
+        create_update_gremlin_role_definition_parameters: Union[
+            _models.GremlinRoleDefinitionResource, _types.GremlinRoleDefinitionResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GremlinRoleDefinitionResource]:
         """Creates or updates an Azure Cosmos DB Gremlin Role Definition.
@@ -27660,10 +28509,11 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :param role_definition_id: The GUID for the Role Definition. Required.
         :type role_definition_id: str
         :param create_update_gremlin_role_definition_parameters: The properties required to create or
-         update a Role Definition. Is one of the following types: GremlinRoleDefinitionResource, JSON,
-         IO[bytes] Required.
+         update a Role Definition. Is either a GremlinRoleDefinitionResource type or a IO[bytes] type.
+         Required.
         :type create_update_gremlin_role_definition_parameters:
-         ~azure.mgmt.cosmosdb.models.GremlinRoleDefinitionResource or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.GremlinRoleDefinitionResource or
+         ~azure.mgmt.cosmosdb.types.GremlinRoleDefinitionResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns GremlinRoleDefinitionResource. The
          GremlinRoleDefinitionResource is compatible with MutableMapping
         :rtype:
@@ -27907,7 +28757,10 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -28031,7 +28884,9 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         role_assignment_id: str,
-        create_update_gremlin_role_assignment_parameters: Union[_models.GremlinRoleAssignmentResource, JSON, IO[bytes]],
+        create_update_gremlin_role_assignment_parameters: Union[
+            _models.GremlinRoleAssignmentResource, _types.GremlinRoleAssignmentResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -28146,7 +29001,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         role_assignment_id: str,
-        create_update_gremlin_role_assignment_parameters: JSON,
+        create_update_gremlin_role_assignment_parameters: _types.GremlinRoleAssignmentResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28162,7 +29017,8 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :type role_assignment_id: str
         :param create_update_gremlin_role_assignment_parameters: The properties required to create or
          update a Role Assignment. Required.
-        :type create_update_gremlin_role_assignment_parameters: JSON
+        :type create_update_gremlin_role_assignment_parameters:
+         ~azure.mgmt.cosmosdb.types.GremlinRoleAssignmentResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28212,7 +29068,9 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         account_name: str,
         role_assignment_id: str,
-        create_update_gremlin_role_assignment_parameters: Union[_models.GremlinRoleAssignmentResource, JSON, IO[bytes]],
+        create_update_gremlin_role_assignment_parameters: Union[
+            _models.GremlinRoleAssignmentResource, _types.GremlinRoleAssignmentResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GremlinRoleAssignmentResource]:
         """Creates or updates an Azure Cosmos DB Gremlin Role Assignment.
@@ -28225,10 +29083,11 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         :param role_assignment_id: The GUID for the Role Assignment. Required.
         :type role_assignment_id: str
         :param create_update_gremlin_role_assignment_parameters: The properties required to create or
-         update a Role Assignment. Is one of the following types: GremlinRoleAssignmentResource, JSON,
-         IO[bytes] Required.
+         update a Role Assignment. Is either a GremlinRoleAssignmentResource type or a IO[bytes] type.
+         Required.
         :type create_update_gremlin_role_assignment_parameters:
-         ~azure.mgmt.cosmosdb.models.GremlinRoleAssignmentResource or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.GremlinRoleAssignmentResource or
+         ~azure.mgmt.cosmosdb.types.GremlinRoleAssignmentResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns GremlinRoleAssignmentResource. The
          GremlinRoleAssignmentResource is compatible with MutableMapping
         :rtype:
@@ -28472,7 +29331,10 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -28515,7 +29377,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DataTransferJobsOperations:
+class DataTransferJobsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -28533,6 +29395,20 @@ class DataTransferJobsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def get(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.DataTransferJobGetResults:
@@ -28645,7 +29521,7 @@ class DataTransferJobsOperations:
         resource_group_name: str,
         account_name: str,
         job_name: str,
-        job_create_parameters: JSON,
+        job_create_parameters: _types.CreateJobRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28660,7 +29536,7 @@ class DataTransferJobsOperations:
         :param job_name: Name of the Data Transfer Job. Required.
         :type job_name: str
         :param job_create_parameters: Required.
-        :type job_create_parameters: JSON
+        :type job_create_parameters: ~azure.mgmt.cosmosdb.types.CreateJobRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28702,12 +29578,27 @@ class DataTransferJobsOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def create(
         self,
         resource_group_name: str,
         account_name: str,
         job_name: str,
-        job_create_parameters: Union[_models.CreateJobRequest, JSON, IO[bytes]],
+        job_create_parameters: Union[_models.CreateJobRequest, _types.CreateJobRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.DataTransferJobGetResults:
         """Creates a Data Transfer Job.
@@ -28719,9 +29610,9 @@ class DataTransferJobsOperations:
         :type account_name: str
         :param job_name: Name of the Data Transfer Job. Required.
         :type job_name: str
-        :param job_create_parameters: Is one of the following types: CreateJobRequest, JSON, IO[bytes]
-         Required.
-        :type job_create_parameters: ~azure.mgmt.cosmosdb.models.CreateJobRequest or JSON or IO[bytes]
+        :param job_create_parameters: Is either a CreateJobRequest type or a IO[bytes] type. Required.
+        :type job_create_parameters: ~azure.mgmt.cosmosdb.models.CreateJobRequest or
+         ~azure.mgmt.cosmosdb.types.CreateJobRequest or IO[bytes]
         :return: DataTransferJobGetResults. The DataTransferJobGetResults is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.cosmosdb.models.DataTransferJobGetResults
@@ -28796,6 +29687,13 @@ class DataTransferJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list_by_database_account(
         self, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.DataTransferJobGetResults"]:
@@ -28853,7 +29751,10 @@ class DataTransferJobsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -28896,6 +29797,20 @@ class DataTransferJobsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def pause(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.DataTransferJobGetResults:
@@ -28972,6 +29887,20 @@ class DataTransferJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def resume(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.DataTransferJobGetResults:
@@ -29048,6 +29977,20 @@ class DataTransferJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def cancel(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.DataTransferJobGetResults:
@@ -29124,6 +30067,20 @@ class DataTransferJobsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "job_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def complete(
         self, resource_group_name: str, account_name: str, job_name: str, **kwargs: Any
     ) -> _models.DataTransferJobGetResults:
@@ -29200,7 +30157,7 @@ class DataTransferJobsOperations:
         return deserialized  # type: ignore
 
 
-class GarnetClustersOperations:
+class GarnetClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29218,6 +30175,13 @@ class GarnetClustersOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def get(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> _models.GarnetClusterResource:
         """Get the properties of a Garnet cache cluster.
 
@@ -29287,11 +30251,25 @@ class GarnetClustersOperations:
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _create_update_initial(
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: Union[_models.GarnetClusterResource, JSON, IO[bytes]],
+        body: Union[_models.GarnetClusterResource, _types.GarnetClusterResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -29396,7 +30374,7 @@ class GarnetClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: JSON,
+        body: _types.GarnetClusterResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29410,7 +30388,7 @@ class GarnetClustersOperations:
         :param cluster_name: The name of the GarnetClusterResource. Required.
         :type cluster_name: str
         :param body: Resource create parameters. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.GarnetClusterResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29450,11 +30428,25 @@ class GarnetClustersOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_create_update(
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: Union[_models.GarnetClusterResource, JSON, IO[bytes]],
+        body: Union[_models.GarnetClusterResource, _types.GarnetClusterResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GarnetClusterResource]:
         """Create or update a Garnet cache cluster. When updating, you must specify all writable
@@ -29465,9 +30457,10 @@ class GarnetClustersOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the GarnetClusterResource. Required.
         :type cluster_name: str
-        :param body: Resource create parameters. Is one of the following types: GarnetClusterResource,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cosmosdb.models.GarnetClusterResource or JSON or IO[bytes]
+        :param body: Resource create parameters. Is either a GarnetClusterResource type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.cosmosdb.models.GarnetClusterResource or
+         ~azure.mgmt.cosmosdb.types.GarnetClusterResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns GarnetClusterResource. The
          GarnetClusterResource is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.GarnetClusterResource]
@@ -29525,11 +30518,25 @@ class GarnetClustersOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _update_initial(
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: Union[_models.GarnetClusterResourcePatch, JSON, IO[bytes]],
+        body: Union[_models.GarnetClusterResourcePatch, _types.GarnetClusterResourcePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -29636,7 +30643,7 @@ class GarnetClustersOperations:
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: JSON,
+        body: _types.GarnetClusterResourcePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29649,7 +30656,7 @@ class GarnetClustersOperations:
         :param cluster_name: The name of the GarnetClusterResource. Required.
         :type cluster_name: str
         :param body: The resource properties to be updated. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.GarnetClusterResourcePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29688,11 +30695,25 @@ class GarnetClustersOperations:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_update(
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: Union[_models.GarnetClusterResourcePatch, JSON, IO[bytes]],
+        body: Union[_models.GarnetClusterResourcePatch, _types.GarnetClusterResourcePatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.GarnetClusterResource]:
         """Updates some of the properties of a garnet cluster.
@@ -29702,9 +30723,10 @@ class GarnetClustersOperations:
         :type resource_group_name: str
         :param cluster_name: The name of the GarnetClusterResource. Required.
         :type cluster_name: str
-        :param body: The resource properties to be updated. Is one of the following types:
-         GarnetClusterResourcePatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cosmosdb.models.GarnetClusterResourcePatch or JSON or IO[bytes]
+        :param body: The resource properties to be updated. Is either a GarnetClusterResourcePatch type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cosmosdb.models.GarnetClusterResourcePatch or
+         ~azure.mgmt.cosmosdb.types.GarnetClusterResourcePatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns GarnetClusterResource. The
          GarnetClusterResource is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.GarnetClusterResource]
@@ -29762,6 +30784,13 @@ class GarnetClustersOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _delete_initial(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -29825,6 +30854,13 @@ class GarnetClustersOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_delete(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Deletes a Garnet cluster.
 
@@ -29882,6 +30918,11 @@ class GarnetClustersOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={"2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.GarnetClusterResource"]:
@@ -29936,7 +30977,10 @@ class GarnetClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -29979,6 +31023,11 @@ class GarnetClustersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={"2026-04-01-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.GarnetClusterResource"]:
         """List all Garnet clusters in this subscription.
 
@@ -30027,7 +31076,10 @@ class GarnetClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -30070,7 +31122,7 @@ class GarnetClustersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30088,6 +31140,20 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "network_security_perimeter_configuration_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def get(
         self,
         resource_group_name: str,
@@ -30169,6 +31235,13 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.NetworkSecurityPerimeterConfiguration"]:
@@ -30226,7 +31299,10 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -30268,6 +31344,19 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
 
         return AsyncItemPaged(get_next, extract_data)
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "network_security_perimeter_configuration_name",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _reconcile_initial(
         self,
         resource_group_name: str,
@@ -30334,6 +31423,19 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         return deserialized  # type: ignore
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "account_name",
+                "network_security_perimeter_configuration_name",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_reconcile(
         self,
         resource_group_name: str,
@@ -30401,7 +31503,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class NotebookWorkspacesOperations:
+class NotebookWorkspacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30503,7 +31605,9 @@ class NotebookWorkspacesOperations:
         resource_group_name: str,
         account_name: str,
         notebook_workspace_name: Union[str, _models.NotebookWorkspaceName],
-        notebook_create_update_parameters: Union[_models.NotebookWorkspaceCreateUpdateParameters, JSON, IO[bytes]],
+        notebook_create_update_parameters: Union[
+            _models.NotebookWorkspaceCreateUpdateParameters, _types.NotebookWorkspaceCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -30613,7 +31717,7 @@ class NotebookWorkspacesOperations:
         resource_group_name: str,
         account_name: str,
         notebook_workspace_name: Union[str, _models.NotebookWorkspaceName],
-        notebook_create_update_parameters: JSON,
+        notebook_create_update_parameters: _types.NotebookWorkspaceCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30630,7 +31734,8 @@ class NotebookWorkspacesOperations:
         :type notebook_workspace_name: str or ~azure.mgmt.cosmosdb.models.NotebookWorkspaceName
         :param notebook_create_update_parameters: The notebook workspace to create for the current
          database account. Required.
-        :type notebook_create_update_parameters: JSON
+        :type notebook_create_update_parameters:
+         ~azure.mgmt.cosmosdb.types.NotebookWorkspaceCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30679,7 +31784,9 @@ class NotebookWorkspacesOperations:
         resource_group_name: str,
         account_name: str,
         notebook_workspace_name: Union[str, _models.NotebookWorkspaceName],
-        notebook_create_update_parameters: Union[_models.NotebookWorkspaceCreateUpdateParameters, JSON, IO[bytes]],
+        notebook_create_update_parameters: Union[
+            _models.NotebookWorkspaceCreateUpdateParameters, _types.NotebookWorkspaceCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NotebookWorkspace]:
         """Creates the notebook workspace for a Cosmos DB account.
@@ -30693,10 +31800,11 @@ class NotebookWorkspacesOperations:
          Required.
         :type notebook_workspace_name: str or ~azure.mgmt.cosmosdb.models.NotebookWorkspaceName
         :param notebook_create_update_parameters: The notebook workspace to create for the current
-         database account. Is one of the following types: NotebookWorkspaceCreateUpdateParameters, JSON,
-         IO[bytes] Required.
+         database account. Is either a NotebookWorkspaceCreateUpdateParameters type or a IO[bytes] type.
+         Required.
         :type notebook_create_update_parameters:
-         ~azure.mgmt.cosmosdb.models.NotebookWorkspaceCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.NotebookWorkspaceCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.NotebookWorkspaceCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NotebookWorkspace. The NotebookWorkspace is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.NotebookWorkspace]
@@ -30948,7 +32056,10 @@ class NotebookWorkspacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -31338,7 +32449,7 @@ class NotebookWorkspacesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31436,7 +32547,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -31546,7 +32657,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        parameters: JSON,
+        parameters: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31561,7 +32672,7 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.cosmosdb.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31610,7 +32721,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
         """Approve or reject a private endpoint connection with a given name.
@@ -31622,9 +32733,9 @@ class PrivateEndpointConnectionsOperations:
         :type account_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param parameters: Is one of the following types: PrivateEndpointConnection, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.cosmosdb.models.PrivateEndpointConnection or JSON or IO[bytes]
+        :param parameters: Is either a PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.cosmosdb.models.PrivateEndpointConnection or
+         ~azure.mgmt.cosmosdb.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -31866,7 +32977,10 @@ class PrivateEndpointConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -31909,7 +33023,7 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32059,7 +33173,10 @@ class PrivateLinkResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32102,7 +33219,1763 @@ class PrivateLinkResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ChaosFaultOperations:
+class SoftDeletedDatabaseAccountsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.cosmosdb.aio.CosmosDBManagementClient`'s
+        :attr:`soft_deleted_database_accounts` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: CosmosDBManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, location: str, account_name: str, **kwargs: Any
+    ) -> _models.SoftDeletedDatabaseAccountGetResult:
+        """Retrieves the properties of a soft-deleted Azure Cosmos DB database account by location and
+        accountName. This call requires
+        'Microsoft.DocumentDB/locations/softDeletedDatabaseAccounts/read' permission.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :return: SoftDeletedDatabaseAccountGetResult. The SoftDeletedDatabaseAccountGetResult is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountGetResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SoftDeletedDatabaseAccountGetResult] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_database_accounts_get_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SoftDeletedDatabaseAccountGetResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={"2026-04-01-preview": ["api_version", "subscription_id", "location", "accept"]},
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def list_by_location(self, location: str, **kwargs: Any) -> _models.SoftDeletedDatabaseAccountsListResult:
+        """Lists all the soft-deleted Azure Cosmos DB database accounts available under the subscription
+        and in a region. This call requires
+        'Microsoft.DocumentDB/locations/softDeletedDatabaseAccounts/read' permission.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :return: SoftDeletedDatabaseAccountsListResult. The SoftDeletedDatabaseAccountsListResult is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountsListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SoftDeletedDatabaseAccountsListResult] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_database_accounts_list_by_location_request(
+            location=location,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SoftDeletedDatabaseAccountsListResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["subscription_id", "resource_group_name", "location", "api_version", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def list_by_resource_group_and_location(
+        self, resource_group_name: str, location: str, **kwargs: Any
+    ) -> _models.SoftDeletedDatabaseAccountsListResult:
+        """Lists all the soft-deleted Azure Cosmos DB database accounts available under the given resource
+        group and in a region. This call requires
+        'Microsoft.DocumentDB/locations/softDeletedDatabaseAccounts/read' permission.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :return: SoftDeletedDatabaseAccountsListResult. The SoftDeletedDatabaseAccountsListResult is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountsListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SoftDeletedDatabaseAccountsListResult] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_database_accounts_list_by_resource_group_and_location_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SoftDeletedDatabaseAccountsListResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def _restore_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_database_accounts_restore_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            soft_delete_action_kind=soft_delete_action_kind,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def begin_restore(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Restores a soft-deleted Azure Cosmos DB database account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :keyword soft_delete_action_kind: The kind of soft delete action to perform. Known values are:
+         "RestoreSoftDeletedResource" and "PermanentDeleteResource". Default value is None.
+        :paramtype soft_delete_action_kind: str or ~azure.mgmt.cosmosdb.models.SoftDeleteActionKind
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._restore_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                account_name=account_name,
+                soft_delete_action_kind=soft_delete_action_kind,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def _purge_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_database_accounts_purge_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            soft_delete_action_kind=soft_delete_action_kind,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def begin_purge(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Permanently deletes (purges) a soft-deleted Azure Cosmos DB database account.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :keyword soft_delete_action_kind: The kind of soft delete action to perform. Known values are:
+         "RestoreSoftDeletedResource" and "PermanentDeleteResource". Default value is None.
+        :paramtype soft_delete_action_kind: str or ~azure.mgmt.cosmosdb.models.SoftDeleteActionKind
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._purge_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                account_name=account_name,
+                soft_delete_action_kind=soft_delete_action_kind,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class SoftDeletedSqlDatabasesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.cosmosdb.aio.CosmosDBManagementClient`'s
+        :attr:`soft_deleted_sql_databases` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: CosmosDBManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, location: str, account_name: str, database_name: str, **kwargs: Any
+    ) -> _models.SoftDeletedSqlDatabaseGetResult:
+        """Retrieves the properties of a soft-deleted Azure Cosmos DB SQL database. This call requires
+        'Microsoft.DocumentDB/locations/softDeletedDatabaseAccounts/softDeletedSqlDatabases/read'
+        permission.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB SQL database name. Required.
+        :type database_name: str
+        :return: SoftDeletedSqlDatabaseGetResult. The SoftDeletedSqlDatabaseGetResult is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabaseGetResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SoftDeletedSqlDatabaseGetResult] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_databases_get_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            database_name=database_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SoftDeletedSqlDatabaseGetResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def list(
+        self, resource_group_name: str, location: str, account_name: str, **kwargs: Any
+    ) -> _models.SoftDeletedSqlDatabasesListResult:
+        """Lists all the soft-deleted Azure Cosmos DB SQL databases under a soft-deleted database account.
+        This call requires
+        'Microsoft.DocumentDB/locations/softDeletedDatabaseAccounts/softDeletedSqlDatabases/read'
+        permission.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :return: SoftDeletedSqlDatabasesListResult. The SoftDeletedSqlDatabasesListResult is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabasesListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SoftDeletedSqlDatabasesListResult] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_databases_list_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SoftDeletedSqlDatabasesListResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def _restore_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_databases_restore_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            database_name=database_name,
+            subscription_id=self._config.subscription_id,
+            soft_delete_action_kind=soft_delete_action_kind,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def begin_restore(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Restores a soft-deleted Azure Cosmos DB SQL database.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB SQL database name. Required.
+        :type database_name: str
+        :keyword soft_delete_action_kind: The kind of soft delete action to perform. Known values are:
+         "RestoreSoftDeletedResource" and "PermanentDeleteResource". Default value is None.
+        :paramtype soft_delete_action_kind: str or ~azure.mgmt.cosmosdb.models.SoftDeleteActionKind
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._restore_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                account_name=account_name,
+                database_name=database_name,
+                soft_delete_action_kind=soft_delete_action_kind,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def _purge_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_databases_purge_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            database_name=database_name,
+            subscription_id=self._config.subscription_id,
+            soft_delete_action_kind=soft_delete_action_kind,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def begin_purge(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Permanently deletes a soft-deleted Azure Cosmos DB SQL database.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB SQL database name. Required.
+        :type database_name: str
+        :keyword soft_delete_action_kind: The kind of soft delete action to perform. Known values are:
+         "RestoreSoftDeletedResource" and "PermanentDeleteResource". Default value is None.
+        :paramtype soft_delete_action_kind: str or ~azure.mgmt.cosmosdb.models.SoftDeleteActionKind
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._purge_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                account_name=account_name,
+                database_name=database_name,
+                soft_delete_action_kind=soft_delete_action_kind,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class SoftDeletedSqlContainersOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.cosmosdb.aio.CosmosDBManagementClient`'s
+        :attr:`soft_deleted_sql_containers` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: CosmosDBManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "container_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        container_name: str,
+        **kwargs: Any
+    ) -> _models.SoftDeletedSqlContainerGetResult:
+        """Retrieves the properties of a soft-deleted Azure Cosmos DB SQL container. This call requires
+        'Microsoft.DocumentDB/locations/softDeletedDatabaseAccounts/softDeletedSqlDatabases/softDeletedSqlContainers/read'
+        permission.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB SQL database name. Required.
+        :type database_name: str
+        :param container_name: Cosmos DB SQL container name. Required.
+        :type container_name: str
+        :return: SoftDeletedSqlContainerGetResult. The SoftDeletedSqlContainerGetResult is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlContainerGetResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SoftDeletedSqlContainerGetResult] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_containers_get_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            database_name=database_name,
+            container_name=container_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SoftDeletedSqlContainerGetResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def list(
+        self, resource_group_name: str, location: str, account_name: str, database_name: str, **kwargs: Any
+    ) -> _models.SoftDeletedSqlContainersListResult:
+        """Lists all the soft-deleted Azure Cosmos DB SQL containers under a soft-deleted SQL database.
+        This call requires
+        'Microsoft.DocumentDB/locations/softDeletedDatabaseAccounts/softDeletedSqlDatabases/softDeletedSqlContainers/read'
+        permission.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB SQL database name. Required.
+        :type database_name: str
+        :return: SoftDeletedSqlContainersListResult. The SoftDeletedSqlContainersListResult is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlContainersListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SoftDeletedSqlContainersListResult] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_containers_list_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            database_name=database_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SoftDeletedSqlContainersListResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "container_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def _restore_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        container_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_containers_restore_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            database_name=database_name,
+            container_name=container_name,
+            subscription_id=self._config.subscription_id,
+            soft_delete_action_kind=soft_delete_action_kind,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "container_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def begin_restore(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        container_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Restores a soft-deleted Azure Cosmos DB SQL container to active state.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB SQL database name. Required.
+        :type database_name: str
+        :param container_name: Cosmos DB SQL container name. Required.
+        :type container_name: str
+        :keyword soft_delete_action_kind: The kind of soft delete action to perform. Known values are:
+         "RestoreSoftDeletedResource" and "PermanentDeleteResource". Default value is None.
+        :paramtype soft_delete_action_kind: str or ~azure.mgmt.cosmosdb.models.SoftDeleteActionKind
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._restore_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                account_name=account_name,
+                database_name=database_name,
+                container_name=container_name,
+                soft_delete_action_kind=soft_delete_action_kind,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "container_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def _purge_initial(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        container_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_soft_deleted_sql_containers_purge_request(
+            resource_group_name=resource_group_name,
+            location=location,
+            account_name=account_name,
+            database_name=database_name,
+            container_name=container_name,
+            subscription_id=self._config.subscription_id,
+            soft_delete_action_kind=soft_delete_action_kind,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "subscription_id",
+                "resource_group_name",
+                "location",
+                "account_name",
+                "database_name",
+                "container_name",
+                "api_version",
+                "soft_delete_action_kind",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
+    async def begin_purge(
+        self,
+        resource_group_name: str,
+        location: str,
+        account_name: str,
+        database_name: str,
+        container_name: str,
+        *,
+        soft_delete_action_kind: Optional[Union[str, _models.SoftDeleteActionKind]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Permanently deletes a soft-deleted Azure Cosmos DB SQL container.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB SQL database name. Required.
+        :type database_name: str
+        :param container_name: Cosmos DB SQL container name. Required.
+        :type container_name: str
+        :keyword soft_delete_action_kind: The kind of soft delete action to perform. Known values are:
+         "RestoreSoftDeletedResource" and "PermanentDeleteResource". Default value is None.
+        :paramtype soft_delete_action_kind: str or ~azure.mgmt.cosmosdb.models.SoftDeleteActionKind
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._purge_initial(
+                resource_group_name=resource_group_name,
+                location=location,
+                account_name=account_name,
+                database_name=database_name,
+                container_name=container_name,
+                soft_delete_action_kind=soft_delete_action_kind,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class ChaosFaultOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32199,7 +35072,7 @@ class ChaosFaultOperations:
         resource_group_name: str,
         account_name: str,
         chaos_fault: str,
-        chaos_fault_request: Union[_models.ChaosFaultResource, JSON, IO[bytes]],
+        chaos_fault_request: Union[_models.ChaosFaultResource, _types.ChaosFaultResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -32308,7 +35181,7 @@ class ChaosFaultOperations:
         resource_group_name: str,
         account_name: str,
         chaos_fault: str,
-        chaos_fault_request: JSON,
+        chaos_fault_request: _types.ChaosFaultResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32323,7 +35196,7 @@ class ChaosFaultOperations:
         :param chaos_fault: The name of the ChaosFault. Required.
         :type chaos_fault: str
         :param chaos_fault_request: A request object to enable/disable the chaos fault. Required.
-        :type chaos_fault_request: JSON
+        :type chaos_fault_request: ~azure.mgmt.cosmosdb.types.ChaosFaultResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32370,7 +35243,7 @@ class ChaosFaultOperations:
         resource_group_name: str,
         account_name: str,
         chaos_fault: str,
-        chaos_fault_request: Union[_models.ChaosFaultResource, JSON, IO[bytes]],
+        chaos_fault_request: Union[_models.ChaosFaultResource, _types.ChaosFaultResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ChaosFaultResource]:
         """Enable, disable Chaos Fault in a CosmosDB account.
@@ -32382,9 +35255,10 @@ class ChaosFaultOperations:
         :type account_name: str
         :param chaos_fault: The name of the ChaosFault. Required.
         :type chaos_fault: str
-        :param chaos_fault_request: A request object to enable/disable the chaos fault. Is one of the
-         following types: ChaosFaultResource, JSON, IO[bytes] Required.
-        :type chaos_fault_request: ~azure.mgmt.cosmosdb.models.ChaosFaultResource or JSON or IO[bytes]
+        :param chaos_fault_request: A request object to enable/disable the chaos fault. Is either a
+         ChaosFaultResource type or a IO[bytes] type. Required.
+        :type chaos_fault_request: ~azure.mgmt.cosmosdb.models.ChaosFaultResource or
+         ~azure.mgmt.cosmosdb.types.ChaosFaultResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ChaosFaultResource. The ChaosFaultResource
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ChaosFaultResource]
@@ -32500,7 +35374,10 @@ class ChaosFaultOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32543,7 +35420,7 @@ class ChaosFaultOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseOperations:
+class DatabaseOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32626,7 +35503,10 @@ class DatabaseOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32739,7 +35619,10 @@ class DatabaseOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32841,7 +35724,10 @@ class DatabaseOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -32884,7 +35770,7 @@ class DatabaseOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CollectionOperations:
+class CollectionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32977,7 +35863,10 @@ class CollectionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33094,7 +35983,10 @@ class CollectionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33199,7 +36091,10 @@ class CollectionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33242,7 +36137,7 @@ class CollectionOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CollectionRegionOperations:
+class CollectionRegionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33339,7 +36234,10 @@ class CollectionRegionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33382,7 +36280,7 @@ class CollectionRegionOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseAccountRegionOperations:
+class DatabaseAccountRegionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33464,7 +36362,10 @@ class DatabaseAccountRegionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33507,7 +36408,7 @@ class DatabaseAccountRegionOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PercentileSourceTargetOperations:
+class PercentileSourceTargetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33602,7 +36503,10 @@ class PercentileSourceTargetOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33645,7 +36549,7 @@ class PercentileSourceTargetOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PercentileTargetOperations:
+class PercentileTargetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33729,7 +36633,10 @@ class PercentileTargetOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33772,7 +36679,7 @@ class PercentileTargetOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PercentileOperations:
+class PercentileOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33852,7 +36759,10 @@ class PercentileOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -33895,7 +36805,7 @@ class PercentileOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CollectionPartitionRegionOperations:
+class CollectionPartitionRegionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33992,7 +36902,10 @@ class CollectionPartitionRegionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -34035,7 +36948,7 @@ class CollectionPartitionRegionOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CollectionPartitionOperations:
+class CollectionPartitionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -34128,7 +37041,10 @@ class CollectionPartitionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -34245,7 +37161,10 @@ class CollectionPartitionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -34288,7 +37207,7 @@ class CollectionPartitionOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PartitionKeyRangeIdOperations:
+class PartitionKeyRangeIdOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -34384,7 +37303,10 @@ class PartitionKeyRangeIdOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -34427,7 +37349,7 @@ class PartitionKeyRangeIdOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PartitionKeyRangeIdRegionOperations:
+class PartitionKeyRangeIdRegionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -34528,7 +37450,10 @@ class PartitionKeyRangeIdRegionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -34571,7 +37496,7 @@ class PartitionKeyRangeIdRegionOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class LocationsOperations:
+class LocationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -34703,7 +37628,10 @@ class LocationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -34746,7 +37674,7 @@ class LocationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
+class CassandraClustersOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -34837,7 +37765,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: Union[_models.ClusterResource, JSON, IO[bytes]],
+        body: Union[_models.ClusterResource, _types.ClusterResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -34943,7 +37871,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: JSON,
+        body: _types.ClusterResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -34958,7 +37886,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         :type cluster_name: str
         :param body: The properties specifying the desired state of the managed Cassandra cluster.
          Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.ClusterResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35003,7 +37931,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: Union[_models.ClusterResource, JSON, IO[bytes]],
+        body: Union[_models.ClusterResource, _types.ClusterResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ClusterResource]:
         """Create or update a managed Cassandra cluster. When updating, you must specify all writable
@@ -35015,8 +37943,9 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         :param cluster_name: Managed Cassandra cluster name. Required.
         :type cluster_name: str
         :param body: The properties specifying the desired state of the managed Cassandra cluster. Is
-         one of the following types: ClusterResource, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cosmosdb.models.ClusterResource or JSON or IO[bytes]
+         either a ClusterResource type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cosmosdb.models.ClusterResource or
+         ~azure.mgmt.cosmosdb.types.ClusterResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ClusterResource. The ClusterResource is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ClusterResource]
@@ -35078,7 +38007,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: Union[_models.ClusterResource, JSON, IO[bytes]],
+        body: Union[_models.ClusterResource, _types.ClusterResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -35182,7 +38111,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: JSON,
+        body: _types.ClusterResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -35195,7 +38124,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         :param cluster_name: Managed Cassandra cluster name. Required.
         :type cluster_name: str
         :param body: Parameters to provide for specifying the managed Cassandra cluster. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.ClusterResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35238,7 +38167,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: Union[_models.ClusterResource, JSON, IO[bytes]],
+        body: Union[_models.ClusterResource, _types.ClusterResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ClusterResource]:
         """Updates some of the properties of a managed Cassandra cluster.
@@ -35248,9 +38177,10 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param cluster_name: Managed Cassandra cluster name. Required.
         :type cluster_name: str
-        :param body: Parameters to provide for specifying the managed Cassandra cluster. Is one of the
-         following types: ClusterResource, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cosmosdb.models.ClusterResource or JSON or IO[bytes]
+        :param body: Parameters to provide for specifying the managed Cassandra cluster. Is either a
+         ClusterResource type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cosmosdb.models.ClusterResource or
+         ~azure.mgmt.cosmosdb.types.ClusterResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ClusterResource. The ClusterResource is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ClusterResource]
@@ -35478,7 +38408,10 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -35568,7 +38501,10 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -35614,7 +38550,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: Union[_models.CommandPostBody, JSON, IO[bytes]],
+        body: Union[_models.CommandPostBody, _types.CommandPostBody, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -35717,7 +38653,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: JSON,
+        body: _types.CommandPostBody,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -35730,7 +38666,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         :param cluster_name: Managed Cassandra cluster name. Required.
         :type cluster_name: str
         :param body: Specification which command to run where. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.CommandPostBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35773,7 +38709,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: Union[_models.CommandPostBody, JSON, IO[bytes]],
+        body: Union[_models.CommandPostBody, _types.CommandPostBody, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CommandOutput]:
         """Invoke a command like nodetool for cassandra maintenance.
@@ -35783,9 +38719,10 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param cluster_name: Managed Cassandra cluster name. Required.
         :type cluster_name: str
-        :param body: Specification which command to run where. Is one of the following types:
-         CommandPostBody, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cosmosdb.models.CommandPostBody or JSON or IO[bytes]
+        :param body: Specification which command to run where. Is either a CommandPostBody type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cosmosdb.models.CommandPostBody or
+         ~azure.mgmt.cosmosdb.types.CommandPostBody or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CommandOutput. The CommandOutput is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.CommandOutput]
@@ -35847,11 +38784,25 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def _invoke_command_async_initial(
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: Union[_models.CommandAsyncPostBody, JSON, IO[bytes]],
+        body: Union[_models.CommandAsyncPostBody, _types.CommandAsyncPostBody, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -35958,7 +38909,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: JSON,
+        body: _types.CommandAsyncPostBody,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -35971,7 +38922,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         :param cluster_name: Managed Cassandra cluster name. Required.
         :type cluster_name: str
         :param body: Specification which command to run where. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.CommandAsyncPostBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36010,11 +38961,25 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def begin_invoke_command_async(
         self,
         resource_group_name: str,
         cluster_name: str,
-        body: Union[_models.CommandAsyncPostBody, JSON, IO[bytes]],
+        body: Union[_models.CommandAsyncPostBody, _types.CommandAsyncPostBody, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CommandPublicResource]:
         """Invoke a command like nodetool for cassandra maintenance asynchronously.
@@ -36024,9 +38989,10 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param cluster_name: Managed Cassandra cluster name. Required.
         :type cluster_name: str
-        :param body: Specification which command to run where. Is one of the following types:
-         CommandAsyncPostBody, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cosmosdb.models.CommandAsyncPostBody or JSON or IO[bytes]
+        :param body: Specification which command to run where. Is either a CommandAsyncPostBody type or
+         a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cosmosdb.models.CommandAsyncPostBody or
+         ~azure.mgmt.cosmosdb.types.CommandAsyncPostBody or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CommandPublicResource. The
          CommandPublicResource is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.CommandPublicResource]
@@ -36085,6 +39051,13 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         )
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list_command(
         self, resource_group_name: str, cluster_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.CommandPublicResource"]:
@@ -36142,7 +39115,10 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -36185,6 +39161,20 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "command_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def get_command_async(
         self, resource_group_name: str, cluster_name: str, command_id: str, **kwargs: Any
     ) -> _models.CommandPublicResource:
@@ -36260,6 +39250,13 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     def list_backups(
         self, resource_group_name: str, cluster_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.BackupResource"]:
@@ -36316,7 +39313,10 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -36359,6 +39359,20 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-04-01-preview",
+        params_added_on={
+            "2026-04-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "backup_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-04-01-preview"],
+    )
     async def get_backup(
         self, resource_group_name: str, cluster_name: str, backup_id: str, **kwargs: Any
     ) -> _models.BackupResource:
@@ -36751,7 +39765,7 @@ class CassandraClustersOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class CassandraDataCentersOperations:
+class CassandraDataCentersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -36848,7 +39862,7 @@ class CassandraDataCentersOperations:
         resource_group_name: str,
         cluster_name: str,
         data_center_name: str,
-        body: Union[_models.DataCenterResource, JSON, IO[bytes]],
+        body: Union[_models.DataCenterResource, _types.DataCenterResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -36958,7 +39972,7 @@ class CassandraDataCentersOperations:
         resource_group_name: str,
         cluster_name: str,
         data_center_name: str,
-        body: JSON,
+        body: _types.DataCenterResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -36974,7 +39988,7 @@ class CassandraDataCentersOperations:
         :param data_center_name: Data center name in a managed Cassandra cluster. Required.
         :type data_center_name: str
         :param body: Parameters specifying the managed Cassandra data center. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.DataCenterResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37022,7 +40036,7 @@ class CassandraDataCentersOperations:
         resource_group_name: str,
         cluster_name: str,
         data_center_name: str,
-        body: Union[_models.DataCenterResource, JSON, IO[bytes]],
+        body: Union[_models.DataCenterResource, _types.DataCenterResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DataCenterResource]:
         """Create or update a managed Cassandra data center. When updating, overwrite all properties. To
@@ -37035,9 +40049,10 @@ class CassandraDataCentersOperations:
         :type cluster_name: str
         :param data_center_name: Data center name in a managed Cassandra cluster. Required.
         :type data_center_name: str
-        :param body: Parameters specifying the managed Cassandra data center. Is one of the following
-         types: DataCenterResource, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cosmosdb.models.DataCenterResource or JSON or IO[bytes]
+        :param body: Parameters specifying the managed Cassandra data center. Is either a
+         DataCenterResource type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cosmosdb.models.DataCenterResource or
+         ~azure.mgmt.cosmosdb.types.DataCenterResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DataCenterResource. The DataCenterResource
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.DataCenterResource]
@@ -37101,7 +40116,7 @@ class CassandraDataCentersOperations:
         resource_group_name: str,
         cluster_name: str,
         data_center_name: str,
-        body: Union[_models.DataCenterResource, JSON, IO[bytes]],
+        body: Union[_models.DataCenterResource, _types.DataCenterResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -37210,7 +40225,7 @@ class CassandraDataCentersOperations:
         resource_group_name: str,
         cluster_name: str,
         data_center_name: str,
-        body: JSON,
+        body: _types.DataCenterResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -37225,7 +40240,7 @@ class CassandraDataCentersOperations:
         :param data_center_name: Data center name in a managed Cassandra cluster. Required.
         :type data_center_name: str
         :param body: Parameters to provide for specifying the managed Cassandra data center. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.DataCenterResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37272,7 +40287,7 @@ class CassandraDataCentersOperations:
         resource_group_name: str,
         cluster_name: str,
         data_center_name: str,
-        body: Union[_models.DataCenterResource, JSON, IO[bytes]],
+        body: Union[_models.DataCenterResource, _types.DataCenterResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DataCenterResource]:
         """Update some of the properties of a managed Cassandra data center.
@@ -37284,9 +40299,10 @@ class CassandraDataCentersOperations:
         :type cluster_name: str
         :param data_center_name: Data center name in a managed Cassandra cluster. Required.
         :type data_center_name: str
-        :param body: Parameters to provide for specifying the managed Cassandra data center. Is one of
-         the following types: DataCenterResource, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cosmosdb.models.DataCenterResource or JSON or IO[bytes]
+        :param body: Parameters to provide for specifying the managed Cassandra data center. Is either
+         a DataCenterResource type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cosmosdb.models.DataCenterResource or
+         ~azure.mgmt.cosmosdb.types.DataCenterResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DataCenterResource. The DataCenterResource
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.DataCenterResource]
@@ -37526,7 +40542,10 @@ class CassandraDataCentersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -37569,7 +40588,7 @@ class CassandraDataCentersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableDatabaseAccountsOperations:
+class RestorableDatabaseAccountsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37717,7 +40736,10 @@ class RestorableDatabaseAccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -37809,7 +40831,10 @@ class RestorableDatabaseAccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -37852,7 +40877,7 @@ class RestorableDatabaseAccountsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableSqlDatabasesOperations:
+class RestorableSqlDatabasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37930,7 +40955,10 @@ class RestorableSqlDatabasesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -37973,7 +41001,7 @@ class RestorableSqlDatabasesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableSqlContainersOperations:
+class RestorableSqlContainersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -38067,7 +41095,10 @@ class RestorableSqlContainersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38110,7 +41141,7 @@ class RestorableSqlContainersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableSqlResourcesOperations:
+class RestorableSqlResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -38202,7 +41233,10 @@ class RestorableSqlResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38245,7 +41279,7 @@ class RestorableSqlResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableMongodbDatabasesOperations:
+class RestorableMongodbDatabasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -38323,7 +41357,10 @@ class RestorableMongodbDatabasesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38366,7 +41403,7 @@ class RestorableMongodbDatabasesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableMongodbCollectionsOperations:
+class RestorableMongodbCollectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -38461,7 +41498,10 @@ class RestorableMongodbCollectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38504,7 +41544,7 @@ class RestorableMongodbCollectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableMongodbResourcesOperations:
+class RestorableMongodbResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -38596,7 +41636,10 @@ class RestorableMongodbResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38639,7 +41682,7 @@ class RestorableMongodbResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableGremlinDatabasesOperations:
+class RestorableGremlinDatabasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -38717,7 +41760,10 @@ class RestorableGremlinDatabasesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38760,7 +41806,7 @@ class RestorableGremlinDatabasesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableGremlinGraphsOperations:
+class RestorableGremlinGraphsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -38854,7 +41900,10 @@ class RestorableGremlinGraphsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -38897,7 +41946,7 @@ class RestorableGremlinGraphsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableGremlinResourcesOperations:
+class RestorableGremlinResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -38989,7 +42038,10 @@ class RestorableGremlinResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -39032,7 +42084,7 @@ class RestorableGremlinResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableTablesOperations:
+class RestorableTablesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -39121,7 +42173,10 @@ class RestorableTablesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -39164,7 +42219,7 @@ class RestorableTablesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableTableResourcesOperations:
+class RestorableTableResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -39255,7 +42310,10 @@ class RestorableTableResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -39298,7 +42356,7 @@ class RestorableTableResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServiceOperations:
+class ServiceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -39395,7 +42453,9 @@ class ServiceOperations:
         resource_group_name: str,
         account_name: str,
         service_name: str,
-        create_update_parameters: Union[_models.ServiceResourceCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_parameters: Union[
+            _models.ServiceResourceCreateUpdateParameters, _types.ServiceResourceCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -39505,7 +42565,7 @@ class ServiceOperations:
         resource_group_name: str,
         account_name: str,
         service_name: str,
-        create_update_parameters: JSON,
+        create_update_parameters: _types.ServiceResourceCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -39520,7 +42580,8 @@ class ServiceOperations:
         :param service_name: Cosmos DB service name. Required.
         :type service_name: str
         :param create_update_parameters: The Service resource parameters. Required.
-        :type create_update_parameters: JSON
+        :type create_update_parameters:
+         ~azure.mgmt.cosmosdb.types.ServiceResourceCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39567,7 +42628,9 @@ class ServiceOperations:
         resource_group_name: str,
         account_name: str,
         service_name: str,
-        create_update_parameters: Union[_models.ServiceResourceCreateUpdateParameters, JSON, IO[bytes]],
+        create_update_parameters: Union[
+            _models.ServiceResourceCreateUpdateParameters, _types.ServiceResourceCreateUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ServiceResource]:
         """Creates a service.
@@ -39579,10 +42642,11 @@ class ServiceOperations:
         :type account_name: str
         :param service_name: Cosmos DB service name. Required.
         :type service_name: str
-        :param create_update_parameters: The Service resource parameters. Is one of the following
-         types: ServiceResourceCreateUpdateParameters, JSON, IO[bytes] Required.
+        :param create_update_parameters: The Service resource parameters. Is either a
+         ServiceResourceCreateUpdateParameters type or a IO[bytes] type. Required.
         :type create_update_parameters:
-         ~azure.mgmt.cosmosdb.models.ServiceResourceCreateUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.ServiceResourceCreateUpdateParameters or
+         ~azure.mgmt.cosmosdb.types.ServiceResourceCreateUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ServiceResource. The ServiceResource is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ServiceResource]
@@ -39824,7 +42888,10 @@ class ServiceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -39867,7 +42934,7 @@ class ServiceOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ThroughputPoolOperations:
+class ThroughputPoolOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -39960,7 +43027,7 @@ class ThroughputPoolOperations:
         self,
         resource_group_name: str,
         throughput_pool_name: str,
-        body: Union[_models.ThroughputPoolResource, JSON, IO[bytes]],
+        body: Union[_models.ThroughputPoolResource, _types.ThroughputPoolResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -40067,7 +43134,7 @@ class ThroughputPoolOperations:
         self,
         resource_group_name: str,
         throughput_pool_name: str,
-        body: JSON,
+        body: _types.ThroughputPoolResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -40081,7 +43148,7 @@ class ThroughputPoolOperations:
         :param throughput_pool_name: Cosmos DB Throughput Pool name. Required.
         :type throughput_pool_name: str
         :param body: The parameters to provide for the current ThroughputPool. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.ThroughputPoolResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40125,7 +43192,7 @@ class ThroughputPoolOperations:
         self,
         resource_group_name: str,
         throughput_pool_name: str,
-        body: Union[_models.ThroughputPoolResource, JSON, IO[bytes]],
+        body: Union[_models.ThroughputPoolResource, _types.ThroughputPoolResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ThroughputPoolResource]:
         """Creates or updates an Azure Cosmos DB ThroughputPool account. The "Update" method is preferred
@@ -40136,9 +43203,10 @@ class ThroughputPoolOperations:
         :type resource_group_name: str
         :param throughput_pool_name: Cosmos DB Throughput Pool name. Required.
         :type throughput_pool_name: str
-        :param body: The parameters to provide for the current ThroughputPool. Is one of the following
-         types: ThroughputPoolResource, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cosmosdb.models.ThroughputPoolResource or JSON or IO[bytes]
+        :param body: The parameters to provide for the current ThroughputPool. Is either a
+         ThroughputPoolResource type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cosmosdb.models.ThroughputPoolResource or
+         ~azure.mgmt.cosmosdb.types.ThroughputPoolResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ThroughputPoolResource. The
          ThroughputPoolResource is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputPoolResource]
@@ -40200,7 +43268,7 @@ class ThroughputPoolOperations:
         self,
         resource_group_name: str,
         throughput_pool_name: str,
-        body: Optional[Union[_models.ThroughputPoolUpdate, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.ThroughputPoolUpdate, _types.ThroughputPoolUpdate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -40311,7 +43379,7 @@ class ThroughputPoolOperations:
         self,
         resource_group_name: str,
         throughput_pool_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.ThroughputPoolUpdate] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -40324,7 +43392,7 @@ class ThroughputPoolOperations:
         :param throughput_pool_name: Cosmos DB Throughput Pool name. Required.
         :type throughput_pool_name: str
         :param body: The parameters to provide for the current Throughput Pool. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.ThroughputPoolUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40367,7 +43435,7 @@ class ThroughputPoolOperations:
         self,
         resource_group_name: str,
         throughput_pool_name: str,
-        body: Optional[Union[_models.ThroughputPoolUpdate, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.ThroughputPoolUpdate, _types.ThroughputPoolUpdate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ThroughputPoolResource]:
         """Updates the properties of an existing Azure Cosmos DB Throughput Pool.
@@ -40377,9 +43445,10 @@ class ThroughputPoolOperations:
         :type resource_group_name: str
         :param throughput_pool_name: Cosmos DB Throughput Pool name. Required.
         :type throughput_pool_name: str
-        :param body: The parameters to provide for the current Throughput Pool. Is one of the following
-         types: ThroughputPoolUpdate, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.cosmosdb.models.ThroughputPoolUpdate or JSON or IO[bytes]
+        :param body: The parameters to provide for the current Throughput Pool. Is either a
+         ThroughputPoolUpdate type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.cosmosdb.models.ThroughputPoolUpdate or
+         ~azure.mgmt.cosmosdb.types.ThroughputPoolUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ThroughputPoolResource. The
          ThroughputPoolResource is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.ThroughputPoolResource]
@@ -40561,7 +43630,7 @@ class ThroughputPoolOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ThroughputPoolsOperations:
+class ThroughputPoolsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -40633,7 +43702,10 @@ class ThroughputPoolsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -40724,7 +43796,10 @@ class ThroughputPoolsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -40767,7 +43842,7 @@ class ThroughputPoolsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ThroughputPoolAccountOperations:
+class ThroughputPoolAccountOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -40866,7 +43941,7 @@ class ThroughputPoolAccountOperations:
         resource_group_name: str,
         throughput_pool_name: str,
         throughput_pool_account_name: str,
-        body: Union[_models.ThroughputPoolAccountResource, JSON, IO[bytes]],
+        body: Union[_models.ThroughputPoolAccountResource, _types.ThroughputPoolAccountResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -40980,7 +44055,7 @@ class ThroughputPoolAccountOperations:
         resource_group_name: str,
         throughput_pool_name: str,
         throughput_pool_account_name: str,
-        body: JSON,
+        body: _types.ThroughputPoolAccountResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -40997,7 +44072,7 @@ class ThroughputPoolAccountOperations:
          Required.
         :type throughput_pool_account_name: str
         :param body: The parameters to provide for the current ThroughputPoolAccount. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.ThroughputPoolAccountResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41048,7 +44123,7 @@ class ThroughputPoolAccountOperations:
         resource_group_name: str,
         throughput_pool_name: str,
         throughput_pool_account_name: str,
-        body: Union[_models.ThroughputPoolAccountResource, JSON, IO[bytes]],
+        body: Union[_models.ThroughputPoolAccountResource, _types.ThroughputPoolAccountResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ThroughputPoolAccountResource]:
         """Creates or updates an Azure Cosmos DB ThroughputPool account. The "Update" method is preferred
@@ -41062,9 +44137,10 @@ class ThroughputPoolAccountOperations:
         :param throughput_pool_account_name: Cosmos DB global database account in a Throughput Pool.
          Required.
         :type throughput_pool_account_name: str
-        :param body: The parameters to provide for the current ThroughputPoolAccount. Is one of the
-         following types: ThroughputPoolAccountResource, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cosmosdb.models.ThroughputPoolAccountResource or JSON or IO[bytes]
+        :param body: The parameters to provide for the current ThroughputPoolAccount. Is either a
+         ThroughputPoolAccountResource type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cosmosdb.models.ThroughputPoolAccountResource or
+         ~azure.mgmt.cosmosdb.types.ThroughputPoolAccountResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ThroughputPoolAccountResource. The
          ThroughputPoolAccountResource is compatible with MutableMapping
         :rtype:
@@ -41252,7 +44328,7 @@ class ThroughputPoolAccountOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ThroughputPoolAccountsOperations:
+class ThroughputPoolAccountsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -41327,7 +44403,10 @@ class ThroughputPoolAccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -41370,7 +44449,7 @@ class ThroughputPoolAccountsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MongoMIResourcesOperations:
+class MongoMIResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -41470,7 +44549,7 @@ class MongoMIResourcesOperations:
         account_name: str,
         role_definition_id: str,
         create_update_mongo_mi_role_definition_parameters: Union[
-            _models.MongoMIRoleDefinitionResource, JSON, IO[bytes]
+            _models.MongoMIRoleDefinitionResource, _types.MongoMIRoleDefinitionResource, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -41586,7 +44665,7 @@ class MongoMIResourcesOperations:
         resource_group_name: str,
         account_name: str,
         role_definition_id: str,
-        create_update_mongo_mi_role_definition_parameters: JSON,
+        create_update_mongo_mi_role_definition_parameters: _types.MongoMIRoleDefinitionResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41602,7 +44681,8 @@ class MongoMIResourcesOperations:
         :type role_definition_id: str
         :param create_update_mongo_mi_role_definition_parameters: The properties required to create or
          update a Role Definition. Required.
-        :type create_update_mongo_mi_role_definition_parameters: JSON
+        :type create_update_mongo_mi_role_definition_parameters:
+         ~azure.mgmt.cosmosdb.types.MongoMIRoleDefinitionResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41653,7 +44733,7 @@ class MongoMIResourcesOperations:
         account_name: str,
         role_definition_id: str,
         create_update_mongo_mi_role_definition_parameters: Union[
-            _models.MongoMIRoleDefinitionResource, JSON, IO[bytes]
+            _models.MongoMIRoleDefinitionResource, _types.MongoMIRoleDefinitionResource, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoMIRoleDefinitionResource]:
@@ -41667,10 +44747,11 @@ class MongoMIResourcesOperations:
         :param role_definition_id: The GUID for the Role Definition. Required.
         :type role_definition_id: str
         :param create_update_mongo_mi_role_definition_parameters: The properties required to create or
-         update a Role Definition. Is one of the following types: MongoMIRoleDefinitionResource, JSON,
-         IO[bytes] Required.
+         update a Role Definition. Is either a MongoMIRoleDefinitionResource type or a IO[bytes] type.
+         Required.
         :type create_update_mongo_mi_role_definition_parameters:
-         ~azure.mgmt.cosmosdb.models.MongoMIRoleDefinitionResource or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.MongoMIRoleDefinitionResource or
+         ~azure.mgmt.cosmosdb.types.MongoMIRoleDefinitionResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns MongoMIRoleDefinitionResource. The
          MongoMIRoleDefinitionResource is compatible with MutableMapping
         :rtype:
@@ -41914,7 +44995,10 @@ class MongoMIResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -42039,7 +45123,7 @@ class MongoMIResourcesOperations:
         account_name: str,
         role_assignment_id: str,
         create_update_mongo_mi_role_assignment_parameters: Union[
-            _models.MongoMIRoleAssignmentResource, JSON, IO[bytes]
+            _models.MongoMIRoleAssignmentResource, _types.MongoMIRoleAssignmentResource, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -42155,7 +45239,7 @@ class MongoMIResourcesOperations:
         resource_group_name: str,
         account_name: str,
         role_assignment_id: str,
-        create_update_mongo_mi_role_assignment_parameters: JSON,
+        create_update_mongo_mi_role_assignment_parameters: _types.MongoMIRoleAssignmentResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42171,7 +45255,8 @@ class MongoMIResourcesOperations:
         :type role_assignment_id: str
         :param create_update_mongo_mi_role_assignment_parameters: The properties required to create or
          update a Role Assignment. Required.
-        :type create_update_mongo_mi_role_assignment_parameters: JSON
+        :type create_update_mongo_mi_role_assignment_parameters:
+         ~azure.mgmt.cosmosdb.types.MongoMIRoleAssignmentResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42222,7 +45307,7 @@ class MongoMIResourcesOperations:
         account_name: str,
         role_assignment_id: str,
         create_update_mongo_mi_role_assignment_parameters: Union[
-            _models.MongoMIRoleAssignmentResource, JSON, IO[bytes]
+            _models.MongoMIRoleAssignmentResource, _types.MongoMIRoleAssignmentResource, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MongoMIRoleAssignmentResource]:
@@ -42236,10 +45321,11 @@ class MongoMIResourcesOperations:
         :param role_assignment_id: The GUID for the Role Assignment. Required.
         :type role_assignment_id: str
         :param create_update_mongo_mi_role_assignment_parameters: The properties required to create or
-         update a Role Assignment. Is one of the following types: MongoMIRoleAssignmentResource, JSON,
-         IO[bytes] Required.
+         update a Role Assignment. Is either a MongoMIRoleAssignmentResource type or a IO[bytes] type.
+         Required.
         :type create_update_mongo_mi_role_assignment_parameters:
-         ~azure.mgmt.cosmosdb.models.MongoMIRoleAssignmentResource or JSON or IO[bytes]
+         ~azure.mgmt.cosmosdb.models.MongoMIRoleAssignmentResource or
+         ~azure.mgmt.cosmosdb.types.MongoMIRoleAssignmentResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns MongoMIRoleAssignmentResource. The
          MongoMIRoleAssignmentResource is compatible with MutableMapping
         :rtype:
@@ -42483,7 +45569,10 @@ class MongoMIResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -42526,7 +45615,7 @@ class MongoMIResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FleetOperations:
+class FleetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -42645,7 +45734,7 @@ class FleetOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        body: JSON,
+        body: _types.FleetResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42658,7 +45747,7 @@ class FleetOperations:
         :param fleet_name: Cosmos DB fleet name. Needs to be unique under a subscription. Required.
         :type fleet_name: str
         :param body: The parameters to provide for the current fleet. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.FleetResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42699,7 +45788,7 @@ class FleetOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        body: Union[_models.FleetResource, JSON, IO[bytes]],
+        body: Union[_models.FleetResource, _types.FleetResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.FleetResource:
         """Creates an Azure Cosmos DB fleet under a subscription.
@@ -42709,9 +45798,10 @@ class FleetOperations:
         :type resource_group_name: str
         :param fleet_name: Cosmos DB fleet name. Needs to be unique under a subscription. Required.
         :type fleet_name: str
-        :param body: The parameters to provide for the current fleet. Is one of the following types:
-         FleetResource, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cosmosdb.models.FleetResource or JSON or IO[bytes]
+        :param body: The parameters to provide for the current fleet. Is either a FleetResource type or
+         a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cosmosdb.models.FleetResource or
+         ~azure.mgmt.cosmosdb.types.FleetResource or IO[bytes]
         :return: FleetResource. The FleetResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.cosmosdb.models.FleetResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -42788,7 +45878,7 @@ class FleetOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        body: Optional[_models.FleetResourceUpdate] = None,
+        body: _models.FleetResourceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42800,7 +45890,7 @@ class FleetOperations:
         :type resource_group_name: str
         :param fleet_name: Cosmos DB fleet name. Needs to be unique under a subscription. Required.
         :type fleet_name: str
-        :param body: The parameters to provide for the current fleet. Default value is None.
+        :param body: The parameters to provide for the current fleet. Required.
         :type body: ~azure.mgmt.cosmosdb.models.FleetResourceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -42815,7 +45905,7 @@ class FleetOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        body: Optional[JSON] = None,
+        body: _types.FleetResourceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42827,8 +45917,8 @@ class FleetOperations:
         :type resource_group_name: str
         :param fleet_name: Cosmos DB fleet name. Needs to be unique under a subscription. Required.
         :type fleet_name: str
-        :param body: The parameters to provide for the current fleet. Default value is None.
-        :type body: JSON
+        :param body: The parameters to provide for the current fleet. Required.
+        :type body: ~azure.mgmt.cosmosdb.types.FleetResourceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42842,7 +45932,7 @@ class FleetOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        body: Optional[IO[bytes]] = None,
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42854,7 +45944,7 @@ class FleetOperations:
         :type resource_group_name: str
         :param fleet_name: Cosmos DB fleet name. Needs to be unique under a subscription. Required.
         :type fleet_name: str
-        :param body: The parameters to provide for the current fleet. Default value is None.
+        :param body: The parameters to provide for the current fleet. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -42869,7 +45959,7 @@ class FleetOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        body: Optional[Union[_models.FleetResourceUpdate, JSON, IO[bytes]]] = None,
+        body: Union[_models.FleetResourceUpdate, _types.FleetResourceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.FleetResource:
         """Updates the properties of an existing Azure Cosmos DB Fleet.
@@ -42879,9 +45969,10 @@ class FleetOperations:
         :type resource_group_name: str
         :param fleet_name: Cosmos DB fleet name. Needs to be unique under a subscription. Required.
         :type fleet_name: str
-        :param body: The parameters to provide for the current fleet. Is one of the following types:
-         FleetResourceUpdate, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.cosmosdb.models.FleetResourceUpdate or JSON or IO[bytes]
+        :param body: The parameters to provide for the current fleet. Is either a FleetResourceUpdate
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cosmosdb.models.FleetResourceUpdate or
+         ~azure.mgmt.cosmosdb.types.FleetResourceUpdate or IO[bytes]
         :return: FleetResource. The FleetResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.cosmosdb.models.FleetResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -42898,18 +45989,14 @@ class FleetOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if body else None
         cls: ClsType[_models.FleetResource] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json" if body else None
+        content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            if body is not None:
-                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_fleet_update_request(
             resource_group_name=resource_group_name,
@@ -43130,7 +46217,10 @@ class FleetOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -43220,7 +46310,10 @@ class FleetOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -43263,7 +46356,7 @@ class FleetOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FleetAnalyticsOperations:
+class FleetAnalyticsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -43391,7 +46484,7 @@ class FleetAnalyticsOperations:
         resource_group_name: str,
         fleet_name: str,
         fleet_analytics_name: str,
-        body: JSON,
+        body: _types.FleetAnalyticsResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43406,7 +46499,7 @@ class FleetAnalyticsOperations:
         :param fleet_analytics_name: Cosmos DB fleetAnalytics name. Required.
         :type fleet_analytics_name: str
         :param body: The parameters to provide for the current FleetAnalytics. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.FleetAnalyticsResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43451,7 +46544,7 @@ class FleetAnalyticsOperations:
         resource_group_name: str,
         fleet_name: str,
         fleet_analytics_name: str,
-        body: Union[_models.FleetAnalyticsResource, JSON, IO[bytes]],
+        body: Union[_models.FleetAnalyticsResource, _types.FleetAnalyticsResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.FleetAnalyticsResource:
         """Creates an Azure Cosmos DB FleetAnalytics under a fleet.
@@ -43463,9 +46556,10 @@ class FleetAnalyticsOperations:
         :type fleet_name: str
         :param fleet_analytics_name: Cosmos DB fleetAnalytics name. Required.
         :type fleet_analytics_name: str
-        :param body: The parameters to provide for the current FleetAnalytics. Is one of the following
-         types: FleetAnalyticsResource, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cosmosdb.models.FleetAnalyticsResource or JSON or IO[bytes]
+        :param body: The parameters to provide for the current FleetAnalytics. Is either a
+         FleetAnalyticsResource type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cosmosdb.models.FleetAnalyticsResource or
+         ~azure.mgmt.cosmosdb.types.FleetAnalyticsResource or IO[bytes]
         :return: FleetAnalyticsResource. The FleetAnalyticsResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.cosmosdb.models.FleetAnalyticsResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -43723,7 +46817,10 @@ class FleetAnalyticsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -43766,7 +46863,7 @@ class FleetAnalyticsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FleetspaceOperations:
+class FleetspaceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -43863,7 +46960,7 @@ class FleetspaceOperations:
         resource_group_name: str,
         fleet_name: str,
         fleetspace_name: str,
-        body: Union[_models.FleetspaceResource, JSON, IO[bytes]],
+        body: Union[_models.FleetspaceResource, _types.FleetspaceResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -43974,7 +47071,7 @@ class FleetspaceOperations:
         resource_group_name: str,
         fleet_name: str,
         fleetspace_name: str,
-        body: JSON,
+        body: _types.FleetspaceResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43989,7 +47086,7 @@ class FleetspaceOperations:
         :param fleetspace_name: Cosmos DB fleetspace name. Needs to be unique under a fleet. Required.
         :type fleetspace_name: str
         :param body: The parameters to provide for the current fleetspace. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.FleetspaceResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44036,7 +47133,7 @@ class FleetspaceOperations:
         resource_group_name: str,
         fleet_name: str,
         fleetspace_name: str,
-        body: Union[_models.FleetspaceResource, JSON, IO[bytes]],
+        body: Union[_models.FleetspaceResource, _types.FleetspaceResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FleetspaceResource]:
         """Creates an Azure Cosmos DB fleetspace under a fleet.
@@ -44048,9 +47145,10 @@ class FleetspaceOperations:
         :type fleet_name: str
         :param fleetspace_name: Cosmos DB fleetspace name. Needs to be unique under a fleet. Required.
         :type fleetspace_name: str
-        :param body: The parameters to provide for the current fleetspace. Is one of the following
-         types: FleetspaceResource, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cosmosdb.models.FleetspaceResource or JSON or IO[bytes]
+        :param body: The parameters to provide for the current fleetspace. Is either a
+         FleetspaceResource type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cosmosdb.models.FleetspaceResource or
+         ~azure.mgmt.cosmosdb.types.FleetspaceResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FleetspaceResource. The FleetspaceResource
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.FleetspaceResource]
@@ -44114,7 +47212,7 @@ class FleetspaceOperations:
         resource_group_name: str,
         fleet_name: str,
         fleetspace_name: str,
-        body: Optional[Union[_models.FleetspaceUpdate, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.FleetspaceUpdate, _types.FleetspaceUpdate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -44230,7 +47328,7 @@ class FleetspaceOperations:
         resource_group_name: str,
         fleet_name: str,
         fleetspace_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.FleetspaceUpdate] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44245,7 +47343,7 @@ class FleetspaceOperations:
         :param fleetspace_name: Cosmos DB fleetspace name. Needs to be unique under a fleet. Required.
         :type fleetspace_name: str
         :param body: The parameters to provide for the current fleetspace. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.FleetspaceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44292,7 +47390,7 @@ class FleetspaceOperations:
         resource_group_name: str,
         fleet_name: str,
         fleetspace_name: str,
-        body: Optional[Union[_models.FleetspaceUpdate, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.FleetspaceUpdate, _types.FleetspaceUpdate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FleetspaceResource]:
         """Update the properties of an existing Azure Cosmos DB fleetspace under a fleet.
@@ -44304,9 +47402,10 @@ class FleetspaceOperations:
         :type fleet_name: str
         :param fleetspace_name: Cosmos DB fleetspace name. Needs to be unique under a fleet. Required.
         :type fleetspace_name: str
-        :param body: The parameters to provide for the current fleetspace. Is one of the following
-         types: FleetspaceUpdate, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.cosmosdb.models.FleetspaceUpdate or JSON or IO[bytes]
+        :param body: The parameters to provide for the current fleetspace. Is either a FleetspaceUpdate
+         type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.cosmosdb.models.FleetspaceUpdate or
+         ~azure.mgmt.cosmosdb.types.FleetspaceUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FleetspaceResource. The FleetspaceResource
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cosmosdb.models.FleetspaceResource]
@@ -44550,7 +47649,10 @@ class FleetspaceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -44593,7 +47695,7 @@ class FleetspaceOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FleetspaceAccountOperations:
+class FleetspaceAccountOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -44700,7 +47802,7 @@ class FleetspaceAccountOperations:
         fleet_name: str,
         fleetspace_name: str,
         fleetspace_account_name: str,
-        body: Union[_models.FleetspaceAccountResource, JSON, IO[bytes]],
+        body: Union[_models.FleetspaceAccountResource, _types.FleetspaceAccountResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -44817,7 +47919,7 @@ class FleetspaceAccountOperations:
         fleet_name: str,
         fleetspace_name: str,
         fleetspace_account_name: str,
-        body: JSON,
+        body: _types.FleetspaceAccountResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44834,7 +47936,7 @@ class FleetspaceAccountOperations:
         :param fleetspace_account_name: Cosmos DB fleetspace account name. Required.
         :type fleetspace_account_name: str
         :param body: The parameters to provide for the current fleetspace account. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cosmosdb.types.FleetspaceAccountResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44887,7 +47989,7 @@ class FleetspaceAccountOperations:
         fleet_name: str,
         fleetspace_name: str,
         fleetspace_account_name: str,
-        body: Union[_models.FleetspaceAccountResource, JSON, IO[bytes]],
+        body: Union[_models.FleetspaceAccountResource, _types.FleetspaceAccountResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FleetspaceAccountResource]:
         """Creates an Azure Cosmos DB fleetspace account under a fleetspace.
@@ -44901,9 +48003,10 @@ class FleetspaceAccountOperations:
         :type fleetspace_name: str
         :param fleetspace_account_name: Cosmos DB fleetspace account name. Required.
         :type fleetspace_account_name: str
-        :param body: The parameters to provide for the current fleetspace account. Is one of the
-         following types: FleetspaceAccountResource, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cosmosdb.models.FleetspaceAccountResource or JSON or IO[bytes]
+        :param body: The parameters to provide for the current fleetspace account. Is either a
+         FleetspaceAccountResource type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cosmosdb.models.FleetspaceAccountResource or
+         ~azure.mgmt.cosmosdb.types.FleetspaceAccountResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FleetspaceAccountResource. The
          FleetspaceAccountResource is compatible with MutableMapping
         :rtype:
@@ -45166,7 +48269,10 @@ class FleetspaceAccountOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

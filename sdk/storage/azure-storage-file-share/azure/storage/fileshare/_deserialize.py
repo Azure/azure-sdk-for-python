@@ -28,6 +28,27 @@ def deserialize_directory_properties(
     return directory_properties
 
 
+class _StreamWrapper:
+    """Wraps a bytes iterator (sync or async) so that properties can be attached."""
+
+    def __init__(self, stream):
+        self._stream = stream
+        self.properties: Optional[FileProperties] = None
+        self.response: Optional[Any] = None
+
+    def __iter__(self):
+        return iter(self._stream)
+
+    def __next__(self):
+        return next(self._stream)
+
+    def __aiter__(self):
+        return self._stream.__aiter__()
+
+    async def __anext__(self):
+        return await self._stream.__anext__()
+
+
 def deserialize_file_properties(response: "PipelineResponse", obj: Any, headers: Dict[str, Any]) -> FileProperties:
     metadata = deserialize_metadata(response, obj, headers)
     file_properties = FileProperties(metadata=metadata, **headers)
@@ -43,8 +64,17 @@ def deserialize_file_stream(
     response: "PipelineResponse", obj: Any, headers: Dict[str, Any]
 ) -> Tuple["LocationMode", Any]:
     file_properties = deserialize_file_properties(response, obj, headers)
+    http_response = response.http_response
+    # The TypeSpec-generated download returns a raw bytes iterator or a structured-message
+    # decoder rather than a response object that exposes .properties. When the stream can't
+    # carry our metadata, wrap it so callers can still reach .properties and .response.
+    if not hasattr(obj, "properties"):
+        stream = _StreamWrapper(obj)
+        stream.properties = file_properties
+        stream.response = http_response
+        return http_response.location_mode, stream
     obj.properties = file_properties
-    return response.http_response.location_mode, obj
+    return http_response.location_mode, obj
 
 
 # Extracts out file permission

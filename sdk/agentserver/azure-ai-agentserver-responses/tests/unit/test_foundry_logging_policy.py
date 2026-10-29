@@ -154,63 +154,59 @@ async def test_logging_policy_handles_missing_correlation_headers(caplog: pytest
 
 
 @pytest.mark.asyncio
-async def test_logging_policy_logs_isolation_header_presence(caplog: pytest.LogCaptureFixture) -> None:
-    """Isolation header *presence* is logged but actual values are NOT."""
+async def test_logging_policy_logs_platform_header_presence(caplog: pytest.LogCaptureFixture) -> None:
+    """Platform header *presence* is logged but actual values are NOT."""
     policy = FoundryStorageLoggingPolicy()
     next_policy = AsyncMock()
     next_policy.send = AsyncMock(return_value=_make_response(200))
     policy.next = next_policy
 
     request = _make_request("GET", "https://storage.example.com/responses/r1")
-    request.http_request.headers["x-agent-user-isolation-key"] = "secret-user-key"
-    request.http_request.headers["x-agent-chat-isolation-key"] = "secret-chat-key"
+    request.http_request.headers["x-agent-foundry-call-id"] = "secret-call-id"
 
     with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
         await policy.send(request)
 
     msg = caplog.records[0].message
-    assert "has_user_isolation_key=True" in msg
-    assert "has_chat_isolation_key=True" in msg
+    assert "has_call_id=True" in msg
     # Values must never appear
-    assert "secret-user-key" not in msg
-    assert "secret-chat-key" not in msg
+    assert "secret-call-id" not in msg
 
 
 @pytest.mark.asyncio
-async def test_logging_policy_logs_isolation_header_absence(caplog: pytest.LogCaptureFixture) -> None:
-    """When isolation headers are absent both flags are False."""
+async def test_logging_policy_logs_platform_header_absence(caplog: pytest.LogCaptureFixture) -> None:
+    """When platform headers are absent both flags are False."""
     policy = FoundryStorageLoggingPolicy()
     next_policy = AsyncMock()
     next_policy.send = AsyncMock(return_value=_make_response(200))
     policy.next = next_policy
 
     request = _make_request("GET", "https://storage.example.com/responses/r1")
-    # Default _make_request has no isolation headers
+    # Default _make_request has no platform headers
 
     with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
         await policy.send(request)
 
     msg = caplog.records[0].message
-    assert "has_user_isolation_key=False" in msg
-    assert "has_chat_isolation_key=False" in msg
+    assert "has_call_id=False" in msg
 
 
 @pytest.mark.asyncio
-async def test_logging_policy_transport_failure_omits_isolation_flags(caplog: pytest.LogCaptureFixture) -> None:
-    """Transport failure ERROR log is minimal and omits isolation flags."""
+async def test_logging_policy_transport_failure_omits_platform_flags(caplog: pytest.LogCaptureFixture) -> None:
+    """Transport failure ERROR log is minimal and omits platform flags."""
     policy = FoundryStorageLoggingPolicy()
     next_policy = AsyncMock()
     next_policy.send = AsyncMock(side_effect=ConnectionError("oops"))
     policy.next = next_policy
 
     request = _make_request("POST", "https://storage.example.com/responses")
-    request.http_request.headers["x-agent-chat-isolation-key"] = "secret"
+    request.http_request.headers["x-agent-foundry-call-id"] = "secret"
 
     with caplog.at_level(logging.DEBUG, logger="azure.ai.agentserver"):
         with pytest.raises(ConnectionError):
             await policy.send(request)
 
-    # Transport failure log — at ERROR level, does not include isolation flags
+    # Transport failure log — at ERROR level, does not include platform flags
     # (transport failure message is intentionally minimal)
     error_records = [r for r in caplog.records if r.levelno >= logging.ERROR]
     assert len(error_records) == 1

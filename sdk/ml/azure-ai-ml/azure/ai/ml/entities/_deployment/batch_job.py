@@ -4,8 +4,6 @@
 
 from typing import Any, Dict
 
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
-
 
 class BatchJob(object):
     """Batch jobs that are created with batch deployments/endpoints invocation.
@@ -29,10 +27,12 @@ class BatchJob(object):
         }
 
     @classmethod
-    def _from_rest_object(cls, obj: BatchJobResource) -> "BatchJob":
+    def _from_rest_object(cls, obj: Dict[str, Any]) -> "BatchJob":
+        # ``BatchJobResource`` is not modeled on arm_ml_service; read the camelCase wire dict directly.
+        properties = obj.get("properties") or {}
         return cls(
-            id=obj.id,
-            name=obj.name,
-            type=obj.type,
-            status=obj.properties.status,
+            id=obj.get("id"),
+            name=obj.get("name"),
+            type=obj.get("type"),
+            status=properties.get("status"),
         )

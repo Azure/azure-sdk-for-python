@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -55,7 +56,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
+class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Microsoft NetApp Files Azure Resource Provider specification.
 
     :ivar operations: Operations operations
@@ -118,7 +119,7 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
+    :keyword api_version: The API version to use for this operation. Known values are "2026-08-01"
      and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str

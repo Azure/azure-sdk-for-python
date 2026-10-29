@@ -11,6 +11,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether access to the storage account is key-based or identity-based."""
+
+    KEY_BASED = "KeyBased"
+    """Access using storage account keys."""
+    IDENTITY_BASED = "IdentityBased"
+    """Access using managed identity."""
+
+
 class AcquireStorageAccountLock(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether storage account lock is to be acquired for this container or not."""
 
@@ -77,6 +86,8 @@ class BackupItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SAP_ASE_DATABASE."""
     SAP_HANA_DB_INSTANCE = "SAPHanaDBInstance"
     """SAP_HANA_DB_INSTANCE."""
+    SQL_INSTANCE = "SQLInstance"
+    """A SQL Server instance."""
 
 
 class BackupManagementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -210,6 +221,8 @@ class DataSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SAP_ASE_DATABASE."""
     SAP_HANA_DB_INSTANCE = "SAPHanaDBInstance"
     """SAP_HANA_DB_INSTANCE."""
+    SQL_INSTANCE = "SQLInstance"
+    """A SQL Server instance."""
 
 
 class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -262,6 +275,13 @@ class EnhancedSecurityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ENABLED."""
     DISABLED = "Disabled"
     """DISABLED."""
+
+
+class ExistingBasicVMProtection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies how existing Basic VM protection is handled when configuring protection."""
+
+    DISABLE_WITH_DELETE_RPS_NOW = "DisableWithDeleteRPsNow"
+    """Disables existing Basic VM protection and immediately deletes its recovery points."""
 
 
 class FabricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -819,6 +839,8 @@ class RecoveryPointTierType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HARDENED_RP."""
     ARCHIVED_RP = "ArchivedRP"
     """ARCHIVED_RP."""
+    IA_SNAPSHOT_RP = "IASnapshotRP"
+    """Instant Access snapshot tier, retained for the policy's instantAccessDurationMinutes."""
 
 
 class RecoveryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -944,6 +966,15 @@ class SoftDeleteFeatureState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ALWAYS_ON."""
 
 
+class SourceScanAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source scan configuration status for enabling or disabling source scan."""
+
+    ENABLE = "Enable"
+    """Enable source scan."""
+    DISABLE = "Disable"
+    """Disable source scan."""
+
+
 class SourceSideScanStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Threat status of the container."""
 
@@ -953,6 +984,8 @@ class SourceSideScanStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Source side scan is not configured."""
     NOT_APPLICABLE = "NotApplicable"
     """Source side scan is not applicable."""
+    CONFIGURATION_FAILED = "ConfigurationFailed"
+    """Source side scan configuration failed."""
 
 
 class SourceSideScanSummary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -966,6 +999,8 @@ class SourceSideScanSummary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Scan summary is suspicious."""
     HEALTHY = "Healthy"
     """Scan summary indicates healthy state."""
+    NO_THREATS_REPORTED = "NoThreatsReported"
+    """No threats reported."""
 
 
 class SQLDataDirectoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1220,6 +1255,8 @@ class WorkloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SAP_ASE_DATABASE."""
     SAP_HANA_DB_INSTANCE = "SAPHanaDBInstance"
     """SAP_HANA_DB_INSTANCE."""
+    SQL_INSTANCE = "SQLInstance"
+    """A SQL Server instance."""
 
 
 class XcoolState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

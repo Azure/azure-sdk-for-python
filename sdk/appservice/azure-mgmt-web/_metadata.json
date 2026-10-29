@@ -3,8 +3,9 @@
   "apiVersions": {
     "Microsoft.Web": "2025-05-01"
   },
-  "commit": "20b78edb12308a566be33a737a79a36662e7f4c3",
+  "commit": "965041b72edd6a89003243f98e36c74ffbfc33c9",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/web/resource-manager/Microsoft.Web/AppService",
-  "emitterVersion": "0.61.2"
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.1"
 }

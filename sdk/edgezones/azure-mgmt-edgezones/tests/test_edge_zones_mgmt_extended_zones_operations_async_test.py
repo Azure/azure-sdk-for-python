@@ -24,4 +24,4 @@ class TestEdgeZonesMgmtExtendedZonesOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_extended_zones_list_by_subscription(self, resource_group):
         response = self.client.extended_zones.list_by_subscription()
         result = [r async for r in response]
-        assert response
+        assert len(result)

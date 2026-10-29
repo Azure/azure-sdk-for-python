@@ -1,6 +1,6 @@
 {
-  "apiVersion": "2025-11-01",
+  "apiVersion": "2026-06-01-preview",
   "apiVersions": {
-    "ContentUnderstanding": "2025-11-01"
+    "ContentUnderstanding": "2026-06-01-preview"
   }
 }

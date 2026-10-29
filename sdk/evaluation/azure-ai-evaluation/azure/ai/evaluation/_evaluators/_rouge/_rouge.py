@@ -9,6 +9,7 @@ from typing_extensions import overload, override
 from azure.ai.evaluation._vendor.rouge_score import rouge_scorer
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 import math
 
 
@@ -113,7 +114,12 @@ class RougeScoreEvaluator(EvaluatorBase):
             ("f1_score_threshold", f1_score_threshold),
         ]:
             if not isinstance(value, float):
-                raise TypeError(f"{name} must be a float, got {type(value)}")
+                raise EvaluationException(
+                    message=f"{name} must be a float, got {type(value)}",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    target=ErrorTarget.ROUGE_EVALUATOR,
+                )
 
         self._threshold = {
             "precision": precision_threshold,

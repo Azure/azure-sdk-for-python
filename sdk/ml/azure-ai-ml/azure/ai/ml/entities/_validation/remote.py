@@ -2,11 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import json
 import logging
 import typing
 
 import msrest
 
+from azure.ai.ml._restclient.arm_ml_service._utils.model_base import SdkJSONEncoder
 from azure.ai.ml._vendor.azure_resources.models import (
     Deployment,
     DeploymentProperties,
@@ -117,11 +119,17 @@ class RemoteValidatableMixin(RestTranslatableMixin):
         :rtype: PreflightResource
         """
         name, version = self._get_resource_name_version()
+        rest_properties = self._to_rest_object().properties
+        # The arm_ml_service hybrid models are MutableMappings, not dicts. msrest's ``object`` serializer stringifies
+        # them (``str(model)``) instead of emitting a JSON object, which breaks the deployment-validate body. Convert
+        # to the plain wire dict so it serializes as an object, byte-identical to the legacy msrest client.
+        if not isinstance(rest_properties, dict):
+            rest_properties = json.loads(json.dumps(rest_properties, cls=SdkJSONEncoder, exclude_readonly=True))
         return PreflightResource(
             type=self._get_resource_type(),
             name=f"{workspace_name}/{name}/{version}",
             location=location,
-            properties=self._to_rest_object().properties,
+            properties=rest_properties,
             api_version="2023-03-01-preview",
         )
 

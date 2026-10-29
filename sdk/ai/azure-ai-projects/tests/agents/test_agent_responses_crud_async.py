@@ -19,7 +19,7 @@ from azure.ai.projects.models import (
 class TestAgentResponsesCrudAsync(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_responses_crud_async(self, **kwargs):
 
         model = kwargs.get("foundry_model_name")
@@ -126,7 +126,7 @@ class TestAgentResponsesCrudAsync(TestBase):
     # To run this test:
     # pytest tests\agents\test_agent_responses_crud_async.py::TestAgentResponsesCrudAsync::test_agent_responses_with_structured_output_async -s
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_responses_with_structured_output_async(self, **kwargs):
         model = kwargs.get("foundry_model_name")
 

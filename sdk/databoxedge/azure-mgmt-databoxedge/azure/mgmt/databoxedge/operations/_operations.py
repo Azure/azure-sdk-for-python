@@ -32,14 +32,13 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import DataBoxEdgeManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -2503,7 +2502,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         device_name: str,
         resource_group_name: str,
-        data_box_edge_device: JSON,
+        data_box_edge_device: _types.DataBoxEdgeDevice,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2516,7 +2515,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type resource_group_name: str
         :param data_box_edge_device: The resource object. Required.
-        :type data_box_edge_device: JSON
+        :type data_box_edge_device: ~azure.mgmt.databoxedge.types.DataBoxEdgeDevice
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2557,7 +2556,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         device_name: str,
         resource_group_name: str,
-        data_box_edge_device: Union[_models.DataBoxEdgeDevice, JSON, IO[bytes]],
+        data_box_edge_device: Union[_models.DataBoxEdgeDevice, _types.DataBoxEdgeDevice, IO[bytes]],
         **kwargs: Any
     ) -> _models.DataBoxEdgeDevice:
         """Creates or updates a Data Box Edge/Data Box Gateway resource.
@@ -2567,10 +2566,10 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param data_box_edge_device: The resource object. Is one of the following types:
-         DataBoxEdgeDevice, JSON, IO[bytes] Required.
-        :type data_box_edge_device: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice or JSON or
-         IO[bytes]
+        :param data_box_edge_device: The resource object. Is either a DataBoxEdgeDevice type or a
+         IO[bytes] type. Required.
+        :type data_box_edge_device: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice or
+         ~azure.mgmt.databoxedge.types.DataBoxEdgeDevice or IO[bytes]
         :return: DataBoxEdgeDevice. The DataBoxEdgeDevice is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2674,7 +2673,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         device_name: str,
         resource_group_name: str,
-        parameters: JSON,
+        parameters: _types.DataBoxEdgeDevicePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2687,7 +2686,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type resource_group_name: str
         :param parameters: The resource parameters. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.databoxedge.types.DataBoxEdgeDevicePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2728,7 +2727,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         device_name: str,
         resource_group_name: str,
-        parameters: Union[_models.DataBoxEdgeDevicePatch, JSON, IO[bytes]],
+        parameters: Union[_models.DataBoxEdgeDevicePatch, _types.DataBoxEdgeDevicePatch, IO[bytes]],
         **kwargs: Any
     ) -> _models.DataBoxEdgeDevice:
         """Modifies a Data Box Edge/Data Box Gateway resource.
@@ -2738,9 +2737,10 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: The resource parameters. Is one of the following types:
-         DataBoxEdgeDevicePatch, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevicePatch or JSON or IO[bytes]
+        :param parameters: The resource parameters. Is either a DataBoxEdgeDevicePatch type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevicePatch or
+         ~azure.mgmt.databoxedge.types.DataBoxEdgeDevicePatch or IO[bytes]
         :return: DataBoxEdgeDevice. The DataBoxEdgeDevice is compatible with MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.DataBoxEdgeDevice
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3631,7 +3631,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         device_name: str,
         resource_group_name: str,
-        security_settings: Union[_models.SecuritySettings, JSON, IO[bytes]],
+        security_settings: Union[_models.SecuritySettings, _types.SecuritySettings, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3734,7 +3734,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         device_name: str,
         resource_group_name: str,
-        security_settings: JSON,
+        security_settings: _types.SecuritySettings,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3747,7 +3747,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type resource_group_name: str
         :param security_settings: The security settings. Required.
-        :type security_settings: JSON
+        :type security_settings: ~azure.mgmt.databoxedge.types.SecuritySettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3788,7 +3788,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         device_name: str,
         resource_group_name: str,
-        security_settings: Union[_models.SecuritySettings, JSON, IO[bytes]],
+        security_settings: Union[_models.SecuritySettings, _types.SecuritySettings, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Updates the security settings on a Data Box Edge/Data Box Gateway device.
@@ -3798,9 +3798,10 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param security_settings: The security settings. Is one of the following types:
-         SecuritySettings, JSON, IO[bytes] Required.
-        :type security_settings: ~azure.mgmt.databoxedge.models.SecuritySettings or JSON or IO[bytes]
+        :param security_settings: The security settings. Is either a SecuritySettings type or a
+         IO[bytes] type. Required.
+        :type security_settings: ~azure.mgmt.databoxedge.models.SecuritySettings or
+         ~azure.mgmt.databoxedge.types.SecuritySettings or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3885,7 +3886,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         device_name: str,
         resource_group_name: str,
-        parameters: JSON,
+        parameters: _types.DataBoxEdgeDeviceExtendedInfoPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3898,7 +3899,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type resource_group_name: str
         :param parameters: The patch object. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.databoxedge.types.DataBoxEdgeDeviceExtendedInfoPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3941,7 +3942,9 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         device_name: str,
         resource_group_name: str,
-        parameters: Union[_models.DataBoxEdgeDeviceExtendedInfoPatch, JSON, IO[bytes]],
+        parameters: Union[
+            _models.DataBoxEdgeDeviceExtendedInfoPatch, _types.DataBoxEdgeDeviceExtendedInfoPatch, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.DataBoxEdgeDeviceExtendedInfo:
         """Gets additional information for the specified Data Box Edge/Data Box Gateway device.
@@ -3951,10 +3954,10 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: The patch object. Is one of the following types:
-         DataBoxEdgeDeviceExtendedInfoPatch, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.databoxedge.models.DataBoxEdgeDeviceExtendedInfoPatch or JSON or
-         IO[bytes]
+        :param parameters: The patch object. Is either a DataBoxEdgeDeviceExtendedInfoPatch type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.databoxedge.models.DataBoxEdgeDeviceExtendedInfoPatch or
+         ~azure.mgmt.databoxedge.types.DataBoxEdgeDeviceExtendedInfoPatch or IO[bytes]
         :return: DataBoxEdgeDeviceExtendedInfo. The DataBoxEdgeDeviceExtendedInfo is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.DataBoxEdgeDeviceExtendedInfo
@@ -4060,7 +4063,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         device_name: str,
         resource_group_name: str,
-        parameters: JSON,
+        parameters: _types.UploadCertificateRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4073,7 +4076,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type resource_group_name: str
         :param parameters: The upload certificate request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.databoxedge.types.UploadCertificateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4116,7 +4119,7 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         self,
         device_name: str,
         resource_group_name: str,
-        parameters: Union[_models.UploadCertificateRequest, JSON, IO[bytes]],
+        parameters: Union[_models.UploadCertificateRequest, _types.UploadCertificateRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.UploadCertificateResponse:
         """Uploads registration certificate for the device.
@@ -4126,9 +4129,10 @@ class DevicesOperations:  # pylint: disable=too-many-public-methods
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: The upload certificate request. Is one of the following types:
-         UploadCertificateRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.databoxedge.models.UploadCertificateRequest or JSON or IO[bytes]
+        :param parameters: The upload certificate request. Is either a UploadCertificateRequest type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.databoxedge.models.UploadCertificateRequest or
+         ~azure.mgmt.databoxedge.types.UploadCertificateRequest or IO[bytes]
         :return: UploadCertificateResponse. The UploadCertificateResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.databoxedge.models.UploadCertificateResponse
@@ -4684,7 +4688,7 @@ class BandwidthSchedulesOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        parameters: Union[_models.BandwidthSchedule, JSON, IO[bytes]],
+        parameters: Union[_models.BandwidthSchedule, _types.BandwidthSchedule, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4793,7 +4797,7 @@ class BandwidthSchedulesOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        parameters: JSON,
+        parameters: _types.BandwidthSchedule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4808,7 +4812,7 @@ class BandwidthSchedulesOperations:
          Required.
         :type resource_group_name: str
         :param parameters: The bandwidth schedule to be added or updated. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.databoxedge.types.BandwidthSchedule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4855,7 +4859,7 @@ class BandwidthSchedulesOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        parameters: Union[_models.BandwidthSchedule, JSON, IO[bytes]],
+        parameters: Union[_models.BandwidthSchedule, _types.BandwidthSchedule, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.BandwidthSchedule]:
         """Creates or updates a bandwidth schedule.
@@ -4867,9 +4871,10 @@ class BandwidthSchedulesOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param parameters: The bandwidth schedule to be added or updated. Is one of the following
-         types: BandwidthSchedule, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.databoxedge.models.BandwidthSchedule or JSON or IO[bytes]
+        :param parameters: The bandwidth schedule to be added or updated. Is either a BandwidthSchedule
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.databoxedge.models.BandwidthSchedule or
+         ~azure.mgmt.databoxedge.types.BandwidthSchedule or IO[bytes]
         :return: An instance of LROPoller that returns BandwidthSchedule. The BandwidthSchedule is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.BandwidthSchedule]
@@ -5248,7 +5253,9 @@ class DiagnosticSettingsOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        proactive_log_collection_settings: Union[_models.DiagnosticProactiveLogCollectionSettings, JSON, IO[bytes]],
+        proactive_log_collection_settings: Union[
+            _models.DiagnosticProactiveLogCollectionSettings, _types.DiagnosticProactiveLogCollectionSettings, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5354,7 +5361,7 @@ class DiagnosticSettingsOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        proactive_log_collection_settings: JSON,
+        proactive_log_collection_settings: _types.DiagnosticProactiveLogCollectionSettings,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5367,7 +5374,8 @@ class DiagnosticSettingsOperations:
          Required.
         :type resource_group_name: str
         :param proactive_log_collection_settings: The proactive log collection settings. Required.
-        :type proactive_log_collection_settings: JSON
+        :type proactive_log_collection_settings:
+         ~azure.mgmt.databoxedge.types.DiagnosticProactiveLogCollectionSettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5412,7 +5420,9 @@ class DiagnosticSettingsOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        proactive_log_collection_settings: Union[_models.DiagnosticProactiveLogCollectionSettings, JSON, IO[bytes]],
+        proactive_log_collection_settings: Union[
+            _models.DiagnosticProactiveLogCollectionSettings, _types.DiagnosticProactiveLogCollectionSettings, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.DiagnosticProactiveLogCollectionSettings]:
         """Updates the proactive log collection settings on a Data Box Edge/Data Box Gateway device.
@@ -5422,10 +5432,11 @@ class DiagnosticSettingsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param proactive_log_collection_settings: The proactive log collection settings. Is one of the
-         following types: DiagnosticProactiveLogCollectionSettings, JSON, IO[bytes] Required.
+        :param proactive_log_collection_settings: The proactive log collection settings. Is either a
+         DiagnosticProactiveLogCollectionSettings type or a IO[bytes] type. Required.
         :type proactive_log_collection_settings:
-         ~azure.mgmt.databoxedge.models.DiagnosticProactiveLogCollectionSettings or JSON or IO[bytes]
+         ~azure.mgmt.databoxedge.models.DiagnosticProactiveLogCollectionSettings or
+         ~azure.mgmt.databoxedge.types.DiagnosticProactiveLogCollectionSettings or IO[bytes]
         :return: An instance of LROPoller that returns DiagnosticProactiveLogCollectionSettings. The
          DiagnosticProactiveLogCollectionSettings is compatible with MutableMapping
         :rtype:
@@ -5562,7 +5573,9 @@ class DiagnosticSettingsOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        diagnostic_remote_support_settings: Union[_models.DiagnosticRemoteSupportSettings, JSON, IO[bytes]],
+        diagnostic_remote_support_settings: Union[
+            _models.DiagnosticRemoteSupportSettings, _types.DiagnosticRemoteSupportSettings, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5668,7 +5681,7 @@ class DiagnosticSettingsOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        diagnostic_remote_support_settings: JSON,
+        diagnostic_remote_support_settings: _types.DiagnosticRemoteSupportSettings,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5681,7 +5694,8 @@ class DiagnosticSettingsOperations:
          Required.
         :type resource_group_name: str
         :param diagnostic_remote_support_settings: The diagnostic remote support settings. Required.
-        :type diagnostic_remote_support_settings: JSON
+        :type diagnostic_remote_support_settings:
+         ~azure.mgmt.databoxedge.types.DiagnosticRemoteSupportSettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5726,7 +5740,9 @@ class DiagnosticSettingsOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        diagnostic_remote_support_settings: Union[_models.DiagnosticRemoteSupportSettings, JSON, IO[bytes]],
+        diagnostic_remote_support_settings: Union[
+            _models.DiagnosticRemoteSupportSettings, _types.DiagnosticRemoteSupportSettings, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.DiagnosticRemoteSupportSettings]:
         """Updates the diagnostic remote support settings on a Data Box Edge/Data Box Gateway device.
@@ -5736,10 +5752,11 @@ class DiagnosticSettingsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param diagnostic_remote_support_settings: The diagnostic remote support settings. Is one of
-         the following types: DiagnosticRemoteSupportSettings, JSON, IO[bytes] Required.
+        :param diagnostic_remote_support_settings: The diagnostic remote support settings. Is either a
+         DiagnosticRemoteSupportSettings type or a IO[bytes] type. Required.
         :type diagnostic_remote_support_settings:
-         ~azure.mgmt.databoxedge.models.DiagnosticRemoteSupportSettings or JSON or IO[bytes]
+         ~azure.mgmt.databoxedge.models.DiagnosticRemoteSupportSettings or
+         ~azure.mgmt.databoxedge.types.DiagnosticRemoteSupportSettings or IO[bytes]
         :return: An instance of LROPoller that returns DiagnosticRemoteSupportSettings. The
          DiagnosticRemoteSupportSettings is compatible with MutableMapping
         :rtype:
@@ -5986,7 +6003,11 @@ class OrdersOperations:
         return deserialized  # type: ignore
 
     def _create_or_update_initial(
-        self, device_name: str, resource_group_name: str, order: Union[_models.Order, JSON, IO[bytes]], **kwargs: Any
+        self,
+        device_name: str,
+        resource_group_name: str,
+        order: Union[_models.Order, _types.Order, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6091,7 +6112,7 @@ class OrdersOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        order: JSON,
+        order: _types.Order,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6106,7 +6127,7 @@ class OrdersOperations:
          Required.
         :type resource_group_name: str
         :param order: The order to be created or updated. Required.
-        :type order: JSON
+        :type order: ~azure.mgmt.databoxedge.types.Order
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6148,7 +6169,11 @@ class OrdersOperations:
 
     @distributed_trace
     def begin_create_or_update(
-        self, device_name: str, resource_group_name: str, order: Union[_models.Order, JSON, IO[bytes]], **kwargs: Any
+        self,
+        device_name: str,
+        resource_group_name: str,
+        order: Union[_models.Order, _types.Order, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.Order]:
         """Creates or updates an order.
 
@@ -6159,9 +6184,10 @@ class OrdersOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param order: The order to be created or updated. Is one of the following types: Order, JSON,
-         IO[bytes] Required.
-        :type order: ~azure.mgmt.databoxedge.models.Order or JSON or IO[bytes]
+        :param order: The order to be created or updated. Is either a Order type or a IO[bytes] type.
+         Required.
+        :type order: ~azure.mgmt.databoxedge.models.Order or ~azure.mgmt.databoxedge.types.Order or
+         IO[bytes]
         :return: An instance of LROPoller that returns Order. The Order is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.Order]
@@ -6611,7 +6637,7 @@ class RolesOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        role: Union[_models.Role, JSON, IO[bytes]],
+        role: Union[_models.Role, _types.Role, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6719,7 +6745,7 @@ class RolesOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        role: JSON,
+        role: _types.Role,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6734,7 +6760,7 @@ class RolesOperations:
          Required.
         :type resource_group_name: str
         :param role: The role properties. Required.
-        :type role: JSON
+        :type role: ~azure.mgmt.databoxedge.types.Role
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6779,7 +6805,7 @@ class RolesOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        role: Union[_models.Role, JSON, IO[bytes]],
+        role: Union[_models.Role, _types.Role, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Role]:
         """Create or update a role.
@@ -6791,9 +6817,9 @@ class RolesOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param role: The role properties. Is one of the following types: Role, JSON, IO[bytes]
-         Required.
-        :type role: ~azure.mgmt.databoxedge.models.Role or JSON or IO[bytes]
+        :param role: The role properties. Is either a Role type or a IO[bytes] type. Required.
+        :type role: ~azure.mgmt.databoxedge.models.Role or ~azure.mgmt.databoxedge.types.Role or
+         IO[bytes]
         :return: An instance of LROPoller that returns Role. The Role is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.Role]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7177,7 +7203,7 @@ class AddonsOperations:
         role_name: str,
         addon_name: str,
         resource_group_name: str,
-        addon: Union[_models.Addon, JSON, IO[bytes]],
+        addon: Union[_models.Addon, _types.Addon, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7291,7 +7317,7 @@ class AddonsOperations:
         role_name: str,
         addon_name: str,
         resource_group_name: str,
-        addon: JSON,
+        addon: _types.Addon,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7308,7 +7334,7 @@ class AddonsOperations:
          Required.
         :type resource_group_name: str
         :param addon: The addon properties. Required.
-        :type addon: JSON
+        :type addon: ~azure.mgmt.databoxedge.types.Addon
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7359,7 +7385,7 @@ class AddonsOperations:
         role_name: str,
         addon_name: str,
         resource_group_name: str,
-        addon: Union[_models.Addon, JSON, IO[bytes]],
+        addon: Union[_models.Addon, _types.Addon, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Addon]:
         """Create or update a addon.
@@ -7373,9 +7399,9 @@ class AddonsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param addon: The addon properties. Is one of the following types: Addon, JSON, IO[bytes]
-         Required.
-        :type addon: ~azure.mgmt.databoxedge.models.Addon or JSON or IO[bytes]
+        :param addon: The addon properties. Is either a Addon type or a IO[bytes] type. Required.
+        :type addon: ~azure.mgmt.databoxedge.models.Addon or ~azure.mgmt.databoxedge.types.Addon or
+         IO[bytes]
         :return: An instance of LROPoller that returns Addon. The Addon is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.Addon]
@@ -7768,7 +7794,7 @@ class SharesOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        share: Union[_models.Share, JSON, IO[bytes]],
+        share: Union[_models.Share, _types.Share, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7879,7 +7905,7 @@ class SharesOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        share: JSON,
+        share: _types.Share,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7896,7 +7922,7 @@ class SharesOperations:
          Required.
         :type resource_group_name: str
         :param share: The share properties. Required.
-        :type share: JSON
+        :type share: ~azure.mgmt.databoxedge.types.Share
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7945,7 +7971,7 @@ class SharesOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        share: Union[_models.Share, JSON, IO[bytes]],
+        share: Union[_models.Share, _types.Share, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Share]:
         """Creates a new share or updates an existing share on the device.
@@ -7959,9 +7985,9 @@ class SharesOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param share: The share properties. Is one of the following types: Share, JSON, IO[bytes]
-         Required.
-        :type share: ~azure.mgmt.databoxedge.models.Share or JSON or IO[bytes]
+        :param share: The share properties. Is either a Share type or a IO[bytes] type. Required.
+        :type share: ~azure.mgmt.databoxedge.models.Share or ~azure.mgmt.databoxedge.types.Share or
+         IO[bytes]
         :return: An instance of LROPoller that returns Share. The Share is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.Share]
@@ -8467,7 +8493,7 @@ class StorageAccountCredentialsOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        storage_account_credential: Union[_models.StorageAccountCredential, JSON, IO[bytes]],
+        storage_account_credential: Union[_models.StorageAccountCredential, _types.StorageAccountCredential, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8576,7 +8602,7 @@ class StorageAccountCredentialsOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        storage_account_credential: JSON,
+        storage_account_credential: _types.StorageAccountCredential,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8591,7 +8617,7 @@ class StorageAccountCredentialsOperations:
          Required.
         :type resource_group_name: str
         :param storage_account_credential: The storage account credential. Required.
-        :type storage_account_credential: JSON
+        :type storage_account_credential: ~azure.mgmt.databoxedge.types.StorageAccountCredential
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8638,7 +8664,7 @@ class StorageAccountCredentialsOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        storage_account_credential: Union[_models.StorageAccountCredential, JSON, IO[bytes]],
+        storage_account_credential: Union[_models.StorageAccountCredential, _types.StorageAccountCredential, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.StorageAccountCredential]:
         """Creates or updates the storage account credential.
@@ -8650,10 +8676,10 @@ class StorageAccountCredentialsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param storage_account_credential: The storage account credential. Is one of the following
-         types: StorageAccountCredential, JSON, IO[bytes] Required.
+        :param storage_account_credential: The storage account credential. Is either a
+         StorageAccountCredential type or a IO[bytes] type. Required.
         :type storage_account_credential: ~azure.mgmt.databoxedge.models.StorageAccountCredential or
-         JSON or IO[bytes]
+         ~azure.mgmt.databoxedge.types.StorageAccountCredential or IO[bytes]
         :return: An instance of LROPoller that returns StorageAccountCredential. The
          StorageAccountCredential is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.StorageAccountCredential]
@@ -9038,7 +9064,7 @@ class StorageAccountsOperations:
         device_name: str,
         storage_account_name: str,
         resource_group_name: str,
-        storage_account: Union[_models.StorageAccount, JSON, IO[bytes]],
+        storage_account: Union[_models.StorageAccount, _types.StorageAccount, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9149,7 +9175,7 @@ class StorageAccountsOperations:
         device_name: str,
         storage_account_name: str,
         resource_group_name: str,
-        storage_account: JSON,
+        storage_account: _types.StorageAccount,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9166,7 +9192,7 @@ class StorageAccountsOperations:
          Required.
         :type resource_group_name: str
         :param storage_account: The StorageAccount properties. Required.
-        :type storage_account: JSON
+        :type storage_account: ~azure.mgmt.databoxedge.types.StorageAccount
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9215,7 +9241,7 @@ class StorageAccountsOperations:
         device_name: str,
         storage_account_name: str,
         resource_group_name: str,
-        storage_account: Union[_models.StorageAccount, JSON, IO[bytes]],
+        storage_account: Union[_models.StorageAccount, _types.StorageAccount, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.StorageAccount]:
         """Creates a new StorageAccount or updates an existing StorageAccount on the device.
@@ -9229,9 +9255,10 @@ class StorageAccountsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param storage_account: The StorageAccount properties. Is one of the following types:
-         StorageAccount, JSON, IO[bytes] Required.
-        :type storage_account: ~azure.mgmt.databoxedge.models.StorageAccount or JSON or IO[bytes]
+        :param storage_account: The StorageAccount properties. Is either a StorageAccount type or a
+         IO[bytes] type. Required.
+        :type storage_account: ~azure.mgmt.databoxedge.models.StorageAccount or
+         ~azure.mgmt.databoxedge.types.StorageAccount or IO[bytes]
         :return: An instance of LROPoller that returns StorageAccount. The StorageAccount is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.StorageAccount]
@@ -9624,7 +9651,7 @@ class ContainersOperations:
         storage_account_name: str,
         container_name: str,
         resource_group_name: str,
-        container: Union[_models.Container, JSON, IO[bytes]],
+        container: Union[_models.Container, _types.Container, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9740,7 +9767,7 @@ class ContainersOperations:
         storage_account_name: str,
         container_name: str,
         resource_group_name: str,
-        container: JSON,
+        container: _types.Container,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9759,7 +9786,7 @@ class ContainersOperations:
          Required.
         :type resource_group_name: str
         :param container: The container properties. Required.
-        :type container: JSON
+        :type container: ~azure.mgmt.databoxedge.types.Container
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9812,7 +9839,7 @@ class ContainersOperations:
         storage_account_name: str,
         container_name: str,
         resource_group_name: str,
-        container: Union[_models.Container, JSON, IO[bytes]],
+        container: Union[_models.Container, _types.Container, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Container]:
         """Creates a new container or updates an existing container on the device.
@@ -9828,9 +9855,10 @@ class ContainersOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param container: The container properties. Is one of the following types: Container, JSON,
-         IO[bytes] Required.
-        :type container: ~azure.mgmt.databoxedge.models.Container or JSON or IO[bytes]
+        :param container: The container properties. Is either a Container type or a IO[bytes] type.
+         Required.
+        :type container: ~azure.mgmt.databoxedge.models.Container or
+         ~azure.mgmt.databoxedge.types.Container or IO[bytes]
         :return: An instance of LROPoller that returns Container. The Container is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.Container]
@@ -10353,7 +10381,7 @@ class TriggersOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        trigger: Union[_models.Trigger, JSON, IO[bytes]],
+        trigger: Union[_models.Trigger, _types.Trigger, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10462,7 +10490,7 @@ class TriggersOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        trigger: JSON,
+        trigger: _types.Trigger,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10477,7 +10505,7 @@ class TriggersOperations:
          Required.
         :type resource_group_name: str
         :param trigger: The trigger. Required.
-        :type trigger: JSON
+        :type trigger: ~azure.mgmt.databoxedge.types.Trigger
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10524,7 +10552,7 @@ class TriggersOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        trigger: Union[_models.Trigger, JSON, IO[bytes]],
+        trigger: Union[_models.Trigger, _types.Trigger, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Trigger]:
         """Creates or updates a trigger.
@@ -10536,8 +10564,9 @@ class TriggersOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param trigger: The trigger. Is one of the following types: Trigger, JSON, IO[bytes] Required.
-        :type trigger: ~azure.mgmt.databoxedge.models.Trigger or JSON or IO[bytes]
+        :param trigger: The trigger. Is either a Trigger type or a IO[bytes] type. Required.
+        :type trigger: ~azure.mgmt.databoxedge.models.Trigger or ~azure.mgmt.databoxedge.types.Trigger
+         or IO[bytes]
         :return: An instance of LROPoller that returns Trigger. The Trigger is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.Trigger]
@@ -10920,7 +10949,7 @@ class UsersOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        user: Union[_models.User, JSON, IO[bytes]],
+        user: Union[_models.User, _types.User, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -11029,7 +11058,7 @@ class UsersOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        user: JSON,
+        user: _types.User,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11045,7 +11074,7 @@ class UsersOperations:
          Required.
         :type resource_group_name: str
         :param user: The user details. Required.
-        :type user: JSON
+        :type user: ~azure.mgmt.databoxedge.types.User
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11091,7 +11120,7 @@ class UsersOperations:
         device_name: str,
         name: str,
         resource_group_name: str,
-        user: Union[_models.User, JSON, IO[bytes]],
+        user: Union[_models.User, _types.User, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.User]:
         """Creates a new user or updates an existing user's information on a Data Box Edge/Data Box
@@ -11104,8 +11133,9 @@ class UsersOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param user: The user details. Is one of the following types: User, JSON, IO[bytes] Required.
-        :type user: ~azure.mgmt.databoxedge.models.User or JSON or IO[bytes]
+        :param user: The user details. Is either a User type or a IO[bytes] type. Required.
+        :type user: ~azure.mgmt.databoxedge.models.User or ~azure.mgmt.databoxedge.types.User or
+         IO[bytes]
         :return: An instance of LROPoller that returns User. The User is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.databoxedge.models.User]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11413,7 +11443,9 @@ class DeviceCapacityCheckOperations:
         self,
         resource_group_name: str,
         device_name: str,
-        device_capacity_request_info: Union[_models.DeviceCapacityRequestInfo, JSON, IO[bytes]],
+        device_capacity_request_info: Union[
+            _models.DeviceCapacityRequestInfo, _types.DeviceCapacityRequestInfo, IO[bytes]
+        ],
         *,
         capacity_name: Optional[str] = None,
         **kwargs: Any
@@ -11524,7 +11556,7 @@ class DeviceCapacityCheckOperations:
         self,
         resource_group_name: str,
         device_name: str,
-        device_capacity_request_info: JSON,
+        device_capacity_request_info: _types.DeviceCapacityRequestInfo,
         *,
         capacity_name: Optional[str] = None,
         content_type: str = "application/json",
@@ -11538,7 +11570,7 @@ class DeviceCapacityCheckOperations:
         :param device_name: The device name. Required.
         :type device_name: str
         :param device_capacity_request_info: The device capacity request info. Required.
-        :type device_capacity_request_info: JSON
+        :type device_capacity_request_info: ~azure.mgmt.databoxedge.types.DeviceCapacityRequestInfo
         :keyword capacity_name: The capacity name. Default value is None.
         :paramtype capacity_name: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -11584,7 +11616,9 @@ class DeviceCapacityCheckOperations:
         self,
         resource_group_name: str,
         device_name: str,
-        device_capacity_request_info: Union[_models.DeviceCapacityRequestInfo, JSON, IO[bytes]],
+        device_capacity_request_info: Union[
+            _models.DeviceCapacityRequestInfo, _types.DeviceCapacityRequestInfo, IO[bytes]
+        ],
         *,
         capacity_name: Optional[str] = None,
         **kwargs: Any
@@ -11596,10 +11630,10 @@ class DeviceCapacityCheckOperations:
         :type resource_group_name: str
         :param device_name: The device name. Required.
         :type device_name: str
-        :param device_capacity_request_info: The device capacity request info. Is one of the following
-         types: DeviceCapacityRequestInfo, JSON, IO[bytes] Required.
+        :param device_capacity_request_info: The device capacity request info. Is either a
+         DeviceCapacityRequestInfo type or a IO[bytes] type. Required.
         :type device_capacity_request_info: ~azure.mgmt.databoxedge.models.DeviceCapacityRequestInfo or
-         JSON or IO[bytes]
+         ~azure.mgmt.databoxedge.types.DeviceCapacityRequestInfo or IO[bytes]
         :keyword capacity_name: The capacity name. Default value is None.
         :paramtype capacity_name: str
         :return: An instance of LROPoller that returns None
@@ -11800,7 +11834,9 @@ class SupportPackagesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        trigger_support_package_request: Union[_models.TriggerSupportPackageRequest, JSON, IO[bytes]],
+        trigger_support_package_request: Union[
+            _models.TriggerSupportPackageRequest, _types.TriggerSupportPackageRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -11906,7 +11942,7 @@ class SupportPackagesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        trigger_support_package_request: JSON,
+        trigger_support_package_request: _types.TriggerSupportPackageRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11921,7 +11957,8 @@ class SupportPackagesOperations:
          Required.
         :type resource_group_name: str
         :param trigger_support_package_request: The trigger support package request object. Required.
-        :type trigger_support_package_request: JSON
+        :type trigger_support_package_request:
+         ~azure.mgmt.databoxedge.types.TriggerSupportPackageRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11964,7 +12001,9 @@ class SupportPackagesOperations:
         self,
         device_name: str,
         resource_group_name: str,
-        trigger_support_package_request: Union[_models.TriggerSupportPackageRequest, JSON, IO[bytes]],
+        trigger_support_package_request: Union[
+            _models.TriggerSupportPackageRequest, _types.TriggerSupportPackageRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Triggers support package on the device.
@@ -11976,10 +12015,11 @@ class SupportPackagesOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param trigger_support_package_request: The trigger support package request object. Is one of
-         the following types: TriggerSupportPackageRequest, JSON, IO[bytes] Required.
+        :param trigger_support_package_request: The trigger support package request object. Is either a
+         TriggerSupportPackageRequest type or a IO[bytes] type. Required.
         :type trigger_support_package_request:
-         ~azure.mgmt.databoxedge.models.TriggerSupportPackageRequest or JSON or IO[bytes]
+         ~azure.mgmt.databoxedge.models.TriggerSupportPackageRequest or
+         ~azure.mgmt.databoxedge.types.TriggerSupportPackageRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12226,7 +12266,9 @@ class MonitoringConfigOperations:
         device_name: str,
         role_name: str,
         resource_group_name: str,
-        monitoring_metric_configuration: Union[_models.MonitoringMetricConfiguration, JSON, IO[bytes]],
+        monitoring_metric_configuration: Union[
+            _models.MonitoringMetricConfiguration, _types.MonitoringMetricConfiguration, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -12339,7 +12381,7 @@ class MonitoringConfigOperations:
         device_name: str,
         role_name: str,
         resource_group_name: str,
-        monitoring_metric_configuration: JSON,
+        monitoring_metric_configuration: _types.MonitoringMetricConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12356,7 +12398,8 @@ class MonitoringConfigOperations:
          Required.
         :type resource_group_name: str
         :param monitoring_metric_configuration: The metric configuration. Required.
-        :type monitoring_metric_configuration: JSON
+        :type monitoring_metric_configuration:
+         ~azure.mgmt.databoxedge.types.MonitoringMetricConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12407,7 +12450,9 @@ class MonitoringConfigOperations:
         device_name: str,
         role_name: str,
         resource_group_name: str,
-        monitoring_metric_configuration: Union[_models.MonitoringMetricConfiguration, JSON, IO[bytes]],
+        monitoring_metric_configuration: Union[
+            _models.MonitoringMetricConfiguration, _types.MonitoringMetricConfiguration, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.MonitoringMetricConfiguration]:
         """Creates a new metric configuration or updates an existing one for a role.
@@ -12421,10 +12466,11 @@ class MonitoringConfigOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param monitoring_metric_configuration: The metric configuration. Is one of the following
-         types: MonitoringMetricConfiguration, JSON, IO[bytes] Required.
+        :param monitoring_metric_configuration: The metric configuration. Is either a
+         MonitoringMetricConfiguration type or a IO[bytes] type. Required.
         :type monitoring_metric_configuration:
-         ~azure.mgmt.databoxedge.models.MonitoringMetricConfiguration or JSON or IO[bytes]
+         ~azure.mgmt.databoxedge.models.MonitoringMetricConfiguration or
+         ~azure.mgmt.databoxedge.types.MonitoringMetricConfiguration or IO[bytes]
         :return: An instance of LROPoller that returns MonitoringMetricConfiguration. The
          MonitoringMetricConfiguration is compatible with MutableMapping
         :rtype:

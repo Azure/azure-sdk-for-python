@@ -33,16 +33,16 @@ def main():
 
     response = client.scheduled_actions.cancel_next_occurrence(
         resource_group_name="rgcomputeschedule",
-        scheduled_action_name="myScheduledAction",
+        scheduled_action_name="scheduled-action-01",
         body={
             "resourceIds": [
-                "/subscriptions/1d04e8f1-ee04-4056-b0b2-718f5bb45b04/resourceGroups/myRg/providers/Microsoft.Compute/virtualMachines/myVm"
+                "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/rgcomputeschedule/providers/Microsoft.Compute/virtualMachines/vm1"
             ]
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-15-preview/ScheduledActions_CancelNextOccurrence_MaximumSet_Gen.json
+# x-ms-original-file: 2026-04-15-preview/ScheduledActions_CancelNextOccurrence_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

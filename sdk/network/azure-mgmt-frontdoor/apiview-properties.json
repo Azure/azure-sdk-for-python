@@ -223,5 +223,6 @@
         "azure.mgmt.frontdoor.aio.operations.FrontDoorNameAvailabilityOperations.check": "Microsoft.Network.FrontDoorNameAvailabilityOperationGroup.check",
         "azure.mgmt.frontdoor.operations.FrontDoorNameAvailabilityWithSubscriptionOperations.check": "Microsoft.Network.FrontDoorNameAvailabilityWithSubscriptionOperationGroup.check",
         "azure.mgmt.frontdoor.aio.operations.FrontDoorNameAvailabilityWithSubscriptionOperations.check": "Microsoft.Network.FrontDoorNameAvailabilityWithSubscriptionOperationGroup.check"
-    }
+    },
+    "CrossLanguageVersion": "b4a622d256e5"
 }

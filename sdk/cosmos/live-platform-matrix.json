@@ -2,104 +2,13 @@
   "displayNames": {
     "--disablecov": "",
     "false": "",
-    "true": ""
+    "true": "",
+    "single-session": "",
+    "single-session-split": "",
+    "multiregion-tc-session": "",
+    "multimaster-multiregion-session": ""
   },
   "include": [
-    {
-      "SplitTestConfig": {
-        "Ubuntu2404_314_split": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.14",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosSplit"
-        },
-        "Ubuntu2404_313_split": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.13",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosSplit"
-        }
-      }
-    },
-    {
-      "CircuitBreakerMultiWriteTestConfig": {
-        "Ubuntu2404_313_circuit_breaker": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.13",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosCircuitBreaker"
-        }
-      },
-      "ArmConfig": {
-        "MultiMaster": {
-          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; circuitBreakerEnabled = 'True' }"
-        }
-      }
-    },
-    {
-      "CircuitBreakerMultiRegionTestConfig": {
-        "Ubuntu2404_310_circuit_breaker": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.10",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosCircuitBreakerMultiRegion"
-        }
-      },
-      "ArmConfig": {
-        "MultiRegion": {
-          "ArmTemplateParameters": "@{ defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; circuitBreakerEnabled = 'True' }"
-        }
-      }
-    },
-    {
-      "PerPartitionAutomaticFailoverTestConfig": {
-        "Ubuntu2004_313_partition_automatic_failover": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.13",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosPerPartitionAutomaticFailover"
-        }
-      },
-      "ArmConfig": {
-        "MultiRegion": {
-          "ArmTemplateParameters": "@{ defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true;}"
-        }
-      }
-    },
-    {
-      "MacTestConfig": {
-        "macos311_search_query": {
-          "OSVmImage": "env:MACVMIMAGE",
-          "Pool": "env:MACPOOL",
-          "PythonVersion": "3.11",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosSearchQuery"
-        }
-      }
-    },
-    {
-      "CoverageConfig": {
-        "ubuntu2404_310_coverage_query": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.10",
-          "CoverageArg": "",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosQuery"
-        }
-      }
-    },
     {
       "AADTestConfig": {
         "Ubuntu2404_312_aad_long": {
@@ -204,55 +113,14 @@
       }
     },
     {
-      "WindowsConfig": {
-        "Windows2022_310_long": {
-          "OSVmImage": "env:WINDOWSVMIMAGE",
-          "Pool": "env:WINDOWSPOOL",
-          "PythonVersion": "3.10",
+      "GSITestConfig": {
+        "Ubuntu2404_313_gsi": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.13",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "TestMarkArgument": "cosmosLong"
-        },
-        "Windows2022_312_long": {
-          "OSVmImage": "env:WINDOWSVMIMAGE",
-          "Pool": "env:WINDOWSPOOL",
-          "PythonVersion": "3.12",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosLong"
-        }
-      }
-    },
-    {
-      "WindowsConfig": {
-        "Windows2022_314": {
-          "OSVmImage": "env:WINDOWSVMIMAGE",
-          "Pool": "env:WINDOWSPOOL",
-          "PythonVersion": "3.14",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosMultiRegion"
-        },
-        "Windows2022_310": {
-          "OSVmImage": "env:WINDOWSVMIMAGE",
-          "Pool": "env:WINDOWSPOOL",
-          "PythonVersion": "3.10",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosMultiRegion"
-        },
-        "Windows2022_312": {
-          "OSVmImage": "env:WINDOWSVMIMAGE",
-          "Pool": "env:WINDOWSPOOL",
-          "PythonVersion": "3.12",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosMultiRegion"
-        }
-      },
-      "ArmConfig": {
-        "MultiMaster_MultiRegion": {
-          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true }"
+          "TestMarkArgument": "cosmosGSI"
         }
       }
     }

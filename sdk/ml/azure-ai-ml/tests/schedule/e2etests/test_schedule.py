@@ -98,7 +98,7 @@ class TestSchedule(AzureRecordedTestCase):
         # Set to None to align with yaml as service will fill this
         rest_schedule.trigger.start_time = None
         assert (
-            pydash.omit(rest_schedule.trigger._to_rest_object().as_dict(), "start_time")
+            pydash.omit(rest_schedule.trigger._to_rest_object().as_dict(), "startTime")
             == CronTrigger(time_zone="UTC", expression="15 10 * * 1")._to_rest_object().as_dict()
         )
 
@@ -141,10 +141,10 @@ class TestSchedule(AzureRecordedTestCase):
         assert rest_schedule.name == schedule.name
         client.schedules.begin_disable(schedule.name)
         assert rest_schedule.trigger._to_rest_object().as_dict() == {
-            "end_time": TRIGGER_ENDTIME,
-            "start_time": "2022-05-10 10:15:00",
-            "time_zone": "Pacific Standard Time",
-            "trigger_type": "Recurrence",
+            "endTime": TRIGGER_ENDTIME,
+            "startTime": "2022-05-10 10:15:00",
+            "timeZone": "Pacific Standard Time",
+            "triggerType": "Recurrence",
             "frequency": "day",
             "interval": 1,
             "schedule": {"hours": [], "minutes": []},
@@ -161,12 +161,12 @@ class TestSchedule(AzureRecordedTestCase):
         assert rest_schedule.name == schedule.name
         client.schedules.begin_disable(schedule.name)
         assert rest_schedule.trigger._to_rest_object().as_dict() == {
-            "start_time": "2022-05-10 10:15:00",
-            "time_zone": "Pacific Standard Time",
-            "trigger_type": "Recurrence",
+            "startTime": "2022-05-10 10:15:00",
+            "timeZone": "Pacific Standard Time",
+            "triggerType": "Recurrence",
             "frequency": "week",
             "interval": 1,
-            "schedule": {"hours": [10], "minutes": [15], "week_days": ["Monday"]},
+            "schedule": {"hours": [10], "minutes": [15], "weekDays": ["Monday"]},
         }
 
     def test_create_schedule_pipeline_with_output_binding(self, client: MLClient, randstr: Callable[[], str]):

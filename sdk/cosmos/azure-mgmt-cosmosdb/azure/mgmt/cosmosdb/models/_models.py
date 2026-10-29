@@ -18,12 +18,12 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AccessRule(_Model):
+class AccessRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access rule in a network security perimeter configuration profile.
 
     :ivar name: Name of the access rule.
     :vartype name: str
-    :ivar properties:
+    :ivar properties: Properties of the access rule.
     :vartype properties: ~azure.mgmt.cosmosdb.models.AccessRuleProperties
     """
 
@@ -32,6 +32,7 @@ class AccessRule(_Model):
     properties: Optional["_models.AccessRuleProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Properties of the access rule."""
 
     @overload
     def __init__(
@@ -52,10 +53,10 @@ class AccessRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessRuleProperties(_Model):
+class AccessRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Access Rule.
 
-    :ivar direction: Known values are: "Inbound" and "Outbound".
+    :ivar direction: Direction of the access rule. Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.cosmosdb.models.AccessRuleDirection
     :ivar address_prefixes: Address prefixes in the CIDR format for inbound rules.
     :vartype address_prefixes: list[str]
@@ -75,7 +76,7 @@ class AccessRuleProperties(_Model):
     direction: Optional[Union[str, "_models.AccessRuleDirection"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Known values are: \"Inbound\" and \"Outbound\"."""
+    """Direction of the access rule. Known values are: \"Inbound\" and \"Outbound\"."""
     address_prefixes: Optional[list[str]] = rest_field(
         name="addressPrefixes", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -125,7 +126,7 @@ class AccessRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessRulePropertiesSubscriptionsItem(_Model):
+class AccessRulePropertiesSubscriptionsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The subscription resource ID for an access rule.
 
     :ivar id: The fully qualified Azure resource ID of the subscription e.g.
@@ -162,6 +163,10 @@ class AccountKeyMetadata(_Model):
      missing from the object, it means that the last key regeneration was triggered before
      2022-06-18.
     :vartype generation_time: ~datetime.datetime
+    :ivar approximate_last_usage_time: Approximate time in UTC of the most recent usage of the key
+     in ISO-8601 format. If the value is missing from the object, it means there is no recorded data
+     plane usage for this key.
+    :vartype approximate_last_usage_time: ~datetime.datetime
     """
 
     generation_time: Optional[datetime.datetime] = rest_field(
@@ -169,9 +174,14 @@ class AccountKeyMetadata(_Model):
     )
     """Generation time in UTC of the key in ISO-8601 format. If the value is missing from the object,
      it means that the last key regeneration was triggered before 2022-06-18."""
+    approximate_last_usage_time: Optional[datetime.datetime] = rest_field(
+        name="approximateLastUsageTime", visibility=["read"], format="rfc3339"
+    )
+    """Approximate time in UTC of the most recent usage of the key in ISO-8601 format. If the value is
+     missing from the object, it means there is no recorded data plane usage for this key."""
 
 
-class AnalyticalStorageConfiguration(_Model):
+class AnalyticalStorageConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Analytical storage specific properties.
 
     :ivar schema_type: Describes the types of schema for analytical storage. Known values are:
@@ -203,7 +213,7 @@ class AnalyticalStorageConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApiProperties(_Model):
+class ApiProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ApiProperties.
 
     :ivar server_version: Describes the version of the MongoDB account. Known values are: "3.2",
@@ -255,7 +265,7 @@ class ARMProxyResource(_Model):
     """The type of Azure resource."""
 
 
-class ARMResourceProperties(_Model):
+class ARMResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The core properties of ARM resources.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -317,7 +327,7 @@ class ARMResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthenticationMethodLdapProperties(_Model):
+class AuthenticationMethodLdapProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Ldap authentication method properties. This feature is in preview.
 
     :ivar server_hostname: Hostname of the LDAP server.
@@ -400,7 +410,7 @@ class AuthenticationMethodLdapProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoscaleSettings(_Model):
+class AutoscaleSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AutoscaleSettings.
 
     :ivar max_throughput: Represents maximum throughput, the resource can scale up to.
@@ -430,7 +440,7 @@ class AutoscaleSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoscaleSettingsResource(_Model):
+class AutoscaleSettingsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB provisioned throughput settings object.
 
     :ivar max_throughput: Represents maximum throughput container can scale up to. Required.
@@ -471,7 +481,7 @@ class AutoscaleSettingsResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoUpgradePolicyResource(_Model):
+class AutoUpgradePolicyResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB resource auto-upgrade policy.
 
     :ivar throughput_policy: Represents throughput policy which service must adhere to for
@@ -502,7 +512,7 @@ class AutoUpgradePolicyResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBlobContainer(_Model):
+class AzureBlobContainer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Blob container.
 
     :ivar container_name: Azure Blob container. Required.
@@ -530,7 +540,7 @@ class AzureBlobContainer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataTransferDataSourceSink(_Model):
+class DataTransferDataSourceSink(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for all DataTransfer source/sink.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -567,7 +577,9 @@ class DataTransferDataSourceSink(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBlobDataTransferDataSourceSink(DataTransferDataSourceSink, discriminator="AzureBlobStorage"):
+class AzureBlobDataTransferDataSourceSink(
+    DataTransferDataSourceSink, discriminator="AzureBlobStorage"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Blob Storage data source/sink.
 
     :ivar container_name: Required.
@@ -606,7 +618,7 @@ class AzureBlobDataTransferDataSourceSink(DataTransferDataSourceSink, discrimina
         self.component = DataTransferComponent.AZURE_BLOB_STORAGE  # type: ignore
 
 
-class AzureBlobSourceSinkDetails(_Model):
+class AzureBlobSourceSinkDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Blob Storage data source/sink.
 
     :ivar endpoint_url: Azure Blob container endpoint. Required.
@@ -634,7 +646,7 @@ class AzureBlobSourceSinkDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupInformation(_Model):
+class BackupInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup information of a resource.
 
     :ivar continuous_backup_information: Information about the status of continuous backups.
@@ -664,7 +676,7 @@ class BackupInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupPolicy(_Model):
+class BackupPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object representing the policy for taking backups on an account.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -705,7 +717,7 @@ class BackupPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupPolicyMigrationState(_Model):
+class BackupPolicyMigrationState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object representing the state of the migration between the backup policies.
 
     :ivar status: Describes the status of migration between backup policy types. Known values are:
@@ -753,7 +765,7 @@ class BackupPolicyMigrationState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupResource(_Model):
+class BackupResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A restorable backup of a Cassandra cluster.
 
     :ivar backup_id: The unique identifier of backup.
@@ -811,7 +823,7 @@ class BackupResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupSchedule(_Model):
+class BackupSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupSchedule.
 
     :ivar schedule_name: The unique identifier of backup schedule.
@@ -857,7 +869,7 @@ class BackupSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BaseCopyJobProperties(_Model):
+class BaseCopyJobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base copy job properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -912,7 +924,7 @@ class BaseCopyJobTask(_Model):
 
 class BaseCosmosDataTransferDataSourceSink(
     DataTransferDataSourceSink, discriminator="BaseCosmosDataTransferDataSourceSink"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A base CosmosDB data source/sink.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -952,7 +964,9 @@ class BaseCosmosDataTransferDataSourceSink(
         self.component = DataTransferComponent.BASE_COSMOS_DATA_TRANSFER_DATA_SOURCE_SINK  # type: ignore
 
 
-class BlobToCassandraRUCopyJobProperties(BaseCopyJobProperties, discriminator="AzureBlobStorageToCassandraRU"):
+class BlobToCassandraRUCopyJobProperties(
+    BaseCopyJobProperties, discriminator="AzureBlobStorageToCassandraRU"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Source Azure Blob Storage to Destination Cassandra copy job properties.
 
     :ivar source_details: Azure Storage container DataStore details. Required.
@@ -1001,7 +1015,7 @@ class BlobToCassandraRUCopyJobProperties(BaseCopyJobProperties, discriminator="A
         self.job_type = CopyJobType.AZURE_BLOB_STORAGE_TO_CASSANDRA_RU  # type: ignore
 
 
-class BlobToCassandraRUCopyJobTask(BaseCopyJobTask):
+class BlobToCassandraRUCopyJobTask(BaseCopyJobTask):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BlobToCassandraRUCopyJobTask.
 
     :ivar total_count: Task level Total Count.
@@ -1040,7 +1054,7 @@ class BlobToCassandraRUCopyJobTask(BaseCopyJobTask):
         super().__init__(*args, **kwargs)
 
 
-class Capability(_Model):
+class Capability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB capability object.
 
     :ivar name: Name of the Cosmos DB capability. For example, "name": "EnableCassandra". Current
@@ -1070,7 +1084,7 @@ class Capability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Capacity(_Model):
+class Capacity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object that represents all properties related to capacity enforcement on an account.
 
     :ivar total_throughput_limit: The total throughput limit imposed on the account. A
@@ -1105,7 +1119,7 @@ class Capacity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CapacityModeChangeTransitionState(_Model):
+class CapacityModeChangeTransitionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The transition state information related capacity mode change with update request.
 
     :ivar capacity_mode_transition_status: The transition status of capacity mode. Known values
@@ -1175,7 +1189,7 @@ class CapacityModeChangeTransitionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CassandraClusterDataCenterNodeItem(_Model):
+class CassandraClusterDataCenterNodeItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CassandraClusterDataCenterNodeItem.
 
     :ivar address: The node's IP address.
@@ -1312,7 +1326,7 @@ class CassandraClusterDataCenterNodeItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CassandraClusterPublicStatus(_Model):
+class CassandraClusterPublicStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a managed Cassandra cluster public status.
 
     :ivar e_tag:
@@ -1369,7 +1383,9 @@ class CassandraClusterPublicStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CassandraClusterPublicStatusDataCentersItem(_Model):  # pylint: disable=name-too-long
+class CassandraClusterPublicStatusDataCentersItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """CassandraClusterPublicStatusDataCentersItem.
 
     :ivar name: The name of this Datacenter.
@@ -1410,7 +1426,7 @@ class CassandraClusterPublicStatusDataCentersItem(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class CassandraError(_Model):
+class CassandraError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CassandraError.
 
     :ivar code: The code of error that occurred.
@@ -1455,7 +1471,9 @@ class CassandraError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
+class CassandraKeyspaceCreateUpdateParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update Cosmos DB Cassandra keyspace.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -1525,7 +1543,7 @@ class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class CassandraKeyspaceCreateUpdateProperties(_Model):
+class CassandraKeyspaceCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to create and update Azure Cosmos DB Cassandra keyspace.
 
     :ivar resource: The standard JSON format of a Cassandra keyspace. Required.
@@ -1564,7 +1582,7 @@ class CassandraKeyspaceCreateUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CassandraKeyspaceGetProperties(_Model):
+class CassandraKeyspaceGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB Cassandra keyspace.
 
     :ivar resource:
@@ -1599,7 +1617,7 @@ class CassandraKeyspaceGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OptionsResource(_Model):
+class OptionsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB options resource object.
 
     :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
@@ -1636,7 +1654,9 @@ class OptionsResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CassandraKeyspaceGetPropertiesOptions(OptionsResource):
+class CassandraKeyspaceGetPropertiesOptions(
+    OptionsResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CassandraKeyspaceGetPropertiesOptions.
 
     :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
@@ -1665,7 +1685,7 @@ class CassandraKeyspaceGetPropertiesOptions(OptionsResource):
         super().__init__(*args, **kwargs)
 
 
-class CassandraKeyspaceResource(_Model):
+class CassandraKeyspaceResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB Cassandra keyspace resource object.
 
     :ivar id: Name of the Cosmos DB Cassandra keyspace. Required.
@@ -1693,7 +1713,9 @@ class CassandraKeyspaceResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CassandraKeyspaceGetPropertiesResource(CassandraKeyspaceResource):
+class CassandraKeyspaceGetPropertiesResource(
+    CassandraKeyspaceResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CassandraKeyspaceGetPropertiesResource.
 
     :ivar id: Name of the Cosmos DB Cassandra keyspace. Required.
@@ -1761,7 +1783,24 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class CassandraKeyspaceGetResults(Resource):
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
+    """
+
+
+class CassandraKeyspaceGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Cassandra keyspace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1777,10 +1816,15 @@ class CassandraKeyspaceGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB Cassandra keyspace.
     :vartype properties: ~azure.mgmt.cosmosdb.models.CassandraKeyspaceGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -1789,10 +1833,15 @@ class CassandraKeyspaceGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB Cassandra keyspace."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1805,8 +1854,8 @@ class CassandraKeyspaceGetResults(Resource):
         self,
         *,
         properties: Optional["_models.CassandraKeyspaceGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -1839,7 +1888,7 @@ class CassandraKeyspaceGetResults(Resource):
             super().__setattr__(key, value)
 
 
-class CassandraPartitionKey(_Model):
+class CassandraPartitionKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB Cassandra table partition key.
 
     :ivar name: Name of the Cosmos DB Cassandra table partition key.
@@ -1867,24 +1916,7 @@ class CassandraPartitionKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProxyResource(Resource):
-    """Proxy Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
-    """
-
-
-class CassandraRoleAssignmentResource(ProxyResource):
+class CassandraRoleAssignmentResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update an Azure Cosmos DB Cassandra Role Assignment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1945,7 +1977,9 @@ class CassandraRoleAssignmentResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CassandraRoleAssignmentResourceProperties(_Model):  # pylint: disable=name-too-long
+class CassandraRoleAssignmentResourceProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure Cosmos DB Cassandra Role Assignment resource object.
 
     :ivar role_definition_id: The unique identifier for the associated Role Definition.
@@ -1997,7 +2031,7 @@ class CassandraRoleAssignmentResourceProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class CassandraRoleDefinitionResource(ProxyResource):
+class CassandraRoleDefinitionResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update an Azure Cosmos DB Cassandra Role Definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2058,7 +2092,9 @@ class CassandraRoleDefinitionResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CassandraRoleDefinitionResourceProperties(_Model):  # pylint: disable=name-too-long
+class CassandraRoleDefinitionResourceProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure Cosmos DB Cassandra Role Definition resource object.
 
     :ivar id: The path id for the Role Definition.
@@ -2123,7 +2159,9 @@ class CassandraRoleDefinitionResourceProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class CassandraRUToBlobCopyJobProperties(BaseCopyJobProperties, discriminator="CassandraRUToAzureBlobStorage"):
+class CassandraRUToBlobCopyJobProperties(
+    BaseCopyJobProperties, discriminator="CassandraRUToAzureBlobStorage"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Source Cassandra to Destination Azure Blob Storage copy job properties.
 
     :ivar source_details: Source Cassandra DataStore details.
@@ -2172,7 +2210,7 @@ class CassandraRUToBlobCopyJobProperties(BaseCopyJobProperties, discriminator="C
         self.job_type = CopyJobType.CASSANDRA_RU_TO_AZURE_BLOB_STORAGE  # type: ignore
 
 
-class CassandraRUToBlobCopyJobTask(BaseCopyJobTask):
+class CassandraRUToBlobCopyJobTask(BaseCopyJobTask):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CassandraRUToBlobCopyJobTask.
 
     :ivar total_count: Task level Total Count.
@@ -2211,7 +2249,7 @@ class CassandraRUToBlobCopyJobTask(BaseCopyJobTask):
 
 class CassandraRUToCassandraRUCopyJobProperties(
     BaseCopyJobProperties, discriminator="CassandraRUToCassandraRU"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Source Cassandra to Destination Cassandra copy job properties.
 
     :ivar source_details: Source Cassandra DataStore details.
@@ -2260,7 +2298,9 @@ class CassandraRUToCassandraRUCopyJobProperties(
         self.job_type = CopyJobType.CASSANDRA_RU_TO_CASSANDRA_RU  # type: ignore
 
 
-class CassandraRUToCassandraRUCopyJobTask(BaseCopyJobTask):
+class CassandraRUToCassandraRUCopyJobTask(
+    BaseCopyJobTask
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CassandraRUToCassandraRUCopyJobTask.
 
     :ivar total_count: Task level Total Count.
@@ -2299,7 +2339,7 @@ class CassandraRUToCassandraRUCopyJobTask(BaseCopyJobTask):
         super().__init__(*args, **kwargs)
 
 
-class CassandraSchema(_Model):
+class CassandraSchema(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB Cassandra table schema.
 
     :ivar columns: List of Cassandra table columns.
@@ -2341,7 +2381,9 @@ class CassandraSchema(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CassandraTableCreateUpdateParameters(ARMResourceProperties):
+class CassandraTableCreateUpdateParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update Cosmos DB Cassandra table.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -2411,7 +2453,7 @@ class CassandraTableCreateUpdateParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class CassandraTableCreateUpdateProperties(_Model):
+class CassandraTableCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to create and update Azure Cosmos DB Cassandra table.
 
     :ivar resource: The standard JSON format of a Cassandra table. Required.
@@ -2448,7 +2490,7 @@ class CassandraTableCreateUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CassandraTableGetProperties(_Model):
+class CassandraTableGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB Cassandra table.
 
     :ivar resource:
@@ -2483,7 +2525,9 @@ class CassandraTableGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CassandraTableGetPropertiesOptions(OptionsResource):
+class CassandraTableGetPropertiesOptions(
+    OptionsResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CassandraTableGetPropertiesOptions.
 
     :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
@@ -2512,7 +2556,7 @@ class CassandraTableGetPropertiesOptions(OptionsResource):
         super().__init__(*args, **kwargs)
 
 
-class CassandraTableResource(_Model):
+class CassandraTableResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB Cassandra table resource object.
 
     :ivar id: Name of the Cosmos DB Cassandra table. Required.
@@ -2559,7 +2603,9 @@ class CassandraTableResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CassandraTableGetPropertiesResource(CassandraTableResource):
+class CassandraTableGetPropertiesResource(
+    CassandraTableResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CassandraTableGetPropertiesResource.
 
     :ivar id: Name of the Cosmos DB Cassandra table. Required.
@@ -2608,7 +2654,7 @@ class CassandraTableGetPropertiesResource(CassandraTableResource):
         super().__init__(*args, **kwargs)
 
 
-class CassandraTableGetResults(Resource):
+class CassandraTableGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Cassandra table.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2624,10 +2670,15 @@ class CassandraTableGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB Cassandra table.
     :vartype properties: ~azure.mgmt.cosmosdb.models.CassandraTableGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -2636,10 +2687,15 @@ class CassandraTableGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB Cassandra table."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2652,8 +2708,8 @@ class CassandraTableGetResults(Resource):
         self,
         *,
         properties: Optional["_models.CassandraTableGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -2686,7 +2742,9 @@ class CassandraTableGetResults(Resource):
             super().__setattr__(key, value)
 
 
-class CassandraViewCreateUpdateParameters(ARMResourceProperties):
+class CassandraViewCreateUpdateParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update Cosmos DB Cassandra view.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -2756,7 +2814,7 @@ class CassandraViewCreateUpdateParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class CassandraViewCreateUpdateProperties(_Model):
+class CassandraViewCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to create and update Azure Cosmos DB Cassandra view.
 
     :ivar resource: The standard JSON format of a Cassandra view. Required.
@@ -2793,7 +2851,7 @@ class CassandraViewCreateUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CassandraViewGetProperties(_Model):
+class CassandraViewGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB Cassandra view.
 
     :ivar resource:
@@ -2828,7 +2886,7 @@ class CassandraViewGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CassandraViewGetPropertiesOptions(OptionsResource):
+class CassandraViewGetPropertiesOptions(OptionsResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CassandraViewGetPropertiesOptions.
 
     :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
@@ -2857,7 +2915,7 @@ class CassandraViewGetPropertiesOptions(OptionsResource):
         super().__init__(*args, **kwargs)
 
 
-class CassandraViewResource(_Model):
+class CassandraViewResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB Cassandra view resource object.
 
     :ivar id: Name of the Cosmos DB Cassandra view. Required.
@@ -2890,7 +2948,9 @@ class CassandraViewResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CassandraViewGetPropertiesResource(CassandraViewResource):
+class CassandraViewGetPropertiesResource(
+    CassandraViewResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CassandraViewGetPropertiesResource.
 
     :ivar id: Name of the Cosmos DB Cassandra view. Required.
@@ -2933,7 +2993,7 @@ class CassandraViewGetPropertiesResource(CassandraViewResource):
         super().__init__(*args, **kwargs)
 
 
-class CassandraViewGetResults(Resource):
+class CassandraViewGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Cassandra view.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2949,10 +3009,15 @@ class CassandraViewGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB Cassandra view.
     :vartype properties: ~azure.mgmt.cosmosdb.models.CassandraViewGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -2961,10 +3026,15 @@ class CassandraViewGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB Cassandra view."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2977,8 +3047,8 @@ class CassandraViewGetResults(Resource):
         self,
         *,
         properties: Optional["_models.CassandraViewGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -3011,7 +3081,7 @@ class CassandraViewGetResults(Resource):
             super().__setattr__(key, value)
 
 
-class Certificate(_Model):
+class Certificate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Certificate.
 
     :ivar pem: PEM formatted public key.
@@ -3039,7 +3109,7 @@ class Certificate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChaosFaultProperties(_Model):
+class ChaosFaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A request object to enable/disable the chaos fault.
 
     :ivar action: Indicates whether what action to take for the Chaos Fault. Known values are:
@@ -3094,7 +3164,7 @@ class ChaosFaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChaosFaultResource(ProxyResource):
+class ChaosFaultResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A request object to enable/disable the chaos fault.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3155,7 +3225,7 @@ class ChaosFaultResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ClientEncryptionIncludedPath(_Model):
+class ClientEncryptionIncludedPath(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """.
 
     :ivar path: Path that needs to be encrypted. Required.
@@ -3205,7 +3275,9 @@ class ClientEncryptionIncludedPath(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientEncryptionKeyCreateUpdateParameters(_Model):  # pylint: disable=name-too-long
+class ClientEncryptionKeyCreateUpdateParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameters to create and update ClientEncryptionKey.
 
     :ivar properties: Properties to create and update ClientEncryptionKey. Required.
@@ -3255,7 +3327,9 @@ class ClientEncryptionKeyCreateUpdateParameters(_Model):  # pylint: disable=name
             super().__setattr__(key, value)
 
 
-class ClientEncryptionKeyCreateUpdateProperties(_Model):  # pylint: disable=name-too-long
+class ClientEncryptionKeyCreateUpdateProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties to create and update ClientEncryptionKey.
 
     :ivar resource: The standard JSON format of a ClientEncryptionKey. Required.
@@ -3285,7 +3359,7 @@ class ClientEncryptionKeyCreateUpdateProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ClientEncryptionKeyGetProperties(_Model):
+class ClientEncryptionKeyGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a ClientEncryptionKey resource.
 
     :ivar resource:
@@ -3314,7 +3388,7 @@ class ClientEncryptionKeyGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientEncryptionKeyResource(_Model):
+class ClientEncryptionKeyResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB client encryption key resource object.
 
     :ivar id: Name of the ClientEncryptionKey.
@@ -3368,7 +3442,9 @@ class ClientEncryptionKeyResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientEncryptionKeyGetPropertiesResource(ClientEncryptionKeyResource):
+class ClientEncryptionKeyGetPropertiesResource(
+    ClientEncryptionKeyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClientEncryptionKeyGetPropertiesResource.
 
     :ivar id: Name of the ClientEncryptionKey.
@@ -3420,7 +3496,7 @@ class ClientEncryptionKeyGetPropertiesResource(ClientEncryptionKeyResource):
         super().__init__(*args, **kwargs)
 
 
-class ClientEncryptionKeyGetResults(ProxyResource):
+class ClientEncryptionKeyGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Client Encryption Key.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3481,7 +3557,7 @@ class ClientEncryptionKeyGetResults(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ClientEncryptionPolicy(_Model):
+class ClientEncryptionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB client encryption policy.
 
     :ivar included_paths: Paths of the item that need encryption along with path-specific settings.
@@ -3521,7 +3597,7 @@ class ClientEncryptionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudError(_Model):
+class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An error response from the service.
 
     :ivar error: Error Response.
@@ -3551,7 +3627,7 @@ class CloudError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterKey(_Model):
+class ClusterKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB Cassandra table cluster key.
 
     :ivar name: Name of the Cosmos DB Cassandra table cluster key.
@@ -3585,7 +3661,7 @@ class ClusterKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterResource(Resource):
+class ClusterResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Representation of a managed Cassandra cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3601,10 +3677,15 @@ class ClusterResource(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: Properties of a managed Cassandra cluster.
     :vartype properties: ~azure.mgmt.cosmosdb.models.ClusterResourceProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedCassandraManagedServiceIdentity
     """
@@ -3613,10 +3694,15 @@ class ClusterResource(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Properties of a managed Cassandra cluster."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedCassandraManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3627,8 +3713,8 @@ class ClusterResource(Resource):
         self,
         *,
         properties: Optional["_models.ClusterResourceProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedCassandraManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -3643,7 +3729,7 @@ class ClusterResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ClusterResourceProperties(_Model):
+class ClusterResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a managed Cassandra cluster.
 
     :ivar provisioning_state: The status of the resource at the time the operation was called.
@@ -3898,7 +3984,7 @@ class ClusterResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Column(_Model):
+class Column(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB Cassandra table column.
 
     :ivar name: Name of the Cosmos DB Cassandra table column.
@@ -3931,7 +4017,7 @@ class Column(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommandAsyncPostBody(_Model):
+class CommandAsyncPostBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specification of which command to run where.
 
     :ivar command: The command which should be run. Required.
@@ -3985,7 +4071,7 @@ class CommandAsyncPostBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommandOutput(_Model):
+class CommandOutput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response of /command api.
 
     :ivar command_output: Output of the command.
@@ -4015,7 +4101,7 @@ class CommandOutput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommandPostBody(_Model):
+class CommandPostBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specification of which command to run where.
 
     :ivar command: The command which should be run. Required.
@@ -4067,7 +4153,7 @@ class CommandPostBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommandPublicResource(_Model):
+class CommandPublicResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """resource representing a command.
 
     :ivar command: The command which should be run.
@@ -4152,7 +4238,7 @@ class CommandPublicResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CompositePath(_Model):
+class CompositePath(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CompositePath.
 
     :ivar path: The path for which the indexing behavior applies to. Index paths typically start
@@ -4189,7 +4275,7 @@ class CompositePath(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComputedProperty(_Model):
+class ComputedProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The definition of a computed property.
 
     :ivar name: The name of a computed property, for example - "cp_lowerName".
@@ -4224,7 +4310,7 @@ class ComputedProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConflictResolutionPolicy(_Model):
+class ConflictResolutionPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The conflict resolution policy for the container.
 
     :ivar mode: Indicates the conflict resolution mode. Known values are: "LastWriterWins" and
@@ -4271,7 +4357,7 @@ class ConflictResolutionPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionError(_Model):
+class ConnectionError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConnectionError.
 
     :ivar connection_state: The kind of connection error that occurred. Known values are:
@@ -4325,7 +4411,7 @@ class ConnectionError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConsistencyPolicy(_Model):
+class ConsistencyPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The consistency policy for the Cosmos DB database account.
 
     :ivar default_consistency_level: The default consistency level and configuration settings of
@@ -4381,7 +4467,7 @@ class ConsistencyPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerPartitionKey(_Model):
+class ContainerPartitionKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration of the partition key to be used for partitioning data into multiple
     partitions.
 
@@ -4430,7 +4516,7 @@ class ContainerPartitionKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContinuousBackupInformation(_Model):
+class ContinuousBackupInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the status of continuous backups.
 
     :ivar latest_restorable_timestamp: The latest restorable timestamp for a resource.
@@ -4460,7 +4546,7 @@ class ContinuousBackupInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContinuousBackupRestoreLocation(_Model):
+class ContinuousBackupRestoreLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the regional restorable account.
 
     :ivar location: The name of the continuous backup restore location.
@@ -4488,7 +4574,9 @@ class ContinuousBackupRestoreLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContinuousModeBackupPolicy(BackupPolicy, discriminator="Continuous"):
+class ContinuousModeBackupPolicy(
+    BackupPolicy, discriminator="Continuous"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object representing continuous mode backup policy.
 
     :ivar migration_state: The object representing the state of the migration between the backup
@@ -4527,19 +4615,19 @@ class ContinuousModeBackupPolicy(BackupPolicy, discriminator="Continuous"):
         self.type = BackupPolicyType.CONTINUOUS  # type: ignore
 
 
-class ContinuousModeProperties(_Model):
+class ContinuousModeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration values for periodic mode backup.
 
-    :ivar tier: Enum to indicate type of Continuos backup mode. Known values are: "Continuous7Days"
-     and "Continuous30Days".
+    :ivar tier: Enum to indicate type of Continuos backup mode. Known values are:
+     "Continuous7Days", "Continuous30Days", and "Continuous35Days".
     :vartype tier: str or ~azure.mgmt.cosmosdb.models.ContinuousTier
     """
 
     tier: Optional[Union[str, "_models.ContinuousTier"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Enum to indicate type of Continuos backup mode. Known values are: \"Continuous7Days\" and
-     \"Continuous30Days\"."""
+    """Enum to indicate type of Continuos backup mode. Known values are: \"Continuous7Days\",
+     \"Continuous30Days\", and \"Continuous35Days\"."""
 
     @overload
     def __init__(
@@ -4559,7 +4647,7 @@ class ContinuousModeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CopyJobGetResults(ProxyResource):
+class CopyJobGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Cosmos DB Copy Job.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4598,7 +4686,7 @@ class CopyJobGetResults(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class CopyJobProperties(_Model):
+class CopyJobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a Copy Job.
 
     :ivar job_properties: Job Properties. Required.
@@ -4670,7 +4758,7 @@ class CopyJobProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CorsPolicy(_Model):
+class CorsPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The CORS policy for the Cosmos DB database account.
 
     :ivar allowed_origins: The origin domains that are permitted to make a request against the
@@ -4734,7 +4822,7 @@ class CorsPolicy(_Model):
 
 class CosmosCassandraDataTransferDataSourceSink(
     BaseCosmosDataTransferDataSourceSink, discriminator="CosmosDBCassandra"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """A CosmosDB Cassandra API data source/sink.
 
     :ivar remote_account_name:
@@ -4775,7 +4863,7 @@ class CosmosCassandraDataTransferDataSourceSink(
         self.component = DataTransferComponent.COSMOS_DB_CASSANDRA  # type: ignore
 
 
-class CosmosDBCassandraTable(_Model):
+class CosmosDBCassandraTable(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A CosmosDB Cassandra table.
 
     :ivar keyspace_name: Azure Cosmos DB for Apache Cassandra keyspace. Required.
@@ -4808,7 +4896,7 @@ class CosmosDBCassandraTable(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CosmosDBMongoCollection(_Model):
+class CosmosDBMongoCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A CosmosDB Mongo collection.
 
     :ivar database_name: Azure Cosmos DB for MongoDB (RU) database. Required.
@@ -4841,7 +4929,7 @@ class CosmosDBMongoCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CosmosDBMongoVCoreCollection(_Model):
+class CosmosDBMongoVCoreCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A CosmosDB Mongo vCore collection.
 
     :ivar database_name: Azure Cosmos DB for MongoDB (vCore) database. Required.
@@ -4874,7 +4962,7 @@ class CosmosDBMongoVCoreCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CosmosDBNoSqlContainer(_Model):
+class CosmosDBNoSqlContainer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A CosmosDB NoSQL container.
 
     :ivar database_name: Azure Cosmos DB for NoSQL database. Required.
@@ -4907,7 +4995,7 @@ class CosmosDBNoSqlContainer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CosmosDBSourceSinkDetails(_Model):
+class CosmosDBSourceSinkDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A CosmosDB data source/sink details.
 
     :ivar remote_account_name: Name of remote account in case of cross-account data transfer.
@@ -4937,7 +5025,9 @@ class CosmosDBSourceSinkDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CosmosMongoDataTransferDataSourceSink(BaseCosmosDataTransferDataSourceSink, discriminator="CosmosDBMongo"):
+class CosmosMongoDataTransferDataSourceSink(
+    BaseCosmosDataTransferDataSourceSink, discriminator="CosmosDBMongo"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A CosmosDB Mongo API data source/sink.
 
     :ivar remote_account_name:
@@ -4980,7 +5070,7 @@ class CosmosMongoDataTransferDataSourceSink(BaseCosmosDataTransferDataSourceSink
 
 class CosmosMongoVCoreDataTransferDataSourceSink(
     DataTransferDataSourceSink, discriminator="CosmosDBMongoVCore"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """A CosmosDB Mongo vCore API data source/sink.
 
     :ivar database_name: Required.
@@ -5028,7 +5118,9 @@ class CosmosMongoVCoreDataTransferDataSourceSink(
         self.component = DataTransferComponent.COSMOS_DB_MONGO_V_CORE  # type: ignore
 
 
-class CosmosSqlDataTransferDataSourceSink(BaseCosmosDataTransferDataSourceSink, discriminator="CosmosDBSql"):
+class CosmosSqlDataTransferDataSourceSink(
+    BaseCosmosDataTransferDataSourceSink, discriminator="CosmosDBSql"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A CosmosDB No Sql API data source/sink.
 
     :ivar remote_account_name:
@@ -5069,7 +5161,7 @@ class CosmosSqlDataTransferDataSourceSink(BaseCosmosDataTransferDataSourceSink, 
         self.component = DataTransferComponent.COSMOS_DB_SQL  # type: ignore
 
 
-class CreateJobRequest(ARMProxyResource):
+class CreateJobRequest(ARMProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create Data Transfer Job.
 
     :ivar id: The unique resource identifier of the database account.
@@ -5105,7 +5197,7 @@ class CreateJobRequest(ARMProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class CreateUpdateOptions(_Model):
+class CreateUpdateOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CreateUpdateOptions are a list of key-value pairs that describe the resource. Supported keys
     are "If-Match", "If-None-Match", "Session-Token" and "Throughput".
 
@@ -5172,7 +5264,9 @@ class DatabaseAccountConnectionString(_Model):
      \"GremlinV2\", and \"Undefined\"."""
 
 
-class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
+class DatabaseAccountCreateUpdateParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update Cosmos DB database accounts.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -5249,6 +5343,8 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
         "default_priority_level",
         "enable_per_region_per_partition_autoscale",
         "enable_all_versions_and_deletes_change_feed",
+        "soft_delete_configuration",
+        "enforce_hierarchical_partition_key_id_last_level",
     ]
 
     @overload
@@ -5291,7 +5387,7 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class DatabaseAccountCreateUpdateProperties(_Model):
+class DatabaseAccountCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to create and update Azure Cosmos DB database accounts.
 
     :ivar consistency_policy: The consistency policy for the Cosmos DB account.
@@ -5404,6 +5500,11 @@ class DatabaseAccountCreateUpdateProperties(_Model):
     :ivar enable_all_versions_and_deletes_change_feed: Flag to indicate if All Versions and Deletes
      Change feed feature is enabled on the account.
     :vartype enable_all_versions_and_deletes_change_feed: bool
+    :ivar soft_delete_configuration: The configuration for soft delete on the Cosmos DB account.
+    :vartype soft_delete_configuration: ~azure.mgmt.cosmosdb.models.SoftDeleteConfiguration
+    :ivar enforce_hierarchical_partition_key_id_last_level: Flag to indicate enabling/disabling of
+     hierarchical partition key ID last level enforcement on the account.
+    :vartype enforce_hierarchical_partition_key_id_last_level: bool
     """
 
     consistency_policy: Optional["_models.ConsistencyPolicy"] = rest_field(
@@ -5571,6 +5672,15 @@ class DatabaseAccountCreateUpdateProperties(_Model):
         name="enableAllVersionsAndDeletesChangeFeed", visibility=["read", "create", "update", "delete", "query"]
     )
     """Flag to indicate if All Versions and Deletes Change feed feature is enabled on the account."""
+    soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = rest_field(
+        name="softDeleteConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration for soft delete on the Cosmos DB account."""
+    enforce_hierarchical_partition_key_id_last_level: Optional[bool] = rest_field(
+        name="enforceHierarchicalPartitionKeyIdLastLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag to indicate enabling/disabling of hierarchical partition key ID last level enforcement on
+     the account."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -5613,6 +5723,8 @@ class DatabaseAccountCreateUpdateProperties(_Model):
         default_priority_level: Optional[Union[str, "_models.DefaultPriorityLevel"]] = None,
         enable_per_region_per_partition_autoscale: Optional[bool] = None,
         enable_all_versions_and_deletes_change_feed: Optional[bool] = None,
+        soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = None,
+        enforce_hierarchical_partition_key_id_last_level: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -5627,7 +5739,7 @@ class DatabaseAccountCreateUpdateProperties(_Model):
         self.database_account_offer_type: Literal["Standard"] = "Standard"
 
 
-class DatabaseAccountGetProperties(_Model):
+class DatabaseAccountGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for the database account.
 
     :ivar provisioning_state: The provisioning state of the resource.
@@ -5763,6 +5875,8 @@ class DatabaseAccountGetProperties(_Model):
     :ivar enable_all_versions_and_deletes_change_feed: Flag to indicate if All Versions and Deletes
      Change feed feature is enabled on the account.
     :vartype enable_all_versions_and_deletes_change_feed: bool
+    :ivar soft_delete_configuration: The configuration for soft delete on the Cosmos DB account.
+    :vartype soft_delete_configuration: ~azure.mgmt.cosmosdb.models.SoftDeleteConfiguration
     :ivar throughput_pool_dedicated_r_us: Total dedicated throughput (RU/s) for database account.
      Represents the sum of all manual provisioned throughput and all autoscale max RU/s across all
      shared throughput databases and dedicated throughput containers in the account for 1 region.
@@ -5773,6 +5887,9 @@ class DatabaseAccountGetProperties(_Model):
      consumed from the pool, summed across all shared throughput databases and dedicated throughput
      containers in the account for 1 region.  READ ONLY.
     :vartype throughput_pool_max_consumable_r_us: int
+    :ivar enforce_hierarchical_partition_key_id_last_level: Flag to indicate enabling/disabling of
+     hierarchical partition key ID last level enforcement on the account.
+    :vartype enforce_hierarchical_partition_key_id_last_level: bool
     """
 
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
@@ -5963,6 +6080,10 @@ class DatabaseAccountGetProperties(_Model):
         name="enableAllVersionsAndDeletesChangeFeed", visibility=["read", "create", "update", "delete", "query"]
     )
     """Flag to indicate if All Versions and Deletes Change feed feature is enabled on the account."""
+    soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = rest_field(
+        name="softDeleteConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration for soft delete on the Cosmos DB account."""
     throughput_pool_dedicated_r_us: Optional[int] = rest_field(
         name="throughputPoolDedicatedRUs", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5976,6 +6097,11 @@ class DatabaseAccountGetProperties(_Model):
      additional throughput (RU/s) that can be consumed from the pool, summed across all shared
      throughput databases and dedicated throughput containers in the account for 1 region.  READ
      ONLY."""
+    enforce_hierarchical_partition_key_id_last_level: Optional[bool] = rest_field(
+        name="enforceHierarchicalPartitionKeyIdLastLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag to indicate enabling/disabling of hierarchical partition key ID last level enforcement on
+     the account."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -6018,8 +6144,10 @@ class DatabaseAccountGetProperties(_Model):
         default_priority_level: Optional[Union[str, "_models.DefaultPriorityLevel"]] = None,
         enable_per_region_per_partition_autoscale: Optional[bool] = None,
         enable_all_versions_and_deletes_change_feed: Optional[bool] = None,
+        soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = None,
         throughput_pool_dedicated_r_us: Optional[int] = None,
         throughput_pool_max_consumable_r_us: Optional[int] = None,
+        enforce_hierarchical_partition_key_id_last_level: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -6033,7 +6161,7 @@ class DatabaseAccountGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseAccountGetResults(Resource):
+class DatabaseAccountGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB database account.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6049,10 +6177,15 @@ class DatabaseAccountGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: Properties for the database account.
     :vartype properties: ~azure.mgmt.cosmosdb.models.DatabaseAccountGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     :ivar kind: Indicates the type of database account. This can only be set at database account
@@ -6064,10 +6197,15 @@ class DatabaseAccountGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Properties for the database account."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6127,8 +6265,10 @@ class DatabaseAccountGetResults(Resource):
         "default_priority_level",
         "enable_per_region_per_partition_autoscale",
         "enable_all_versions_and_deletes_change_feed",
+        "soft_delete_configuration",
         "throughput_pool_dedicated_r_us",
         "throughput_pool_max_consumable_r_us",
+        "enforce_hierarchical_partition_key_id_last_level",
     ]
 
     @overload
@@ -6136,8 +6276,8 @@ class DatabaseAccountGetResults(Resource):
         self,
         *,
         properties: Optional["_models.DatabaseAccountGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         kind: Optional[Union[str, "_models.DatabaseAccountKind"]] = None,
     ) -> None: ...
@@ -6206,7 +6346,9 @@ class DatabaseAccountKeysMetadata(_Model):
     """The metadata related to the Secondary Read-Only Key for the given Cosmos DB database account."""
 
 
-class DatabaseAccountListConnectionStringsResult(_Model):  # pylint: disable=name-too-long
+class DatabaseAccountListConnectionStringsResult(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The connection strings for the given database account.
 
     :ivar connection_strings: An array that contains the connection strings for the Cosmos DB
@@ -6271,12 +6413,15 @@ class DatabaseAccountListKeysResult(DatabaseAccountListReadOnlyKeysResult):
     """Base 64 encoded value of the secondary read-write key."""
 
 
-class DatabaseAccountRegenerateKeyParameters(_Model):
+class DatabaseAccountRegenerateKeyParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to regenerate the keys within the database account.
 
     :ivar key_kind: The access key to regenerate. Required. Known values are: "primary",
      "secondary", "primaryReadonly", and "secondaryReadonly".
     :vartype key_kind: str or ~azure.mgmt.cosmosdb.models.KeyKind
+    :ivar skip_account_keys_last_usage_check: Optional flag indicating whether to skip account keys
+     last usage check.
+    :vartype skip_account_keys_last_usage_check: bool
     """
 
     key_kind: Union[str, "_models.KeyKind"] = rest_field(
@@ -6284,12 +6429,17 @@ class DatabaseAccountRegenerateKeyParameters(_Model):
     )
     """The access key to regenerate. Required. Known values are: \"primary\", \"secondary\",
      \"primaryReadonly\", and \"secondaryReadonly\"."""
+    skip_account_keys_last_usage_check: Optional[bool] = rest_field(
+        name="skipAccountKeysLastUsageCheck", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional flag indicating whether to skip account keys last usage check."""
 
     @overload
     def __init__(
         self,
         *,
         key_kind: Union[str, "_models.KeyKind"],
+        skip_account_keys_last_usage_check: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -6303,7 +6453,7 @@ class DatabaseAccountRegenerateKeyParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseAccountUpdateParameters(_Model):
+class DatabaseAccountUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for patching Azure Cosmos DB database account properties.
 
     :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
@@ -6376,6 +6526,8 @@ class DatabaseAccountUpdateParameters(_Model):
         "default_priority_level",
         "enable_per_region_per_partition_autoscale",
         "enable_all_versions_and_deletes_change_feed",
+        "soft_delete_configuration",
+        "enforce_hierarchical_partition_key_id_last_level",
     ]
 
     @overload
@@ -6417,7 +6569,7 @@ class DatabaseAccountUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class DatabaseAccountUpdateProperties(_Model):
+class DatabaseAccountUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to update Azure Cosmos DB database accounts.
 
     :ivar consistency_policy: The consistency policy for the Cosmos DB account.
@@ -6521,6 +6673,11 @@ class DatabaseAccountUpdateProperties(_Model):
     :ivar enable_all_versions_and_deletes_change_feed: Flag to indicate if All Versions and Deletes
      Change feed feature is enabled on the account.
     :vartype enable_all_versions_and_deletes_change_feed: bool
+    :ivar soft_delete_configuration: The configuration for soft delete on the Cosmos DB account.
+    :vartype soft_delete_configuration: ~azure.mgmt.cosmosdb.models.SoftDeleteConfiguration
+    :ivar enforce_hierarchical_partition_key_id_last_level: Flag to indicate enabling/disabling of
+     hierarchical partition key ID last level enforcement on the account.
+    :vartype enforce_hierarchical_partition_key_id_last_level: bool
     """
 
     consistency_policy: Optional["_models.ConsistencyPolicy"] = rest_field(
@@ -6677,6 +6834,15 @@ class DatabaseAccountUpdateProperties(_Model):
         name="enableAllVersionsAndDeletesChangeFeed", visibility=["read", "create", "update", "delete", "query"]
     )
     """Flag to indicate if All Versions and Deletes Change feed feature is enabled on the account."""
+    soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = rest_field(
+        name="softDeleteConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration for soft delete on the Cosmos DB account."""
+    enforce_hierarchical_partition_key_id_last_level: Optional[bool] = rest_field(
+        name="enforceHierarchicalPartitionKeyIdLastLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag to indicate enabling/disabling of hierarchical partition key ID last level enforcement on
+     the account."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -6717,6 +6883,8 @@ class DatabaseAccountUpdateProperties(_Model):
         default_priority_level: Optional[Union[str, "_models.DefaultPriorityLevel"]] = None,
         enable_per_region_per_partition_autoscale: Optional[bool] = None,
         enable_all_versions_and_deletes_change_feed: Optional[bool] = None,
+        soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = None,
+        enforce_hierarchical_partition_key_id_last_level: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -6730,7 +6898,7 @@ class DatabaseAccountUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseRestoreResource(_Model):
+class DatabaseRestoreResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specific Databases to restore.
 
     :ivar database_name: The name of the database available for restore.
@@ -6767,7 +6935,7 @@ class DatabaseRestoreResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataCenterResource(ProxyResource):
+class DataCenterResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed Cassandra data center.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6808,7 +6976,7 @@ class DataCenterResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DataCenterResourceProperties(_Model):
+class DataCenterResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a managed Cassandra data center.
 
     :ivar provisioning_state: The status of the resource at the time the operation was called.
@@ -6961,7 +7129,7 @@ class DataCenterResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataMaskingPolicy(_Model):
+class DataMaskingPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data masking policy for the container.
 
     :ivar included_paths: List of JSON paths to include in the masking policy.
@@ -7005,7 +7173,7 @@ class DataMaskingPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataMaskingPolicyExcludedPathsItem(_Model):
+class DataMaskingPolicyExcludedPathsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """JSON path to exclude from masking.
 
     :ivar path: The JSON path to exclude from masking (e.g. "/id"). Required.
@@ -7033,7 +7201,7 @@ class DataMaskingPolicyExcludedPathsItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataMaskingPolicyIncludedPathsItem(_Model):
+class DataMaskingPolicyIncludedPathsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """JSON path to include in the masking policy.
 
     :ivar path: The JSON path to apply masking (e.g. "/contact/phones"). Required.
@@ -7078,7 +7246,7 @@ class DataMaskingPolicyIncludedPathsItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataTransferJobGetResults(ProxyResource):
+class DataTransferJobGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Cosmos DB Data Transfer Job.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7151,7 +7319,7 @@ class DataTransferJobGetResults(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DataTransferJobProperties(_Model):
+class DataTransferJobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a DataTransfer Job.
 
     :ivar job_name: Job Name.
@@ -7266,7 +7434,7 @@ class DataTransferRegionalServiceResource(RegionalServiceResource):
     """
 
 
-class ServiceResourceCreateUpdateProperties(_Model):
+class ServiceResourceCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties in ServiceResourceCreateUpdateParameters.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -7323,7 +7491,7 @@ class ServiceResourceCreateUpdateProperties(_Model):
 
 class DataTransferServiceResourceCreateUpdateProperties(
     ServiceResourceCreateUpdateProperties, discriminator="DataTransfer"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties for Create or Update request for DataTransferServiceResource.
 
     :ivar instance_size: Instance type for the service. Known values are: "Cosmos.D4s",
@@ -7358,7 +7526,7 @@ class DataTransferServiceResourceCreateUpdateProperties(
         self.service_type = ServiceType.DATA_TRANSFER  # type: ignore
 
 
-class ServiceResourceProperties(_Model):
+class ServiceResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Services response resource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -7421,7 +7589,9 @@ class ServiceResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataTransferServiceResourceProperties(ServiceResourceProperties, discriminator="DataTransfer"):
+class DataTransferServiceResourceProperties(
+    ServiceResourceProperties, discriminator="DataTransfer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for DataTransferServiceResource.
 
     :ivar creation_time: Time of the last state change (ISO-8601 format).
@@ -7465,7 +7635,7 @@ class DataTransferServiceResourceProperties(ServiceResourceProperties, discrimin
         self.service_type = ServiceType.DATA_TRANSFER  # type: ignore
 
 
-class DiagnosticLogSettings(_Model):
+class DiagnosticLogSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Indicates what diagnostic log settings are to be enabled.
 
     :ivar enable_full_text_query: Describe the level of detail with which queries are to be logged.
@@ -7541,7 +7711,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -7569,7 +7739,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponseAutoGenerated(_Model):
+class ErrorResponseAutoGenerated(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error Response.
 
     :ivar code: Error code.
@@ -7602,7 +7772,7 @@ class ErrorResponseAutoGenerated(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExcludedPath(_Model):
+class ExcludedPath(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExcludedPath.
 
     :ivar path: The path for which the indexing behavior applies to. Index paths typically start
@@ -7632,7 +7802,7 @@ class ExcludedPath(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FailoverPolicies(_Model):
+class FailoverPolicies(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of new failover policies for the failover priority change.
 
     :ivar failover_policies: List of failover policies. Required.
@@ -7662,7 +7832,7 @@ class FailoverPolicies(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FailoverPolicy(_Model):
+class FailoverPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The failover policy for a given region of a database account.
 
     :ivar id: The unique identifier of the region in which the database account replicates to.
@@ -7710,7 +7880,7 @@ class FailoverPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FleetAnalyticsProperties(_Model):
+class FleetAnalyticsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FleetAnalyticsProperties.
 
     :ivar provisioning_state: A provisioning state of the FleetAnalytics. Known values are:
@@ -7760,7 +7930,7 @@ class FleetAnalyticsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FleetAnalyticsResource(ProxyResource):
+class FleetAnalyticsResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB FleetAnalytics.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7820,7 +7990,7 @@ class FleetAnalyticsResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7864,7 +8034,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class FleetResource(TrackedResource):
+class FleetResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB FleetResource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7948,13 +8118,17 @@ class FleetResourceProperties(_Model):
      \"Updating\", and \"Creating\"."""
 
 
-class FleetResourceUpdate(_Model):
+class FleetResourceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a fleet resource for updates.
 
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     :ivar properties: Properties to update Azure Cosmos DB fleet resource.
     :vartype properties: ~azure.mgmt.cosmosdb.models.FleetResourceProperties
     """
 
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
     properties: Optional["_models.FleetResourceProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7966,6 +8140,7 @@ class FleetResourceUpdate(_Model):
     def __init__(
         self,
         *,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.FleetResourceProperties"] = None,
     ) -> None: ...
 
@@ -7998,7 +8173,7 @@ class FleetResourceUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class FleetspaceAccountProperties(_Model):
+class FleetspaceAccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Global Database Account which is part of a Fleetspace Account.
 
     :ivar provisioning_state: A provisioning state of the Fleetspace Account. Known values are:
@@ -8042,7 +8217,9 @@ class FleetspaceAccountProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FleetspaceAccountPropertiesGlobalDatabaseAccountProperties(_Model):  # pylint: disable=name-too-long
+class FleetspaceAccountPropertiesGlobalDatabaseAccountProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Configuration for fleetspace Account in the fleetspace.
 
     :ivar resource_id: The resource identifier of global database account in the Fleetspace
@@ -8080,7 +8257,7 @@ class FleetspaceAccountPropertiesGlobalDatabaseAccountProperties(_Model):  # pyl
         super().__init__(*args, **kwargs)
 
 
-class FleetspaceAccountResource(ProxyResource):
+class FleetspaceAccountResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Fleetspace Account.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8142,7 +8319,7 @@ class FleetspaceAccountResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class FleetspaceProperties(_Model):
+class FleetspaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to update Azure Cosmos DB Fleetspace.
 
     :ivar provisioning_state: A provisioning state of the Fleetspace. Known values are:
@@ -8210,7 +8387,9 @@ class FleetspaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FleetspacePropertiesThroughputPoolConfiguration(_Model):  # pylint: disable=name-too-long
+class FleetspacePropertiesThroughputPoolConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Configuration for throughput pool in the fleetspace.
 
     :ivar min_throughput: Minimum throughput for the pool.
@@ -8269,7 +8448,7 @@ class FleetspacePropertiesThroughputPoolConfiguration(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class FleetspaceResource(ProxyResource):
+class FleetspaceResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Fleetspace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8336,7 +8515,7 @@ class FleetspaceResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class FleetspaceUpdate(_Model):
+class FleetspaceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a fleetspace resource for updates.
 
     :ivar properties: Properties of the fleetspace.
@@ -8392,7 +8571,7 @@ class FleetspaceUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class FullTextIndexPath(_Model):
+class FullTextIndexPath(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the full text index path.
 
     :ivar path: The path to the full text field in the document. Required.
@@ -8420,7 +8599,7 @@ class FullTextIndexPath(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FullTextPath(_Model):
+class FullTextPath(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the full text path specification.
 
     :ivar path: The path to the full text field in the document. Required.
@@ -8453,7 +8632,7 @@ class FullTextPath(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FullTextPolicy(_Model):
+class FullTextPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB FullText Policy.
 
     :ivar default_language: The default language for a full text paths.
@@ -8490,7 +8669,7 @@ class FullTextPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GarnetClusterResource(TrackedResource):
+class GarnetClusterResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Representation of a Garnet cache cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8544,7 +8723,7 @@ class GarnetClusterResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class GarnetClusterResourcePatch(_Model):
+class GarnetClusterResourcePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Representation of a Garnet cache cluster for updates.
 
     :ivar properties: Properties of a Garnet cache cluster for updates.
@@ -8574,7 +8753,7 @@ class GarnetClusterResourcePatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GarnetClusterResourcePatchProperties(_Model):
+class GarnetClusterResourcePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a Garnet cache cluster for updates.
 
     :ivar cluster_type: Type of the cluster. If set to Production, some operations might not be
@@ -8582,6 +8761,10 @@ class GarnetClusterResourcePatchProperties(_Model):
     :vartype cluster_type: str or ~azure.mgmt.cosmosdb.models.ClusterType
     :ivar extensions: Extensions to be added or updated on cluster.
     :vartype extensions: list[str]
+    :ivar authentication_method: The authentication method used for the Garnet cluster. "Entra"
+    :vartype authentication_method: str or ~azure.mgmt.cosmosdb.models.GarnetAuthenticationType
+    :ivar persistence: Flag to indicate if persistence is enabled for the Garnet cluster.
+    :vartype persistence: bool
     """
 
     cluster_type: Optional[Union[str, "_models.ClusterType"]] = rest_field(
@@ -8591,6 +8774,12 @@ class GarnetClusterResourcePatchProperties(_Model):
      Known values are: \"Production\" and \"NonProduction\"."""
     extensions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Extensions to be added or updated on cluster."""
+    authentication_method: Optional[Union[str, "_models.GarnetAuthenticationType"]] = rest_field(
+        name="authenticationMethod", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authentication method used for the Garnet cluster. \"Entra\""""
+    persistence: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Flag to indicate if persistence is enabled for the Garnet cluster."""
 
     @overload
     def __init__(
@@ -8598,6 +8787,8 @@ class GarnetClusterResourcePatchProperties(_Model):
         *,
         cluster_type: Optional[Union[str, "_models.ClusterType"]] = None,
         extensions: Optional[list[str]] = None,
+        authentication_method: Optional[Union[str, "_models.GarnetAuthenticationType"]] = None,
+        persistence: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -8611,7 +8802,7 @@ class GarnetClusterResourcePatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GarnetClusterResourceProperties(_Model):
+class GarnetClusterResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a Garnet cache cluster.
 
     :ivar provisioning_state: The provisioning state of the resource. Known values are: "Creating",
@@ -8628,13 +8819,17 @@ class GarnetClusterResourceProperties(_Model):
      list[~azure.mgmt.cosmosdb.models.GarnetClusterResourcePropertiesEndPointsItem]
     :ivar replication_factor: Number of copies of data maintained by the cluster.
     :vartype replication_factor: int
-    :ivar node_count: Number of nodes.
-    :vartype node_count: int
+    :ivar shard_count: Number of shards in the cluster.
+    :vartype shard_count: int
     :ivar node_sku: Virtual Machine SKU used for clusters. Default value is Standard_DS14_v2.
     :vartype node_sku: str
     :ivar availability_zone: If the data center has Availability Zone support, apply it to the
      Virtual Machine ScaleSet that host the garnet cluster virtual machines.
     :vartype availability_zone: bool
+    :ivar authentication_method: The authentication method used for the Garnet cluster. "Entra"
+    :vartype authentication_method: str or ~azure.mgmt.cosmosdb.models.GarnetAuthenticationType
+    :ivar persistence: Flag to indicate if persistence is enabled for the Garnet cluster.
+    :vartype persistence: bool
     :ivar allocation_state: Allocation state of the cluster and data center resources. Active
      implies the virtual machines of the cluster are allocated, deallocated implies virtual machines
      and resources are deallocated. Known values are: "Active" and "Deallocated".
@@ -8667,8 +8862,10 @@ class GarnetClusterResourceProperties(_Model):
         name="replicationFactor", visibility=["read", "create", "update", "delete", "query"]
     )
     """Number of copies of data maintained by the cluster."""
-    node_count: Optional[int] = rest_field(name="nodeCount", visibility=["read", "create", "update", "delete", "query"])
-    """Number of nodes."""
+    shard_count: Optional[int] = rest_field(
+        name="shardCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of shards in the cluster."""
     node_sku: Optional[str] = rest_field(name="nodeSku", visibility=["read", "create", "update", "delete", "query"])
     """Virtual Machine SKU used for clusters. Default value is Standard_DS14_v2."""
     availability_zone: Optional[bool] = rest_field(
@@ -8676,6 +8873,12 @@ class GarnetClusterResourceProperties(_Model):
     )
     """If the data center has Availability Zone support, apply it to the Virtual Machine ScaleSet that
      host the garnet cluster virtual machines."""
+    authentication_method: Optional[Union[str, "_models.GarnetAuthenticationType"]] = rest_field(
+        name="authenticationMethod", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authentication method used for the Garnet cluster. \"Entra\""""
+    persistence: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Flag to indicate if persistence is enabled for the Garnet cluster."""
     allocation_state: Optional[Union[str, "_models.AllocationState"]] = rest_field(
         name="allocationState", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8700,9 +8903,11 @@ class GarnetClusterResourceProperties(_Model):
         *,
         subnet_id: Optional[str] = None,
         replication_factor: Optional[int] = None,
-        node_count: Optional[int] = None,
+        shard_count: Optional[int] = None,
         node_sku: Optional[str] = None,
         availability_zone: Optional[bool] = None,
+        authentication_method: Optional[Union[str, "_models.GarnetAuthenticationType"]] = None,
+        persistence: Optional[bool] = None,
         allocation_state: Optional[Union[str, "_models.AllocationState"]] = None,
         cluster_type: Optional[Union[str, "_models.ClusterType"]] = None,
         provision_error: Optional["_models.ErrorDetail"] = None,
@@ -8720,7 +8925,9 @@ class GarnetClusterResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GarnetClusterResourcePropertiesEndPointsItem(_Model):  # pylint: disable=name-too-long
+class GarnetClusterResourcePropertiesEndPointsItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Endpoint for clients to connect to the cluster.
 
     :ivar ip_address: Ipv4 address of the endpoint.
@@ -8773,7 +8980,7 @@ class GraphAPIComputeRegionalServiceResource(RegionalServiceResource):
 
 class GraphAPIComputeServiceResourceCreateUpdateProperties(
     ServiceResourceCreateUpdateProperties, discriminator="GraphAPICompute"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties for Create or Update request for GraphAPIComputeServiceResource.
 
     :ivar instance_size: Instance type for the service. Known values are: "Cosmos.D4s",
@@ -8808,7 +9015,9 @@ class GraphAPIComputeServiceResourceCreateUpdateProperties(
         self.service_type = ServiceType.GRAPH_API_COMPUTE  # type: ignore
 
 
-class GraphAPIComputeServiceResourceProperties(ServiceResourceProperties, discriminator="GraphAPICompute"):
+class GraphAPIComputeServiceResourceProperties(
+    ServiceResourceProperties, discriminator="GraphAPICompute"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for GraphAPIComputeServiceResource.
 
     :ivar creation_time: Time of the last state change (ISO-8601 format).
@@ -8859,7 +9068,7 @@ class GraphAPIComputeServiceResourceProperties(ServiceResourceProperties, discri
         self.service_type = ServiceType.GRAPH_API_COMPUTE  # type: ignore
 
 
-class GraphResource(_Model):
+class GraphResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB Graph resource object.
 
     :ivar id: Name of the Cosmos DB Graph. Required.
@@ -8887,7 +9096,9 @@ class GraphResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GraphResourceCreateUpdateParameters(ARMResourceProperties):
+class GraphResourceCreateUpdateParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update Cosmos DB Graph resource.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -8957,7 +9168,7 @@ class GraphResourceCreateUpdateParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class GraphResourceCreateUpdateProperties(_Model):
+class GraphResourceCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to create and update Azure Cosmos DB Graph resource.
 
     :ivar resource: The standard JSON format of a Graph resource. Required.
@@ -8994,7 +9205,7 @@ class GraphResourceCreateUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GraphResourceGetProperties(_Model):
+class GraphResourceGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB SQL database.
 
     :ivar resource:
@@ -9029,7 +9240,7 @@ class GraphResourceGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GraphResourceGetPropertiesOptions(OptionsResource):
+class GraphResourceGetPropertiesOptions(OptionsResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GraphResourceGetPropertiesOptions.
 
     :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
@@ -9058,7 +9269,7 @@ class GraphResourceGetPropertiesOptions(OptionsResource):
         super().__init__(*args, **kwargs)
 
 
-class GraphResourceGetPropertiesResource(GraphResource):
+class GraphResourceGetPropertiesResource(GraphResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GraphResourceGetPropertiesResource.
 
     :ivar id: Name of the Cosmos DB Graph. Required.
@@ -9083,7 +9294,7 @@ class GraphResourceGetPropertiesResource(GraphResource):
         super().__init__(*args, **kwargs)
 
 
-class GraphResourceGetResults(Resource):
+class GraphResourceGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Graph resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9099,10 +9310,15 @@ class GraphResourceGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB Graph resource.
     :vartype properties: ~azure.mgmt.cosmosdb.models.GraphResourceGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -9111,10 +9327,15 @@ class GraphResourceGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB Graph resource."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9127,8 +9348,8 @@ class GraphResourceGetResults(Resource):
         self,
         *,
         properties: Optional["_models.GraphResourceGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -9161,7 +9382,9 @@ class GraphResourceGetResults(Resource):
             super().__setattr__(key, value)
 
 
-class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
+class GremlinDatabaseCreateUpdateParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update Cosmos DB Gremlin database.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -9231,7 +9454,7 @@ class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class GremlinDatabaseCreateUpdateProperties(_Model):
+class GremlinDatabaseCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to create and update Azure Cosmos DB Gremlin database.
 
     :ivar resource: The standard JSON format of a Gremlin database. Required.
@@ -9268,7 +9491,7 @@ class GremlinDatabaseCreateUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GremlinDatabaseGetProperties(_Model):
+class GremlinDatabaseGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB SQL database.
 
     :ivar resource:
@@ -9303,7 +9526,9 @@ class GremlinDatabaseGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GremlinDatabaseGetPropertiesOptions(OptionsResource):
+class GremlinDatabaseGetPropertiesOptions(
+    OptionsResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GremlinDatabaseGetPropertiesOptions.
 
     :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
@@ -9332,7 +9557,7 @@ class GremlinDatabaseGetPropertiesOptions(OptionsResource):
         super().__init__(*args, **kwargs)
 
 
-class GremlinDatabaseResource(_Model):
+class GremlinDatabaseResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB Gremlin database resource object.
 
     :ivar id: Name of the Cosmos DB Gremlin database. Required.
@@ -9375,7 +9600,9 @@ class GremlinDatabaseResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GremlinDatabaseGetPropertiesResource(GremlinDatabaseResource):
+class GremlinDatabaseGetPropertiesResource(
+    GremlinDatabaseResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GremlinDatabaseGetPropertiesResource.
 
     :ivar id: Name of the Cosmos DB Gremlin database. Required.
@@ -9422,7 +9649,7 @@ class GremlinDatabaseGetPropertiesResource(GremlinDatabaseResource):
         super().__init__(*args, **kwargs)
 
 
-class GremlinDatabaseGetResults(Resource):
+class GremlinDatabaseGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Gremlin database.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9438,10 +9665,15 @@ class GremlinDatabaseGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB SQL database.
     :vartype properties: ~azure.mgmt.cosmosdb.models.GremlinDatabaseGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -9450,10 +9682,15 @@ class GremlinDatabaseGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB SQL database."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9466,8 +9703,8 @@ class GremlinDatabaseGetResults(Resource):
         self,
         *,
         properties: Optional["_models.GremlinDatabaseGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -9500,7 +9737,7 @@ class GremlinDatabaseGetResults(Resource):
             super().__setattr__(key, value)
 
 
-class GremlinDatabaseRestoreResource(_Model):
+class GremlinDatabaseRestoreResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specific Gremlin Databases to restore.
 
     :ivar database_name: The name of the gremlin database available for restore.
@@ -9537,7 +9774,9 @@ class GremlinDatabaseRestoreResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GremlinGraphCreateUpdateParameters(ARMResourceProperties):
+class GremlinGraphCreateUpdateParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update Cosmos DB Gremlin graph.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -9607,7 +9846,7 @@ class GremlinGraphCreateUpdateParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class GremlinGraphCreateUpdateProperties(_Model):
+class GremlinGraphCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to create and update Azure Cosmos DB Gremlin graph.
 
     :ivar resource: The standard JSON format of a Gremlin graph. Required.
@@ -9644,7 +9883,7 @@ class GremlinGraphCreateUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GremlinGraphGetProperties(_Model):
+class GremlinGraphGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB Gremlin graph.
 
     :ivar resource:
@@ -9679,7 +9918,7 @@ class GremlinGraphGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GremlinGraphGetPropertiesOptions(OptionsResource):
+class GremlinGraphGetPropertiesOptions(OptionsResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GremlinGraphGetPropertiesOptions.
 
     :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
@@ -9708,7 +9947,7 @@ class GremlinGraphGetPropertiesOptions(OptionsResource):
         super().__init__(*args, **kwargs)
 
 
-class GremlinGraphResource(_Model):
+class GremlinGraphResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB Gremlin graph resource object.
 
     :ivar id: Name of the Cosmos DB Gremlin graph. Required.
@@ -9799,7 +10038,9 @@ class GremlinGraphResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GremlinGraphGetPropertiesResource(GremlinGraphResource):
+class GremlinGraphGetPropertiesResource(
+    GremlinGraphResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GremlinGraphGetPropertiesResource.
 
     :ivar id: Name of the Cosmos DB Gremlin graph. Required.
@@ -9867,7 +10108,7 @@ class GremlinGraphGetPropertiesResource(GremlinGraphResource):
         super().__init__(*args, **kwargs)
 
 
-class GremlinGraphGetResults(Resource):
+class GremlinGraphGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Gremlin graph.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9883,10 +10124,15 @@ class GremlinGraphGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB Gremlin graph.
     :vartype properties: ~azure.mgmt.cosmosdb.models.GremlinGraphGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -9895,10 +10141,15 @@ class GremlinGraphGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB Gremlin graph."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9911,8 +10162,8 @@ class GremlinGraphGetResults(Resource):
         self,
         *,
         properties: Optional["_models.GremlinGraphGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -9945,7 +10196,7 @@ class GremlinGraphGetResults(Resource):
             super().__setattr__(key, value)
 
 
-class GremlinRoleAssignmentResource(ProxyResource):
+class GremlinRoleAssignmentResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update an Azure Cosmos DB Gremlin Role Assignment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10006,7 +10257,7 @@ class GremlinRoleAssignmentResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class GremlinRoleAssignmentResourceProperties(_Model):
+class GremlinRoleAssignmentResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Cosmos DB Gremlin Role Assignment resource object.
 
     :ivar role_definition_id: The unique identifier for the associated Role Definition.
@@ -10058,7 +10309,7 @@ class GremlinRoleAssignmentResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GremlinRoleDefinitionResource(ProxyResource):
+class GremlinRoleDefinitionResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update an Azure Cosmos DB Gremlin Role Definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10119,7 +10370,7 @@ class GremlinRoleDefinitionResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class GremlinRoleDefinitionResourceProperties(_Model):
+class GremlinRoleDefinitionResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Cosmos DB Gremlin Role Definition resource object.
 
     :ivar id: The path id for the Role Definition.
@@ -10184,7 +10435,7 @@ class GremlinRoleDefinitionResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IncludedPath(_Model):
+class IncludedPath(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The paths that are included in indexing.
 
     :ivar path: The path for which the indexing behavior applies to. Index paths typically start
@@ -10219,7 +10470,7 @@ class IncludedPath(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Indexes(_Model):
+class Indexes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The indexes for the path.
 
     :ivar data_type: The datatype for which the indexing behavior is applied to. Known values are:
@@ -10263,7 +10514,7 @@ class Indexes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexingPolicy(_Model):
+class IndexingPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB indexing policy.
 
     :ivar automatic: Indicates if the indexing policy is automatic.
@@ -10341,7 +10592,7 @@ class IndexingPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpAddressOrRange(_Model):
+class IpAddressOrRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IpAddressOrRange object.
 
     :ivar ip_address_or_range: A single IPv4 address or a single IPv4 address range in CIDR format.
@@ -10377,7 +10628,7 @@ class IpAddressOrRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyWrapMetadata(_Model):
+class KeyWrapMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents key wrap metadata that a key wrapping provider can use to wrap/unwrap a client
     encryption key.
 
@@ -10421,7 +10672,7 @@ class KeyWrapMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Location(_Model):
+class Location(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A region in which the Azure Cosmos DB database account is deployed.
 
     :ivar id: The unique identifier of the region within the database account. Example:
@@ -10487,7 +10738,7 @@ class Location(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocationGetResult(ProxyResource):
+class LocationGetResult(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB location get result.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10573,7 +10824,7 @@ class LocationProperties(_Model):
      \"Canceled\", \"Updating\", and \"Creating\"."""
 
 
-class ManagedCassandraManagedServiceIdentity(_Model):
+class ManagedCassandraManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the resource.
 
     :ivar principal_id: The object id of the identity resource.
@@ -10611,7 +10862,7 @@ class ManagedCassandraManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedCassandraReaperStatus(_Model):
+class ManagedCassandraReaperStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ManagedCassandraReaperStatus.
 
     :ivar healthy:
@@ -10652,7 +10903,7 @@ class ManagedCassandraReaperStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the resource.
 
     :ivar principal_id: The principal id of the system assigned identity. This property will only
@@ -10727,7 +10978,7 @@ class ManagedServiceIdentityUserAssignedIdentity(_Model):  # pylint: disable=nam
     """The client id of user assigned identity."""
 
 
-class MaterializedViewDefinition(_Model):
+class MaterializedViewDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Materialized View definition for the container.
 
     :ivar source_collection_rid: An unique identifier for the source collection. This is a system
@@ -10778,7 +11029,7 @@ class MaterializedViewDefinition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaterializedViewDetails(_Model):
+class MaterializedViewDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MaterializedViewDetails, contains Id & _rid fields of materialized view.
 
     :ivar id: Id field of Materialized container.
@@ -10826,7 +11077,7 @@ class MaterializedViewsBuilderRegionalServiceResource(RegionalServiceResource): 
 
 class MaterializedViewsBuilderServiceResourceCreateUpdateProperties(
     ServiceResourceCreateUpdateProperties, discriminator="MaterializedViewsBuilder"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties for Create or Update request for MaterializedViewsBuilderServiceResource.
 
     :ivar instance_size: Instance type for the service. Known values are: "Cosmos.D4s",
@@ -10863,7 +11114,7 @@ class MaterializedViewsBuilderServiceResourceCreateUpdateProperties(
 
 class MaterializedViewsBuilderServiceResourceProperties(
     ServiceResourceProperties, discriminator="MaterializedViewsBuilder"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties for MaterializedViewsBuilderServiceResource.
 
     :ivar creation_time: Time of the last state change (ISO-8601 format).
@@ -10910,7 +11161,7 @@ class MaterializedViewsBuilderServiceResourceProperties(
         self.service_type = ServiceType.MATERIALIZED_VIEWS_BUILDER  # type: ignore
 
 
-class MaterializedViewsProperties(_Model):
+class MaterializedViewsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Materialized Views Properties for the source container.
 
     :ivar throughput_bucket_for_build: Throughput bucket assigned for the materialized view
@@ -10941,7 +11192,7 @@ class MaterializedViewsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MergeParameters(_Model):
+class MergeParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB merge operations.
 
     :ivar is_dry_run: Specifies whether the operation is a real merge operation or a simulation.
@@ -11098,7 +11349,9 @@ class MetricValue(_Model):
     """The total value of the metric."""
 
 
-class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
+class MongoDBCollectionCreateUpdateParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update Cosmos DB MongoDB collection.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -11168,7 +11421,7 @@ class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class MongoDBCollectionCreateUpdateProperties(_Model):
+class MongoDBCollectionCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to create and update Azure Cosmos DB MongoDB collection.
 
     :ivar resource: The standard JSON format of a MongoDB collection. Required.
@@ -11207,7 +11460,7 @@ class MongoDBCollectionCreateUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoDBCollectionGetProperties(_Model):
+class MongoDBCollectionGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB MongoDB collection.
 
     :ivar resource:
@@ -11242,7 +11495,9 @@ class MongoDBCollectionGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoDBCollectionGetPropertiesOptions(OptionsResource):
+class MongoDBCollectionGetPropertiesOptions(
+    OptionsResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MongoDBCollectionGetPropertiesOptions.
 
     :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
@@ -11271,7 +11526,7 @@ class MongoDBCollectionGetPropertiesOptions(OptionsResource):
         super().__init__(*args, **kwargs)
 
 
-class MongoDBCollectionResource(_Model):
+class MongoDBCollectionResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB MongoDB collection resource object.
 
     :ivar id: Name of the Cosmos DB MongoDB collection. Required.
@@ -11335,7 +11590,9 @@ class MongoDBCollectionResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoDBCollectionGetPropertiesResource(MongoDBCollectionResource):
+class MongoDBCollectionGetPropertiesResource(
+    MongoDBCollectionResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MongoDBCollectionGetPropertiesResource.
 
     :ivar id: Name of the Cosmos DB MongoDB collection. Required.
@@ -11391,7 +11648,7 @@ class MongoDBCollectionGetPropertiesResource(MongoDBCollectionResource):
         super().__init__(*args, **kwargs)
 
 
-class MongoDBCollectionGetResults(Resource):
+class MongoDBCollectionGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB MongoDB collection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11407,10 +11664,15 @@ class MongoDBCollectionGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB MongoDB collection.
     :vartype properties: ~azure.mgmt.cosmosdb.models.MongoDBCollectionGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -11419,10 +11681,15 @@ class MongoDBCollectionGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB MongoDB collection."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -11435,8 +11702,8 @@ class MongoDBCollectionGetResults(Resource):
         self,
         *,
         properties: Optional["_models.MongoDBCollectionGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -11469,7 +11736,9 @@ class MongoDBCollectionGetResults(Resource):
             super().__setattr__(key, value)
 
 
-class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
+class MongoDBDatabaseCreateUpdateParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update Cosmos DB MongoDB database.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -11539,7 +11808,7 @@ class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class MongoDBDatabaseCreateUpdateProperties(_Model):
+class MongoDBDatabaseCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to create and update Azure Cosmos DB MongoDB database.
 
     :ivar resource: The standard JSON format of a MongoDB database. Required.
@@ -11576,7 +11845,7 @@ class MongoDBDatabaseCreateUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoDBDatabaseGetProperties(_Model):
+class MongoDBDatabaseGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB MongoDB database.
 
     :ivar resource:
@@ -11611,7 +11880,9 @@ class MongoDBDatabaseGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoDBDatabaseGetPropertiesOptions(OptionsResource):
+class MongoDBDatabaseGetPropertiesOptions(
+    OptionsResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MongoDBDatabaseGetPropertiesOptions.
 
     :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
@@ -11640,7 +11911,7 @@ class MongoDBDatabaseGetPropertiesOptions(OptionsResource):
         super().__init__(*args, **kwargs)
 
 
-class MongoDBDatabaseResource(_Model):
+class MongoDBDatabaseResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB MongoDB database resource object.
 
     :ivar id: Name of the Cosmos DB MongoDB database. Required.
@@ -11683,7 +11954,9 @@ class MongoDBDatabaseResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoDBDatabaseGetPropertiesResource(MongoDBDatabaseResource):
+class MongoDBDatabaseGetPropertiesResource(
+    MongoDBDatabaseResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MongoDBDatabaseGetPropertiesResource.
 
     :ivar id: Name of the Cosmos DB MongoDB database. Required.
@@ -11730,7 +12003,7 @@ class MongoDBDatabaseGetPropertiesResource(MongoDBDatabaseResource):
         super().__init__(*args, **kwargs)
 
 
-class MongoDBDatabaseGetResults(Resource):
+class MongoDBDatabaseGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB MongoDB database.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11746,10 +12019,15 @@ class MongoDBDatabaseGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB MongoDB database.
     :vartype properties: ~azure.mgmt.cosmosdb.models.MongoDBDatabaseGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -11758,10 +12036,15 @@ class MongoDBDatabaseGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB MongoDB database."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -11774,8 +12057,8 @@ class MongoDBDatabaseGetResults(Resource):
         self,
         *,
         properties: Optional["_models.MongoDBDatabaseGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -11808,7 +12091,7 @@ class MongoDBDatabaseGetResults(Resource):
             super().__setattr__(key, value)
 
 
-class MongoIndex(_Model):
+class MongoIndex(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB MongoDB collection index key.
 
     :ivar key: Cosmos DB MongoDB collection index keys.
@@ -11823,6 +12106,8 @@ class MongoIndex(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Cosmos DB MongoDB collection index key options."""
+
+    __flattened_items = ["keys_property"]
 
     @overload
     def __init__(
@@ -11840,10 +12125,28 @@ class MongoIndex(_Model):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.key is None:
+                return None
+            return getattr(self.key, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.key is None:
+                self.key = self._attr_to_rest_field["key"]._class_type()
+            setattr(self.key, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
-class MongoIndexKeys(_Model):
+class MongoIndexKeys(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB MongoDB collection resource object.
 
     :ivar keys_property: List of keys for each MongoDB collection in the Azure Cosmos DB service.
@@ -11873,7 +12176,7 @@ class MongoIndexKeys(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoIndexOptions(_Model):
+class MongoIndexOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB MongoDB collection index options.
 
     :ivar expire_after_seconds: Expire after seconds.
@@ -11908,7 +12211,7 @@ class MongoIndexOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoMIRoleAssignmentResource(ProxyResource):
+class MongoMIRoleAssignmentResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update an Azure Cosmos DB MongoMI Role Assignment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11969,7 +12272,7 @@ class MongoMIRoleAssignmentResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class MongoMIRoleAssignmentResourceProperties(_Model):
+class MongoMIRoleAssignmentResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Cosmos DB MongoMI Role Assignment resource object.
 
     :ivar role_definition_id: The unique identifier for the associated Role Definition.
@@ -12021,7 +12324,7 @@ class MongoMIRoleAssignmentResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoMIRoleDefinitionResource(ProxyResource):
+class MongoMIRoleDefinitionResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update an Azure Cosmos DB MongoMI Role Definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12082,7 +12385,7 @@ class MongoMIRoleDefinitionResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class MongoMIRoleDefinitionResourceProperties(_Model):
+class MongoMIRoleDefinitionResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Cosmos DB MongoMI Role Definition resource object.
 
     :ivar id: The path id for the Role Definition.
@@ -12147,7 +12450,9 @@ class MongoMIRoleDefinitionResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoRoleDefinitionCreateUpdateParameters(_Model):  # pylint: disable=name-too-long
+class MongoRoleDefinitionCreateUpdateParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameters to create and update an Azure Cosmos DB Mongo Role Definition.
 
     :ivar properties: Properties to create and update an Azure Cosmos DB Mongo Role Definition.
@@ -12197,7 +12502,7 @@ class MongoRoleDefinitionCreateUpdateParameters(_Model):  # pylint: disable=name
             super().__setattr__(key, value)
 
 
-class MongoRoleDefinitionGetResults(ProxyResource):
+class MongoRoleDefinitionGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Mongo Role Definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12258,7 +12563,7 @@ class MongoRoleDefinitionGetResults(ProxyResource):
             super().__setattr__(key, value)
 
 
-class MongoRoleDefinitionResource(_Model):
+class MongoRoleDefinitionResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Cosmos DB Mongo Role Definition resource object.
 
     :ivar role_name: A user-friendly name for the Role Definition. Must be unique for the database
@@ -12320,7 +12625,9 @@ class MongoRoleDefinitionResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoRUToMongoRUCopyJobProperties(BaseCopyJobProperties, discriminator="MongoRUToMongoRU"):
+class MongoRUToMongoRUCopyJobProperties(
+    BaseCopyJobProperties, discriminator="MongoRUToMongoRU"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Source Mongo to Destination Mongo copy job properties.
 
     :ivar source_details: Source Mongo DataStore details.
@@ -12369,7 +12676,7 @@ class MongoRUToMongoRUCopyJobProperties(BaseCopyJobProperties, discriminator="Mo
         self.job_type = CopyJobType.MONGO_RU_TO_MONGO_RU  # type: ignore
 
 
-class MongoRUToMongoRUCopyJobTask(BaseCopyJobTask):
+class MongoRUToMongoRUCopyJobTask(BaseCopyJobTask):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MongoRUToMongoRUCopyJobTask.
 
     :ivar total_count: Task level Total Count.
@@ -12408,7 +12715,9 @@ class MongoRUToMongoRUCopyJobTask(BaseCopyJobTask):
         super().__init__(*args, **kwargs)
 
 
-class MongoRUToMongoVCoreCopyJobProperties(BaseCopyJobProperties, discriminator="MongoRUToMongoVCore"):
+class MongoRUToMongoVCoreCopyJobProperties(
+    BaseCopyJobProperties, discriminator="MongoRUToMongoVCore"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Source Mongo to Destination Mongo vCore copy job properties.
 
     :ivar source_details: Source Mongo (RU) DataStore details.
@@ -12457,7 +12766,7 @@ class MongoRUToMongoVCoreCopyJobProperties(BaseCopyJobProperties, discriminator=
         self.job_type = CopyJobType.MONGO_RU_TO_MONGO_V_CORE  # type: ignore
 
 
-class MongoRUToMongoVCoreCopyJobTask(BaseCopyJobTask):
+class MongoRUToMongoVCoreCopyJobTask(BaseCopyJobTask):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MongoRUToMongoVCoreCopyJobTask.
 
     :ivar total_count: Task level Total Count.
@@ -12496,7 +12805,9 @@ class MongoRUToMongoVCoreCopyJobTask(BaseCopyJobTask):
         super().__init__(*args, **kwargs)
 
 
-class MongoUserDefinitionCreateUpdateParameters(_Model):  # pylint: disable=name-too-long
+class MongoUserDefinitionCreateUpdateParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameters to create and update an Azure Cosmos DB Mongo User Definition.
 
     :ivar properties: Properties to create and update an Azure Cosmos DB Mongo User Definition.
@@ -12546,7 +12857,7 @@ class MongoUserDefinitionCreateUpdateParameters(_Model):  # pylint: disable=name
             super().__setattr__(key, value)
 
 
-class MongoUserDefinitionGetResults(ProxyResource):
+class MongoUserDefinitionGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB User Definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12607,7 +12918,7 @@ class MongoUserDefinitionGetResults(ProxyResource):
             super().__setattr__(key, value)
 
 
-class MongoUserDefinitionResource(_Model):
+class MongoUserDefinitionResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Cosmos DB Mongo User Definition resource object.
 
     :ivar user_name: The user name for User Definition.
@@ -12666,7 +12977,7 @@ class MongoUserDefinitionResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MongoVCoreSourceSinkDetails(_Model):
+class MongoVCoreSourceSinkDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A CosmosDB Mongo vCore data source/sink details.
 
     :ivar host_name:
@@ -12701,7 +13012,7 @@ class MongoVCoreSourceSinkDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeter(_Model):
+class NetworkSecurityPerimeter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a network security perimeter (NSP).
 
     :ivar id: Fully qualified Azure resource ID of the NSP resource.
@@ -12741,7 +13052,9 @@ class NetworkSecurityPerimeter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfiguration(ProxyResource):
+class NetworkSecurityPerimeterConfiguration(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network security perimeter (NSP) configuration resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12783,28 +13096,32 @@ class NetworkSecurityPerimeterConfiguration(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Network security configuration properties.
 
-    :ivar provisioning_state: Known values are: "Succeeded", "Creating", "Updating", "Deleting",
-     "Accepted", "Failed", and "Canceled".
+    :ivar provisioning_state: Provisioning state of the network security perimeter configuration.
+     Known values are: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", "Failed", and
+     "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.cosmosdb.models.NetworkSecurityPerimeterConfigurationProvisioningState
     :ivar provisioning_issues: List of provisioning issues, if any.
     :vartype provisioning_issues: list[~azure.mgmt.cosmosdb.models.ProvisioningIssue]
-    :ivar network_security_perimeter:
+    :ivar network_security_perimeter: Information about the network security perimeter (NSP).
     :vartype network_security_perimeter: ~azure.mgmt.cosmosdb.models.NetworkSecurityPerimeter
-    :ivar resource_association:
+    :ivar resource_association: Information about the resource association.
     :vartype resource_association: ~azure.mgmt.cosmosdb.models.ResourceAssociation
-    :ivar profile:
+    :ivar profile: Network security perimeter configuration profile.
     :vartype profile: ~azure.mgmt.cosmosdb.models.NetworkSecurityProfile
     """
 
     provisioning_state: Optional[Union[str, "_models.NetworkSecurityPerimeterConfigurationProvisioningState"]] = (
         rest_field(name="provisioningState", visibility=["read"])
     )
-    """Known values are: \"Succeeded\", \"Creating\", \"Updating\", \"Deleting\", \"Accepted\",
-     \"Failed\", and \"Canceled\"."""
+    """Provisioning state of the network security perimeter configuration. Known values are:
+     \"Succeeded\", \"Creating\", \"Updating\", \"Deleting\", \"Accepted\", \"Failed\", and
+     \"Canceled\"."""
     provisioning_issues: Optional[list["_models.ProvisioningIssue"]] = rest_field(
         name="provisioningIssues", visibility=["read"]
     )
@@ -12812,12 +13129,15 @@ class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disabl
     network_security_perimeter: Optional["_models.NetworkSecurityPerimeter"] = rest_field(
         name="networkSecurityPerimeter", visibility=["read", "create", "update", "delete", "query"]
     )
+    """Information about the network security perimeter (NSP)."""
     resource_association: Optional["_models.ResourceAssociation"] = rest_field(
         name="resourceAssociation", visibility=["read", "create", "update", "delete", "query"]
     )
+    """Information about the resource association."""
     profile: Optional["_models.NetworkSecurityProfile"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Network security perimeter configuration profile."""
 
     @overload
     def __init__(
@@ -12839,7 +13159,7 @@ class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityProfile(_Model):
+class NetworkSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network security perimeter configuration profile.
 
     :ivar name: Name of the profile.
@@ -12895,7 +13215,9 @@ class NetworkSecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NoSqlRUToNoSqlRUCopyJobProperties(BaseCopyJobProperties, discriminator="NoSqlRUToNoSqlRU"):
+class NoSqlRUToNoSqlRUCopyJobProperties(
+    BaseCopyJobProperties, discriminator="NoSqlRUToNoSqlRU"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Source SQL to Destination SQL copy job properties.
 
     :ivar source_details: Source SQL DataStore details.
@@ -12944,7 +13266,7 @@ class NoSqlRUToNoSqlRUCopyJobProperties(BaseCopyJobProperties, discriminator="No
         self.job_type = CopyJobType.NO_SQL_RU_TO_NO_SQL_RU  # type: ignore
 
 
-class NoSqlRUToNoSqlRUCopyJobTask(BaseCopyJobTask):
+class NoSqlRUToNoSqlRUCopyJobTask(BaseCopyJobTask):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NoSqlRUToNoSqlRUCopyJobTask.
 
     :ivar total_count: Task level Total Count.
@@ -12983,7 +13305,7 @@ class NoSqlRUToNoSqlRUCopyJobTask(BaseCopyJobTask):
         super().__init__(*args, **kwargs)
 
 
-class NotebookWorkspace(ProxyResource):
+class NotebookWorkspace(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A notebook workspace resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13089,7 +13411,7 @@ class NotebookWorkspaceProperties(_Model):
      Updating."""
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -13124,7 +13446,7 @@ class Operation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object that represents the operation.
 
     :ivar provider: Service provider: Microsoft.ResourceProvider.
@@ -13335,7 +13657,9 @@ class PercentileMetricValue(MetricValue):
     """The 99th percentile value for the metric."""
 
 
-class PeriodicModeBackupPolicy(BackupPolicy, discriminator="Periodic"):
+class PeriodicModeBackupPolicy(
+    BackupPolicy, discriminator="Periodic"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object representing periodic mode backup policy.
 
     :ivar migration_state: The object representing the state of the migration between the backup
@@ -13374,7 +13698,7 @@ class PeriodicModeBackupPolicy(BackupPolicy, discriminator="Periodic"):
         self.type = BackupPolicyType.PERIODIC  # type: ignore
 
 
-class PeriodicModeProperties(_Model):
+class PeriodicModeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration values for periodic mode backup.
 
     :ivar backup_interval_in_minutes: An integer representing the interval in minutes between two
@@ -13421,7 +13745,7 @@ class PeriodicModeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Permission(_Model):
+class Permission(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The set of data plane operations permitted through this Role Definition.
 
     :ivar id: The id for the permission.
@@ -13463,7 +13787,7 @@ class Permission(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PhysicalPartitionId(_Model):
+class PhysicalPartitionId(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PhysicalPartitionId object.
 
     :ivar id: Id of a physical partition. Required.
@@ -13521,7 +13845,9 @@ class PhysicalPartitionStorageInfoCollection(_Model):
     """List of physical partitions and their properties."""
 
 
-class PhysicalPartitionThroughputInfoProperties(_Model):  # pylint: disable=name-too-long
+class PhysicalPartitionThroughputInfoProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB PhysicalPartitionThroughputInfoProperties object.
 
     :ivar physical_partition_throughput_info: Array of physical partition throughput info objects.
@@ -13552,7 +13878,7 @@ class PhysicalPartitionThroughputInfoProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class PhysicalPartitionThroughputInfoResource(_Model):
+class PhysicalPartitionThroughputInfoResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PhysicalPartitionThroughputInfo object.
 
     :ivar id: Id of a physical partition. Required.
@@ -13592,7 +13918,9 @@ class PhysicalPartitionThroughputInfoResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PhysicalPartitionThroughputInfoResult(ARMResourceProperties):
+class PhysicalPartitionThroughputInfoResult(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB PhysicalPartitionThroughputInfoResult object.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -13664,7 +13992,9 @@ class PhysicalPartitionThroughputInfoResult(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class PhysicalPartitionThroughputInfoResultProperties(_Model):  # pylint: disable=name-too-long
+class PhysicalPartitionThroughputInfoResultProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB PhysicalPartitionThroughputInfoResult object.
 
     :ivar resource: properties of physical partition throughput info.
@@ -13697,7 +14027,7 @@ class PhysicalPartitionThroughputInfoResultProperties(_Model):  # pylint: disabl
 
 class PhysicalPartitionThroughputInfoResultPropertiesResource(
     PhysicalPartitionThroughputInfoProperties
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """properties of physical partition throughput info.
 
     :ivar physical_partition_throughput_info: Array of physical partition throughput info objects.
@@ -13723,7 +14053,7 @@ class PhysicalPartitionThroughputInfoResultPropertiesResource(
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private endpoint connection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13784,7 +14114,7 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private endpoint connection.
 
     :ivar private_endpoint: Private endpoint which the connection belongs to.
@@ -13835,7 +14165,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointProperty(_Model):
+class PrivateEndpointProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private endpoint which the connection belongs to.
 
     :ivar id: Resource id of the private endpoint.
@@ -13863,7 +14193,7 @@ class PrivateEndpointProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(ProxyResource):
+class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13943,7 +14273,9 @@ class PrivateLinkResourceProperties(_Model):
     """The private link resource required zone names."""
 
 
-class PrivateLinkServiceConnectionStateProperty(_Model):  # pylint: disable=name-too-long
+class PrivateLinkServiceConnectionStateProperty(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Connection State of the Private Endpoint Connection.
 
     :ivar status: The private link service connection status.
@@ -13981,7 +14313,7 @@ class PrivateLinkServiceConnectionStateProperty(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class Privilege(_Model):
+class Privilege(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The set of data plane operations permitted through this Role Definition.
 
     :ivar resource: An Azure Cosmos DB Mongo DB Resource.
@@ -14016,7 +14348,7 @@ class Privilege(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivilegeResource(_Model):
+class PrivilegeResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Mongo DB Resource.
 
     :ivar db: The database name the role is applied.
@@ -14054,13 +14386,14 @@ class ProvisioningIssue(_Model):
 
     :ivar name: Name of the issue.
     :vartype name: str
-    :ivar properties:
+    :ivar properties: Details of the provisioning issue.
     :vartype properties: ~azure.mgmt.cosmosdb.models.ProvisioningIssueProperties
     """
 
     name: Optional[str] = rest_field(visibility=["read"])
     """Name of the issue."""
     properties: Optional["_models.ProvisioningIssueProperties"] = rest_field(visibility=["read"])
+    """Details of the provisioning issue."""
 
 
 class ProvisioningIssueProperties(_Model):
@@ -14101,7 +14434,9 @@ class ProvisioningIssueProperties(_Model):
     """Access rules that can be added to the network security profile (NSP) to remediate the issue."""
 
 
-class RedistributeThroughputParameters(ARMResourceProperties):
+class RedistributeThroughputParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB redistribute throughput parameters object.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -14171,7 +14506,7 @@ class RedistributeThroughputParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class RedistributeThroughputProperties(_Model):
+class RedistributeThroughputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to redistribute throughput for Azure Cosmos DB resource.
 
     :ivar resource: The standard JSON format of a resource throughput. Required.
@@ -14201,7 +14536,7 @@ class RedistributeThroughputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RedistributeThroughputPropertiesResource(_Model):
+class RedistributeThroughputPropertiesResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource to redistribute throughput for Azure Cosmos DB resource.
 
     :ivar throughput_policy: ThroughputPolicy to apply for throughput redistribution. Required.
@@ -14251,7 +14586,7 @@ class RedistributeThroughputPropertiesResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegionForOnlineOffline(_Model):
+class RegionForOnlineOffline(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB region to online or offline.
 
     :ivar region: Cosmos DB region, with spaces between words and each word capitalized. Required.
@@ -14279,12 +14614,13 @@ class RegionForOnlineOffline(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceAssociation(_Model):
+class ResourceAssociation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about resource association.
 
     :ivar name: Name of the resource association.
     :vartype name: str
-    :ivar access_mode: Known values are: "Enforced", "Learning", and "Audit".
+    :ivar access_mode: Access mode of the resource association. Known values are: "Enforced",
+     "Learning", and "Audit".
     :vartype access_mode: str or ~azure.mgmt.cosmosdb.models.ResourceAssociationAccessMode
     """
 
@@ -14293,7 +14629,8 @@ class ResourceAssociation(_Model):
     access_mode: Optional[Union[str, "_models.ResourceAssociationAccessMode"]] = rest_field(
         name="accessMode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Known values are: \"Enforced\", \"Learning\", and \"Audit\"."""
+    """Access mode of the resource association. Known values are: \"Enforced\", \"Learning\", and
+     \"Audit\"."""
 
     @overload
     def __init__(
@@ -14314,7 +14651,7 @@ class ResourceAssociation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestoreParametersBase(_Model):
+class RestoreParametersBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to indicate the information about the restore.
 
     :ivar restore_source: The id of the restorable database account from which the restore has to
@@ -14364,7 +14701,7 @@ class RestoreParametersBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceRestoreParameters(RestoreParametersBase):
+class ResourceRestoreParameters(RestoreParametersBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to indicate the information about the restore.
 
     :ivar restore_source: The id of the restorable database account from which the restore has to
@@ -14398,7 +14735,7 @@ class ResourceRestoreParameters(RestoreParametersBase):
         super().__init__(*args, **kwargs)
 
 
-class RestorableDatabaseAccountGetResult(ProxyResource):
+class RestorableDatabaseAccountGetResult(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Azure Cosmos DB restorable database account.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14471,7 +14808,7 @@ class RestorableDatabaseAccountGetResult(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RestorableDatabaseAccountProperties(_Model):
+class RestorableDatabaseAccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a restorable database account.
 
     :ivar account_name: The name of the global database account.
@@ -14537,7 +14874,7 @@ class RestorableDatabaseAccountProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorableGremlinDatabaseGetResult(_Model):
+class RestorableGremlinDatabaseGetResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Gremlin database event.
 
     :ivar properties: The properties of a Gremlin database event.
@@ -14599,7 +14936,7 @@ class RestorableGremlinDatabaseGetResult(_Model):
             super().__setattr__(key, value)
 
 
-class RestorableGremlinDatabaseProperties(_Model):
+class RestorableGremlinDatabaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB Gremlin database event.
 
     :ivar resource: The resource of an Azure Cosmos DB Gremlin database event.
@@ -14669,7 +15006,7 @@ class RestorableGremlinDatabasePropertiesResource(_Model):  # pylint: disable=na
     """The resource ID of this Gremlin database."""
 
 
-class RestorableGremlinGraphGetResult(_Model):
+class RestorableGremlinGraphGetResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Gremlin graph event.
 
     :ivar properties: The properties of a Gremlin graph event.
@@ -14731,7 +15068,7 @@ class RestorableGremlinGraphGetResult(_Model):
             super().__setattr__(key, value)
 
 
-class RestorableGremlinGraphProperties(_Model):
+class RestorableGremlinGraphProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB Gremlin graph event.
 
     :ivar resource: The resource of an Azure Cosmos DB Gremlin graph event.
@@ -14801,7 +15138,7 @@ class RestorableGremlinGraphPropertiesResource(_Model):
     """The resource ID of this Gremlin graph."""
 
 
-class RestorableGremlinResourcesGetResult(_Model):
+class RestorableGremlinResourcesGetResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specific Databases to restore.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -14878,7 +15215,7 @@ class RestorableLocationResource(_Model):
     """The time at which the regional restorable database account has been deleted (ISO-8601 format)."""
 
 
-class RestorableMongodbCollectionGetResult(_Model):
+class RestorableMongodbCollectionGetResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB MongoDB collection event.
 
     :ivar properties: The properties of a MongoDB collection event.
@@ -14940,7 +15277,7 @@ class RestorableMongodbCollectionGetResult(_Model):
             super().__setattr__(key, value)
 
 
-class RestorableMongodbCollectionProperties(_Model):
+class RestorableMongodbCollectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB MongoDB collection event.
 
     :ivar resource: The resource of an Azure Cosmos DB MongoDB collection event.
@@ -15010,7 +15347,7 @@ class RestorableMongodbCollectionPropertiesResource(_Model):  # pylint: disable=
     """The resource ID of this MongoDB collection."""
 
 
-class RestorableMongodbDatabaseGetResult(_Model):
+class RestorableMongodbDatabaseGetResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB MongoDB database event.
 
     :ivar properties: The properties of a MongoDB database event.
@@ -15072,7 +15409,7 @@ class RestorableMongodbDatabaseGetResult(_Model):
             super().__setattr__(key, value)
 
 
-class RestorableMongodbDatabaseProperties(_Model):
+class RestorableMongodbDatabaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB MongoDB database event.
 
     :ivar resource: The resource of an Azure Cosmos DB MongoDB database event.
@@ -15142,7 +15479,7 @@ class RestorableMongodbDatabasePropertiesResource(_Model):  # pylint: disable=na
     """The resource ID of this MongoDB database."""
 
 
-class RestorableMongodbResourcesGetResult(_Model):
+class RestorableMongodbResourcesGetResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specific Databases to restore.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -15191,7 +15528,7 @@ class RestorableMongodbResourcesGetResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorableSqlContainerGetResult(_Model):
+class RestorableSqlContainerGetResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB SQL container event.
 
     :ivar properties: The properties of a SQL container event.
@@ -15253,7 +15590,7 @@ class RestorableSqlContainerGetResult(_Model):
             super().__setattr__(key, value)
 
 
-class RestorableSqlContainerProperties(_Model):
+class RestorableSqlContainerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB SQL container event.
 
     :ivar resource: The resource of an Azure Cosmos DB SQL container event.
@@ -15283,7 +15620,7 @@ class RestorableSqlContainerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorableSqlContainerPropertiesResource(_Model):
+class RestorableSqlContainerPropertiesResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource of an Azure Cosmos DB SQL container event.
 
     :ivar rid: A system generated property. A unique identifier.
@@ -15347,7 +15684,7 @@ class RestorableSqlContainerPropertiesResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlContainerResource(_Model):
+class SqlContainerResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB SQL container resource object.
 
     :ivar id: Name of the Cosmos DB SQL container. Required.
@@ -15497,7 +15834,9 @@ class SqlContainerResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorableSqlContainerPropertiesResourceContainer(SqlContainerResource):  # pylint: disable=name-too-long
+class RestorableSqlContainerPropertiesResourceContainer(
+    SqlContainerResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Cosmos DB SQL container resource object.
 
     :ivar id: Name of the Cosmos DB SQL container. Required.
@@ -15596,7 +15935,7 @@ class RestorableSqlContainerPropertiesResourceContainer(SqlContainerResource):  
         super().__init__(*args, **kwargs)
 
 
-class RestorableSqlDatabaseGetResult(_Model):
+class RestorableSqlDatabaseGetResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB SQL database event.
 
     :ivar properties: The properties of a SQL database event.
@@ -15658,7 +15997,7 @@ class RestorableSqlDatabaseGetResult(_Model):
             super().__setattr__(key, value)
 
 
-class RestorableSqlDatabaseProperties(_Model):
+class RestorableSqlDatabaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB SQL database event.
 
     :ivar resource: The resource of an Azure Cosmos DB SQL database event.
@@ -15688,7 +16027,7 @@ class RestorableSqlDatabaseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorableSqlDatabasePropertiesResource(_Model):
+class RestorableSqlDatabasePropertiesResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource of an Azure Cosmos DB SQL database event.
 
     :ivar rid: A system generated property. A unique identifier.
@@ -15751,7 +16090,7 @@ class RestorableSqlDatabasePropertiesResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlDatabaseResource(_Model):
+class SqlDatabaseResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB SQL database resource object.
 
     :ivar id: Name of the Cosmos DB SQL database. Required.
@@ -15794,7 +16133,9 @@ class SqlDatabaseResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorableSqlDatabasePropertiesResourceDatabase(SqlDatabaseResource):  # pylint: disable=name-too-long
+class RestorableSqlDatabasePropertiesResourceDatabase(
+    SqlDatabaseResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Cosmos DB SQL database resource object.
 
     :ivar id: Name of the Cosmos DB SQL database. Required.
@@ -15856,7 +16197,7 @@ class RestorableSqlDatabasePropertiesResourceDatabase(SqlDatabaseResource):  # p
         super().__init__(*args, **kwargs)
 
 
-class RestorableSqlResourcesGetResult(_Model):
+class RestorableSqlResourcesGetResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specific Databases to restore.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -15905,7 +16246,7 @@ class RestorableSqlResourcesGetResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RestorableTableGetResult(_Model):
+class RestorableTableGetResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Table event.
 
     :ivar properties: The properties of a Table event.
@@ -15967,7 +16308,7 @@ class RestorableTableGetResult(_Model):
             super().__setattr__(key, value)
 
 
-class RestorableTableProperties(_Model):
+class RestorableTableProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB Table event.
 
     :ivar resource: The resource of an Azure Cosmos DB Table event.
@@ -16056,7 +16397,7 @@ class RestorableTableResourcesGetResult(_Model):
     """The type of Azure resource."""
 
 
-class RestoreParameters(RestoreParametersBase):
+class RestoreParameters(RestoreParametersBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to indicate the information about the restore.
 
     :ivar restore_with_ttl_disabled: Specifies whether the restored account will have Time-To-Live
@@ -16127,7 +16468,9 @@ class RestoreParameters(RestoreParametersBase):
         super().__init__(*args, **kwargs)
 
 
-class RetrieveThroughputParameters(ARMResourceProperties):
+class RetrieveThroughputParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB retrieve throughput parameters object.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -16197,7 +16540,7 @@ class RetrieveThroughputParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class RetrieveThroughputProperties(_Model):
+class RetrieveThroughputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to retrieve throughput for Azure Cosmos DB resource.
 
     :ivar resource: The standard JSON format of a resource throughput. Required.
@@ -16227,7 +16570,7 @@ class RetrieveThroughputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RetrieveThroughputPropertiesResource(_Model):
+class RetrieveThroughputPropertiesResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource to retrieve throughput information for Cosmos DB resource.
 
     :ivar physical_partition_ids: Array of PhysicalPartitionId objects. Required.
@@ -16257,7 +16600,7 @@ class RetrieveThroughputPropertiesResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Role(_Model):
+class Role(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The set of roles permitted through this Role Definition.
 
     :ivar db: The database name the role is applied.
@@ -16290,7 +16633,7 @@ class Role(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SeedNode(_Model):
+class SeedNode(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SeedNode.
 
     :ivar ip_address: IP address of this seed node.
@@ -16318,7 +16661,7 @@ class SeedNode(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceResource(ProxyResource):
+class ServiceResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for the database account.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16359,7 +16702,7 @@ class ServiceResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ServiceResourceCreateUpdateParameters(_Model):
+class ServiceResourceCreateUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for Create or Update request for ServiceResource.
 
     :ivar properties: Properties in ServiceResourceCreateUpdateParameters.
@@ -16389,7 +16732,578 @@ class ServiceResourceCreateUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpatialSpec(_Model):
+class SoftDeleteConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration for soft delete on the Cosmos DB account.
+
+    :ivar soft_deletion_enabled: Flag to indicate whether soft delete is enabled on the account.
+    :vartype soft_deletion_enabled: bool
+    :ivar min_minutes_before_permanent_deletion_allowed: Minimum number of minutes before a soft
+     deleted resource can be permanently deleted.
+    :vartype min_minutes_before_permanent_deletion_allowed: int
+    :ivar soft_delete_retention_period_in_minutes: Soft delete retention period in minutes for
+     resources.
+    :vartype soft_delete_retention_period_in_minutes: int
+    """
+
+    soft_deletion_enabled: Optional[bool] = rest_field(
+        name="softDeletionEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag to indicate whether soft delete is enabled on the account."""
+    min_minutes_before_permanent_deletion_allowed: Optional[int] = rest_field(
+        name="minMinutesBeforePermanentDeletionAllowed", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Minimum number of minutes before a soft deleted resource can be permanently deleted."""
+    soft_delete_retention_period_in_minutes: Optional[int] = rest_field(
+        name="softDeleteRetentionPeriodInMinutes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Soft delete retention period in minutes for resources."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        soft_deletion_enabled: Optional[bool] = None,
+        min_minutes_before_permanent_deletion_allowed: Optional[int] = None,
+        soft_delete_retention_period_in_minutes: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedDatabaseAccountGetResult(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A Azure Cosmos DB soft-deleted database account.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountProperties
+    """
+
+    properties: Optional["_models.SoftDeletedDatabaseAccountProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SoftDeletedDatabaseAccountProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedDatabaseAccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of a soft-deleted database account.
+
+    :ivar account_name: The name of the database account.
+    :vartype account_name: str
+    :ivar soft_deletion_metadata: Metadata related to the soft deletion of the database account.
+    :vartype soft_deletion_metadata: ~azure.mgmt.cosmosdb.models.SoftDeletionMetadata
+    :ivar soft_delete_configuration: The soft delete configuration for the database account.
+    :vartype soft_delete_configuration: ~azure.mgmt.cosmosdb.models.SoftDeleteConfiguration
+    :ivar resource: A subset of properties of the underlying database account resource.
+    :vartype resource: ~azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountResource
+    """
+
+    account_name: Optional[str] = rest_field(
+        name="accountName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the database account."""
+    soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = rest_field(
+        name="softDeletionMetadata", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Metadata related to the soft deletion of the database account."""
+    soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = rest_field(
+        name="softDeleteConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The soft delete configuration for the database account."""
+    resource: Optional["_models.SoftDeletedDatabaseAccountResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A subset of properties of the underlying database account resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        account_name: Optional[str] = None,
+        soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = None,
+        soft_delete_configuration: Optional["_models.SoftDeleteConfiguration"] = None,
+        resource: Optional["_models.SoftDeletedDatabaseAccountResource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedDatabaseAccountResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The database account resource information for a soft-deleted account.
+
+    :ivar locations: An array that contains all of the locations enabled for the Cosmos DB account.
+    :vartype locations: list[~azure.mgmt.cosmosdb.models.Location]
+    :ivar write_locations: An array that contains the write location(s) for the Cosmos DB account.
+    :vartype write_locations: list[~azure.mgmt.cosmosdb.models.Location]
+    :ivar read_locations: An array that contains the read locations enabled for the Cosmos DB
+     account.
+    :vartype read_locations: list[~azure.mgmt.cosmosdb.models.Location]
+    """
+
+    locations: Optional[list["_models.Location"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An array that contains all of the locations enabled for the Cosmos DB account."""
+    write_locations: Optional[list["_models.Location"]] = rest_field(
+        name="writeLocations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An array that contains the write location(s) for the Cosmos DB account."""
+    read_locations: Optional[list["_models.Location"]] = rest_field(
+        name="readLocations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An array that contains the read locations enabled for the Cosmos DB account."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        locations: Optional[list["_models.Location"]] = None,
+        write_locations: Optional[list["_models.Location"]] = None,
+        read_locations: Optional[list["_models.Location"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedDatabaseAccountsListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The List operation response, that contains the soft-deleted database accounts and their
+    properties.
+
+    :ivar value: The SoftDeletedDatabaseAccountGetResult items on this page. Required.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.SoftDeletedDatabaseAccountGetResult]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    value: list["_models.SoftDeletedDatabaseAccountGetResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SoftDeletedDatabaseAccountGetResult items on this page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """The link to the next page of items."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.SoftDeletedDatabaseAccountGetResult"],
+        next_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlContainerGetResult(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An Azure Cosmos DB soft-deleted SQL container.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlContainerProperties
+    """
+
+    properties: Optional["_models.SoftDeletedSqlContainerProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SoftDeletedSqlContainerProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlContainerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of a soft-deleted SQL container.
+
+    :ivar soft_deletion_metadata: Metadata related to the soft deletion of the SQL container.
+    :vartype soft_deletion_metadata: ~azure.mgmt.cosmosdb.models.SoftDeletionMetadata
+    :ivar resource: The resource information for the soft-deleted SQL container.
+    :vartype resource: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlContainerResource
+    """
+
+    soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = rest_field(
+        name="softDeletionMetadata", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Metadata related to the soft deletion of the SQL container."""
+    resource: Optional["_models.SoftDeletedSqlContainerResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource information for the soft-deleted SQL container."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = None,
+        resource: Optional["_models.SoftDeletedSqlContainerResource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlContainerResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Cosmos DB SQL container resource object.
+
+    :ivar id: Name of the Cosmos DB SQL container. Required.
+    :vartype id: str
+    :ivar rid: A system generated property. A unique identifier.
+    :vartype rid: str
+    :ivar partition_key: The configuration of the partition key to be used for partitioning data
+     into multiple partitions.
+    :vartype partition_key: ~azure.mgmt.cosmosdb.models.ContainerPartitionKey
+    :ivar default_ttl: Default time to live.
+    :vartype default_ttl: int
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the Cosmos DB SQL container. Required."""
+    rid: Optional[str] = rest_field(name="_rid", visibility=["read"])
+    """A system generated property. A unique identifier."""
+    partition_key: Optional["_models.ContainerPartitionKey"] = rest_field(
+        name="partitionKey", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The configuration of the partition key to be used for partitioning data into multiple
+     partitions."""
+    default_ttl: Optional[int] = rest_field(
+        name="defaultTtl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default time to live."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        partition_key: Optional["_models.ContainerPartitionKey"] = None,
+        default_ttl: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlContainersListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The List operation response, that contains the soft-deleted SQL containers and their
+    properties.
+
+    :ivar value: The SoftDeletedSqlContainerGetResult items on this page. Required.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.SoftDeletedSqlContainerGetResult]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    value: list["_models.SoftDeletedSqlContainerGetResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SoftDeletedSqlContainerGetResult items on this page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """The link to the next page of items."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.SoftDeletedSqlContainerGetResult"],
+        next_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlDatabaseGetResult(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An Azure Cosmos DB soft-deleted SQL database.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabaseProperties
+    """
+
+    properties: Optional["_models.SoftDeletedSqlDatabaseProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SoftDeletedSqlDatabaseProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlDatabaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of a soft-deleted SQL database.
+
+    :ivar soft_deletion_metadata: Metadata related to the soft deletion of the SQL database.
+    :vartype soft_deletion_metadata: ~azure.mgmt.cosmosdb.models.SoftDeletionMetadata
+    :ivar resource: The resource information for the soft-deleted SQL database.
+    :vartype resource: ~azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabaseResource
+    """
+
+    soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = rest_field(
+        name="softDeletionMetadata", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Metadata related to the soft deletion of the SQL database."""
+    resource: Optional["_models.SoftDeletedSqlDatabaseResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource information for the soft-deleted SQL database."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        soft_deletion_metadata: Optional["_models.SoftDeletionMetadata"] = None,
+        resource: Optional["_models.SoftDeletedSqlDatabaseResource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlDatabaseResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Cosmos DB SQL database resource object.
+
+    :ivar id: Name of the Cosmos DB SQL database. Required.
+    :vartype id: str
+    :ivar rid: A system generated property. A unique identifier.
+    :vartype rid: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the Cosmos DB SQL database. Required."""
+    rid: Optional[str] = rest_field(name="_rid", visibility=["read"])
+    """A system generated property. A unique identifier."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletedSqlDatabasesListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The List operation response, that contains the soft-deleted SQL databases and their properties.
+
+    :ivar value: The SoftDeletedSqlDatabaseGetResult items on this page. Required.
+    :vartype value: list[~azure.mgmt.cosmosdb.models.SoftDeletedSqlDatabaseGetResult]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    value: list["_models.SoftDeletedSqlDatabaseGetResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SoftDeletedSqlDatabaseGetResult items on this page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """The link to the next page of items."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.SoftDeletedSqlDatabaseGetResult"],
+        next_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletionMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Metadata about the soft deletion of a resource.
+
+    :ivar is_soft_deleted: Indicates whether the resource is soft deleted.
+    :vartype is_soft_deleted: bool
+    :ivar soft_deletion_start_timestamp: The timestamp when the soft deletion started.
+    :vartype soft_deletion_start_timestamp: int
+    :ivar soft_deletion_resource_expiration_timestamp: The timestamp when the soft-deleted resource
+     will expire and be permanently deleted.
+    :vartype soft_deletion_resource_expiration_timestamp: int
+    """
+
+    is_soft_deleted: Optional[bool] = rest_field(
+        name="isSoftDeleted", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether the resource is soft deleted."""
+    soft_deletion_start_timestamp: Optional[int] = rest_field(
+        name="softDeletionStartTimestamp", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The timestamp when the soft deletion started."""
+    soft_deletion_resource_expiration_timestamp: Optional[int] = rest_field(
+        name="softDeletionResourceExpirationTimestamp", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The timestamp when the soft-deleted resource will expire and be permanently deleted."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_soft_deleted: Optional[bool] = None,
+        soft_deletion_start_timestamp: Optional[int] = None,
+        soft_deletion_resource_expiration_timestamp: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SpatialSpec(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SpatialSpec.
 
     :ivar path: The path for which the indexing behavior applies to. Index paths typically start
@@ -16426,7 +17340,9 @@ class SpatialSpec(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlContainerCreateUpdateParameters(ARMResourceProperties):
+class SqlContainerCreateUpdateParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update Cosmos DB container.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -16496,7 +17412,7 @@ class SqlContainerCreateUpdateParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class SqlContainerCreateUpdateProperties(_Model):
+class SqlContainerCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to create and update Azure Cosmos DB container.
 
     :ivar resource: The standard JSON format of a container. Required.
@@ -16533,7 +17449,7 @@ class SqlContainerCreateUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlContainerGetProperties(_Model):
+class SqlContainerGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB container.
 
     :ivar resource:
@@ -16568,7 +17484,7 @@ class SqlContainerGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlContainerGetPropertiesOptions(OptionsResource):
+class SqlContainerGetPropertiesOptions(OptionsResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SqlContainerGetPropertiesOptions.
 
     :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
@@ -16597,7 +17513,9 @@ class SqlContainerGetPropertiesOptions(OptionsResource):
         super().__init__(*args, **kwargs)
 
 
-class SqlContainerGetPropertiesResource(SqlContainerResource):
+class SqlContainerGetPropertiesResource(
+    SqlContainerResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SqlContainerGetPropertiesResource.
 
     :ivar id: Name of the Cosmos DB SQL container. Required.
@@ -16691,7 +17609,7 @@ class SqlContainerGetPropertiesResource(SqlContainerResource):
         super().__init__(*args, **kwargs)
 
 
-class SqlContainerGetResults(Resource):
+class SqlContainerGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB container.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16707,10 +17625,15 @@ class SqlContainerGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB container.
     :vartype properties: ~azure.mgmt.cosmosdb.models.SqlContainerGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -16719,10 +17642,15 @@ class SqlContainerGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB container."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -16735,8 +17663,8 @@ class SqlContainerGetResults(Resource):
         self,
         *,
         properties: Optional["_models.SqlContainerGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -16769,7 +17697,9 @@ class SqlContainerGetResults(Resource):
             super().__setattr__(key, value)
 
 
-class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
+class SqlDatabaseCreateUpdateParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update Cosmos DB SQL database.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -16839,7 +17769,7 @@ class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class SqlDatabaseCreateUpdateProperties(_Model):
+class SqlDatabaseCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to create and update Azure Cosmos DB SQL database.
 
     :ivar resource: The standard JSON format of a SQL database. Required.
@@ -16876,7 +17806,7 @@ class SqlDatabaseCreateUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlDatabaseGetProperties(_Model):
+class SqlDatabaseGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB SQL database.
 
     :ivar resource:
@@ -16911,7 +17841,7 @@ class SqlDatabaseGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlDatabaseGetPropertiesOptions(OptionsResource):
+class SqlDatabaseGetPropertiesOptions(OptionsResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SqlDatabaseGetPropertiesOptions.
 
     :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
@@ -16940,7 +17870,9 @@ class SqlDatabaseGetPropertiesOptions(OptionsResource):
         super().__init__(*args, **kwargs)
 
 
-class SqlDatabaseGetPropertiesResource(SqlDatabaseResource):
+class SqlDatabaseGetPropertiesResource(
+    SqlDatabaseResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SqlDatabaseGetPropertiesResource.
 
     :ivar id: Name of the Cosmos DB SQL database. Required.
@@ -16999,7 +17931,7 @@ class SqlDatabaseGetPropertiesResource(SqlDatabaseResource):
         super().__init__(*args, **kwargs)
 
 
-class SqlDatabaseGetResults(Resource):
+class SqlDatabaseGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB SQL database.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17015,10 +17947,15 @@ class SqlDatabaseGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB SQL database.
     :vartype properties: ~azure.mgmt.cosmosdb.models.SqlDatabaseGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -17027,10 +17964,15 @@ class SqlDatabaseGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB SQL database."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -17043,8 +17985,8 @@ class SqlDatabaseGetResults(Resource):
         self,
         *,
         properties: Optional["_models.SqlDatabaseGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -17097,7 +18039,7 @@ class SqlDedicatedGatewayRegionalServiceResource(RegionalServiceResource):  # py
 
 class SqlDedicatedGatewayServiceResourceCreateUpdateProperties(
     ServiceResourceCreateUpdateProperties, discriminator="SqlDedicatedGateway"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties for Create or Update request for SqlDedicatedGatewayServiceResource.
 
     :ivar instance_size: Instance type for the service. Known values are: "Cosmos.D4s",
@@ -17143,7 +18085,7 @@ class SqlDedicatedGatewayServiceResourceCreateUpdateProperties(
 
 class SqlDedicatedGatewayServiceResourceProperties(
     ServiceResourceProperties, discriminator="SqlDedicatedGateway"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties for SqlDedicatedGatewayServiceResource.
 
     :ivar creation_time: Time of the last state change (ISO-8601 format).
@@ -17204,7 +18146,7 @@ class SqlDedicatedGatewayServiceResourceProperties(
         self.service_type = ServiceType.SQL_DEDICATED_GATEWAY  # type: ignore
 
 
-class SqlRoleAssignmentCreateUpdateParameters(_Model):
+class SqlRoleAssignmentCreateUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update an Azure Cosmos DB SQL Role Assignment.
 
     :ivar properties: Properties to create and update an Azure Cosmos DB SQL Role Assignment.
@@ -17254,7 +18196,7 @@ class SqlRoleAssignmentCreateUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class SqlRoleAssignmentGetResults(ProxyResource):
+class SqlRoleAssignmentGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Role Assignment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17315,7 +18257,7 @@ class SqlRoleAssignmentGetResults(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SqlRoleAssignmentResource(_Model):
+class SqlRoleAssignmentResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Cosmos DB SQL Role Assignment resource object.
 
     :ivar role_definition_id: The unique identifier for the associated Role Definition.
@@ -17362,7 +18304,7 @@ class SqlRoleAssignmentResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlRoleDefinitionCreateUpdateParameters(_Model):
+class SqlRoleDefinitionCreateUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update an Azure Cosmos DB SQL Role Definition.
 
     :ivar properties: Properties to create and update an Azure Cosmos DB SQL Role Definition.
@@ -17412,7 +18354,7 @@ class SqlRoleDefinitionCreateUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class SqlRoleDefinitionGetResults(ProxyResource):
+class SqlRoleDefinitionGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB SQL Role Definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17473,7 +18415,7 @@ class SqlRoleDefinitionGetResults(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SqlRoleDefinitionResource(_Model):
+class SqlRoleDefinitionResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Cosmos DB SQL Role Definition resource object.
 
     :ivar role_name: A user-friendly name for the Role Definition. Must be unique for the database
@@ -17533,7 +18475,9 @@ class SqlRoleDefinitionResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlStoredProcedureCreateUpdateParameters(ARMResourceProperties):
+class SqlStoredProcedureCreateUpdateParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update Cosmos DB storedProcedure.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -17603,7 +18547,7 @@ class SqlStoredProcedureCreateUpdateParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class SqlStoredProcedureCreateUpdateProperties(_Model):
+class SqlStoredProcedureCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to create and update Azure Cosmos DB storedProcedure.
 
     :ivar resource: The standard JSON format of a storedProcedure. Required.
@@ -17642,7 +18586,7 @@ class SqlStoredProcedureCreateUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlStoredProcedureGetProperties(_Model):
+class SqlStoredProcedureGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB StoredProcedure.
 
     :ivar resource:
@@ -17671,7 +18615,7 @@ class SqlStoredProcedureGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlStoredProcedureResource(_Model):
+class SqlStoredProcedureResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB SQL storedProcedure resource object.
 
     :ivar id: Name of the Cosmos DB SQL storedProcedure. Required.
@@ -17704,7 +18648,9 @@ class SqlStoredProcedureResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlStoredProcedureGetPropertiesResource(SqlStoredProcedureResource):
+class SqlStoredProcedureGetPropertiesResource(
+    SqlStoredProcedureResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SqlStoredProcedureGetPropertiesResource.
 
     :ivar id: Name of the Cosmos DB SQL storedProcedure. Required.
@@ -17747,7 +18693,7 @@ class SqlStoredProcedureGetPropertiesResource(SqlStoredProcedureResource):
         super().__init__(*args, **kwargs)
 
 
-class SqlStoredProcedureGetResults(Resource):
+class SqlStoredProcedureGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB storedProcedure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17763,10 +18709,15 @@ class SqlStoredProcedureGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB storedProcedure.
     :vartype properties: ~azure.mgmt.cosmosdb.models.SqlStoredProcedureGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -17775,10 +18726,15 @@ class SqlStoredProcedureGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB storedProcedure."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -17791,8 +18747,8 @@ class SqlStoredProcedureGetResults(Resource):
         self,
         *,
         properties: Optional["_models.SqlStoredProcedureGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -17825,7 +18781,9 @@ class SqlStoredProcedureGetResults(Resource):
             super().__setattr__(key, value)
 
 
-class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
+class SqlTriggerCreateUpdateParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update Cosmos DB trigger.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -17895,7 +18853,7 @@ class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class SqlTriggerCreateUpdateProperties(_Model):
+class SqlTriggerCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to create and update Azure Cosmos DB trigger.
 
     :ivar resource: The standard JSON format of a trigger. Required.
@@ -17932,7 +18890,7 @@ class SqlTriggerCreateUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlTriggerGetProperties(_Model):
+class SqlTriggerGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB trigger.
 
     :ivar resource:
@@ -17961,7 +18919,7 @@ class SqlTriggerGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlTriggerResource(_Model):
+class SqlTriggerResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB SQL trigger resource object.
 
     :ivar id: Name of the Cosmos DB SQL trigger. Required.
@@ -18010,7 +18968,9 @@ class SqlTriggerResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlTriggerGetPropertiesResource(SqlTriggerResource):
+class SqlTriggerGetPropertiesResource(
+    SqlTriggerResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SqlTriggerGetPropertiesResource.
 
     :ivar id: Name of the Cosmos DB SQL trigger. Required.
@@ -18060,7 +19020,7 @@ class SqlTriggerGetPropertiesResource(SqlTriggerResource):
         super().__init__(*args, **kwargs)
 
 
-class SqlTriggerGetResults(Resource):
+class SqlTriggerGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB trigger.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18076,10 +19036,15 @@ class SqlTriggerGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB trigger.
     :vartype properties: ~azure.mgmt.cosmosdb.models.SqlTriggerGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -18088,10 +19053,15 @@ class SqlTriggerGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB trigger."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -18104,8 +19074,8 @@ class SqlTriggerGetResults(Resource):
         self,
         *,
         properties: Optional["_models.SqlTriggerGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -18138,7 +19108,9 @@ class SqlTriggerGetResults(Resource):
             super().__setattr__(key, value)
 
 
-class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):  # pylint: disable=name-too-long
+class SqlUserDefinedFunctionCreateUpdateParameters(
+    ARMResourceProperties
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameters to create and update Cosmos DB userDefinedFunction.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -18209,7 +19181,9 @@ class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):  # py
             super().__setattr__(key, value)
 
 
-class SqlUserDefinedFunctionCreateUpdateProperties(_Model):  # pylint: disable=name-too-long
+class SqlUserDefinedFunctionCreateUpdateProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties to create and update Azure Cosmos DB userDefinedFunction.
 
     :ivar resource: The standard JSON format of a userDefinedFunction. Required.
@@ -18248,7 +19222,7 @@ class SqlUserDefinedFunctionCreateUpdateProperties(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class SqlUserDefinedFunctionGetProperties(_Model):
+class SqlUserDefinedFunctionGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB userDefinedFunction.
 
     :ivar resource:
@@ -18277,7 +19251,7 @@ class SqlUserDefinedFunctionGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlUserDefinedFunctionResource(_Model):
+class SqlUserDefinedFunctionResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB SQL userDefinedFunction resource object.
 
     :ivar id: Name of the Cosmos DB SQL userDefinedFunction. Required.
@@ -18310,7 +19284,9 @@ class SqlUserDefinedFunctionResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SqlUserDefinedFunctionGetPropertiesResource(SqlUserDefinedFunctionResource):  # pylint: disable=name-too-long
+class SqlUserDefinedFunctionGetPropertiesResource(
+    SqlUserDefinedFunctionResource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """SqlUserDefinedFunctionGetPropertiesResource.
 
     :ivar id: Name of the Cosmos DB SQL userDefinedFunction. Required.
@@ -18353,7 +19329,7 @@ class SqlUserDefinedFunctionGetPropertiesResource(SqlUserDefinedFunctionResource
         super().__init__(*args, **kwargs)
 
 
-class SqlUserDefinedFunctionGetResults(Resource):
+class SqlUserDefinedFunctionGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB userDefinedFunction.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18369,10 +19345,15 @@ class SqlUserDefinedFunctionGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB userDefinedFunction.
     :vartype properties: ~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -18381,10 +19362,15 @@ class SqlUserDefinedFunctionGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB userDefinedFunction."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -18397,8 +19383,8 @@ class SqlUserDefinedFunctionGetResults(Resource):
         self,
         *,
         properties: Optional["_models.SqlUserDefinedFunctionGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -18431,7 +19417,7 @@ class SqlUserDefinedFunctionGetResults(Resource):
             super().__setattr__(key, value)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -18498,7 +19484,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TableCreateUpdateParameters(ARMResourceProperties):
+class TableCreateUpdateParameters(ARMResourceProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update Cosmos DB Table.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -18568,7 +19554,7 @@ class TableCreateUpdateParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class TableCreateUpdateProperties(_Model):
+class TableCreateUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to create and update Azure Cosmos DB Table.
 
     :ivar resource: The standard JSON format of a Table. Required.
@@ -18605,7 +19591,7 @@ class TableCreateUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TableGetProperties(_Model):
+class TableGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos Table.
 
     :ivar resource:
@@ -18640,7 +19626,7 @@ class TableGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TableGetPropertiesOptions(OptionsResource):
+class TableGetPropertiesOptions(OptionsResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TableGetPropertiesOptions.
 
     :ivar throughput: Value of the Cosmos DB resource throughput or autoscaleSettings. Use the
@@ -18669,7 +19655,7 @@ class TableGetPropertiesOptions(OptionsResource):
         super().__init__(*args, **kwargs)
 
 
-class TableResource(_Model):
+class TableResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB table resource object.
 
     :ivar id: Name of the Cosmos DB table. Required.
@@ -18712,7 +19698,7 @@ class TableResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TableGetPropertiesResource(TableResource):
+class TableGetPropertiesResource(TableResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TableGetPropertiesResource.
 
     :ivar id: Name of the Cosmos DB table. Required.
@@ -18759,7 +19745,7 @@ class TableGetPropertiesResource(TableResource):
         super().__init__(*args, **kwargs)
 
 
-class TableGetResults(Resource):
+class TableGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Table.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18775,10 +19761,15 @@ class TableGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB Table.
     :vartype properties: ~azure.mgmt.cosmosdb.models.TableGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -18787,10 +19778,15 @@ class TableGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB Table."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -18803,8 +19799,8 @@ class TableGetResults(Resource):
         self,
         *,
         properties: Optional["_models.TableGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -18837,7 +19833,7 @@ class TableGetResults(Resource):
             super().__setattr__(key, value)
 
 
-class TableRoleAssignmentResource(ProxyResource):
+class TableRoleAssignmentResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update an Azure Cosmos DB Table Role Assignment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18898,7 +19894,7 @@ class TableRoleAssignmentResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TableRoleAssignmentResourceProperties(_Model):
+class TableRoleAssignmentResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Cosmos DB Table Role Assignment resource object.
 
     :ivar role_definition_id: The unique identifier for the associated Role Definition.
@@ -18950,7 +19946,7 @@ class TableRoleAssignmentResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TableRoleDefinitionResource(ProxyResource):
+class TableRoleDefinitionResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to create and update an Azure Cosmos DB Table Role Definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19011,7 +20007,7 @@ class TableRoleDefinitionResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TableRoleDefinitionResourceProperties(_Model):
+class TableRoleDefinitionResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Cosmos DB Table Role Definition resource object.
 
     :ivar id: The path id for the Role Definition.
@@ -19076,7 +20072,7 @@ class TableRoleDefinitionResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThroughputBucketResource(_Model):
+class ThroughputBucketResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB throughput bucket object.
 
     :ivar id: Represents the throughput bucket id. Required.
@@ -19119,7 +20115,7 @@ class ThroughputBucketResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThroughputPolicyResource(_Model):
+class ThroughputPolicyResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB resource throughput policy.
 
     :ivar is_enabled: Determines whether the ThroughputPolicy is active or not.
@@ -19158,7 +20154,7 @@ class ThroughputPolicyResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThroughputPoolAccountProperties(_Model):
+class ThroughputPoolAccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Global Database Account which is part of a Throughputpool.
 
     :ivar provisioning_state: A provisioning state of the ThroughputPool Account. Known values are:
@@ -19210,7 +20206,7 @@ class ThroughputPoolAccountProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThroughputPoolAccountResource(ProxyResource):
+class ThroughputPoolAccountResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Throughputpool Account.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19271,7 +20267,7 @@ class ThroughputPoolAccountResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ThroughputPoolProperties(_Model):
+class ThroughputPoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to update Azure Cosmos DB throughput pool.
 
     :ivar provisioning_state: A provisioning state of the ThroughputPool. Known values are:
@@ -19312,7 +20308,7 @@ class ThroughputPoolProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThroughputPoolResource(TrackedResource):
+class ThroughputPoolResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB Throughputpool.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19379,7 +20375,7 @@ class ThroughputPoolResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ThroughputPoolUpdate(_Model):
+class ThroughputPoolUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a throughput pool resource for updates.
 
     :ivar properties: Properties of the throughput pool.
@@ -19429,7 +20425,7 @@ class ThroughputPoolUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class ThroughputSettingsGetProperties(_Model):
+class ThroughputSettingsGetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an Azure Cosmos DB resource throughput.
 
     :ivar resource:
@@ -19458,7 +20454,7 @@ class ThroughputSettingsGetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThroughputSettingsResource(_Model):
+class ThroughputSettingsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB resource throughput object. Either throughput is required or autoscaleSettings is
     required, but not both.
 
@@ -19527,7 +20523,9 @@ class ThroughputSettingsResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource):
+class ThroughputSettingsGetPropertiesResource(
+    ThroughputSettingsResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ThroughputSettingsGetPropertiesResource.
 
     :ivar throughput: Value of the Cosmos DB resource throughput. Either throughput is required or
@@ -19586,7 +20584,7 @@ class ThroughputSettingsGetPropertiesResource(ThroughputSettingsResource):
         super().__init__(*args, **kwargs)
 
 
-class ThroughputSettingsGetResults(Resource):
+class ThroughputSettingsGetResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Azure Cosmos DB resource throughput.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19602,10 +20600,15 @@ class ThroughputSettingsGetResults(Resource):
     :vartype system_data: ~azure.mgmt.cosmosdb.models.SystemData
     :ivar properties: The properties of an Azure Cosmos DB resource throughput.
     :vartype properties: ~azure.mgmt.cosmosdb.models.ThroughputSettingsGetProperties
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: The location of the resource group to which the resource belongs.
     :vartype location: str
+    :ivar tags: Tags are a list of key-value pairs that describe the resource. These tags can be
+     used in viewing and grouping this resource (across resource groups). A maximum of 15 tags can
+     be provided for a resource. Each tag must have a key no greater than 128 characters and value
+     no greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\".
+    :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
     :vartype identity: ~azure.mgmt.cosmosdb.models.ManagedServiceIdentity
     """
@@ -19614,10 +20617,15 @@ class ThroughputSettingsGetResults(Resource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of an Azure Cosmos DB resource throughput."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """The location of the resource group to which the resource belongs."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tags are a list of key-value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups). A maximum of 15 tags can be
+     provided for a resource. Each tag must have a key no greater than 128 characters and value no
+     greater than 256 characters. For example, the default experience for a template type is set
+     with \\"defaultExperience\\": \\"Cassandra\\". Current \\"defaultExperience\\" values also
+     include \\"Table\\", \\"Graph\\", \\"DocumentDB\\", and \\"MongoDB\\"."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -19630,8 +20638,8 @@ class ThroughputSettingsGetResults(Resource):
         self,
         *,
         properties: Optional["_models.ThroughputSettingsGetProperties"] = None,
-        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
@@ -19664,7 +20672,9 @@ class ThroughputSettingsGetResults(Resource):
             super().__setattr__(key, value)
 
 
-class ThroughputSettingsUpdateParameters(ARMResourceProperties):
+class ThroughputSettingsUpdateParameters(
+    ARMResourceProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to update Cosmos DB resource throughput.
 
     :ivar id: The unique resource identifier of the ARM resource.
@@ -19734,7 +20744,7 @@ class ThroughputSettingsUpdateParameters(ARMResourceProperties):
             super().__setattr__(key, value)
 
 
-class ThroughputSettingsUpdateProperties(_Model):
+class ThroughputSettingsUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to update Azure Cosmos DB resource throughput.
 
     :ivar resource: The standard JSON format of a resource throughput. Required.
@@ -19764,7 +20774,7 @@ class ThroughputSettingsUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UniqueKey(_Model):
+class UniqueKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The unique key on that enforces uniqueness constraint on documents in the collection in the
     Azure Cosmos DB service.
 
@@ -19793,7 +20803,7 @@ class UniqueKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UniqueKeyPolicy(_Model):
+class UniqueKeyPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The unique key policy configuration for specifying uniqueness constraints on documents in the
     collection in the Azure Cosmos DB service.
 
@@ -19826,7 +20836,7 @@ class UniqueKeyPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VectorEmbedding(_Model):
+class VectorEmbedding(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a vector embedding. A vector embedding is used to define a vector field in the
     documents.
 
@@ -19878,7 +20888,7 @@ class VectorEmbedding(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VectorEmbeddingPolicy(_Model):
+class VectorEmbeddingPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cosmos DB Vector Embedding Policy.
 
     :ivar vector_embeddings: List of vector embeddings.
@@ -19908,7 +20918,7 @@ class VectorEmbeddingPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VectorIndex(_Model):
+class VectorIndex(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VectorIndex.
 
     :ivar path: The path to the vector field in the document. Required.
@@ -19975,7 +20985,7 @@ class VectorIndex(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualNetworkRule(_Model):
+class VirtualNetworkRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual Network ACL Rule object.
 
     :ivar id: Resource ID of a subnet, for example:

@@ -112,7 +112,7 @@ def __getattr__(name: str):
 
     if requested:
         if not getattr(__getattr__, "warning_issued", False):
-            logging.warning(
+            module_logger.warning(
                 " %s will be removed from the azure.ai.ml namespace in a future release."
                 " Please use the azure.ai.ml.entities namespace instead.",
                 name,

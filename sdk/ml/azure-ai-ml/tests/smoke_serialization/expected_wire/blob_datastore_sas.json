@@ -1,0 +1,17 @@
+{
+  "properties": {
+    "accountName": "smokeaccount",
+    "containerName": "smoke-container",
+    "credentials": {
+      "credentialsType": "Sas",
+      "secrets": {
+        "sasToken": "?sv=smoke-sas-token",
+        "secretsType": "Sas"
+      }
+    },
+    "datastoreType": "AzureBlob",
+    "endpoint": "core.windows.net",
+    "protocol": "https",
+    "tags": {}
+  }
+}

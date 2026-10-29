@@ -5,30 +5,44 @@
 import json
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     CustomModelFineTuning as RestCustomModelFineTuningVertical,
 )
-from azure.ai.ml._restclient.v2024_01_01_preview.models import FineTuningJob as RestFineTuningJob
-from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as RestJobBase
-from azure.ai.ml._restclient.v2024_01_01_preview.models import MLFlowModelJobInput, UriFileJobInput
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    FineTuningJob as RestFineTuningJob,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase as RestJobBase
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    MLFlowModelJobInput,
+    UriFileJobInput,
+)
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants import DataGenerationType, JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE, AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
+from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_data_outputs,
+    to_rest_data_outputs,
+)
 from azure.ai.ml.entities._job.distillation.constants import (
     AzureMLDistillationProperties,
     EndpointSettings,
     PromptSettingKeys,
 )
-from azure.ai.ml.entities._job.distillation.endpoint_request_settings import EndpointRequestSettings
+from azure.ai.ml.entities._job.distillation.endpoint_request_settings import (
+    EndpointRequestSettings,
+)
 from azure.ai.ml.entities._job.distillation.prompt_settings import PromptSettings
-from azure.ai.ml.entities._job.distillation.teacher_model_settings import TeacherModelSettings
+from azure.ai.ml.entities._job.distillation.teacher_model_settings import (
+    TeacherModelSettings,
+)
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
+from azure.ai.ml.entities._workspace.connections.workspace_connection import (
+    WorkspaceConnection,
+)
 
 
 # pylint: disable=too-many-instance-attributes
@@ -243,7 +257,8 @@ class DistillationJob(Job, JobIOMixin):
         :type endpoint_request_settings: typing.Optional[EndpointRequestSettings]
         """
         self._teacher_model_settings = TeacherModelSettings(
-            inference_parameters=inference_parameters, endpoint_request_settings=endpoint_request_settings
+            inference_parameters=inference_parameters,
+            endpoint_request_settings=endpoint_request_settings,
         )
 
     def set_prompt_settings(self, prompt_settings: Optional[PromptSettings]):
@@ -268,7 +283,9 @@ class DistillationJob(Job, JobIOMixin):
         :return: dictionary representation of the object.
         :rtype: typing.Dict
         """
-        from azure.ai.ml._schema._distillation.distillation_job import DistillationJobSchema
+        from azure.ai.ml._schema._distillation.distillation_job import (
+            DistillationJobSchema,
+        )
 
         schema_dict: dict = {}
         schema_dict = DistillationJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
@@ -294,7 +311,9 @@ class DistillationJob(Job, JobIOMixin):
         :return: DistillationJob object.
         :rtype: DistillationJob
         """
-        from azure.ai.ml._schema._distillation.distillation_job import DistillationJobSchema
+        from azure.ai.ml._schema._distillation.distillation_job import (
+            DistillationJobSchema,
+        )
 
         loaded_data = load_from_dict(DistillationJobSchema, data, context, additional_message, **kwargs)
 
@@ -360,23 +379,52 @@ class DistillationJob(Job, JobIOMixin):
         :return: REST object representation of this object.
         :rtype: JobBase
         """
-        distillation = RestCustomModelFineTuningVertical(
-            task_type="ChatCompletion",
-            model=self.student_model,
-            model_provider="Custom",
-            training_data=self.training_data,
-            validation_data=self.validation_data,
-            hyper_parameters=self._hyperparameters,
+        # Convert any SDK Input values to their REST job-input models BEFORE constructing the arm hybrid
+        # model. The shared arm_ml_service models coerce a value assigned to a field into their backing
+        # dict, so a post-construction ``isinstance(..., Input)`` check would no longer see the original
+        # Input (unlike the old msrest models, which stored the attribute as-is).
+        student_model = (
+            MLFlowModelJobInput(uri=self.student_model.path)
+            if isinstance(self.student_model, Input)
+            else self.student_model
+        )
+        training_data = (
+            UriFileJobInput(uri=self.training_data.path)
+            if isinstance(self.training_data, Input)
+            else self.training_data
+        )
+        validation_data = (
+            UriFileJobInput(uri=self.validation_data.path)
+            if isinstance(self.validation_data, Input)
+            else self.validation_data
         )
 
-        if isinstance(distillation.training_data, Input):
-            distillation.training_data = UriFileJobInput(uri=distillation.training_data.path)
-        if isinstance(distillation.validation_data, Input):
-            distillation.validation_data = UriFileJobInput(uri=distillation.validation_data.path)
-        if isinstance(distillation.model, Input):
-            distillation.model = MLFlowModelJobInput(uri=distillation.model.path)
+        distillation = RestCustomModelFineTuningVertical(
+            task_type="ChatCompletion",
+            model=student_model,
+            model_provider="Custom",
+            training_data=training_data,
+            validation_data=validation_data,
+            # The v2024_01 msrest CustomModelFineTuning model typed hyper_parameters as Dict[str, str] and
+            # coerced every value to a string on the wire. The shared arm_ml_service model preserves the
+            # original value type, so stringify here to keep the serialized body byte-identical.
+            hyper_parameters=(
+                {key: str(value) for key, value in self._hyperparameters.items()}
+                if self._hyperparameters
+                else self._hyperparameters
+            ),
+        )
 
         self._add_distillation_properties(self.properties)
+
+        # The v2024_01 msrest FineTuningJob typed ``properties`` as Dict[str, str] and coerced every value
+        # to a string on the wire (e.g. True -> "True", 0.8 -> "0.8", 100 -> "100"). The shared
+        # arm_ml_service model preserves native value types, so stringify the whole bag here to keep the
+        # serialized body byte-identical. The in-memory entity keeps the native values; ``_from_rest_object``
+        # restores them via ``_coerce_property_value``.
+        rest_properties = (
+            {key: str(value) for key, value in self.properties.items()} if self.properties else self.properties
+        )
 
         finetuning_job = RestFineTuningJob(
             display_name=self.display_name,
@@ -384,9 +432,12 @@ class DistillationJob(Job, JobIOMixin):
             experiment_name=self.experiment_name,
             services=self.services,
             tags=self.tags,
-            properties=self.properties,
+            properties=rest_properties,
             fine_tuning_details=distillation,
             outputs=to_rest_data_outputs(self.outputs),
+            # The shared arm_ml_service model defaults is_archived to None (omitted on the wire), but the
+            # pre-migration msrest model emitted ``isArchived: false``; set it to stay byte-identical.
+            is_archived=False,
         )
 
         result = RestJobBase(properties=finetuning_job)
@@ -448,6 +499,38 @@ class DistillationJob(Job, JobIOMixin):
             properties[f"{AzureMLDistillationProperties.INSTANCE_TYPE}.data_generation"] = self._resources.instance_type
 
     # TODO: Remove once Distillation is added to MFE
+    @staticmethod
+    def _coerce_property_value(value: Any) -> Any:
+        """Restore a native Python type from a stringified REST property value.
+
+        The shared arm_ml_service ``FineTuningJob.properties`` field is typed ``Dict[str, str]`` and coerces
+        every value to a string when stored (e.g. ``0.1`` -> ``"0.1"``, ``True`` -> ``"True"``). The old
+        msrest model kept the native Python value in memory until serialization, so restore the native type
+        on read to preserve the previous round-trip behavior. The on-the-wire payload is unchanged: both
+        clients send the stringified form.
+
+        :param value: The property value read from the REST object.
+        :type value: typing.Any
+        :return: The value coerced back to bool/int/float where possible, otherwise unchanged.
+        :rtype: typing.Any
+        """
+        if not isinstance(value, str):
+            return value
+        if value == "True":
+            return True
+        if value == "False":
+            return False
+        try:
+            return int(value)
+        except ValueError:
+            pass
+        try:
+            return float(value)
+        except ValueError:
+            pass
+        return value
+
+    # TODO: Remove once Distillation is added to MFE
     @classmethod
     def _filter_properties(cls, properties: Dict) -> Dict:
         """Convert properties from REST object back to their original states.
@@ -466,16 +549,16 @@ class DistillationJob(Job, JobIOMixin):
         for key, val in properties.items():
             param = key.split(".")[-1]
             if AzureMLDistillationProperties.TEACHER_MODEL in key and param != "endpoint_name":
-                inference_parameters[param] = val
+                inference_parameters[param] = cls._coerce_property_value(val)
             elif AzureMLDistillationProperties.INSTANCE_TYPE in key:
                 resources[key.split(".")[1]] = val
             elif AzureMLDistillationProperties.CONNECTION_INFORMATION in key:
                 teacher_model_info = val
             else:
                 if param in EndpointSettings.VALID_SETTINGS:
-                    endpoint_settings[param] = val
+                    endpoint_settings[param] = cls._coerce_property_value(val)
                 elif param in PromptSettingKeys.VALID_SETTINGS:
-                    prompt_settings[param] = val
+                    prompt_settings[param] = cls._coerce_property_value(val)
 
         if inference_parameters:
             teacher_settings["inference_parameters"] = inference_parameters
@@ -491,7 +574,7 @@ class DistillationJob(Job, JobIOMixin):
             "teacher_model_settings": (
                 TeacherModelSettings(**teacher_settings) if teacher_settings else None  # type: ignore
             ),
-            "prompt_settings": PromptSettings(**prompt_settings) if prompt_settings else None,
+            "prompt_settings": (PromptSettings(**prompt_settings) if prompt_settings else None),
             "resources": ResourceConfiguration(**resources) if resources else None,
         }
 

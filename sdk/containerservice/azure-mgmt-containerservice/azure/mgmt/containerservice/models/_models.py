@@ -9,15 +9,16 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .._utils.model_base import Model as _Model, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
+from ._enums import ImpactedResourceKind, UpgradeType
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AbsoluteMonthlySchedule(_Model):
+class AbsoluteMonthlySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """For schedules like: 'recur every month on the 15th' or 'recur every 3 months on the 20th'.
 
     :ivar interval_months: Specifies the number of months between each set of occurrences.
@@ -51,7 +52,7 @@ class AbsoluteMonthlySchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessProfile(_Model):
+class AccessProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for enabling a user to access a managed cluster.
 
     :ivar kube_config: Base64-encoded Kubernetes configuration file.
@@ -81,7 +82,7 @@ class AccessProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvancedNetworking(_Model):
+class AdvancedNetworking(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Advanced Networking profile for enabling observability and security feature suite on a cluster.
     For more information see aka.ms/aksadvancednetworking.
 
@@ -139,7 +140,7 @@ class AdvancedNetworking(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvancedNetworkingObservability(_Model):
+class AdvancedNetworkingObservability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Observability profile to enable advanced network metrics and flow logs with historical
     contexts.
 
@@ -169,7 +170,7 @@ class AdvancedNetworkingObservability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvancedNetworkingPerformance(_Model):
+class AdvancedNetworkingPerformance(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile to enable performance-enhancing features on clusters that use Azure CNI powered by
     Cilium.
 
@@ -209,7 +210,7 @@ class AdvancedNetworkingPerformance(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvancedNetworkingSecurity(_Model):
+class AdvancedNetworkingSecurity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security profile to enable security features on cilium based cluster.
 
     :ivar enabled: This feature allows user to configure network policy based on DNS (FQDN) names.
@@ -268,7 +269,9 @@ class AdvancedNetworkingSecurity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvancedNetworkingSecurityTransitEncryption(_Model):  # pylint: disable=name-too-long
+class AdvancedNetworkingSecurityTransitEncryption(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Encryption configuration for Cilium-based clusters. Once enabled all traffic between Cilium
     managed pods will be encrypted when it leaves the node boundary.
 
@@ -347,7 +350,102 @@ class ProxyResource(Resource):
     """
 
 
-class AgentPool(ProxyResource):
+class AgentFabricMembership(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The AgentFabric membership of a managed cluster. A cluster may belong to at most one
+    AgentFabric, so this resource always has the name 'default'. See
+    `https://aka.ms/aks/agentfabric-membership <https://aka.ms/aks/agentfabric-membership>`_.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.containerservice.models.AgentFabricMembershipProperties
+    :ivar managed_by: Resource ID of the AgentFabric that this cluster is a member of. The
+     AgentFabric must be in the same tenant and subscription as the managed cluster. As the ARM
+     envelope property, it also stops a complete mode deployment from deleting the membership and
+     silently detaching the cluster. Required.
+    :vartype managed_by: str
+    """
+
+    properties: Optional["_models.AgentFabricMembershipProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    managed_by: str = rest_field(name="managedBy", visibility=["read", "create", "update"])
+    """Resource ID of the AgentFabric that this cluster is a member of. The AgentFabric must be in the
+     same tenant and subscription as the managed cluster. As the ARM envelope property, it also
+     stops a complete mode deployment from deleting the membership and silently detaching the
+     cluster. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        managed_by: str,
+        properties: Optional["_models.AgentFabricMembershipProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentFabricMembershipProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of the AgentFabric membership of a managed cluster.
+
+    :ivar provisioning_state: The current provisioning state of the AgentFabric membership. Known
+     values are: "Canceled", "Creating", "Deleting", "Failed", "Succeeded", and "Updating".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.AgentFabricMembershipProvisioningState
+    :ivar sku: The SKU of the AgentFabric membership. Determines which AgentFabric components are
+     deployed to the cluster. Required. Known values are: "Standard" and "Premium".
+    :vartype sku: str or ~azure.mgmt.containerservice.models.AgentFabricMembershipSkuName
+    """
+
+    provisioning_state: Optional[Union[str, "_models.AgentFabricMembershipProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The current provisioning state of the AgentFabric membership. Known values are: \"Canceled\",
+     \"Creating\", \"Deleting\", \"Failed\", \"Succeeded\", and \"Updating\"."""
+    sku: Union[str, "_models.AgentFabricMembershipSkuName"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SKU of the AgentFabric membership. Determines which AgentFabric components are deployed to
+     the cluster. Required. Known values are: \"Standard\" and \"Premium\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sku: Union[str, "_models.AgentFabricMembershipSkuName"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentPool(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -471,7 +569,7 @@ class AgentPool(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AgentPoolArtifactStreamingProfile(_Model):
+class AgentPoolArtifactStreamingProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Artifact streaming profile for the agent pool.
 
     :ivar enabled: Artifact streaming speeds up the cold-start of containers on a node through
@@ -503,7 +601,7 @@ class AgentPoolArtifactStreamingProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolAvailableVersions(_Model):
+class AgentPoolAvailableVersions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of available versions for an agent pool.
 
     :ivar id: The ID of the agent pool version list.
@@ -565,7 +663,7 @@ class AgentPoolAvailableVersions(_Model):
             super().__setattr__(key, value)
 
 
-class AgentPoolAvailableVersionsProperties(_Model):
+class AgentPoolAvailableVersionsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of available agent pool versions.
 
     :ivar agent_pool_versions: List of versions available for agent pool.
@@ -596,7 +694,9 @@ class AgentPoolAvailableVersionsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem(_Model):  # pylint: disable=name-too-long
+class AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Available version information for an agent pool.
 
     :ivar default: Whether this version is the default agent pool version.
@@ -638,7 +738,7 @@ class AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem(_Model):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolBlueGreenUpgradeSettings(_Model):
+class AgentPoolBlueGreenUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for blue-green upgrade on an agentpool.
 
     :ivar drain_batch_size: The number or percentage of nodes to drain in batch during blue-green
@@ -715,7 +815,7 @@ class AgentPoolBlueGreenUpgradeSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolDeleteMachinesParameter(_Model):
+class AgentPoolDeleteMachinesParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies a list of machine names from the agent pool to be deleted.
 
     :ivar machine_names: The agent pool machine names. Required.
@@ -745,7 +845,7 @@ class AgentPoolDeleteMachinesParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolGatewayProfile(_Model):
+class AgentPoolGatewayProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile of the managed cluster gateway agent pool.
 
     :ivar public_ip_prefix_size: The Gateway agent pool associates one public IPPrefix for each
@@ -785,7 +885,94 @@ class AgentPoolGatewayProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disable=name-too-long
+class GenerateUpgradeInsightsContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The base request body for the generateUpgradeInsights action. The concrete shape is determined
+    by ``upgradeType``, so that each scope declares exactly the inputs it needs: the schema itself
+    enforces which of ``targetKubernetesVersion``, ``targetNodeImageVersion``, and
+    ``agentPoolName`` are required or optional, rather than relying on documented conventions plus
+    server-side validation. The server generates (or refreshes) the corresponding UpgradeInsight
+    and returns it.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AgentPoolGenerateUpgradeInsightsContent, ControlPlaneGenerateUpgradeInsightsContent,
+    ControlPlaneAndAgentPoolsGenerateUpgradeInsightsContent,
+    NodeImageGenerateUpgradeInsightsContent
+
+    :ivar upgrade_type: The type of upgrade to evaluate. Required. Known values are:
+     "ControlPlane", "AgentPool", "NodeImage", and "ControlPlaneAndAgentPools".
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.UpgradeType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    upgrade_type: str = rest_discriminator(
+        name="upgradeType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of upgrade to evaluate. Required. Known values are: \"ControlPlane\", \"AgentPool\",
+     \"NodeImage\", and \"ControlPlaneAndAgentPools\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        upgrade_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentPoolGenerateUpgradeInsightsContent(
+    GenerateUpgradeInsightsContent, discriminator="AgentPool"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request body to evaluate a single agent pool Kubernetes version upgrade.
+
+    :ivar upgrade_type: Required. An agent pool (node pool) Kubernetes version upgrade.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.AGENT_POOL
+    :ivar agent_pool_name: The name of the agent pool to evaluate. Required.
+    :vartype agent_pool_name: str
+    :ivar target_kubernetes_version: The target Kubernetes version to evaluate. Required.
+    :vartype target_kubernetes_version: str
+    """
+
+    upgrade_type: Literal[UpgradeType.AGENT_POOL] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. An agent pool (node pool) Kubernetes version upgrade."""
+    agent_pool_name: str = rest_field(name="agentPoolName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the agent pool to evaluate. Required."""
+    target_kubernetes_version: str = rest_field(
+        name="targetKubernetesVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target Kubernetes version to evaluate. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        agent_pool_name: str,
+        target_kubernetes_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.AGENT_POOL  # type: ignore
+
+
+class AgentPoolManagedClusterAgentPoolProfileProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties for the container service agent pool profile.
 
     :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
@@ -848,7 +1035,7 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3", "Mariner",
      "Flatcar", "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025",
-     "WindowsAnnual", "Ubuntu2404", and "AzureContainerLinux".
+     "WindowsAnnual", "Ubuntu2404", "AzureContainerLinux", and "Ubuntu2604".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -861,7 +1048,7 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
      are: "Delete" and "Deallocate".
     :vartype scale_down_mode: str or ~azure.mgmt.containerservice.models.ScaleDownMode
     :ivar type_properties_type: The type of Agent Pool. Known values are:
-     "VirtualMachineScaleSets", "AvailabilitySet", and "VirtualMachines".
+     "VirtualMachineScaleSets", "AvailabilitySet", "VirtualMachines", and "FlexNodes".
     :vartype type_properties_type: str or ~azure.mgmt.containerservice.models.AgentPoolType
     :ivar mode: The mode of an agent pool. A cluster must have at least one 'System' Agent Pool at
      all times. For additional information on agent pool restrictions and best practices, see:
@@ -1098,7 +1285,7 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
      default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >= 1.25 if OSType
      is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"Mariner\",
      \"Flatcar\", \"CBLMariner\", \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\",
-     \"WindowsAnnual\", \"Ubuntu2404\", and \"AzureContainerLinux\"."""
+     \"WindowsAnnual\", \"Ubuntu2404\", \"AzureContainerLinux\", and \"Ubuntu2604\"."""
     max_count: Optional[int] = rest_field(name="maxCount", visibility=["read", "create", "update", "delete", "query"])
     """The maximum number of nodes for auto-scaling."""
     min_count: Optional[int] = rest_field(name="minCount", visibility=["read", "create", "update", "delete", "query"])
@@ -1116,8 +1303,8 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
     type_properties_type: Optional[Union[str, "_models.AgentPoolType"]] = rest_field(
         name="type", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The type of Agent Pool. Known values are: \"VirtualMachineScaleSets\", \"AvailabilitySet\", and
-     \"VirtualMachines\"."""
+    """The type of Agent Pool. Known values are: \"VirtualMachineScaleSets\", \"AvailabilitySet\",
+     \"VirtualMachines\", and \"FlexNodes\"."""
     mode: Optional[Union[str, "_models.AgentPoolMode"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1413,7 +1600,7 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolNetworkInterface(_Model):
+class AgentPoolNetworkInterface(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration of a secondary network interface provisioned on each VM instance in the agent
     pool. For more information, see `https://aka.ms/aks/multi-nic <https://aka.ms/aks/multi-nic>`_.
 
@@ -1429,6 +1616,14 @@ class AgentPoolNetworkInterface(_Model):
      accelerated networking. Validation will fail if it is enabled on an unsupported SKU or NIC
      configuration.
     :vartype enable_accelerated_networking: bool
+    :ivar public_ip_address_configuration: Public IP configuration for this secondary NIC. Only
+     valid when ``type`` is ``Standard``. Set ``publicIPAddressVersion`` to provision a per-VM
+     instance-level public IP for the NIC, then optionally shape it with ``ipTags`` or
+     ``publicIPPrefixID``. If omitted, no public IP is provisioned. Idle timeout is not
+     configurable. For more information, see `https://aka.ms/aks/multi-nic
+     <https://aka.ms/aks/multi-nic>`_.
+    :vartype public_ip_address_configuration:
+     ~azure.mgmt.containerservice.models.AgentPoolNICPublicIPAddressConfiguration
     """
 
     type: Optional[Union[str, "_models.AgentPoolNetworkInterfaceType"]] = rest_field(
@@ -1447,6 +1642,14 @@ class AgentPoolNetworkInterface(_Model):
     """Whether accelerated networking is enabled on this secondary NIC. If omitted, this defaults to
      true only when the agent pool VM SKU supports accelerated networking. Validation will fail if
      it is enabled on an unsupported SKU or NIC configuration."""
+    public_ip_address_configuration: Optional["_models.AgentPoolNICPublicIPAddressConfiguration"] = rest_field(
+        name="publicIPAddressConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Public IP configuration for this secondary NIC. Only valid when ``type`` is ``Standard``. Set
+     ``publicIPAddressVersion`` to provision a per-VM instance-level public IP for the NIC, then
+     optionally shape it with ``ipTags`` or ``publicIPPrefixID``. If omitted, no public IP is
+     provisioned. Idle timeout is not configurable. For more information, see
+     `https://aka.ms/aks/multi-nic <https://aka.ms/aks/multi-nic>`_."""
 
     @overload
     def __init__(
@@ -1455,6 +1658,7 @@ class AgentPoolNetworkInterface(_Model):
         type: Optional[Union[str, "_models.AgentPoolNetworkInterfaceType"]] = None,
         vnet_subnet_id: Optional[str] = None,
         enable_accelerated_networking: Optional[bool] = None,
+        public_ip_address_configuration: Optional["_models.AgentPoolNICPublicIPAddressConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -1468,7 +1672,7 @@ class AgentPoolNetworkInterface(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolNetworkProfile(_Model):
+class AgentPoolNetworkProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network settings of an agent pool.
 
     :ivar node_public_ip_tags: IPTags of instance-level public IPs.
@@ -1497,6 +1701,8 @@ class AgentPoolNetworkProfile(_Model):
      For more information, see `https://aka.ms/aks/multi-nic <https://aka.ms/aks/multi-nic>`_.
     :vartype secondary_network_interfaces:
      list[~azure.mgmt.containerservice.models.AgentPoolNetworkInterface]
+    :ivar dranet: DRANET settings of an agent pool.
+    :vartype dranet: ~azure.mgmt.containerservice.models.DRANETProfile
     """
 
     node_public_ip_tags: Optional[list["_models.IPTag"]] = rest_field(
@@ -1521,7 +1727,7 @@ class AgentPoolNetworkProfile(_Model):
     )
     """The IDs of the application security groups which agent pool will associate when created."""
     secondary_network_interfaces: Optional[list["_models.AgentPoolNetworkInterface"]] = rest_field(
-        name="secondaryNetworkInterfaces", visibility=["read", "create", "update", "delete", "query"]
+        name="secondaryNetworkInterfaces", visibility=["read", "create"]
     )
     """Secondary network interface configurations for each VM in the agent pool. Each entry is a
      template: one physical NIC per entry is provisioned on every VM instance. These interfaces are
@@ -1531,6 +1737,8 @@ class AgentPoolNetworkProfile(_Model):
      interfaces allowed is 3. For mixed-SKU VM pools the effective capacity is the minimum across
      all SKUs: count(secondaryNetworkInterfaces) + 1 <= min(maxNICs). For more information, see
      `https://aka.ms/aks/multi-nic <https://aka.ms/aks/multi-nic>`_."""
+    dranet: Optional["_models.DRANETProfile"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """DRANET settings of an agent pool."""
 
     @overload
     def __init__(
@@ -1541,6 +1749,7 @@ class AgentPoolNetworkProfile(_Model):
         allowed_host_ports: Optional[list["_models.PortRange"]] = None,
         application_security_groups: Optional[list[str]] = None,
         secondary_network_interfaces: Optional[list["_models.AgentPoolNetworkInterface"]] = None,
+        dranet: Optional["_models.DRANETProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -1554,7 +1763,64 @@ class AgentPoolNetworkProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolRecentlyUsedVersion(_Model):
+class AgentPoolNICPublicIPAddressConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Public IP configuration applied to a secondary NIC on an agent pool. ``ipTags`` and
+    ``publicIPPrefixID`` are mutually exclusive, matching the primary NIC's behavior. For more
+    information, see `https://aka.ms/aks/multi-nic <https://aka.ms/aks/multi-nic>`_.
+
+    :ivar public_ip_address_version: IP version of the public IP provisioned for this NIC.
+     Required: its presence is what enables public IP provisioning, so an empty configuration
+     allocates nothing. ``IPv4`` is the only accepted value. Required. "IPv4"
+    :vartype public_ip_address_version: str or
+     ~azure.mgmt.containerservice.models.AgentPoolNICPublicIPAddressVersion
+    :ivar ip_tags: IP tags to attach to the public IP allocated for this NIC. Each tag's
+     ``ipTagType`` must be ``FirstPartyUsage``, ``NetworkDomain``, or ``RoutingPreference``.
+     Mutually exclusive with ``publicIPPrefixID``.
+    :vartype ip_tags: list[~azure.mgmt.containerservice.models.IPTag]
+    :ivar public_ip_prefix_id: The resource ID of a public IP prefix to draw this NIC's public IP
+     from. Mutually exclusive with ``ipTags``.
+    :vartype public_ip_prefix_id: str
+    """
+
+    public_ip_address_version: Union[str, "_models.AgentPoolNICPublicIPAddressVersion"] = rest_field(
+        name="publicIPAddressVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IP version of the public IP provisioned for this NIC. Required: its presence is what enables
+     public IP provisioning, so an empty configuration allocates nothing. ``IPv4`` is the only
+     accepted value. Required. \"IPv4\""""
+    ip_tags: Optional[list["_models.IPTag"]] = rest_field(
+        name="ipTags", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IP tags to attach to the public IP allocated for this NIC. Each tag's ``ipTagType`` must be
+     ``FirstPartyUsage``, ``NetworkDomain``, or ``RoutingPreference``. Mutually exclusive with
+     ``publicIPPrefixID``."""
+    public_ip_prefix_id: Optional[str] = rest_field(
+        name="publicIPPrefixID", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of a public IP prefix to draw this NIC's public IP from. Mutually exclusive
+     with ``ipTags``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        public_ip_address_version: Union[str, "_models.AgentPoolNICPublicIPAddressVersion"],
+        ip_tags: Optional[list["_models.IPTag"]] = None,
+        public_ip_prefix_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentPoolRecentlyUsedVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A historical version that can be used for rollback operations.
 
     :ivar orchestrator_version: The Kubernetes version (major.minor.patch) available for rollback.
@@ -1598,7 +1864,64 @@ class AgentPoolRecentlyUsedVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolSecurityProfile(_Model):
+class AgentPoolScopeEvaluation(_Model):
+    """The readiness evaluation for a single agent pool within a combined evaluation.
+
+    :ivar agent_pool_name: The name of the agent pool this evaluation applies to.
+    :vartype agent_pool_name: str
+    :ivar current_kubernetes_version: The Kubernetes version the scope was evaluated from (the
+     upgrade source version the scope is currently running). Lets consumers read the result as "from
+     X to targetKubernetesVersion" and detect a stale cached record by comparing against the live
+     cluster version. Populated for Kubernetes version upgrades.
+    :vartype current_kubernetes_version: str
+    :ivar kubernetes_version_support_status: The support status of the Kubernetes version the scope
+     is currently running (not the target version). Populated for Kubernetes version upgrades. Known
+     values are: "InSupport" and "OutOfSupport".
+    :vartype kubernetes_version_support_status: str or
+     ~azure.mgmt.containerservice.models.KubernetesVersionSupportStatus
+    :ivar kubernetes_version_end_of_support_date: The date on which support ends for the Kubernetes
+     version the scope is currently running (its end-of-support date). Returned as an absolute date
+     so clients can apply their own "approaching end of support" threshold and compute the remaining
+     days against the current time; a precomputed remaining-days value is intentionally not returned
+     so that cached results do not go stale. Populated for Kubernetes version upgrades.
+    :vartype kubernetes_version_end_of_support_date: ~datetime.date
+    :ivar context: Contextual information about how this upgrade is managed, such as the upgrade
+     strategy, next maintenance window, and last successful upgrade time.
+    :vartype context: ~azure.mgmt.containerservice.models.UpgradeContext
+    :ivar evaluation: The evaluation result, including overall status, evaluation time, and any
+     detected issues.
+    :vartype evaluation: ~azure.mgmt.containerservice.models.UpgradeInsightEvaluation
+    """
+
+    agent_pool_name: Optional[str] = rest_field(name="agentPoolName", visibility=["read"])
+    """The name of the agent pool this evaluation applies to."""
+    current_kubernetes_version: Optional[str] = rest_field(name="currentKubernetesVersion", visibility=["read"])
+    """The Kubernetes version the scope was evaluated from (the upgrade source version the scope is
+     currently running). Lets consumers read the result as \"from X to targetKubernetesVersion\" and
+     detect a stale cached record by comparing against the live cluster version. Populated for
+     Kubernetes version upgrades."""
+    kubernetes_version_support_status: Optional[Union[str, "_models.KubernetesVersionSupportStatus"]] = rest_field(
+        name="kubernetesVersionSupportStatus", visibility=["read"]
+    )
+    """The support status of the Kubernetes version the scope is currently running (not the target
+     version). Populated for Kubernetes version upgrades. Known values are: \"InSupport\" and
+     \"OutOfSupport\"."""
+    kubernetes_version_end_of_support_date: Optional[datetime.date] = rest_field(
+        name="kubernetesVersionEndOfSupportDate", visibility=["read"]
+    )
+    """The date on which support ends for the Kubernetes version the scope is currently running (its
+     end-of-support date). Returned as an absolute date so clients can apply their own \"approaching
+     end of support\" threshold and compute the remaining days against the current time; a
+     precomputed remaining-days value is intentionally not returned so that cached results do not go
+     stale. Populated for Kubernetes version upgrades."""
+    context: Optional["_models.UpgradeContext"] = rest_field(visibility=["read"])
+    """Contextual information about how this upgrade is managed, such as the upgrade strategy, next
+     maintenance window, and last successful upgrade time."""
+    evaluation: Optional["_models.UpgradeInsightEvaluation"] = rest_field(visibility=["read"])
+    """The evaluation result, including overall status, evaluation time, and any detected issues."""
+
+
+class AgentPoolSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The security settings of an agent pool.
 
     :ivar enable_vtpm: vTPM is a Trusted Launch feature for configuring a dedicated secure vault
@@ -1665,7 +1988,342 @@ class AgentPoolStatus(_Model):
      there was no error, this field is omitted."""
 
 
-class AgentPoolUpgradeProfile(ProxyResource):
+class AgentPoolUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Agent pool.
+
+    :ivar properties: Properties for the agent pool.
+    :vartype properties: ~azure.mgmt.containerservice.models.AgentPoolUpdateProperties
+    """
+
+    properties: Optional["_models.AgentPoolUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties for the agent pool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AgentPoolUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentPoolUpdateManualScaleProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifications on number of machines.
+
+    :ivar size: VM size that AKS will use when creating and scaling e.g. 'Standard_E4s_v3',
+     'Standard_E16s_v3' or 'Standard_D16s_v5'.
+    :vartype size: str
+    :ivar count: Number of nodes.
+    :vartype count: int
+    """
+
+    size: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """VM size that AKS will use when creating and scaling e.g. 'Standard_E4s_v3', 'Standard_E16s_v3'
+     or 'Standard_D16s_v5'."""
+    count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of nodes."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        size: Optional[str] = None,
+        count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentPoolUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for the agent pool.
+
+    :ivar count: Number of agents (VMs) to host docker containers.
+    :vartype count: int
+    :ivar virtual_machines_profile: Specifications on VirtualMachines agent pool.
+    :vartype virtual_machines_profile:
+     ~azure.mgmt.containerservice.models.AgentPoolUpdateVirtualMachinesProfile
+    """
+
+    count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of agents (VMs) to host docker containers."""
+    virtual_machines_profile: Optional["_models.AgentPoolUpdateVirtualMachinesProfile"] = rest_field(
+        name="virtualMachinesProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifications on VirtualMachines agent pool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        count: Optional[int] = None,
+        virtual_machines_profile: Optional["_models.AgentPoolUpdateVirtualMachinesProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentPoolUpdateScaleProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifications on how to scale a VirtualMachines agent pool.
+
+    :ivar manual: Specifications on how to scale the VirtualMachines agent pool to a fixed size.
+    :vartype manual: list[~azure.mgmt.containerservice.models.AgentPoolUpdateManualScaleProfile]
+    """
+
+    manual: Optional[list["_models.AgentPoolUpdateManualScaleProfile"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifications on how to scale the VirtualMachines agent pool to a fixed size."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        manual: Optional[list["_models.AgentPoolUpdateManualScaleProfile"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentPoolUpdateVirtualMachinesProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifications on VirtualMachines agent pool.
+
+    :ivar scale: Specifications on how to scale a VirtualMachines agent pool.
+    :vartype scale: ~azure.mgmt.containerservice.models.AgentPoolUpdateScaleProfile
+    """
+
+    scale: Optional["_models.AgentPoolUpdateScaleProfile"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifications on how to scale a VirtualMachines agent pool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        scale: Optional["_models.AgentPoolUpdateScaleProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpgradeInsightProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The base properties of an upgrade insight. The concrete shape is determined by ``upgradeType``,
+    which is encoded in the resource name: single-scope evaluations (``ControlPlane``,
+    ``AgentPool``, ``NodeImage``) carry a flat per-scope result, while a combined evaluation
+    (``ControlPlaneAndAgentPools``) carries a nested control plane result plus a per-agent-pool
+    array.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AgentPoolUpgradeInsightProperties, ControlPlaneUpgradeInsightProperties,
+    ControlPlaneAndAgentPoolsUpgradeInsightProperties, NodeImageUpgradeInsightProperties
+
+    :ivar provisioning_state: The provisioning state of the upgrade insight evaluation. Known
+     values are: "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.ResourceProvisioningState
+    :ivar upgrade_type: The type of upgrade this insight evaluates. Derived from the resource name.
+     Required. Known values are: "ControlPlane", "AgentPool", "NodeImage", and
+     "ControlPlaneAndAgentPools".
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.UpgradeType
+    :ivar last_evaluated_at: The UTC time at which this upgrade insight was last computed (the last
+     time the compute operation ran for this resource). This is the resource-level "last run" marker
+     and, for a cached record, indicates how stale the stored evaluation is. For a combined
+     evaluation it is the umbrella run time across all scopes, whereas each scope's
+     ``evaluation.evaluatedAt`` records when that specific snapshot was produced.
+    :vartype last_evaluated_at: ~datetime.datetime
+    :ivar expires_at: The UTC time at which this stored upgrade insight expires and is removed from
+     the data store (currently ``lastEvaluatedAt`` plus a 14-day retention window). After this time
+     a GET for the resource returns 404 Not Found and it no longer appears in the list, indicating
+     the caller should call the compute operation to produce a fresh evaluation. Exposing the expiry
+     lets clients decide when to recompute without hardcoding the retention period.
+    :vartype expires_at: ~datetime.datetime
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the upgrade insight evaluation. Known values are: \"Succeeded\",
+     \"Failed\", and \"Canceled\"."""
+    upgrade_type: str = rest_discriminator(name="upgradeType", visibility=["read"])
+    """The type of upgrade this insight evaluates. Derived from the resource name. Required. Known
+     values are: \"ControlPlane\", \"AgentPool\", \"NodeImage\", and \"ControlPlaneAndAgentPools\"."""
+    last_evaluated_at: Optional[datetime.datetime] = rest_field(
+        name="lastEvaluatedAt", visibility=["read"], format="rfc3339"
+    )
+    """The UTC time at which this upgrade insight was last computed (the last time the compute
+     operation ran for this resource). This is the resource-level \"last run\" marker and, for a
+     cached record, indicates how stale the stored evaluation is. For a combined evaluation it is
+     the umbrella run time across all scopes, whereas each scope's ``evaluation.evaluatedAt``
+     records when that specific snapshot was produced."""
+    expires_at: Optional[datetime.datetime] = rest_field(name="expiresAt", visibility=["read"], format="rfc3339")
+    """The UTC time at which this stored upgrade insight expires and is removed from the data store
+     (currently ``lastEvaluatedAt`` plus a 14-day retention window). After this time a GET for the
+     resource returns 404 Not Found and it no longer appears in the list, indicating the caller
+     should call the compute operation to produce a fresh evaluation. Exposing the expiry lets
+     clients decide when to recompute without hardcoding the retention period."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        upgrade_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentPoolUpgradeInsightProperties(UpgradeInsightProperties, discriminator="AgentPool"):
+    """Properties for a single agent pool Kubernetes version upgrade insight.
+
+    :ivar provisioning_state: The provisioning state of the upgrade insight evaluation. Known
+     values are: "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.ResourceProvisioningState
+    :ivar last_evaluated_at: The UTC time at which this upgrade insight was last computed (the last
+     time the compute operation ran for this resource). This is the resource-level "last run" marker
+     and, for a cached record, indicates how stale the stored evaluation is. For a combined
+     evaluation it is the umbrella run time across all scopes, whereas each scope's
+     ``evaluation.evaluatedAt`` records when that specific snapshot was produced.
+    :vartype last_evaluated_at: ~datetime.datetime
+    :ivar expires_at: The UTC time at which this stored upgrade insight expires and is removed from
+     the data store (currently ``lastEvaluatedAt`` plus a 14-day retention window). After this time
+     a GET for the resource returns 404 Not Found and it no longer appears in the list, indicating
+     the caller should call the compute operation to produce a fresh evaluation. Exposing the expiry
+     lets clients decide when to recompute without hardcoding the retention period.
+    :vartype expires_at: ~datetime.datetime
+    :ivar upgrade_type: The type of upgrade this insight evaluates. Required. An agent pool (node
+     pool) Kubernetes version upgrade.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.AGENT_POOL
+    :ivar agent_pool_name: The name of the agent pool this insight applies to.
+    :vartype agent_pool_name: str
+    :ivar target_kubernetes_version: The target Kubernetes version that was evaluated.
+    :vartype target_kubernetes_version: str
+    :ivar current_kubernetes_version: The Kubernetes version the scope was evaluated from (the
+     upgrade source version the scope is currently running). Lets consumers read the result as "from
+     X to targetKubernetesVersion" and detect a stale cached record by comparing against the live
+     cluster version. Populated for Kubernetes version upgrades.
+    :vartype current_kubernetes_version: str
+    :ivar kubernetes_version_support_status: The support status of the Kubernetes version the scope
+     is currently running (not the target version). Populated for Kubernetes version upgrades. Known
+     values are: "InSupport" and "OutOfSupport".
+    :vartype kubernetes_version_support_status: str or
+     ~azure.mgmt.containerservice.models.KubernetesVersionSupportStatus
+    :ivar kubernetes_version_end_of_support_date: The date on which support ends for the Kubernetes
+     version the scope is currently running (its end-of-support date). Returned as an absolute date
+     so clients can apply their own "approaching end of support" threshold and compute the remaining
+     days against the current time; a precomputed remaining-days value is intentionally not returned
+     so that cached results do not go stale. Populated for Kubernetes version upgrades.
+    :vartype kubernetes_version_end_of_support_date: ~datetime.date
+    :ivar context: Contextual information about how this upgrade is managed, such as the upgrade
+     strategy, next maintenance window, and last successful upgrade time.
+    :vartype context: ~azure.mgmt.containerservice.models.UpgradeContext
+    :ivar evaluation: The evaluation result, including overall status, evaluation time, and any
+     detected issues.
+    :vartype evaluation: ~azure.mgmt.containerservice.models.UpgradeInsightEvaluation
+    """
+
+    upgrade_type: Literal[UpgradeType.AGENT_POOL] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of upgrade this insight evaluates. Required. An agent pool (node pool) Kubernetes
+     version upgrade."""
+    agent_pool_name: Optional[str] = rest_field(name="agentPoolName", visibility=["read"])
+    """The name of the agent pool this insight applies to."""
+    target_kubernetes_version: Optional[str] = rest_field(name="targetKubernetesVersion", visibility=["read"])
+    """The target Kubernetes version that was evaluated."""
+    current_kubernetes_version: Optional[str] = rest_field(name="currentKubernetesVersion", visibility=["read"])
+    """The Kubernetes version the scope was evaluated from (the upgrade source version the scope is
+     currently running). Lets consumers read the result as \"from X to targetKubernetesVersion\" and
+     detect a stale cached record by comparing against the live cluster version. Populated for
+     Kubernetes version upgrades."""
+    kubernetes_version_support_status: Optional[Union[str, "_models.KubernetesVersionSupportStatus"]] = rest_field(
+        name="kubernetesVersionSupportStatus", visibility=["read"]
+    )
+    """The support status of the Kubernetes version the scope is currently running (not the target
+     version). Populated for Kubernetes version upgrades. Known values are: \"InSupport\" and
+     \"OutOfSupport\"."""
+    kubernetes_version_end_of_support_date: Optional[datetime.date] = rest_field(
+        name="kubernetesVersionEndOfSupportDate", visibility=["read"]
+    )
+    """The date on which support ends for the Kubernetes version the scope is currently running (its
+     end-of-support date). Returned as an absolute date so clients can apply their own \"approaching
+     end of support\" threshold and compute the remaining days against the current time; a
+     precomputed remaining-days value is intentionally not returned so that cached results do not go
+     stale. Populated for Kubernetes version upgrades."""
+    context: Optional["_models.UpgradeContext"] = rest_field(visibility=["read"])
+    """Contextual information about how this upgrade is managed, such as the upgrade strategy, next
+     maintenance window, and last successful upgrade time."""
+    evaluation: Optional["_models.UpgradeInsightEvaluation"] = rest_field(visibility=["read"])
+    """The evaluation result, including overall status, evaluation time, and any detected issues."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.AGENT_POOL  # type: ignore
+
+
+class AgentPoolUpgradeProfile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of available upgrades for an agent pool.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1733,7 +2391,7 @@ class AgentPoolUpgradeProfile(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AgentPoolUpgradeProfileProperties(_Model):
+class AgentPoolUpgradeProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of available upgrade versions.
 
     :ivar kubernetes_version: The Kubernetes version (major.minor.patch). Required.
@@ -1801,7 +2459,9 @@ class AgentPoolUpgradeProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolUpgradeProfilePropertiesUpgradesItem(_Model):  # pylint: disable=name-too-long
+class AgentPoolUpgradeProfilePropertiesUpgradesItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Available upgrades for an AgentPool.
 
     :ivar kubernetes_version: The Kubernetes version (major.minor.patch).
@@ -1845,7 +2505,7 @@ class AgentPoolUpgradeProfilePropertiesUpgradesItem(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolUpgradeSettings(_Model):
+class AgentPoolUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for upgrading an agentpool.
 
     :ivar max_surge: The maximum number or percentage of nodes that are surged during upgrade. This
@@ -1889,6 +2549,13 @@ class AgentPoolUpgradeSettings(_Model):
      and "Schedule".
     :vartype undrainable_node_behavior: str or
      ~azure.mgmt.containerservice.models.UndrainableNodeBehavior
+    :ivar upgrade_gate_settings: Settings for upgrade gating on upgrades of this agent pool. Health
+     signals are ``HealthSignal`` custom resources published by monitoring components running in the
+     cluster. When the cluster-level ``enabled`` is unset or ``false``, this agent pool can opt in
+     independently. When the cluster-level ``enabled`` is ``true``, gating is inherited and setting
+     this agent pool's ``enabled`` to ``false`` is rejected; an omitted value on a newly created
+     agent pool is defaulted to ``true``.
+    :vartype upgrade_gate_settings: ~azure.mgmt.containerservice.models.UpgradeGateSettings
     """
 
     max_surge: Optional[str] = rest_field(name="maxSurge", visibility=["read", "create", "update", "delete", "query"])
@@ -1938,6 +2605,15 @@ class AgentPoolUpgradeSettings(_Model):
      nodes is Pod Disruption Budgets (PDBs), but other issues, such as pod termination grace period
      is exceeding the remaining per-node drain timeout or pod is still being in a running state, can
      also cause undrainable nodes. Known values are: \"Cordon\" and \"Schedule\"."""
+    upgrade_gate_settings: Optional["_models.UpgradeGateSettings"] = rest_field(
+        name="upgradeGateSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Settings for upgrade gating on upgrades of this agent pool. Health signals are ``HealthSignal``
+     custom resources published by monitoring components running in the cluster. When the
+     cluster-level ``enabled`` is unset or ``false``, this agent pool can opt in independently. When
+     the cluster-level ``enabled`` is ``true``, gating is inherited and setting this agent pool's
+     ``enabled`` to ``false`` is rejected; an omitted value on a newly created agent pool is
+     defaulted to ``true``."""
 
     @overload
     def __init__(
@@ -1949,6 +2625,7 @@ class AgentPoolUpgradeSettings(_Model):
         drain_timeout_in_minutes: Optional[int] = None,
         node_soak_duration_in_minutes: Optional[int] = None,
         undrainable_node_behavior: Optional[Union[str, "_models.UndrainableNodeBehavior"]] = None,
+        upgrade_gate_settings: Optional["_models.UpgradeGateSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -1962,7 +2639,7 @@ class AgentPoolUpgradeSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolWindowsProfile(_Model):
+class AgentPoolWindowsProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Windows agent pool's specific profile.
 
     :ivar disable_outbound_nat: Whether to disable OutboundNAT in windows nodes. The default value
@@ -1996,7 +2673,251 @@ class AgentPoolWindowsProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoScaleProfile(_Model):
+class AlertConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Alert configuration for a managed cluster. Allows configuring AKS-managed alerts that notify
+    users of important cluster events and conditions.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.containerservice.models.AlertConfigurationProperties
+    """
+
+    properties: Optional["_models.AlertConfigurationProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AlertConfigurationProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AlertConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of the alert configuration.
+
+    :ivar mode: The mode of the alert configuration. Specifies how AKS manages the alerts.
+     Required. Known values are: "Disabled" and "Managed".
+    :vartype mode: str or ~azure.mgmt.containerservice.models.AlertConfigurationMode
+    :ivar notification: Notification settings for the alert configuration. Required.
+    :vartype notification: ~azure.mgmt.containerservice.models.AlertNotification
+    :ivar provisioning_state: The current provisioning state of the alert configuration. Known
+     values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.AlertConfigurationProvisioningState
+    """
+
+    mode: Union[str, "_models.AlertConfigurationMode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The mode of the alert configuration. Specifies how AKS manages the alerts. Required. Known
+     values are: \"Disabled\" and \"Managed\"."""
+    notification: "_models.AlertNotification" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Notification settings for the alert configuration. Required."""
+    provisioning_state: Optional[Union[str, "_models.AlertConfigurationProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The current provisioning state of the alert configuration. Known values are: \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Union[str, "_models.AlertConfigurationMode"],
+        notification: "_models.AlertNotification",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AlertNotification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Notification settings for the alert configuration.
+
+    :ivar action_group_id: The resource ID of the Azure Monitor action group to send notifications
+     to. Required.
+    :vartype action_group_id: str
+    """
+
+    action_group_id: str = rest_field(name="actionGroupId", visibility=["read", "create", "update", "delete", "query"])
+    """The resource ID of the Azure Monitor action group to send notifications to. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        action_group_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AllowedSubject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A subject authorized to use the identity binding for token exchange. The namespace selector is
+    required and must be non-empty. The service account selector is optional; when omitted, all
+    service accounts in matching namespaces are authorized. Selectors within a single
+    AllowedSubject are AND'd; multiple AllowedSubjects on an IdentityBinding are OR'd.
+
+    :ivar namespace_selector: Label selector matching the namespaces in which this identity may be
+     used. Must be non-empty: an empty selector would match every namespace and is rejected to
+     prevent overly permissive bindings. Use the built-in ``kubernetes.io/metadata.name`` label to
+     target specific namespaces by name. Required.
+    :vartype namespace_selector: ~azure.mgmt.containerservice.models.LabelSelector
+    :ivar service_account_selector: Optional label selector matching the service accounts (within
+     the namespaces matched by ``namespaceSelector``) that may use this identity. When omitted, all
+     service accounts in matching namespaces are authorized. When provided, it must be non-empty.
+    :vartype service_account_selector: ~azure.mgmt.containerservice.models.LabelSelector
+    """
+
+    namespace_selector: "_models.LabelSelector" = rest_field(
+        name="namespaceSelector", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Label selector matching the namespaces in which this identity may be used. Must be non-empty:
+     an empty selector would match every namespace and is rejected to prevent overly permissive
+     bindings. Use the built-in ``kubernetes.io/metadata.name`` label to target specific namespaces
+     by name. Required."""
+    service_account_selector: Optional["_models.LabelSelector"] = rest_field(
+        name="serviceAccountSelector", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional label selector matching the service accounts (within the namespaces matched by
+     ``namespaceSelector``) that may use this identity. When omitted, all service accounts in
+     matching namespaces are authorized. When provided, it must be non-empty."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        namespace_selector: "_models.LabelSelector",
+        service_account_selector: Optional["_models.LabelSelector"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpgradeInsightImpactedResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A resource impacted by a detected upgrade issue. The concrete shape is determined by ``kind``:
+    an ARM resource is identified by its ARM resource ID, while a Kubernetes resource is identified
+    by its namespace and name.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ArmImpactedResource, KubernetesImpactedResource
+
+    :ivar kind: The category of the impacted resource. Required. Known values are: "Arm" and
+     "Kubernetes".
+    :vartype kind: str or ~azure.mgmt.containerservice.models.ImpactedResourceKind
+    :ivar resource_type: The type of the impacted resource (for example,
+     Microsoft.Network/virtualNetworks/subnets or PodDisruptionBudget).
+    :vartype resource_type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read"])
+    """The category of the impacted resource. Required. Known values are: \"Arm\" and \"Kubernetes\"."""
+    resource_type: Optional[str] = rest_field(name="resourceType", visibility=["read"])
+    """The type of the impacted resource (for example, Microsoft.Network/virtualNetworks/subnets or
+     PodDisruptionBudget)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArmImpactedResource(UpgradeInsightImpactedResource, discriminator="Arm"):
+    """An Azure Resource Manager (ARM) resource impacted by a detected upgrade issue, identified by
+    its ARM resource ID.
+
+    :ivar resource_type: The type of the impacted resource (for example,
+     Microsoft.Network/virtualNetworks/subnets or PodDisruptionBudget).
+    :vartype resource_type: str
+    :ivar kind: The category of the impacted resource. Required. An Azure Resource Manager (ARM)
+     resource.
+    :vartype kind: str or ~azure.mgmt.containerservice.models.ARM
+    :ivar resource_id: The ARM resource ID of the impacted resource.
+    :vartype resource_id: str
+    """
+
+    kind: Literal[ImpactedResourceKind.ARM] = rest_discriminator(name="kind", visibility=["read"])  # type: ignore
+    """The category of the impacted resource. Required. An Azure Resource Manager (ARM) resource."""
+    resource_id: Optional[str] = rest_field(name="resourceId", visibility=["read"])
+    """The ARM resource ID of the impacted resource."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = ImpactedResourceKind.ARM  # type: ignore
+
+
+class AutoScaleProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifications on auto-scaling.
 
     :ivar size: VM size that AKS will use when creating and scaling e.g. 'Standard_E4s_v3',
@@ -2036,16 +2957,20 @@ class AutoScaleProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureKeyVaultKms(_Model):
+class AzureKeyVaultKms(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Key Vault key management service settings for the security profile.
 
     :ivar enabled: Whether to enable Azure Key Vault key management service. The default is false.
     :vartype enabled: bool
-    :ivar key_id: Identifier of Azure Key Vault key. See `key identifier format
-     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_
-     for more details. When Azure Key Vault key management service is enabled, this field is
-     required and must be a valid key identifier. When Azure Key Vault key management service is
-     disabled, leave the field empty.
+    :ivar key_id: The identifier of the Azure Key Vault key. For more information, see `Azure Key
+     Vault key identifiers
+     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_.
+     This property is required when Azure Key Vault key management service is enabled and must be
+     omitted when the service is disabled. Starting with API versions 2026-07-01 and
+     2026-07-02-preview, a versioned key identifier uses the legacy KMS experience, while an
+     unversioned key identifier uses the new KMS experience. For more information, see `KMS data
+     encryption concepts
+     <https://learn.microsoft.com/en-us/azure/aks/kms-data-encryption-concepts>`_.
     :vartype key_id: str
     :ivar key_vault_network_access: Network access of the key vault. Network access of key vault.
      The possible values are ``Public`` and ``Private``. ``Public`` means the key vault allows
@@ -2063,11 +2988,15 @@ class AzureKeyVaultKms(_Model):
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to enable Azure Key Vault key management service. The default is false."""
     key_id: Optional[str] = rest_field(name="keyId", visibility=["read", "create", "update", "delete", "query"])
-    """Identifier of Azure Key Vault key. See `key identifier format
-     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_
-     for more details. When Azure Key Vault key management service is enabled, this field is
-     required and must be a valid key identifier. When Azure Key Vault key management service is
-     disabled, leave the field empty."""
+    """The identifier of the Azure Key Vault key. For more information, see `Azure Key Vault key
+     identifiers
+     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_.
+     This property is required when Azure Key Vault key management service is enabled and must be
+     omitted when the service is disabled. Starting with API versions 2026-07-01 and
+     2026-07-02-preview, a versioned key identifier uses the legacy KMS experience, while an
+     unversioned key identifier uses the new KMS experience. For more information, see `KMS data
+     encryption concepts
+     <https://learn.microsoft.com/en-us/azure/aks/kms-data-encryption-concepts>`_."""
     key_vault_network_access: Optional[Union[str, "_models.KeyVaultNetworkAccessTypes"]] = rest_field(
         name="keyVaultNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2102,7 +3031,7 @@ class AzureKeyVaultKms(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BastionProfile(_Model):
+class BastionProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile to enable managed Azure Bastion or reference to an existing Bastion for the managed
     cluster. See `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more
     details.
@@ -2190,23 +3119,446 @@ class BastionProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterUpgradeSettings(_Model):
+class BootstrapAzureConfig(_Model):
+    """Azure configuration returned as part of FlexNode bootstrap data.
+
+    :ivar resource_manager_endpoint: Azure Resource Manager endpoint for the cloud environment.
+    :vartype resource_manager_endpoint: str
+    :ivar target_cluster: Target cluster identity.
+    :vartype target_cluster: ~azure.mgmt.containerservice.models.BootstrapTargetCluster
+    :ivar target_agent_pool_name: Target agent pool name.
+    :vartype target_agent_pool_name: str
+    :ivar bootstrap_token: Bootstrap token for node enrollment. Do not cache or log.
+    :vartype bootstrap_token: ~azure.mgmt.containerservice.models.BootstrapTokenInfo
+    """
+
+    resource_manager_endpoint: Optional[str] = rest_field(name="resourceManagerEndpoint", visibility=["read"])
+    """Azure Resource Manager endpoint for the cloud environment."""
+    target_cluster: Optional["_models.BootstrapTargetCluster"] = rest_field(name="targetCluster", visibility=["read"])
+    """Target cluster identity."""
+    target_agent_pool_name: Optional[str] = rest_field(name="targetAgentPoolName", visibility=["read"])
+    """Target agent pool name."""
+    bootstrap_token: Optional["_models.BootstrapTokenInfo"] = rest_field(name="bootstrapToken", visibility=["read"])
+    """Bootstrap token for node enrollment. Do not cache or log."""
+
+
+class BootstrapComponentVersions(_Model):
+    """Component versions returned as part of FlexNode bootstrap data.
+
+    :ivar kubernetes: Kubernetes version.
+    :vartype kubernetes: str
+    :ivar containerd: Containerd version.
+    :vartype containerd: str
+    :ivar runc: Runc version.
+    :vartype runc: str
+    """
+
+    kubernetes: Optional[str] = rest_field(visibility=["read"])
+    """Kubernetes version."""
+    containerd: Optional[str] = rest_field(visibility=["read"])
+    """Containerd version."""
+    runc: Optional[str] = rest_field(visibility=["read"])
+    """Runc version."""
+
+
+class BootstrapKubeletConfig(_Model):
+    """Kubelet configuration returned as part of FlexNode bootstrap data.
+
+    :ivar cluster_fqdn: FQDN of the Kubernetes API server.
+    :vartype cluster_fqdn: str
+    :ivar ca_cert_data: Base64-encoded PEM certificate of the cluster CA. Do not cache or log.
+    :vartype ca_cert_data: str
+    """
+
+    cluster_fqdn: Optional[str] = rest_field(name="clusterFQDN", visibility=["read"])
+    """FQDN of the Kubernetes API server."""
+    ca_cert_data: Optional[str] = rest_field(name="caCertData", visibility=["read"])
+    """Base64-encoded PEM certificate of the cluster CA. Do not cache or log."""
+
+
+class BootstrapNetworkingConfig(_Model):
+    """Network configuration returned as part of FlexNode bootstrap data.
+
+    :ivar dns_service_ip: IP address of the cluster DNS service.
+    :vartype dns_service_ip: str
+    :ivar cni_version: CNI plugin version.
+    :vartype cni_version: str
+    """
+
+    dns_service_ip: Optional[str] = rest_field(name="dnsServiceIP", visibility=["read"])
+    """IP address of the cluster DNS service."""
+    cni_version: Optional[str] = rest_field(name="cniVersion", visibility=["read"])
+    """CNI plugin version."""
+
+
+class BootstrapNodeConfig(_Model):
+    """Node configuration returned as part of FlexNode bootstrap data.
+
+    :ivar max_pods: Maximum pods per node.
+    :vartype max_pods: int
+    :ivar labels: Node labels to apply during registration.
+    :vartype labels: dict[str, str]
+    :ivar taints: Node taints in the format 'key=value:effect'.
+    :vartype taints: list[str]
+    :ivar kubelet: Kubelet configuration.
+    :vartype kubelet: ~azure.mgmt.containerservice.models.BootstrapKubeletConfig
+    """
+
+    max_pods: Optional[int] = rest_field(name="maxPods", visibility=["read"])
+    """Maximum pods per node."""
+    labels: Optional[dict[str, str]] = rest_field(visibility=["read"])
+    """Node labels to apply during registration."""
+    taints: Optional[list[str]] = rest_field(visibility=["read"])
+    """Node taints in the format 'key=value:effect'."""
+    kubelet: Optional["_models.BootstrapKubeletConfig"] = rest_field(visibility=["read"])
+    """Kubelet configuration."""
+
+
+class BootstrapTargetCluster(_Model):
+    """Target AKS cluster for FlexNode bootstrap.
+
+    :ivar resource_id: Azure resource ID of the target AKS cluster.
+    :vartype resource_id: str
+    """
+
+    resource_id: Optional[str] = rest_field(name="resourceId", visibility=["read"])
+    """Azure resource ID of the target AKS cluster."""
+
+
+class BootstrapTokenInfo(_Model):
+    """Bootstrap token information.
+
+    :ivar token: Short-lived bootstrap token for kubelet. Do not cache or log.
+    :vartype token: str
+    """
+
+    token: Optional[str] = rest_field(visibility=["read"])
+    """Short-lived bootstrap token for kubelet. Do not cache or log."""
+
+
+class CapacityReservation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Capacity Reservation to provide virtual machines from a reserved group of Machines.
+
+    :ivar capacity_reservation_group: The Capacity Reservation Group to provide virtual machines
+     from a reserved group of Machines.
+    :vartype capacity_reservation_group:
+     ~azure.mgmt.containerservice.models.CapacityReservationGroup
+    """
+
+    capacity_reservation_group: Optional["_models.CapacityReservationGroup"] = rest_field(
+        name="capacityReservationGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Capacity Reservation Group to provide virtual machines from a reserved group of Machines."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        capacity_reservation_group: Optional["_models.CapacityReservationGroup"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CapacityReservationGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Capacity Reservation Group to provide virtual machines from a reserved group of Machines.
+
+    :ivar id: The fully qualified resource ID of the Capacity Reservation Group to provide virtual
+     machines from a reserved group of Machines. This is of the form:
+     '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Compute/capacityreservationgroups/{capacityReservationGroupName}'
+     Customers use it to create a Machine with a specified CRG. For more information see `Capacity
+     Reservation <aka.ms/CapacityReservation>`_.
+    :vartype id: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The fully qualified resource ID of the Capacity Reservation Group to provide virtual machines
+     from a reserved group of Machines. This is of the form:
+     '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Compute/capacityreservationgroups/{capacityReservationGroupName}'
+     Customers use it to create a Machine with a specified CRG. For more information see `Capacity
+     Reservation <aka.ms/CapacityReservation>`_."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CloudShellNetworkProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Network resources used by Cloud Shell. AKS peers the subnet's virtual network with the cluster
+    virtual network. For Custom resources, their address spaces must not overlap. See
+    `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_.
+
+    :ivar subnet_id: Dedicated IPv4 subnet used by Cloud Shell containers. For Custom networking,
+     this subnet must be delegated to Microsoft.ContainerInstance/containerGroups and be /24 or
+     larger. Grant the cluster identity Network Contributor on the containing virtual network and
+     grant the Azure Container Instance service principal Network Contributor on this subnet or its
+     containing virtual network. Required when Cloud Shell mode is Custom.
+    :vartype subnet_id: str
+    :ivar relay_namespace_id: Azure Relay namespace used by Cloud Shell. For Custom networking,
+     this existing namespace is required with subnetId. Grant the cluster identity Reader and the
+     Azure Container Instance service principal Contributor on the namespace. Required when Cloud
+     Shell mode is Custom.
+    :vartype relay_namespace_id: str
+    """
+
+    subnet_id: Optional[str] = rest_field(name="subnetId", visibility=["read", "create", "update", "delete", "query"])
+    """Dedicated IPv4 subnet used by Cloud Shell containers. For Custom networking, this subnet must
+     be delegated to Microsoft.ContainerInstance/containerGroups and be /24 or larger. Grant the
+     cluster identity Network Contributor on the containing virtual network and grant the Azure
+     Container Instance service principal Network Contributor on this subnet or its containing
+     virtual network. Required when Cloud Shell mode is Custom."""
+    relay_namespace_id: Optional[str] = rest_field(
+        name="relayNamespaceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure Relay namespace used by Cloud Shell. For Custom networking, this existing namespace is
+     required with subnetId. Grant the cluster identity Reader and the Azure Container Instance
+     service principal Contributor on the namespace. Required when Cloud Shell mode is Custom."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subnet_id: Optional[str] = None,
+        relay_namespace_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CloudShellProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Cloud Shell connectivity and storage settings for a private managed cluster. For more
+    information, see `https://aka.ms/aks/CloudShellConnect
+    <https://aka.ms/aks/CloudShellConnect>`_.
+
+    :ivar mode: Whether Cloud Shell connectivity is disabled, uses AKS-managed network resources,
+     or uses user-provided network resources. Defaults to Disabled when omitted during create. On
+     update, omission preserves the existing mode. Setting this property to Disabled removes
+     AKS-created resources and connectivity artifacts. For Custom mode, AKS unregisters the
+     user-provided resources but does not delete them. Known values are: "Disabled", "Managed", and
+     "Custom".
+    :vartype mode: str or ~azure.mgmt.containerservice.models.CloudShellProfileMode
+    :ivar network: Network resources used by Cloud Shell. When configuring Custom networking, users
+     must provide both subnetId and relayNamespaceId. When updating an existing Custom
+     configuration, either resource ID can be changed independently; omitted fields preserve their
+     existing values. In Custom mode, AKS returns the user-provided values. In Managed mode, AKS
+     populates the effective values. Users may omit Managed values or resubmit values returned by
+     GET unchanged; different values are rejected. This property must be omitted when mode is
+     Disabled. See `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_
+     for Custom networking requirements.
+    :vartype network: ~azure.mgmt.containerservice.models.CloudShellNetworkProfile
+    :ivar storage: Storage resources used for Cloud Shell file persistence. When configuring Custom
+     storage, users must provide both storageAccountId and fileShareName. When updating an existing
+     Custom configuration, either property can be changed independently; omitted fields preserve
+     their existing values. In Custom mode, AKS returns the user-provided values. In Managed mode,
+     AKS populates the effective values. Users may omit Managed values or resubmit values returned
+     by GET unchanged; different values are rejected. Both properties must be omitted when mode is
+     Disabled. See `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_
+     for Custom storage requirements.
+    :vartype storage: ~azure.mgmt.containerservice.models.CloudShellStorageProfile
+    """
+
+    mode: Optional[Union[str, "_models.CloudShellProfileMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether Cloud Shell connectivity is disabled, uses AKS-managed network resources, or uses
+     user-provided network resources. Defaults to Disabled when omitted during create. On update,
+     omission preserves the existing mode. Setting this property to Disabled removes AKS-created
+     resources and connectivity artifacts. For Custom mode, AKS unregisters the user-provided
+     resources but does not delete them. Known values are: \"Disabled\", \"Managed\", and
+     \"Custom\"."""
+    network: Optional["_models.CloudShellNetworkProfile"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Network resources used by Cloud Shell. When configuring Custom networking, users must provide
+     both subnetId and relayNamespaceId. When updating an existing Custom configuration, either
+     resource ID can be changed independently; omitted fields preserve their existing values. In
+     Custom mode, AKS returns the user-provided values. In Managed mode, AKS populates the effective
+     values. Users may omit Managed values or resubmit values returned by GET unchanged; different
+     values are rejected. This property must be omitted when mode is Disabled. See
+     `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_ for Custom
+     networking requirements."""
+    storage: Optional["_models.CloudShellStorageProfile"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Storage resources used for Cloud Shell file persistence. When configuring Custom storage, users
+     must provide both storageAccountId and fileShareName. When updating an existing Custom
+     configuration, either property can be changed independently; omitted fields preserve their
+     existing values. In Custom mode, AKS returns the user-provided values. In Managed mode, AKS
+     populates the effective values. Users may omit Managed values or resubmit values returned by
+     GET unchanged; different values are rejected. Both properties must be omitted when mode is
+     Disabled. See `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_
+     for Custom storage requirements."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.CloudShellProfileMode"]] = None,
+        network: Optional["_models.CloudShellNetworkProfile"] = None,
+        storage: Optional["_models.CloudShellStorageProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CloudShellStorageProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Storage used for Cloud Shell file persistence.
+
+    :ivar mode: Whether persistent storage is disabled, managed by AKS, or provided by the user.
+     Defaults to Disabled when omitted during initial Cloud Shell enablement. On update, omission
+     preserves the existing mode. Known values are: "Disabled", "Managed", and "Custom".
+    :vartype mode: str or ~azure.mgmt.containerservice.models.CloudShellStorageProfileMode
+    :ivar storage_account_id: Storage account used for Cloud Shell files. For Custom storage, grant
+     the cluster identity Storage File Data SMB Share Contributor on this existing storage account.
+     Required when mode is Custom.
+    :vartype storage_account_id: str
+    :ivar file_share_name: File share used for Cloud Shell files. Required when mode is Custom.
+    :vartype file_share_name: str
+    """
+
+    mode: Optional[Union[str, "_models.CloudShellStorageProfileMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether persistent storage is disabled, managed by AKS, or provided by the user. Defaults to
+     Disabled when omitted during initial Cloud Shell enablement. On update, omission preserves the
+     existing mode. Known values are: \"Disabled\", \"Managed\", and \"Custom\"."""
+    storage_account_id: Optional[str] = rest_field(
+        name="storageAccountId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Storage account used for Cloud Shell files. For Custom storage, grant the cluster identity
+     Storage File Data SMB Share Contributor on this existing storage account. Required when mode is
+     Custom."""
+    file_share_name: Optional[str] = rest_field(
+        name="fileShareName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """File share used for Cloud Shell files. Required when mode is Custom."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.CloudShellStorageProfileMode"]] = None,
+        storage_account_id: Optional[str] = None,
+        file_share_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterAPIConnectivityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration for accessing the managed cluster API through Bastion or Cloud Shell.
+
+    :ivar bastion: Azure Bastion connectivity settings. See `https://aka.ms/aks/BastionConnect
+     <https://aka.ms/aks/BastionConnect>`_ for more details.
+    :vartype bastion: ~azure.mgmt.containerservice.models.BastionProfile
+    :ivar cloud_shell: Cloud Shell connectivity settings. For more information, see
+     `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_.
+    :vartype cloud_shell: ~azure.mgmt.containerservice.models.CloudShellProfile
+    """
+
+    bastion: Optional["_models.BastionProfile"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Azure Bastion connectivity settings. See `https://aka.ms/aks/BastionConnect
+     <https://aka.ms/aks/BastionConnect>`_ for more details."""
+    cloud_shell: Optional["_models.CloudShellProfile"] = rest_field(
+        name="cloudShell", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cloud Shell connectivity settings. For more information, see
+     `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        bastion: Optional["_models.BastionProfile"] = None,
+        cloud_shell: Optional["_models.CloudShellProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for upgrading a cluster.
 
     :ivar override_settings: Settings for overrides.
     :vartype override_settings: ~azure.mgmt.containerservice.models.UpgradeOverrideSettings
+    :ivar upgrade_gate_settings: Settings for upgrade gating on upgrades in this managed cluster.
+     Health signals are ``HealthSignal`` custom resources published by monitoring components running
+     in the cluster. Setting ``enabled`` to ``true`` here is a cluster-wide opt-in that applies to
+     all agent pool upgrades in this cluster; an agent pool cannot opt out of it.
+    :vartype upgrade_gate_settings: ~azure.mgmt.containerservice.models.UpgradeGateSettings
     """
 
     override_settings: Optional["_models.UpgradeOverrideSettings"] = rest_field(
         name="overrideSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Settings for overrides."""
+    upgrade_gate_settings: Optional["_models.UpgradeGateSettings"] = rest_field(
+        name="upgradeGateSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Settings for upgrade gating on upgrades in this managed cluster. Health signals are
+     ``HealthSignal`` custom resources published by monitoring components running in the cluster.
+     Setting ``enabled`` to ``true`` here is a cluster-wide opt-in that applies to all agent pool
+     upgrades in this cluster; an agent pool cannot opt out of it."""
 
     @overload
     def __init__(
         self,
         *,
         override_settings: Optional["_models.UpgradeOverrideSettings"] = None,
+        upgrade_gate_settings: Optional["_models.UpgradeGateSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -2251,7 +3603,7 @@ class CommandResultProperties(_Model):
     """An explanation of why provisioningState is set to failed (if so)."""
 
 
-class CompatibleVersions(_Model):
+class CompatibleVersions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Version information about a product/service that is compatible with a service mesh revision.
 
     :ivar name: The product/service name.
@@ -2284,7 +3636,7 @@ class CompatibleVersions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Component(_Model):
+class Component(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Component information for a Kubernetes version.
 
     :ivar name: Component name.
@@ -2330,7 +3682,7 @@ class Component(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComponentsByRelease(_Model):
+class ComponentsByRelease(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """components of given Kubernetes version.
 
     :ivar kubernetes_version: The Kubernetes version (major.minor).
@@ -2367,7 +3719,7 @@ class ComponentsByRelease(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerServiceLinuxProfile(_Model):
+class ContainerServiceLinuxProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for Linux VMs in the container service cluster.
 
     :ivar admin_username: The administrator username to use for Linux VMs. Required.
@@ -2402,7 +3754,7 @@ class ContainerServiceLinuxProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerServiceNetworkProfile(_Model):
+class ContainerServiceNetworkProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile of network configuration.
 
     :ivar network_plugin: Network plugin used for building the Kubernetes network. Known values
@@ -2433,23 +3785,30 @@ class ContainerServiceNetworkProfile(_Model):
     :ivar outbound_type: The outbound (egress) routing method. This can only be set at cluster
      creation time and cannot be changed later. For more information see `egress outbound type
      <https://docs.microsoft.com/azure/aks/egress-outboundtype>`_. Known values are: "loadBalancer",
-     "userDefinedRouting", "managedNATGateway", "managedNATGatewayV2", "userAssignedNATGateway", and
-     "none".
+     "userDefinedRouting", "managedNATGateway", "userAssignedNATGateway", and "none".
     :vartype outbound_type: str or ~azure.mgmt.containerservice.models.OutboundType
     :ivar load_balancer_sku: The load balancer sku for the managed cluster. The default is
      'standard'. See `Azure Load Balancer SKUs
      <https://docs.microsoft.com/azure/load-balancer/skus>`_ for more information about the
-     differences between load balancer SKUs. Known values are: "standard" and "basic".
+     differences between load balancer SKUs. Known values are: "service", "standard", and "basic".
     :vartype load_balancer_sku: str or ~azure.mgmt.containerservice.models.LoadBalancerSku
     :ivar load_balancer_profile: Profile of the cluster load balancer.
     :vartype load_balancer_profile:
      ~azure.mgmt.containerservice.models.ManagedClusterLoadBalancerProfile
-    :ivar bastion_profile: Profile of the Bastion Host associated with the managed cluster. See
-     `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more details.
-    :vartype bastion_profile: ~azure.mgmt.containerservice.models.BastionProfile
+    :ivar cluster_api_connectivity_profile: Configuration for accessing the managed cluster API
+     through Bastion or Cloud Shell.
+    :vartype cluster_api_connectivity_profile:
+     ~azure.mgmt.containerservice.models.ClusterAPIConnectivityProfile
     :ivar nat_gateway_profile: Profile of the cluster NAT gateway.
     :vartype nat_gateway_profile:
      ~azure.mgmt.containerservice.models.ManagedClusterNATGatewayProfile
+    :ivar nat_gateway_id: The Azure resource ID of the NAT gateway to use for egress at cluster
+     startup when outboundType is 'userAssignedNATGateway' using StandardV2 Public IP, backend pool
+     type is podIP, and load balancer type is service SKU. This is of the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/natGateways/{natGatewayName}'.
+     When using managed NATGateway this field is auto populated. For more information, see
+     `https://aka.ms/aks/container-native-slb <https://aka.ms/aks/container-native-slb>`_.
+    :vartype nat_gateway_id: str
     :ivar static_egress_gateway_profile: The profile for Static Egress Gateway addon. For more
      details about Static Egress Gateway, see `https://aka.ms/aks/static-egress-gateway
      <https://aka.ms/aks/static-egress-gateway>`_.
@@ -2527,27 +3886,34 @@ class ContainerServiceNetworkProfile(_Model):
     """The outbound (egress) routing method. This can only be set at cluster creation time and cannot
      be changed later. For more information see `egress outbound type
      <https://docs.microsoft.com/azure/aks/egress-outboundtype>`_. Known values are:
-     \"loadBalancer\", \"userDefinedRouting\", \"managedNATGateway\", \"managedNATGatewayV2\",
-     \"userAssignedNATGateway\", and \"none\"."""
+     \"loadBalancer\", \"userDefinedRouting\", \"managedNATGateway\", \"userAssignedNATGateway\",
+     and \"none\"."""
     load_balancer_sku: Optional[Union[str, "_models.LoadBalancerSku"]] = rest_field(
         name="loadBalancerSku", visibility=["read", "create", "update", "delete", "query"]
     )
     """The load balancer sku for the managed cluster. The default is 'standard'. See `Azure Load
      Balancer SKUs <https://docs.microsoft.com/azure/load-balancer/skus>`_ for more information
-     about the differences between load balancer SKUs. Known values are: \"standard\" and \"basic\"."""
+     about the differences between load balancer SKUs. Known values are: \"service\", \"standard\",
+     and \"basic\"."""
     load_balancer_profile: Optional["_models.ManagedClusterLoadBalancerProfile"] = rest_field(
         name="loadBalancerProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Profile of the cluster load balancer."""
-    bastion_profile: Optional["_models.BastionProfile"] = rest_field(
-        name="bastionProfile", visibility=["read", "create", "update", "delete", "query"]
+    cluster_api_connectivity_profile: Optional["_models.ClusterAPIConnectivityProfile"] = rest_field(
+        name="clusterAPIConnectivityProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Profile of the Bastion Host associated with the managed cluster. See
-     `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more details."""
+    """Configuration for accessing the managed cluster API through Bastion or Cloud Shell."""
     nat_gateway_profile: Optional["_models.ManagedClusterNATGatewayProfile"] = rest_field(
         name="natGatewayProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Profile of the cluster NAT gateway."""
+    nat_gateway_id: Optional[str] = rest_field(name="natGatewayId", visibility=["read", "create"])
+    """The Azure resource ID of the NAT gateway to use for egress at cluster startup when outboundType
+     is 'userAssignedNATGateway' using StandardV2 Public IP, backend pool type is podIP, and load
+     balancer type is service SKU. This is of the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/natGateways/{natGatewayName}'.
+     When using managed NATGateway this field is auto populated. For more information, see
+     `https://aka.ms/aks/container-native-slb <https://aka.ms/aks/container-native-slb>`_."""
     static_egress_gateway_profile: Optional["_models.ManagedClusterStaticEgressGatewayProfile"] = rest_field(
         name="staticEgressGatewayProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2602,8 +3968,9 @@ class ContainerServiceNetworkProfile(_Model):
         outbound_type: Optional[Union[str, "_models.OutboundType"]] = None,
         load_balancer_sku: Optional[Union[str, "_models.LoadBalancerSku"]] = None,
         load_balancer_profile: Optional["_models.ManagedClusterLoadBalancerProfile"] = None,
-        bastion_profile: Optional["_models.BastionProfile"] = None,
+        cluster_api_connectivity_profile: Optional["_models.ClusterAPIConnectivityProfile"] = None,
         nat_gateway_profile: Optional["_models.ManagedClusterNATGatewayProfile"] = None,
+        nat_gateway_id: Optional[str] = None,
         static_egress_gateway_profile: Optional["_models.ManagedClusterStaticEgressGatewayProfile"] = None,
         pod_cidrs: Optional[list[str]] = None,
         service_cidrs: Optional[list[str]] = None,
@@ -2623,7 +3990,9 @@ class ContainerServiceNetworkProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerServiceNetworkProfileKubeProxyConfig(_Model):  # pylint: disable=name-too-long
+class ContainerServiceNetworkProfileKubeProxyConfig(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Holds configuration customizations for kube-proxy. Any values not defined will use the
     kube-proxy defaulting behavior. See `https://v
     <https://v>`_<version>.docs.kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/
@@ -2673,7 +4042,9 @@ class ContainerServiceNetworkProfileKubeProxyConfig(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig(_Model):  # pylint: disable=name-too-long
+class ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Holds configuration customizations for IPVS. May only be specified if 'mode' is set to 'IPVS'.
 
     :ivar scheduler: IPVS scheduler, for more information please see
@@ -2734,7 +4105,7 @@ class ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig(_Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class ContainerServiceSshConfiguration(_Model):
+class ContainerServiceSshConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SSH configuration for Linux-based VMs running on Azure.
 
     :ivar public_keys: The list of SSH public keys used to authenticate with Linux-based VMs. A
@@ -2766,7 +4137,7 @@ class ContainerServiceSshConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerServiceSshPublicKey(_Model):
+class ContainerServiceSshPublicKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about SSH certificate public key data.
 
     :ivar key_data: Certificate public key used to authenticate with VMs through SSH. The
@@ -2796,7 +4167,252 @@ class ContainerServiceSshPublicKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreationData(_Model):
+class ControlPlaneAndAgentPoolsGenerateUpgradeInsightsContent(
+    GenerateUpgradeInsightsContent, discriminator="ControlPlaneAndAgentPools"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Request body to evaluate the combined control plane and agent pools Kubernetes version upgrade.
+
+    :ivar upgrade_type: Required. A combined evaluation of the control plane plus every agent pool
+     for a single target Kubernetes version. This scope covers Kubernetes version upgrades only;
+     node OS image upgrades are not included and must be evaluated separately using the NodeImage
+     scope.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.CONTROL_PLANE_AND_AGENT_POOLS
+    :ivar target_kubernetes_version: The target Kubernetes version to evaluate for all scopes.
+     Required.
+    :vartype target_kubernetes_version: str
+    """
+
+    upgrade_type: Literal[UpgradeType.CONTROL_PLANE_AND_AGENT_POOLS] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. A combined evaluation of the control plane plus every agent pool for a single target
+     Kubernetes version. This scope covers Kubernetes version upgrades only; node OS image upgrades
+     are not included and must be evaluated separately using the NodeImage scope."""
+    target_kubernetes_version: str = rest_field(
+        name="targetKubernetesVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target Kubernetes version to evaluate for all scopes. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_kubernetes_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.CONTROL_PLANE_AND_AGENT_POOLS  # type: ignore
+
+
+class ControlPlaneAndAgentPoolsUpgradeInsightProperties(
+    UpgradeInsightProperties, discriminator="ControlPlaneAndAgentPools"
+):  # pylint: disable=name-too-long
+    """Properties for a combined control plane and agent pools Kubernetes version upgrade insight: a
+    single evaluation of the control plane plus every agent pool for one target Kubernetes version.
+    This scope is Kubernetes-version-only — node OS image upgrades are never part of a combined
+    evaluation and must be requested separately with a
+    ``nodeImage-<agentPoolName>-<nodeImageVersion>`` insight.
+
+    :ivar provisioning_state: The provisioning state of the upgrade insight evaluation. Known
+     values are: "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.ResourceProvisioningState
+    :ivar last_evaluated_at: The UTC time at which this upgrade insight was last computed (the last
+     time the compute operation ran for this resource). This is the resource-level "last run" marker
+     and, for a cached record, indicates how stale the stored evaluation is. For a combined
+     evaluation it is the umbrella run time across all scopes, whereas each scope's
+     ``evaluation.evaluatedAt`` records when that specific snapshot was produced.
+    :vartype last_evaluated_at: ~datetime.datetime
+    :ivar expires_at: The UTC time at which this stored upgrade insight expires and is removed from
+     the data store (currently ``lastEvaluatedAt`` plus a 14-day retention window). After this time
+     a GET for the resource returns 404 Not Found and it no longer appears in the list, indicating
+     the caller should call the compute operation to produce a fresh evaluation. Exposing the expiry
+     lets clients decide when to recompute without hardcoding the retention period.
+    :vartype expires_at: ~datetime.datetime
+    :ivar upgrade_type: The type of upgrade this insight evaluates. Required. A combined evaluation
+     of the control plane plus every agent pool for a single target Kubernetes version. This scope
+     covers Kubernetes version upgrades only; node OS image upgrades are not included and must be
+     evaluated separately using the NodeImage scope.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.CONTROL_PLANE_AND_AGENT_POOLS
+    :ivar target_kubernetes_version: The target Kubernetes version that was evaluated for all
+     scopes.
+    :vartype target_kubernetes_version: str
+    :ivar control_plane: The readiness evaluation for the control plane Kubernetes version upgrade.
+    :vartype control_plane: ~azure.mgmt.containerservice.models.ScopeEvaluationResult
+    :ivar agent_pools: The readiness evaluation for each agent pool Kubernetes version upgrade, one
+     entry per agent pool.
+    :vartype agent_pools: list[~azure.mgmt.containerservice.models.AgentPoolScopeEvaluation]
+    """
+
+    upgrade_type: Literal[UpgradeType.CONTROL_PLANE_AND_AGENT_POOLS] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of upgrade this insight evaluates. Required. A combined evaluation of the control
+     plane plus every agent pool for a single target Kubernetes version. This scope covers
+     Kubernetes version upgrades only; node OS image upgrades are not included and must be evaluated
+     separately using the NodeImage scope."""
+    target_kubernetes_version: Optional[str] = rest_field(name="targetKubernetesVersion", visibility=["read"])
+    """The target Kubernetes version that was evaluated for all scopes."""
+    control_plane: Optional["_models.ScopeEvaluationResult"] = rest_field(name="controlPlane", visibility=["read"])
+    """The readiness evaluation for the control plane Kubernetes version upgrade."""
+    agent_pools: Optional[list["_models.AgentPoolScopeEvaluation"]] = rest_field(name="agentPools", visibility=["read"])
+    """The readiness evaluation for each agent pool Kubernetes version upgrade, one entry per agent
+     pool."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.CONTROL_PLANE_AND_AGENT_POOLS  # type: ignore
+
+
+class ControlPlaneGenerateUpgradeInsightsContent(
+    GenerateUpgradeInsightsContent, discriminator="ControlPlane"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Request body to evaluate a control plane (managed cluster) Kubernetes version upgrade.
+
+    :ivar upgrade_type: Required. The control plane (managed cluster) Kubernetes version upgrade.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.CONTROL_PLANE
+    :ivar target_kubernetes_version: The target Kubernetes version to evaluate. Required.
+    :vartype target_kubernetes_version: str
+    """
+
+    upgrade_type: Literal[UpgradeType.CONTROL_PLANE] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. The control plane (managed cluster) Kubernetes version upgrade."""
+    target_kubernetes_version: str = rest_field(
+        name="targetKubernetesVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target Kubernetes version to evaluate. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_kubernetes_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.CONTROL_PLANE  # type: ignore
+
+
+class ControlPlaneUpgradeInsightProperties(UpgradeInsightProperties, discriminator="ControlPlane"):
+    """Properties for a control plane (managed cluster) Kubernetes version upgrade insight.
+
+    :ivar provisioning_state: The provisioning state of the upgrade insight evaluation. Known
+     values are: "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.ResourceProvisioningState
+    :ivar last_evaluated_at: The UTC time at which this upgrade insight was last computed (the last
+     time the compute operation ran for this resource). This is the resource-level "last run" marker
+     and, for a cached record, indicates how stale the stored evaluation is. For a combined
+     evaluation it is the umbrella run time across all scopes, whereas each scope's
+     ``evaluation.evaluatedAt`` records when that specific snapshot was produced.
+    :vartype last_evaluated_at: ~datetime.datetime
+    :ivar expires_at: The UTC time at which this stored upgrade insight expires and is removed from
+     the data store (currently ``lastEvaluatedAt`` plus a 14-day retention window). After this time
+     a GET for the resource returns 404 Not Found and it no longer appears in the list, indicating
+     the caller should call the compute operation to produce a fresh evaluation. Exposing the expiry
+     lets clients decide when to recompute without hardcoding the retention period.
+    :vartype expires_at: ~datetime.datetime
+    :ivar upgrade_type: The type of upgrade this insight evaluates. Required. The control plane
+     (managed cluster) Kubernetes version upgrade.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.CONTROL_PLANE
+    :ivar target_kubernetes_version: The target Kubernetes version that was evaluated.
+    :vartype target_kubernetes_version: str
+    :ivar current_kubernetes_version: The Kubernetes version the scope was evaluated from (the
+     upgrade source version the scope is currently running). Lets consumers read the result as "from
+     X to targetKubernetesVersion" and detect a stale cached record by comparing against the live
+     cluster version. Populated for Kubernetes version upgrades.
+    :vartype current_kubernetes_version: str
+    :ivar kubernetes_version_support_status: The support status of the Kubernetes version the scope
+     is currently running (not the target version). Populated for Kubernetes version upgrades. Known
+     values are: "InSupport" and "OutOfSupport".
+    :vartype kubernetes_version_support_status: str or
+     ~azure.mgmt.containerservice.models.KubernetesVersionSupportStatus
+    :ivar kubernetes_version_end_of_support_date: The date on which support ends for the Kubernetes
+     version the scope is currently running (its end-of-support date). Returned as an absolute date
+     so clients can apply their own "approaching end of support" threshold and compute the remaining
+     days against the current time; a precomputed remaining-days value is intentionally not returned
+     so that cached results do not go stale. Populated for Kubernetes version upgrades.
+    :vartype kubernetes_version_end_of_support_date: ~datetime.date
+    :ivar context: Contextual information about how this upgrade is managed, such as the upgrade
+     strategy, next maintenance window, and last successful upgrade time.
+    :vartype context: ~azure.mgmt.containerservice.models.UpgradeContext
+    :ivar evaluation: The evaluation result, including overall status, evaluation time, and any
+     detected issues.
+    :vartype evaluation: ~azure.mgmt.containerservice.models.UpgradeInsightEvaluation
+    """
+
+    upgrade_type: Literal[UpgradeType.CONTROL_PLANE] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of upgrade this insight evaluates. Required. The control plane (managed cluster)
+     Kubernetes version upgrade."""
+    target_kubernetes_version: Optional[str] = rest_field(name="targetKubernetesVersion", visibility=["read"])
+    """The target Kubernetes version that was evaluated."""
+    current_kubernetes_version: Optional[str] = rest_field(name="currentKubernetesVersion", visibility=["read"])
+    """The Kubernetes version the scope was evaluated from (the upgrade source version the scope is
+     currently running). Lets consumers read the result as \"from X to targetKubernetesVersion\" and
+     detect a stale cached record by comparing against the live cluster version. Populated for
+     Kubernetes version upgrades."""
+    kubernetes_version_support_status: Optional[Union[str, "_models.KubernetesVersionSupportStatus"]] = rest_field(
+        name="kubernetesVersionSupportStatus", visibility=["read"]
+    )
+    """The support status of the Kubernetes version the scope is currently running (not the target
+     version). Populated for Kubernetes version upgrades. Known values are: \"InSupport\" and
+     \"OutOfSupport\"."""
+    kubernetes_version_end_of_support_date: Optional[datetime.date] = rest_field(
+        name="kubernetesVersionEndOfSupportDate", visibility=["read"]
+    )
+    """The date on which support ends for the Kubernetes version the scope is currently running (its
+     end-of-support date). Returned as an absolute date so clients can apply their own \"approaching
+     end of support\" threshold and compute the remaining days against the current time; a
+     precomputed remaining-days value is intentionally not returned so that cached results do not go
+     stale. Populated for Kubernetes version upgrades."""
+    context: Optional["_models.UpgradeContext"] = rest_field(visibility=["read"])
+    """Contextual information about how this upgrade is managed, such as the upgrade strategy, next
+     maintenance window, and last successful upgrade time."""
+    evaluation: Optional["_models.UpgradeInsightEvaluation"] = rest_field(visibility=["read"])
+    """The evaluation result, including overall status, evaluation time, and any detected issues."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.CONTROL_PLANE  # type: ignore
+
+
+class CreationData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data used when creating a target resource from a source resource.
 
     :ivar source_resource_id: This is the ARM ID of the source object to be used to create the
@@ -2853,7 +4469,7 @@ class CredentialResults(_Model):
     """Base64-encoded Kubernetes configuration file."""
 
 
-class DailySchedule(_Model):
+class DailySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """For schedules like: 'recur every day' or 'recur every 3 days'.
 
     :ivar interval_days: Specifies the number of days between each set of occurrences. Required.
@@ -2881,7 +4497,7 @@ class DailySchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DateSpan(_Model):
+class DateSpan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A date range. For example, between '2022-12-23' and '2023-01-05'.
 
     :ivar start: The start date of the date span. Required.
@@ -2914,7 +4530,7 @@ class DateSpan(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DelegatedResource(_Model):
+class DelegatedResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Delegated resource properties - internal use only.
 
     :ivar resource_id: The ARM resource id of the delegated resource - internal use only.
@@ -2962,7 +4578,84 @@ class DelegatedResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointDependency(_Model):
+class DetectedUpgradeIssue(_Model):
+    """A detected upgrade issue for a managed cluster.
+
+    :ivar issue_type: The type of the detected upgrade issue. Known values are: "PDBConstraint",
+     "SubnetIPExhausted", "QuotaExceeded", "APIBreakingChange", "ComponentVersionMismatch",
+     "UnsupportedKubernetesVersion", and "NodeImageOutOfSLA".
+    :vartype issue_type: str or ~azure.mgmt.containerservice.models.UpgradeIssueType
+    :ivar severity: The severity of the detected issue. Known values are: "Blocking" and "Warning".
+    :vartype severity: str or ~azure.mgmt.containerservice.models.UpgradeIssueSeverity
+    :ivar message: A human-readable description of the issue and why it may block or risk the
+     upgrade.
+    :vartype message: str
+    :ivar impacted_resources: The Azure or Kubernetes resources impacted by this issue. A single
+     issue can affect multiple resources (for example, one removed Kubernetes API version affecting
+     several objects).
+    :vartype impacted_resources:
+     list[~azure.mgmt.containerservice.models.UpgradeInsightImpactedResource]
+    :ivar recommended_actions: The recommended actions to resolve this issue. Today this always
+     contains a single action whose documentation link covers all of the options the user could take
+     to remediate the issue; it is modeled as an array so that additional distinct actions can be
+     returned in the future without a breaking change.
+    :vartype recommended_actions:
+     list[~azure.mgmt.containerservice.models.UpgradeInsightRecommendedAction]
+    """
+
+    issue_type: Optional[Union[str, "_models.UpgradeIssueType"]] = rest_field(name="issueType", visibility=["read"])
+    """The type of the detected upgrade issue. Known values are: \"PDBConstraint\",
+     \"SubnetIPExhausted\", \"QuotaExceeded\", \"APIBreakingChange\", \"ComponentVersionMismatch\",
+     \"UnsupportedKubernetesVersion\", and \"NodeImageOutOfSLA\"."""
+    severity: Optional[Union[str, "_models.UpgradeIssueSeverity"]] = rest_field(visibility=["read"])
+    """The severity of the detected issue. Known values are: \"Blocking\" and \"Warning\"."""
+    message: Optional[str] = rest_field(visibility=["read"])
+    """A human-readable description of the issue and why it may block or risk the upgrade."""
+    impacted_resources: Optional[list["_models.UpgradeInsightImpactedResource"]] = rest_field(
+        name="impactedResources", visibility=["read"]
+    )
+    """The Azure or Kubernetes resources impacted by this issue. A single issue can affect multiple
+     resources (for example, one removed Kubernetes API version affecting several objects)."""
+    recommended_actions: Optional[list["_models.UpgradeInsightRecommendedAction"]] = rest_field(
+        name="recommendedActions", visibility=["read"]
+    )
+    """The recommended actions to resolve this issue. Today this always contains a single action whose
+     documentation link covers all of the options the user could take to remediate the issue; it is
+     modeled as an array so that additional distinct actions can be returned in the future without a
+     breaking change."""
+
+
+class DRANETProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """DRANET settings of an agent pool.
+
+    :ivar mode: The DRANET mode for the agent pool. Known values are: "Unmanaged" and "Managed".
+    :vartype mode: str or ~azure.mgmt.containerservice.models.DRANETMode
+    """
+
+    mode: Optional[Union[str, "_models.DRANETMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The DRANET mode for the agent pool. Known values are: \"Unmanaged\" and \"Managed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.DRANETMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EndpointDependency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A domain name that AKS agent nodes are reaching at.
 
     :ivar domain_name: The domain name of the dependency.
@@ -2999,7 +4692,7 @@ class EndpointDependency(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointDetail(_Model):
+class EndpointDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """connect information from the AKS agent nodes to a single endpoint.
 
     :ivar ip_address: An IP Address that Domain Name currently resolves to.
@@ -3086,7 +4779,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -3114,7 +4807,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedLocation(_Model):
+class ExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The complex type of the extended location.
 
     :ivar name: The name of the extended location.
@@ -3149,7 +4842,7 @@ class ExtendedLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GPUProfile(_Model):
+class GPUProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GPU settings for the Agent Pool.
 
     :ivar driver: Whether to install GPU drivers. When it's not specified, default is Install.
@@ -3202,7 +4895,7 @@ class GPUProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GuardrailsAvailableVersion(ProxyResource):
+class GuardrailsAvailableVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Available Guardrails Version.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3259,7 +4952,7 @@ class GuardrailsAvailableVersionsProperties(_Model):
     """Whether the version is preview or stable. Known values are: \"Preview\" and \"Stable\"."""
 
 
-class HardEvictionThreshold(_Model):
+class HardEvictionThreshold(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hard eviction thresholds for kubelet. These thresholds trigger pod eviction when node resources
     drop below the specified values. Values must be greater than or equal to the documented
     minimums for each signal. Supported formats are Ki, Mi, Gi, or percentages using %.
@@ -3319,7 +5012,7 @@ class HardEvictionThreshold(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentityBinding(ProxyResource):
+class IdentityBinding(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The IdentityBinding resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3335,6 +5028,11 @@ class IdentityBinding(ProxyResource):
     :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.containerservice.models.IdentityBindingProperties
+    :ivar managed_by: The fully qualified resource ID of the resource that manages this resource.
+     Indicates if this resource is managed by another Azure resource. If this is present, complete
+     mode deployment will not delete the resource if it is removed from the template since it is
+     managed by another resource.
+    :vartype managed_by: str
     :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
      same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
@@ -3346,6 +5044,11 @@ class IdentityBinding(ProxyResource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
+    managed_by: Optional[str] = rest_field(name="managedBy", visibility=["read", "create"])
+    """The fully qualified resource ID of the resource that manages this resource. Indicates if this
+     resource is managed by another Azure resource. If this is present, complete mode deployment
+     will not delete the resource if it is removed from the template since it is managed by another
+     resource."""
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """If eTag is provided in the response body, it may also be provided as a header per the normal
      etag convention.  Entity tags are used for comparing two or more entities from the same
@@ -3357,6 +5060,7 @@ class IdentityBinding(ProxyResource):
         self,
         *,
         properties: Optional["_models.IdentityBindingProperties"] = None,
+        managed_by: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3370,7 +5074,7 @@ class IdentityBinding(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class IdentityBindingManagedIdentityProfile(_Model):
+class IdentityBindingManagedIdentityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed identity profile for the identity binding.
 
     :ivar resource_id: The resource ID of the managed identity. Required.
@@ -3421,7 +5125,7 @@ class IdentityBindingOidcIssuerProfile(_Model):
     """The OIDC issuer URL of the IdentityBinding."""
 
 
-class IdentityBindingProperties(_Model):
+class IdentityBindingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IdentityBinding properties.
 
     :ivar managed_identity: Managed identity profile for the identity binding. Required.
@@ -3433,6 +5137,12 @@ class IdentityBindingProperties(_Model):
      "Failed", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerservice.models.IdentityBindingProvisioningState
+    :ivar allowed_subjects: Optional list of subjects authorized to use this identity binding for
+     token exchange. Each entry pairs a required namespace label selector with an optional service
+     account label selector; selectors within an entry are AND'd, and multiple entries are OR'd.
+     When omitted or empty, authorization falls back exclusively to ClusterRole/ClusterRoleBinding
+     evaluation. Maximum 100 entries.
+    :vartype allowed_subjects: list[~azure.mgmt.containerservice.models.AllowedSubject]
     """
 
     managed_identity: "_models.IdentityBindingManagedIdentityProfile" = rest_field(
@@ -3448,12 +5158,21 @@ class IdentityBindingProperties(_Model):
     )
     """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
      \"Creating\", \"Updating\", and \"Deleting\"."""
+    allowed_subjects: Optional[list["_models.AllowedSubject"]] = rest_field(
+        name="allowedSubjects", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional list of subjects authorized to use this identity binding for token exchange. Each
+     entry pairs a required namespace label selector with an optional service account label
+     selector; selectors within an entry are AND'd, and multiple entries are OR'd. When omitted or
+     empty, authorization falls back exclusively to ClusterRole/ClusterRoleBinding evaluation.
+     Maximum 100 entries."""
 
     @overload
     def __init__(
         self,
         *,
         managed_identity: "_models.IdentityBindingManagedIdentityProfile",
+        allowed_subjects: Optional[list["_models.AllowedSubject"]] = None,
     ) -> None: ...
 
     @overload
@@ -3467,7 +5186,7 @@ class IdentityBindingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPTag(_Model):
+class IPTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the IPTag associated with the object.
 
     :ivar ip_tag_type: The IP tag type. Example: RoutingPreference.
@@ -3502,7 +5221,7 @@ class IPTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IstioCertificateAuthority(_Model):
+class IstioCertificateAuthority(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Istio Service Mesh Certificate Authority (CA) configuration. For now, we only support plugin
     certificates as described here `https://aka.ms/asm-plugin-ca <https://aka.ms/asm-plugin-ca>`_.
 
@@ -3533,7 +5252,7 @@ class IstioCertificateAuthority(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IstioComponents(_Model):
+class IstioComponents(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Istio components configuration.
 
     :ivar ingress_gateways: Istio ingress gateways.
@@ -3579,7 +5298,7 @@ class IstioComponents(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IstioEgressGateway(_Model):
+class IstioEgressGateway(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Istio egress gateway configuration.
 
     :ivar enabled: Whether to enable the egress gateway. Required.
@@ -3630,7 +5349,7 @@ class IstioEgressGateway(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IstioIngressGateway(_Model):
+class IstioIngressGateway(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Istio ingress gateway configuration. For now, we support up to one external ingress gateway
     named ``aks-istio-ingressgateway-external`` and one internal ingress gateway named
     ``aks-istio-ingressgateway-internal``.
@@ -3667,7 +5386,7 @@ class IstioIngressGateway(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IstioPluginCertificateAuthority(_Model):
+class IstioPluginCertificateAuthority(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Plugin certificates information for Service Mesh.
 
     :ivar key_vault_id: The resource ID of the Key Vault.
@@ -3725,7 +5444,7 @@ class IstioPluginCertificateAuthority(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IstioServiceMesh(_Model):
+class IstioServiceMesh(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Istio service mesh configuration.
 
     :ivar components: Istio components configuration.
@@ -3777,7 +5496,7 @@ class IstioServiceMesh(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JWTAuthenticator(ProxyResource):
+class JWTAuthenticator(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for JWT authenticator in the managed cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3830,7 +5549,7 @@ class JWTAuthenticator(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class JWTAuthenticatorClaimMappingExpression(_Model):
+class JWTAuthenticatorClaimMappingExpression(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The claim mapping expression for JWTAuthenticator.
 
     :ivar expression: The CEL expression used to access token claims. Required.
@@ -3858,7 +5577,7 @@ class JWTAuthenticatorClaimMappingExpression(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JWTAuthenticatorClaimMappings(_Model):
+class JWTAuthenticatorClaimMappings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The claim mappings for JWTAuthenticator.
 
     :ivar username: The expression to extract username attribute from the token claims. Required.
@@ -3916,7 +5635,9 @@ class JWTAuthenticatorClaimMappings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JWTAuthenticatorExtraClaimMappingExpression(_Model):  # pylint: disable=name-too-long
+class JWTAuthenticatorExtraClaimMappingExpression(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The extra claim mapping expression for JWTAuthenticator.
 
     :ivar key: The key of the extra attribute. Required.
@@ -3952,7 +5673,7 @@ class JWTAuthenticatorExtraClaimMappingExpression(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class JWTAuthenticatorIssuer(_Model):
+class JWTAuthenticatorIssuer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The OIDC issuer details for JWTAuthenticator.
 
     :ivar url: The issuer URL. The URL must begin with the scheme https and cannot contain a query
@@ -3992,7 +5713,7 @@ class JWTAuthenticatorIssuer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JWTAuthenticatorProperties(_Model):
+class JWTAuthenticatorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of JWTAuthenticator. For details on how to configure the properties of a JWT
     authenticator, please refer to the Kubernetes documentation:
     `https://kubernetes.io/docs/reference/access-authn-authz/authentication/#using-authentication-configuration
@@ -4018,6 +5739,20 @@ class JWTAuthenticatorProperties(_Model):
      authentication. All the expressions must evaluate to true for validation to succeed.
     :vartype user_validation_rules:
      list[~azure.mgmt.containerservice.models.JWTAuthenticatorValidationRule]
+    :ivar certificate_authority_bundle: PEM-encoded CA certificate bundle used to validate the
+     connection when fetching discovery information. Use this for issuer endpoints that use private
+     certificate authorities
+     or environments where TLS inspection is performed.
+
+     The bundle must contain only CERTIFICATE PEM blocks, up to 10 CA certificates, and must be no
+     larger than 20 KB in total. Include all CA certificates needed to validate
+     the issuer endpoint's TLS certificate. Certificate revocation checking is not supported.
+
+     If provided, only these CAs are trusted instead of the well-known root CAs.
+     If not provided and the managed cluster's properties.securityProfile.customCATrustCertificates
+     is set, those certificates will be used instead. Otherwise, only the well-known
+     root CAs are trusted.
+    :vartype certificate_authority_bundle: str
     """
 
     provisioning_state: Optional[Union[str, "_models.JWTAuthenticatorProvisioningState"]] = rest_field(
@@ -4041,6 +5776,21 @@ class JWTAuthenticatorProperties(_Model):
     )
     """The rules that are applied to the mapped user before completing authentication. All the
      expressions must evaluate to true for validation to succeed."""
+    certificate_authority_bundle: Optional[str] = rest_field(
+        name="certificateAuthorityBundle", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """PEM-encoded CA certificate bundle used to validate the connection when fetching discovery
+     information. Use this for issuer endpoints that use private certificate authorities
+     or environments where TLS inspection is performed.
+     
+     The bundle must contain only CERTIFICATE PEM blocks, up to 10 CA certificates, and must be no
+     larger than 20 KB in total. Include all CA certificates needed to validate
+     the issuer endpoint's TLS certificate. Certificate revocation checking is not supported.
+     
+     If provided, only these CAs are trusted instead of the well-known root CAs.
+     If not provided and the managed cluster's properties.securityProfile.customCATrustCertificates
+     is set, those certificates will be used instead. Otherwise, only the well-known
+     root CAs are trusted."""
 
     @overload
     def __init__(
@@ -4050,6 +5800,7 @@ class JWTAuthenticatorProperties(_Model):
         claim_mappings: "_models.JWTAuthenticatorClaimMappings",
         claim_validation_rules: Optional[list["_models.JWTAuthenticatorValidationRule"]] = None,
         user_validation_rules: Optional[list["_models.JWTAuthenticatorValidationRule"]] = None,
+        certificate_authority_bundle: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -4063,7 +5814,7 @@ class JWTAuthenticatorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JWTAuthenticatorValidationRule(_Model):
+class JWTAuthenticatorValidationRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The validation rule for JWTAuthenticator.
 
     :ivar expression: The CEL expression used to validate the claim or attribute. Required.
@@ -4096,7 +5847,7 @@ class JWTAuthenticatorValidationRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubeletConfig(_Model):
+class KubeletConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Kubelet configurations of agent nodes. See `AKS custom node configuration
     <https://docs.microsoft.com/azure/aks/custom-node-configuration>`_ for more details.
 
@@ -4151,6 +5902,27 @@ class KubeletConfig(_Model):
      <https://aka.ms/aks/nodereservations>`_ for details on computed defaults. Only applicable for
      Linux nodepools.
     :vartype hard_eviction_threshold: ~azure.mgmt.containerservice.models.HardEvictionThreshold
+    :ivar soft_eviction_threshold: Soft eviction thresholds for kubelet. When crossed, pods are
+     evicted after the paired softEvictionGracePeriod. System defaults apply when the cluster's
+     ``enableNodeHardening`` property is true; otherwise no soft eviction is configured. For each
+     signal (memoryAvailable, nodeFsAvailable, nodeFsInodesFree), the entries in
+     softEvictionThreshold and softEvictionGracePeriod must be in the same state: both omitted
+     (default), both non-empty (override), or both empty strings (opt that signal out). Only
+     applicable for Linux nodepools. See
+     `https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#soft-eviction-thresholds
+     <https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#soft-eviction-thresholds>`_.
+    :vartype soft_eviction_threshold: ~azure.mgmt.containerservice.models.SoftEvictionThreshold
+    :ivar soft_eviction_grace_period: Grace periods for soft eviction signals — how long a
+     threshold must be held before pod eviction. Same defaulting and pairing rules as
+     softEvictionThreshold. Values are Go-style duration strings (e.g. '1m30s'); supported units are
+     'ns', 'us', 'ms', 's', 'm', and 'h'. Only applicable for Linux nodepools.
+    :vartype soft_eviction_grace_period:
+     ~azure.mgmt.containerservice.models.SoftEvictionGracePeriod
+    :ivar eviction_max_pod_grace_period_in_seconds: Maximum grace period, in seconds, for pods to
+     terminate during a soft eviction; caps the pod's terminationGracePeriodSeconds. Default is 60,
+     applied when the cluster's ``enableNodeHardening`` property is true. Only applicable for Linux
+     nodepools.
+    :vartype eviction_max_pod_grace_period_in_seconds: int
     """
 
     cpu_manager_policy: Optional[str] = rest_field(
@@ -4224,6 +5996,31 @@ class KubeletConfig(_Model):
     """Hard eviction thresholds for kubelet. When a threshold is not set, the system default is used.
      See `AKS node resource reservations <https://aka.ms/aks/nodereservations>`_ for details on
      computed defaults. Only applicable for Linux nodepools."""
+    soft_eviction_threshold: Optional["_models.SoftEvictionThreshold"] = rest_field(
+        name="softEvictionThreshold", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Soft eviction thresholds for kubelet. When crossed, pods are evicted after the paired
+     softEvictionGracePeriod. System defaults apply when the cluster's ``enableNodeHardening``
+     property is true; otherwise no soft eviction is configured. For each signal (memoryAvailable,
+     nodeFsAvailable, nodeFsInodesFree), the entries in softEvictionThreshold and
+     softEvictionGracePeriod must be in the same state: both omitted (default), both non-empty
+     (override), or both empty strings (opt that signal out). Only applicable for Linux nodepools.
+     See
+     `https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#soft-eviction-thresholds
+     <https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/#soft-eviction-thresholds>`_."""
+    soft_eviction_grace_period: Optional["_models.SoftEvictionGracePeriod"] = rest_field(
+        name="softEvictionGracePeriod", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Grace periods for soft eviction signals — how long a threshold must be held before pod
+     eviction. Same defaulting and pairing rules as softEvictionThreshold. Values are Go-style
+     duration strings (e.g. '1m30s'); supported units are 'ns', 'us', 'ms', 's', 'm', and 'h'. Only
+     applicable for Linux nodepools."""
+    eviction_max_pod_grace_period_in_seconds: Optional[int] = rest_field(
+        name="evictionMaxPodGracePeriodInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum grace period, in seconds, for pods to terminate during a soft eviction; caps the pod's
+     terminationGracePeriodSeconds. Default is 60, applied when the cluster's
+     ``enableNodeHardening`` property is true. Only applicable for Linux nodepools."""
 
     @overload
     def __init__(
@@ -4243,6 +6040,9 @@ class KubeletConfig(_Model):
         seccomp_default: Optional[Union[str, "_models.SeccompDefault"]] = None,
         kube_reserved: Optional["_models.KubeReserved"] = None,
         hard_eviction_threshold: Optional["_models.HardEvictionThreshold"] = None,
+        soft_eviction_threshold: Optional["_models.SoftEvictionThreshold"] = None,
+        soft_eviction_grace_period: Optional["_models.SoftEvictionGracePeriod"] = None,
+        eviction_max_pod_grace_period_in_seconds: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -4256,7 +6056,7 @@ class KubeletConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubeReserved(_Model):
+class KubeReserved(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Kube-reserved values for kubelet. When a value is not set, the system-computed default based on
     VM size is used. See `AKS node resource reservations <https://aka.ms/aks/nodereservations>`_
     for details on computed defaults. Only applicable for Linux nodepools.
@@ -4297,7 +6097,46 @@ class KubeReserved(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesPatchVersion(_Model):
+class KubernetesImpactedResource(UpgradeInsightImpactedResource, discriminator="Kubernetes"):
+    """A Kubernetes resource impacted by a detected upgrade issue, identified by its namespace and
+    name.
+
+    :ivar resource_type: The type of the impacted resource (for example,
+     Microsoft.Network/virtualNetworks/subnets or PodDisruptionBudget).
+    :vartype resource_type: str
+    :ivar kind: The category of the impacted resource. Required. A Kubernetes resource.
+    :vartype kind: str or ~azure.mgmt.containerservice.models.KUBERNETES
+    :ivar namespace: The Kubernetes namespace of the impacted resource, if applicable.
+    :vartype namespace: str
+    :ivar name: The name of the impacted Kubernetes resource.
+    :vartype name: str
+    """
+
+    kind: Literal[ImpactedResourceKind.KUBERNETES] = rest_discriminator(name="kind", visibility=["read"])  # type: ignore
+    """The category of the impacted resource. Required. A Kubernetes resource."""
+    namespace: Optional[str] = rest_field(visibility=["read"])
+    """The Kubernetes namespace of the impacted resource, if applicable."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the impacted Kubernetes resource."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = ImpactedResourceKind.KUBERNETES  # type: ignore
+
+
+class KubernetesPatchVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Kubernetes patch version profile.
 
     :ivar upgrades: Possible upgrade path for given patch version.
@@ -4325,7 +6164,9 @@ class KubernetesPatchVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesResourceObjectEncryptionProfile(_Model):  # pylint: disable=name-too-long
+class KubernetesResourceObjectEncryptionProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Encryption at rest of Kubernetes resource objects using service-managed keys. More information
     on this can be found under `https://aka.ms/aks/kubernetesResourceObjectEncryption
     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_.
@@ -4333,8 +6174,7 @@ class KubernetesResourceObjectEncryptionProfile(_Model):  # pylint: disable=name
     :ivar infrastructure_encryption: Whether to enable encryption at rest of Kubernetes resource
      objects using service-managed keys. More information on this can be found under
      `https://aka.ms/aks/kubernetesResourceObjectEncryption
-     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. Known values are: "Enabled" and
-     "Disabled".
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. "Enabled"
     :vartype infrastructure_encryption: str or
      ~azure.mgmt.containerservice.models.InfrastructureEncryption
     """
@@ -4345,8 +6185,7 @@ class KubernetesResourceObjectEncryptionProfile(_Model):  # pylint: disable=name
     """Whether to enable encryption at rest of Kubernetes resource objects using service-managed keys.
      More information on this can be found under
      `https://aka.ms/aks/kubernetesResourceObjectEncryption
-     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. Known values are: \"Enabled\" and
-     \"Disabled\"."""
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. \"Enabled\""""
 
     @overload
     def __init__(
@@ -4366,7 +6205,7 @@ class KubernetesResourceObjectEncryptionProfile(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class KubernetesVersion(_Model):
+class KubernetesVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Kubernetes version profile for given major.minor release.
 
     :ivar version: major.minor version of Kubernetes release.
@@ -4422,7 +6261,7 @@ class KubernetesVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesVersionCapabilities(_Model):
+class KubernetesVersionCapabilities(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Capabilities on this Kubernetes version.
 
     :ivar support_plan: Kubernetes support plans available for this version.
@@ -4452,7 +6291,7 @@ class KubernetesVersionCapabilities(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesVersionListResult(_Model):
+class KubernetesVersionListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hold values properties, which is array of KubernetesVersion.
 
     :ivar values_property: Array of AKS supported Kubernetes versions.
@@ -4482,7 +6321,7 @@ class KubernetesVersionListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LabelSelector(_Model):
+class LabelSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A label selector is a label query over a set of resources. The result of matchLabels and
     matchExpressions are ANDed. An empty label selector matches all objects. A null label selector
     matches no objects.
@@ -4527,7 +6366,7 @@ class LabelSelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LabelSelectorRequirement(_Model):
+class LabelSelectorRequirement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A label selector requirement is a selector that contains values, a key, and an operator that
     relates the key and values.
 
@@ -4572,7 +6411,7 @@ class LabelSelectorRequirement(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinuxOSConfig(_Model):
+class LinuxOSConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OS configurations of Linux agent nodes. See `AKS custom node configuration
     <https://docs.microsoft.com/azure/aks/custom-node-configuration>`_ for more details.
 
@@ -4634,7 +6473,11 @@ class LinuxOSConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LoadBalancer(ProxyResource):
+class ListBootstrapDataRequest(_Model):
+    """Empty request body for listing FlexNode bootstrap data."""
+
+
+class LoadBalancer(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configurations regarding multiple standard load balancers. If not supplied, single load
     balancer mode will be used. Multiple standard load balancers mode will be used if at lease one
     configuration is supplied. There has to be a configuration named ``kubernetes``. The name field
@@ -4708,7 +6551,7 @@ class LoadBalancer(ProxyResource):
             super().__setattr__(key, value)
 
 
-class LoadBalancerProperties(_Model):
+class LoadBalancerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for a load balancer resource.
 
     :ivar primary_agent_pool_name: Required field. A string value that must specify the ID of an
@@ -4783,7 +6626,7 @@ class LoadBalancerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocalDNSOverride(_Model):
+class LocalDNSOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Overrides for localDNS profile.
 
     :ivar query_logging: Log level for DNS queries in localDNS. Known values are: "Error" and
@@ -4881,7 +6724,7 @@ class LocalDNSOverride(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocalDNSProfile(_Model):
+class LocalDNSProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configures the per-node local DNS, with VnetDNS and KubeDNS overrides. LocalDNS helps improve
     performance and reliability of DNS resolution in an AKS cluster. For more details see
     aka.ms/aks/localdns.
@@ -4937,7 +6780,7 @@ class LocalDNSProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Machine(ProxyResource):
+class Machine(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A machine. Contains details about the underlying virtual machine. A machine may be visible here
     but not in kubectl get nodes; if so it may be because the machine has not been registered with
     the Kubernetes API Server yet.
@@ -4985,7 +6828,7 @@ class Machine(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class MachineBillingProfile(_Model):
+class MachineBillingProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties having to do with machine billing.
 
     :ivar spot_max_price: The max price (in US Dollars) you are willing to pay for spot instances.
@@ -5021,7 +6864,7 @@ class MachineBillingProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineHardwareProfile(_Model):
+class MachineHardwareProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The hardware and GPU settings of the machine.
 
     :ivar vm_size: The size of the VM. VM size availability varies by region. If a node contains
@@ -5094,7 +6937,7 @@ class MachineIpAddress(_Model):
     """IPv4 or IPv6 address of the machine."""
 
 
-class MachineKubernetesProfile(_Model):
+class MachineKubernetesProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Kubernetes configurations used by the machine.
 
     :ivar node_labels: The node labels on the machine.
@@ -5209,7 +7052,7 @@ class MachineKubernetesProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineNetworkProperties(_Model):
+class MachineNetworkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """network properties of the machine.
 
     :ivar ip_addresses: IPv4, IPv6 addresses of the machine.
@@ -5225,6 +7068,10 @@ class MachineNetworkProperties(_Model):
      the form:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
     :vartype pod_subnet_id: str
+    :ivar pod_ip_allocation_mode: Pod IP Allocation Mode. The IP allocation mode for pods on the
+     machine. Must be used with podSubnetID. The default is 'DynamicIndividual'. Known values are:
+     "DynamicIndividual" and "StaticBlock".
+    :vartype pod_ip_allocation_mode: str or ~azure.mgmt.containerservice.models.PodIPAllocationMode
     :ivar enable_node_public_ip: Whether the machine is allocated its own public IP. Some scenarios
      may require the machine to receive their own dedicated public IP addresses. A common scenario
      is for gaming workloads, where a console needs to make a direct connection to a cloud virtual
@@ -5253,6 +7100,12 @@ class MachineNetworkProperties(_Model):
     """The ID of the subnet which pods will join when launched. If omitted, pod IPs are statically
      assigned on the node subnet (see vnetSubnetID for more details). This is of the form:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}."""
+    pod_ip_allocation_mode: Optional[Union[str, "_models.PodIPAllocationMode"]] = rest_field(
+        name="podIPAllocationMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Pod IP Allocation Mode. The IP allocation mode for pods on the machine. Must be used with
+     podSubnetID. The default is 'DynamicIndividual'. Known values are: \"DynamicIndividual\" and
+     \"StaticBlock\"."""
     enable_node_public_ip: Optional[bool] = rest_field(
         name="enableNodePublicIP", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5276,6 +7129,7 @@ class MachineNetworkProperties(_Model):
         *,
         vnet_subnet_id: Optional[str] = None,
         pod_subnet_id: Optional[str] = None,
+        pod_ip_allocation_mode: Optional[Union[str, "_models.PodIPAllocationMode"]] = None,
         enable_node_public_ip: Optional[bool] = None,
         node_public_ip_prefix_id: Optional[str] = None,
         node_public_ip_tags: Optional[list["_models.IPTag"]] = None,
@@ -5292,7 +7146,7 @@ class MachineNetworkProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineOSProfile(_Model):
+class MachineOSProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The operating system and disk used by the machine.
 
     :ivar os_type: The operating system type. The default is Linux. Known values are: "Linux" and
@@ -5302,7 +7156,8 @@ class MachineOSProfile(_Model):
      Ubuntu if OSType=Linux or Windows2019 if OSType=Windows. And the default Windows OSSKU will be
      changed to Windows2022 after Windows2019 is deprecated. Known values are: "Ubuntu",
      "AzureLinux", "AzureLinux3", "Mariner", "Flatcar", "CBLMariner", "Windows2019", "Windows2022",
-     "Ubuntu2204", "Windows2025", "WindowsAnnual", "Ubuntu2404", and "AzureContainerLinux".
+     "Ubuntu2204", "Windows2025", "WindowsAnnual", "Ubuntu2404", "AzureContainerLinux", and
+     "Ubuntu2604".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every machine
      in the master/agent pool. If you specify 0, it will apply the default osDisk size according to
@@ -5333,8 +7188,8 @@ class MachineOSProfile(_Model):
      OSType=Linux or Windows2019 if OSType=Windows. And the default Windows OSSKU will be changed to
      Windows2022 after Windows2019 is deprecated. Known values are: \"Ubuntu\", \"AzureLinux\",
      \"AzureLinux3\", \"Mariner\", \"Flatcar\", \"CBLMariner\", \"Windows2019\", \"Windows2022\",
-     \"Ubuntu2204\", \"Windows2025\", \"WindowsAnnual\", \"Ubuntu2404\", and
-     \"AzureContainerLinux\"."""
+     \"Ubuntu2204\", \"Windows2025\", \"WindowsAnnual\", \"Ubuntu2404\", \"AzureContainerLinux\",
+     and \"Ubuntu2604\"."""
     os_disk_size_gb: Optional[int] = rest_field(
         name="osDiskSizeGB", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5386,7 +7241,7 @@ class MachineOSProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineOSProfileLinuxProfile(_Model):
+class MachineOSProfileLinuxProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Linux machine's specific profile.
 
     :ivar linux_os_config: The OS configuration of Linux machine.
@@ -5429,7 +7284,7 @@ class MachineOSProfileLinuxProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineProperties(_Model):
+class MachineProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the machine.
 
     :ivar network: network properties of the machine.
@@ -5474,6 +7329,9 @@ class MachineProperties(_Model):
      LocalDNS helps improve performance and reliability of DNS resolution in an AKS cluster. For
      more details see aka.ms/aks/localdns.
     :vartype local_dns_profile: ~azure.mgmt.containerservice.models.LocalDNSProfile
+    :ivar capacity_reservation: The Capacity Reservation Group to provide virtual machines from a
+     reserved group of Machines.
+    :vartype capacity_reservation: ~azure.mgmt.containerservice.models.CapacityReservation
     """
 
     network: Optional["_models.MachineNetworkProperties"] = rest_field(
@@ -5535,6 +7393,10 @@ class MachineProperties(_Model):
     """Configures the per-node local DNS, with VnetDNS and KubeDNS overrides. LocalDNS helps improve
      performance and reliability of DNS resolution in an AKS cluster. For more details see
      aka.ms/aks/localdns."""
+    capacity_reservation: Optional["_models.CapacityReservation"] = rest_field(
+        name="capacityReservation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Capacity Reservation Group to provide virtual machines from a reserved group of Machines."""
 
     @overload
     def __init__(
@@ -5551,6 +7413,7 @@ class MachineProperties(_Model):
         billing: Optional["_models.MachineBillingProfile"] = None,
         tags: Optional[dict[str, str]] = None,
         local_dns_profile: Optional["_models.LocalDNSProfile"] = None,
+        capacity_reservation: Optional["_models.CapacityReservation"] = None,
     ) -> None: ...
 
     @overload
@@ -5564,7 +7427,7 @@ class MachineProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineSecurityProfile(_Model):
+class MachineSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The security settings of the machine.
 
     :ivar enable_vtpm: vTPM is a Trusted Launch feature for configuring a dedicated secure vault
@@ -5670,7 +7533,7 @@ class MachineStatus(_Model):
      values are: \"Running\" and \"Deleted\"."""
 
 
-class MaintenanceConfiguration(ProxyResource):
+class MaintenanceConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Planned maintenance configuration, used to configure when updates can be deployed to a Managed
     Cluster. See `planned maintenance <https://docs.microsoft.com/azure/aks/planned-maintenance>`_
     for more information about planned maintenance.
@@ -5695,7 +7558,7 @@ class MaintenanceConfiguration(ProxyResource):
     )
     """Properties of a default maintenance configuration."""
 
-    __flattened_items = ["time_in_week", "not_allowed_time", "maintenance_window"]
+    __flattened_items = ["time_in_week", "not_allowed_time", "maintenance_window_id", "maintenance_window"]
 
     @overload
     def __init__(
@@ -5733,7 +7596,7 @@ class MaintenanceConfiguration(ProxyResource):
             super().__setattr__(key, value)
 
 
-class MaintenanceConfigurationProperties(_Model):
+class MaintenanceConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties used to configure planned maintenance for a Managed Cluster.
 
     :ivar time_in_week: Time slots during the week when planned maintenance is allowed to proceed.
@@ -5742,6 +7605,12 @@ class MaintenanceConfigurationProperties(_Model):
     :vartype time_in_week: list[~azure.mgmt.containerservice.models.TimeInWeek]
     :ivar not_allowed_time: Time slots on which upgrade is not allowed.
     :vartype not_allowed_time: list[~azure.mgmt.containerservice.models.TimeSpan]
+    :ivar maintenance_window_id: The fully qualified resource ID of the maintenance window that
+     this maintenance configuration is linked to. When set, the schedule is derived read-only from
+     the linked maintenance window — maintenanceWindow becomes a computed field. When absent (the
+     default), the schedule is defined inline via the maintenanceWindow property. The caller must
+     have read access to the target maintenance window.
+    :vartype maintenance_window_id: str
     :ivar maintenance_window: Maintenance window for the maintenance configuration.
     :vartype maintenance_window: ~azure.mgmt.containerservice.models.MaintenanceWindow
     """
@@ -5756,6 +7625,14 @@ class MaintenanceConfigurationProperties(_Model):
         name="notAllowedTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """Time slots on which upgrade is not allowed."""
+    maintenance_window_id: Optional[str] = rest_field(
+        name="maintenanceWindowId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified resource ID of the maintenance window that this maintenance configuration
+     is linked to. When set, the schedule is derived read-only from the linked maintenance window —
+     maintenanceWindow becomes a computed field. When absent (the default), the schedule is defined
+     inline via the maintenanceWindow property. The caller must have read access to the target
+     maintenance window."""
     maintenance_window: Optional["_models.MaintenanceWindow"] = rest_field(
         name="maintenanceWindow", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5767,6 +7644,7 @@ class MaintenanceConfigurationProperties(_Model):
         *,
         time_in_week: Optional[list["_models.TimeInWeek"]] = None,
         not_allowed_time: Optional[list["_models.TimeSpan"]] = None,
+        maintenance_window_id: Optional[str] = None,
         maintenance_window: Optional["_models.MaintenanceWindow"] = None,
     ) -> None: ...
 
@@ -5781,7 +7659,7 @@ class MaintenanceConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceWindow(_Model):
+class MaintenanceWindow(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance window used to configure scheduled auto-upgrade for a Managed Cluster.
 
     :ivar schedule: Recurrence schedule for the maintenance window. Required.
@@ -5853,7 +7731,7 @@ class MaintenanceWindow(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5897,7 +7775,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceWindowResource(TrackedResource):
+class MaintenanceWindowResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A maintenance window is a resource-group-scoped resource that defines a reusable maintenance
     schedule which can be linked to maintenance configurations on one or more managed clusters. For
     more information, see `https://aka.ms/aks/maintenance-windows
@@ -5947,7 +7825,7 @@ class MaintenanceWindowResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceWindowResourceProperties(_Model):
+class MaintenanceWindowResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a maintenance window. For more information, see
     `https://aka.ms/aks/maintenance-windows <https://aka.ms/aks/maintenance-windows>`_.
 
@@ -6038,7 +7916,7 @@ class MaintenanceWindowResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedCluster(TrackedResource):
+class ManagedCluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6120,6 +7998,7 @@ class ManagedCluster(TrackedResource):
         "enable_rbac",
         "support_plan",
         "enable_fips",
+        "enable_node_hardening",
         "enable_namespace_resources",
         "network_profile",
         "aad_profile",
@@ -6144,6 +8023,8 @@ class ManagedCluster(TrackedResource):
         "node_provisioning_profile",
         "bootstrap_profile",
         "ai_toolchain_operator_profile",
+        "agent_sandbox_profile",
+        "pod_snapshot_profile",
         "scheduler_profile",
         "hosted_system_profile",
         "health_monitor_profile",
@@ -6194,7 +8075,7 @@ class ManagedCluster(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ManagedClusterAADProfile(_Model):
+class ManagedClusterAADProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AADProfile specifies attributes for Azure Active Directory integration. For more details see
     `managed AAD on AKS <https://docs.microsoft.com/azure/aks/managed-aad>`_.
 
@@ -6239,9 +8120,7 @@ class ManagedClusterAADProfile(_Model):
     )
     """(DEPRECATED) The server AAD application ID. Learn more at `https://aka.ms/aks/aad-legacy
      <https://aka.ms/aks/aad-legacy>`_."""
-    server_app_secret: Optional[str] = rest_field(
-        name="serverAppSecret", visibility=["read", "create", "update", "delete", "query"]
-    )
+    server_app_secret: Optional[str] = rest_field(name="serverAppSecret", visibility=["create", "update"])
     """(DEPRECATED) The server AAD application secret. Learn more at `https://aka.ms/aks/aad-legacy
      <https://aka.ms/aks/aad-legacy>`_."""
     tenant_id: Optional[str] = rest_field(name="tenantID", visibility=["read", "create", "update", "delete", "query"])
@@ -6272,7 +8151,7 @@ class ManagedClusterAADProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAccessProfile(TrackedResource):
+class ManagedClusterAccessProfile(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed cluster Access Profile.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6339,7 +8218,7 @@ class ManagedClusterAccessProfile(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ManagedClusterAddonProfile(_Model):
+class ManagedClusterAddonProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Kubernetes add-on profile for a managed cluster.
 
     :ivar enabled: Whether the add-on is enabled or not. Required.
@@ -6376,7 +8255,7 @@ class ManagedClusterAddonProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserAssignedIdentity(_Model):
+class UserAssignedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about a user assigned identity.
 
     :ivar resource_id: The resource ID of the user assigned identity.
@@ -6416,7 +8295,9 @@ class UserAssignedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAddonProfileIdentity(UserAssignedIdentity):
+class ManagedClusterAddonProfileIdentity(
+    UserAssignedIdentity
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information of user assigned identity used by this add-on.
 
     :ivar resource_id: The resource ID of the user assigned identity.
@@ -6447,7 +8328,7 @@ class ManagedClusterAddonProfileIdentity(UserAssignedIdentity):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAgentPoolProfileProperties(_Model):
+class ManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for the container service agent pool profile.
 
     :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
@@ -6510,7 +8391,7 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3", "Mariner",
      "Flatcar", "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025",
-     "WindowsAnnual", "Ubuntu2404", and "AzureContainerLinux".
+     "WindowsAnnual", "Ubuntu2404", "AzureContainerLinux", and "Ubuntu2604".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -6523,7 +8404,7 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
      are: "Delete" and "Deallocate".
     :vartype scale_down_mode: str or ~azure.mgmt.containerservice.models.ScaleDownMode
     :ivar type: The type of Agent Pool. Known values are: "VirtualMachineScaleSets",
-     "AvailabilitySet", and "VirtualMachines".
+     "AvailabilitySet", "VirtualMachines", and "FlexNodes".
     :vartype type: str or ~azure.mgmt.containerservice.models.AgentPoolType
     :ivar mode: The mode of an agent pool. A cluster must have at least one 'System' Agent Pool at
      all times. For additional information on agent pool restrictions and best practices, see:
@@ -6760,7 +8641,7 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
      default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >= 1.25 if OSType
      is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"Mariner\",
      \"Flatcar\", \"CBLMariner\", \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\",
-     \"WindowsAnnual\", \"Ubuntu2404\", and \"AzureContainerLinux\"."""
+     \"WindowsAnnual\", \"Ubuntu2404\", \"AzureContainerLinux\", and \"Ubuntu2604\"."""
     max_count: Optional[int] = rest_field(name="maxCount", visibility=["read", "create", "update", "delete", "query"])
     """The maximum number of nodes for auto-scaling."""
     min_count: Optional[int] = rest_field(name="minCount", visibility=["read", "create", "update", "delete", "query"])
@@ -6778,8 +8659,8 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
     type: Optional[Union[str, "_models.AgentPoolType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The type of Agent Pool. Known values are: \"VirtualMachineScaleSets\", \"AvailabilitySet\", and
-     \"VirtualMachines\"."""
+    """The type of Agent Pool. Known values are: \"VirtualMachineScaleSets\", \"AvailabilitySet\",
+     \"VirtualMachines\", and \"FlexNodes\"."""
     mode: Optional[Union[str, "_models.AgentPoolMode"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7075,7 +8956,9 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
+class ManagedClusterAgentPoolProfile(
+    ManagedClusterAgentPoolProfileProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for the container service agent pool.
 
     :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
@@ -7138,7 +9021,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3", "Mariner",
      "Flatcar", "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025",
-     "WindowsAnnual", "Ubuntu2404", and "AzureContainerLinux".
+     "WindowsAnnual", "Ubuntu2404", "AzureContainerLinux", and "Ubuntu2604".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -7151,7 +9034,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      are: "Delete" and "Deallocate".
     :vartype scale_down_mode: str or ~azure.mgmt.containerservice.models.ScaleDownMode
     :ivar type: The type of Agent Pool. Known values are: "VirtualMachineScaleSets",
-     "AvailabilitySet", and "VirtualMachines".
+     "AvailabilitySet", "VirtualMachines", and "FlexNodes".
     :vartype type: str or ~azure.mgmt.containerservice.models.AgentPoolType
     :ivar mode: The mode of an agent pool. A cluster must have at least one 'System' Agent Pool at
      all times. For additional information on agent pool restrictions and best practices, see:
@@ -7394,7 +9277,37 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAIToolchainOperatorProfile(_Model):
+class ManagedClusterAgentSandboxProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Settings for the Agent Sandbox core extension managed by Azure Kubernetes Service (AKS).
+
+    :ivar enabled: Whether the Agent Sandbox core extension is enabled for the cluster. On cluster
+     creation, the default is false.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the Agent Sandbox core extension is enabled for the cluster. On cluster creation, the
+     default is false."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedClusterAIToolchainOperatorProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """When enabling the operator, a set of AKS managed CRDs and controllers will be installed in the
     cluster. The operator automates the deployment of OSS models for inference and/or training
     purposes. It provides a set of preset models and enables distributed inference against them.
@@ -7426,7 +9339,7 @@ class ManagedClusterAIToolchainOperatorProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAPIServerAccessProfile(_Model):
+class ManagedClusterAPIServerAccessProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access profile for managed cluster API server.
 
     :ivar authorized_ip_ranges: The IP ranges authorized to access the Kubernetes API server. IP
@@ -7520,7 +9433,7 @@ class ManagedClusterAPIServerAccessProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAppRoutingIstio(_Model):
+class ManagedClusterAppRoutingIstio(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for using a sidecar-less Istio control plane for managed ingress via the Gateway
     API with App Routing. See `https://aka.ms/gateway-on-istio <https://aka.ms/gateway-on-istio>`_
     for information on using Istio for ingress via the Gateway API.
@@ -7554,7 +9467,7 @@ class ManagedClusterAppRoutingIstio(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAutoUpgradeProfile(_Model):
+class ManagedClusterAutoUpgradeProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Auto upgrade profile for a managed cluster.
 
     :ivar upgrade_channel: The upgrade channel for auto upgrade. The default is 'none'. For more
@@ -7601,7 +9514,7 @@ class ManagedClusterAutoUpgradeProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfile(_Model):
+class ManagedClusterAzureMonitorProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Monitor addon profiles for monitoring the managed cluster.
 
     :ivar metrics: Metrics profile for the Azure Monitor managed service for Prometheus addon.
@@ -7609,9 +9522,9 @@ class ManagedClusterAzureMonitorProfile(_Model):
      and configure additional scraping for custom targets. See aka.ms/AzureManagedPrometheus for an
      overview.
     :vartype metrics: ~azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileMetrics
-    :ivar container_insights: Azure Monitor Container Insights Profile for Kubernetes Events,
-     Inventory and Container stdout & stderr logs etc. See aka.ms/AzureMonitorContainerInsights for
-     an overview.
+    :ivar container_insights: Set this to enable and configure Azure Monitor Container Insights for
+     the cluster, which collects Kubernetes events, inventory, and container stdout & stderr logs.
+     See aka.ms/AzureMonitorContainerInsights for an overview.
     :vartype container_insights:
      ~azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileContainerInsights
     :ivar app_monitoring: Application Monitoring Profile for Kubernetes Application Container.
@@ -7632,8 +9545,9 @@ class ManagedClusterAzureMonitorProfile(_Model):
     container_insights: Optional["_models.ManagedClusterAzureMonitorProfileContainerInsights"] = rest_field(
         name="containerInsights", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Azure Monitor Container Insights Profile for Kubernetes Events, Inventory and Container stdout
-     & stderr logs etc. See aka.ms/AzureMonitorContainerInsights for an overview."""
+    """Set this to enable and configure Azure Monitor Container Insights for the cluster, which
+     collects Kubernetes events, inventory, and container stdout & stderr logs. See
+     aka.ms/AzureMonitorContainerInsights for an overview."""
     app_monitoring: Optional["_models.ManagedClusterAzureMonitorProfileAppMonitoring"] = rest_field(
         name="appMonitoring", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7661,7 +9575,9 @@ class ManagedClusterAzureMonitorProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileAppMonitoring(_Model):  # pylint: disable=name-too-long
+class ManagedClusterAzureMonitorProfileAppMonitoring(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Application Monitoring profile for AKS.
 
     :ivar auto_instrumentation: Application Monitoring auto-instrumentation for AKS. Deploys a
@@ -7671,15 +9587,15 @@ class ManagedClusterAzureMonitorProfileAppMonitoring(_Model):  # pylint: disable
      <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
     :vartype auto_instrumentation:
      ~azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation
-    :ivar open_telemetry_metrics: Application Monitoring Open Telemetry Metrics Profile for AKS.
+    :ivar open_telemetry_metrics: Application Monitoring OpenTelemetry Metrics Profile for AKS.
      Collects OpenTelemetry metrics of the application using Azure Monitor OpenTelemetry based SDKs.
      See `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
      `https://aka.ms/AzureMonitorApplicationMonitoring
      <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
     :vartype open_telemetry_metrics:
      ~azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics
-    :ivar open_telemetry_logs_and_traces: Application Monitoring Open Telemetry Logs and Traces
-     Profile for AKS. Collects OpenTelemetry logs and traces of the application using Azure Monitor
+    :ivar open_telemetry_logs_and_traces: Application Monitoring OpenTelemetry logs and traces
+     profile for AKS. Collects OpenTelemetry logs and traces of the application using Azure Monitor
      OpenTelemetry based SDKs. See `https://aka.ms/AKSAppMonitoringDocs
      <https://aka.ms/AKSAppMonitoringDocs>`_ and `https://aka.ms/AzureMonitorApplicationMonitoring
      <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
@@ -7698,15 +9614,15 @@ class ManagedClusterAzureMonitorProfileAppMonitoring(_Model):  # pylint: disable
     open_telemetry_metrics: Optional["_models.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics"] = (
         rest_field(name="openTelemetryMetrics", visibility=["read", "create", "update", "delete", "query"])
     )
-    """Application Monitoring Open Telemetry Metrics Profile for AKS. Collects OpenTelemetry metrics
-     of the application using Azure Monitor OpenTelemetry based SDKs. See
+    """Application Monitoring OpenTelemetry Metrics Profile for AKS. Collects OpenTelemetry metrics of
+     the application using Azure Monitor OpenTelemetry based SDKs. See
      `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
      `https://aka.ms/AzureMonitorApplicationMonitoring
      <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview."""
     open_telemetry_logs_and_traces: Optional[
         "_models.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces"
     ] = rest_field(name="openTelemetryLogsAndTraces", visibility=["read", "create", "update", "delete", "query"])
-    """Application Monitoring Open Telemetry Logs and Traces Profile for AKS. Collects OpenTelemetry
+    """Application Monitoring OpenTelemetry logs and traces profile for AKS. Collects OpenTelemetry
      logs and traces of the application using Azure Monitor OpenTelemetry based SDKs. See
      `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
      `https://aka.ms/AzureMonitorApplicationMonitoring
@@ -7738,7 +9654,9 @@ class ManagedClusterAzureMonitorProfileAppMonitoring(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation(_Model):  # pylint: disable=name-too-long
+class ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Application Monitoring auto-instrumentation for AKS. Deploys a webhook that auto-instruments
     workloads with Microsoft OpenTelemetry Distros to collect OpenTelemetry metrics, logs, and
     traces. See `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
@@ -7770,31 +9688,33 @@ class ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces(_Model):  # pylint: disable=name-too-long
-    """Application Monitoring Open Telemetry Logs and Traces Profile for AKS. Collects OpenTelemetry
+class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Application Monitoring OpenTelemetry logs and traces profile for AKS. Collects OpenTelemetry
     logs and traces of the application using Azure Monitor OpenTelemetry based SDKs. See
     `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
     `https://aka.ms/AzureMonitorApplicationMonitoring
     <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
 
-    :ivar enabled: Indicates if Application Monitoring Open Telemetry Logs and traces is enabled or
+    :ivar enabled: Indicates if Application Monitoring OpenTelemetry Logs and traces is enabled or
      not.
     :vartype enabled: bool
-    :ivar http_port: The host port for Open Telemetry HTTP/PROTOBUF logs and traces. If not
+    :ivar http_port: The host port for OpenTelemetry HTTP/PROTOBUF logs and traces. If not
      specified, the default port is 28331.
     :vartype http_port: int
-    :ivar grpc_port: The host port for Open Telemetry GRPC logs and traces. If not specified, the
+    :ivar grpc_port: The host port for OpenTelemetry GRPC logs and traces. If not specified, the
      default port is 28332.
     :vartype grpc_port: int
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Indicates if Application Monitoring Open Telemetry Logs and traces is enabled or not."""
+    """Indicates if Application Monitoring OpenTelemetry Logs and traces is enabled or not."""
     http_port: Optional[int] = rest_field(name="httpPort", visibility=["read", "create", "update", "delete", "query"])
-    """The host port for Open Telemetry HTTP/PROTOBUF logs and traces. If not specified, the default
+    """The host port for OpenTelemetry HTTP/PROTOBUF logs and traces. If not specified, the default
      port is 28331."""
     grpc_port: Optional[int] = rest_field(name="grpcPort", visibility=["read", "create", "update", "delete", "query"])
-    """The host port for Open Telemetry GRPC logs and traces. If not specified, the default port is
+    """The host port for OpenTelemetry GRPC logs and traces. If not specified, the default port is
      28332."""
 
     @overload
@@ -7817,30 +9737,32 @@ class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces(_
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics(_Model):  # pylint: disable=name-too-long
-    """Application Monitoring Open Telemetry Metrics Profile for AKS. Collects OpenTelemetry metrics
-    of the application using Azure Monitor OpenTelemetry based SDKs. See
+class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Application Monitoring OpenTelemetry Metrics Profile for AKS. Collects OpenTelemetry metrics of
+    the application using Azure Monitor OpenTelemetry based SDKs. See
     `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
     `https://aka.ms/AzureMonitorApplicationMonitoring
     <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
 
-    :ivar enabled: Indicates if Application Monitoring Open Telemetry Metrics is enabled or not.
+    :ivar enabled: Indicates if Application Monitoring OpenTelemetry Metrics is enabled or not.
     :vartype enabled: bool
-    :ivar http_port: The host port for Open Telemetry HTTP/PROTOBUF metrics. If not specified, the
+    :ivar http_port: The host port for OpenTelemetry HTTP/PROTOBUF metrics. If not specified, the
      default port is 28333.
     :vartype http_port: int
-    :ivar grpc_port: The host port for Open Telemetry GRPC metrics. If not specified, the default
+    :ivar grpc_port: The host port for OpenTelemetry GRPC metrics. If not specified, the default
      port is 28334.
     :vartype grpc_port: int
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Indicates if Application Monitoring Open Telemetry Metrics is enabled or not."""
+    """Indicates if Application Monitoring OpenTelemetry Metrics is enabled or not."""
     http_port: Optional[int] = rest_field(name="httpPort", visibility=["read", "create", "update", "delete", "query"])
-    """The host port for Open Telemetry HTTP/PROTOBUF metrics. If not specified, the default port is
+    """The host port for OpenTelemetry HTTP/PROTOBUF metrics. If not specified, the default port is
      28333."""
     grpc_port: Optional[int] = rest_field(name="grpcPort", visibility=["read", "create", "update", "delete", "query"])
-    """The host port for Open Telemetry GRPC metrics. If not specified, the default port is 28334."""
+    """The host port for OpenTelemetry GRPC metrics. If not specified, the default port is 28334."""
 
     @overload
     def __init__(
@@ -7862,9 +9784,12 @@ class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics(_Model)
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileContainerInsights(_Model):  # pylint: disable=name-too-long
-    """Azure Monitor Container Insights Profile for Kubernetes Events, Inventory and Container stdout
-    & stderr logs etc. See aka.ms/AzureMonitorContainerInsights for an overview.
+class ManagedClusterAzureMonitorProfileContainerInsights(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Azure Monitor Container Insights profile. Represents the configuration for collecting
+    Kubernetes events, inventory, and container stdout & stderr logs. See
+    aka.ms/AzureMonitorContainerInsights for an overview.
 
     :ivar enabled: Indicates if Azure Monitor Container Insights Logs Addon is enabled or not.
     :vartype enabled: bool
@@ -7873,21 +9798,14 @@ class ManagedClusterAzureMonitorProfileContainerInsights(_Model):  # pylint: dis
     :vartype log_analytics_workspace_resource_id: str
     :ivar syslog_port: The syslog host port. If not specified, the default port is 28330.
     :vartype syslog_port: int
-    :ivar disable_custom_metrics: Indicates whether custom metrics collection has to be disabled or
-     not. If not specified the default is false. No custom metrics will be emitted if this field is
-     false but the container insights enabled field is false.
-    :vartype disable_custom_metrics: bool
     :ivar disable_prometheus_metrics_scraping: Indicates whether prometheus metrics scraping is
-     disabled or not. If not specified the default is false. No prometheus metrics will be emitted
-     if this field is false but the container insights enabled field is false.
+     disabled or not. If not specified the default is false i.e. the prometheus scraping is enabled.
     :vartype disable_prometheus_metrics_scraping: bool
     :ivar container_network_logs: Configures container network logs ingestion with Azure Monitor.
-     Which network logs to ingest is controlled by the CRD found in the following links. No network
-     logs are ingested by default. More information on container network logs can be found at
-     `https://aka.ms/ContainerNetworkLogsDoc <https://aka.ms/ContainerNetworkLogsDoc>`_. More
-     information on configuring container network log can be found at
-     `https://aka.ms/acns/howtoenablecnl <https://aka.ms/acns/howtoenablecnl>`_. If not specified,
-     the default is Disabled. Known values are: "Disabled" and "Enabled".
+     The log types ingested are controlled by the associated CRD; if unspecified, defaults to
+     ``Disabled``. See `https://aka.ms/ContainerNetworkLogsDoc
+     <https://aka.ms/ContainerNetworkLogsDoc>`_ and `https://aka.ms/acns/howtoenablecnl
+     <https://aka.ms/acns/howtoenablecnl>`_ for details. Known values are: "Disabled" and "Enabled".
     :vartype container_network_logs: str or
      ~azure.mgmt.containerservice.models.ContainerNetworkLogs
     """
@@ -7903,28 +9821,19 @@ class ManagedClusterAzureMonitorProfileContainerInsights(_Model):  # pylint: dis
         name="syslogPort", visibility=["read", "create", "update", "delete", "query"]
     )
     """The syslog host port. If not specified, the default port is 28330."""
-    disable_custom_metrics: Optional[bool] = rest_field(
-        name="disableCustomMetrics", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Indicates whether custom metrics collection has to be disabled or not. If not specified the
-     default is false. No custom metrics will be emitted if this field is false but the container
-     insights enabled field is false."""
     disable_prometheus_metrics_scraping: Optional[bool] = rest_field(
         name="disablePrometheusMetricsScraping", visibility=["read", "create", "update", "delete", "query"]
     )
     """Indicates whether prometheus metrics scraping is disabled or not. If not specified the default
-     is false. No prometheus metrics will be emitted if this field is false but the container
-     insights enabled field is false."""
+     is false i.e. the prometheus scraping is enabled."""
     container_network_logs: Optional[Union[str, "_models.ContainerNetworkLogs"]] = rest_field(
         name="containerNetworkLogs", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Configures container network logs ingestion with Azure Monitor. Which network logs to ingest is
-     controlled by the CRD found in the following links. No network logs are ingested by default.
-     More information on container network logs can be found at
-     `https://aka.ms/ContainerNetworkLogsDoc <https://aka.ms/ContainerNetworkLogsDoc>`_. More
-     information on configuring container network log can be found at
-     `https://aka.ms/acns/howtoenablecnl <https://aka.ms/acns/howtoenablecnl>`_. If not specified,
-     the default is Disabled. Known values are: \"Disabled\" and \"Enabled\"."""
+    """Configures container network logs ingestion with Azure Monitor. The log types ingested are
+     controlled by the associated CRD; if unspecified, defaults to ``Disabled``. See
+     `https://aka.ms/ContainerNetworkLogsDoc <https://aka.ms/ContainerNetworkLogsDoc>`_ and
+     `https://aka.ms/acns/howtoenablecnl <https://aka.ms/acns/howtoenablecnl>`_ for details. Known
+     values are: \"Disabled\" and \"Enabled\"."""
 
     @overload
     def __init__(
@@ -7933,7 +9842,6 @@ class ManagedClusterAzureMonitorProfileContainerInsights(_Model):  # pylint: dis
         enabled: Optional[bool] = None,
         log_analytics_workspace_resource_id: Optional[str] = None,
         syslog_port: Optional[int] = None,
-        disable_custom_metrics: Optional[bool] = None,
         disable_prometheus_metrics_scraping: Optional[bool] = None,
         container_network_logs: Optional[Union[str, "_models.ContainerNetworkLogs"]] = None,
     ) -> None: ...
@@ -7949,7 +9857,9 @@ class ManagedClusterAzureMonitorProfileContainerInsights(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileKubeStateMetrics(_Model):  # pylint: disable=name-too-long
+class ManagedClusterAzureMonitorProfileKubeStateMetrics(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Kube State Metrics profile for the Azure Managed Prometheus addon. These optional settings are
     for the kube-state-metrics pod that is deployed with the addon. See
     aka.ms/AzureManagedPrometheus-optional-parameters for details.
@@ -7998,7 +9908,7 @@ class ManagedClusterAzureMonitorProfileKubeStateMetrics(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileMetrics(_Model):
+class ManagedClusterAzureMonitorProfileMetrics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metrics profile for the Azure Monitor managed service for Prometheus addon. Collect
     out-of-the-box Kubernetes infrastructure metrics to send to an Azure Monitor Workspace and
     configure additional scraping for custom targets. See aka.ms/AzureManagedPrometheus for an
@@ -8056,7 +9966,9 @@ class ManagedClusterAzureMonitorProfileMetrics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileMetricsControlPlane(_Model):  # pylint: disable=name-too-long
+class ManagedClusterAzureMonitorProfileMetricsControlPlane(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Control plane metrics collection profile for the Azure Managed Prometheus addon. Configures
     collection of operational runtime metrics from managed control plane components
     (kube-apiserver, etcd, etc). See aka.ms/aks/controlplane-metrics for an overview.
@@ -8089,7 +10001,7 @@ class ManagedClusterAzureMonitorProfileMetricsControlPlane(_Model):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterBootstrapProfile(_Model):
+class ManagedClusterBootstrapProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The bootstrap profile.
 
     :ivar artifact_source: The artifact source. The source where the artifacts are downloaded from.
@@ -8130,7 +10042,7 @@ class ManagedClusterBootstrapProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterControlPlaneScalingProfile(_Model):
+class ManagedClusterControlPlaneScalingProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for providing scaled and performance guaranteed control plane capacity to deliver
     consistent performance under high workload. Requires Kubernetes version 1.33.0 or later.
 
@@ -8169,7 +10081,7 @@ class ManagedClusterControlPlaneScalingProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterCostAnalysis(_Model):
+class ManagedClusterCostAnalysis(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The cost analysis configuration for the cluster.
 
     :ivar enabled: Whether to enable cost analysis. The Managed Cluster sku.tier must be set to
@@ -8203,7 +10115,7 @@ class ManagedClusterCostAnalysis(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterHealthMonitorProfile(_Model):
+class ManagedClusterHealthMonitorProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Health monitor profile for the managed cluster.
 
     :ivar enable_continuous_control_plane_and_addon_monitor: Whether to enable continuous control
@@ -8241,7 +10153,7 @@ class ManagedClusterHealthMonitorProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterHostedSystemProfile(_Model):
+class ManagedClusterHostedSystemProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for hosted system addons.
 
     :ivar enabled: Whether to enable hosted system addons for the cluster.
@@ -8299,7 +10211,7 @@ class ManagedClusterHostedSystemProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterHTTPProxyConfig(_Model):
+class ManagedClusterHTTPProxyConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cluster HTTP proxy configuration.
 
     :ivar http_proxy: The HTTP proxy server endpoint to use.
@@ -8359,7 +10271,7 @@ class ManagedClusterHTTPProxyConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterIdentity(_Model):
+class ManagedClusterIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the managed cluster.
 
     :ivar principal_id: The principal id of the system assigned identity which is used by master
@@ -8430,7 +10342,9 @@ class ManagedClusterIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterIngressDefaultDomainProfile(_Model):  # pylint: disable=name-too-long
+class ManagedClusterIngressDefaultDomainProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Default domain profile for the managed cluster ingress profile.
 
     :ivar enabled: Whether to enable Default Domain.
@@ -8464,7 +10378,7 @@ class ManagedClusterIngressDefaultDomainProfile(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterIngressProfile(_Model):
+class ManagedClusterIngressProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Ingress profile for the container service cluster.
 
     :ivar web_app_routing: App Routing settings for the ingress profile. You can find an overview
@@ -8518,7 +10432,9 @@ class ManagedClusterIngressProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterIngressProfileApplicationLoadBalancer(_Model):  # pylint: disable=name-too-long
+class ManagedClusterIngressProfileApplicationLoadBalancer(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Application Load Balancer settings for the ingress profile.
 
     :ivar enabled: Whether to enable Application Load Balancer.
@@ -8553,7 +10469,9 @@ class ManagedClusterIngressProfileApplicationLoadBalancer(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterIngressProfileGatewayConfiguration(_Model):  # pylint: disable=name-too-long
+class ManagedClusterIngressProfileGatewayConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Configuration for managed Gateway API CRDs. See `https://aka.ms/k8s-gateway-api
     <https://aka.ms/k8s-gateway-api>`_ for more details.
 
@@ -8589,7 +10507,7 @@ class ManagedClusterIngressProfileGatewayConfiguration(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterIngressProfileNginx(_Model):
+class ManagedClusterIngressProfileNginx(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Nginx ingress controller configuration for the managed cluster ingress profile.
 
     :ivar default_ingress_controller_type: Ingress type for the default NginxIngressController
@@ -8622,7 +10540,9 @@ class ManagedClusterIngressProfileNginx(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterIngressProfileWebAppRouting(_Model):  # pylint: disable=name-too-long
+class ManagedClusterIngressProfileWebAppRouting(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Application Routing add-on settings for the ingress profile.
 
     :ivar enabled: Whether to enable the Application Routing add-on.
@@ -8710,7 +10630,7 @@ class ManagedClusterIngressProfileWebAppRouting(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterLoadBalancerProfile(_Model):
+class ManagedClusterLoadBalancerProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile of the managed cluster load balancer.
 
     :ivar managed_outbound_i_ps: Desired managed outbound IPs for the cluster load balancer.
@@ -8736,7 +10656,7 @@ class ManagedClusterLoadBalancerProfile(_Model):
      cluster or not.
     :vartype enable_multiple_standard_load_balancers: bool
     :ivar backend_pool_type: The type of the managed inbound Load Balancer BackendPool. Known
-     values are: "NodeIPConfiguration" and "NodeIP".
+     values are: "NodeIPConfiguration", "NodeIP", and "PodIP".
     :vartype backend_pool_type: str or ~azure.mgmt.containerservice.models.BackendPoolType
     :ivar cluster_service_load_balancer_health_probe_mode: The health probing behavior for External
      Traffic Policy Cluster services. Known values are: "ServiceNodePort" and "Shared".
@@ -8778,7 +10698,7 @@ class ManagedClusterLoadBalancerProfile(_Model):
         name="backendPoolType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of the managed inbound Load Balancer BackendPool. Known values are:
-     \"NodeIPConfiguration\" and \"NodeIP\"."""
+     \"NodeIPConfiguration\", \"NodeIP\", and \"PodIP\"."""
     cluster_service_load_balancer_health_probe_mode: Optional[
         Union[str, "_models.ClusterServiceLoadBalancerHealthProbeMode"]
     ] = rest_field(
@@ -8814,7 +10734,9 @@ class ManagedClusterLoadBalancerProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterLoadBalancerProfileManagedOutboundIPs(_Model):  # pylint: disable=name-too-long
+class ManagedClusterLoadBalancerProfileManagedOutboundIPs(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Desired managed outbound IPs for the cluster load balancer.
 
     :ivar count: The desired number of IPv4 outbound IPs created/managed by Azure for the cluster
@@ -8854,7 +10776,9 @@ class ManagedClusterLoadBalancerProfileManagedOutboundIPs(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(_Model):  # pylint: disable=name-too-long
+class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Desired outbound IP Prefix resources for the cluster load balancer.
 
     :ivar public_ip_prefixes: A list of public IP prefix resources.
@@ -8884,7 +10808,9 @@ class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterLoadBalancerProfileOutboundIPs(_Model):  # pylint: disable=name-too-long
+class ManagedClusterLoadBalancerProfileOutboundIPs(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Desired outbound IP resources for the cluster load balancer.
 
     :ivar public_i_ps: A list of public IP resources.
@@ -8914,23 +10840,21 @@ class ManagedClusterLoadBalancerProfileOutboundIPs(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterManagedOutboundIPProfile(_Model):
+class ManagedClusterManagedOutboundIPProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile of the managed outbound IP resources of the managed cluster.
 
     :ivar count: The desired number of outbound IPs created/managed by Azure. Allowed values must
      be in the range of 1 to 16 (inclusive). The default value is 1.
     :vartype count: int
-    :ivar count_i_pv6: The desired number of IPv6 outbound IPs created/managed by Azure. Allowed
+    :ivar count_ipv6: The desired number of IPv6 outbound IPs created/managed by Azure. Allowed
      values must be in the range of 1 to 16 (inclusive).
-    :vartype count_i_pv6: int
+    :vartype count_ipv6: int
     """
 
     count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The desired number of outbound IPs created/managed by Azure. Allowed values must be in the
      range of 1 to 16 (inclusive). The default value is 1."""
-    count_i_pv6: Optional[int] = rest_field(
-        name="countIPv6", visibility=["read", "create", "update", "delete", "query"]
-    )
+    count_ipv6: Optional[int] = rest_field(name="countIPv6", visibility=["read", "create", "update", "delete", "query"])
     """The desired number of IPv6 outbound IPs created/managed by Azure. Allowed values must be in the
      range of 1 to 16 (inclusive)."""
 
@@ -8939,7 +10863,7 @@ class ManagedClusterManagedOutboundIPProfile(_Model):
         self,
         *,
         count: Optional[int] = None,
-        count_i_pv6: Optional[int] = None,
+        count_ipv6: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -8953,7 +10877,7 @@ class ManagedClusterManagedOutboundIPProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterMetricsProfile(_Model):
+class ManagedClusterMetricsProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The metrics profile for the ManagedCluster.
 
     :ivar cost_analysis: The configuration for detailed per-Kubernetes resource cost analysis.
@@ -8983,9 +10907,12 @@ class ManagedClusterMetricsProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterNATGatewayProfile(_Model):
+class ManagedClusterNATGatewayProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile of the managed cluster NAT gateway.
 
+    :ivar sku: The SKU of the managed cluster NAT Gateway. Defaults to 'StandardV2' where available
+     in the region, otherwise 'Standard'. Known values are: "Standard" and "StandardV2".
+    :vartype sku: str or ~azure.mgmt.containerservice.models.ManagedClusterNATGatewaySku
     :ivar managed_outbound_ip_profile: Profile of the managed outbound IP resources of the cluster
      NAT gateway.
     :vartype managed_outbound_ip_profile:
@@ -9004,6 +10931,11 @@ class ManagedClusterNATGatewayProfile(_Model):
     :vartype idle_timeout_in_minutes: int
     """
 
+    sku: Optional[Union[str, "_models.ManagedClusterNATGatewaySku"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SKU of the managed cluster NAT Gateway. Defaults to 'StandardV2' where available in the
+     region, otherwise 'Standard'. Known values are: \"Standard\" and \"StandardV2\"."""
     managed_outbound_ip_profile: Optional["_models.ManagedClusterManagedOutboundIPProfile"] = rest_field(
         name="managedOutboundIPProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9031,6 +10963,7 @@ class ManagedClusterNATGatewayProfile(_Model):
     def __init__(
         self,
         *,
+        sku: Optional[Union[str, "_models.ManagedClusterNATGatewaySku"]] = None,
         managed_outbound_ip_profile: Optional["_models.ManagedClusterManagedOutboundIPProfile"] = None,
         outbound_ip_prefixes: Optional["_models.ManagedClusterNATGatewayProfileOutboundIpPrefixes"] = None,
         outbound_i_ps: Optional["_models.ManagedClusterNATGatewayProfileOutboundIPs"] = None,
@@ -9048,7 +10981,9 @@ class ManagedClusterNATGatewayProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterNATGatewayProfileOutboundIpPrefixes(_Model):  # pylint: disable=name-too-long
+class ManagedClusterNATGatewayProfileOutboundIpPrefixes(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ManagedClusterNATGatewayProfileOutboundIpPrefixes.
 
     :ivar public_ip_prefixes: A list of public IP prefix resources.
@@ -9078,7 +11013,9 @@ class ManagedClusterNATGatewayProfileOutboundIpPrefixes(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterNATGatewayProfileOutboundIPs(_Model):  # pylint: disable=name-too-long
+class ManagedClusterNATGatewayProfileOutboundIPs(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ManagedClusterNATGatewayProfileOutboundIPs.
 
     :ivar public_i_ps: A list of public IP resources.
@@ -9108,7 +11045,7 @@ class ManagedClusterNATGatewayProfileOutboundIPs(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterNodeProvisioningProfile(_Model):
+class ManagedClusterNodeProvisioningProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Node provisioning profile for the managed cluster.
 
     :ivar mode: The node provisioning mode. If not specified, the default is Manual. Known values
@@ -9160,7 +11097,7 @@ class ManagedClusterNodeProvisioningProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterNodeResourceGroupProfile(_Model):
+class ManagedClusterNodeResourceGroupProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Node resource group lockdown profile for a managed cluster.
 
     :ivar restriction_level: The restriction level applied to the cluster's node resource group. If
@@ -9192,7 +11129,7 @@ class ManagedClusterNodeResourceGroupProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterOIDCIssuerProfile(_Model):
+class ManagedClusterOIDCIssuerProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The OIDC issuer profile of the Managed Cluster.
 
     :ivar issuer_url: The OIDC issuer url of the Managed Cluster.
@@ -9224,7 +11161,7 @@ class ManagedClusterOIDCIssuerProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPodIdentity(_Model):
+class ManagedClusterPodIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about the pod identity assigned to the Managed Cluster.
 
     :ivar name: The name of the pod identity. Required.
@@ -9285,7 +11222,7 @@ class ManagedClusterPodIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPodIdentityException(_Model):
+class ManagedClusterPodIdentityException(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A pod identity exception, which allows pods with certain labels to access the Azure Instance
     Metadata Service (IMDS) endpoint without being intercepted by the node-managed identity (NMI)
     server. See `disable AAD Pod Identity for a specific Pod/Application
@@ -9329,7 +11266,7 @@ class ManagedClusterPodIdentityException(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPodIdentityProfile(_Model):
+class ManagedClusterPodIdentityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The pod identity profile of the Managed Cluster. See `use AAD pod identity
     <https://docs.microsoft.com/azure/aks/use-azure-ad-pod-identity>`_ for more details on pod
     identity integration.
@@ -9391,7 +11328,9 @@ class ManagedClusterPodIdentityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPodIdentityProvisioningError(_Model):  # pylint: disable=name-too-long
+class ManagedClusterPodIdentityProvisioningError(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """An error response from the pod identity provisioning.
 
     :ivar error: Details about the error.
@@ -9422,7 +11361,9 @@ class ManagedClusterPodIdentityProvisioningError(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPodIdentityProvisioningErrorBody(_Model):  # pylint: disable=name-too-long
+class ManagedClusterPodIdentityProvisioningErrorBody(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """An error response from the pod identity provisioning.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -9472,7 +11413,9 @@ class ManagedClusterPodIdentityProvisioningErrorBody(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPodIdentityProvisioningInfo(_Model):  # pylint: disable=name-too-long
+class ManagedClusterPodIdentityProvisioningInfo(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Pod identity provisioning information.
 
     :ivar error: Pod identity assignment error (if any).
@@ -9502,7 +11445,36 @@ class ManagedClusterPodIdentityProvisioningInfo(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPoolUpgradeProfile(_Model):
+class ManagedClusterPodSnapshotProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Pod Snapshot Restore profile for the managed cluster.
+
+    :ivar enabled: Whether the Pod Snapshot Restore core extension is enabled for the managed
+     cluster.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the Pod Snapshot Restore core extension is enabled for the managed cluster."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedClusterPoolUpgradeProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of available upgrade versions.
 
     :ivar kubernetes_version: The Kubernetes version (major.minor.patch). Required.
@@ -9561,7 +11533,9 @@ class ManagedClusterPoolUpgradeProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPoolUpgradeProfileUpgradesItem(_Model):  # pylint: disable=name-too-long
+class ManagedClusterPoolUpgradeProfileUpgradesItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Available upgrades for an AgentPool.
 
     :ivar kubernetes_version: The Kubernetes version (major.minor.patch).
@@ -9605,7 +11579,7 @@ class ManagedClusterPoolUpgradeProfileUpgradesItem(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterProperties(_Model):
+class ManagedClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the managed cluster.
 
     :ivar provisioning_state: The current provisioning state.
@@ -9684,8 +11658,18 @@ class ManagedClusterProperties(_Model):
      enforces FIPS compliance for all AKS-managed components, such as the node operating system,
      addons, and `managed containerized components <https://aka.ms/aks/components/docs>`_. See
      `Enable cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is
-     enabled, all node pools in the cluster must also be FIPS-enabled.
+     enabled, all node pools in the cluster must also be FIPS-enabled. Although this property is
+     available in a stable API version, cluster-wide FIPS remains a preview feature. Write requests
+     whose resulting cluster state has this property set to true require the
+     ``Microsoft.ContainerService/EnableFIPSPreview`` subscription feature registration.
     :vartype enable_fips: bool
+    :ivar enable_node_hardening: Whether to enable node hardening at the cluster level. When
+     enabled, AKS applies hardened defaults for soft eviction thresholds, kube-reserved, and
+     system-reserved on all Linux node pools in the cluster. Per-node-pool kubeletConfig settings
+     take precedence over hardening defaults. On agent pools running Kubernetes 1.37 or later, node
+     hardening is enabled by default and cannot be disabled; setting this field to false has no
+     effect on those pools.
+    :vartype enable_node_hardening: bool
     :ivar enable_namespace_resources: Enable namespace as Azure resource. The default value is
      false. It can be enabled/disabled on creation and updating of the managed cluster. See
      `https://aka.ms/NamespaceARMResource <https://aka.ms/NamespaceARMResource>`_ for more details
@@ -9755,7 +11739,15 @@ class ManagedClusterProperties(_Model):
      cluster.
     :vartype ai_toolchain_operator_profile:
      ~azure.mgmt.containerservice.models.ManagedClusterAIToolchainOperatorProfile
-    :ivar scheduler_profile: Profile of the pod scheduler configuration.
+    :ivar agent_sandbox_profile: Agent Sandbox settings that apply to the whole cluster.
+    :vartype agent_sandbox_profile:
+     ~azure.mgmt.containerservice.models.ManagedClusterAgentSandboxProfile
+    :ivar pod_snapshot_profile: The Pod Snapshot Restore profile for the managed cluster.
+    :vartype pod_snapshot_profile:
+     ~azure.mgmt.containerservice.models.ManagedClusterPodSnapshotProfile
+    :ivar scheduler_profile: Profile with scheduler-related settings, like the configuration mode
+     for each scheduler managed by AKS. See `https://aka.ms/aks/scheduler-profile
+     <https://aka.ms/aks/scheduler-profile>`_.
     :vartype scheduler_profile: ~azure.mgmt.containerservice.models.SchedulerProfile
     :ivar hosted_system_profile: Settings for hosted system addons. For more information, see
      `https://aka.ms/aks/automatic/systemcomponents
@@ -9877,7 +11869,18 @@ class ManagedClusterProperties(_Model):
      compliance for all AKS-managed components, such as the node operating system, addons, and
      `managed containerized components <https://aka.ms/aks/components/docs>`_. See `Enable
      cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is enabled,
-     all node pools in the cluster must also be FIPS-enabled."""
+     all node pools in the cluster must also be FIPS-enabled. Although this property is available in
+     a stable API version, cluster-wide FIPS remains a preview feature. Write requests whose
+     resulting cluster state has this property set to true require the
+     ``Microsoft.ContainerService/EnableFIPSPreview`` subscription feature registration."""
+    enable_node_hardening: Optional[bool] = rest_field(
+        name="enableNodeHardening", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to enable node hardening at the cluster level. When enabled, AKS applies hardened
+     defaults for soft eviction thresholds, kube-reserved, and system-reserved on all Linux node
+     pools in the cluster. Per-node-pool kubeletConfig settings take precedence over hardening
+     defaults. On agent pools running Kubernetes 1.37 or later, node hardening is enabled by default
+     and cannot be disabled; setting this field to false has no effect on those pools."""
     enable_namespace_resources: Optional[bool] = rest_field(
         name="enableNamespaceResources", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9984,10 +11987,19 @@ class ManagedClusterProperties(_Model):
         name="aiToolchainOperatorProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """AI toolchain operator settings that apply to the whole cluster."""
+    agent_sandbox_profile: Optional["_models.ManagedClusterAgentSandboxProfile"] = rest_field(
+        name="agentSandboxProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Agent Sandbox settings that apply to the whole cluster."""
+    pod_snapshot_profile: Optional["_models.ManagedClusterPodSnapshotProfile"] = rest_field(
+        name="podSnapshotProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Pod Snapshot Restore profile for the managed cluster."""
     scheduler_profile: Optional["_models.SchedulerProfile"] = rest_field(
         name="schedulerProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Profile of the pod scheduler configuration."""
+    """Profile with scheduler-related settings, like the configuration mode for each scheduler managed
+     by AKS. See `https://aka.ms/aks/scheduler-profile <https://aka.ms/aks/scheduler-profile>`_."""
     hosted_system_profile: Optional["_models.ManagedClusterHostedSystemProfile"] = rest_field(
         name="hostedSystemProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10032,6 +12044,7 @@ class ManagedClusterProperties(_Model):
         enable_rbac: Optional[bool] = None,
         support_plan: Optional[Union[str, "_models.KubernetesSupportPlan"]] = None,
         enable_fips: Optional[bool] = None,
+        enable_node_hardening: Optional[bool] = None,
         enable_namespace_resources: Optional[bool] = None,
         network_profile: Optional["_models.ContainerServiceNetworkProfile"] = None,
         aad_profile: Optional["_models.ManagedClusterAADProfile"] = None,
@@ -10055,6 +12068,8 @@ class ManagedClusterProperties(_Model):
         node_provisioning_profile: Optional["_models.ManagedClusterNodeProvisioningProfile"] = None,
         bootstrap_profile: Optional["_models.ManagedClusterBootstrapProfile"] = None,
         ai_toolchain_operator_profile: Optional["_models.ManagedClusterAIToolchainOperatorProfile"] = None,
+        agent_sandbox_profile: Optional["_models.ManagedClusterAgentSandboxProfile"] = None,
+        pod_snapshot_profile: Optional["_models.ManagedClusterPodSnapshotProfile"] = None,
         scheduler_profile: Optional["_models.SchedulerProfile"] = None,
         hosted_system_profile: Optional["_models.ManagedClusterHostedSystemProfile"] = None,
         health_monitor_profile: Optional["_models.ManagedClusterHealthMonitorProfile"] = None,
@@ -10074,7 +12089,9 @@ class ManagedClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPropertiesAutoScalerProfile(_Model):  # pylint: disable=name-too-long
+class ManagedClusterPropertiesAutoScalerProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameters to be applied to the cluster-autoscaler when enabled.
 
     :ivar balance_similar_node_groups: Detects similar node pools and balances the number of nodes
@@ -10338,7 +12355,7 @@ class ManagedClusterPropertiesForSnapshot(_Model):
     """The current network profile."""
 
 
-class ManagedClusterSecurityProfile(_Model):
+class ManagedClusterSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security profile for the container service cluster.
 
     :ivar defender: Microsoft Defender settings for the security profile.
@@ -10461,7 +12478,7 @@ class ManagedClusterSecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileDefender(_Model):
+class ManagedClusterSecurityProfileDefender(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft Defender settings for the security profile.
 
     :ivar log_analytics_workspace_resource_id: Resource ID of the Log Analytics workspace to be
@@ -10473,10 +12490,11 @@ class ManagedClusterSecurityProfileDefender(_Model):
      security profile.
     :vartype security_monitoring:
      ~azure.mgmt.containerservice.models.ManagedClusterSecurityProfileDefenderSecurityMonitoring
-    :ivar security_gating: Microsoft Defender settings for security gating, validates container
-     images eligibility for deployment based on Defender for Containers security findings. Using
-     Admission Controller, it either audits or prevents the deployment of images that do not meet
-     security standards.
+    :ivar security_gating: Microsoft Defender settings for security gating. This validates
+     container images eligibility for deployment based on Defender for Containers security findings.
+     Using Admission Controller, it either audits or prevents deployment of images that do not meet
+     security standards. For more information, see `https://aka.ms/KubernetesDefenderAuditRule
+     <https://aka.ms/KubernetesDefenderAuditRule>`_.
     :vartype security_gating:
      ~azure.mgmt.containerservice.models.ManagedClusterSecurityProfileDefenderSecurityGating
     """
@@ -10494,9 +12512,11 @@ class ManagedClusterSecurityProfileDefender(_Model):
     security_gating: Optional["_models.ManagedClusterSecurityProfileDefenderSecurityGating"] = rest_field(
         name="securityGating", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Microsoft Defender settings for security gating, validates container images eligibility for
-     deployment based on Defender for Containers security findings. Using Admission Controller, it
-     either audits or prevents the deployment of images that do not meet security standards."""
+    """Microsoft Defender settings for security gating. This validates container images eligibility
+     for deployment based on Defender for Containers security findings. Using Admission Controller,
+     it either audits or prevents deployment of images that do not meet security standards. For more
+     information, see `https://aka.ms/KubernetesDefenderAuditRule
+     <https://aka.ms/KubernetesDefenderAuditRule>`_."""
 
     @overload
     def __init__(
@@ -10518,54 +12538,59 @@ class ManagedClusterSecurityProfileDefender(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileDefenderSecurityGating(_Model):  # pylint: disable=name-too-long
-    """Microsoft Defender settings for security gating, validates container images eligibility for
+class ManagedClusterSecurityProfileDefenderSecurityGating(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Microsoft Defender settings for security gating. This validates container image eligibility for
     deployment based on Defender for Containers security findings. Using Admission Controller, it
-    either audits or prevents the deployment of images that do not meet security standards.
+    either audits or prevents deployment of images that do not meet security standards.
 
     :ivar enabled: Whether to enable Defender security gating. When enabled, the gating feature
-     will scan container images and audit or block the deployment of images that do not meet
-     security standards according to the configured security rules.
+     scans container images and audits or blocks deployment of images that do not meet security
+     standards according to configured security rules. For more information, see
+     `https://aka.ms/KubernetesDefenderAuditRule <https://aka.ms/KubernetesDefenderAuditRule>`_.
     :vartype enabled: bool
-    :ivar identities: List of identities that the admission controller will make use of in order to
-     pull security artifacts from the registry. These are the same identities used by the cluster to
-     pull container images. Each identity provided should have federated identity credential
-     attached to it.
+    :ivar identities: List of identities that the admission controller uses to pull security
+     artifacts from registries. These are the same identities used by the cluster to pull container
+     images. For more information on configuring this identity, see
+     `https://learn.microsoft.com/en-us/azure/defender-for-cloud/gated-deployment-infrastructure-as-code
+     <https://learn.microsoft.com/en-us/azure/defender-for-cloud/gated-deployment-infrastructure-as-code>`_.
     :vartype identities:
-     list[~azure.mgmt.containerservice.models.ManagedClusterSecurityProfileDefenderSecurityGatingIdentitiesItem]
-    :ivar allow_secret_access: In use only while registry access granted by secret rather than
-     managed identity. Set whether to grant the Defender gating agent access to the cluster's
-     secrets for pulling images from registries. If secret access is denied and the registry
-     requires pull secrets, the add-on will not perform any image validation. Default value is
-     false.
+     list[~azure.mgmt.containerservice.models.ManagedClusterSecurityProfileDefenderSecurityGatingIdentity]
+    :ivar allow_secret_access: In use only while registry access is granted by secret rather than
+     managed identity. Sets whether to grant the Defender gating agent access to cluster secrets for
+     pulling images from registries. If secret access is denied and the registry requires pull
+     secrets, the add-on will not perform image validation. Default value is false.
     :vartype allow_secret_access: bool
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether to enable Defender security gating. When enabled, the gating feature will scan
-     container images and audit or block the deployment of images that do not meet security
-     standards according to the configured security rules."""
-    identities: Optional[list["_models.ManagedClusterSecurityProfileDefenderSecurityGatingIdentitiesItem"]] = (
-        rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether to enable Defender security gating. When enabled, the gating feature scans container
+     images and audits or blocks deployment of images that do not meet security standards according
+     to configured security rules. For more information, see
+     `https://aka.ms/KubernetesDefenderAuditRule <https://aka.ms/KubernetesDefenderAuditRule>`_."""
+    identities: Optional[list["_models.ManagedClusterSecurityProfileDefenderSecurityGatingIdentity"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """List of identities that the admission controller will make use of in order to pull security
-     artifacts from the registry. These are the same identities used by the cluster to pull
-     container images. Each identity provided should have federated identity credential attached to
-     it."""
+    """List of identities that the admission controller uses to pull security artifacts from
+     registries. These are the same identities used by the cluster to pull container images. For
+     more information on configuring this identity, see
+     `https://learn.microsoft.com/en-us/azure/defender-for-cloud/gated-deployment-infrastructure-as-code
+     <https://learn.microsoft.com/en-us/azure/defender-for-cloud/gated-deployment-infrastructure-as-code>`_."""
     allow_secret_access: Optional[bool] = rest_field(
         name="allowSecretAccess", visibility=["read", "create", "update", "delete", "query"]
     )
-    """In use only while registry access granted by secret rather than managed identity. Set whether
-     to grant the Defender gating agent access to the cluster's secrets for pulling images from
+    """In use only while registry access is granted by secret rather than managed identity. Sets
+     whether to grant the Defender gating agent access to cluster secrets for pulling images from
      registries. If secret access is denied and the registry requires pull secrets, the add-on will
-     not perform any image validation. Default value is false."""
+     not perform image validation. Default value is false."""
 
     @overload
     def __init__(
         self,
         *,
         enabled: Optional[bool] = None,
-        identities: Optional[list["_models.ManagedClusterSecurityProfileDefenderSecurityGatingIdentitiesItem"]] = None,
+        identities: Optional[list["_models.ManagedClusterSecurityProfileDefenderSecurityGatingIdentity"]] = None,
         allow_secret_access: Optional[bool] = None,
     ) -> None: ...
 
@@ -10580,8 +12605,10 @@ class ManagedClusterSecurityProfileDefenderSecurityGating(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileDefenderSecurityGatingIdentitiesItem(_Model):  # pylint: disable=name-too-long
-    """Identity information used by Defender security gating to access container registries.
+class ManagedClusterSecurityProfileDefenderSecurityGatingIdentity(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Identity mapping used by Defender security gating for registry access.
 
     :ivar azure_container_registry: The container registry for which the identity will be used; the
      identity specified here should have a federated identity credential attached to it.
@@ -10619,7 +12646,9 @@ class ManagedClusterSecurityProfileDefenderSecurityGatingIdentitiesItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileDefenderSecurityMonitoring(_Model):  # pylint: disable=name-too-long
+class ManagedClusterSecurityProfileDefenderSecurityMonitoring(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Microsoft Defender settings for the security profile threat detection.
 
     :ivar enabled: Whether to enable Defender threat detection.
@@ -10647,7 +12676,9 @@ class ManagedClusterSecurityProfileDefenderSecurityMonitoring(_Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileImageCleaner(_Model):  # pylint: disable=name-too-long
+class ManagedClusterSecurityProfileImageCleaner(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Image Cleaner removes unused images from nodes, freeing up disk space and helping to reduce
     attack surface area. Here are settings for the security profile.
 
@@ -10683,7 +12714,9 @@ class ManagedClusterSecurityProfileImageCleaner(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileImageIntegrity(_Model):  # pylint: disable=name-too-long
+class ManagedClusterSecurityProfileImageIntegrity(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Image integrity related settings for the security profile.
 
     :ivar enabled: Whether to enable image integrity. The default value is false.
@@ -10711,7 +12744,9 @@ class ManagedClusterSecurityProfileImageIntegrity(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileNodeRestriction(_Model):  # pylint: disable=name-too-long
+class ManagedClusterSecurityProfileNodeRestriction(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Node Restriction settings for the security profile.
 
     :ivar enabled: Whether to enable Node Restriction.
@@ -10739,7 +12774,9 @@ class ManagedClusterSecurityProfileNodeRestriction(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileWorkloadIdentity(_Model):  # pylint: disable=name-too-long
+class ManagedClusterSecurityProfileWorkloadIdentity(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Workload identity settings for the security profile.
 
     :ivar enabled: Whether to enable workload identity.
@@ -10767,7 +12804,7 @@ class ManagedClusterSecurityProfileWorkloadIdentity(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterServicePrincipalProfile(_Model):
+class ManagedClusterServicePrincipalProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a service principal identity for the cluster to use for manipulating Azure
     APIs.
 
@@ -10779,7 +12816,7 @@ class ManagedClusterServicePrincipalProfile(_Model):
 
     client_id: str = rest_field(name="clientId", visibility=["read", "create", "update", "delete", "query"])
     """The ID for the service principal. Required."""
-    secret: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    secret: Optional[str] = rest_field(visibility=["create", "update"])
     """The secret password associated with the service principal in plain text."""
 
     @overload
@@ -10801,7 +12838,7 @@ class ManagedClusterServicePrincipalProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSKU(_Model):
+class ManagedClusterSKU(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The SKU of a Managed Cluster.
 
     :ivar name: The name of a managed cluster SKU. Known values are: "Base" and "Automatic".
@@ -10842,7 +12879,7 @@ class ManagedClusterSKU(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSnapshot(TrackedResource):
+class ManagedClusterSnapshot(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed cluster snapshot resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10909,7 +12946,7 @@ class ManagedClusterSnapshot(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ManagedClusterSnapshotProperties(_Model):
+class ManagedClusterSnapshotProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for a managed cluster snapshot.
 
     :ivar creation_data: CreationData to be used to specify the source resource ID to create this
@@ -10958,7 +12995,7 @@ class ManagedClusterSnapshotProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterStaticEgressGatewayProfile(_Model):
+class ManagedClusterStaticEgressGatewayProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Static Egress Gateway addon configuration for the cluster.
 
     :ivar enabled: Enable Static Egress Gateway addon. Indicates if Static Egress Gateway addon is
@@ -11000,7 +13037,7 @@ class ManagedClusterStatus(_Model):
      If there was no error, this field is omitted."""
 
 
-class ManagedClusterStorageProfile(_Model):
+class ManagedClusterStorageProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage profile for the container service cluster.
 
     :ivar disk_csi_driver: AzureDisk CSI Driver settings for the storage profile.
@@ -11055,7 +13092,9 @@ class ManagedClusterStorageProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterStorageProfileBlobCSIDriver(_Model):  # pylint: disable=name-too-long
+class ManagedClusterStorageProfileBlobCSIDriver(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AzureBlob CSI Driver settings for the storage profile.
 
     :ivar enabled: Whether to enable AzureBlob CSI Driver. The default value is false.
@@ -11083,15 +13122,77 @@ class ManagedClusterStorageProfileBlobCSIDriver(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterStorageProfileDiskCSIDriver(_Model):  # pylint: disable=name-too-long
+class ManagedClusterStorageProfileDiskCSIDriver(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AzureDisk CSI Driver settings for the storage profile.
 
     :ivar enabled: Whether to enable AzureDisk CSI Driver. The default value is true.
     :vartype enabled: bool
+    :ivar quick_attach_detach: Quick Attach Detach settings for the AzureDisk CSI driver. Quick
+     Attach Detach enables faster, higher-scale Azure Disk attach and detach operations for stateful
+     AKS workloads by bypassing ARM/CRP control-plane bottlenecks. For more information, see
+     `https://aka.ms/aks/qad <https://aka.ms/aks/qad>`_.
+    :vartype quick_attach_detach:
+     ~azure.mgmt.containerservice.models.ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to enable AzureDisk CSI Driver. The default value is true."""
+    quick_attach_detach: Optional["_models.ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach"] = rest_field(
+        name="quickAttachDetach", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Quick Attach Detach settings for the AzureDisk CSI driver. Quick Attach Detach enables faster,
+     higher-scale Azure Disk attach and detach operations for stateful AKS workloads by bypassing
+     ARM/CRP control-plane bottlenecks. For more information, see `https://aka.ms/aks/qad
+     <https://aka.ms/aks/qad>`_."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        quick_attach_detach: Optional["_models.ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Quick Attach Detach settings for the AzureDisk CSI driver.
+
+    :ivar enabled: Whether to enable Quick Attach Detach for the AzureDisk CSI driver. The default
+     value is false.
+    :vartype enabled: bool
+    :ivar identity: Identity used by Quick Attach Detach. This property is returned by GET and
+     cannot be set by clients. The Quick Attach Detach feature uses a managed identity that is
+     automatically created and managed by the AKS resource provider. In most scenarios, no user
+     action is required. An exception applies when using customer-managed disks that are located
+     outside of the AKS node resource group (Bring Your Own Disk scenario). In this case, users must
+     grant the Quick Attach Detach managed identity the required permissions on the resource group
+     containing the disk.
+    :vartype identity: ~azure.mgmt.containerservice.models.UserAssignedIdentity
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether to enable Quick Attach Detach for the AzureDisk CSI driver. The default value is false."""
+    identity: Optional["_models.UserAssignedIdentity"] = rest_field(visibility=["read"])
+    """Identity used by Quick Attach Detach. This property is returned by GET and cannot be set by
+     clients. The Quick Attach Detach feature uses a managed identity that is automatically created
+     and managed by the AKS resource provider. In most scenarios, no user action is required. An
+     exception applies when using customer-managed disks that are located outside of the AKS node
+     resource group (Bring Your Own Disk scenario). In this case, users must grant the Quick Attach
+     Detach managed identity the required permissions on the resource group containing the disk."""
 
     @overload
     def __init__(
@@ -11111,7 +13212,9 @@ class ManagedClusterStorageProfileDiskCSIDriver(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterStorageProfileFileCSIDriver(_Model):  # pylint: disable=name-too-long
+class ManagedClusterStorageProfileFileCSIDriver(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AzureFile CSI Driver settings for the storage profile.
 
     :ivar enabled: Whether to enable AzureFile CSI Driver. The default value is true.
@@ -11139,7 +13242,9 @@ class ManagedClusterStorageProfileFileCSIDriver(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterStorageProfileSnapshotController(_Model):  # pylint: disable=name-too-long
+class ManagedClusterStorageProfileSnapshotController(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Snapshot Controller settings for the storage profile.
 
     :ivar enabled: Whether to enable Snapshot Controller. The default value is true.
@@ -11167,7 +13272,7 @@ class ManagedClusterStorageProfileSnapshotController(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterUpgradeProfile(ProxyResource):
+class ManagedClusterUpgradeProfile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of available upgrades for compute pools.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11228,7 +13333,7 @@ class ManagedClusterUpgradeProfile(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedClusterUpgradeProfileProperties(_Model):
+class ManagedClusterUpgradeProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Control plane and agent pool upgrade profiles.
 
     :ivar control_plane_profile: The list of available upgrade versions for the control plane.
@@ -11268,7 +13373,9 @@ class ManagedClusterUpgradeProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterWebAppRoutingGatewayAPIImplementations(_Model):  # pylint: disable=name-too-long
+class ManagedClusterWebAppRoutingGatewayAPIImplementations(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Configurations for Gateway API providers to be used for managed ingress with App Routing.
 
     :ivar app_routing_istio: Configuration for using a sidecar-less Istio control plane for managed
@@ -11303,7 +13410,7 @@ class ManagedClusterWebAppRoutingGatewayAPIImplementations(_Model):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterWindowsProfile(_Model):
+class ManagedClusterWindowsProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for Windows VMs in the managed cluster.
 
     :ivar admin_username: Specifies the name of the administrator account. <br><br>
@@ -11339,9 +13446,7 @@ class ManagedClusterWindowsProfile(_Model):
      \"root\", \"server\", \"sql\", \"support\", \"support_388945a0\", \"sys\", \"test2\",
      \"test3\", \"user4\", \"user5\". <br><br> **Minimum-length:** 1 character <br><br>
      **Max-length:** 20 characters. Required."""
-    admin_password: Optional[str] = rest_field(
-        name="adminPassword", visibility=["read", "create", "update", "delete", "query"]
-    )
+    admin_password: Optional[str] = rest_field(name="adminPassword", visibility=["create", "update"])
     """Specifies the password of the administrator account. <br><br> **Minimum-length:** 8 characters
      <br><br> **Max-length:** 123 characters <br><br> **Complexity requirements:** 3 out of 4
      conditions below need to be fulfilled <br> Has lower characters <br>Has upper characters <br>
@@ -11386,7 +13491,7 @@ class ManagedClusterWindowsProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterWorkloadAutoScalerProfile(_Model):
+class ManagedClusterWorkloadAutoScalerProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workload Auto-scaler profile for the managed cluster.
 
     :ivar keda: KEDA (Kubernetes Event-driven Autoscaling) settings for the workload auto-scaler
@@ -11428,7 +13533,9 @@ class ManagedClusterWorkloadAutoScalerProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterWorkloadAutoScalerProfileKeda(_Model):  # pylint: disable=name-too-long
+class ManagedClusterWorkloadAutoScalerProfileKeda(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """KEDA (Kubernetes Event-driven Autoscaling) settings for the workload auto-scaler profile.
 
     :ivar enabled: Whether to enable KEDA. Required.
@@ -11456,7 +13563,9 @@ class ManagedClusterWorkloadAutoScalerProfileKeda(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler(_Model):  # pylint: disable=name-too-long
+class ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """VPA (Vertical Pod Autoscaler) settings for the workload auto-scaler profile.
 
     :ivar enabled: Whether to enable VPA. Default value is false. Required.
@@ -11493,7 +13602,7 @@ class ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler(_Model):  # p
         super().__init__(*args, **kwargs)
 
 
-class ManagedNamespace(TrackedResource):
+class ManagedNamespace(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Namespace managed by ARM.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11565,7 +13674,7 @@ class ManagedServiceIdentityUserAssignedIdentitiesValue(_Model):  # pylint: disa
     """The client id of user assigned identity."""
 
 
-class ManualScaleProfile(_Model):
+class ManualScaleProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifications on number of machines.
 
     :ivar size: VM size that AKS will use when creating and scaling e.g. 'Standard_E4s_v3',
@@ -11600,7 +13709,7 @@ class ManualScaleProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MeshMembership(ProxyResource):
+class MeshMembership(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mesh membership of a managed cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11662,7 +13771,7 @@ class MeshMembership(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class MeshMembershipPrivateConnectProfile(_Model):
+class MeshMembershipPrivateConnectProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private connect profile for mesh membership.
 
     :ivar private_ip_address: The private IP address of the member cluster private FQDN. This is a
@@ -11701,7 +13810,7 @@ class MeshMembershipPrivateConnectProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MeshMembershipProperties(_Model):
+class MeshMembershipProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mesh membership properties of a managed cluster.
 
     :ivar provisioning_state: The current provisioning state of the Mesh Membership. Known values
@@ -11756,7 +13865,7 @@ class MeshMembershipProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MeshRevision(_Model):
+class MeshRevision(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Holds information on upgrades and compatibility for given major.minor mesh release.
 
     :ivar revision: The revision of the mesh release.
@@ -11797,7 +13906,7 @@ class MeshRevision(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MeshRevisionProfile(ProxyResource):
+class MeshRevisionProfile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mesh revision profile for a mesh.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11838,7 +13947,7 @@ class MeshRevisionProfile(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class MeshRevisionProfileProperties(_Model):
+class MeshRevisionProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mesh revision profile properties for a mesh.
 
     :ivar mesh_revisions: Available mesh revisions.
@@ -11868,7 +13977,7 @@ class MeshRevisionProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MeshUpgradeProfile(ProxyResource):
+class MeshUpgradeProfile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Upgrade profile for given mesh.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11909,7 +14018,7 @@ class MeshUpgradeProfile(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class MeshUpgradeProfileProperties(MeshRevision):
+class MeshUpgradeProfileProperties(MeshRevision):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mesh upgrade profile properties for a major.minor release.
 
     :ivar revision: The revision of the mesh release.
@@ -11941,7 +14050,7 @@ class MeshUpgradeProfileProperties(MeshRevision):
         super().__init__(*args, **kwargs)
 
 
-class NamespaceProperties(_Model):
+class NamespaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a namespace managed by ARM.
 
     :ivar provisioning_state: The current provisioning state of the namespace. Known values are:
@@ -12037,7 +14146,7 @@ class NamespaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkPolicies(_Model):
+class NetworkPolicies(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Default network policy of the namespace, specifying ingress and egress rules.
 
     :ivar ingress: Enum representing different network policy rules. Known values are: "DenyAll",
@@ -12078,7 +14187,7 @@ class NetworkPolicies(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkProfileForSnapshot(_Model):
+class NetworkProfileForSnapshot(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """network profile for managed cluster snapshot, these properties are read only.
 
     :ivar network_plugin: networkPlugin for managed cluster snapshot. Known values are: "azure",
@@ -12093,7 +14202,7 @@ class NetworkProfileForSnapshot(_Model):
      and "bridge".
     :vartype network_mode: str or ~azure.mgmt.containerservice.models.NetworkMode
     :ivar load_balancer_sku: loadBalancerSku for managed cluster snapshot. Known values are:
-     "standard" and "basic".
+     "service", "standard", and "basic".
     :vartype load_balancer_sku: str or ~azure.mgmt.containerservice.models.LoadBalancerSku
     """
 
@@ -12118,7 +14227,8 @@ class NetworkProfileForSnapshot(_Model):
     load_balancer_sku: Optional[Union[str, "_models.LoadBalancerSku"]] = rest_field(
         name="loadBalancerSku", visibility=["read", "create", "update", "delete", "query"]
     )
-    """loadBalancerSku for managed cluster snapshot. Known values are: \"standard\" and \"basic\"."""
+    """loadBalancerSku for managed cluster snapshot. Known values are: \"service\", \"standard\", and
+     \"basic\"."""
 
     @overload
     def __init__(
@@ -12142,7 +14252,7 @@ class NetworkProfileForSnapshot(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NodeDisruptionProfile(_Model):
+class NodeDisruptionProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Node disruption profile for a managed cluster.
 
     :ivar node_disruption_policy: The policy configuration for when to allow certain operations
@@ -12185,7 +14295,138 @@ class NodeDisruptionProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NodeImageVersion(_Model):
+class NodeImageGenerateUpgradeInsightsContent(
+    GenerateUpgradeInsightsContent, discriminator="NodeImage"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request body to evaluate a single agent pool node OS image upgrade.
+
+    :ivar upgrade_type: Required. An agent pool node OS image upgrade. NodeImage upgrade insights
+     are evaluated per agent pool, mirroring the per-pool node-image upgrade API
+     (.../agentPools/{name}), and cover the node OS image only; agent-pool Kubernetes version
+     readiness is evaluated separately via the AgentPool or ControlPlaneAndAgentPools scopes.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.NODE_IMAGE
+    :ivar agent_pool_name: The name of the agent pool to evaluate. Required.
+    :vartype agent_pool_name: str
+    :ivar target_node_image_version: The target node OS image version to evaluate. If omitted, the
+     server resolves and evaluates the latest available node image. The resolved full version is
+     always returned in the generated insight's read-only ``targetNodeImageVersion`` property.
+    :vartype target_node_image_version: str
+    """
+
+    upgrade_type: Literal[UpgradeType.NODE_IMAGE] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. An agent pool node OS image upgrade. NodeImage upgrade insights are evaluated per
+     agent pool, mirroring the per-pool node-image upgrade API (.../agentPools/{name}), and cover
+     the node OS image only; agent-pool Kubernetes version readiness is evaluated separately via the
+     AgentPool or ControlPlaneAndAgentPools scopes."""
+    agent_pool_name: str = rest_field(name="agentPoolName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the agent pool to evaluate. Required."""
+    target_node_image_version: Optional[str] = rest_field(
+        name="targetNodeImageVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target node OS image version to evaluate. If omitted, the server resolves and evaluates the
+     latest available node image. The resolved full version is always returned in the generated
+     insight's read-only ``targetNodeImageVersion`` property."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        agent_pool_name: str,
+        target_node_image_version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.NODE_IMAGE  # type: ignore
+
+
+class NodeImageUpgradeInsightProperties(UpgradeInsightProperties, discriminator="NodeImage"):
+    """Properties for a single agent pool node OS image upgrade insight.
+
+    :ivar provisioning_state: The provisioning state of the upgrade insight evaluation. Known
+     values are: "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.ResourceProvisioningState
+    :ivar last_evaluated_at: The UTC time at which this upgrade insight was last computed (the last
+     time the compute operation ran for this resource). This is the resource-level "last run" marker
+     and, for a cached record, indicates how stale the stored evaluation is. For a combined
+     evaluation it is the umbrella run time across all scopes, whereas each scope's
+     ``evaluation.evaluatedAt`` records when that specific snapshot was produced.
+    :vartype last_evaluated_at: ~datetime.datetime
+    :ivar expires_at: The UTC time at which this stored upgrade insight expires and is removed from
+     the data store (currently ``lastEvaluatedAt`` plus a 14-day retention window). After this time
+     a GET for the resource returns 404 Not Found and it no longer appears in the list, indicating
+     the caller should call the compute operation to produce a fresh evaluation. Exposing the expiry
+     lets clients decide when to recompute without hardcoding the retention period.
+    :vartype expires_at: ~datetime.datetime
+    :ivar upgrade_type: The type of upgrade this insight evaluates. Required. An agent pool node OS
+     image upgrade. NodeImage upgrade insights are evaluated per agent pool, mirroring the per-pool
+     node-image upgrade API (.../agentPools/{name}), and cover the node OS image only; agent-pool
+     Kubernetes version readiness is evaluated separately via the AgentPool or
+     ControlPlaneAndAgentPools scopes.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.NODE_IMAGE
+    :ivar agent_pool_name: The name of the agent pool this insight applies to.
+    :vartype agent_pool_name: str
+    :ivar current_node_image_version: The node OS image version the agent pool was evaluated from
+     (the upgrade source version it is currently running). Lets consumers read the result as "from X
+     to targetNodeImageVersion" and detect a stale cached record by comparing against the live node
+     image version.
+    :vartype current_node_image_version: str
+    :ivar target_node_image_version: The target node OS image version that was evaluated.
+    :vartype target_node_image_version: str
+    :ivar context: Contextual information about how this upgrade is managed, such as the upgrade
+     strategy, next maintenance window, and last successful upgrade time.
+    :vartype context: ~azure.mgmt.containerservice.models.UpgradeContext
+    :ivar evaluation: The evaluation result, including overall status, evaluation time, and any
+     detected issues.
+    :vartype evaluation: ~azure.mgmt.containerservice.models.UpgradeInsightEvaluation
+    """
+
+    upgrade_type: Literal[UpgradeType.NODE_IMAGE] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of upgrade this insight evaluates. Required. An agent pool node OS image upgrade.
+     NodeImage upgrade insights are evaluated per agent pool, mirroring the per-pool node-image
+     upgrade API (.../agentPools/{name}), and cover the node OS image only; agent-pool Kubernetes
+     version readiness is evaluated separately via the AgentPool or ControlPlaneAndAgentPools
+     scopes."""
+    agent_pool_name: Optional[str] = rest_field(name="agentPoolName", visibility=["read"])
+    """The name of the agent pool this insight applies to."""
+    current_node_image_version: Optional[str] = rest_field(name="currentNodeImageVersion", visibility=["read"])
+    """The node OS image version the agent pool was evaluated from (the upgrade source version it is
+     currently running). Lets consumers read the result as \"from X to targetNodeImageVersion\" and
+     detect a stale cached record by comparing against the live node image version."""
+    target_node_image_version: Optional[str] = rest_field(name="targetNodeImageVersion", visibility=["read"])
+    """The target node OS image version that was evaluated."""
+    context: Optional["_models.UpgradeContext"] = rest_field(visibility=["read"])
+    """Contextual information about how this upgrade is managed, such as the upgrade strategy, next
+     maintenance window, and last successful upgrade time."""
+    evaluation: Optional["_models.UpgradeInsightEvaluation"] = rest_field(visibility=["read"])
+    """The evaluation result, including overall status, evaluation time, and any detected issues."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.NODE_IMAGE  # type: ignore
+
+
+class NodeImageVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """node image version profile for given major.minor.patch release.
 
     :ivar os: The operating system of the node image. Example: AKSUbuntu.
@@ -12230,7 +14471,7 @@ class NodeImageVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NvidiaGPUProfile(_Model):
+class NvidiaGPUProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NVIDIA-specific GPU settings.
 
     :ivar management_mode: The Managed GPU experience installs additional components, such as the
@@ -12238,10 +14479,22 @@ class NvidiaGPUProfile(_Model):
      more details of what is installed, check out aka.ms/aks/managed-gpu. Known values are:
      "Unmanaged" and "Managed".
     :vartype management_mode: str or ~azure.mgmt.containerservice.models.ManagementMode
+    :ivar driver_mode: NVIDIA GPU resource allocation mode. DevicePlugin installs the NVIDIA
+     Kubernetes device plugin. DRA installs the NVIDIA DRA driver. Known values are: "DevicePlugin"
+     and "DRA".
+    :vartype driver_mode: str or ~azure.mgmt.containerservice.models.NvidiaDriverMode
     :ivar mig_strategy: Sets the MIG (Multi-Instance GPU) strategy that will be used for managed
      MIG support. For more information about the different strategies, visit aka.ms/aks/managed-gpu.
      When not specified, the default is None. Known values are: "None", "Single", and "Mixed".
     :vartype mig_strategy: str or ~azure.mgmt.containerservice.models.MigStrategy
+    :ivar mig_profiles: The ordered list of MIG (Multi-Instance GPU) partition profiles to assign
+     to each supported NVIDIA GPU. When ``migStrategy`` is ``Single``, exactly one profile must be
+     specified. When ``migStrategy`` is ``Mixed``, one or more profiles may be specified and the
+     combination is validated against the supported MIG geometry for the agent pool's GPU VM size.
+     The same value may appear more than once to request multiple partitions of that size. This
+     field is mutually exclusive with the top-level ``gpuInstanceProfile`` property. For more
+     information, see `https://aka.ms/aks/managed-gpu <https://aka.ms/aks/managed-gpu>`_.
+    :vartype mig_profiles: list[str or ~azure.mgmt.containerservice.models.GPUInstanceProfile]
     """
 
     management_mode: Optional[Union[str, "_models.ManagementMode"]] = rest_field(
@@ -12250,19 +14503,36 @@ class NvidiaGPUProfile(_Model):
     """The Managed GPU experience installs additional components, such as the Data Center GPU Manager
      (DCGM) metrics for monitoring, on top of the GPU driver for you. For more details of what is
      installed, check out aka.ms/aks/managed-gpu. Known values are: \"Unmanaged\" and \"Managed\"."""
+    driver_mode: Optional[Union[str, "_models.NvidiaDriverMode"]] = rest_field(
+        name="driverMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """NVIDIA GPU resource allocation mode. DevicePlugin installs the NVIDIA Kubernetes device plugin.
+     DRA installs the NVIDIA DRA driver. Known values are: \"DevicePlugin\" and \"DRA\"."""
     mig_strategy: Optional[Union[str, "_models.MigStrategy"]] = rest_field(
         name="migStrategy", visibility=["read", "create", "update", "delete", "query"]
     )
     """Sets the MIG (Multi-Instance GPU) strategy that will be used for managed MIG support. For more
      information about the different strategies, visit aka.ms/aks/managed-gpu. When not specified,
      the default is None. Known values are: \"None\", \"Single\", and \"Mixed\"."""
+    mig_profiles: Optional[list[Union[str, "_models.GPUInstanceProfile"]]] = rest_field(
+        name="migProfiles", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ordered list of MIG (Multi-Instance GPU) partition profiles to assign to each supported
+     NVIDIA GPU. When ``migStrategy`` is ``Single``, exactly one profile must be specified. When
+     ``migStrategy`` is ``Mixed``, one or more profiles may be specified and the combination is
+     validated against the supported MIG geometry for the agent pool's GPU VM size. The same value
+     may appear more than once to request multiple partitions of that size. This field is mutually
+     exclusive with the top-level ``gpuInstanceProfile`` property. For more information, see
+     `https://aka.ms/aks/managed-gpu <https://aka.ms/aks/managed-gpu>`_."""
 
     @overload
     def __init__(
         self,
         *,
         management_mode: Optional[Union[str, "_models.ManagementMode"]] = None,
+        driver_mode: Optional[Union[str, "_models.NvidiaDriverMode"]] = None,
         mig_strategy: Optional[Union[str, "_models.MigStrategy"]] = None,
+        mig_profiles: Optional[list[Union[str, "_models.GPUInstanceProfile"]]] = None,
     ) -> None: ...
 
     @overload
@@ -12276,7 +14546,7 @@ class NvidiaGPUProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatusResult(_Model):
+class OperationStatusResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The current status of an async operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -12298,6 +14568,10 @@ class OperationStatusResult(_Model):
     :ivar resource_id: Fully qualified ID of the resource against which the original async
      operation was started.
     :vartype resource_id: str
+    :ivar operation_type: The type of the operation.
+    :vartype operation_type: str
+    :ivar sub_operation_type: The type of the suboperation.
+    :vartype sub_operation_type: str
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -12326,6 +14600,10 @@ class OperationStatusResult(_Model):
     """If present, details of the operation error."""
     resource_id: Optional[str] = rest_field(name="resourceId", visibility=["read"])
     """Fully qualified ID of the resource against which the original async operation was started."""
+    operation_type: Optional[str] = rest_field(name="operationType", visibility=["read"])
+    """The type of the operation."""
+    sub_operation_type: Optional[str] = rest_field(name="subOperationType", visibility=["read"])
+    """The type of the suboperation."""
 
     @overload
     def __init__(
@@ -12352,7 +14630,7 @@ class OperationStatusResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationValue(_Model):
+class OperationValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Operation value.
 
     :ivar origin: The origin of the operation.
@@ -12433,7 +14711,7 @@ class OperationValueDisplay(_Model):
     """The resource provider for the operation."""
 
 
-class OutboundEnvironmentEndpoint(_Model):
+class OutboundEnvironmentEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Egress endpoints which AKS agent nodes connect to for common purpose.
 
     :ivar category: The category of endpoints accessed by the AKS agent node, e.g.
@@ -12470,7 +14748,30 @@ class OutboundEnvironmentEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortRange(_Model):
+class PoolBootstrapData(_Model):
+    """Bootstrap configuration for a FlexNode pool.
+
+    :ivar azure: Azure environment and cluster identity information.
+    :vartype azure: ~azure.mgmt.containerservice.models.BootstrapAzureConfig
+    :ivar components: Component versions for the node runtime.
+    :vartype components: ~azure.mgmt.containerservice.models.BootstrapComponentVersions
+    :ivar networking: Network configuration for the node.
+    :vartype networking: ~azure.mgmt.containerservice.models.BootstrapNetworkingConfig
+    :ivar node: Node-level configuration for kubelet, labels, and taints.
+    :vartype node: ~azure.mgmt.containerservice.models.BootstrapNodeConfig
+    """
+
+    azure: Optional["_models.BootstrapAzureConfig"] = rest_field(visibility=["read"])
+    """Azure environment and cluster identity information."""
+    components: Optional["_models.BootstrapComponentVersions"] = rest_field(visibility=["read"])
+    """Component versions for the node runtime."""
+    networking: Optional["_models.BootstrapNetworkingConfig"] = rest_field(visibility=["read"])
+    """Network configuration for the node."""
+    node: Optional["_models.BootstrapNodeConfig"] = rest_field(visibility=["read"])
+    """Node-level configuration for kubelet, labels, and taints."""
+
+
+class PortRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The port range.
 
     :ivar port_start: The minimum port that is included in the range. It should be ranged from 1 to
@@ -12514,7 +14815,7 @@ class PortRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PowerState(_Model):
+class PowerState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the Power State of the cluster.
 
     :ivar code: Tells whether the cluster is Running or Stopped. Known values are: "Running" and
@@ -12543,7 +14844,7 @@ class PowerState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PreparedImageSpecificationProfile(_Model):
+class PreparedImageSpecificationProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings to determine the prepared image specification used to provision nodes in a pool.
 
     :ivar prepared_image_specification_id: The resource ID of the prepared image specification
@@ -12576,7 +14877,7 @@ class PreparedImageSpecificationProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpoint(_Model):
+class PrivateEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private endpoint which a connection belongs to.
 
     :ivar id: The resource ID of the private endpoint.
@@ -12604,7 +14905,7 @@ class PrivateEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private endpoint connection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12665,7 +14966,7 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionListResult(_Model):
+class PrivateEndpointConnectionListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of private endpoint connections.
 
     :ivar value: The collection value.
@@ -12695,7 +14996,7 @@ class PrivateEndpointConnectionListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private endpoint connection.
 
     :ivar provisioning_state: The current provisioning state. Known values are: "Canceled",
@@ -12744,7 +15045,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(_Model):
+class PrivateLinkResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: The ID of the private link resource.
@@ -12801,7 +15102,7 @@ class PrivateLinkResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourcesListResult(_Model):
+class PrivateLinkResourcesListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of private link resources.
 
     :ivar value: The collection value.
@@ -12831,7 +15132,7 @@ class PrivateLinkResourcesListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The state of a private link service connection.
 
     :ivar status: The private link service connection status. Known values are: "Pending",
@@ -12868,7 +15169,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RebalanceLoadBalancersRequestBody(_Model):
+class RebalanceLoadBalancersRequestBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The names of the load balancers to rebalance. If set to empty, all load balancers will be
     rebalanced.
 
@@ -12899,7 +15200,7 @@ class RebalanceLoadBalancersRequestBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RelativeMonthlySchedule(_Model):
+class RelativeMonthlySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """For schedules like: 'recur every month on the first Monday' or 'recur every 3 months on last
     Friday'.
 
@@ -12947,7 +15248,7 @@ class RelativeMonthlySchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceQuota(_Model):
+class ResourceQuota(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource quota for the namespace.
 
     :ivar cpu_request: CPU request of the namespace in one-thousandth CPU form. See `CPU resource
@@ -13017,7 +15318,7 @@ class ResourceQuota(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceReference(_Model):
+class ResourceReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A reference to an Azure resource.
 
     :ivar id: The fully qualified Azure resource id.
@@ -13261,7 +15562,7 @@ class ResourceSkuZoneDetails(_Model):
     """A list of capabilities that are available for the SKU in the specified list of zones."""
 
 
-class RunCommandRequest(_Model):
+class RunCommandRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A run command request.
 
     :ivar command: The command to run. Required.
@@ -13301,7 +15602,7 @@ class RunCommandRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunCommandResult(_Model):
+class RunCommandResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """run command result.
 
     :ivar id: The command id.
@@ -13355,7 +15656,7 @@ class RunCommandResult(_Model):
             super().__setattr__(key, value)
 
 
-class SafeguardsAvailableVersion(ProxyResource):
+class SafeguardsAvailableVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Available Safeguards Version.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13412,7 +15713,7 @@ class SafeguardsAvailableVersionsProperties(_Model):
     """Whether the version is preview or stable. Known values are: \"Preview\" and \"Stable\"."""
 
 
-class ScaleProfile(_Model):
+class ScaleProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifications on how to scale a VirtualMachines agent pool.
 
     :ivar manual: Specifications on how to scale the VirtualMachines agent pool to a fixed size.
@@ -13455,7 +15756,7 @@ class ScaleProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Schedule(_Model):
+class Schedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """One and only one of the schedule types should be specified. Choose either 'daily', 'weekly',
     'absoluteMonthly' or 'relativeMonthly' for your maintenance schedule.
 
@@ -13506,19 +15807,19 @@ class Schedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchedulerInstanceProfile(_Model):
-    """The scheduler profile for a single scheduler instance.
+class SchedulerInstanceProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Profile with settings related to a specific instance of an AKS-managed scheduler.
 
-    :ivar scheduler_config_mode: The config customization mode for this scheduler instance. Known
-     values are: "Default" and "ManagedByCRD".
+    :ivar scheduler_config_mode: The configuration mode to be used by the AKS-managed scheduler.
+     Known values are: "Default" and "ManagedByCRD".
     :vartype scheduler_config_mode: str or ~azure.mgmt.containerservice.models.SchedulerConfigMode
     """
 
     scheduler_config_mode: Optional[Union[str, "_models.SchedulerConfigMode"]] = rest_field(
         name="schedulerConfigMode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The config customization mode for this scheduler instance. Known values are: \"Default\" and
-     \"ManagedByCRD\"."""
+    """The configuration mode to be used by the AKS-managed scheduler. Known values are: \"Default\"
+     and \"ManagedByCRD\"."""
 
     @overload
     def __init__(
@@ -13538,48 +15839,22 @@ class SchedulerInstanceProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchedulerProfile(_Model):
-    """The pod scheduler profile for the cluster.
+class SchedulerProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Profile with scheduler-related settings, like the configuration mode for each scheduler managed
+    by AKS. See `https://aka.ms/aks/scheduler-profile <https://aka.ms/aks/scheduler-profile>`_.
 
-    :ivar scheduler_instance_profiles: Mapping of each scheduler instance to its profile.
-    :vartype scheduler_instance_profiles:
-     ~azure.mgmt.containerservice.models.SchedulerProfileSchedulerInstanceProfiles
-    """
-
-    scheduler_instance_profiles: Optional["_models.SchedulerProfileSchedulerInstanceProfiles"] = rest_field(
-        name="schedulerInstanceProfiles", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Mapping of each scheduler instance to its profile."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        scheduler_instance_profiles: Optional["_models.SchedulerProfileSchedulerInstanceProfiles"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SchedulerProfileSchedulerInstanceProfiles(_Model):  # pylint: disable=name-too-long
-    """Mapping of each scheduler instance to its profile.
-
-    :ivar upstream: The scheduler profile for the upstream scheduler instance.
+    :ivar upstream: Profile with settings related to upstream variant of kube-scheduler
+     (`https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler
+     <https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler>`_).
     :vartype upstream: ~azure.mgmt.containerservice.models.SchedulerInstanceProfile
     """
 
     upstream: Optional["_models.SchedulerInstanceProfile"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The scheduler profile for the upstream scheduler instance."""
+    """Profile with settings related to upstream variant of kube-scheduler
+     (`https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler
+     <https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler>`_)."""
 
     @overload
     def __init__(
@@ -13599,7 +15874,62 @@ class SchedulerProfileSchedulerInstanceProfiles(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ServiceAccountImagePullProfile(_Model):
+class ScopeEvaluationResult(_Model):
+    """The readiness evaluation details shared by a single scope: the support status of the version
+    the scope is currently running, the upgrade context, and the evaluation result. All fields are
+    server-computed and read-only.
+
+    :ivar current_kubernetes_version: The Kubernetes version the scope was evaluated from (the
+     upgrade source version the scope is currently running). Lets consumers read the result as "from
+     X to targetKubernetesVersion" and detect a stale cached record by comparing against the live
+     cluster version. Populated for Kubernetes version upgrades.
+    :vartype current_kubernetes_version: str
+    :ivar kubernetes_version_support_status: The support status of the Kubernetes version the scope
+     is currently running (not the target version). Populated for Kubernetes version upgrades. Known
+     values are: "InSupport" and "OutOfSupport".
+    :vartype kubernetes_version_support_status: str or
+     ~azure.mgmt.containerservice.models.KubernetesVersionSupportStatus
+    :ivar kubernetes_version_end_of_support_date: The date on which support ends for the Kubernetes
+     version the scope is currently running (its end-of-support date). Returned as an absolute date
+     so clients can apply their own "approaching end of support" threshold and compute the remaining
+     days against the current time; a precomputed remaining-days value is intentionally not returned
+     so that cached results do not go stale. Populated for Kubernetes version upgrades.
+    :vartype kubernetes_version_end_of_support_date: ~datetime.date
+    :ivar context: Contextual information about how this upgrade is managed, such as the upgrade
+     strategy, next maintenance window, and last successful upgrade time.
+    :vartype context: ~azure.mgmt.containerservice.models.UpgradeContext
+    :ivar evaluation: The evaluation result, including overall status, evaluation time, and any
+     detected issues.
+    :vartype evaluation: ~azure.mgmt.containerservice.models.UpgradeInsightEvaluation
+    """
+
+    current_kubernetes_version: Optional[str] = rest_field(name="currentKubernetesVersion", visibility=["read"])
+    """The Kubernetes version the scope was evaluated from (the upgrade source version the scope is
+     currently running). Lets consumers read the result as \"from X to targetKubernetesVersion\" and
+     detect a stale cached record by comparing against the live cluster version. Populated for
+     Kubernetes version upgrades."""
+    kubernetes_version_support_status: Optional[Union[str, "_models.KubernetesVersionSupportStatus"]] = rest_field(
+        name="kubernetesVersionSupportStatus", visibility=["read"]
+    )
+    """The support status of the Kubernetes version the scope is currently running (not the target
+     version). Populated for Kubernetes version upgrades. Known values are: \"InSupport\" and
+     \"OutOfSupport\"."""
+    kubernetes_version_end_of_support_date: Optional[datetime.date] = rest_field(
+        name="kubernetesVersionEndOfSupportDate", visibility=["read"]
+    )
+    """The date on which support ends for the Kubernetes version the scope is currently running (its
+     end-of-support date). Returned as an absolute date so clients can apply their own \"approaching
+     end of support\" threshold and compute the remaining days against the current time; a
+     precomputed remaining-days value is intentionally not returned so that cached results do not go
+     stale. Populated for Kubernetes version upgrades."""
+    context: Optional["_models.UpgradeContext"] = rest_field(visibility=["read"])
+    """Contextual information about how this upgrade is managed, such as the upgrade strategy, next
+     maintenance window, and last successful upgrade time."""
+    evaluation: Optional["_models.UpgradeInsightEvaluation"] = rest_field(visibility=["read"])
+    """The evaluation result, including overall status, evaluation time, and any detected issues."""
+
+
+class ServiceAccountImagePullProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for configuring image pull authentication to use service account scoped managed
     identities for authentication instead of node scoped managed identity (kubelet identity) for
     authentication to Azure Container Registry. For more information, refer to
@@ -13650,7 +15980,7 @@ class ServiceAccountImagePullProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceMeshProfile(_Model):
+class ServiceMeshProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Service mesh profile for a managed cluster.
 
     :ivar mode: Mode of the service mesh. Required. Known values are: "Istio" and "Disabled".
@@ -13683,7 +16013,7 @@ class ServiceMeshProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Snapshot(TrackedResource):
+class Snapshot(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A node pool snapshot resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13759,7 +16089,7 @@ class Snapshot(TrackedResource):
             super().__setattr__(key, value)
 
 
-class SnapshotProperties(_Model):
+class SnapshotProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties used to configure a node pool snapshot.
 
     :ivar creation_data: CreationData to be used to specify the source agent pool resource ID to
@@ -13779,7 +16109,7 @@ class SnapshotProperties(_Model):
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3", "Mariner",
      "Flatcar", "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025",
-     "WindowsAnnual", "Ubuntu2404", and "AzureContainerLinux".
+     "WindowsAnnual", "Ubuntu2404", "AzureContainerLinux", and "Ubuntu2604".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar vm_size: The size of the VM.
     :vartype vm_size: str
@@ -13807,7 +16137,7 @@ class SnapshotProperties(_Model):
      default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >= 1.25 if OSType
      is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"Mariner\",
      \"Flatcar\", \"CBLMariner\", \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\",
-     \"WindowsAnnual\", \"Ubuntu2404\", and \"AzureContainerLinux\"."""
+     \"WindowsAnnual\", \"Ubuntu2404\", \"AzureContainerLinux\", and \"Ubuntu2604\"."""
     vm_size: Optional[str] = rest_field(name="vmSize", visibility=["read"])
     """The size of the VM."""
     enable_fips: Optional[bool] = rest_field(name="enableFIPS", visibility=["read"])
@@ -13832,7 +16162,132 @@ class SnapshotProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SysctlConfig(_Model):
+class SoftEvictionGracePeriod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Grace periods for kubelet soft eviction thresholds. Each field is a Go-style duration string
+    (e.g. '1m30s') that specifies how long the corresponding soft eviction signal must be crossed
+    before pod eviction is triggered. A grace period only applies when the matching soft eviction
+    threshold is set.
+
+    :ivar memory_available: The grace period for the memoryAvailable soft eviction signal,
+     expressed as a Go-style duration string (e.g. '30s', '1m30s'). Supported units are 'ns', 'us',
+     'ms', 's', 'm', and 'h'. Must be greater than or equal to '30s'. Default is '30s'.
+    :vartype memory_available: str
+    :ivar node_fs_available: The grace period for the nodeFsAvailable soft eviction signal,
+     expressed as a Go-style duration string (e.g. '30s', '1m30s'). Supported units are 'ns', 'us',
+     'ms', 's', 'm', and 'h'. Must be greater than or equal to '30s'. Default is '2m'.
+    :vartype node_fs_available: str
+    :ivar node_fs_inodes_free: The grace period for the nodeFsInodesFree soft eviction signal,
+     expressed as a Go-style duration string (e.g. '30s', '1m30s'). Supported units are 'ns', 'us',
+     'ms', 's', 'm', and 'h'. Must be greater than or equal to '30s'. Default is '2m'.
+    :vartype node_fs_inodes_free: str
+    """
+
+    memory_available: Optional[str] = rest_field(
+        name="memoryAvailable", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The grace period for the memoryAvailable soft eviction signal, expressed as a Go-style duration
+     string (e.g. '30s', '1m30s'). Supported units are 'ns', 'us', 'ms', 's', 'm', and 'h'. Must be
+     greater than or equal to '30s'. Default is '30s'."""
+    node_fs_available: Optional[str] = rest_field(
+        name="nodeFsAvailable", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The grace period for the nodeFsAvailable soft eviction signal, expressed as a Go-style duration
+     string (e.g. '30s', '1m30s'). Supported units are 'ns', 'us', 'ms', 's', 'm', and 'h'. Must be
+     greater than or equal to '30s'. Default is '2m'."""
+    node_fs_inodes_free: Optional[str] = rest_field(
+        name="nodeFsInodesFree", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The grace period for the nodeFsInodesFree soft eviction signal, expressed as a Go-style
+     duration string (e.g. '30s', '1m30s'). Supported units are 'ns', 'us', 'ms', 's', 'm', and 'h'.
+     Must be greater than or equal to '30s'. Default is '2m'."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        memory_available: Optional[str] = None,
+        node_fs_available: Optional[str] = None,
+        node_fs_inodes_free: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftEvictionThreshold(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Soft eviction thresholds for kubelet. These thresholds trigger graceful pod eviction when node
+    resources drop below the specified values for at least the corresponding grace period defined
+    in softEvictionGracePeriod. Supported formats are Ki, Mi, Gi, or percentages using %.
+
+    :ivar memory_available: The threshold for available memory below which soft pod eviction is
+     triggered. Accepts absolute values (e.g. '500Mi') or percentage values (e.g. '5%'). Absolute
+     minimum is 100Mi; percentage minimum is 2%. Default uses a capacity-based step ladder: 500Mi
+     for nodes with <=8GiB, 750Mi for 16GiB, and 1024Mi (1Gi) for >=32GiB. Must also be greater than
+     the effective hardEvictionThreshold.memoryAvailable.
+    :vartype memory_available: str
+    :ivar node_fs_available: The threshold for available node filesystem space below which soft pod
+     eviction is triggered. Accepts absolute values (e.g. '1Gi') or percentage values (e.g. '10%').
+     Default is '12%'. Must be greater than or equal to 10% and greater than the effective
+     hardEvictionThreshold.nodeFsAvailable.
+    :vartype node_fs_available: str
+    :ivar node_fs_inodes_free: The threshold for available inodes on the node filesystem below
+     which soft pod eviction is triggered. Accepts absolute inode counts (e.g. '100000') or
+     percentage values (e.g. '5%'). Default is '7%'. Percentage values must be greater than or equal
+     to 5% and greater than the effective hardEvictionThreshold.nodeFsInodesFree.
+    :vartype node_fs_inodes_free: str
+    """
+
+    memory_available: Optional[str] = rest_field(
+        name="memoryAvailable", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The threshold for available memory below which soft pod eviction is triggered. Accepts absolute
+     values (e.g. '500Mi') or percentage values (e.g. '5%'). Absolute minimum is 100Mi; percentage
+     minimum is 2%. Default uses a capacity-based step ladder: 500Mi for nodes with <=8GiB, 750Mi
+     for 16GiB, and 1024Mi (1Gi) for >=32GiB. Must also be greater than the effective
+     hardEvictionThreshold.memoryAvailable."""
+    node_fs_available: Optional[str] = rest_field(
+        name="nodeFsAvailable", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The threshold for available node filesystem space below which soft pod eviction is triggered.
+     Accepts absolute values (e.g. '1Gi') or percentage values (e.g. '10%'). Default is '12%'. Must
+     be greater than or equal to 10% and greater than the effective
+     hardEvictionThreshold.nodeFsAvailable."""
+    node_fs_inodes_free: Optional[str] = rest_field(
+        name="nodeFsInodesFree", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The threshold for available inodes on the node filesystem below which soft pod eviction is
+     triggered. Accepts absolute inode counts (e.g. '100000') or percentage values (e.g. '5%').
+     Default is '7%'. Percentage values must be greater than or equal to 5% and greater than the
+     effective hardEvictionThreshold.nodeFsInodesFree."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        memory_available: Optional[str] = None,
+        node_fs_available: Optional[str] = None,
+        node_fs_inodes_free: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SysctlConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sysctl settings for Linux agent nodes.
 
     :ivar net_core_somaxconn: Sysctl setting net.core.somaxconn.
@@ -14049,7 +16504,7 @@ class SysctlConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -14116,7 +16571,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagsObject(_Model):
+class TagsObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tags object for patch operations.
 
     :ivar tags: Resource tags.
@@ -14144,7 +16599,7 @@ class TagsObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TimeInWeek(_Model):
+class TimeInWeek(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Time in a week.
 
     :ivar day: The day of the week. Known values are: "Sunday", "Monday", "Tuesday", "Wednesday",
@@ -14189,7 +16644,7 @@ class TimeInWeek(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TimeSpan(_Model):
+class TimeSpan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A time range. For example, between 2021-05-25T13:00:00Z and 2021-05-25T14:00:00Z.
 
     :ivar start: The start of a time span.
@@ -14248,7 +16703,7 @@ class TrustedAccessRole(_Model):
      <https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/cluster-role-v1/#ClusterRole>`_."""
 
 
-class TrustedAccessRoleBinding(ProxyResource):
+class TrustedAccessRoleBinding(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines binding between a resource and role.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14309,7 +16764,7 @@ class TrustedAccessRoleBinding(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TrustedAccessRoleBindingProperties(_Model):
+class TrustedAccessRoleBindingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for trusted access role binding.
 
     :ivar provisioning_state: The current provisioning state of trusted access role binding. Known
@@ -14383,7 +16838,227 @@ class TrustedAccessRoleRule(_Model):
     """List of allowed nonResourceURLs."""
 
 
-class UpgradeOverrideSettings(_Model):
+class UpgradeContext(_Model):
+    """Contextual information for a specific upgrade type (Kubernetes version or node OS image).
+    Because the Kubernetes version and node OS image can be managed independently — for example,
+    auto-upgrade for the node image but manual for the Kubernetes version — this context is
+    reported per upgrade type rather than once for the whole cluster.
+
+    :ivar current_upgrade_strategy: The strategy currently used to perform this type of upgrade
+     (manual or auto-upgrade). Known values are: "Manual" and "Auto".
+    :vartype current_upgrade_strategy: str or
+     ~azure.mgmt.containerservice.models.UpgradeInsightStrategy
+    :ivar next_maintenance_window: The next scheduled automatic upgrade maintenance window for this
+     upgrade type, if auto-upgrade is configured.
+    :vartype next_maintenance_window:
+     ~azure.mgmt.containerservice.models.UpgradeInsightMaintenanceWindow
+    :ivar last_successful_upgrade_time: The UTC time of the last successful upgrade of this type
+     for this scope. Clients can compute "days since last successful upgrade" from this value and
+     the current time; the server intentionally does not return a precomputed value so that cached
+     results do not go stale.
+    :vartype last_successful_upgrade_time: ~datetime.datetime
+    """
+
+    current_upgrade_strategy: Optional[Union[str, "_models.UpgradeInsightStrategy"]] = rest_field(
+        name="currentUpgradeStrategy", visibility=["read"]
+    )
+    """The strategy currently used to perform this type of upgrade (manual or auto-upgrade). Known
+     values are: \"Manual\" and \"Auto\"."""
+    next_maintenance_window: Optional["_models.UpgradeInsightMaintenanceWindow"] = rest_field(
+        name="nextMaintenanceWindow", visibility=["read"]
+    )
+    """The next scheduled automatic upgrade maintenance window for this upgrade type, if auto-upgrade
+     is configured."""
+    last_successful_upgrade_time: Optional[datetime.datetime] = rest_field(
+        name="lastSuccessfulUpgradeTime", visibility=["read"], format="rfc3339"
+    )
+    """The UTC time of the last successful upgrade of this type for this scope. Clients can compute
+     \"days since last successful upgrade\" from this value and the current time; the server
+     intentionally does not return a precomputed value so that cached results do not go stale."""
+
+
+class UpgradeGateSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Settings for health-aware upgrade gating.
+
+    :ivar enabled: Whether upgrade gating is enabled. Defaults to ``false`` when unset, except on a
+     newly created agent pool in a cluster where upgrade gating is enabled, which defaults to
+     ``true``. When ``true``, upgrade-gated health checks are enabled for upgrades in the
+     corresponding scope. Setting this to ``true`` at the cluster scope enables gating for the
+     entire cluster, including all agent pool upgrades. When the cluster scope is unset or
+     ``false``, an agent pool can opt in independently by setting this to ``true``. When the cluster
+     scope is ``true``, an agent pool cannot set this to ``false``. Force upgrade
+     (``overrideSettings.forceUpgrade``) overrides the gate: while the override window is active,
+     the upgrade skips health signal validation and proceeds.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether upgrade gating is enabled. Defaults to ``false`` when unset, except on a newly created
+     agent pool in a cluster where upgrade gating is enabled, which defaults to ``true``. When
+     ``true``, upgrade-gated health checks are enabled for upgrades in the corresponding scope.
+     Setting this to ``true`` at the cluster scope enables gating for the entire cluster, including
+     all agent pool upgrades. When the cluster scope is unset or ``false``, an agent pool can opt in
+     independently by setting this to ``true``. When the cluster scope is ``true``, an agent pool
+     cannot set this to ``false``. Force upgrade (``overrideSettings.forceUpgrade``) overrides the
+     gate: while the override window is active, the upgrade skips health signal validation and
+     proceeds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpgradeInsight(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An upgrade insight for a managed cluster: an on-demand readiness evaluation for an upgrade
+    scope, produced by the generateUpgradeInsights action on the managed cluster and addressable by
+    a server-generated name. The name identifies the scope and evaluated target —
+    ``controlPlane-<targetKubernetesVersion>`` (for example ``controlPlane-1.33.5``),
+    ``controlPlaneAndAgentPools-<targetKubernetesVersion>``,
+    ``agentPool-<agentPoolName>-<targetKubernetesVersion>`` (for example
+    ``agentPool-nodepool1-1.33.5``), or ``nodeImage-<agentPoolName>-<nodeImageVersion>`` (for
+    example ``nodeImage-nodepool1-202607.01.0``). The node image segment contains only the numeric
+    image version, while ``properties.targetNodeImageVersion`` returns the full image name. The
+    resource itself is read-only: GET returns the stored evaluation and LIST returns the stored
+    evaluations for the cluster. Evaluations are (re)generated via the managed cluster's
+    generateUpgradeInsights action, whose response body is the same UpgradeInsight representation
+    returned by GET.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.containerservice.models.UpgradeInsightProperties
+    """
+
+    properties: Optional["_models.UpgradeInsightProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.UpgradeInsightProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpgradeInsightEvaluation(_Model):
+    """The evaluation payload shared by all upgrade insight results, containing the overall status,
+    evaluation time, and any detected issues. Whenever this object is present the evaluation has
+    run, so ``status`` and ``evaluatedAt`` are always populated; the "not yet evaluated" state is
+    signaled by the absence of this ``evaluation`` object (and by ``provisioningState``), never by
+    a present evaluation with an absent status.
+
+    :ivar status: The overall upgrade insight status indicating whether issues were detected.
+     Always present when the evaluation has run; absence of the enclosing ``evaluation`` object—not
+     an absent status—represents "not yet evaluated". Required. Known values are: "Passed",
+     "Warning", and "Failed".
+    :vartype status: str or ~azure.mgmt.containerservice.models.UpgradeInsightStatus
+    :ivar evaluated_at: The UTC time at which the upgrade insight evaluation was performed.
+     Required.
+    :vartype evaluated_at: ~datetime.datetime
+    :ivar detected_issues: The list of detected upgrade issues, if any. Empty or absent for a
+     ``Passed`` status.
+    :vartype detected_issues: list[~azure.mgmt.containerservice.models.DetectedUpgradeIssue]
+    """
+
+    status: Union[str, "_models.UpgradeInsightStatus"] = rest_field(visibility=["read"])
+    """The overall upgrade insight status indicating whether issues were detected. Always present when
+     the evaluation has run; absence of the enclosing ``evaluation`` object—not an absent
+     status—represents \"not yet evaluated\". Required. Known values are: \"Passed\", \"Warning\",
+     and \"Failed\"."""
+    evaluated_at: datetime.datetime = rest_field(name="evaluatedAt", visibility=["read"], format="rfc3339")
+    """The UTC time at which the upgrade insight evaluation was performed. Required."""
+    detected_issues: Optional[list["_models.DetectedUpgradeIssue"]] = rest_field(
+        name="detectedIssues", visibility=["read"]
+    )
+    """The list of detected upgrade issues, if any. Empty or absent for a ``Passed`` status."""
+
+
+class UpgradeInsightMaintenanceWindow(_Model):
+    """A scheduled maintenance window during which an automatic upgrade of this type is expected to
+    run. The window is derived from the maintenance configuration that governs this upgrade type —
+    the cluster auto-upgrade schedule for Kubernetes version upgrades or the node OS upgrade
+    schedule for node image upgrades — so the same model describes both without duplicating types.
+
+    :ivar maintenance_configuration_name: The name of the maintenance configuration that governs
+     this window (for example, aksManagedAutoUpgradeSchedule or aksManagedNodeOSUpgradeSchedule).
+    :vartype maintenance_configuration_name: str
+    :ivar source: The auto-upgrade schedule that this window is derived from. Known values are:
+     "ClusterAutoUpgradeSchedule" and "NodeOSUpgradeSchedule".
+    :vartype source: str or ~azure.mgmt.containerservice.models.MaintenanceWindowSource
+    :ivar start_time: The UTC start time of the next scheduled maintenance window.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The UTC end time of the next scheduled maintenance window.
+    :vartype end_time: ~datetime.datetime
+    """
+
+    maintenance_configuration_name: Optional[str] = rest_field(name="maintenanceConfigurationName", visibility=["read"])
+    """The name of the maintenance configuration that governs this window (for example,
+     aksManagedAutoUpgradeSchedule or aksManagedNodeOSUpgradeSchedule)."""
+    source: Optional[Union[str, "_models.MaintenanceWindowSource"]] = rest_field(visibility=["read"])
+    """The auto-upgrade schedule that this window is derived from. Known values are:
+     \"ClusterAutoUpgradeSchedule\" and \"NodeOSUpgradeSchedule\"."""
+    start_time: Optional[datetime.datetime] = rest_field(name="startTime", visibility=["read"], format="rfc3339")
+    """The UTC start time of the next scheduled maintenance window."""
+    end_time: Optional[datetime.datetime] = rest_field(name="endTime", visibility=["read"], format="rfc3339")
+    """The UTC end time of the next scheduled maintenance window."""
+
+
+class UpgradeInsightRecommendedAction(_Model):
+    """A recommended action to resolve a detected upgrade issue.
+
+    :ivar title: A short title describing the recommended action.
+    :vartype title: str
+    :ivar details: A detailed description of the recommended action and how to perform it.
+    :vartype details: str
+    :ivar documentation_link: A link to customer-facing documentation describing the available
+     options for remediating the issue.
+    :vartype documentation_link: str
+    """
+
+    title: Optional[str] = rest_field(visibility=["read"])
+    """A short title describing the recommended action."""
+    details: Optional[str] = rest_field(visibility=["read"])
+    """A detailed description of the recommended action and how to perform it."""
+    documentation_link: Optional[str] = rest_field(name="documentationLink", visibility=["read"])
+    """A link to customer-facing documentation describing the available options for remediating the
+     issue."""
+
+
+class UpgradeOverrideSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for overrides when upgrading a cluster.
 
     :ivar force_upgrade: Whether to force upgrade the cluster. Note that this option instructs
@@ -14430,7 +17105,7 @@ class UpgradeOverrideSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineNodes(_Model):
+class VirtualMachineNodes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Current status on a group of nodes of the same vm size.
 
     :ivar size: The VM size of the agents used to host this group of nodes.
@@ -14463,7 +17138,7 @@ class VirtualMachineNodes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachinesProfile(_Model):
+class VirtualMachinesProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifications on VirtualMachines agent pool.
 
     :ivar scale: Specifications on how to scale a VirtualMachines agent pool.
@@ -14491,7 +17166,7 @@ class VirtualMachinesProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WeeklySchedule(_Model):
+class WeeklySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """For schedules like: 'recur every Monday' or 'recur every 3 weeks on Wednesday'.
 
     :ivar interval_weeks: Specifies the number of weeks between each set of occurrences. Required.
@@ -14528,7 +17203,7 @@ class WeeklySchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsGmsaProfile(_Model):
+class WindowsGmsaProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Windows gMSA Profile in the managed cluster.
 
     :ivar enabled: Whether to enable Windows gMSA. Specifies whether to enable Windows gMSA in the

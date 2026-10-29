@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=unused-wildcard-import, wildcard-import
+# pylint: disable=unused-wildcard-import, wildcard-import, used-before-assignment
 
 from __future__ import division
 

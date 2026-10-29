@@ -51,9 +51,8 @@ class TestDeviceRegistrationStateDelete(object):
     def service_client_delete(self, mocked_response):
         mocked_response.delete(
             url=registrations_url,
-            body="{}",
+            body="",
             status=204,
-            content_type="application/json",
             match_querystring=False,
         )
 

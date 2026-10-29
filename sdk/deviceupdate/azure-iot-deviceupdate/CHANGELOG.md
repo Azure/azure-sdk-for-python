@@ -1,14 +1,11 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.1.0 (2026-08-05)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Regenerated the client library from the TypeSpec specification for the Device Update for IoT Hub `2026-06-01` GA API version.
+- Added support for configuring TLS-secured update payload downloads through the `downloadSecurity` property when creating or updating a deployment.
 
 ## 1.0.0 (2022-09-09)
 

@@ -40,7 +40,7 @@ def main():
                 "administratorLogin": "exampleadministratorlogin",
                 "administratorLoginPassword": "examplepassword",
                 "availabilityZone": "1",
-                "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Enabled"},
+                "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Enabled", "immutableBackup": "Enabled"},
                 "createMode": "Create",
                 "highAvailability": {"mode": "SameZone"},
                 "network": {
@@ -57,6 +57,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/ServersCreateInYourOwnVirtualNetworkWithSameZoneHighAvailability.json
+# x-ms-original-file: 2026-07-01-preview/ServersCreateInYourOwnVirtualNetworkWithSameZoneHighAvailability.json
 if __name__ == "__main__":
     main()

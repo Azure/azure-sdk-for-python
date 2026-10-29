@@ -67,7 +67,7 @@ Replace ALL existing text with a disclaimer in the following format.
 ## CHANGELOG.md and _version.py
 
 - Update the version in the `azure/mypackage/_version.py` file. The new version should be:
-  - A [post-release](https://peps.python.org/pep-0440/#post-releases) of the last released version **only if** this deprecation release contains no code changes (i.e. the only updates are to metadata files such as `README.md`, `CHANGELOG.md`, `setup.py` classifiers, `sdk_packaging.toml`, `ci.yml`, etc.). If the last released version is already a post-release, increment the existing post segment instead of appending another `.post1`. For example:
+  - A [post-release](https://peps.python.org/pep-0440/#post-releases) of the last released version **only if** this deprecation release contains no code changes (i.e. the only updates are to metadata files such as `README.md`, `CHANGELOG.md`, `pyproject.toml` (or legacy `setup.py`) classifiers, `sdk_packaging.toml`, `ci.yml`, etc.). If the last released version is already a post-release, increment the existing post segment instead of appending another `.post1`. For example:
     - If the last released version was 1.0.0b1, the new version should be 1.0.0b1.post1.
     - If the last released version was 1.0.0b1.post1, the new version should be 1.0.0b1.post2.
     - If the last released version was 1.2.3, the new version should be 1.2.3.post1.
@@ -96,12 +96,9 @@ Replace ALL existing text with a disclaimer in the following format.
 ## pyproject.toml
 
 - Ensure `ci_enabled = false` is NOT present in pyproject.toml. If it is, remove the line, as this will prevent you from releasing the package.
-
-## setup.py
-
-- Update the `Development Status` classifier in `setup.py` to `Development Status :: 7 - Inactive`.
+- Update the `Development Status` classifier in `pyproject.toml` (or in `setup.py` for legacy packages that still use it) to `Development Status :: 7 - Inactive`.
   - `Inactive` packages are disabled from most CI verification such as tests/mypy/pylint/etc., therefore the CI should be faster and have fewer requirements.
- 
+
 ## ci.yml
 
 - Ensure the package is listed under `Artifacts` so that the artifact is generated for release. If not listed, add it.

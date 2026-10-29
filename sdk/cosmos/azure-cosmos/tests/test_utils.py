@@ -3,7 +3,6 @@
 
 import platform
 import unittest
-import uuid
 
 import pytest
 
@@ -33,7 +32,7 @@ class TestsUtils(unittest.TestCase):
         client: CosmosClient = (azure.cosmos.CosmosClient
                                 .from_connection_string(test_config.TestConfig.connection_str,
                                                         consistency_level="Session"))
-        database_id = "connection_string_test" + str(uuid.uuid4())
+        database_id = test_config.unique_database_id("connection-string")
         db = client.create_database(database_id)
         self.assertTrue(db is not None)
         client.delete_database(db.id)

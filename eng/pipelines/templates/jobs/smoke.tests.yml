@@ -44,8 +44,9 @@ jobs:
       condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
     strategy:
       matrix:
-        Python_310_Linux (AzureCloud):
-          PythonVersion: '3.10'
+        Python_311_Linux (AzureCloud):
+          PythonVersion: '3.11'
+          PythonArchitecture: 'x64'
 
     pool:
       name: $(LINUXPOOL)
@@ -77,8 +78,9 @@ jobs:
         condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
       strategy:
         matrix:
-            Python_310_Windows (AzureCloud):
-              PythonVersion: '3.10'
+            Python_311_Windows (AzureCloud):
+              PythonVersion: '3.11'
+              PythonArchitecture: 'x64'
 
       pool:
         name: $(WINDOWSPOOL)
@@ -107,8 +109,9 @@ jobs:
         condition: and(succeeded(), eq(dependencies.smoke_test_eligibility.outputs['output_eligibility.RunSmokeTests'], true))
       strategy:
         matrix:
-            Python_310_Mac (AzureCloud):
-              PythonVersion: '3.10'
+            Python_311_Mac (AzureCloud):
+              PythonVersion: '3.11'
+              PythonArchitecture: 'arm64'
 
       pool:
         name: $(MACPOOL)

@@ -1,0 +1,97 @@
+{
+  "properties": {
+    "action": {
+      "actionType": "CreateMonitor",
+      "monitorDefinition": {
+        "computeConfiguration": {
+          "computeIdentity": {
+            "computeIdentityType": "AmlToken"
+          },
+          "computeType": "ServerlessSpark",
+          "instanceType": "standard_e8s_v3",
+          "runtimeVersion": "3.4"
+        },
+        "monitoringTarget": {
+          "deploymentId": "fake_endpoint_id",
+          "taskType": "classification"
+        },
+        "signals": {
+          "testSignal": {
+            "metricThreshold": {
+              "metric": "normalizedDiscountedCumulativeGain",
+              "threshold": {
+                "value": 0.2
+              }
+            },
+            "mode": "Enabled",
+            "productionData": [
+              {
+                "columns": {
+                  "correlation_id": "inference_correlation_id"
+                },
+                "dataContext": "model_inputs",
+                "inputDataType": "Trailing",
+                "jobInputType": "mltable",
+                "uri": "my_model_inputs_data:1",
+                "windowOffset": "P0D",
+                "windowSize": "P7D"
+              },
+              {
+                "columns": {
+                  "correlation_id": "inference_correlation_id",
+                  "prediction": "is_fraud",
+                  "prediction_probability": "is_fraud_probability"
+                },
+                "dataContext": "model_outputs",
+                "inputDataType": "Trailing",
+                "jobInputType": "mltable",
+                "uri": "my_model_outputs_data:1",
+                "windowOffset": "P0D",
+                "windowSize": "P7D"
+              }
+            ],
+            "referenceData": {
+              "columns": {
+                "target_column": "target"
+              },
+              "dataContext": "training",
+              "inputDataType": "Fixed",
+              "jobInputType": "mltable",
+              "uri": "my_model_training_data:1"
+            },
+            "signalType": "FeatureAttributionDrift"
+          }
+        }
+      }
+    },
+    "properties": {
+      "prop1": "value"
+    },
+    "tags": {
+      "tag1": "tag"
+    },
+    "trigger": {
+      "frequency": "week",
+      "interval": 1,
+      "schedule": {
+        "hours": [
+          22,
+          20
+        ],
+        "minutes": [
+          0,
+          0
+        ],
+        "weekDays": [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday"
+        ]
+      },
+      "timeZone": "utc",
+      "triggerType": "Recurrence"
+    }
+  }
+}

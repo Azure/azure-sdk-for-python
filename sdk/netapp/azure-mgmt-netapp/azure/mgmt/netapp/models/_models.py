@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AccountEncryption(_Model):
+class AccountEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encryption settings.
 
     :ivar key_source: The encryption keySource (provider). Possible values (case-insensitive):
@@ -66,7 +66,56 @@ class AccountEncryption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccountProperties(_Model):
+class AccountEncryptionPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Encryption settings for PATCH operations (no default values).
+
+    :ivar key_source: The encryption keySource (provider). Possible values (case-insensitive):
+     Microsoft.NetApp, Microsoft.KeyVault. Known values are: "Microsoft.NetApp" and
+     "Microsoft.KeyVault".
+    :vartype key_source: str or ~azure.mgmt.netapp.models.KeySource
+    :ivar key_vault_properties: Properties provided by KeVault. Applicable if keySource is
+     'Microsoft.KeyVault'.
+    :vartype key_vault_properties: ~azure.mgmt.netapp.models.KeyVaultPropertiesPatch
+    :ivar identity: Identity used to authenticate to KeyVault. Applicable if keySource is
+     'Microsoft.KeyVault'.
+    :vartype identity: ~azure.mgmt.netapp.models.EncryptionIdentityPatch
+    """
+
+    key_source: Optional[Union[str, "_models.KeySource"]] = rest_field(
+        name="keySource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The encryption keySource (provider). Possible values (case-insensitive):  Microsoft.NetApp,
+     Microsoft.KeyVault. Known values are: \"Microsoft.NetApp\" and \"Microsoft.KeyVault\"."""
+    key_vault_properties: Optional["_models.KeyVaultPropertiesPatch"] = rest_field(
+        name="keyVaultProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties provided by KeVault. Applicable if keySource is 'Microsoft.KeyVault'."""
+    identity: Optional["_models.EncryptionIdentityPatch"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Identity used to authenticate to KeyVault. Applicable if keySource is 'Microsoft.KeyVault'."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_source: Optional[Union[str, "_models.KeySource"]] = None,
+        key_vault_properties: Optional["_models.KeyVaultPropertiesPatch"] = None,
+        identity: Optional["_models.EncryptionIdentityPatch"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NetApp account properties.
 
     :ivar provisioning_state: Azure lifecycle management.
@@ -84,6 +133,8 @@ class AccountProperties(_Model):
     :ivar multi_ad_status: MultiAD Status for the account. Known values are: "Disabled" and
      "Enabled".
     :vartype multi_ad_status: str or ~azure.mgmt.netapp.models.MultiAdStatus
+    :ivar ldap_configuration: LDAP Configuration for the account.
+    :vartype ldap_configuration: ~azure.mgmt.netapp.models.LdapConfiguration
     """
 
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
@@ -107,6 +158,10 @@ class AccountProperties(_Model):
         name="multiAdStatus", visibility=["read"]
     )
     """MultiAD Status for the account. Known values are: \"Disabled\" and \"Enabled\"."""
+    ldap_configuration: Optional["_models.LdapConfiguration"] = rest_field(
+        name="ldapConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """LDAP Configuration for the account."""
 
     @overload
     def __init__(
@@ -115,6 +170,7 @@ class AccountProperties(_Model):
         active_directories: Optional[list["_models.ActiveDirectory"]] = None,
         encryption: Optional["_models.AccountEncryption"] = None,
         nfs_v4_id_domain: Optional[str] = None,
+        ldap_configuration: Optional["_models.LdapConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -128,7 +184,60 @@ class AccountProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActiveDirectory(_Model):
+class AccountPropertiesPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """NetApp account patch properties.
+
+    :ivar active_directories: Active Directories.
+    :vartype active_directories: list[~azure.mgmt.netapp.models.ActiveDirectoryPatch]
+    :ivar encryption: Encryption settings.
+    :vartype encryption: ~azure.mgmt.netapp.models.AccountEncryptionPatch
+    :ivar nfs_v4_id_domain: Domain for NFSv4 user ID mapping. This property will be set for all
+     NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes.
+    :vartype nfs_v4_id_domain: str
+    :ivar ldap_configuration: LDAP Configuration for the account.
+    :vartype ldap_configuration: ~azure.mgmt.netapp.models.LdapConfigurationPatch
+    """
+
+    active_directories: Optional[list["_models.ActiveDirectoryPatch"]] = rest_field(
+        name="activeDirectories", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Active Directories."""
+    encryption: Optional["_models.AccountEncryptionPatch"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Encryption settings."""
+    nfs_v4_id_domain: Optional[str] = rest_field(
+        name="nfsV4IDDomain", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Domain for NFSv4 user ID mapping. This property will be set for all NetApp accounts in the
+     subscription and region and only affect non ldap NFSv4 volumes."""
+    ldap_configuration: Optional["_models.LdapConfigurationPatch"] = rest_field(
+        name="ldapConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """LDAP Configuration for the account."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        active_directories: Optional[list["_models.ActiveDirectoryPatch"]] = None,
+        encryption: Optional["_models.AccountEncryptionPatch"] = None,
+        nfs_v4_id_domain: Optional[str] = None,
+        ldap_configuration: Optional["_models.LdapConfigurationPatch"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ActiveDirectory(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Active Directory.
 
     :ivar active_directory_id: Id of the Active Directory.
@@ -316,7 +425,185 @@ class ActiveDirectory(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizeRequest(_Model):
+class ActiveDirectoryPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Active Directory settings for PATCH operations (no default values).
+
+    :ivar active_directory_id: Id of the Active Directory.
+    :vartype active_directory_id: str
+    :ivar username: A domain user account with permission to create machine accounts.
+    :vartype username: str
+    :ivar password: Plain text password of Active Directory domain administrator, value is masked
+     in the response.
+    :vartype password: str
+    :ivar domain: Name of the Active Directory domain.
+    :vartype domain: str
+    :ivar dns: Comma separated list of DNS server IP addresses (IPv4 only) for the Active Directory
+     domain.
+    :vartype dns: str
+    :ivar smb_server_name: NetBIOS name of the SMB server. This name will be registered as a
+     computer account in the AD and used to mount volumes.
+    :vartype smb_server_name: str
+    :ivar organizational_unit: The Organizational Unit (OU) within the Windows Active Directory.
+    :vartype organizational_unit: str
+    :ivar site: The Active Directory site the service will limit Domain Controller discovery to.
+    :vartype site: str
+    :ivar backup_operators: Users to be added to the Built-in Backup Operator active directory
+     group. A list of unique usernames without domain specifier.
+    :vartype backup_operators: list[str]
+    :ivar administrators: Users to be added to the Built-in Administrators active directory group.
+     A list of unique usernames without domain specifier.
+    :vartype administrators: list[str]
+    :ivar kdc_ip: kdc server IP address for the active directory machine. This optional parameter
+     is used only while creating kerberos volume.
+    :vartype kdc_ip: str
+    :ivar ad_name: Name of the active directory machine. This optional parameter is used only while
+     creating kerberos volume.
+    :vartype ad_name: str
+    :ivar server_root_ca_certificate: When LDAP over SSL/TLS is enabled, the LDAP client is
+     required to have base64 encoded Active Directory Certificate Service's self-signed root CA
+     certificate, this optional parameter is used only for dual protocol with LDAP user-mapping
+     volumes.
+    :vartype server_root_ca_certificate: str
+    :ivar aes_encryption: If enabled, AES encryption will be enabled for SMB communication.
+    :vartype aes_encryption: bool
+    :ivar ldap_signing: Specifies whether or not the LDAP traffic needs to be signed.
+    :vartype ldap_signing: bool
+    :ivar security_operators: Domain Users in the Active directory to be given SeSecurityPrivilege
+     privilege (Needed for SMB Continuously available shares for SQL). A list of unique usernames
+     without domain specifier.
+    :vartype security_operators: list[str]
+    :ivar ldap_over_tls: Specifies whether or not the LDAP traffic needs to be secured via TLS.
+    :vartype ldap_over_tls: bool
+    :ivar allow_local_nfs_users_with_ldap: If enabled, NFS client local users can also (in addition
+     to LDAP users) access the NFS volumes.
+    :vartype allow_local_nfs_users_with_ldap: bool
+    :ivar encrypt_dc_connections: If enabled, Traffic between the SMB server to Domain Controller
+     (DC) will be encrypted.
+    :vartype encrypt_dc_connections: bool
+    :ivar ldap_search_scope: LDAP Search scope options.
+    :vartype ldap_search_scope: ~azure.mgmt.netapp.models.LdapSearchScopeOpt
+    :ivar preferred_servers_for_ldap_client: Comma separated list of IPv4 addresses of preferred
+     servers for LDAP client. At most two comma separated IPv4 addresses can be passed.
+    :vartype preferred_servers_for_ldap_client: str
+    """
+
+    active_directory_id: Optional[str] = rest_field(
+        name="activeDirectoryId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Id of the Active Directory."""
+    username: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A domain user account with permission to create machine accounts."""
+    password: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Plain text password of Active Directory domain administrator, value is masked in the response."""
+    domain: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the Active Directory domain."""
+    dns: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Comma separated list of DNS server IP addresses (IPv4 only) for the Active Directory domain."""
+    smb_server_name: Optional[str] = rest_field(
+        name="smbServerName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """NetBIOS name of the SMB server. This name will be registered as a computer account in the AD
+     and used to mount volumes."""
+    organizational_unit: Optional[str] = rest_field(
+        name="organizationalUnit", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Organizational Unit (OU) within the Windows Active Directory."""
+    site: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Active Directory site the service will limit Domain Controller discovery to."""
+    backup_operators: Optional[list[str]] = rest_field(
+        name="backupOperators", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Users to be added to the Built-in Backup Operator active directory group. A list of unique
+     usernames without domain specifier."""
+    administrators: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Users to be added to the Built-in Administrators active directory group. A list of unique
+     usernames without domain specifier."""
+    kdc_ip: Optional[str] = rest_field(name="kdcIP", visibility=["read", "create", "update", "delete", "query"])
+    """kdc server IP address for the active directory machine. This optional parameter is used only
+     while creating kerberos volume."""
+    ad_name: Optional[str] = rest_field(name="adName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the active directory machine. This optional parameter is used only while creating
+     kerberos volume."""
+    server_root_ca_certificate: Optional[str] = rest_field(
+        name="serverRootCACertificate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """When LDAP over SSL/TLS is enabled, the LDAP client is required to have base64 encoded Active
+     Directory Certificate Service's self-signed root CA certificate, this optional parameter is
+     used only for dual protocol with LDAP user-mapping volumes."""
+    aes_encryption: Optional[bool] = rest_field(
+        name="aesEncryption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """If enabled, AES encryption will be enabled for SMB communication."""
+    ldap_signing: Optional[bool] = rest_field(
+        name="ldapSigning", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether or not the LDAP traffic needs to be signed."""
+    security_operators: Optional[list[str]] = rest_field(
+        name="securityOperators", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Domain Users in the Active directory to be given SeSecurityPrivilege privilege (Needed for SMB
+     Continuously available shares for SQL). A list of unique usernames without domain specifier."""
+    ldap_over_tls: Optional[bool] = rest_field(
+        name="ldapOverTLS", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether or not the LDAP traffic needs to be secured via TLS."""
+    allow_local_nfs_users_with_ldap: Optional[bool] = rest_field(
+        name="allowLocalNfsUsersWithLdap", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """If enabled, NFS client local users can also (in addition to LDAP users) access the NFS volumes."""
+    encrypt_dc_connections: Optional[bool] = rest_field(
+        name="encryptDCConnections", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """If enabled, Traffic between the SMB server to Domain Controller (DC) will be encrypted."""
+    ldap_search_scope: Optional["_models.LdapSearchScopeOpt"] = rest_field(
+        name="ldapSearchScope", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """LDAP Search scope options."""
+    preferred_servers_for_ldap_client: Optional[str] = rest_field(
+        name="preferredServersForLdapClient", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Comma separated list of IPv4 addresses of preferred servers for LDAP client. At most two comma
+     separated IPv4 addresses can be passed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        active_directory_id: Optional[str] = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        domain: Optional[str] = None,
+        dns: Optional[str] = None,
+        smb_server_name: Optional[str] = None,
+        organizational_unit: Optional[str] = None,
+        site: Optional[str] = None,
+        backup_operators: Optional[list[str]] = None,
+        administrators: Optional[list[str]] = None,
+        kdc_ip: Optional[str] = None,
+        ad_name: Optional[str] = None,
+        server_root_ca_certificate: Optional[str] = None,
+        aes_encryption: Optional[bool] = None,
+        ldap_signing: Optional[bool] = None,
+        security_operators: Optional[list[str]] = None,
+        ldap_over_tls: Optional[bool] = None,
+        allow_local_nfs_users_with_ldap: Optional[bool] = None,
+        encrypt_dc_connections: Optional[bool] = None,
+        ldap_search_scope: Optional["_models.LdapSearchScopeOpt"] = None,
+        preferred_servers_for_ldap_client: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AuthorizeRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authorize request.
 
     :ivar remote_volume_resource_id: Resource id of the remote volume.
@@ -346,7 +633,7 @@ class AuthorizeRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureKeyVaultDetails(_Model):
+class AzureKeyVaultDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the Azure Key Vault settings. These are used when
     a) retrieving the bucket server certificate, and
     b) storing the bucket credentials
@@ -443,7 +730,7 @@ class ProxyResource(Resource):
     """
 
 
-class Backup(ProxyResource):
+class Backup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup under a Backup Vault.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -517,7 +804,7 @@ class Backup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class BackupPatch(_Model):
+class BackupPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup patch.
 
     :ivar properties: Backup Patch Properties.
@@ -567,7 +854,7 @@ class BackupPatch(_Model):
             super().__setattr__(key, value)
 
 
-class BackupPatchProperties(_Model):
+class BackupPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup patch properties.
 
     :ivar label: Label for backup.
@@ -595,7 +882,7 @@ class BackupPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -639,7 +926,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class BackupPolicy(TrackedResource):
+class BackupPolicy(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup policy information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -725,7 +1012,7 @@ class BackupPolicy(TrackedResource):
             super().__setattr__(key, value)
 
 
-class BackupPolicyPatch(_Model):
+class BackupPolicyPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup policy Details for create and update.
 
     :ivar location: Resource location.
@@ -806,7 +1093,7 @@ class BackupPolicyPatch(_Model):
             super().__setattr__(key, value)
 
 
-class BackupPolicyProperties(_Model):
+class BackupPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup policy properties.
 
     :ivar backup_policy_id: Backup Policy GUID ID.
@@ -871,7 +1158,7 @@ class BackupPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupProperties(_Model):
+class BackupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup properties.
 
     :ivar backup_id: UUID v4 used to identify the Backup.
@@ -961,7 +1248,7 @@ class BackupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupRestoreFiles(_Model):
+class BackupRestoreFiles(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Restore payload for Single File Backup Restore.
 
     :ivar file_list: List of files to be restored. Required.
@@ -1008,7 +1295,7 @@ class BackupRestoreFiles(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupsMigrationRequest(_Model):
+class BackupsMigrationRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Migrate Backups Request.
 
     :ivar backup_vault_id: The ResourceId of the Backup Vault. Required.
@@ -1085,7 +1372,7 @@ class BackupStatus(_Model):
     """Displays the total number of bytes transferred for the ongoing operation."""
 
 
-class BackupVault(TrackedResource):
+class BackupVault(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup Vault information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1152,7 +1439,7 @@ class BackupVault(TrackedResource):
             super().__setattr__(key, value)
 
 
-class BackupVaultPatch(_Model):
+class BackupVaultPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup Vault information.
 
     :ivar tags: Resource tags.
@@ -1191,7 +1478,100 @@ class BackupVaultProperties(_Model):
     """Azure lifecycle management."""
 
 
-class BreakFileLocksRequest(_Model):
+class BindPasswordAkvConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure Key Vault configuration where the Bind DN (Distinguished Name) user password is
+    stored.
+
+    :ivar azure_key_vault_uri: The Azure Key Vault URI where the Bind DN user password is stored.
+     Required.
+    :vartype azure_key_vault_uri: str
+    :ivar secret_name: The name of the secret in Azure Key Vault that contains the Bind DN user
+     password. Required.
+    :vartype secret_name: str
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault.
+    :vartype user_assigned_identity: str
+    """
+
+    azure_key_vault_uri: str = rest_field(
+        name="azureKeyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault URI where the Bind DN user password is stored. Required."""
+    secret_name: str = rest_field(name="secretName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the secret in Azure Key Vault that contains the Bind DN user password. Required."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_key_vault_uri: str,
+        secret_name: str,
+        user_assigned_identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BindPasswordAkvConfigPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure Key Vault configuration where the Bind DN (Distinguished Name) user password is
+    stored.
+
+    :ivar azure_key_vault_uri: The Azure Key Vault URI where the Bind DN user password is stored.
+    :vartype azure_key_vault_uri: str
+    :ivar secret_name: The name of the secret in Azure Key Vault that contains the Bind DN user
+     password.
+    :vartype secret_name: str
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault.
+    :vartype user_assigned_identity: str
+    """
+
+    azure_key_vault_uri: Optional[str] = rest_field(
+        name="azureKeyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault URI where the Bind DN user password is stored."""
+    secret_name: Optional[str] = rest_field(
+        name="secretName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the secret in Azure Key Vault that contains the Bind DN user password."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_key_vault_uri: Optional[str] = None,
+        secret_name: Optional[str] = None,
+        user_assigned_identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BreakFileLocksRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Break file locks request.
 
     :ivar client_ip: To clear file locks on a volume for a particular client.
@@ -1228,7 +1608,7 @@ class BreakFileLocksRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BreakReplicationRequest(_Model):
+class BreakReplicationRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Break replication request.
 
     :ivar force_break_replication: If replication is in status transferring and you want to force
@@ -1260,7 +1640,7 @@ class BreakReplicationRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Bucket(ProxyResource):
+class Bucket(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Bucket resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1329,7 +1709,7 @@ class Bucket(ProxyResource):
             super().__setattr__(key, value)
 
 
-class BucketCredentialsExpiry(_Model):
+class BucketCredentialsExpiry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The bucket's Access and Secret key pair Expiry Time expressed as the number of days from now.
 
     :ivar key_pair_expiry_days: The number of days from now until the newly generated Access and
@@ -1383,7 +1763,7 @@ class BucketGenerateCredentials(_Model):
     """The bucket's Access and Secret key pair expiry date and time (in UTC)."""
 
 
-class BucketPatch(ProxyResource):
+class BucketPatch(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Bucket resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1444,15 +1824,15 @@ class BucketPatch(ProxyResource):
             super().__setattr__(key, value)
 
 
-class BucketPatchProperties(_Model):
+class BucketPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Bucket resource properties for a Patch operation.
 
     :ivar file_system_user: File System user having access to volume data. For Unix, this is the
      user's uid and gid. For Windows, this is the user's username. Note that the Unix and Windows
      user details are mutually exclusive, meaning one or other must be supplied, but not both.
     :vartype file_system_user: ~azure.mgmt.netapp.models.FileSystemUser
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
-     "Creating", "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
     :ivar server: Properties of the server managing the lifecycle of volume buckets.
     :vartype server: ~azure.mgmt.netapp.models.BucketServerPatchProperties
@@ -1484,8 +1864,8 @@ class BucketPatchProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """Provisioning state of the resource. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
     server: Optional["_models.BucketServerPatchProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1533,7 +1913,7 @@ class BucketPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BucketProperties(_Model):
+class BucketProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Bucket resource properties.
 
     :ivar path: The volume path mounted inside the bucket. The default is the root path '/' if no
@@ -1543,8 +1923,8 @@ class BucketProperties(_Model):
      user's uid and gid. For Windows, this is the user's username. Note that the Unix and Windows
      user details are mutually exclusive, meaning one or other must be supplied, but not both.
     :vartype file_system_user: ~azure.mgmt.netapp.models.FileSystemUser
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
-     "Creating", "Patching", "Updating", "Deleting", "Moving", "Failed", and "Succeeded".
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
     :ivar status: The bucket credentials status. There states:
 
@@ -1587,8 +1967,8 @@ class BucketProperties(_Model):
     provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
-    """Provisioning state of the resource. Known values are: \"Accepted\", \"Creating\", \"Patching\",
-     \"Updating\", \"Deleting\", \"Moving\", \"Failed\", and \"Succeeded\"."""
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
     status: Optional[Union[str, "_models.CredentialsStatus"]] = rest_field(visibility=["read"])
     """The bucket credentials status. There states:
      
@@ -1644,7 +2024,7 @@ class BucketProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BucketServerPatchProperties(_Model):
+class BucketServerPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the server managing the lifecycle of volume buckets.
 
     :ivar fqdn: The host part of the bucket URL, resolving to the bucket IP address and allowed by
@@ -1696,7 +2076,7 @@ class BucketServerPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BucketServerProperties(_Model):
+class BucketServerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the server managing the lifecycle of volume buckets.
 
     :ivar fqdn: The host part of the bucket URL, resolving to the bucket IP address and allowed by
@@ -1763,7 +2143,7 @@ class BucketServerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Cache(TrackedResource):
+class Cache(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cache resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1842,7 +2222,7 @@ class CacheMountTargetProperties(_Model):
     """The SMB server's Fully Qualified Domain Name, FQDN."""
 
 
-class CacheProperties(_Model):
+class CacheProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cache resource properties.
 
     :ivar file_path: The file path of the Cache. Required.
@@ -2068,7 +2448,7 @@ class CacheProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CachePropertiesExportPolicy(_Model):
+class CachePropertiesExportPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Set of export policy rules.
 
     :ivar rules: Export policy rule.
@@ -2098,7 +2478,7 @@ class CachePropertiesExportPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CacheUpdate(_Model):
+class CacheUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the Cache.
 
     :ivar tags: Resource tags.
@@ -2133,7 +2513,7 @@ class CacheUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CacheUpdateProperties(_Model):
+class CacheUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the Cache.
 
     :ivar size: Maximum storage quota allowed for a file system in bytes. Valid values are in the
@@ -2222,7 +2602,7 @@ class CacheUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CapacityPool(TrackedResource):
+class CapacityPool(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Capacity pool resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2308,7 +2688,7 @@ class CapacityPool(TrackedResource):
             super().__setattr__(key, value)
 
 
-class CapacityPoolPatch(_Model):
+class CapacityPoolPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Capacity pool patch resource.
 
     :ivar location: Resource location.
@@ -2380,7 +2760,7 @@ class CapacityPoolPatch(_Model):
             super().__setattr__(key, value)
 
 
-class CertificateAkvDetails(_Model):
+class CertificateAkvDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the Azure Key Vault settings for retrieving the bucket server certificate.
 
     :ivar certificate_key_vault_uri: The base URI of the Azure Key Vault that is used when
@@ -2419,7 +2799,7 @@ class CertificateAkvDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChangeKeyVault(_Model):
+class ChangeKeyVault(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Change key vault request.
 
     :ivar key_vault_uri: The URI of the key vault/managed HSM that should be used for encryption.
@@ -2471,7 +2851,7 @@ class ChangeKeyVault(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckAvailabilityResponse(_Model):
+class CheckAvailabilityResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information regarding availability of a resource.
 
     :ivar is_available: <code>true</code> indicates name is valid and available. <code>false</code>
@@ -2525,7 +2905,7 @@ class CheckAvailabilityResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CifsUser(_Model):
+class CifsUser(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The effective CIFS username when accessing the volume data.
 
     :ivar username: The CIFS user's username.
@@ -2553,7 +2933,7 @@ class CifsUser(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterPeerCommandResponse(_Model):
+class ClusterPeerCommandResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about cluster peering process.
 
     :ivar properties: Represents the properties of the cluster peer command response.
@@ -2583,7 +2963,7 @@ class ClusterPeerCommandResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterPeerCommandResponseProperties(_Model):
+class ClusterPeerCommandResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the cluster peer command response.
 
     :ivar cluster_peering_command: ClusterPeeringCommand to run to accept cluster peer. Will only
@@ -2620,7 +3000,7 @@ class ClusterPeerCommandResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CredentialsAkvDetails(_Model):
+class CredentialsAkvDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the Azure Key Vault settings for storing the bucket credentials.
 
     :ivar credentials_key_vault_uri: The base URI of the Azure Key Vault that is used when storing
@@ -2670,7 +3050,7 @@ class CredentialsAkvDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DailySchedule(_Model):
+class DailySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Daily Schedule properties.
 
     :ivar snapshots_to_keep: Daily snapshot count to keep.
@@ -2715,7 +3095,7 @@ class DailySchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DestinationReplication(_Model):
+class DestinationReplication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Destination replication properties.
 
     :ivar resource_id: The resource ID of the remote volume.
@@ -2764,7 +3144,7 @@ class DestinationReplication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Dimension(_Model):
+class Dimension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dimension of blobs, possibly be blob type or access tier.
 
     :ivar name: Display name of dimension.
@@ -2799,7 +3179,7 @@ class Dimension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionIdentity(_Model):
+class EncryptionIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity used to authenticate with key vault.
 
     :ivar principal_id: The principal ID (object ID) of the identity used to authenticate with key
@@ -2846,7 +3226,49 @@ class EncryptionIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionTransitionRequest(_Model):
+class EncryptionIdentityPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Identity used to authenticate with key vault for PATCH operations.
+
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match
+     key of identity.userAssignedIdentities.
+    :vartype user_assigned_identity: str
+    :ivar federated_client_id: ClientId of the multi-tenant Entra ID Application. Used to access
+     cross-tenant keyvaults.
+    :vartype federated_client_id: str
+    """
+
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault.
+     Applicable if identity.type has 'UserAssigned'. It should match key of
+     identity.userAssignedIdentities."""
+    federated_client_id: Optional[str] = rest_field(
+        name="federatedClientId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ClientId of the multi-tenant Entra ID Application. Used to access cross-tenant keyvaults."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user_assigned_identity: Optional[str] = None,
+        federated_client_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EncryptionTransitionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encryption transition request.
 
     :ivar virtual_network_id: Identifier for the virtual network. Required.
@@ -2928,7 +3350,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -2956,7 +3378,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportPolicyRule(_Model):
+class ExportPolicyRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume Export Policy Rule.
 
     :ivar rule_index: Order index.
@@ -3088,7 +3510,7 @@ class ExportPolicyRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FilePathAvailabilityRequest(_Model):
+class FilePathAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """File path availability request content - availability is based on the name and the subnetId.
 
     :ivar name: File path to verify. Required.
@@ -3133,7 +3555,7 @@ class FilePathAvailabilityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileSystemUser(_Model):
+class FileSystemUser(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """File System user having access to volume data. For Unix, this is the user's uid and gid. For
     Windows, this is the user's username. Note that the Unix and Windows user details are mutually
     exclusive, meaning one or other must be supplied, but not both.
@@ -3172,7 +3594,7 @@ class FileSystemUser(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetGroupIdListForLDAPUserRequest(_Model):
+class GetGroupIdListForLDAPUserRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Get group Id list for LDAP User request.
 
     :ivar username: username is required to fetch the group to which user is part of. Required.
@@ -3200,7 +3622,7 @@ class GetGroupIdListForLDAPUserRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetGroupIdListForLDAPUserResponse(_Model):
+class GetGroupIdListForLDAPUserResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Group Id list for Ldap user.
 
     :ivar group_ids_for_ldap_user: Group Id list.
@@ -3230,7 +3652,7 @@ class GetGroupIdListForLDAPUserResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetKeyVaultStatusResponse(_Model):
+class GetKeyVaultStatusResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of getKeyVaultStatus with information about how volumes under NetApp account are
     encrypted.
 
@@ -3281,7 +3703,7 @@ class GetKeyVaultStatusResponse(_Model):
             super().__setattr__(key, value)
 
 
-class GetKeyVaultStatusResponseProperties(_Model):
+class GetKeyVaultStatusResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties which represents Change key vault status.
 
     :ivar key_vault_uri: The URI of the key vault/managed HSM that should be used for encryption.
@@ -3334,7 +3756,7 @@ class GetKeyVaultStatusResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HourlySchedule(_Model):
+class HourlySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hourly Schedule properties.
 
     :ivar snapshots_to_keep: Hourly snapshot count to keep.
@@ -3374,7 +3796,7 @@ class HourlySchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultPrivateEndpoint(_Model):
+class KeyVaultPrivateEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pairs of virtual network ID and private endpoint ID. Every virtual network that has volumes
     encrypted with customer-managed keys needs its own key vault private endpoint.
 
@@ -3412,7 +3834,7 @@ class KeyVaultPrivateEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyVaultProperties(_Model):
+class KeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of key vault.
 
     :ivar key_vault_id: UUID v4 used to identify the Azure Key Vault configuration.
@@ -3462,7 +3884,291 @@ class KeyVaultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LdapSearchScopeOpt(_Model):
+class KeyVaultPropertiesPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of key vault for PATCH operations (no required properties).
+
+    :ivar key_vault_uri: The Uri of KeyVault.
+    :vartype key_vault_uri: str
+    :ivar key_name: The name of KeyVault key.
+    :vartype key_name: str
+    :ivar key_vault_resource_id: The resource ID of KeyVault.
+    :vartype key_vault_resource_id: str
+    """
+
+    key_vault_uri: Optional[str] = rest_field(
+        name="keyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Uri of KeyVault."""
+    key_name: Optional[str] = rest_field(name="keyName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of KeyVault key."""
+    key_vault_resource_id: Optional[str] = rest_field(
+        name="keyVaultResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of KeyVault."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_vault_uri: Optional[str] = None,
+        key_name: Optional[str] = None,
+        key_vault_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LdapConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LDAP configuration.
+
+    :ivar domain: Name of the LDAP configuration domain.
+    :vartype domain: str
+    :ivar ldap_servers: List of LDAP server IP addresses (IPv4 only) for the LDAP domain.
+    :vartype ldap_servers: list[str]
+    :ivar secure_ldap_type: Indicates the secure LDAP mode for encrypting communication between ANF
+     storage and customer LDAP servers. Known values are: "LdapOverTLS" and "None".
+    :vartype secure_ldap_type: str or ~azure.mgmt.netapp.models.SecureLdapType
+    :ivar server_ca_certificate: When LDAP over SSL/TLS is enabled, the LDAP client is required to
+     have base64 encoded ldap servers CA certificate.
+    :vartype server_ca_certificate: str
+    :ivar certificate_cn_host: The CN host name used while generating the certificate, LDAP Over
+     TLS requires the CN host name to create DNS host entry.
+    :vartype certificate_cn_host: str
+    :ivar dns_servers: List of DNS server IPv4 addresses for resolving the CN host certificate.
+     This parameter is used when LDAP over TLS is enabled.
+    :vartype dns_servers: list[str]
+    :ivar ldap_port: Port number for LDAP communication. Default is 389 for LDAP.
+    :vartype ldap_port: int
+    :ivar user_dn: This specifies the user DN (Distinguished Name), which overrides the base DN for
+     user lookups.
+    :vartype user_dn: str
+    :ivar group_dn: This specifies the group DN (Distinguished Name), which overrides the base DN
+     for group lookups.
+    :vartype group_dn: str
+    :ivar net_group_dn: This specifies the netgroup DN (Distinguished Name), which overrides the
+     base DN for netgroup lookups.
+    :vartype net_group_dn: str
+    :ivar bind_authentication_level: The authentication level to use when binding to the LDAP
+     server, defaults to Anonymous. Known values are: "Anonymous" and "Simple".
+    :vartype bind_authentication_level: str or ~azure.mgmt.netapp.models.BindAuthenticationLevel
+    :ivar bind_dn: The distinguished name (DN) to bind as when performing LDAP operations.
+    :vartype bind_dn: str
+    :ivar bind_password_akv_config: The Azure Key Vault configuration where the Bind DN
+     (Distinguished Name) user password is stored.
+    :vartype bind_password_akv_config: ~azure.mgmt.netapp.models.BindPasswordAkvConfig
+    """
+
+    domain: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the LDAP configuration domain."""
+    ldap_servers: Optional[list[str]] = rest_field(
+        name="ldapServers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of LDAP server IP addresses (IPv4 only) for the LDAP domain."""
+    secure_ldap_type: Optional[Union[str, "_models.SecureLdapType"]] = rest_field(
+        name="secureLdapType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates the secure LDAP mode for encrypting communication between ANF storage and customer
+     LDAP servers. Known values are: \"LdapOverTLS\" and \"None\"."""
+    server_ca_certificate: Optional[str] = rest_field(
+        name="serverCACertificate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """When LDAP over SSL/TLS is enabled, the LDAP client is required to have base64 encoded ldap
+     servers CA certificate."""
+    certificate_cn_host: Optional[str] = rest_field(
+        name="certificateCNHost", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The CN host name used while generating the certificate, LDAP Over TLS requires the CN host name
+     to create DNS host entry."""
+    dns_servers: Optional[list[str]] = rest_field(
+        name="dnsServers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of DNS server IPv4 addresses for resolving the CN host certificate. This parameter is used
+     when LDAP over TLS is enabled."""
+    ldap_port: Optional[int] = rest_field(name="ldapPort", visibility=["read", "create", "update", "delete", "query"])
+    """Port number for LDAP communication. Default is 389 for LDAP."""
+    user_dn: Optional[str] = rest_field(name="userDN", visibility=["read", "create", "update", "delete", "query"])
+    """This specifies the user DN (Distinguished Name), which overrides the base DN for user lookups."""
+    group_dn: Optional[str] = rest_field(name="groupDN", visibility=["read", "create", "update", "delete", "query"])
+    """This specifies the group DN (Distinguished Name), which overrides the base DN for group
+     lookups."""
+    net_group_dn: Optional[str] = rest_field(
+        name="netGroupDN", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """This specifies the netgroup DN (Distinguished Name), which overrides the base DN for netgroup
+     lookups."""
+    bind_authentication_level: Optional[Union[str, "_models.BindAuthenticationLevel"]] = rest_field(
+        name="bindAuthenticationLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authentication level to use when binding to the LDAP server, defaults to Anonymous. Known
+     values are: \"Anonymous\" and \"Simple\"."""
+    bind_dn: Optional[str] = rest_field(name="bindDN", visibility=["read", "create", "update", "delete", "query"])
+    """The distinguished name (DN) to bind as when performing LDAP operations."""
+    bind_password_akv_config: Optional["_models.BindPasswordAkvConfig"] = rest_field(
+        name="bindPasswordAkvConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault configuration where the Bind DN (Distinguished Name) user password is
+     stored."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        domain: Optional[str] = None,
+        ldap_servers: Optional[list[str]] = None,
+        secure_ldap_type: Optional[Union[str, "_models.SecureLdapType"]] = None,
+        server_ca_certificate: Optional[str] = None,
+        certificate_cn_host: Optional[str] = None,
+        dns_servers: Optional[list[str]] = None,
+        ldap_port: Optional[int] = None,
+        user_dn: Optional[str] = None,
+        group_dn: Optional[str] = None,
+        net_group_dn: Optional[str] = None,
+        bind_authentication_level: Optional[Union[str, "_models.BindAuthenticationLevel"]] = None,
+        bind_dn: Optional[str] = None,
+        bind_password_akv_config: Optional["_models.BindPasswordAkvConfig"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LdapConfigurationPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LDAP configuration for PATCH operations (no default values).
+
+    :ivar domain: Name of the LDAP configuration domain.
+    :vartype domain: str
+    :ivar ldap_servers: List of LDAP server IP addresses (IPv4 only) for the LDAP domain.
+    :vartype ldap_servers: list[str]
+    :ivar secure_ldap_type: Indicates the secure LDAP mode for encrypting communication between ANF
+     storage and customer LDAP servers. Known values are: "LdapOverTLS" and "None".
+    :vartype secure_ldap_type: str or ~azure.mgmt.netapp.models.SecureLdapType
+    :ivar server_ca_certificate: When LDAP over SSL/TLS is enabled, the LDAP client is required to
+     have base64 encoded ldap servers CA certificate.
+    :vartype server_ca_certificate: str
+    :ivar certificate_cn_host: The CN host name used while generating the certificate, LDAP Over
+     TLS requires the CN host name to create DNS host entry.
+    :vartype certificate_cn_host: str
+    :ivar dns_servers: List of DNS server IPv4 addresses for resolving the CN host certificate.
+     This parameter is used when LDAP over TLS is enabled.
+    :vartype dns_servers: list[str]
+    :ivar ldap_port: Port number for LDAP communication. Default is 389 for LDAP.
+    :vartype ldap_port: int
+    :ivar user_dn: This specifies the user DN (Distinguished Name), which overrides the base DN for
+     user lookups.
+    :vartype user_dn: str
+    :ivar group_dn: This specifies the group DN (Distinguished Name), which overrides the base DN
+     for group lookups.
+    :vartype group_dn: str
+    :ivar net_group_dn: This specifies the netgroup DN (Distinguished Name), which overrides the
+     base DN for netgroup lookups.
+    :vartype net_group_dn: str
+    :ivar bind_authentication_level: The authentication level to use when binding to the LDAP
+     server, defaults to Anonymous. Known values are: "Anonymous" and "Simple".
+    :vartype bind_authentication_level: str or ~azure.mgmt.netapp.models.BindAuthenticationLevel
+    :ivar bind_dn: The distinguished name (DN) to bind as when performing LDAP operations.
+    :vartype bind_dn: str
+    :ivar bind_password_akv_config: The Azure Key Vault configuration where the Bind DN
+     (Distinguished Name) user password is stored.
+    :vartype bind_password_akv_config: ~azure.mgmt.netapp.models.BindPasswordAkvConfigPatch
+    """
+
+    domain: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the LDAP configuration domain."""
+    ldap_servers: Optional[list[str]] = rest_field(
+        name="ldapServers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of LDAP server IP addresses (IPv4 only) for the LDAP domain."""
+    secure_ldap_type: Optional[Union[str, "_models.SecureLdapType"]] = rest_field(
+        name="secureLdapType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates the secure LDAP mode for encrypting communication between ANF storage and customer
+     LDAP servers. Known values are: \"LdapOverTLS\" and \"None\"."""
+    server_ca_certificate: Optional[str] = rest_field(
+        name="serverCACertificate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """When LDAP over SSL/TLS is enabled, the LDAP client is required to have base64 encoded ldap
+     servers CA certificate."""
+    certificate_cn_host: Optional[str] = rest_field(
+        name="certificateCNHost", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The CN host name used while generating the certificate, LDAP Over TLS requires the CN host name
+     to create DNS host entry."""
+    dns_servers: Optional[list[str]] = rest_field(
+        name="dnsServers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of DNS server IPv4 addresses for resolving the CN host certificate. This parameter is used
+     when LDAP over TLS is enabled."""
+    ldap_port: Optional[int] = rest_field(name="ldapPort", visibility=["read", "create", "update", "delete", "query"])
+    """Port number for LDAP communication. Default is 389 for LDAP."""
+    user_dn: Optional[str] = rest_field(name="userDN", visibility=["read", "create", "update", "delete", "query"])
+    """This specifies the user DN (Distinguished Name), which overrides the base DN for user lookups."""
+    group_dn: Optional[str] = rest_field(name="groupDN", visibility=["read", "create", "update", "delete", "query"])
+    """This specifies the group DN (Distinguished Name), which overrides the base DN for group
+     lookups."""
+    net_group_dn: Optional[str] = rest_field(
+        name="netGroupDN", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """This specifies the netgroup DN (Distinguished Name), which overrides the base DN for netgroup
+     lookups."""
+    bind_authentication_level: Optional[Union[str, "_models.BindAuthenticationLevel"]] = rest_field(
+        name="bindAuthenticationLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The authentication level to use when binding to the LDAP server, defaults to Anonymous. Known
+     values are: \"Anonymous\" and \"Simple\"."""
+    bind_dn: Optional[str] = rest_field(name="bindDN", visibility=["read", "create", "update", "delete", "query"])
+    """The distinguished name (DN) to bind as when performing LDAP operations."""
+    bind_password_akv_config: Optional["_models.BindPasswordAkvConfigPatch"] = rest_field(
+        name="bindPasswordAkvConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault configuration where the Bind DN (Distinguished Name) user password is
+     stored."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        domain: Optional[str] = None,
+        ldap_servers: Optional[list[str]] = None,
+        secure_ldap_type: Optional[Union[str, "_models.SecureLdapType"]] = None,
+        server_ca_certificate: Optional[str] = None,
+        certificate_cn_host: Optional[str] = None,
+        dns_servers: Optional[list[str]] = None,
+        ldap_port: Optional[int] = None,
+        user_dn: Optional[str] = None,
+        group_dn: Optional[str] = None,
+        net_group_dn: Optional[str] = None,
+        bind_authentication_level: Optional[Union[str, "_models.BindAuthenticationLevel"]] = None,
+        bind_dn: Optional[str] = None,
+        bind_password_akv_config: Optional["_models.BindPasswordAkvConfigPatch"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LdapSearchScopeOpt(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LDAP search scope.
 
     :ivar user_dn: This specifies the user DN, which overrides the base DN for user lookups.
@@ -3504,7 +4210,7 @@ class LdapSearchScopeOpt(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListQuotaReportResponse(_Model):
+class ListQuotaReportResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Quota Report for volume.
 
     :ivar quota_report_records: List of quota reports.
@@ -3534,7 +4240,7 @@ class ListQuotaReportResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListQuotaReportResult(_Model):
+class ListQuotaReportResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """
 
     * Result of ListQuotaReportResponse.
@@ -3566,7 +4272,7 @@ class ListQuotaReportResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListReplicationsRequest(_Model):
+class ListReplicationsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Body for the list replications endpoint. If supplied, the body will be used as a filter for
     example to exclude deleted replications. If omitted, the endpoint returns all replications.
 
@@ -3599,7 +4305,7 @@ class ListReplicationsRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogSpecification(_Model):
+class LogSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Log Definition of a single resource metric.
 
     :ivar name: Name of log specification.
@@ -3634,7 +4340,7 @@ class LogSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -3685,7 +4391,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetricSpecification(_Model):
+class MetricSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metric specification of operation.
 
     :ivar name: Name of metric specification.
@@ -3815,7 +4521,7 @@ class MetricSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonthlySchedule(_Model):
+class MonthlySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Monthly Schedule properties.
 
     :ivar snapshots_to_keep: Monthly snapshot count to keep.
@@ -3868,7 +4574,7 @@ class MonthlySchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MountTargetProperties(_Model):
+class MountTargetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mount target properties.
 
     :ivar mount_target_id: UUID v4 used to identify the MountTarget.
@@ -3911,7 +4617,7 @@ class MountTargetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetAppAccount(TrackedResource):
+class NetAppAccount(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NetApp account resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3961,6 +4667,7 @@ class NetAppAccount(TrackedResource):
         "disable_showmount",
         "nfs_v4_id_domain",
         "multi_ad_status",
+        "ldap_configuration",
     ]
 
     @overload
@@ -4002,61 +4709,37 @@ class NetAppAccount(TrackedResource):
             super().__setattr__(key, value)
 
 
-class NetAppAccountPatch(_Model):
+class NetAppAccountPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NetApp account patch resource.
 
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar properties: NetApp Account properties.
-    :vartype properties: ~azure.mgmt.netapp.models.AccountProperties
-    :ivar identity: The identity used for the resource.
-    :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
+    :vartype properties: ~azure.mgmt.netapp.models.AccountPropertiesPatch
     """
 
-    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource location."""
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Resource Id."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """Resource name."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """Resource type."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    properties: Optional["_models.AccountProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """NetApp Account properties."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The identity used for the resource."""
+    """The managed service identities assigned to this resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.AccountPropertiesPatch"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """NetApp Account properties."""
 
-    __flattened_items = [
-        "provisioning_state",
-        "active_directories",
-        "encryption",
-        "disable_showmount",
-        "nfs_v4_id_domain",
-        "multi_ad_status",
-    ]
+    __flattened_items = ["active_directories", "encryption", "nfs_v4_id_domain", "ldap_configuration"]
 
     @overload
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
-        properties: Optional["_models.AccountProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.AccountPropertiesPatch"] = None,
     ) -> None: ...
 
     @overload
@@ -4088,7 +4771,7 @@ class NetAppAccountPatch(_Model):
             super().__setattr__(key, value)
 
 
-class NetworkSiblingSet(_Model):
+class NetworkSiblingSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the contents of a network sibling set.
 
     :ivar network_sibling_set_id: Network Sibling Set ID for a group of volumes sharing networking
@@ -4161,7 +4844,7 @@ class NetworkSiblingSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NfsUser(_Model):
+class NfsUser(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The effective NFS User ID and Group ID when accessing the volume data.
 
     :ivar user_id: The NFS user's UID.
@@ -4194,7 +4877,7 @@ class NfsUser(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NicInfo(_Model):
+class NicInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NIC information and list of volumes for which the NIC has the primary mount IP Address.
 
     :ivar ip_address: IP Address.
@@ -4228,7 +4911,7 @@ class NicInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft.NetApp REST API operation definition.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -4295,7 +4978,7 @@ class Operation(_Model):
             super().__setattr__(key, value)
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Display metadata associated with the operation.
 
     :ivar provider: Service provider: Microsoft NetApp.
@@ -4338,7 +5021,7 @@ class OperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationProperties(_Model):
+class OperationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of operation, include metric specifications.
 
     :ivar service_specification: One property of operation, include metric specifications.
@@ -4368,7 +5051,7 @@ class OperationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OriginClusterInformation(_Model):
+class OriginClusterInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Stores the origin cluster information associated to a cache.
 
     :ivar peer_cluster_name: ONTAP cluster name of external cluster hosting the origin volume. Must
@@ -4423,7 +5106,7 @@ class OriginClusterInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PeerClusterForVolumeMigrationRequest(_Model):
+class PeerClusterForVolumeMigrationRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Source Cluster properties for a cluster peer request.
 
     :ivar peer_ip_addresses: A list of IC-LIF IPs that can be used to connect to the On-prem
@@ -4454,7 +5137,7 @@ class PeerClusterForVolumeMigrationRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PeeringPassphrases(_Model):
+class PeeringPassphrases(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response containing peering passphrases and commands for cluster and vserver peering.
 
     :ivar cluster_peering_command: The cluster peering command. Required.
@@ -4503,7 +5186,7 @@ class PeeringPassphrases(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlacementKeyValuePairs(_Model):
+class PlacementKeyValuePairs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Application specific parameters for the placement of volumes in the volume group.
 
     :ivar key: Key for an application specific parameter for the placement of volumes in the volume
@@ -4540,7 +5223,7 @@ class PlacementKeyValuePairs(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PoolChangeRequest(_Model):
+class PoolChangeRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pool change request.
 
     :ivar new_pool_resource_id: Resource id of the pool to move volume to. Required.
@@ -4570,7 +5253,7 @@ class PoolChangeRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PoolPatchProperties(_Model):
+class PoolPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Patchable pool properties.
 
     :ivar size: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value
@@ -4623,7 +5306,7 @@ class PoolPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PoolProperties(_Model):
+class PoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pool properties.
 
     :ivar pool_id: UUID v4 used to identify the Pool.
@@ -4712,7 +5395,7 @@ class PoolProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryNetworkSiblingSetRequest(_Model):
+class QueryNetworkSiblingSetRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network sibling set query.
 
     :ivar network_sibling_set_id: Network Sibling Set ID for a group of volumes sharing networking
@@ -4755,7 +5438,7 @@ class QueryNetworkSiblingSetRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuotaAvailabilityRequest(_Model):
+class QuotaAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Quota availability request content.
 
     :ivar name: Name of the resource to verify. Required.
@@ -4805,7 +5488,7 @@ class QuotaAvailabilityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuotaItem(ProxyResource):
+class QuotaItem(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information regarding Quota Item.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4885,7 +5568,7 @@ class QuotaItemProperties(_Model):
     """The usage quota value."""
 
 
-class QuotaReport(_Model):
+class QuotaReport(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Quota report record properties.
 
     :ivar quota_type: Type of quota. Known values are: "DefaultUserQuota", "DefaultGroupQuota",
@@ -4958,7 +5641,7 @@ class QuotaReport(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuotaReportFilterRequest(_Model):
+class QuotaReportFilterRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Quota report filters. When filtering by quotaType or quotaTarget, both properties must be
     supplied together. This constraint is enforced by the service/API at runtime, and requests
     violating this rule will return a validation error. The usageThresholdPercentage filter is
@@ -5027,7 +5710,7 @@ class QuotaReportFilterRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RansomwareProtectionPatchSettings(_Model):
+class RansomwareProtectionPatchSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Advanced Ransomware Protection reports (ARP) updatable settings.
 
     :ivar desired_ransomware_protection_state: The desired value of the ARP feature state available
@@ -5060,7 +5743,7 @@ class RansomwareProtectionPatchSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RansomwareProtectionSettings(_Model):
+class RansomwareProtectionSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Advanced Ransomware Protection reports (ARP) settings.
 
     :ivar desired_ransomware_protection_state: The desired value of the Advanced Ransomware
@@ -5103,7 +5786,7 @@ class RansomwareProtectionSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RansomwareReport(ProxyResource):
+class RansomwareReport(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Advanced Ransomware Protection (ARP) report Get details of the specified Advanced Ransomware
     Protection report (ARP). ARP reports are created with a list of suspected files when it detects
     any combination of high data entropy, abnormal volume activity with data encryption, and
@@ -5221,7 +5904,7 @@ class RansomwareSuspects(_Model):
     """Suspect files."""
 
 
-class RansomwareSuspectsClearRequest(_Model):
+class RansomwareSuspectsClearRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Clear suspects for Advanced Ransomware Protection (ARP) report.
 
     :ivar resolution: ARP report suspect resolution. Required. Known values are: "PotentialThreat"
@@ -5259,7 +5942,7 @@ class RansomwareSuspectsClearRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReestablishReplicationRequest(_Model):
+class ReestablishReplicationRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Re-establish request object supplied in the body of the operation.
 
     :ivar source_volume_id: Resource id of the source volume for the replication.
@@ -5289,7 +5972,7 @@ class ReestablishReplicationRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegionInfo(_Model):
+class RegionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provides region specific information.
 
     :ivar storage_to_network_proximity: Provides storage to network proximity information in the
@@ -5333,7 +6016,7 @@ class RegionInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegionInfoAvailabilityZoneMappingsItem(_Model):
+class RegionInfoAvailabilityZoneMappingsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RegionInfoAvailabilityZoneMappingsItem.
 
     :ivar availability_zone: Logical availability zone.
@@ -5370,7 +6053,7 @@ class RegionInfoAvailabilityZoneMappingsItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegionInfoResource(ProxyResource):
+class RegionInfoResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information regarding regionInfo Item.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5429,7 +6112,7 @@ class RegionInfoResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RelocateVolumeRequest(_Model):
+class RelocateVolumeRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Relocate volume request.
 
     :ivar creation_token: New creation token for the volume that controls the mount point name.
@@ -5459,7 +6142,7 @@ class RelocateVolumeRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RemotePath(_Model):
+class RemotePath(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The full path to a volume that is to be migrated into ANF. Required for Migration volumes.
 
     :ivar external_host_name: The Path to a ONTAP Host. Required.
@@ -5499,7 +6182,7 @@ class RemotePath(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Replication(_Model):
+class Replication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication properties.
 
     :ivar replication_id: UUID v4 used to identify the replication.
@@ -5576,7 +6259,7 @@ class Replication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationObject(_Model):
+class ReplicationObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication properties.
 
     :ivar replication_id: Id.
@@ -5680,7 +6363,7 @@ class ReplicationObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationStatus(_Model):
+class ReplicationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication status.
 
     :ivar healthy: Replication health check.
@@ -5740,7 +6423,7 @@ class ReplicationStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceNameAvailabilityRequest(_Model):
+class ResourceNameAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource name availability request content.
 
     :ivar name: Resource name to verify. Required.
@@ -5826,7 +6509,7 @@ class RestoreStatus(_Model):
     """Displays the total bytes transferred."""
 
 
-class ServiceSpecification(_Model):
+class ServiceSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """One property of operation, include metric specifications.
 
     :ivar metric_specifications: Metric specifications of operation.
@@ -5863,19 +6546,18 @@ class ServiceSpecification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SmbSettings(_Model):
+class SmbSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SMB settings for the cache.
 
     :ivar smb_encryption: Enables encryption for in-flight smb3 data. Only applicable for
      SMB/DualProtocol cache. Known values are: "Disabled" and "Enabled".
     :vartype smb_encryption: str or ~azure.mgmt.netapp.models.SmbEncryptionState
     :ivar smb_access_based_enumeration: Enables access-based enumeration share property for SMB
-     Shares. Only applicable for SMB/DualProtocol volume. Known values are: "Disabled" and
-     "Enabled".
+     Shares. Only applicable for SMB/DualProtocol cache. Known values are: "Disabled" and "Enabled".
     :vartype smb_access_based_enumeration: str or
      ~azure.mgmt.netapp.models.SmbAccessBasedEnumeration
     :ivar smb_non_browsable: Enables non-browsable property for SMB Shares. Only applicable for
-     SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
+     SMB/DualProtocol cache. Known values are: "Disabled" and "Enabled".
     :vartype smb_non_browsable: str or ~azure.mgmt.netapp.models.SmbNonBrowsable
     """
 
@@ -5888,11 +6570,11 @@ class SmbSettings(_Model):
         name="smbAccessBasedEnumeration", visibility=["read", "create", "update", "delete", "query"]
     )
     """Enables access-based enumeration share property for SMB Shares. Only applicable for
-     SMB/DualProtocol volume. Known values are: \"Disabled\" and \"Enabled\"."""
+     SMB/DualProtocol cache. Known values are: \"Disabled\" and \"Enabled\"."""
     smb_non_browsable: Optional[Union[str, "_models.SmbNonBrowsable"]] = rest_field(
         name="smbNonBrowsable", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Enables non-browsable property for SMB Shares. Only applicable for SMB/DualProtocol volume.
+    """Enables non-browsable property for SMB Shares. Only applicable for SMB/DualProtocol cache.
      Known values are: \"Disabled\" and \"Enabled\"."""
 
     @overload
@@ -5915,7 +6597,7 @@ class SmbSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Snapshot(ProxyResource):
+class Snapshot(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Snapshot of a Volume.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5985,7 +6667,7 @@ class SnapshotPatch(_Model):
     """Snapshot of a Volume."""
 
 
-class SnapshotPolicy(TrackedResource):
+class SnapshotPolicy(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Snapshot policy information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6069,7 +6751,7 @@ class SnapshotPolicy(TrackedResource):
             super().__setattr__(key, value)
 
 
-class SnapshotPolicyPatch(_Model):
+class SnapshotPolicyPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Snapshot policy Details for create and update.
 
     :ivar location: Resource location.
@@ -6148,7 +6830,7 @@ class SnapshotPolicyPatch(_Model):
             super().__setattr__(key, value)
 
 
-class SnapshotPolicyProperties(_Model):
+class SnapshotPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Snapshot policy properties.
 
     :ivar hourly_schedule: Schedule for hourly snapshots.
@@ -6208,7 +6890,7 @@ class SnapshotPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SnapshotPolicyVolumeList(_Model):
+class SnapshotPolicyVolumeList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volumes associated with snapshot policy.
 
     :ivar value: The Volume items on this page. Required.
@@ -6260,7 +6942,7 @@ class SnapshotProperties(_Model):
     """Azure lifecycle management."""
 
 
-class SnapshotRestoreFiles(_Model):
+class SnapshotRestoreFiles(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Restore payload for Single File Snapshot Restore.
 
     :ivar file_paths: List of files to be restored. Required.
@@ -6295,8 +6977,9 @@ class SnapshotRestoreFiles(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubvolumeInfo(ProxyResource):
-    """Subvolume Information properties.
+class SubvolumeInfo(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Subvolume Information properties Deprecated. This resource type will be removed in a future API
+    version.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -6356,7 +7039,7 @@ class SubvolumeInfo(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SubvolumeModel(_Model):
+class SubvolumeModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of the post subvolume and action is to get metadata of the subvolume.
 
     :ivar id: Resource Id.
@@ -6429,7 +7112,7 @@ class SubvolumeModel(_Model):
             super().__setattr__(key, value)
 
 
-class SubvolumeModelProperties(_Model):
+class SubvolumeModelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties which represents actual subvolume model which is stored as a file in the system.
 
     :ivar path: Path to the subvolume.
@@ -6514,7 +7197,7 @@ class SubvolumeModelProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubvolumePatchParams(_Model):
+class SubvolumePatchParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters with which a subvolume can be updated.
 
     :ivar size: Truncate subvolume to the provided size in bytes.
@@ -6547,7 +7230,7 @@ class SubvolumePatchParams(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubvolumePatchRequest(_Model):
+class SubvolumePatchRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subvolume Patch Request properties.
 
     :ivar properties: Subvolume Properties.
@@ -6597,7 +7280,7 @@ class SubvolumePatchRequest(_Model):
             super().__setattr__(key, value)
 
 
-class SubvolumeProperties(_Model):
+class SubvolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This represents path associated with the subvolume.
 
     :ivar path: Path to the subvolume.
@@ -6658,7 +7341,7 @@ class SuspectFile(_Model):
     """The creation date and time of the file."""
 
 
-class SvmPeerCommandResponse(_Model):
+class SvmPeerCommandResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about svm peering process.
 
     :ivar properties: Represents the properties of the SVM peer command response.
@@ -6688,7 +7371,7 @@ class SvmPeerCommandResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SvmPeerCommandResponseProperties(_Model):
+class SvmPeerCommandResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the SVM peer command response.
 
     :ivar svm_peering_command: A command that needs to be run on the external ONTAP to accept svm
@@ -6720,7 +7403,7 @@ class SvmPeerCommandResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -6787,7 +7470,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateNetworkSiblingSetRequest(_Model):
+class UpdateNetworkSiblingSetRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network sibling set update.
 
     :ivar network_sibling_set_id: Network Sibling Set ID for a group of volumes sharing networking
@@ -6847,7 +7530,7 @@ class UpdateNetworkSiblingSetRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UsageName(_Model):
+class UsageName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The name of the usage.
 
     :ivar value: The name of the usage.
@@ -6901,7 +7584,7 @@ class UsageProperties(_Model):
     """The unit of the usage."""
 
 
-class UsageResult(_Model):
+class UsageResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Usages entity model.
 
     :ivar id: The id of the usage.
@@ -6974,7 +7657,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class Volume(TrackedResource):
+class Volume(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7072,6 +7755,7 @@ class Volume(TrackedResource):
         "is_large_volume",
         "originating_resource_id",
         "inherited_size_in_bytes",
+        "breakthrough_mode",
     ]
 
     @overload
@@ -7113,7 +7797,7 @@ class Volume(TrackedResource):
             super().__setattr__(key, value)
 
 
-class VolumeBackupProperties(_Model):
+class VolumeBackupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume Backup Properties.
 
     :ivar backup_policy_id: Backup Policy Resource ID.
@@ -7157,7 +7841,7 @@ class VolumeBackupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeBackups(_Model):
+class VolumeBackups(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume details using the backup policy.
 
     :ivar volume_name: Volume name.
@@ -7208,7 +7892,7 @@ class VolumeBackups(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeGroup(_Model):
+class VolumeGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume group resource.
 
     :ivar location: Resource location.
@@ -7275,7 +7959,7 @@ class VolumeGroup(_Model):
             super().__setattr__(key, value)
 
 
-class VolumeGroupDetails(ProxyResource):
+class VolumeGroupDetails(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume group resource for create.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7341,7 +8025,7 @@ class VolumeGroupDetails(ProxyResource):
             super().__setattr__(key, value)
 
 
-class VolumeGroupListProperties(_Model):
+class VolumeGroupListProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume group properties.
 
     :ivar provisioning_state: Azure lifecycle management.
@@ -7375,7 +8059,7 @@ class VolumeGroupListProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeGroupMetaData(_Model):
+class VolumeGroupMetaData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume group properties.
 
     :ivar group_description: Group Description.
@@ -7430,7 +8114,7 @@ class VolumeGroupMetaData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeGroupProperties(_Model):
+class VolumeGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume group properties.
 
     :ivar provisioning_state: Azure lifecycle management.
@@ -7471,7 +8155,7 @@ class VolumeGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeGroupVolumeProperties(_Model):
+class VolumeGroupVolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume resource.
 
     :ivar id: Resource Id.
@@ -7560,6 +8244,7 @@ class VolumeGroupVolumeProperties(_Model):
         "is_large_volume",
         "originating_resource_id",
         "inherited_size_in_bytes",
+        "breakthrough_mode",
     ]
 
     @overload
@@ -7601,7 +8286,7 @@ class VolumeGroupVolumeProperties(_Model):
             super().__setattr__(key, value)
 
 
-class VolumePatch(_Model):
+class VolumePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume patch resource.
 
     :ivar location: Resource location.
@@ -7691,7 +8376,7 @@ class VolumePatch(_Model):
             super().__setattr__(key, value)
 
 
-class VolumePatchProperties(_Model):
+class VolumePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Patchable volume properties.
 
     :ivar service_level: The service level of the file system. Known values are: "Standard",
@@ -7704,7 +8389,9 @@ class VolumePatchProperties(_Model):
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
-    :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+    :ivar protocol_types: Specify the protocol types for the volume. Supported values are NFSv3,
+     NFSv4.1, and CIFS. For SMB volumes, specify CIFS. The value SMB isn't supported in the
+     protocolTypes property. Default: NFSv3.
     :vartype protocol_types: list[str]
     :ivar throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
      this will be accepted as input only for manual qosType volume.
@@ -7780,7 +8467,9 @@ class VolumePatchProperties(_Model):
     protocol_types: Optional[list[str]] = rest_field(
         name="protocolTypes", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Set of protocol types, default NFSv3, CIFS for SMB protocol."""
+    """Specify the protocol types for the volume. Supported values are NFSv3, NFSv4.1, and CIFS. For
+     SMB volumes, specify CIFS. The value SMB isn't supported in the protocolTypes property.
+     Default: NFSv3."""
     throughput_mibps: Optional[float] = rest_field(
         name="throughputMibps", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7887,7 +8576,7 @@ class VolumePatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumePatchPropertiesDataProtection(_Model):
+class VolumePatchPropertiesDataProtection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataProtection type volumes include an object containing details of the replication.
 
     :ivar backup: Backup Properties.
@@ -7931,7 +8620,7 @@ class VolumePatchPropertiesDataProtection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumePatchPropertiesExportPolicy(_Model):
+class VolumePatchPropertiesExportPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Set of export policy rules.
 
     :ivar rules: Export policy rule.
@@ -7961,7 +8650,7 @@ class VolumePatchPropertiesExportPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeProperties(_Model):
+class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume properties.
 
     :ivar file_system_id: Unique FileSystem Identifier.
@@ -7980,7 +8669,9 @@ class VolumeProperties(_Model):
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
-    :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+    :ivar protocol_types: Specify the protocol types for the volume. Supported values are NFSv3,
+     NFSv4.1, and CIFS. For SMB volumes, specify CIFS. The value SMB isn't supported in the
+     protocolTypes property. Default: NFSv3.
     :vartype protocol_types: list[str]
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
@@ -8138,8 +8829,9 @@ class VolumeProperties(_Model):
     :vartype encrypted: bool
     :ivar placement_rules: Application specific placement rules for the particular volume.
     :vartype placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
-    :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
-     volume. Known values are: "Enabled" and "Disabled".
+    :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the volume
+     Deprecated. Subvolume operations and this flag will be removed in a future API version. Known
+     values are: "Enabled" and "Disabled".
     :vartype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
     :ivar provisioned_availability_zone: The availability zone where the volume is provisioned.
      This refers to the logical availability zone where the volume resides.
@@ -8151,6 +8843,9 @@ class VolumeProperties(_Model):
     :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
      bytes.
     :vartype inherited_size_in_bytes: int
+    :ivar breakthrough_mode: Specifies whether the volume operates in Breakthrough Mode. Known
+     values are: "Enabled" and "Disabled".
+    :vartype breakthrough_mode: str or ~azure.mgmt.netapp.models.BreakthroughMode
     """
 
     file_system_id: Optional[str] = rest_field(name="fileSystemId", visibility=["read"])
@@ -8174,7 +8869,9 @@ class VolumeProperties(_Model):
     protocol_types: Optional[list[str]] = rest_field(
         name="protocolTypes", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Set of protocol types, default NFSv3, CIFS for SMB protocol."""
+    """Specify the protocol types for the volume. Supported values are NFSv3, NFSv4.1, and CIFS. For
+     SMB volumes, specify CIFS. The value SMB isn't supported in the protocolTypes property.
+     Default: NFSv3."""
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
     """Azure lifecycle management."""
     snapshot_id: Optional[str] = rest_field(name="snapshotId", visibility=["read", "create"])
@@ -8374,8 +9071,9 @@ class VolumeProperties(_Model):
     enable_subvolumes: Optional[Union[str, "_models.EnableSubvolumes"]] = rest_field(
         name="enableSubvolumes", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Flag indicating whether subvolume operations are enabled on the volume. Known values are:
-     \"Enabled\" and \"Disabled\"."""
+    """Flag indicating whether subvolume operations are enabled on the volume Deprecated. Subvolume
+     operations and this flag will be removed in a future API version. Known values are: \"Enabled\"
+     and \"Disabled\"."""
     provisioned_availability_zone: Optional[str] = rest_field(name="provisionedAvailabilityZone", visibility=["read"])
     """The availability zone where the volume is provisioned. This refers to the logical availability
      zone where the volume resides."""
@@ -8385,6 +9083,11 @@ class VolumeProperties(_Model):
     """Id of the snapshot or backup that the volume is restored from."""
     inherited_size_in_bytes: Optional[int] = rest_field(name="inheritedSizeInBytes", visibility=["read"])
     """Space shared by short term clone volume with parent volume in bytes."""
+    breakthrough_mode: Optional[Union[str, "_models.BreakthroughMode"]] = rest_field(
+        name="breakthroughMode", visibility=["read", "create"]
+    )
+    """Specifies whether the volume operates in Breakthrough Mode. Known values are: \"Enabled\" and
+     \"Disabled\"."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -8431,6 +9134,7 @@ class VolumeProperties(_Model):
         placement_rules: Optional[list["_models.PlacementKeyValuePairs"]] = None,
         enable_subvolumes: Optional[Union[str, "_models.EnableSubvolumes"]] = None,
         is_large_volume: Optional[bool] = None,
+        breakthrough_mode: Optional[Union[str, "_models.BreakthroughMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -8444,7 +9148,7 @@ class VolumeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumePropertiesDataProtection(_Model):
+class VolumePropertiesDataProtection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DataProtection type volumes include an object containing details of the replication.
 
     :ivar backup: Backup Properties.
@@ -8502,7 +9206,7 @@ class VolumePropertiesDataProtection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumePropertiesExportPolicy(_Model):
+class VolumePropertiesExportPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Set of export policy rules.
 
     :ivar rules: Export policy rule.
@@ -8532,7 +9236,7 @@ class VolumePropertiesExportPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeQuotaRule(TrackedResource):
+class VolumeQuotaRule(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Quota Rule of a Volume.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8599,7 +9303,7 @@ class VolumeQuotaRule(TrackedResource):
             super().__setattr__(key, value)
 
 
-class VolumeQuotaRulePatch(_Model):
+class VolumeQuotaRulePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Patchable Quota Rule of a Volume.
 
     :ivar tags: Resource tags.
@@ -8654,12 +9358,12 @@ class VolumeQuotaRulePatch(_Model):
             super().__setattr__(key, value)
 
 
-class VolumeQuotaRulesProperties(_Model):
+class VolumeQuotaRulesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume Quota Rule properties.
 
     :ivar provisioning_state: Gets the status of the VolumeQuotaRule at the time the operation was
-     called. Known values are: "Accepted", "Creating", "Patching", "Updating", "Deleting", "Moving",
-     "Failed", and "Succeeded".
+     called. Known values are: "Succeeded", "Failed", "Canceled", "Accepted", "Creating",
+     "Patching", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
     :ivar quota_size_in_ki_bs: Size of quota.
     :vartype quota_size_in_ki_bs: int
@@ -8676,8 +9380,8 @@ class VolumeQuotaRulesProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Gets the status of the VolumeQuotaRule at the time the operation was called. Known values are:
-     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", \"Moving\", \"Failed\",
-     and \"Succeeded\"."""
+     \"Succeeded\", \"Failed\", \"Canceled\", \"Accepted\", \"Creating\", \"Patching\",
+     \"Updating\", \"Deleting\", and \"Moving\"."""
     quota_size_in_ki_bs: Optional[int] = rest_field(
         name="quotaSizeInKiBs", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8710,7 +9414,7 @@ class VolumeQuotaRulesProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeRelocationProperties(_Model):
+class VolumeRelocationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume relocation properties.
 
     :ivar relocation_requested: Has relocation been requested for this volume.
@@ -8744,7 +9448,7 @@ class VolumeRelocationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeRevert(_Model):
+class VolumeRevert(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """revert a volume to the snapshot.
 
     :ivar snapshot_id: Resource id of the snapshot.
@@ -8774,7 +9478,7 @@ class VolumeRevert(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeSnapshotProperties(_Model):
+class VolumeSnapshotProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume Snapshot Properties.
 
     :ivar snapshot_policy_id: Snapshot Policy ResourceId.
@@ -8804,7 +9508,7 @@ class VolumeSnapshotProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WeeklySchedule(_Model):
+class WeeklySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Weekly Schedule properties, make a snapshot every week at a specific day or days.
 
     :ivar snapshots_to_keep: Weekly snapshot count to keep.

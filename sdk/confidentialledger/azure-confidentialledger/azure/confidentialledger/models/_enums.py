@@ -14,86 +14,84 @@ class ApplicationClaimKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the kind of an application claim."""
 
     LEDGER_ENTRY = "LedgerEntry"
-    """Claim derived from a ledger entry"""
+    """Claim derived from a ledger entry."""
     CLAIM_DIGEST = "ClaimDigest"
-    """Claim in digested form"""
+    """Claim in digested form."""
 
 
 class ApplicationClaimProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents the protocol to be used to compute the digest of a claim from the
-    given claim data.
-    """
+    """Represents the protocol to be used to compute the digest of a claim from the given claim data."""
 
     LEDGER_ENTRY_V1 = "LedgerEntryV1"
-    """Ledger Entry V1 protocol"""
+    """Ledger Entry V1 protocol."""
 
 
 class ConfidentialLedgerQueryState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of a ledger query."""
 
     LOADING = "Loading"
-    """The query is still loading"""
+    """The query is still loading."""
     READY = "Ready"
-    """The query is ready"""
+    """The query is ready."""
 
 
 class ConfidentialLedgerUserRoleName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents an assignable role."""
 
     ADMINISTRATOR = "Administrator"
-    """Administrator role"""
+    """Administrator role."""
     CONTRIBUTOR = "Contributor"
-    """Contributor role"""
+    """Contributor role."""
     READER = "Reader"
-    """Reader role"""
+    """Reader role."""
 
 
 class ForwardingRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether request forwarding is required for this operation."""
 
     SOMETIMES = "sometimes"
-    """Forwarding is required sometimes"""
+    """Forwarding is required sometimes."""
     ALWAYS = "always"
-    """Forwarding is always required"""
+    """Forwarding is always required."""
     NEVER = "never"
-    """Forwarding is never required"""
+    """Forwarding is never required."""
 
 
 class Mode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the operation mode of the endpoint."""
 
     READWRITE = "readwrite"
-    """Read-write mode"""
+    """Read-write mode."""
     READONLY = "readonly"
-    """Read-only mode"""
+    """Read-only mode."""
     HISTORICAL = "historical"
-    """Historical mode"""
+    """Historical mode."""
 
 
 class RedirectionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the redirection strategy for the endpoint."""
 
     NONE = "none"
-    """No redirection strategy"""
+    """No redirection strategy."""
     TO_PRIMARY = "to_primary"
-    """Redirect to primary"""
+    """Redirect to primary."""
     TO_BACKUP = "to_backup"
-    """Redirect to backup"""
+    """Redirect to backup."""
 
 
 class TransactionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the state of the transaction."""
 
     COMMITTED = "Committed"
-    """The transaction is committed"""
+    """The transaction is committed."""
     PENDING = "Pending"
-    """The transaction is pending"""
+    """The transaction is pending."""
 
 
 class UserDefinedFunctionExecutionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the status of a user defined function execution."""
 
     SUCCEEDED = "Succeeded"
-    """The function execution completed successfully"""
+    """The function execution completed successfully."""
     FAILED = "Failed"
-    """The function execution failed"""
+    """The function execution failed."""

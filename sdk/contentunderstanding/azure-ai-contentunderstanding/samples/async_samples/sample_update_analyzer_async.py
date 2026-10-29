@@ -49,9 +49,7 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         # Create initial analyzer
         analyzer_id = f"my_analyzer_for_update_{int(time.time())}"
 
@@ -72,7 +70,7 @@ async def main() -> None:
                     ),
                 },
             ),
-            models={"completion": "gpt-4.1"},
+            models={"completion": "gpt-5.2"},
             tags={"tag1": "tag1_initial_value", "tag2": "tag2_initial_value"},
         )
 

@@ -30,7 +30,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import SubscriptionClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -38,7 +38,6 @@ from .._utils.utils import ClientMixinABC
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -620,14 +619,19 @@ class SubscriptionsOperations:
 
     @overload
     def check_zone_peers(
-        self, subscription_id: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        subscription_id: str,
+        parameters: _types.CheckZonePeersRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckZonePeersResult:
         """Compares a subscriptions logical zone mapping.
 
         :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
         :type subscription_id: str
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.subscriptions.types.CheckZonePeersRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -656,16 +660,19 @@ class SubscriptionsOperations:
 
     @distributed_trace
     def check_zone_peers(
-        self, subscription_id: str, parameters: Union[_models.CheckZonePeersRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        subscription_id: str,
+        parameters: Union[_models.CheckZonePeersRequest, _types.CheckZonePeersRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CheckZonePeersResult:
         """Compares a subscriptions logical zone mapping.
 
         :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
         :type subscription_id: str
-        :param parameters: The request body. Is one of the following types: CheckZonePeersRequest,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.subscriptions.models.CheckZonePeersRequest or JSON or
-         IO[bytes]
+        :param parameters: The request body. Is either a CheckZonePeersRequest type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.resource.subscriptions.models.CheckZonePeersRequest or
+         ~azure.mgmt.resource.subscriptions.types.CheckZonePeersRequest or IO[bytes]
         :return: CheckZonePeersResult. The CheckZonePeersResult is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.subscriptions.models.CheckZonePeersResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -876,7 +883,11 @@ class _SubscriptionClientOperationsMixin(
 
     @overload
     def check_resource_name(
-        self, resource_name_definition: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        resource_name_definition: Optional[_types.ResourceName] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckResourceNameResult:
         """Checks resource name validity.
 
@@ -884,7 +895,7 @@ class _SubscriptionClientOperationsMixin(
         does not start with a reserved word.
 
         :param resource_name_definition: The request body. Default value is None.
-        :type resource_name_definition: JSON
+        :type resource_name_definition: ~azure.mgmt.resource.subscriptions.types.ResourceName
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -918,17 +929,19 @@ class _SubscriptionClientOperationsMixin(
 
     @distributed_trace
     def check_resource_name(
-        self, resource_name_definition: Optional[Union[_models.ResourceName, JSON, IO[bytes]]] = None, **kwargs: Any
+        self,
+        resource_name_definition: Optional[Union[_models.ResourceName, _types.ResourceName, IO[bytes]]] = None,
+        **kwargs: Any
     ) -> _models.CheckResourceNameResult:
         """Checks resource name validity.
 
         A resource name is valid if it is not a reserved word, does not contains a reserved word and
         does not start with a reserved word.
 
-        :param resource_name_definition: The request body. Is one of the following types: ResourceName,
-         JSON, IO[bytes] Default value is None.
-        :type resource_name_definition: ~azure.mgmt.resource.subscriptions.models.ResourceName or JSON
-         or IO[bytes]
+        :param resource_name_definition: The request body. Is either a ResourceName type or a IO[bytes]
+         type. Default value is None.
+        :type resource_name_definition: ~azure.mgmt.resource.subscriptions.models.ResourceName or
+         ~azure.mgmt.resource.subscriptions.types.ResourceName or IO[bytes]
         :return: CheckResourceNameResult. The CheckResourceNameResult is compatible with MutableMapping
         :rtype: ~azure.mgmt.resource.subscriptions.models.CheckResourceNameResult
         :raises ~azure.core.exceptions.HttpResponseError:
