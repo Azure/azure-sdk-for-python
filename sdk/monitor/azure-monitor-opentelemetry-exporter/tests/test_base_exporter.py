@@ -16,6 +16,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     _is_sampling_rejection,
     BaseExporter,
     ExportResult,
+    _ROUTING_REUSED_NAMED_POLICY_OPTIONS,
     _get_storage_directory,
 )
 from azure.monitor.opentelemetry.exporter._utils import _get_retry_delay_from_headers
@@ -264,6 +265,40 @@ class TestBaseExporter(unittest.TestCase):
                 per_retry_policies=[HeadersPolicy()],
             )
         mock_client.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_multi_endpoint_routing_rejects_http_policy_in_named_slots(self, mock_client):
+        for option in _ROUTING_REUSED_NAMED_POLICY_OPTIONS:
+            with self.subTest(option=option), mock.patch.dict(
+                os.environ,
+                {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: "multi_endpoint_routing"},
+            ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+                with self.assertRaisesRegex(
+                    ValueError,
+                    f"HTTPPolicy instances are not supported for {option}",
+                ):
+                    BaseExporter(**{option: RetryPolicy()})
+        mock_client.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_multi_endpoint_routing_allows_sans_io_policy_in_named_slots(self, mock_client):
+        for option in _ROUTING_REUSED_NAMED_POLICY_OPTIONS:
+            with self.subTest(option=option), mock.patch.dict(
+                os.environ,
+                {_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES: "multi_endpoint_routing"},
+            ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+                BaseExporter(disable_offline_storage=True, **{option: HeadersPolicy()})
+        self.assertEqual(mock_client.call_count, len(_ROUTING_REUSED_NAMED_POLICY_OPTIONS))
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")
+    def test_http_policy_in_named_slot_is_unchanged_without_routing(self, mock_client):
+        headers_policy = RetryPolicy()
+        BaseExporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab",
+            disable_offline_storage=True,
+            headers_policy=headers_policy,
+        )
+        self.assertIn(headers_policy, mock_client.call_args.kwargs["policies"])
 
     @mock.patch.dict(os.environ)
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.AzureMonitorClient")

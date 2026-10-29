@@ -20,8 +20,9 @@
   or invalid values use `unknown_service`, while role instances remain resource-derived.
   Routing-enabled exporters can be created without a host connection string.
   Custom transports and scalar retry settings remain supported, but complete custom
-  pipelines and mutable custom HTTP policies are rejected because routed destinations
-  require independent exporter-managed policy chains. Sans-I/O policies remain supported.
+  pipelines and mutable custom HTTP policies in named, per-call, or per-retry options
+  are rejected because routed destinations require independent exporter-managed policy
+  chains. Sans-I/O policies remain supported.
   Cached routes and routed offline storage are limited to 64 endpoint/authentication
   pairs per exporter; additional destinations use short-lived clients without persistence.
   Routed destinations with available offline storage defer new transmissions

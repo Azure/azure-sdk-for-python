@@ -107,6 +107,14 @@ _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
 _MAX_ROUTE_STORAGE_PARTITIONS = 64
 _MAX_CACHED_ROUTE_EXPORTERS = _MAX_ROUTE_STORAGE_PARTITIONS
+_ROUTING_REUSED_NAMED_POLICY_OPTIONS = (
+    "headers_policy",
+    "user_agent_policy",
+    "proxy_policy",
+    "custom_hook_policy",
+    "logging_policy",
+    "http_logging_policy",
+)
 
 _enabled_experimental_features: Optional[FrozenSet[str]] = None
 _experimental_features_lock = Lock()
@@ -1121,6 +1129,12 @@ def _get_authentication_credential(
 
 
 def _validate_routing_policy_options(options: Dict[str, Any]) -> None:
+    for name in _ROUTING_REUSED_NAMED_POLICY_OPTIONS:
+        if isinstance(options.get(name), HTTPPolicy):
+            raise ValueError(
+                f"HTTPPolicy instances are not supported for {name} with multi-endpoint routing. "
+                "Use a SansIOHTTPPolicy instance instead."
+            )
     for name in ("per_call_policies", "per_retry_policies"):
         value = options.get(name)
         if value is None or isinstance(value, SansIOHTTPPolicy):
