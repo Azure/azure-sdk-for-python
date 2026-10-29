@@ -9,6 +9,7 @@ WebSocket-only bidirectional streaming property.
 """
 import asyncio
 import logging
+from urllib.parse import unquote
 
 import pytest
 from starlette.testclient import TestClient
@@ -59,9 +60,34 @@ def test_ws_original_subject_is_invocation_local():
     }
     client = TestClient(app)
     with client.websocket_connect("/invocations_ws", headers=dict(subject)) as websocket:
-        assert websocket.receive_json() == subject
+        forwarded = websocket.receive_json()
+        assert not any(name.lower().startswith("x-ms-original-subject") for name in forwarded)
+        assert unquote(forwarded["x-ms-foundry-baggage"].split("=", 1)[1]) == subject["x-ms-original-subject"]
+        assert len(forwarded) == 1
     with client.websocket_connect("/invocations_ws") as websocket:
         assert websocket.receive_json() == {}
+    assert get_request_context().original_subject is None
+
+
+def test_overlapping_websockets_keep_subject_baggage_isolated():
+    app = InvocationAgentServerHost(configure_observability=None)
+
+    @app.ws_handler
+    async def handler(websocket: WebSocket) -> None:
+        await websocket.receive_text()
+        await websocket.send_json(get_request_context().model_attribution_headers())
+
+    alice = 'oid="alice", tid="tenant-alice", idtype="user"'
+    bob = 'oid="bob", tid="tenant-bob", idtype="app"'
+    with TestClient(app) as client:
+        with client.websocket_connect("/invocations_ws", headers={"x-ms-original-subject": alice}) as first:
+            with client.websocket_connect("/invocations_ws", headers={"x-ms-original-subject": bob}) as second:
+                first.send_text("ready")
+                second.send_text("ready")
+                for websocket, subject in ((first, alice), (second, bob)):
+                    forwarded = websocket.receive_json()
+                    assert not any(name.lower().startswith("x-ms-original-subject") for name in forwarded)
+                    assert unquote(forwarded["x-ms-foundry-baggage"].split("=", 1)[1]) == subject
     assert get_request_context().original_subject is None
 
 
