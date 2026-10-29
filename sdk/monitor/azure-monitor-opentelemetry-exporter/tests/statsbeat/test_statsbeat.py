@@ -448,6 +448,9 @@ class TestStatsbeat(unittest.TestCase):
             {
                 _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: "",
             },
+        ), mock.patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_configuration_manager",
+            return_value=None,
         ):
             # Act
             _statsbeat.collect_statsbeat_metrics(exporter)
@@ -498,6 +501,9 @@ class TestStatsbeat(unittest.TestCase):
             {
                 _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME: "",
             },
+        ), mock.patch(
+            "azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_configuration_manager",
+            return_value=None,
         ):
             # Act
             _statsbeat.collect_statsbeat_metrics(exporter)
