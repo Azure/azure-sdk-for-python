@@ -330,6 +330,10 @@ async def _do_checkpoint_persist(
     response_id: str,
     last_snapshot: "bytes | None",
     terminal_seen: bool,
+    agent_reference: "generated_models.AgentReference | dict[str, Any] | None" = None,
+    model: str | None = None,
+    agent_session_id: str | None = None,
+    conversation_id: str | None = None,
 ) -> "bytes | None":
     """Persist a developer checkpoint snapshot (spec 025 §A.3).
 
@@ -355,6 +359,14 @@ async def _do_checkpoint_persist(
     :paramtype last_snapshot: bytes | None
     :keyword terminal_seen: Whether a terminal event has already been processed.
     :paramtype terminal_seen: bool
+    :keyword agent_reference: Canonical agent identity to stamp on the checkpoint.
+    :paramtype agent_reference: AgentReference | dict[str, Any] | None
+    :keyword model: Model name to stamp when the checkpoint has none.
+    :paramtype model: str | None
+    :keyword agent_session_id: Resolved session ID to stamp on the checkpoint.
+    :paramtype agent_session_id: str | None
+    :keyword conversation_id: Resolved conversation ID to stamp on the checkpoint.
+    :paramtype conversation_id: str | None
     :returns: The new ``last_snapshot`` bytes (unchanged when nothing persisted).
     :rtype: bytes | None
     """
@@ -367,8 +379,35 @@ async def _do_checkpoint_persist(
     response = event.response
     if response is None or provider is None:
         return last_snapshot
+
+    # Checkpoints may be emitted by a stream created with only ``response_id``.
+    # Normalize the payload with the same identity defaults used by terminal
+    # persistence before handing it to the provider, so a checkpoint is valid
+    # on its own rather than relying on a later terminal write to fill fields.
+    checkpoint_response = deepcopy(dict(response))
+    normalized_events: list[generated_models.ResponseStreamEvent] = [
+        cast(
+            "generated_models.ResponseStreamEvent",
+            {
+                "type": "response.in_progress",
+                "response": checkpoint_response,
+            },
+        )
+    ]
+    normalized_snapshot = _extract_response_snapshot_from_events(
+        normalized_events,
+        response_id=response_id,
+        agent_reference=agent_reference or {},
+        model=model,
+        agent_session_id=agent_session_id,
+        conversation_id=conversation_id,
+    )
+    checkpoint_response = cast("dict[str, Any]", normalized_snapshot)
+    # Keep checkpoint snapshots independently readable by providers that use
+    # the persisted mode flags for background-response validation.
+    checkpoint_response["background"] = background
     try:
-        snapshot_bytes = json.dumps(dict(response), sort_keys=True, default=str).encode("utf-8")
+        snapshot_bytes = json.dumps(checkpoint_response, sort_keys=True, default=str).encode("utf-8")
     except Exception:  # pylint: disable=broad-exception-caught
         logger.debug("checkpoint() snapshot serialisation failed for %s", response_id, exc_info=True)
         return last_snapshot
@@ -376,7 +415,7 @@ async def _do_checkpoint_persist(
         return last_snapshot  # idempotent — nothing changed since the last checkpoint
     result = last_snapshot
     try:
-        await provider.update_response(response, context=context)
+        await provider.update_response(checkpoint_response, context=context)
         result = snapshot_bytes
     except Exception as exc:  # pylint: disable=broad-exception-caught
         setattr(exc, PLATFORM_ERROR_TAG, True)
@@ -1039,6 +1078,10 @@ async def _bg_drain_handler_events(
                     response_id=response_id,
                     last_snapshot=st.checkpoint_snapshot,
                     terminal_seen=st.terminal_seen,
+                    agent_reference=agent_reference,
+                    model=model,
+                    agent_session_id=agent_session_id,
+                    conversation_id=conversation_id,
                 )
                 continue
             # Client-initiated cancel → discard and force cancelled.
@@ -2342,6 +2385,10 @@ class _ResponseOrchestrator:
             response_id=ctx.response_id,
             last_snapshot=state.last_persisted_snapshot,
             terminal_seen=state.pending_terminal is not None,
+            agent_reference=ctx.agent_reference,
+            model=ctx.model,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
         )
 
     async def _emit_standalone_error(
