@@ -5,6 +5,7 @@ aiohttp
 # (`test_start_c2c_job_with_private_source`) and row #10's extended public-bucket
 # E2E (`test_job_definition_job_run`). Test-only deps; not in the package's
 # runtime install_requires.
-azure-mgmt-network
+# Match the 2025-05-01 Network API used by the private-link recordings.
+azure-mgmt-network==30.2.0
 azure-mgmt-authorization
 azure-mgmt-storage
