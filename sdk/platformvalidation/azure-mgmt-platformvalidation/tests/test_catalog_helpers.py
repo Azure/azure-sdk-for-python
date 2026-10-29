@@ -11,6 +11,10 @@ from test_catalog import TestCatalog as CatalogTestCase
 
 
 @pytest.mark.parametrize(
+    "subscription_id",
+    ["11111111-1111-1111-1111-111111111111", "22222222-2222-2222-2222-222222222222"],
+)
+@pytest.mark.parametrize(
     "resource",
     [
         "validationTests/boot",
@@ -18,9 +22,11 @@ from test_catalog import TestCatalog as CatalogTestCase
         "validationTestCategories/image-certification",
     ],
 )
-def test_catalog_identity_is_provider_global(resource):
+def test_catalog_identity_is_subscription_scoped(monkeypatch, resource, subscription_id):
     case = CatalogTestCase()
-    expected = f"/providers/Microsoft.PlatformValidation/{resource}"
+    monkeypatch.setattr(case, "get_settings_value", lambda _: subscription_id)
+    provider_id = f"/providers/Microsoft.PlatformValidation/{resource}"
+    expected = f"/subscriptions/{subscription_id}{provider_id}"
     assert case.catalog_id(resource) == expected
     entry = SimpleNamespace(
         name=resource.rsplit("/", 1)[-1],
@@ -28,6 +34,7 @@ def test_catalog_identity_is_provider_global(resource):
         properties=SimpleNamespace(audience="Public"),
     )
     case.assert_entry(entry, expected, entry.name)
-    entry.id = f"/subscriptions/unexpected{expected}"
-    with pytest.raises(AssertionError, match="provider-global"):
-        case.assert_entry(entry, expected, entry.name)
+    for invalid_id in (provider_id, f"/subscriptions/unexpected{provider_id}"):
+        entry.id = invalid_id
+        with pytest.raises(AssertionError, match="subscription-scoped"):
+            case.assert_entry(entry, expected, entry.name)

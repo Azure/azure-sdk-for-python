@@ -47,13 +47,13 @@ class TestCatalog(CloudValidationTestCase):
         actual_id = entry.id
         assert (
             actual_id and actual_id.lower() == resource_id.lower()
-        ), "Catalog ID differs from the canonical provider-global identity."
+        ), "Catalog ID differs from the canonical subscription-scoped identity."
         is_public = bool(entry.properties and entry.properties.audience == "Public")
         assert is_public, "The selected catalog entry must have Public audience."
 
     def catalog_id(self, name):
-        # The subscription scopes authorization; catalog resources are globally shared.
-        return f"/providers/Microsoft.PlatformValidation/{name}"
+        subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+        return f"/subscriptions/{subscription_id}/providers/Microsoft.PlatformValidation/{name}"
 
     @CatalogPreparer()
     @recorded_by_proxy

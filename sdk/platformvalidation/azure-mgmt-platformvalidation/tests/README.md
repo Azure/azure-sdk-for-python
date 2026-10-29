@@ -17,7 +17,7 @@ input, authorization boundary or deployment has been tested.
 | `validation_execution_plans` | `begin_create_or_update`, `get`, `begin_update`, `begin_delete`, `list_by_resource_group` | Tags/description/configuration PATCH, omitted-field preservation, existing-resource PUT, lists and post-delete 404 |
 | `execution_plan_runs` | `begin_create_or_update`, `get`, `begin_delete`, `list_by_execution_plan` | New run completes with one passing boot test; deletion removes the run and its test results |
 | `validation_test_runs` | `get`, `list_by_execution_plan_run` | Exact parent identity, completed state, pass counts, timestamps and absence of failure details |
-| `validation_tests` | `get`, `list_by_subscription` | Public entry discovery and exact provider-global identity |
+| `validation_tests` | `get`, `list_by_subscription` | Public entry discovery and exact subscription-scoped identity |
 | `validation_test_versions` | `get`, `list` | Public version discovery and exact parent/version identity |
 | `validation_test_categories` | `get`, `list_by_subscription` | Public category discovery and exact identity |
 | `operation_status` | `get` | Direct polling of the supported route returned by a plan PATCH |
@@ -27,10 +27,16 @@ Existing-resource PUT is covered for CloudValidation and execution plans.
 `execution_plan_runs.begin_create_or_update` is covered by creation of a new run,
 not replay of an existing completed run.
 
-Catalog requests are subscription-scoped; the approved deployment returns
-provider-global IDs beginning `/providers/Microsoft.PlatformValidation/`.
-Tests assert that exact identity. Description-only PATCH tests verify that
-omitted tags and configuration are preserved.
+Catalog tests, categories and child versions follow the subscription-scoped ARM
+contract. Expected IDs use the framework's configured subscription:
+`/subscriptions/{subscriptionId}/providers/Microsoft.PlatformValidation/...`.
+The current deployment and published recordings instead return provider-global
+IDs beginning `/providers/Microsoft.PlatformValidation/`. Both recorded catalog
+scenarios therefore fail strict identity assertions, reproducing the service
+contract mismatch observed in Go and JavaScript. No fallback or expected-failure
+masking is applied. Refresh and publish recordings after the service is corrected;
+do not rewrite recorded responses to make the assertions pass.
+Description-only PATCH tests verify that omitted tags and configuration are preserved.
 
 Run serially; do not re-submit an existing execution merely to test its
 update-shaped SDK entrypoint.
