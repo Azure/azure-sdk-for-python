@@ -69,6 +69,9 @@ parameters:
   - name: PersistOidcToken
     type: boolean
     default: false
+  - name: DisableAzureResourceCreation
+    type: boolean
+    default: false
 
 jobs:
   - job:
@@ -125,29 +128,30 @@ jobs:
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-      - template: /eng/common/TestResources/build-test-resource-config.yml
-        parameters:
-          SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
-          SubscriptionConfigurations: ${{ parameters.CloudConfig.SubscriptionConfigurations }}
-          ${{ if parameters.UseFederatedAuth }}:
-            SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
-          EnvVars:
-            Pool: $(Pool)
-            ${{ insert }}: ${{ parameters.EnvVars }}
-
-      - ${{ each directory in coalesce(parameters.TestResourceDirectories, split(parameters.ServiceDirectory, '|')) }}:
-        - template: /eng/common/TestResources/deploy-test-resources.yml
+      - ${{ if not(parameters.DisableAzureResourceCreation) }}:
+        - template: /eng/common/TestResources/build-test-resource-config.yml
           parameters:
-            Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
-            ServiceDirectory: '${{ directory }}'
-            SubscriptionConfiguration: $(SubscriptionConfiguration)
-            ArmTemplateParameters: $(ArmTemplateParameters)
-            UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
-            PersistOidcToken: ${{ parameters.PersistOidcToken }}
-            ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
+            SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
+            SubscriptionConfigurations: ${{ parameters.CloudConfig.SubscriptionConfigurations }}
+            ${{ if parameters.UseFederatedAuth }}:
+              SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
             EnvVars:
               Pool: $(Pool)
               ${{ insert }}: ${{ parameters.EnvVars }}
+
+        - ${{ each directory in coalesce(parameters.TestResourceDirectories, split(parameters.ServiceDirectory, '|')) }}:
+          - template: /eng/common/TestResources/deploy-test-resources.yml
+            parameters:
+              Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
+              ServiceDirectory: '${{ directory }}'
+              SubscriptionConfiguration: $(SubscriptionConfiguration)
+              ArmTemplateParameters: $(ArmTemplateParameters)
+              UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+              PersistOidcToken: ${{ parameters.PersistOidcToken }}
+              ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
+              EnvVars:
+                Pool: $(Pool)
+                ${{ insert }}: ${{ parameters.EnvVars }}
 
       # This is a heuristic to detect compiled requirements in the service 
       # directory. If compiled requirements are found, install dependencies for
@@ -224,12 +228,13 @@ jobs:
           UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
           ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
 
-      - ${{ each directory in coalesce(parameters.TestResourceDirectories, split(parameters.ServiceDirectory, '|')) }}:
-        - template: /eng/common/TestResources/remove-test-resources.yml
-          parameters:
-            ServiceDirectory: '${{ directory }}'
-            SubscriptionConfiguration: $(SubscriptionConfiguration)
-            UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
-            ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
+      - ${{ if not(parameters.DisableAzureResourceCreation) }}:
+        - ${{ each directory in coalesce(parameters.TestResourceDirectories, split(parameters.ServiceDirectory, '|')) }}:
+          - template: /eng/common/TestResources/remove-test-resources.yml
+            parameters:
+              ServiceDirectory: '${{ directory }}'
+              SubscriptionConfiguration: $(SubscriptionConfiguration)
+              UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+              ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
 
       - ${{ parameters.PostSteps }}

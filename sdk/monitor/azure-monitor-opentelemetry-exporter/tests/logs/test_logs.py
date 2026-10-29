@@ -443,6 +443,49 @@ class TestAzureLogExporter(unittest.TestCase):
         self._log_data.resource = old_resource
         self.assertEqual(envelope.tags.get(ContextTagKeys.AI_OPERATION_NAME), "TestOperationName")
 
+    def test_log_to_envelope_gen_ai_messages_attributes_length(self):
+        exporter = self._exporter
+        messages_length = 1024 * 1024
+        messages_value = "m" * messages_length
+        oversized_messages_value = "o" * (4 * 1024 * 1024 + 1000)
+        other_value = "t" * (1024 * 1024)
+        log_data = _logs.ReadWriteLogRecord(
+            LogRecord(
+                timestamp=1646865018558419456,
+                severity_text="INFO",
+                severity_number=SeverityNumber.INFO,
+                body="gen_ai event",
+                attributes={
+                    "gen_ai.input.messages": messages_value,
+                    "gen_ai.output.messages": oversized_messages_value,
+                    "gen_ai.system_instructions": other_value,
+                    "custom.attribute": other_value,
+                },
+            ),
+            resource=Resource.create(attributes={"asd": "test_resource"}),
+            instrumentation_scope=InstrumentationScope("test_name"),
+        )
+        # Without the experimental feature, existing truncation limits apply
+        envelope = exporter._log_to_envelope(log_data)
+
+        properties = envelope.data.base_data.properties
+        self.assertEqual(len(properties["gen_ai.input.messages"]), 256 * 1024)
+        self.assertEqual(len(properties["gen_ai.output.messages"]), 256 * 1024)
+        self.assertEqual(len(properties["gen_ai.system_instructions"]), 256 * 1024)
+        self.assertEqual(len(properties["custom.attribute"]), 8 * 1024)
+
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features",
+            frozenset({"gen_ai_input_output_limit_increase"}),
+        ):
+            envelope = exporter._log_to_envelope(log_data)
+
+        properties = envelope.data.base_data.properties
+        self.assertEqual(properties["gen_ai.input.messages"], messages_value)
+        self.assertEqual(len(properties["gen_ai.output.messages"]), 4 * 1024 * 1024)
+        self.assertEqual(len(properties["gen_ai.system_instructions"]), 256 * 1024)
+        self.assertEqual(len(properties["custom.attribute"]), 8 * 1024)
+
     def test_log_to_envelope_partA_default(self):
         exporter = self._exporter
         old_resource = self._log_data.resource

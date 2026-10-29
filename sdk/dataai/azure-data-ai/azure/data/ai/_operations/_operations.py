@@ -44,7 +44,7 @@ def build_inference_semantic_rerank_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-30"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL

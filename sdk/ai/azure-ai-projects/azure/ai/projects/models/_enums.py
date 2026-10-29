@@ -146,6 +146,9 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VOICE."""
     INVOCATIONS_WS = "invocations_ws"
     """WebSocket-based protocol for hosted voice and real-time streaming agents."""
+    VOICE_CONVERSATION_ENGINE = "voice_conversation_engine"
+    """Text conversation protocol for a hosted agent used by Voice Live Bridge. Declare version
+    ``1.0.0``; audio transport remains outside this protocol."""
 
 
 class AgentIdentityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2466,7 +2469,10 @@ class VoiceAgentEndOfUtteranceThresholdLevel(str, Enum, metaclass=CaseInsensitiv
 class VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The input-audio transcription model identifier. This is a model name, not a Foundry deployment
     name. Mirrors the transcription models supported by the managed voice backend, covering the
-    OpenAI Realtime transcription models plus the Azure and MAI models. Additional values may be
+    OpenAI Realtime transcription models plus the Azure and MAI models. ``azure-speech-streaming``
+    is supported for cascaded text-model conversations only (not realtime speech-to-speech models),
+    requires a nonempty ``language`` such as ``en-US`` (comma-separated locales are supported), and
+    supports ``custom_speech``, ``phrase_list``, and ``profanity_filter``. Additional values may be
     added over time.
     """
 
@@ -2488,6 +2494,11 @@ class VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnum
     """MAI transcription."""
     AZURE_SPEECH = "azure-speech"
     """Azure AI Speech to text."""
+    AZURE_SPEECH_STREAMING = "azure-speech-streaming"
+    """Azure AI Speech streaming transcription for cascaded text-model conversations only. Requires a
+    nonempty ``language``, such as ``en-US``; comma-separated locales are supported. Supports
+    ``custom_speech``, ``phrase_list``, and ``profanity_filter``. Not supported with realtime
+    speech-to-speech models."""
 
 
 class VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2500,7 +2511,15 @@ class VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumM
 
 
 class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The input audio noise reduction mode."""
+    """The input audio noise reduction mode.
+
+    * `azure_deep_noise_suppression_headset`: Azure headset-optimized noise suppression for local voice activity
+      detection. Optimized for low-sample-rate audio, including 8 kHz telephony audio. Enhances detection audio without
+      changing the audio used for recognition. The mode is not restricted to headset devices.
+    * `azure_personal_noise_suppression`: Azure personalized noise suppression for local voice activity detection.
+      Starts with headset suppression and personalizes detection after automatic speaker enrollment. Recognition audio
+      is unchanged; headset suppression remains active when personalization is unavailable.
+    """
 
     NEAR_FIELD = "near_field"
     """NEAR_FIELD."""
@@ -2508,6 +2527,14 @@ class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """FAR_FIELD."""
     AZURE_DEEP_NOISE_SUPPRESSION = "azure_deep_noise_suppression"
     """Azure deep noise suppression."""
+    AZURE_DEEP_NOISE_SUPPRESSION_HEADSET = "azure_deep_noise_suppression_headset"
+    """Azure headset-optimized noise suppression for local voice activity detection. Optimized for
+    low-sample-rate audio, including 8 kHz telephony audio. Enhances detection audio without
+    changing the audio used for recognition. The mode is not restricted to headset devices."""
+    AZURE_PERSONAL_NOISE_SUPPRESSION = "azure_personal_noise_suppression"
+    """Azure personalized noise suppression for local voice activity detection. Starts with headset
+    suppression and personalizes detection after automatic speaker enrollment. Recognition audio is
+    unchanged; headset suppression remains active when personalization is unavailable."""
 
 
 class VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2530,6 +2557,25 @@ class VoiceAgentSessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMet
     """INPUT_AUDIO_TRANSCRIPTION_PHRASES."""
     FILE_SEARCH_CALL_RESULTS = "file_search_call.results"
     """FILE_SEARCH_CALL_RESULTS."""
+
+
+class VoiceAgentSoundscapeSound(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The packaged sounds accepted by a built-in soundscape source."""
+
+    OFFICE = "office"
+    """Quiet office ambience."""
+    CALL_CENTER = "call_center"
+    """Busy call-center ambience."""
+    BUSY_STREET = "busy_street"
+    """Busy street ambience."""
+    PEOPLE_TALKING = "people_talking"
+    """Crowd conversation ambience."""
+    STREET_AND_METRO_STATION = "street_and_metro_station"
+    """Street and metro-station ambience."""
+    DING1 = "ding1"
+    """The first notification tone."""
+    DING2 = "ding2"
+    """The second notification tone."""
 
 
 class VoiceAgentSubagentAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
