@@ -1,6 +1,6 @@
 # Release History
 
-## 2.3.0b3 (Unreleased)
+## 2.3.0 (2026-10-29)
 
 ### Features Added
 
@@ -13,7 +13,7 @@
 ### Breaking Changes
 
 - Removed the internal `EXPERIMENTAL_LINK_MESSAGE` constant. When using
-  `azure-ai-agentserver-responses`, upgrade it to `2.4.0b3` or later alongside
+  `azure-ai-agentserver-responses`, upgrade it to `2.4.0` or later alongside
   Core; older Responses compatibility shims require the removed constant.
 
 ### Bugs Fixed
@@ -27,6 +27,11 @@
   characters rather than forwarding oversized model-attribution baggage.
 - Place the subject before unrelated baggage so bounded transport normalization
   cannot displace the attribution member.
+
+### Other Changes
+
+- Stable release of the 2.3.0 preview series, including the protocol-scoped task
+  runtime and recovery protections described in the preview entries below.
 
 ## 2.3.0b2 (2026-10-26)
 

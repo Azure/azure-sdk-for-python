@@ -28,7 +28,9 @@ from azure.ai.agentserver.invocations import _invocation
 def test_original_subject_core_dependency_floor():
     requirements = (Requirement(value) for value in requires("azure-ai-agentserver-invocations") or [])
     core = next(value for value in requirements if value.name == "azure-ai-agentserver-core")
-    assert "2.3.0b2" in core.specifier
+    assert "2.3.0" in core.specifier
+    assert "2.3.0b3" not in core.specifier
+    assert "2.3.0b2" not in core.specifier
     assert "2.3.0b1" not in core.specifier
     assert "2.1.0" not in core.specifier
     assert callable(FoundryAgentRequestContext.model_attribution_headers)
