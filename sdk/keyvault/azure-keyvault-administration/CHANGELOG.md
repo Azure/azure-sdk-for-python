@@ -40,8 +40,6 @@
   If no newer challenge remains, the next request rediscovers it, which can add an unauthenticated request even when
   resource verification is disabled.
 
-- Fixed a bug in the challenge authentication policy where the authentication challenge was cached before the challenge resource was verified. The challenge is now cached only after resource verification succeeds [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
-
 ## 4.7.1 (2026-08-25)
 
 ### Bugs Fixed
