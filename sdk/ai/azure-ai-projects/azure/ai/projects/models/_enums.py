@@ -71,21 +71,21 @@ class A2AProtocolVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ActivityProtocolAccessBoundary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """An access boundary for the activity protocol."""
 
-    READ1_ON1_DEVELOPERS = "read.1on1.developers"
+    READ_1_ON1_DEVELOPERS = "read.1on1.developers"
     """Allows read access to one-on-one developer conversations."""
-    READ1_ON1_MANAGER = "read.1on1.manager"
+    READ_1_ON1_MANAGER = "read.1on1.manager"
     """Allows read access to one-on-one manager conversations."""
-    READ1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
+    READ_1_ON1_ALLOWLISTED = "read.1on1.allowlisted"
     """Allows read access to allowlisted one-on-one conversations."""
-    READ1_ON1_TENANT = "read.1on1.tenant"
+    READ_1_ON1_TENANT = "read.1on1.tenant"
     """Allows read access to tenant-wide one-on-one conversations."""
-    WRITE1_ON1_DEVELOPERS = "write.1on1.developers"
+    WRITE_1_ON1_DEVELOPERS = "write.1on1.developers"
     """Allows write access to one-on-one developer conversations."""
-    WRITE1_ON1_MANAGER = "write.1on1.manager"
+    WRITE_1_ON1_MANAGER = "write.1on1.manager"
     """Allows write access to one-on-one manager conversations."""
-    WRITE1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
+    WRITE_1_ON1_ALLOWLISTED = "write.1on1.allowlisted"
     """Allows write access to allowlisted one-on-one conversations."""
-    WRITE1_ON1_TENANT = "write.1on1.tenant"
+    WRITE_1_ON1_TENANT = "write.1on1.tenant"
     """Allows write access to tenant-wide one-on-one conversations."""
     READ_GROUP_DEVELOPERS = "read.group.developers"
     """Allows read access to developer group conversations."""
@@ -2470,15 +2470,15 @@ class VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnum
     added over time.
     """
 
-    WHISPER1 = "whisper-1"
+    WHISPER_1 = "whisper-1"
     """OpenAI Whisper."""
     GPT_REALTIME_WHISPER = "gpt-realtime-whisper"
     """OpenAI GPT Realtime Whisper."""
-    GPT4_O_TRANSCRIBE = "gpt-4o-transcribe"
+    GPT_4_O_TRANSCRIBE = "gpt-4o-transcribe"
     """OpenAI GPT-4o transcribe."""
-    GPT4_O_MINI_TRANSCRIBE = "gpt-4o-mini-transcribe"
+    GPT_4_O_MINI_TRANSCRIBE = "gpt-4o-mini-transcribe"
     """OpenAI GPT-4o mini transcribe."""
-    GPT4_O_TRANSCRIBE_DIARIZE = "gpt-4o-transcribe-diarize"
+    GPT_4_O_TRANSCRIBE_DIARIZE = "gpt-4o-transcribe-diarize"
     """OpenAI GPT-4o transcribe with speaker diarization."""
     GPT_TRANSCRIBE = "gpt-transcribe"
     """OpenAI GPT Transcribe."""
@@ -2614,10 +2614,13 @@ class VoiceAudioRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The lifecycle status of a persisted voice conversation:
 
-    * `in_progress`: the live session is active, or post-session persistence finalization is pending.
-    * `completed`: finalization succeeded after normal or client close, `end_conversation`, a max-duration `1001` close,
-      or a client or network disconnect that the service can still finalize.
-    * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented finalization.
+    * `in_progress`: the live session is active, or post-session persistence finalization is
+    pending.
+    * `completed`: finalization succeeded after normal or client close, `end_conversation`, a
+    max-duration `1001`
+    close, or a client or network disconnect that the service can still finalize.
+    * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented
+    finalization.
     """
 
     IN_PROGRESS = "in_progress"
