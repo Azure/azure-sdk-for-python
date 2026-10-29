@@ -1,14 +1,20 @@
 # Release History
 
-## 2.10.0 (Unreleased)
+## 2.10.0 (2026-10-30)
 
 ### Features Added
 
 * Added preview GPT Live clients at `beta.voice_agents.live` for text and audio streaming, typed events, session controls, and Responses function-tool results. Both synchronous and asynchronous clients are available.
+* Added optional `VoiceAgentDefinition.soundscape` for built-in background ambience and event cues in telephony calls, with `VoiceAgentSoundscapeConfig`, `VoiceAgentSoundscapeSourceConfig`, `VoiceAgentSoundscapeTrackConfig`, `VoiceAgentSoundscapeWorkingTrackConfig`, and `VoiceAgentSoundscapeSound`.
+* Added optional `VoiceAgentInputTranscription.profanity_filter` and `VoiceAgentProfanityFilterMode` for configuring Azure Speech input-transcript filtering before a session starts.
+* Added `VoiceAgentInputTranscriptionModel.AZURE_SPEECH_STREAMING` for Azure Speech streaming transcription in cascaded text-model conversations. This model requires a nonempty `VoiceAgentInputTranscription.language` and is not supported with realtime speech-to-speech models.
+* Added `VoiceAgentNoiseReductionType.AZURE_DEEP_NOISE_SUPPRESSION_HEADSET` and `VoiceAgentNoiseReductionType.AZURE_PERSONAL_NOISE_SUPPRESSION` for local voice activity detection without changing recognition audio.
+* Added `AgentEndpointProtocol.VOICE_CONVERSATION_ENGINE` for hosted text agents used as Voice Agent conversation engines. Hosted agents must declare this protocol with version `1.0.0`; `invocations_ws` does not substitute for it.
+* Added optional `HostedAgentDefinition.enable_memory_snapshot` to start hosted-agent sessions from a snapshot of the initialized process instead of starting the process from its image.
+* Added image-generation model options `gpt-image-2.5-sunburst`, `gpt-image-2.5-sunburst-2026-09-08`, `gpt-image-2.5-flare`, and `gpt-image-2.5-flare-2026-09-08`, with `xhigh` and `max` quality options for these models.
 * Added generated GPT Live configuration and event models from OpenAI TypeSpec 1.32, including Decisions, expanded Responses tools, and audio fixtures.
 * Added `VoiceAgentLiveSessionResource` and `VoiceAgentLiveDelegationItem` so Live lifecycle and delegation events preserve effective Foundry-managed ownership and resolved agent versions.
 * Added persisted Live conversation, item, and audio REST operations under `beta.voice_agents.live_conversations`.
-* Added image-generation model options and the `xhigh` and `max` quality values from the updated OpenAI TypeSpec dependency.
 
 ### Breaking Changes
 
@@ -17,6 +23,7 @@
 
 ### Bugs Fixed
 
+* Fixed tracing to record `temperature=0` and `top_p=0` instead of omitting these valid values.
 * Preserved Live and Realtime agent types when reading agents, without adding `sub_protocol` when it was omitted.
 * Accepted mappings other than dictionaries for GPT Live raw events and structured inputs.
 * Fixed overlapping async Voice Agent close calls to wait for the same cleanup, even if a caller is cancelled.

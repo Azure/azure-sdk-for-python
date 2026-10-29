@@ -7,11 +7,10 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any
 
+from azure.ai.agentserver.core import experimental
 from azure.ai.agentserver.core.platform_headers import (
     PLATFORM_ERROR_TAG,
 )
-
-from .._experimental import experimental
 
 if TYPE_CHECKING:
     from azure.core.rest import HttpResponse
