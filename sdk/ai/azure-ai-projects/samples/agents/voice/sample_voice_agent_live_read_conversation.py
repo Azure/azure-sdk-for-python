@@ -5,28 +5,18 @@
 
 """
 DESCRIPTION:
-    Read a stored GPT Live conversation using the preview
-    project_client.beta.voice_agents.live_conversations REST APIs. Retrieve the
-    conversation, recent conversations, ordered items, individual items, and
-    merged/per-item audio metadata.
+    Read a GPT Live conversation, list its items, and download its audio using
+    project_client.beta.voice_agents.live_conversations.
 
-    If FOUNDRY_VOICE_CONVERSATION_ID is omitted or blank, create a temporary
-    GPT Live agent and a stored greeting session, close it, wait for persistence,
-    read its recordings, then delete the conversation and agent version.
-    No microphone, input recording, or Responses backend is needed.
+    With no conversation ID, the sample creates a short greeting session and
+    deletes its conversation and temporary agent version afterward. No microphone,
+    input WAV, or Responses model is needed. Supplying an existing ID skips
+    creation and leaves the existing agent and conversation untouched.
 
-    If an existing conversation ID is supplied, read it without creating an
-    agent or opening a WebSocket and never delete its resources. It must come
-    from session.started.conversation_id, not session.id, after a successful
-    speech session with effective store=True. Dedicated Live REST routes must
-    be available; no fallback to older Realtime conversation routes is used.
-
-    Download Foundry-managed WAV recordings into a unique folder in your user
-    temporary directory and print its location. The files remain available
-    after the sample exits and are not overwritten. Downloads contain stored
-    conversation content; remove the local folder when it is no longer needed.
-    BYOS recordings require your own storage credentials and are not downloaded.
-    Only the agent version and conversation created by this run are deleted.
+    WAV downloads remain in a unique user-temporary folder. The sample prints
+    its path; remove the folder when finished. Files contain conversation
+    content, not telemetry. BYOS audio requires your own storage credentials
+    and is not downloaded.
 
 USAGE:
     python sample_voice_agent_live_read_conversation.py
@@ -35,16 +25,17 @@ USAGE:
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
-    2) FOUNDRY_VOICE_CONVERSATION_ID (optional) - An existing stored conversation.
-       When unset or blank, this sample creates and deletes its own conversation.
-    3) FOUNDRY_VOICE_AGENT_NAME (required with an existing conversation ID) -
-       The existing GPT Live agent name. Otherwise, an optional name prefix
-       for the uniquely named temporary agent; an existing agent is not changed.
-    4) FOUNDRY_VOICE_AGENT_MODEL (required without a conversation ID) -
-       Your GPT Live deployment name, used to create the temporary agent.
+    2) FOUNDRY_VOICE_AGENT_MODEL (required when creating a conversation) -
+       Your GPT Live deployment name.
+    3) FOUNDRY_VOICE_CONVERSATION_ID (optional) - An existing conversation ID.
+       Unset or blank means create a conversation for this run.
+    4) FOUNDRY_VOICE_AGENT_NAME - Required with an existing ID; otherwise an
+       optional prefix for the temporary agent name.
 
-    Authenticates with DefaultAzureCredential. Existing-conversation mode
-    requires no model deployment name or WebSocket dependency.
+    Uses DefaultAzureCredential. An existing conversation needs no model
+    deployment or WebSocket. Use session.started.conversation_id, not session.id,
+    from a completed speech session with store=True. The service must support
+    Live REST routes; HTTP errors are raised without a Realtime fallback.
 """
 
 from __future__ import annotations

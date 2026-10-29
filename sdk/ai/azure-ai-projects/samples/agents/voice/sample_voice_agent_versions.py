@@ -6,24 +6,21 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates working with voice-agent versions. Agents are
-    immutable: every `create_version` call produces a new version. This sample
-    creates an agent, adds a new version to it, adds a draft version, lists the
-    versions, and reads a single version back.
+    Create published and draft versions of a voice agent, list them, and read
+    their settings. Each create_version call makes a new version rather than
+    changing an existing one.
 
 USAGE:
     python sample_voice_agent_versions.py
 
-    Before running the sample:
-
     pip install "azure-ai-projects>=2.7.0" python-dotenv
 
-    Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
-    2) FOUNDRY_VOICE_AGENT_MODEL - Optional. The managed (service-hosted) realtime model
-       identifier. Defaults to "gpt-realtime".
-    3) FOUNDRY_VOICE_AGENT_NAME - Optional. The name of the voice agent. If not
-       set, defaults to "sample-versioned-voice-agent".
+    Environment variables:
+    1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
+    2) FOUNDRY_VOICE_AGENT_MODEL (optional) - Managed Realtime model;
+       defaults to "gpt-realtime".
+    3) FOUNDRY_VOICE_AGENT_NAME (optional) - Agent name;
+       defaults to "sample-versioned-voice-agent".
 """
 
 import os

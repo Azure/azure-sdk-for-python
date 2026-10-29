@@ -5,58 +5,42 @@
 
 """
 DESCRIPTION:
-    Talk to a preview GPT Live voice agent using a microphone, or stream a real
-    WAV recording. Both modes use PCM16 little-endian, mono,
-    24 kHz audio and send/receive concurrently.
-    Async is used for full-duplex streaming and nonblocking audio devices,
-    rather than duplicating a synchronous sample.
+    Send a WAV recording to GPT Live, or talk through a microphone and hear
+    replies through your speakers. Async lets audio send and receive together.
+    Both modes use PCM16 little-endian, mono, 24-kHz audio.
 
-    Microphone mode uses optional PyAudio capture and speaker callbacks,
-    following the Realtime audio sample's nonblocking device pattern. Speak
-    normally and hear the reply through your speakers; use headphones to avoid
-    feedback. Capture backpressure drops a frame instead of queuing unlimited
-    sends, with the dropped-frame count reported at shutdown. Playback buffering
-    is bounded and device/send errors are raised. Press Ctrl-C to stop capture,
-    close the Live session and delete only the sample's agent version. Live owns
-    turn handling; this sample does not send Realtime response.cancel commands.
-
-    WAV mode needs spoken audio in uncompressed PCM16, mono, 24 kHz format.
-    Only raw frames are sent, without the WAV header, in paced 50 ms chunks
-    followed by one second of silence. No audio-device dependency is needed.
-
-    Aggregate audio byte counts and any emitted input/output transcripts are
-    displayed. Live has no speech-finished event: after WAV sending finishes, this
-    bounded mode stops after three seconds without non-silent reply
-    audio or nonblank output transcript updates. This is an inactivity heuristic;
-    a long speech pause can still split a reply. Low-level PCM with peak
-    amplitude at or below 256 does not restart the timer or count as a reply.
-    Captured PCM, including silence, is still counted and optionally saved.
-    Client-owned delegations are answered with commentary tied to their ID.
+    The sample prints transcripts and audio byte counts, then deletes its
+    temporary agent version. Microphone mode also reports dropped capture
+    frames if sending cannot keep up. Device and playback errors are raised.
 
 USAGE:
     python sample_voice_agent_live_audio_conversation_async.py
 
-    Set USE_MICROPHONE = True in this file for microphone capture and speaker
-    playback. Leave it False to stream a WAV file without audio devices.
-    Set SAVE_AUDIO = True to save returned audio in a unique user-temporary
-    folder. Its location is printed and the files remain after exit; remove
-    the folder when it is no longer needed.
+    Settings in this file:
+    - USE_MICROPHONE = False (default): send a WAV file; no audio devices needed.
+    - USE_MICROPHONE = True: use a microphone and speakers. Use headphones
+      to avoid feedback; press Ctrl-C to stop.
+    - SAVE_AUDIO = True: save reply audio in a unique user-temporary folder.
+      The path is printed. Remove the folder when finished; it contains
+      conversation content, not telemetry. Saving is off by default.
 
     pip install "azure-ai-projects[voice]" azure-identity python-dotenv
     pip install pyaudio  # Only required for microphone mode.
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
-    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT Live DEPLOYMENT name.
+    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT Live deployment name.
     3) FOUNDRY_VOICE_AUDIO_INPUT_PATH (required for WAV mode only) - Path to an
        actual spoken-audio WAV file: uncompressed PCM16, mono, 24000 Hz.
-    4) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for a uniquely named sample
-       agent. Only the version created by this run is deleted.
+    4) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for the temporary agent name.
 
-    Authenticates with DefaultAzureCredential.
-    Choose a short recording; Ctrl-C cancels local tasks and closes the session.
-    Conversation persistence is disabled; explicitly saving audio still writes
-    conversation content locally. SAVE_AUDIO is False by default.
+    Uses DefaultAzureCredential; conversation persistence is disabled.
+    Choose a short spoken recording. WAV mode sends raw audio in 50-ms chunks
+    and adds one second of silence. It finishes after three seconds without
+    active reply audio or transcript updates because Live has no speech-finished
+    event. Long pauses can cut a reply short; silence alone is not a reply.
+    Low-level PCM (peak <= 256) does not extend the wait, but is still counted
+    and saved when requested. Live handles turn-taking without response.cancel.
 """
 
 from __future__ import annotations

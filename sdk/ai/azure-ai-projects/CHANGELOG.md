@@ -4,7 +4,7 @@
 
 ### Features Added
 
-* Added preview GPT Live support through `beta.voice_agents.live`, with synchronous and asynchronous WebSocket clients, typed Live events, session controls, audio streaming, and Responses-delegation tool input/output.
+* Added preview GPT Live clients at `beta.voice_agents.live` for text and audio streaming, typed events, session controls, and Responses function-tool results. Both synchronous and asynchronous clients are available.
 * Added generated GPT Live voice-agent configuration, delegation, and client/server event models.
 * Added `VoiceAgentLiveSessionResource` and `VoiceAgentLiveDelegationItem` so Live lifecycle and delegation events preserve effective Foundry-managed ownership and resolved agent versions.
 * Added persisted Live conversation, item, and audio REST operations under `beta.voice_agents.live_conversations`.
@@ -12,13 +12,13 @@
 
 ### Bugs Fixed
 
-* Preserved concrete Live/Realtime voice-agent types on agent readback without inserting an omitted `sub_protocol`.
-* Accepted non-dictionary mappings in GPT Live raw events and structured connection inputs.
-* Fixed concurrent asynchronous Voice Agent close calls to await shared cleanup, including when a caller is cancelled.
+* Preserved Live and Realtime agent types when reading agents, without adding `sub_protocol` when it was omitted.
+* Accepted mappings other than dictionaries for GPT Live raw events and structured inputs.
+* Fixed overlapping async Voice Agent close calls to wait for the same cleanup, even if a caller is cancelled.
 
 ### Sample updates
 
-* Added GPT Live samples under `samples/agents/voice` demonstrating session lifecycle and configuration, single- and multi-turn text conversations, function-tool calling, WAV audio streaming, microphone capture with speaker playback, and stored-conversation/item/audio retrieval with Foundry-managed WAV downloads to a unique user-temporary folder. The REST sample can create and clean up its own stored greeting conversation or read an existing conversation without modifying it.
+* Added GPT Live samples for session setup, text conversations, function tools, WAV and microphone audio, and stored-conversation readback. The REST sample creates and cleans up a conversation when no ID is supplied, or reads an existing conversation without changing it. Audio downloads use a unique user-temporary folder.
 
 ## 2.9.0 (2026-10-16)
 

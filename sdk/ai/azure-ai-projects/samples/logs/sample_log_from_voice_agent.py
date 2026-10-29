@@ -5,23 +5,21 @@
 
 """
 DESCRIPTION:
-    Capture Voice Agent WebSocket diagnostics from azure.ai.projects.realtime
-    into a timestamped temporary log file. The SDK logs connection lifecycle,
-    event types and serialized event sizes, not event payloads or credentials.
-    No OpenTelemetry configuration or GenAI tracing opt-in is required.
+    Save Realtime voice-agent diagnostics to a temporary log file using
+    azure.ai.projects.realtime. Logs contain connection events, event types,
+    and byte counts, not message content or credentials. OpenTelemetry is
+    not required.
 
-    Create a preview Voice Agent, send one text prompt, wait for its response,
-    and delete the created version. No microphone or speaker is required.
+    The sample sends one text prompt and deletes the agent version it creates.
+    No microphone or speaker is needed.
 
 USAGE:
     python samples/logs/sample_log_from_voice_agent.py
 
-    Before running the sample:
-
     pip install "azure-ai-projects[voice]" azure-identity python-dotenv
 
-    Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
+    Environment variables:
+    1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
     2) FOUNDRY_VOICE_AGENT_MODEL - Optional managed model; defaults to "gpt-realtime".
     3) FOUNDRY_VOICE_AGENT_NAME - Optional agent name; defaults to a unique sample name.
 

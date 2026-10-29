@@ -6,26 +6,20 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates handling a client-executed `function` tool during
-    a live voice-agent session:
-
-    1) Create a voice agent configured with a `get_weather` function tool.
-    2) Open a realtime session and send a text turn that should trigger the tool.
-    3) Listen for `response.function_call_arguments.done`, execute the function
-       locally, and send the result back with `conversation.item.create` +
-       `response.create` so the agent can finish its reply using the tool output.
+    Create a Realtime voice agent with a local get_weather tool. Send a text
+    request, run the requested function, return its result, and print the final
+    reply. Weather values are sample data, not a live forecast.
+    The sample deletes the agent version it creates.
 
 USAGE:
     python sample_voice_agent_realtime_function_tool.py
 
-    Before running the sample:
-
     pip install "azure-ai-projects[voice]>=2.7.0" azure-identity python-dotenv
 
-    Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
-    2) FOUNDRY_VOICE_AGENT_MODEL - Optional. The managed (service-hosted) realtime model
-       identifier. Defaults to "gpt-realtime".
+    Environment variables:
+    1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
+    2) FOUNDRY_VOICE_AGENT_MODEL (optional) - Managed Realtime model;
+       defaults to "gpt-realtime".
     3) FOUNDRY_VOICE_AGENT_NAME - Optional. Name for the sample voice agent
        created and deleted by this script. Defaults to
        "sample-voice-agent-function-tool".
@@ -61,7 +55,7 @@ _RESPONSE_TIMEOUT: Final = 45
 
 
 def get_weather(city: str) -> str:
-    """A trivial local "tool" implementation the agent can call.
+    """Return sample weather without calling a weather service.
 
     :param city: The city to look up.
     :type city: str
@@ -72,14 +66,7 @@ def get_weather(city: str) -> str:
 
 
 def _safe_print(text: str) -> None:
-    """Print text that may contain characters the current console can't display.
-
-    The agent's reply below is model-generated and can contain characters (curly
-    quotes, em-dashes, etc.) outside some legacy, non-Unicode console encodings
-    (for example when stdout is piped/redirected on Windows). Rather than crashing
-    with UnicodeEncodeError, fall back to replacing just the unsupported characters;
-    a real interactive UTF-8 console prints unaffected.
-    """
+    """Print model text, replacing characters the console cannot display."""
     try:
         print(text)
     except UnicodeEncodeError:

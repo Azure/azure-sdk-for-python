@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-"""Asynchronous GPT Live WebSocket client, alongside the Realtime client."""
+"""Asynchronous GPT Live sessions at ``client.beta.voice_agents.live``."""
 
 from __future__ import annotations
 
@@ -34,7 +34,7 @@ class _Resource:
 
 
 class TextResource(_Resource):
-    """Append instructions, silent thinking, or speakable commentary.
+    """Send instructions, unspoken context, or spoken commentary.
 
     :param connection: The parent Live connection.
     :type connection: ~azure.ai.projects.aio.operations.AsyncBetaLiveConnection
@@ -47,10 +47,10 @@ class TextResource(_Resource):
         self._event_model = event_model
 
     async def append(self, *, content: str, delegation_id: Optional[str], event_id: Optional[str] = None) -> None:
-        """Append text, optionally associated with a client delegation.
+        """Send text, optionally tied to a request delegated to your app.
 
         :keyword str content: Text to append.
-        :keyword delegation_id: Delegation ID, or None for independent context.
+        :keyword delegation_id: The delegated request's ID, or None for standalone text.
         :paramtype delegation_id: str or None
         :keyword event_id: Optional client event identifier.
         :paramtype event_id: str or None
@@ -59,7 +59,7 @@ class TextResource(_Resource):
 
 
 class InputAudioResource(_Resource):
-    """Stream primary-transport audio in the session's configured format."""
+    """Send audio using the session's configured format."""
 
     async def append(self, *, audio: Union[str, bytes], event_id: Optional[str] = None) -> None:
         """Send raw audio bytes or base64 without a container header.
@@ -90,7 +90,7 @@ class InputAudioResource(_Resource):
 
 
 class SessionResource(_Resource):
-    """Live session controls; startup is owned by Foundry, not the client.
+    """Control a Live session that Foundry starts when the connection opens.
 
     :param connection: The parent Live connection.
     :type connection: ~azure.ai.projects.aio.operations.AsyncBetaLiveConnection
@@ -106,9 +106,9 @@ class SessionResource(_Resource):
     async def update(
         self, *, session: Union[models.LiveSessionUpdateParams, Mapping[str, Any]], event_id: Optional[str] = None
     ) -> None:
-        """Update mutable delegation settings, not startup model/audio.
+        """Change delegation settings. The model and audio format cannot change mid-session.
 
-        :keyword session: Sparse session delegation settings.
+        :keyword session: Only the delegation settings to change.
         :paramtype session: ~azure.ai.projects.models.LiveSessionUpdateParams or Mapping[str, Any]
         :keyword event_id: Optional client event identifier.
         :paramtype event_id: str or None
@@ -125,10 +125,10 @@ class SessionResource(_Resource):
 
 
 class ResponseItemResource(_Resource):
-    """Append user messages or function results to a Responses delegation."""
+    """Send user messages or tool results to the Responses backend model."""
 
     async def create(self, *, item: Mapping[str, Any], event_id: Optional[str] = None) -> None:
-        """Submit an item; requires Responses delegation.
+        """Send a message or tool result. Requires a Responses backend.
 
         :keyword item: Responses input item, including function_call_output.
         :paramtype item: Mapping[str, Any]
@@ -141,7 +141,7 @@ class ResponseItemResource(_Resource):
 
 
 class ResponseResource(_Resource):
-    """Controls for the Responses backend, not Realtime response controls.
+    """Request replies from the Responses backend model.
 
     :param connection: The parent Live connection.
     :type connection: ~azure.ai.projects.aio.operations.AsyncBetaLiveConnection
@@ -161,10 +161,11 @@ class ResponseResource(_Resource):
 
 
 class AsyncBetaLiveConnection(_BaseWebSocketConnection[LiveServerEvent, LiveClientEvent]):
-    """An open Live connection. Server errors are returned as typed events.
+    """Send and receive events on a GPT Live connection.
 
-    Local cancellation closes the transport through the context manager. Live
-    has no response.cancel command; session.close requests protocol shutdown.
+    Service errors arrive as error events. Use the context manager to close
+    the connection. Send ``session.close`` to end the session; Live has no
+    ``response.cancel`` command.
 
     :param connection: The open WebSocket.
     :type connection: ~aiohttp.ClientWebSocketResponse
@@ -188,7 +189,7 @@ class AsyncBetaLiveConnection(_BaseWebSocketConnection[LiveServerEvent, LiveClie
         return super().__aiter__()
 
     async def recv(self) -> LiveServerEvent:
-        """Receive a generated Live event, or a mapping for an unknown event.
+        """Receive an SDK event model, or a dictionary for an unknown event type.
 
         :return: The server event.
         :rtype: ~azure.ai.projects.aio.operations.LiveServerEvent
@@ -198,7 +199,7 @@ class AsyncBetaLiveConnection(_BaseWebSocketConnection[LiveServerEvent, LiveClie
         return await super().recv()
 
     async def send(self, event: LiveClientEvent) -> None:
-        """Send a generated Live event, a mapping, or a JSON string.
+        """Send an SDK event model, mapping, or JSON string.
 
         :param event: The client event.
         :type event: ~azure.ai.projects.aio.operations.LiveClientEvent
@@ -210,9 +211,9 @@ class AsyncBetaLiveConnection(_BaseWebSocketConnection[LiveServerEvent, LiveClie
 class AsyncBetaLiveConnectionManager(_BaseWebSocketConnectionManager[AsyncBetaLiveConnection]):
     """Context manager for one Live session using the project's credential.
 
-    :keyword agent_version: Optional pinned agent version.
+    :keyword agent_version: A specific agent version, if needed.
     :paramtype agent_version: str or None
-    :keyword store: Optional conversation persistence override.
+    :keyword store: Save conversation content and audio. None uses the agent's setting.
     :paramtype store: bool or None
     """
 
@@ -235,7 +236,7 @@ class AsyncBetaLiveConnectionManager(_BaseWebSocketConnectionManager[AsyncBetaLi
         return await self.enter()
 
     async def enter(self) -> AsyncBetaLiveConnection:
-        """Open the Live connection without sending a second startup event.
+        """Open the connection. Foundry starts the Live session automatically.
 
         :return: The Live connection.
         :rtype: ~azure.ai.projects.aio.operations.AsyncBetaLiveConnection
@@ -260,10 +261,10 @@ class AsyncBetaLiveConnectionManager(_BaseWebSocketConnectionManager[AsyncBetaLi
 
 
 class AsyncBetaLive:
-    """Live protocol entry point at client.beta.voice_agents.live.
+    """Connect to GPT Live through ``client.beta.voice_agents.live``.
 
-    Foundry starts the session using the persisted Live agent definition. Receive
-    session.started before sending session commands; do not send session.start.
+    Foundry starts the session from the saved agent settings. Wait for
+    ``session.started`` before sending commands; do not send ``session.start``.
 
     :param args: The voice-agent sub-client whose shared configuration is reused.
     :type args: ~azure.ai.projects.aio.operations.BetaVoiceAgentsOperations
@@ -288,16 +289,16 @@ class AsyncBetaLive:
         extra_headers: Optional[Mapping[str, str]] = None,
         **kwargs: Any,
     ) -> AsyncBetaLiveConnectionManager:
-        """Open a Live WebSocket session; network I/O starts on context entry.
+        """Connect to a GPT Live agent when entering the context manager.
 
-        :keyword str agent_name: Persisted Live agent name.
-        :keyword agent_version: Optional pinned agent version.
+        :keyword str agent_name: The name of an existing GPT Live agent.
+        :keyword agent_version: A specific agent version, if needed.
         :paramtype agent_version: str or None
-        :keyword structured_inputs: Session template values.
+        :keyword structured_inputs: Values for placeholders in the agent's instructions and greeting.
         :paramtype structured_inputs: Mapping[str, Any] or None
-        :keyword store: Optional conversation persistence override.
+        :keyword store: Save conversation content and audio. None uses the agent's setting.
         :paramtype store: bool or None
-        :keyword connection_url: Same-origin wss URL override.
+        :keyword connection_url: A wss URL on the project endpoint's origin, instead of the default route.
         :paramtype connection_url: str or None
         :keyword api_version: API version override.
         :paramtype api_version: str or None
