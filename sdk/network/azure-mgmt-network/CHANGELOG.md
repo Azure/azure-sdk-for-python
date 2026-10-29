@@ -1,5 +1,9 @@
 # Release History
 
+## 33.2.0 (2026-10-29)
+
+tool can't generate changelog for this release, please update manually.
+
 ## 33.1.0 (2026-10-09)
 
 ### Features Added
