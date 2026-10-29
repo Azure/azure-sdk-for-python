@@ -384,29 +384,32 @@ async def _do_checkpoint_persist(
     # Normalize the payload with the same identity defaults used by terminal
     # persistence before handing it to the provider, so a checkpoint is valid
     # on its own rather than relying on a later terminal write to fill fields.
-    checkpoint_response = deepcopy(dict(response))
-    normalized_events: list[generated_models.ResponseStreamEvent] = [
-        cast(
-            "generated_models.ResponseStreamEvent",
-            {
-                "type": "response.in_progress",
-                "response": checkpoint_response,
-            },
-        )
-    ]
-    normalized_snapshot = _extract_response_snapshot_from_events(
-        normalized_events,
-        response_id=response_id,
-        agent_reference=agent_reference or {},
-        model=model,
-        agent_session_id=agent_session_id,
-        conversation_id=conversation_id,
-    )
-    checkpoint_response = cast("dict[str, Any]", normalized_snapshot)
-    # Keep checkpoint snapshots independently readable by providers that use
-    # the persisted mode flags for background-response validation.
-    checkpoint_response["background"] = background
+    # Preparation is part of snapshot serialisation: extensions can contain
+    # values such as generators that cannot be deep-copied, and checkpoint
+    # failures must never fail the live response.
     try:
+        checkpoint_response = deepcopy(dict(response))
+        normalized_events: list[generated_models.ResponseStreamEvent] = [
+            cast(
+                "generated_models.ResponseStreamEvent",
+                {
+                    "type": "response.in_progress",
+                    "response": checkpoint_response,
+                },
+            )
+        ]
+        normalized_snapshot = _extract_response_snapshot_from_events(
+            normalized_events,
+            response_id=response_id,
+            agent_reference=agent_reference or {},
+            model=model,
+            agent_session_id=agent_session_id,
+            conversation_id=conversation_id,
+        )
+        checkpoint_response = cast("dict[str, Any]", normalized_snapshot)
+        # Keep checkpoint snapshots independently readable by providers that use
+        # the persisted mode flags for background-response validation.
+        checkpoint_response["background"] = background
         snapshot_bytes = json.dumps(checkpoint_response, sort_keys=True, default=str).encode("utf-8")
     except Exception:  # pylint: disable=broad-exception-caught
         logger.debug("checkpoint() snapshot serialisation failed for %s", response_id, exc_info=True)

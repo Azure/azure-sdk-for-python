@@ -208,6 +208,32 @@ async def test_checkpoint_stamps_identity_for_an_unseeded_stream():
 
 
 @pytest.mark.asyncio
+async def test_checkpoint_preparation_failure_is_swallowed():
+    p = _RecordingProvider()
+    ev = _event()
+    generator = (value for value in [1])
+    ev.response["extension"] = {"generator": generator}
+
+    try:
+        snap = await _do_checkpoint_persist(
+            ev,
+            provider=p,
+            runtime_options=_opts(True),
+            store=True,
+            background=True,
+            context=None,
+            response_id="r1",
+            last_snapshot=b"previous",
+            terminal_seen=False,
+        )
+    finally:
+        generator.close()
+
+    assert snap == b"previous"
+    assert p.updates == []
+
+
+@pytest.mark.asyncio
 async def test_t22_failure_swallowed_and_tagged():
     from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG  # noqa: E501
 
