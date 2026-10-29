@@ -61,7 +61,7 @@ class TestWebPubSubChatTopicsLiveAsync(WebPubSubChatTest):
                 assert topic.etag
                 conversation = await client.get_conversation(topic.conversation_id)
                 assert conversation.id == topic.conversation_id
-                assert conversation.parent_room == room_id
+                assert conversation.room_id == room_id
                 assert await _collect(client.list_messages(topic.conversation_id)) == []
 
             assert {topic.id async for topic in client.list_topics(room_id, max_page_size=1)}.issuperset(

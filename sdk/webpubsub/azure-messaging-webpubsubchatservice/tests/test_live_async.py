@@ -154,7 +154,7 @@ class TestWebPubSubChatLiveAsync(WebPubSubChatTest):
 
             conversation = await client.get_conversation(room.default_conversation)
             assert conversation.id == room.default_conversation
-            assert conversation.parent_room == room_id
+            assert conversation.room_id == room_id
             assert await _collect(client.list_messages(room.default_conversation)) == []
             assert await _collect(client.list_room_members(room_id)) == []
         finally:

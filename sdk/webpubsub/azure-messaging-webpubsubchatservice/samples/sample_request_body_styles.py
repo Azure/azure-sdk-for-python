@@ -29,3 +29,10 @@ def typed_dictionary(client: WebPubSubChatServiceClient) -> None:
 def plain_dictionary(client: WebPubSubChatServiceClient) -> None:
     member = client.create_or_replace_room_member("sample-room", "sample-user", {"roleName": "room.member"})
     print(member.user_id, member.role_name)
+
+
+def replace_topic_with_typed_dictionary(client: WebPubSubChatServiceClient) -> None:
+    """Replace an existing topic, retaining an explicit lifecycle state."""
+    topic: types.ChatTopicCreateOrReplace = {"title": "Sample topic", "state": models.ChatTopicState.NORMAL}
+    result = client.create_or_replace_topic("sample-room", "sample-topic", topic=topic)
+    print(result.id, result.state)

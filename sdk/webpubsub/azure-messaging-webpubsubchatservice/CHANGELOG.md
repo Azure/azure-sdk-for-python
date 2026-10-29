@@ -10,9 +10,13 @@
 ### Other Changes
 
   - Changed the default service API version from `2026-02-01-preview` to `2026-08-01-preview` for both existing and newly added Chat operations
+  - Clarified that message IDs are pagination cursors for `list_messages`. The pager follows the service's `nextLink`; resume with `by_page(continuation_token=...)`.
+  - Replaced standalone generated samples with handwritten operation examples and Model/TypedDict request-body examples.
 
 ### Breaking Changes
 
+  - Renamed request-body parameters from `resource` to `role`, `room`, `member`, `user`, `topic`, or `message`, matching the operation's resource. Positional calls are unchanged.
+  - Renamed `ChatConversation.parent_room` to `room_id`. The JSON field remains `parentRoom`.
   - Removed the `continuation_token_parameter` argument from listing operations. Resume paging with `by_page(continuation_token=...)` on the returned `ItemPaged` or `AsyncItemPaged` instead.
   - Create or replace operations now accept dedicated `ChatRoleCreateOrReplace`, `ChatRoomCreateOrReplace`, `ChatRoomMemberCreateOrReplace`, and `ChatUserCreateOrReplace` (including `HumanChatUserCreateOrReplace`) request models instead of resource response models.
   - Message updates accept `ChatMessageUpdate`, whose fields are optional, instead of `ChatMessage`. Resource response model names are unchanged.

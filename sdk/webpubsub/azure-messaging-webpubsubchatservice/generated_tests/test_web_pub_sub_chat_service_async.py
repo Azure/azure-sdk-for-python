@@ -54,7 +54,7 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
         response = await client.update_message(
             conversation_id="str",
             message_id="str",
-            resource={"content": {"binary": bytes("bytes", encoding="utf-8"), "text": "str"}, "createdBy": "str"},
+            message={"content": {"binary": bytes("bytes", encoding="utf-8"), "text": "str"}, "createdBy": "str"},
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
         client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
         response = await client.create_or_replace_role(
             role_name="str",
-            resource={"permissions": ["str"]},
+            role={"permissions": ["str"]},
         )
 
         # please add some check logic here by yourself
@@ -118,7 +118,7 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
         client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
         response = await client.create_or_replace_room(
             room_id="str",
-            resource={"title": "str"},
+            room={"title": "str"},
         )
 
         # please add some check logic here by yourself
@@ -164,7 +164,7 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
         response = await client.create_or_replace_topic(
             room_id="str",
             topic_id="str",
-            resource={"title": "str", "state": "str"},
+            topic={"title": "str", "state": "str"},
         )
 
         # please add some check logic here by yourself
@@ -189,7 +189,7 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
         response = await client.update_topic(
             room_id="str",
             topic_id="str",
-            resource={"state": "str", "title": "str"},
+            topic={"state": "str", "title": "str"},
         )
 
         # please add some check logic here by yourself
@@ -225,7 +225,7 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
         response = await client.create_or_replace_room_member(
             room_id="str",
             user_id="str",
-            resource={"roleName": "str"},
+            member={"roleName": "str"},
         )
 
         # please add some check logic here by yourself
@@ -269,7 +269,7 @@ class TestWebPubSubChatServiceAsync(WebPubSubChatServiceClientTestBaseAsync):
         client = self.create_async_client(endpoint=webpubsubchatservice_endpoint)
         response = await client.create_or_replace_user(
             user_id="str",
-            resource={"kind": "Human", "nickname": "str", "roleName": "str"},
+            user={"kind": "Human", "nickname": "str", "roleName": "str"},
         )
 
         # please add some check logic here by yourself
