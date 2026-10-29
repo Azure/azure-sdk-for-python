@@ -33,6 +33,16 @@ REQUEST_PROJECTIONS = [
     (models.HumanChatUserCreateOrReplace, models.HumanChatUser, {"create", "update"}),
 ]
 
+BODY_PARAMETERS = {
+    "create_or_replace_role": "role",
+    "create_or_replace_room": "room",
+    "create_or_replace_room_member": "member",
+    "create_or_replace_user": "user",
+    "create_or_replace_topic": "topic",
+    "update_topic": "topic",
+    "update_message": "message",
+}
+
 CASES = [
     (
         "create_or_replace_topic",
@@ -223,28 +233,75 @@ def _assert_request(run, method, body):
         assert request.headers["Content-Type"] == "application/merge-patch+json"
 
 
+@pytest.mark.parametrize("use_keyword", [False, True])
 @pytest.mark.parametrize("method,args,resource,response_model,body", CASES)
-def test_lifecycle_request_and_resource_response(method, args, resource, response_model, body):
+def test_lifecycle_request_and_resource_response(method, args, resource, response_model, body, use_keyword):
     with WebPubSubChatServiceClient(
         "https://example.webpubsub.azure.com", "chat", AzureKeyCredential("test-key")
     ) as client:
         with patch.object(client._client._pipeline, "run", return_value=_response(body)) as run:
-            result = getattr(client, method)(
-                *args, resource, etag='"old"', match_condition=MatchConditions.IfNotModified
-            )
+            options = {"etag": '"old"', "match_condition": MatchConditions.IfNotModified}
+            if use_keyword:
+                options[BODY_PARAMETERS[method]] = resource
+                result = getattr(client, method)(*args, **options)
+            else:
+                result = getattr(client, method)(*args, resource, **options)
     assert isinstance(result, response_model)
     assert result.etag == '"new"'
     _assert_request(run, method, body)
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("use_keyword", [False, True])
 @pytest.mark.parametrize("method,args,resource,response_model,body", CASES)
-async def test_async_lifecycle_request_and_resource_response(method, args, resource, response_model, body):
+async def test_async_lifecycle_request_and_resource_response(method, args, resource, response_model, body, use_keyword):
     async with AsyncClient("https://example.webpubsub.azure.com", "chat", AzureKeyCredential("test-key")) as client:
         with patch.object(client._client._pipeline, "run", new_callable=AsyncMock, return_value=_response(body)) as run:
-            result = await getattr(client, method)(
-                *args, resource, etag='"old"', match_condition=MatchConditions.IfNotModified
-            )
+            options = {"etag": '"old"', "match_condition": MatchConditions.IfNotModified}
+            if use_keyword:
+                options[BODY_PARAMETERS[method]] = resource
+                result = await getattr(client, method)(*args, **options)
+            else:
+                result = await getattr(client, method)(*args, resource, **options)
     assert isinstance(result, response_model)
     assert result.etag == '"new"'
     _assert_request(run, method, body)
+
+
+@pytest.mark.parametrize("client_type", [WebPubSubChatServiceClient, AsyncClient])
+@pytest.mark.parametrize("method,body_parameter", BODY_PARAMETERS.items())
+def test_resource_specific_body_parameter(client_type, method, body_parameter):
+    parameters = inspect.signature(getattr(client_type, method)).parameters
+    assert body_parameter in parameters
+    assert "resource" not in parameters
+
+
+def test_conversation_room_id_preserves_wire_name():
+    conversation = models.ChatConversation(room_id="room")
+    assert conversation.room_id == "room"
+    assert conversation.as_dict() == {"parentRoom": "room"}
+
+
+def test_get_conversation_deserializes_room_id():
+    with WebPubSubChatServiceClient(
+        "https://example.webpubsub.azure.com", "chat", AzureKeyCredential("test-key")
+    ) as client:
+        with patch.object(client._client._pipeline, "run", return_value=_response({"parentRoom": "room"})):
+            conversation = client.get_conversation("conversation")
+    assert isinstance(conversation, models.ChatConversation)
+    assert conversation.room_id == "room"
+    assert conversation.id == "returned-id"
+    assert conversation.etag == '"new"'
+
+
+@pytest.mark.asyncio
+async def test_async_get_conversation_deserializes_room_id():
+    async with AsyncClient("https://example.webpubsub.azure.com", "chat", AzureKeyCredential("test-key")) as client:
+        with patch.object(
+            client._client._pipeline, "run", new_callable=AsyncMock, return_value=_response({"parentRoom": "room"})
+        ):
+            conversation = await client.get_conversation("conversation")
+    assert isinstance(conversation, models.ChatConversation)
+    assert conversation.room_id == "room"
+    assert conversation.id == "returned-id"
+    assert conversation.etag == '"new"'

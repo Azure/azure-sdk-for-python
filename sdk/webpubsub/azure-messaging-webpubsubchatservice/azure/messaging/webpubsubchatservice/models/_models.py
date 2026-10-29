@@ -23,15 +23,15 @@ class ChatConversation(_Model):  # pylint: disable=docstring-keyword-should-matc
 
     :ivar id: Conversation identifier. Required.
     :vartype id: str
-    :ivar parent_room: Parent room identifier. Required.
-    :vartype parent_room: str
+    :ivar room_id: Parent room identifier. Required.
+    :vartype room_id: str
     :ivar etag: The entity tag for this resource. Required.
     :vartype etag: str
     """
 
     id: str = rest_field(visibility=["read"])
     """Conversation identifier. Required."""
-    parent_room: str = rest_field(name="parentRoom", visibility=["read", "create", "update", "delete", "query"])
+    room_id: str = rest_field(name="parentRoom", visibility=["read", "create", "update", "delete", "query"])
     """Parent room identifier. Required."""
     etag: str = rest_field(visibility=["read"])
     """The entity tag for this resource. Required."""
@@ -40,7 +40,7 @@ class ChatConversation(_Model):  # pylint: disable=docstring-keyword-should-matc
     def __init__(
         self,
         *,
-        parent_room: str,
+        room_id: str,
     ) -> None: ...
 
     @overload

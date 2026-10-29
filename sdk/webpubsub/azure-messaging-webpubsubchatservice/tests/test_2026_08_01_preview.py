@@ -71,7 +71,8 @@ def _response(payload, status=200):
 
 
 def _paging_responses(path, fields, identity):
-    query = urlencode({"api-version": "2026-08-01-preview", "continuationToken": "next+/=token"})
+    cursor = "first" if path.endswith("/messages") else "next+/=token"
+    query = urlencode({"api-version": "2026-08-01-preview", "continuationToken": cursor})
     next_link = f"{ENDPOINT}/api/hubs/chat/chat/{path}?{query}"
     return [
         _response({"value": [{**fields, identity: "first"}], "nextLink": next_link}),
@@ -87,7 +88,8 @@ def _assert_page_requests(run, path):
     assert "continuationToken" not in parse_qs(urlparse(first.url).query)
     assert parse_qs(urlparse(first.url).query)["api-version"] == ["2026-08-01-preview"]
     assert urlparse(second.url).path == f"/api/hubs/chat/chat/{path}"
-    assert parse_qs(urlparse(second.url).query)["continuationToken"] == ["next+/=token"]
+    cursor = "first" if path.endswith("/messages") else "next+/=token"
+    assert parse_qs(urlparse(second.url).query)["continuationToken"] == [cursor]
     assert parse_qs(urlparse(second.url).query)["api-version"] == ["2026-08-01-preview"]
 
 
@@ -114,6 +116,8 @@ def test_listing_api_surface(client_type):
         assert not any("continuation_token" in parameter for parameter in inspect.signature(method).parameters)
         assert ":keyword continuation_token" not in method.__doc__
         assert ":paramtype continuation_token" not in method.__doc__
+    assert "Message IDs are used as pagination cursors." in " ".join(client_type.list_messages.__doc__.split())
+    assert "nextLink" in client_type.list_messages.__doc__
 
 
 @pytest.mark.parametrize("resume", [False, True])

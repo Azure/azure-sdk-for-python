@@ -138,6 +138,12 @@ A conversation is an ordered message stream within a room. Every room has a defa
 
 Messages sent to a conversation are delivered in real time to the room's connected members. The chat service manages ordering and persistence, allowing members to load message history after reconnecting or joining later. The service client can list, update, and delete persisted messages.
 
+`ChatConversation.room_id` identifies the room containing the conversation.
+`list_messages` returns messages from latest to earliest, using message IDs as
+pagination cursors. The returned pager follows the service's `nextLink`
+automatically. To resume a page iteration, pass its continuation token to
+`by_page(continuation_token=...)`, not to `list_messages` itself.
+
 ### Topic
 
 A topic represents a named conversation within a room. Topics can be created,
@@ -171,10 +177,9 @@ Explore the examples:
 
 - [Model-based and scenario examples][examples], including complete synchronous and
   asynchronous programs.
-- [Dictionary-based operation examples][generated_examples], generated from the
-  specification's examples.
+- [Model, typed-dictionary, and plain-dictionary comparison](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_request_body_styles.py).
 - [Complete operation index](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/README.md#complete-operation-index),
-  linking to model-based and generated examples for each service operation.
+  linking to handwritten examples for each service operation.
 
 ### Generate client access credentials
 
@@ -395,11 +400,8 @@ For conditional updates and deletes, pass the current ETag with
 `MatchConditions.IfNotModified`. A stale ETag prevents overwriting a topic
 that another caller has changed. Deleting a topic is a soft delete.
 
-For individual API calls, see the generated examples for
-[create or replace](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/create_or_replace_topic.py),
-[list](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_topics.py), [get](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/get_topic.py),
-[update](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/update_topic.py), and
-[delete](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/delete_topic.py).
+For individual API calls, see the
+[operation examples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/README.md#complete-operation-index).
 
 ### List rooms and users
 
@@ -438,9 +440,8 @@ for room in client.list_rooms_for_user("<user-id>"):
 
 <!-- END SNIPPET -->
 
-For basic list calls, see [list_rooms.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_rooms.py),
-[list_users.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_users.py), and
-[list_rooms_for_user.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_rooms_for_user.py).
+For basic list calls, see the functions in
+[the README snippet sources](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_readme_snippets.py).
 Listing rooms for a user requires an existing user ID.
 
 Collection iterators automatically fetch subsequent pages.
@@ -545,7 +546,7 @@ Explore the [README snippet sources](https://github.com/Azure/azure-sdk-for-pyth
 - Manage topic lifecycles and iterate over room and user collections.
 - Use synchronous and asynchronous clients.
 
-See also the [dictionary-based operation examples][generated_examples].
+See also the [request-body style comparison](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_request_body_styles.py).
 
 ## Additional resources
 
@@ -566,7 +567,6 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [api_reference]: https://learn.microsoft.com/python/api/overview/azure/messaging-webpubsubchatservice-readme?view=azure-python-preview
 [product_docs]: https://learn.microsoft.com/azure/azure-web-pubsub/chat-overview
 [examples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples
-[generated_examples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples
 [changelog]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/CHANGELOG.md
 [azure_sub]: https://azure.microsoft.com/free/
 [webpubsub_docs]: https://learn.microsoft.com/azure/azure-web-pubsub/

@@ -18,8 +18,7 @@ Operations with a JSON request body support three styles:
   `typed_dictionary` in the [three-style comparison](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_request_body_styles.py).
 - **Plain dictionary:** pass a JSON-shaped dictionary directly, without an
   explicit `TypedDict` annotation. See `plain_dictionary` in the
-  [three-style comparison](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_request_body_styles.py)
-  and the [generated operation examples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples).
+  [three-style comparison](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_request_body_styles.py).
 
 For example, these request bodies express the same room membership:
 
@@ -77,37 +76,22 @@ remove the specified resource (topic deletion is a soft delete). Use isolated
 sample resources and review each operation before running it. The samples do
 not create unrelated prerequisites or send WebSocket messages.
 
-Generated examples use placeholder endpoints and example identifiers;
-replace them and configure authentication as described in each file.
+Standalone generated examples are not included. The handwritten examples below
+cover every service operation; use the three-style comparison for dictionary inputs.
 
-| Operation | Generated example | Model-based request-body example |
-| --- | --- | --- |
-| `get_client_access_token` | SDK convenience method; no generated sample. | [Sync](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_client_access.py) / [async](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_client_access_async.py) |
-| `create_or_replace_role` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/create_or_replace_role.py) | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_create_or_replace_role.py) |
-| `get_role` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/get_role.py) | No request body |
-| `list_roles` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_roles.py) | No request body |
-| `delete_role` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/delete_role.py) | No request body |
-| `create_or_replace_room` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/create_or_replace_room.py) | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_create_or_replace_room.py) |
-| `get_room` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/get_room.py) | No request body |
-| `list_rooms` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_rooms.py) | No request body |
-| `delete_room` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/delete_room.py) | No request body |
-| `create_or_replace_room_member` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/create_or_replace_room_member.py) | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_create_or_replace_room_member.py) |
-| `list_room_members` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_room_members.py) | No request body |
-| `delete_room_member` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/delete_room_member.py) | No request body |
-| `create_or_replace_user` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/create_or_replace_user.py) | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_create_or_replace_user.py) |
-| `get_user` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/get_user.py) | No request body |
-| `list_users` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_users.py) | No request body |
-| `delete_user` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/delete_user.py) | No request body |
-| `list_rooms_for_user` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_rooms_for_user.py) | No request body |
-| `create_or_replace_topic` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/create_or_replace_topic.py) | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_create_or_replace_topic.py) |
-| `get_topic` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/get_topic.py) | No request body |
-| `list_topics` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_topics.py) | No request body |
-| `update_topic` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/update_topic.py) | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_update_topic.py) |
-| `delete_topic` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/delete_topic.py) | No request body |
-| `get_conversation` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/get_conversation.py) | No request body |
-| `list_messages` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/list_messages.py) | No request body |
-| `update_message` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/update_message.py) | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_update_message.py) |
-| `delete_message` | [Sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/generated_samples/delete_message.py) | No request body |
+| Operation | Handwritten example |
+| --- | --- |
+| `get_client_access_token` | [Sync](sample_client_access.py) / [async](sample_client_access_async.py) |
+| `create_or_replace_role` | [Model request](sample_create_or_replace_role.py) |
+| `create_or_replace_room` | [Model request](sample_create_or_replace_room.py) |
+| `create_or_replace_room_member` | [Model request](sample_create_or_replace_room_member.py) / [dictionary styles](sample_request_body_styles.py) |
+| `create_or_replace_user` | [Model request](sample_create_or_replace_user.py) |
+| `create_or_replace_topic` | [Model request](sample_create_or_replace_topic.py) / [typed dictionary replacement](sample_request_body_styles.py) |
+| `update_topic` | [Model request](sample_update_topic.py) |
+| `update_message` | [Model request](sample_update_message.py) |
+| `get_role`, `get_room`, `get_user`, `get_topic`, `get_conversation` | [Read operation functions](sample_read_operations.py) |
+| `list_roles`, `list_rooms`, `list_room_members`, `list_users`, `list_topics`, `list_rooms_for_user`, `list_messages` | [List operation functions](sample_read_operations.py) |
+| `delete_role`, `delete_room`, `delete_room_member`, `delete_user`, `delete_topic`, `delete_message` | [Delete operation functions](sample_delete_operations.py) |
 
 The synchronous and asynchronous clients expose the same service operations.
 Await asynchronous non-paging calls, and use `async for` to iterate asynchronous
