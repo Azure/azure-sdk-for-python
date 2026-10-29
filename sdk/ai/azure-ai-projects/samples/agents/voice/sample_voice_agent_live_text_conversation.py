@@ -5,30 +5,28 @@
 
 """
 DESCRIPTION:
-    Send one or more text messages through one preview GPT Live session configured
-    with a Responses delegation. Each turn waits for nested response.completed
-    before sending the next prompt, retaining the conversation in that session.
-    This is not the Realtime protocol's response.done.
+    Send text messages through GPT Live and print the replies from a Responses
+    backend model. Multiple messages share one session. The sample waits for
+    response.completed before sending the next message and deletes its temporary
+    agent version when finished.
 
 USAGE:
     python sample_voice_agent_live_text_conversation.py
 
-    Leave TEXT_PROMPTS as None for the single-turn example. To demonstrate
-    a headless multi-turn conversation, set TEXT_PROMPTS in this file to
-    ["My name is Ada.", "What is my name?"] before running it.
+    Leave TEXT_PROMPTS as None for one message, or set it to a list such as
+    ["My name is Ada.", "What is my name?"] for a multi-turn conversation.
 
     pip install "azure-ai-projects[voice]" azure-identity python-dotenv
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
-    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT Live DEPLOYMENT name.
-    3) FOUNDRY_MODEL_NAME (required) - A Responses backend DEPLOYMENT name
-       available to the Live resource, not a model catalog identifier.
-    4) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for a uniquely named sample
-       agent. Only the version created by this run is deleted.
+    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT Live deployment name.
+    3) FOUNDRY_MODEL_NAME (required) - A Responses model deployment available
+       to your Live resource. It handles the delegated text requests.
+    4) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for the temporary agent name.
 
-    Authenticates with DefaultAzureCredential. No microphone or speaker needed.
-    This sample prints the backend text; use the audio sample for Live speech.
+    Uses DefaultAzureCredential. No microphone or speaker is needed.
+    Printed text does not signal that voice playback has finished.
 """
 
 from __future__ import annotations

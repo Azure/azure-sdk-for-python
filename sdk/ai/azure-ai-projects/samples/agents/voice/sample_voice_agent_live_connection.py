@@ -5,10 +5,9 @@
 
 """
 DESCRIPTION:
-    Open a preview GPT Live voice-agent session, update its client delegation,
-    append instructions, and confirm graceful session shutdown. Foundry starts
-    the session from the persisted agent definition; do not send session.start.
-    This is a protocol/lifecycle example, not a text or microphone conversation.
+    Create a temporary GPT Live agent, open a session, update its settings,
+    add instructions, and close it. The sample deletes the agent version it
+    creates. No user input or audio devices are needed.
 
 USAGE:
     python sample_voice_agent_live_connection.py
@@ -17,12 +16,11 @@ USAGE:
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
-    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT Live DEPLOYMENT name,
-       not a model catalog identifier.
-    3) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for a uniquely named sample
-       agent. Only the version created by this run is deleted.
+    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT Live deployment name.
+    3) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for the temporary agent name.
 
-    Authenticates with DefaultAzureCredential. No audio devices are needed.
+    Uses DefaultAzureCredential. Foundry starts the session automatically;
+    wait for session.started rather than sending session.start.
 """
 
 import os

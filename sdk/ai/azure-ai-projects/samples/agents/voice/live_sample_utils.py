@@ -27,13 +27,13 @@ CLOSE_TIMEOUT = 10.0
 
 
 def sample_agent_name(scenario: str) -> str:
-    """Treat the optional name as a prefix so each run owns a distinct version."""
+    """Choose a unique agent name so cleanup affects only this run."""
     prefix = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or f"sample-live-{scenario}"
     return f"{prefix}-{uuid4().hex[:8]}"
 
 
 def text_conversation_prompts(prompts: Optional[Sequence[str]]) -> list[str]:
-    """Keep the original single-turn example unless explicit scripted prompts are supplied."""
+    """Use one default message, or validate the supplied list of messages."""
     if prompts is None:
         return ["Why is Seattle known for rain? Answer in one short sentence."]
     if isinstance(prompts, str):
@@ -60,7 +60,7 @@ def safe_print(text: str, *, end: str = "\n") -> None:
 
 @contextmanager
 def recording_output(path: Path) -> Iterator[BinaryIO]:
-    """Create an audio file exclusively and remove incomplete or empty downloads.
+    """Save a recording without overwriting a file; remove failed or empty downloads.
 
     :param path: Explicit destination that must not already exist.
     :type path: pathlib.Path
@@ -82,7 +82,7 @@ def recording_output(path: Path) -> Iterator[BinaryIO]:
 
 
 def remaining_time(deadline: float, operation: str) -> float:
-    """Keep a stream of nonterminal events from extending a timeout forever."""
+    """Return the time left, or raise when the deadline expires."""
     remaining = deadline - time.monotonic()
     if remaining <= 0:
         raise TimeoutError(f"Timed out waiting for {operation}.")
@@ -90,7 +90,7 @@ def remaining_time(deadline: float, operation: str) -> float:
 
 
 def check_event(event: LiveServerEvent) -> Mapping[str, Any]:
-    """Raise service/backend failures and unwrap a nested Responses event."""
+    """Raise service errors and read events from the Responses backend."""
     if event.get("type") == "error":
         error = event.get("error") or {}
         raise RuntimeError(f"Live session error: {error.get('code')}: {error.get('message')}")
@@ -115,7 +115,7 @@ def check_event(event: LiveServerEvent) -> Mapping[str, Any]:
 
 
 def check_session_open(event: LiveServerEvent) -> None:
-    """Do not mistake a premature shutdown for a completed reply."""
+    """Raise if the session closes before the requested work finishes."""
     if event.get("type") == "session.closed":
         raise RuntimeError(f"Live session closed before the workflow completed: {event.get('reason')}")
 
@@ -123,7 +123,7 @@ def check_session_open(event: LiveServerEvent) -> None:
 def wait_for_event(
     connection: BetaLiveConnection, event_type: str, timeout: float = RESPONSE_TIMEOUT
 ) -> LiveServerEvent:
-    """Receive a lifecycle acknowledgement within one bounded deadline."""
+    """Wait for a specific event, with a timeout."""
     deadline = time.monotonic() + timeout
     while True:
         try:
@@ -139,7 +139,7 @@ def wait_for_event(
 async def wait_for_event_async(
     connection: AsyncBetaLiveConnection, event_type: str, timeout: float = RESPONSE_TIMEOUT
 ) -> LiveServerEvent:
-    """Receive an async lifecycle acknowledgement without an unbounded wait."""
+    """Wait asynchronously for a specific event, with a timeout."""
     deadline = time.monotonic() + timeout
     while True:
         try:
@@ -154,7 +154,7 @@ async def wait_for_event_async(
 
 
 def close_session(connection: BetaLiveConnection) -> None:
-    """Call in finally; preserve the original failure while still requesting close."""
+    """Close the session without hiding an error already being handled."""
     if sys.exc_info()[0] is not None:
         with suppress(Exception):
             connection.session.close()
@@ -167,7 +167,7 @@ def close_session(connection: BetaLiveConnection) -> None:
 
 
 async def close_session_async(connection: AsyncBetaLiveConnection) -> None:
-    """Request protocol shutdown before the connection context closes the transport."""
+    """End the session before closing its WebSocket."""
     if sys.exc_info()[0] is not None:
         with suppress(Exception):
             await asyncio.wait_for(connection.session.close(), timeout=CLOSE_TIMEOUT)
@@ -214,7 +214,7 @@ def _collect_response_event(
 def receive_response(
     connection: BetaLiveConnection, timeout: float = RESPONSE_TIMEOUT
 ) -> tuple[str, list[Mapping[str, Any]]]:
-    """Collect one nested Responses cycle, with function calls from complete output items."""
+    """Wait for a backend reply and return its text and completed tool calls."""
     deadline = time.monotonic() + timeout
     text_parts: dict[tuple[str, int], str] = {}
     calls: dict[str, Mapping[str, Any]] = {}
@@ -224,14 +224,14 @@ def receive_response(
         except TimeoutError as exc:
             raise TimeoutError("Timed out waiting for the Responses backend to complete.") from exc
         if _collect_response_event(event, text_parts, calls):
-            # Live strips output from lifecycle snapshots; the granular events carry it.
+            # Text and tool results arrive before response.completed.
             return "".join(text_parts.values()).strip(), list(calls.values())
 
 
 async def receive_response_async(
     connection: AsyncBetaLiveConnection, timeout: float = RESPONSE_TIMEOUT
 ) -> tuple[str, list[Mapping[str, Any]]]:
-    """Collect the same backend text and tool events without blocking the event loop."""
+    """Wait asynchronously for a backend reply and its completed tool calls."""
     deadline = time.monotonic() + timeout
     text_parts: dict[tuple[str, int], str] = {}
     calls: dict[str, Mapping[str, Any]] = {}

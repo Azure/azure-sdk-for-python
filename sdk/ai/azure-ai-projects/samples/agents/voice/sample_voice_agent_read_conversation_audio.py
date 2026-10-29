@@ -6,50 +6,32 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates reading the persisted audio of a voice
-    conversation via `project_client.beta.voice_agents.conversations`, both the
-    merged whole-call recording and a single turn's audio segment. For each it
-    reads the metadata first, then streams the WAV bytes to a local file. The
-    merged recording is stereo: the caller on the left channel and the agent
-    on the right.
+    Download a stored Realtime conversation's WAV recording and one reply's
+    audio. The whole-call recording has caller audio on the left channel and
+    agent audio on the right. The session must have ended with store=True.
 
-    Audio is available only after the session has ended and only when the
-    agent was configured with `store=True`. For bring-your-own-storage (BYOS)
-    accounts the metadata carries a `blob_uri` instead, and the bytes are read
-    from your own storage rather than streamed here.
+    With no conversation ID, send a text message to produce a spoken reply.
+    With no agent name, also create a temporary agent and delete its version
+    afterward. An existing agent is not changed or deleted. Conversations
+    created on an existing agent remain stored.
 
-    Runs with no setup beyond the endpoint: if FOUNDRY_VOICE_CONVERSATION_ID is
-    not set, this sample creates a temporary voice agent, holds one short
-    realtime text turn to produce a real conversation, then reads its audio
-    back -- the agent's reply is real synthesized speech either way, so both
-    the merged recording and the reply's own audio segment are available even
-    though the turn itself was typed. Set FOUNDRY_VOICE_AGENT_NAME to hold that
-    conversation against your own existing agent instead -- it is never
-    created, modified, or deleted by this sample. Additionally set
-    FOUNDRY_VOICE_CONVERSATION_ID to skip holding a new conversation entirely
-    and just read back the audio of one your agent already produced.
+    Files are saved in the current directory and contain conversation content.
+    For bring-your-own-storage (BYOS) recordings, the sample prints the blob
+    location; use your own storage credentials to download the audio.
 
 USAGE:
     python sample_voice_agent_read_conversation_audio.py
 
-    Before running the sample:
-
     pip install "azure-ai-projects[voice]>=2.7.0" python-dotenv
 
-    Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
-    2) FOUNDRY_VOICE_AGENT_NAME - Optional. The name of an existing voice
-       agent (configured with `store=True`) to hold or read a conversation on.
-       Defaults to a temporary agent, created and deleted by this sample, when
-       unset.
-    3) FOUNDRY_VOICE_CONVERSATION_ID - Optional. The id of a persisted
-       conversation owned by FOUNDRY_VOICE_AGENT_NAME. If unset, this sample
-       holds one short realtime text turn to produce one; see
-       voice_sample_util.py in this folder and
-       sample_voice_agent_realtime_text_conversation.py for a full interactive
-       version.
-    4) FOUNDRY_VOICE_AGENT_MODEL - Optional. The managed (service-hosted) realtime model
-       identifier, used only when creating the temporary agent. Defaults to "gpt-realtime".
+    Environment variables:
+    1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
+    2) FOUNDRY_VOICE_AGENT_NAME (optional) - Existing agent with store=True;
+       omit to create a temporary agent.
+    3) FOUNDRY_VOICE_CONVERSATION_ID (optional) - Completed conversation from
+       that agent. Omit to create a conversation with a text message.
+    4) FOUNDRY_VOICE_AGENT_MODEL (optional) - Model for a temporary agent;
+       defaults to "gpt-realtime".
 """
 
 import os

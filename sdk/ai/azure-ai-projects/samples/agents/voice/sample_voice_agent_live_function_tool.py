@@ -5,12 +5,10 @@
 
 """
 DESCRIPTION:
-    Resolve a client-executed Responses function tool in a preview GPT Live
-    session. The deterministic get_weather tool returns sample data for Seattle
-    (72 F), not a real weather observation. After the tool response completes,
-    submit function_call_output and request the next backend response.
-    Read call_id from the complete response.output_item.done function_call item,
-    not from response.function_call_arguments.done (which identifies item_id).
+    Let a GPT Live session call a local get_weather function through a Responses
+    backend model. Return the function result and print the model's final reply.
+    The weather is fixed sample data for Seattle (72 F), not a live forecast.
+    The sample deletes its temporary agent version when finished.
 
 USAGE:
     python sample_voice_agent_live_function_tool.py
@@ -19,13 +17,14 @@ USAGE:
 
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
-    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT Live DEPLOYMENT name.
-    3) FOUNDRY_MODEL_NAME (required) - A tool-capable Responses backend
-       DEPLOYMENT name available to the Live resource.
-    4) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for a uniquely named sample
-       agent. Only the version created by this run is deleted.
+    2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT Live deployment name.
+    3) FOUNDRY_MODEL_NAME (required) - A tool-capable Responses model deployment
+       available to your Live resource.
+    4) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for the temporary agent name.
 
-    Authenticates with DefaultAzureCredential. No audio devices are needed.
+    Uses DefaultAzureCredential. No audio devices are needed.
+    Tool results use call_id from response.output_item.done, not the item_id
+    in response.function_call_arguments.done.
 """
 
 from __future__ import annotations

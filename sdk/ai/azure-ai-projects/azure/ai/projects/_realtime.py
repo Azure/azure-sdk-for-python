@@ -4,15 +4,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-"""Hand-written sync realtime (WebSocket) streaming client for voice agents.
+"""Synchronous Realtime voice-agent client.
 
-This is the synchronous counterpart of :mod:`azure.ai.projects.aio._realtime`. See that
-module's docstring for the full design rationale; the two modules are kept structurally
-identical (sync method names drop the ``async``/``await`` keywords) so fixes/features land in
-both at once.
-
-``websockets`` is required for this feature and is *not* a hard dependency of the package; it
-is imported lazily so importing the SDK never fails when it is absent.
+Use ``client.beta.voice_agents.realtime.connect(...)`` as a context manager.
+Send text or audio through the connection and receive model events.
+Install ``azure-ai-projects[voice]`` for the optional WebSocket dependencies.
 """
 
 from __future__ import annotations
@@ -49,15 +45,10 @@ from ._realtime_utils import _normalize_transport, _without_transport_query
 
 _LOGGER = logging.getLogger("azure.ai.projects.realtime")
 
-# The realtime WebSocket route is voice-agent-specific (see `_to_ws_url`'s
-# `/endpoint/protocols/voice` path), so this is always the correct opt-in value -- callers
-# cannot and do not need to override it.
+# Voice-agent WebSocket requests need the same preview header as REST requests.
 _VOICE_AGENT_FEATURE_HEADER: str = _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value
 
-# Identifies the SDK to the service on the WebSocket handshake, which otherwise falls back to
-# the underlying `websockets` library's generic default (the generated HTTP surface gets this
-# for free from the pipeline's own UserAgentPolicy; this hand-written client builds its own
-# request instead, so it needs to opt in explicitly the same way).
+# The WebSocket handshake does not use the HTTP pipeline, so identify the SDK explicitly.
 _USER_AGENT: str = UserAgentPolicy(sdk_moniker=f"ai-projects/{VERSION}").user_agent
 
 if TYPE_CHECKING:
@@ -67,14 +58,7 @@ if TYPE_CHECKING:
 
 
 class _ConfigProvider(Protocol):
-    """Anything exposing the shared client configuration (endpoint, credential, etc.).
-
-    :class:`~azure.ai.projects.operations.BetaVoiceAgentsOperations` (accessed as
-    ``client.beta.voice_agents``) satisfies this: it is constructed with the same shared
-    configuration instance as the top-level client, so ``client.beta.voice_agents.realtime`` can
-    reuse the endpoint/credential wiring without needing a back-reference to the top-level client
-    itself.
-    """
+    """Provide the project endpoint, credential, and shared client settings."""
 
     _config: "AIProjectClientConfiguration"
 
@@ -679,8 +663,8 @@ class BetaRealtimeConnection(
 ):  # pylint: disable=too-many-instance-attributes
     """An open realtime WebSocket connection to a voice agent.
 
-    Iterate over the connection to receive strongly-typed server events, and use the
-    sub-namespaces to send strongly-typed client events::
+    Iterate to receive events. Use ``conversation``, ``response``, and the audio
+    buffers to send messages and control replies::
 
         with client.beta.voice_agents.realtime.connect(agent_name="my-agent") as conn:
             for event in conn:
@@ -730,9 +714,8 @@ class BetaRealtimeConnection(
     def recv(self, *, timeout: Optional[float] = None) -> ServerEvent:
         """Receive and parse the next server event.
 
-        Known event types are returned as their strongly-typed
-        ``VoiceAgentServerEventXxx`` model. Event types not (yet) represented by a
-        generated model are returned as a plain ``dict`` for forward compatibility.
+        Known events use SDK model classes. Unknown event types are returned
+        as dictionaries.
 
         :keyword timeout: Maximum time in seconds to wait for the next event. If ``None``
          (the default), block until an event is received. If no event arrives within
@@ -750,7 +733,7 @@ class BetaRealtimeConnection(
     def send(self, event: ClientEvent) -> None:
         """Send a client event over the connection.
 
-        :param event: A strongly-typed client event, a ready-made mapping, or a raw JSON string.
+        :param event: A client event model, mapping, or JSON string.
         :type event: ~azure.ai.projects.ClientEvent or str
         :raises ValueError: If ``event`` is a ``str`` that is not valid JSON.
         """
@@ -940,10 +923,9 @@ class BetaRealtimeConnectionManager(_BaseWebSocketConnectionManager[BetaRealtime
 
 
 class BetaRealtime:  # pylint: disable=too-few-public-methods
-    """BetaRealtime streaming entry point, exposed as ``client.beta.voice_agents.realtime``.
+    """Connect to a voice agent through ``client.beta.voice_agents.realtime``.
 
-    Follows the OpenAI Python realtime surface: obtain it from the HTTP client and open a
-    connection with :meth:`connect`::
+    Open a connection with :meth:`connect`::
 
         from azure.ai.projects import AIProjectClient
         from azure.identity import DefaultAzureCredential
@@ -957,9 +939,7 @@ class BetaRealtime:  # pylint: disable=too-few-public-methods
                 if event.type == RealtimeServerEventType.RESPONSE_DONE:
                     break
 
-    :param client: The object whose endpoint and credential are reused for the realtime
-     handshake -- the ``.beta.voice_agents`` sub-client, which shares the same underlying
-     configuration as the top-level client.
+    :param client: The voice-agent client that supplies the project endpoint and credential.
     :type client: ~azure.ai.projects.operations.BetaVoiceAgentsOperations
     """
 
@@ -988,16 +968,11 @@ class BetaRealtime:  # pylint: disable=too-few-public-methods
         :keyword agent_session_id: An optional identifier used to correlate the voice session.
          Default value is None.
         :paramtype agent_session_id: str or None
-        :keyword transport: The transport used for this connection. Known values are
-         ``VoiceAgentTransport.WEBSOCKET`` and ``VoiceAgentTransport.WEBRTC``. When omitted, the
-         service defaults to WebSocket. The SDK constructs the wire query internally; an explicit
-         selection overrides an existing transport query value. For WebRTC, the caller must
-         manage the peer connection, media, and SDP offer/answer exchange.
+        :keyword transport: ``VoiceAgentTransport.WEBSOCKET`` (service default) or
+         ``VoiceAgentTransport.WEBRTC``. An explicit value overrides ``extra_query``.
+         WebRTC requires your app to handle the peer connection, media, and SDP exchange.
         :paramtype transport: str or ~azure.ai.projects.models.VoiceAgentTransport or None
-        :keyword structured_inputs: A mapping of structured-input names to their values for this
-         session (see :attr:`~azure.ai.projects.models.CreateTelephonyCallJobRequest.structured_inputs`
-         for the analogous shape used elsewhere). Serialized to JSON on the wire. Default value is
-         None.
+        :keyword structured_inputs: Values for the agent's structured-input placeholders.
         :paramtype structured_inputs: Mapping[str, Any] or None
         :keyword connection_url: Full ``wss://`` URL that overrides the route computed
          from the client endpoint. Query parameters are still appended. Default value is None.
