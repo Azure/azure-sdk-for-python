@@ -4,10 +4,15 @@
 
 ### Features Added
 
-* Added generated GPT Live voice-agent configuration, delegation, and client/server event models.
+* Added generated GPT Live configuration and event models from OpenAI TypeSpec 1.32, including Decisions, expanded Responses tools, and audio fixtures.
 * Added `VoiceAgentLiveSessionResource` and `VoiceAgentLiveDelegationItem` so Live lifecycle and delegation events preserve effective Foundry-managed ownership and resolved agent versions.
 * Added persisted Live conversation, item, and audio REST operations under `beta.voice_agents.live_conversations`.
 * Added image-generation model options and the `xhigh` and `max` quality values from the updated OpenAI TypeSpec dependency.
+
+### Breaking Changes
+
+* Renamed preview Live transport event models from `LiveTransportAnswered`, `LiveTransportFailed`, and `LiveTransportRinging` to `LiveServerEventLiveTransportAnswered`, `LiveServerEventLiveTransportFailed`, and `LiveServerEventLiveTransportRinging`. Their wire event types are unchanged.
+* OpenAI TypeSpec 1.32 generates `Tool`-prefixed names for several existing tool classes. Use `ToolMcpTool` and `ToolCustomToolParam` where a `Tool` subtype is required; `MCPTool` and `CustomToolParam` are now standalone models.
 
 ## 2.9.0 (2026-10-16)
 
