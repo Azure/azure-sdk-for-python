@@ -15,7 +15,7 @@ from ._api_versions import DEFAULT_VERSION
 from ._call_connection_client import CallConnectionClient
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._shared.auth_policy_utils import get_authentication_policy
-from .recording_url_validator import RecordingURLValidationPolicy
+from ._recording_url_validator import RecordingURLValidationPolicy
 from ._shared.utils import parse_connection_str
 from ._shared.models import CommunicationIdentifier
 from ._generated.models import (

@@ -14,7 +14,7 @@ from azure.core.credentials import AccessToken
 from azure.core.pipeline.transport import AioHttpTransport, RequestsTransport
 from azure.communication.callautomation import CallAutomationClient
 from azure.communication.callautomation.aio import CallAutomationClient as AsyncCallAutomationClient
-from azure.communication.callautomation.recording_url_validator import validate_recording_url
+from azure.communication.callautomation._recording_url_validator import validate_recording_url
 
 from unittest_helpers import mock_response
 
