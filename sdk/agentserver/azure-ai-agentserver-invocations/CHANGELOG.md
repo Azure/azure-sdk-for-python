@@ -1,14 +1,14 @@
 # Release History
 
-## 1.3.0b2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.3.0 (2026-10-29)
 
 ### Other Changes
+
+- Stable release of the 1.3.0 preview series, including the experimental
+  Voice route and protocol-scoped task activation. No implementation changes
+  since 1.3.0b1.
+- Require the stable `azure-ai-agentserver-core>=2.3.0` release. Publish Core
+  before Invocations.
 
 ## 1.3.0b1 (2026-10-26)
 
