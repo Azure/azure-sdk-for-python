@@ -34,3 +34,5 @@ extends:
       safeName: azuremgmtdeviceregistry
     - name: azure-iot-deviceregistrysoftwareupdate
       safeName: azureiotdeviceregistrysoftwareupdate
+    - name: azure-mgmt-deviceregistrysoftwareupdate
+      safeName: azuremgmtdeviceregistrysoftwareupdate
