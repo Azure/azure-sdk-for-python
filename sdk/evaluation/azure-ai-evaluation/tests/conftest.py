@@ -140,6 +140,18 @@ def ensure_nltk_data() -> Generator[None, None, None]:
     data_dir = cache_dir / "nltk_data"
     with FileLock(cache_dir / "nltk_data.lock"):
         _prepare_nltk_test_data(data_dir)
+        if os.name == "posix":
+            for d in (cache_dir, data_dir):
+                if d.exists():
+                    d.chmod(d.stat().st_mode & ~0o022)
+            for root, _, files in os.walk(data_dir):
+                p = Path(root)
+                p.chmod(p.stat().st_mode & ~0o022)
+                for f in files:
+                    try:
+                        (p / f).chmod((p / f).stat().st_mode & ~0o022)
+                    except OSError:
+                        pass
 
     with pytest.MonkeyPatch.context() as monkeypatch:
         monkeypatch.setenv("NLTK_DATA", str(data_dir), prepend=os.pathsep)

@@ -95,11 +95,9 @@ class PromptyEvaluationStrategy:
                     score, reason = parse_quality_evaluator_reason_score(answer)
                 has_score = not math.isnan(score)
             else:
-                match = re.search(
-                    r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?" if self.score_range else r"\d", answer
-                )
-                if match:
-                    score = float(match.group())
+                extracted = self._extract_score_from_text(answer, has_score_range=bool(self.score_range))
+                if extracted is not None:
+                    score = extracted
                     has_score = True
         if self.score_range:
             minimum, maximum = self.score_range
@@ -163,3 +161,33 @@ class PromptyEvaluationStrategy:
             category=ErrorCategory.FAILED_EXECUTION,
             target=self.error_target,
         )
+
+    @staticmethod
+    def _extract_score_from_text(llm_output: str, has_score_range: bool = False) -> Optional[float]:
+        """Extract a numeric score from free-text LLM output that is not parseable JSON.
+
+        Preference order: the whole output is a bare number, an explicitly labelled score
+        (e.g. "Score: 4"), trailing verdict score after colon, then numeric fallback.
+        Taking the first digit risks scoring the judge's reasoning rather than its verdict.
+        """
+        match = re.fullmatch(r"\s*(\d+(?:\.\d+)?)\s*", llm_output)
+        if match:
+            return float(match.group(1))
+        match = re.search(r"[Ss]core\s*[:=]\s*(\d+(?:\.\d+)?)", llm_output)
+        if match:
+            return float(match.group(1))
+        match = re.search(r"(\d+(?:\.\d+)?)\s*(?:out of|/)\s*\d+", llm_output, re.IGNORECASE)
+        if match:
+            return float(match.group(1))
+        match = re.search(r"[:=]\s*(\d+(?:\.\d+)?)\s*$", llm_output)
+        if match:
+            return float(match.group(1))
+        if has_score_range:
+            matches = re.findall(r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?", llm_output)
+            if matches:
+                return float(matches[-1])
+        else:
+            match = re.search(r"\d", llm_output)
+            if match:
+                return float(match.group())
+        return None
