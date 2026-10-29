@@ -13,6 +13,7 @@ import pytest
 from a2a.server.request_handlers import RequestHandler
 from a2a.types import AgentCapabilities, AgentCard, AgentInterface
 from opentelemetry import baggage as _otel_baggage
+from opentelemetry import context as _otel_context
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
@@ -160,6 +161,40 @@ async def test_hosted_invocation_preserves_deployment_and_agent_card_identity(
     assert _attributes(semantic)["gen_ai.agent.version"] == "1.2.3"
     assert "gen_ai.operation.name" not in _attributes(semantic)
     assert invocation.start_time <= semantic.start_time <= semantic.end_time <= invocation.end_time
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("method", ["SendMessage", "SendStreamingMessage", "GetTask"])
+async def test_explicit_context_overrides_conflicting_baggage_on_request_and_child_spans(
+    client_factory, hosted_span_exporter, method
+):
+    async def endpoint(_request):
+        assert _otel_baggage.get_baggage("azure.ai.agentserver.conversation_id") == "a2a-context"
+        with trace.get_tracer("sample").start_as_current_span("agent-work"):
+            pass
+        return JSONResponse({"result": {"task": _task_result()}})
+
+    token = _otel_context.attach(_otel_baggage.set_baggage("azure.ai.agentserver.conversation_id", "upstream-context"))
+    try:
+        async with client_factory(_host(endpoint)) as client:
+            response = await client.post(
+                _RPC_PATH,
+                json={
+                    "method": method,
+                    "params": (
+                        {"message": {"contextId": "a2a-context"}}
+                        if method != "GetTask"
+                        else {"contextId": "a2a-context", "id": "task-result"}
+                    ),
+                },
+            )
+        assert response.status_code == 200
+        spans = hosted_span_exporter.get_finished_spans()
+        assert len(spans) == (2 if method == "GetTask" else 3)
+        assert all(_attributes(span)["gen_ai.conversation.id"] == "a2a-context" for span in spans)
+        assert _otel_baggage.get_baggage("azure.ai.agentserver.conversation_id") == "upstream-context"
+    finally:
+        _otel_context.detach(token)
 
 
 @pytest.mark.asyncio

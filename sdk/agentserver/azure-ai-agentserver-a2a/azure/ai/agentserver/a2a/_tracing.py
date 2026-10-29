@@ -98,6 +98,10 @@ class _TracedResponse(Response):
         span = tracer.start_span(
             attributes["a2a.method.name"], context=parent_context, kind=SpanKind.SERVER, attributes=attributes
         )
+        if "gen_ai.conversation.id" in attributes:
+            for request_span in (span, self._invocation):
+                if request_span is not None:
+                    request_span.set_attribute("gen_ai.conversation.id", attributes["gen_ai.conversation.id"])
         self._span = span
         operation_context = trace.set_span_in_context(span, parent_context)
         if "gen_ai.conversation.id" in attributes:

@@ -1,6 +1,7 @@
 ```py
 namespace azure.ai.agentserver.a2a
 
+    @experimental
     class azure.ai.agentserver.a2a.A2AAgentServerHost(AgentServerHost):
         property agent_card: AgentCard    # Read-only
         property request_handler: RequestHandler    # Read-only
@@ -19,6 +20,7 @@ namespace azure.ai.agentserver.a2a
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.a2a.FoundryTaskStore(TaskStore): implements AsyncContextManager
 
         def __init__(

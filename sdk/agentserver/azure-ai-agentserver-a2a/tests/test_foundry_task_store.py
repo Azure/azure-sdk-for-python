@@ -5,7 +5,7 @@
 
 import base64
 from types import SimpleNamespace
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 from a2a.auth.user import User
@@ -156,10 +156,85 @@ async def test_listing_matches_native_filters_order_and_pagination_across_backen
             await native.save(task, context)
         request = ListTasksRequest(context_id="even", status=TaskState.TASK_STATE_COMPLETED, page_size=7)
         request.status_timestamp_after.FromSeconds(10)
-        first = await store.list(request, context)
-        assert first == await native.list(request, context)
-        assert first.next_page_token
-        request.page_token = first.next_page_token
+        backend = await store._store()
+        with patch.object(backend, "get_item", wraps=backend.get_item) as read:
+            first = await store.list(request, context)
+            assert first == await native.list(request, context)
+            assert read.await_count == 7
+            assert first.next_page_token
+            request.page_token = first.next_page_token
+            read.reset_mock()
+            assert await store.list(request, context) == await native.list(request, context)
+            assert read.await_count == 7
+
+
+@pytest.mark.asyncio
+async def test_one_task_page_reads_only_one_full_snapshot_from_105_large_tasks():
+    context = ServerCallContext()
+    native = InMemoryTaskStore()
+    async with FoundryTaskStore("test") as store:
+        for index in range(105):
+            task = _task(f"task-{index:03}")
+            task.artifacts[0].parts[0].text = "large artifact" * 1000
+            task.history[0].parts[0].text = "large history" * 1000
+            task.status.timestamp.FromNanoseconds(index * 1000000000 + 123)
+            await store.save(task, context)
+            await native.save(task, context)
+        backend = await store._store()
+        with patch.object(backend, "get_item", wraps=backend.get_item) as read:
+            request = ListTasksRequest(page_size=1)
+            for _ in range(2):
+                page = await store.list(request, context)
+                assert page == await native.list(request, context)
+                assert read.await_count == 1
+                assert page.total_size == 105
+                request.page_token = page.next_page_token
+                read.reset_mock()
+
+
+@pytest.mark.asyncio
+async def test_listing_supports_legacy_records_without_metadata():
+    context = ServerCallContext()
+    task = _task()
+    async with FoundryTaskStore("test") as store:
+        await store.save(task, context)
+        backend = await store._store()
+        owner = store._owner(context)
+        key = store._key(task.id, owner)
+        await backend.set_item(
+            key,
+            {"task": base64.b64encode(task.SerializeToString()).decode("ascii")},
+            tags={"a2a_owner": owner},
+        )
+        with patch.object(backend, "get_item", wraps=backend.get_item) as read:
+            assert list((await store.list(ListTasksRequest(), context)).tasks) == [task]
+            assert read.await_count == 1
+
+
+@pytest.mark.asyncio
+async def test_listing_metadata_tracks_updates_missing_timestamps_and_deletion():
+    context = ServerCallContext()
+    native = InMemoryTaskStore()
+    async with FoundryTaskStore("test") as store:
+        for task in (
+            _task("no-timestamp"),
+            _task("first", state=TaskState.TASK_STATE_WORKING),
+            _task("second"),
+        ):
+            if task.id != "no-timestamp":
+                task.status.timestamp.FromNanoseconds(1000000001)
+            await store.save(task, context)
+            await native.save(task, context)
+        updated = _task("first")
+        updated.status.timestamp.FromNanoseconds(2000000002)
+        await store.save(updated, context)
+        await native.save(updated, context)
+        await store.delete("second", context)
+        await native.delete("second", context)
+        request = ListTasksRequest(page_size=1, status=TaskState.TASK_STATE_COMPLETED)
+        page = await store.list(request, context)
+        assert page == await native.list(request, context)
+        request.page_token = page.next_page_token
         assert await store.list(request, context) == await native.list(request, context)
 
 
@@ -173,9 +248,14 @@ async def test_owner_tag_is_query_safe_and_identical_for_saving_and_listing(monk
     async with FoundryTaskStore("test") as store:
         await store.save(_task(), context)
         tags = backend.set_item.call_args.kwargs["tags"]
-        assert tags == {"a2a_owner": store._owner(context)}
+        assert tags["a2a_owner"] == store._owner(context)
+        assert all(key.isidentifier() for key in tags)
+        summary = Task.FromString(base64.b64decode(tags["a2a_list"]))
+        assert summary.id == "task-1" and summary.context_id == "conversation"
+        assert summary.status.state == TaskState.TASK_STATE_COMPLETED
+        assert not summary.history and not summary.artifacts
         await store.list(ListTasksRequest(), context)
-        backend.list_keys.assert_awaited_once_with(tags=tags, limit=100, after=None)
+        backend.list_keys.assert_awaited_once_with(tags={"a2a_owner": tags["a2a_owner"]}, limit=100, after=None)
 
 
 @pytest.mark.asyncio
@@ -227,7 +307,7 @@ async def test_brokered_callers_remain_isolated_without_raw_user_headers(monkeyp
         return SimpleNamespace(user_isolation=True)
 
     async def write(key, value, **kwargs):
-        records[(caller(), key)] = SimpleNamespace(key=key, value=value)
+        records[(caller(), key)] = SimpleNamespace(key=key, value=value, tags=kwargs["tags"])
 
     async def read(key, **kwargs):
         return records.get((caller(), key))
@@ -237,7 +317,11 @@ async def test_brokered_callers_remain_isolated_without_raw_user_headers(monkeyp
 
     async def keys(**kwargs):
         return StateStoreItemKeyPage(
-            keys=[SimpleNamespace(key=key, id=key) for user, key in records if user == caller()]
+            keys=[
+                SimpleNamespace(key=key, id=key, tags=item.tags)
+                for (user, key), item in records.items()
+                if user == caller()
+            ]
         )
 
     backend.get.side_effect = descriptor
@@ -337,6 +421,24 @@ async def test_corrupt_record_does_not_return_another_task():
             await backend.set_item(key, {"task": base64.b64encode(wrong.SerializeToString()).decode("ascii")})
         with pytest.raises(ValueError, match="identity"):
             await store.get("task-1", context)
+
+
+@pytest.mark.asyncio
+async def test_corrupt_listing_metadata_does_not_read_another_task():
+    context = ServerCallContext()
+    async with FoundryTaskStore("test") as store:
+        await store.save(_task(), context)
+        backend = await store._store()
+        owner = store._owner(context)
+        key = store._key("task-1", owner)
+        item = await backend.get_item(key)
+        tags = dict(item.tags)
+        tags["a2a_list"] = base64.b64encode(_task("another-task").SerializeToString()).decode("ascii")
+        await backend.set_item(key, item.value, tags=tags)
+        with patch.object(backend, "get_item", wraps=backend.get_item) as read:
+            with pytest.raises(ValueError, match="identity"):
+                await store.list(ListTasksRequest(), context)
+            read.assert_not_awaited()
 
 
 @pytest.mark.asyncio

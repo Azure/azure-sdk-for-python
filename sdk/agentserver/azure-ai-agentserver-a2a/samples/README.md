@@ -5,7 +5,7 @@ languages:
 products:
 - azure
 name: azure-ai-agentserver-a2a samples for Python
-description: Native A2A hosting, multi-protocol composition, streaming, and persistent Tasks.
+description: Native A2A hosting, multi-protocol composition, and persistent Tasks.
 ---
 
 # Azure AI Agent Server A2A samples
@@ -26,7 +26,7 @@ python -m venv .venv
 The requirements install A2A, core, and Invocations from sibling source
 directories. Invocations is needed only for the multi-protocol example; it is
 not a runtime dependency of the A2A package. Keep the current source checkouts
-together, since the preview requires the core tracing fix in 2.2.1.
+together, since the preview requires the core tracing fix in 2.3.0b1.
 The updated A2A package requires native `a2a-sdk>=1.2.3` for caller authorization
 on active-task cache lookups.
 
@@ -39,7 +39,6 @@ switching examples.
 |---------|---------------------------|-----------------|
 | [Hello world](01-hello-world/hello_world.py) | `.\.venv\Scripts\python 01-hello-world\hello_world.py` | A completed Task containing `Hello from Foundry`. |
 | [Multi-protocol](02-multi-protocol/multi_protocol.py) | `.\.venv\Scripts\python 02-multi-protocol\multi_protocol.py` | A2A and Invocations on the same server and port. |
-| [Streaming](03-streaming/streaming.py) | `.\.venv\Scripts\python 03-streaming\streaming.py` | A working Task, four incremental updates to one artifact, then a completed Task status. |
 | [State store](04-state-store/README.md) | `.\.venv\Scripts\python 04-state-store\state_store.py` | A completed Task can still be fetched after stopping and restarting the server. |
 
 Every sample also exposes `GET /readiness` and the native Agent Card at
@@ -80,30 +79,6 @@ Invoke-RestMethod -Uri "http://localhost:8088/a2a" -Method Post `
     -Body $request
 ```
 
-## Stream a Task
-
-Start the streaming server, then run:
-
-```powershell
-.\.venv\Scripts\python sample_client.py --stream
-```
-
-The Agent Card advertises streaming, so the client uses
-`SendStreamingMessage` and consumes SSE events. Watch for:
-
-1. The Task and context IDs.
-2. `TASK_STATE_WORKING`.
-3. Four artifact updates sharing one artifact ID. The first creates it;
-   subsequent updates set `append=true`, and the final update sets
-   `lastChunk=true`.
-4. `TASK_STATE_COMPLETED`.
-
-The chunks assemble to `Hello from streaming A2A!`. The delay between updates
-is only to make streaming visible; it does not simulate a real model.
-
-The first two examples intentionally do not advertise streaming. The client
-rejects `--stream` for those examples rather than silently using a unary call.
-
 ## Retrieve state and reuse a context
 
 Keep the same server process running. Copy the IDs printed by the client:
@@ -121,9 +96,9 @@ Task in that context; it is not a request to resume a completed Task.
 
 - **Task ID:** identifies a native A2A Task and is used for local task lookup.
 - **Context ID:** correlates related A2A messages/Tasks. Treat it as opaque.
-- **TaskStore:** the first three examples select native in-memory storage
+- **TaskStore:** the hello-world and multi-protocol examples select native in-memory storage
   locally, so restarting the server loses their Tasks. Executor-based hosts
-  default to Foundry-backed storage when hosted. The fourth example explicitly
+  default to Foundry-backed storage when hosted. The state-store example explicitly
   uses `FoundryTaskStore` locally so Core's file-backed store can demonstrate
   persistence across restarts.
 - **Application memory:** reusing a context ID does not automatically create
@@ -135,7 +110,7 @@ Task in that context; it is not a request to resume a completed Task.
 Custom stores and existing native request handlers are still supported and
 remain caller-owned. Persistence alone does not resume executor work after a
 process crash: recovery, cancellation, and application history need explicit
-application design. See [the fourth example's restart walkthrough](04-state-store/README.md).
+application design. See [the state-store example's restart walkthrough](04-state-store/README.md).
 
 These are **local container** examples, not a claim that every native A2A
 method is available through Foundry's public endpoint. When deployed, the

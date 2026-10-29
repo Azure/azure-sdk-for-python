@@ -33,6 +33,7 @@ from azure.ai.agentserver.core import (
     reset_request_context,
     set_request_context,
 )
+from azure.ai.agentserver.core._experimental import experimental
 from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
     ERROR_DETAIL,
     ERROR_SOURCE,
@@ -212,6 +213,7 @@ def _get_a2a_routes(
     ]
 
 
+@experimental
 class A2AAgentServerHost(AgentServerHost):
     """Host a native A2A SDK handler in an Azure AI Hosted Agent container.
 

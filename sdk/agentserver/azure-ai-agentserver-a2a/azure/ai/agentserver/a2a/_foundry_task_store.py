@@ -18,6 +18,7 @@ from a2a.types import ListTasksRequest, ListTasksResponse, Task
 from azure.core.credentials_async import AsyncTokenCredential
 
 from azure.ai.agentserver.core import get_request_context
+from azure.ai.agentserver.core._experimental import experimental
 from azure.ai.agentserver.core.storage import (
     DEFAULT_ITEM_TTL_SECONDS,
     FoundryStateStore,
@@ -30,6 +31,7 @@ from azure.ai.agentserver.core.storage import (
 logger = logging.getLogger(__name__)
 
 
+@experimental
 class FoundryTaskStore(TaskStore):
     """Persist native A2A Tasks in one named Core state store.
 
@@ -130,13 +132,15 @@ class FoundryTaskStore(TaskStore):
 
     @classmethod
     def _deserialize(cls, item: StateStoreItem, owner: str) -> Task:
-        value = item.value
-        encoded = value.get("task")
+        return cls._decode_task(item.value.get("task"), item.key, owner)
+
+    @classmethod
+    def _decode_task(cls, encoded: object, key: str, owner: str) -> Task:
         if not isinstance(encoded, str):
             raise ValueError("Stored A2A task payload must contain serialized task data")
         task = Task()
         task.ParseFromString(base64.b64decode(encoded, validate=True))
-        if item.key != cls._key(task.id, owner):
+        if key != cls._key(task.id, owner):
             raise ValueError("Stored A2A task identity does not match its storage key")
         return task
 
@@ -151,9 +155,21 @@ class FoundryTaskStore(TaskStore):
         owner = self._owner(context)
         key = self._key(task.id, owner)
         value: JSONObject = {"task": base64.b64encode(task.SerializeToString()).decode("ascii")}
+        summary = Task(id=task.id, context_id=task.context_id)
+        if task.HasField("status"):
+            summary.status.state = task.status.state
+            if task.status.HasField("timestamp"):
+                summary.status.timestamp.CopyFrom(task.status.timestamp)
         store = await self._store(create=True)
         await self._verify_isolation(store)
-        await store.set_item(key, value, tags={"a2a_owner": owner})
+        await store.set_item(
+            key,
+            value,
+            tags={
+                "a2a_owner": owner,
+                "a2a_list": base64.b64encode(summary.SerializeToString()).decode("ascii"),
+            },
+        )
 
     async def get(self, task_id: str, context: ServerCallContext) -> Task | None:
         """Read a caller-scoped Task, or return ``None`` when absent.
@@ -191,21 +207,41 @@ class FoundryTaskStore(TaskStore):
         if not await self._verify_isolation(store, missing_ok=True):
             return await view.list(params, context)
         after = None
+        legacy_tasks: dict[str, Task] = {}
         while True:
             try:
                 page = await store.list_keys(tags={"a2a_owner": owner}, limit=100, after=after)
             except FoundryStorageNotFoundError:
                 break
             for key in page.keys:
-                item = await store.get_item(key.key)
-                if item is not None:
-                    await view.save(self._deserialize(item, owner), context)
+                tags = key.tags or {}
+                if "a2a_list" in tags:
+                    summary = self._decode_task(tags["a2a_list"], key.key, owner)
+                else:
+                    # Previously saved preview records have no lightweight listing metadata.
+                    item = await store.get_item(key.key)
+                    if item is None:
+                        continue
+                    summary = self._deserialize(item, owner)
+                    legacy_tasks[summary.id] = summary
+                await view.save(summary, context)
             if not page.has_more:
                 break
             if page.last_id is None or page.last_id == after:
                 raise ValueError("Foundry state store returned an invalid pagination cursor")
             after = page.last_id
-        return await view.list(params, context)
+        result = await view.list(params, context)
+        tasks = []
+        for summary in result.tasks:
+            if summary.id in legacy_tasks:
+                tasks.append(legacy_tasks[summary.id])
+            else:
+                item = await store.get_item(self._key(summary.id, owner))
+                if item is not None:
+                    tasks.append(self._deserialize(item, owner))
+        del result.tasks[:]
+        result.tasks.extend(tasks)
+        return result
 
     async def delete(self, task_id: str, context: ServerCallContext) -> None:
         """Delete a caller-scoped Task without affecting other callers.

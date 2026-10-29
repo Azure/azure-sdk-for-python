@@ -17,7 +17,6 @@ _SAMPLES = Path(__file__).resolve().parents[1] / "samples"
 _EXAMPLES = [
     ("01-hello-world/hello_world.py", "Hello from Foundry"),
     ("02-multi-protocol/multi_protocol.py", "Hello over A2A"),
-    ("03-streaming/streaming.py", "Hello from streaming A2A!"),
 ]
 
 
@@ -50,12 +49,12 @@ def load_sample(monkeypatch, tmp_path):
     return load
 
 
-async def _native_client(http_client, *, streaming=False):
+async def _native_client(http_client):
     http_client.headers["A2A-Version"] = "1.0"
     card = await A2ACardResolver(http_client, "http://testserver").get_agent_card(
         relative_card_path="a2a/.well-known/agent-card.json",
     )
-    return await create_client(card, ClientConfig(streaming=streaming, httpx_client=http_client))
+    return await create_client(card, ClientConfig(streaming=False, httpx_client=http_client))
 
 
 def _text(task):
@@ -110,38 +109,6 @@ async def test_multi_protocol_sample_serves_invocations(load_sample, client_fact
         response = await client.post("/invocations", json={"message": "hello"})
     assert response.status_code == 200
     assert response.json() == {"message": "Hello over Invocations"}
-
-
-@pytest.mark.asyncio
-async def test_streaming_sample_appends_one_artifact(load_sample, client_factory):
-    module = load_sample("03-streaming/streaming.py")
-    assert module.card.capabilities.streaming
-    async with client_factory(module.host) as http_client:
-        client = await _native_client(http_client, streaming=True)
-        try:
-            responses = [
-                response
-                async for response in client.send_message(
-                    SendMessageRequest(message=new_text_message("hello", role=Role.ROLE_USER))
-                )
-            ]
-            updates = [response.artifact_update for response in responses if response.HasField("artifact_update")]
-            states = [
-                response.status_update.status.state for response in responses if response.HasField("status_update")
-            ]
-            assert len(updates) == 4
-            assert len({update.artifact.artifact_id for update in updates}) == 1
-            assert [update.append for update in updates] == [False, True, True, True]
-            assert [update.last_chunk for update in updates] == [False, False, False, True]
-            assert "".join(get_artifact_text(update.artifact, delimiter="") for update in updates) == (
-                "Hello from streaming A2A!"
-            )
-            assert TaskState.TASK_STATE_WORKING in states
-            assert states[-1] == TaskState.TASK_STATE_COMPLETED
-            task_id = next(response.task.id for response in responses if response.HasField("task"))
-            assert _text(await client.get_task(GetTaskRequest(id=task_id))) == "Hello from streaming A2A!"
-        finally:
-            await client.close()
 
 
 @pytest.mark.asyncio
@@ -215,8 +182,8 @@ def test_sample_card_respects_port_and_url(load_sample, monkeypatch, relative_pa
 
 
 @pytest.mark.asyncio
-async def test_sample_client_streams_then_fetches_task(load_sample, client_factory, capsys):
-    server = load_sample("03-streaming/streaming.py")
+async def test_sample_client_sends_then_fetches_task(load_sample, client_factory, capsys):
+    server = load_sample("01-hello-world/hello_world.py")
     example = load_sample("sample_client.py")
 
     def create_http_client(**kwargs):
@@ -225,22 +192,13 @@ async def test_sample_client_streams_then_fetches_task(load_sample, client_facto
         return client
 
     with patch.object(example.httpx, "AsyncClient", side_effect=create_http_client):
-        await example._run(example._parse_args(["--stream"]))
+        await example._run(example._parse_args(["--message", "hello"]))
         output = capsys.readouterr().out
-        assert "TASK_STATE_WORKING" in output and "TASK_STATE_COMPLETED" in output
-        assert output.count("Artifact chunk") == 4
+        assert "TASK_STATE_COMPLETED" in output
+        assert "Artifact: Hello from Foundry" in output
         task_id = next(line.removeprefix("Task: ") for line in output.splitlines() if line.startswith("Task: "))
         await example._run(example._parse_args(["--get-task", task_id]))
     output = capsys.readouterr().out
     assert f"Task: {task_id}" in output
     assert "TASK_STATE_COMPLETED" in output
-    assert "Artifact: Hello from streaming A2A!" in output
-
-
-@pytest.mark.asyncio
-async def test_sample_client_rejects_unadvertised_streaming(load_sample, client_factory):
-    server = load_sample("01-hello-world/hello_world.py")
-    example = load_sample("sample_client.py")
-    with patch.object(example.httpx, "AsyncClient", return_value=client_factory(server.host)):
-        with pytest.raises(ValueError, match="does not advertise streaming"):
-            await example._run(example._parse_args(["--stream"]))
+    assert "Artifact: Hello from Foundry" in output

@@ -40,21 +40,21 @@ They are not published to PyPI.
    alpha packages, not the other Agent Server hosts.
 
 The pipeline generates versions from its build number without changing the
-checked-in versions. For example, build `20261021.1` produces
-`1.0.0a20261021001` (A2A) and `2.2.1a20261021001` (core).
+checked-in versions. For example, build `20261028.1` produces
+`1.0.0a20261028001` (A2A) and `2.3.0a20261028001` (core).
 Replace the example versions below with those from the successful run:
 
 ```powershell
 python -m pip install --pre `
   --index-url "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" `
-  "azure-ai-agentserver-a2a==1.0.0a20261021001" `
-  "azure-ai-agentserver-core==2.2.1a20261021001"
+  "azure-ai-agentserver-a2a==1.0.0a20261028001" `
+  "azure-ai-agentserver-core==2.3.0a20261028001"
 ```
 
 Install both packages from the same run to include the core tracing enrichment
 changes. The dev-build tooling rewrites A2A's core dependency to an alpha range;
 pinning both versions also prevents accidentally testing a different core build.
-Regular preview installations require core 2.2.1 or later, which contains the
+Regular preview installations require core 2.3.0b1 or later, which contains the
 Agent Card metadata-preservation fix.
 
 ### Prerequisites
@@ -87,40 +87,36 @@ Agent Card metadata-preservation fix.
   Both card routes use the same native card handler and `card_modifier`; the
   compatibility alias does not rewrite the card or advertise an extra interface.
 
-The Foundry passthrough advertises only the JSON-RPC binding, including
-`SendStreamingMessage` responses over SSE. Push notifications, the authenticated
-extended card, HTTP+JSON/REST, and gRPC are not exposed in the initial release.
+The Foundry passthrough advertises only the JSON-RPC binding. Push notifications,
+the authenticated extended card, HTTP+JSON/REST, and gRPC are not exposed in the
+initial release.
 
 ### Distributed tracing
 
-In Foundry-hosted environments, `SendMessage` and `SendStreamingMessage` also
-emit one `invoke_agent` parent span using the deployed Foundry agent name,
+In Foundry-hosted environments, `SendMessage` also emits one `invoke_agent`
+parent span using the deployed Foundry agent name,
 version, and identity. This keeps hosted-agent trace discovery independent of
 LLM calls or native SDK implementation spans. The child A2A operation span
 retains Agent Card metadata, which can differ from the deployment name/version.
-Both spans cover the complete response, including streaming transmission, and
-record a returned Task ID for correlation. Task lookup/list/cancel operations
+Both spans cover the complete response and record a returned Task ID for
+correlation. Task lookup/list/cancel operations
 do not emit an `invoke_agent` span because they do not execute the agent.
 
 The host emits one `SERVER` span for each valid A2A JSON-RPC operation using
 the `Azure.AI.AgentServer.A2A` instrumentation scope. Span names are the A2A
-method names (`SendMessage`, `SendStreamingMessage`, `GetTask`, and so on).
+method names (`SendMessage`, `GetTask`, and so on).
 Attributes include Agent Card metadata and protocol, message, task, and `contextId`
 identifiers supplied in the request. The host reuses Core's trace propagation,
 exception recording, span completion, and non-blocking flush helpers. HTTP errors
 and buffered unary JSON-RPC errors mark the span as failed, including JSON-RPC
-errors transported with HTTP 200. Streaming spans remain open until the SSE
-response completes.
+errors transported with HTTP 200.
 
 When the request has no Task ID, tracing also records the first Task ID returned
-by a single-task operation, including streaming responses. This lets a Task-ID
-search find its original creation span. SSE observation stops once the ID is
-known, inspects at most 1 MiB per event, and forwards response bytes unchanged.
+by a single-task operation. This lets a Task-ID search find its original
+creation span.
 `ListTasks` is not tagged with an arbitrary result Task ID.
 
-Response-only context IDs and task states are not recorded, and JSON-RPC error
-events within an HTTP-200 SSE stream do not mark the span as failed.
-Exceptions raised while producing or sending the stream are still recorded.
+Response-only context IDs and task states are not recorded.
 Application metadata, prompts, and artifacts are not added to these spans.
 
 These attributes follow the development-stage proposal in
@@ -176,8 +172,12 @@ an existing handler, configure its storage directly instead of passing
 
 `FoundryTaskStore` implements the native `save`, `get`, `list`, and `delete`
 operations. It stores complete protobuf Task snapshots, including history and
-artifacts, and delegates list filtering and pagination semantics to the native
-SDK. Foundry enforces its configured caller-isolation scope on hosted item
+artifacts. Lightweight listing metadata is saved atomically with each snapshot;
+native filtering and pagination select the page before full snapshots are read.
+Listing still scans key metadata to preserve native ordering and total counts,
+but full history/artifact reads are limited to the requested page. Older preview
+records without listing metadata require full reads until saved again.
+Foundry enforces its configured caller-isolation scope on hosted item
 operations using validated brokered context. Available platform-user, native
 user, and tenant scopes are layered into storage keys. A raw user-ID header is not required when the request
 has a brokered call ID; the opaque call ID is forwarded unchanged through Core,
@@ -219,9 +219,8 @@ storage. Store retention defaults to Core's 30 days and can be configured with
 to respect the state service's item-size limits.
 
 **Persistence is not execution recovery:** saving a Task marked `WORKING` does
-not restart its executor. This feature does not create Core resilient tasks,
-checkpoint workflows, or provide durable SSE replay or push-notification
-delivery. Those remain separate application choices.
+not restart its executor. This feature does not create Core resilient tasks
+or checkpoint workflows. Those remain separate application choices.
 
 Hosted persistence also requires the A2A gateway to deliver the platform
 identity/brokered-context headers. A preview gateway may route native A2A
@@ -288,7 +287,7 @@ host.run()
 ```
 
 See the [sample setup and walkthroughs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-a2a/samples)
-for standalone, multi-protocol, and streaming examples, a native local client,
+for standalone and multi-protocol examples, a native local client,
 and guidance on TaskStore durability and context reuse.
 
 ## Scope
@@ -311,9 +310,6 @@ unsupported capabilities are not exposed to callers.
 - **Task lookup fails after restarting a sample:** the examples use
   `InMemoryTaskStore`. Its records do not survive a process restart. Reusing a
   context ID does not restore a lost Task or application history.
-- **The greeting does not stream:** the first two samples intentionally do not
-  advertise streaming. Start the streaming example and invoke the client with
-  `--stream`.
 
 Core provides console logging for request failures and supports distributed
 tracing through its configured exporters. See [distributed tracing](#distributed-tracing)
@@ -323,8 +319,7 @@ message contents when sharing diagnostic logs.
 ## Next steps
 
 - Follow the [sample setup and walkthroughs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-a2a/samples)
-  to discover an Agent Card, send a message, consume SSE updates, and retrieve a
-  Task locally.
+  to discover an Agent Card, send a message, and retrieve a Task locally.
 - Implement your agent with the native [A2A Python SDK](https://github.com/a2aproject/a2a-python)
   executor, request-handler, and TaskStore interfaces.
 - Review the samples' state guidance before replacing in-memory storage, and
