@@ -10,7 +10,7 @@ using these APIs from a feed.
 
 ## Install
 
-From the parent `samples` directory, follow the [source setup](../README.md#setup).
+From the parent `samples` directory, follow the [source setup](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-a2a/samples/README.md#setup).
 Its requirements install the A2A and Core packages from sibling source folders.
 
 ## 1. Start the persistent agent

@@ -231,7 +231,7 @@ fabricated platform identity headers to work around a missing service handoff.
 
 These APIs require the updated source or an alpha built after this feature;
 previously published alpha wheels do not gain the new behavior automatically.
-See [the persistence example](samples/04-state-store/README.md) for a restart test.
+See [the persistence example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-a2a/samples/04-state-store/README.md) for a restart test.
 
 ### Call a Foundry service from an A2A handler
 

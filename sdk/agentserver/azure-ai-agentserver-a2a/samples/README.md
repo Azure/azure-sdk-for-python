@@ -37,9 +37,9 @@ switching examples.
 
 | Example | Start from this directory | What to observe |
 |---------|---------------------------|-----------------|
-| [Hello world](01-hello-world/hello_world.py) | `.\.venv\Scripts\python 01-hello-world\hello_world.py` | A completed Task containing `Hello from Foundry`. |
-| [Multi-protocol](02-multi-protocol/multi_protocol.py) | `.\.venv\Scripts\python 02-multi-protocol\multi_protocol.py` | A2A and Invocations on the same server and port. |
-| [State store](04-state-store/README.md) | `.\.venv\Scripts\python 04-state-store\state_store.py` | A completed Task can still be fetched after stopping and restarting the server. |
+| [Hello world](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-a2a/samples/01-hello-world/hello_world.py) | `.\.venv\Scripts\python 01-hello-world\hello_world.py` | A completed Task containing `Hello from Foundry`. |
+| [Multi-protocol](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-a2a/samples/02-multi-protocol/multi_protocol.py) | `.\.venv\Scripts\python 02-multi-protocol\multi_protocol.py` | A2A and Invocations on the same server and port. |
+| [State store](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-a2a/samples/04-state-store/README.md) | `.\.venv\Scripts\python 04-state-store\state_store.py` | A completed Task can still be fetched after stopping and restarting the server. |
 
 Every sample also exposes `GET /readiness` and the native Agent Card at
 `GET /a2a/.well-known/agent-card.json`.
@@ -47,7 +47,7 @@ Every sample also exposes `GET /readiness` and the native Agent Card at
 ## Send a message
 
 With the hello-world or multi-protocol server running, open another terminal
-in this directory and run the [native client](sample_client.py):
+in this directory and run the [native client](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-a2a/samples/sample_client.py):
 
 ```powershell
 .\.venv\Scripts\python sample_client.py --message "hello"
@@ -110,7 +110,7 @@ Task in that context; it is not a request to resume a completed Task.
 Custom stores and existing native request handlers are still supported and
 remain caller-owned. Persistence alone does not resume executor work after a
 process crash: recovery, cancellation, and application history need explicit
-application design. See [the state-store example's restart walkthrough](04-state-store/README.md).
+application design. See [the state-store example's restart walkthrough](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-a2a/samples/04-state-store/README.md).
 
 These are **local container** examples, not a claim that every native A2A
 method is available through Foundry's public endpoint. When deployed, the
@@ -152,5 +152,5 @@ clients send to the URL advertised by the card, so it must be reachable.
 The examples disable the native SDK's generic instrumentation before importing
 `a2a`, avoiding duplicate spans alongside Agent Server's semantic operation
 spans. This can be overridden by explicitly setting
-`OTEL_INSTRUMENTATION_A2A_SDK_ENABLED`. See the [package tracing guidance](../README.md#distributed-tracing)
+`OTEL_INSTRUMENTATION_A2A_SDK_ENABLED`. See the [package tracing guidance](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-a2a/README.md#distributed-tracing)
 for exporter configuration and the development-stage A2A convention.
