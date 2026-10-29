@@ -10,7 +10,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    CodeInterpreterTool,
+    ToolCodeInterpreterTool,
     AutoCodeInterpreterToolParam,
 )
 
@@ -40,7 +40,7 @@ class TestAgentCodeInterpreterAsync(TestBase):
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant that can execute Python code.",
-                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[]))],
+                    tools=[ToolCodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[]))],
                 ),
                 description="Simple code interpreter agent for basic Python execution.",
             )

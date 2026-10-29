@@ -17,8 +17,8 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    FileSearchTool,
-    CodeInterpreterTool,
+    ToolFileSearchTool,
+    ToolCodeInterpreterTool,
     AutoCodeInterpreterToolParam,
 )
 
@@ -87,8 +87,8 @@ End of sensor log.
                 model=model,
                 instructions="You are a data analyst. Use file search to find data files, then use code interpreter to perform calculations on the data.",
                 tools=[
-                    FileSearchTool(vector_store_ids=[vector_store.id]),
-                    CodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
+                    ToolFileSearchTool(vector_store_ids=[vector_store.id]),
+                    ToolCodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
                 ],
             ),
             description="Agent with File Search and Code Interpreter.",
@@ -157,8 +157,8 @@ def fibonacci(n):
                 model=model,
                 instructions="You are a code analyst. Use file search to find code files, then use code interpreter to execute and test the code.",
                 tools=[
-                    FileSearchTool(vector_store_ids=[vector_store.id]),
-                    CodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
+                    ToolFileSearchTool(vector_store_ids=[vector_store.id]),
+                    ToolCodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
                 ],
             ),
             description="Agent for code analysis and execution.",

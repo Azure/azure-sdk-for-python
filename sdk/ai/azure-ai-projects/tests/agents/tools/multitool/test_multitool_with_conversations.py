@@ -15,8 +15,8 @@ from openai.types.responses.response_input_param import FunctionCallOutput, Resp
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
-    FunctionTool,
-    FileSearchTool,
+    ToolFunctionTool,
+    ToolFileSearchTool,
     PromptAgentDefinition,
 )
 
@@ -60,7 +60,7 @@ Total Revenue: $144,000
         print(f"Vector store created: {vector_store.id}")
 
         # Define save function
-        save_report = FunctionTool(
+        save_report = ToolFunctionTool(
             name="save_report",
             description="Save a report summary. Use this when explicitly asked to perform a save operation.",
             parameters={
@@ -82,7 +82,7 @@ Total Revenue: $144,000
                 model=model,
                 instructions="You are an analyst. Search data to answer questions and save reports when instructed",
                 tools=[
-                    FileSearchTool(vector_store_ids=[vector_store.id]),
+                    ToolFileSearchTool(vector_store_ids=[vector_store.id]),
                     save_report,
                 ],
             ),
