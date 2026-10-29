@@ -81,17 +81,17 @@ cover every service operation; use the three-style comparison for dictionary inp
 
 | Operation | Handwritten example |
 | --- | --- |
-| `get_client_access_token` | [Sync](sample_client_access.py) / [async](sample_client_access_async.py) |
-| `create_or_replace_role` | [Model request](sample_create_or_replace_role.py) |
-| `create_or_replace_room` | [Model request](sample_create_or_replace_room.py) |
-| `create_or_replace_room_member` | [Model request](sample_create_or_replace_room_member.py) / [dictionary styles](sample_request_body_styles.py) |
-| `create_or_replace_user` | [Model request](sample_create_or_replace_user.py) |
-| `create_or_replace_topic` | [Model request](sample_create_or_replace_topic.py) / [typed dictionary replacement](sample_request_body_styles.py) |
-| `update_topic` | [Model request](sample_update_topic.py) |
-| `update_message` | [Model request](sample_update_message.py) |
-| `get_role`, `get_room`, `get_user`, `get_topic`, `get_conversation` | [Read operation functions](sample_read_operations.py) |
-| `list_roles`, `list_rooms`, `list_room_members`, `list_users`, `list_topics`, `list_rooms_for_user`, `list_messages` | [List operation functions](sample_read_operations.py) |
-| `delete_role`, `delete_room`, `delete_room_member`, `delete_user`, `delete_topic`, `delete_message` | [Delete operation functions](sample_delete_operations.py) |
+| `get_client_access_token` | [Sync](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_client_access.py) / [async](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_client_access_async.py) |
+| `create_or_replace_role` | [Model request](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_create_or_replace_role.py) |
+| `create_or_replace_room` | [Model request](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_create_or_replace_room.py) |
+| `create_or_replace_room_member` | [Model request](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_create_or_replace_room_member.py) / [dictionary styles](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_request_body_styles.py) |
+| `create_or_replace_user` | [Model request](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_create_or_replace_user.py) |
+| `create_or_replace_topic` | [Model request](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_create_or_replace_topic.py) / [typed dictionary replacement](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_request_body_styles.py) |
+| `update_topic` | [Model request](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_update_topic.py) |
+| `update_message` | [Model request](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_update_message.py) |
+| `get_role`, `get_room`, `get_user`, `get_topic`, `get_conversation` | [Read operation functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_read_operations.py) |
+| `list_roles`, `list_rooms`, `list_room_members`, `list_users`, `list_topics`, `list_rooms_for_user`, `list_messages` | [List operation functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_read_operations.py) |
+| `delete_role`, `delete_room`, `delete_room_member`, `delete_user`, `delete_topic`, `delete_message` | [Delete operation functions](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/webpubsub/azure-messaging-webpubsubchatservice/samples/sample_delete_operations.py) |
 
 The synchronous and asynchronous clients expose the same service operations.
 Await asynchronous non-paging calls, and use `async for` to iterate asynchronous
