@@ -1,6 +1,20 @@
 # Release History
 
-## 2.10.0 (Unreleased)
+## 2.10.0 (2026-10-30)
+
+### Features Added
+
+* Added optional `VoiceAgentDefinition.soundscape` for built-in background ambience and event cues in telephony calls, with `VoiceAgentSoundscapeConfig`, `VoiceAgentSoundscapeSourceConfig`, `VoiceAgentSoundscapeTrackConfig`, `VoiceAgentSoundscapeWorkingTrackConfig`, and `VoiceAgentSoundscapeSound`.
+* Added optional `VoiceAgentInputTranscription.profanity_filter` and `VoiceAgentProfanityFilterMode` for configuring Azure Speech input-transcript filtering before a session starts.
+* Added `VoiceAgentInputTranscriptionModel.AZURE_SPEECH_STREAMING` for Azure Speech streaming transcription in cascaded text-model conversations. This model requires a nonempty `VoiceAgentInputTranscription.language` and is not supported with realtime speech-to-speech models.
+* Added `VoiceAgentNoiseReductionType.AZURE_DEEP_NOISE_SUPPRESSION_HEADSET` and `VoiceAgentNoiseReductionType.AZURE_PERSONAL_NOISE_SUPPRESSION` for local voice activity detection without changing recognition audio.
+* Added `AgentEndpointProtocol.VOICE_CONVERSATION_ENGINE` for hosted text agents used as Voice Agent conversation engines. Hosted agents must declare this protocol with version `1.0.0`; `invocations_ws` does not substitute for it.
+* Added optional `HostedAgentDefinition.enable_memory_snapshot` to start hosted-agent sessions from a snapshot of the initialized process instead of starting the process from its image.
+* Added known `ImageGenTool.model` values `gpt-image-2.5-sunburst`, `gpt-image-2.5-sunburst-2026-09-08`, `gpt-image-2.5-flare`, and `gpt-image-2.5-flare-2026-09-08`, with `xhigh` and `max` quality options for these models.
+
+### Bugs Fixed
+
+* Fixed tracing to record `temperature=0` and `top_p=0` instead of omitting these valid values.
 
 ## 2.9.0 (2026-10-16)
 
