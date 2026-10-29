@@ -127,8 +127,7 @@ def local_store_root(monkeypatch, tmp_path):
 
 def test_long_item_keys_retain_owner_scope_and_identifier_uniqueness():
     first = FoundryTaskStore._key("\u00e9" * 200, "a" * 64)
-    assert len(first) <= 256
-    assert first.startswith("a" * 64 + ":sha256:")
+    assert len(first) == 64
     assert first != FoundryTaskStore._key("\u00e9" * 200, "b" * 64)
     assert first != FoundryTaskStore._key("\u00e9" * 199 + "x", "a" * 64)
 
@@ -148,7 +147,7 @@ async def test_storage_tag_bound_preserves_full_task_and_listing(local_store_roo
         original_set = backend.set_item
 
         async def bounded_set(key, value, **kwargs):
-            assert len(key) <= 256
+            assert len(key) <= 128
             assert all(len(value) <= 256 for value in kwargs["tags"].values())
             return await original_set(key, value, **kwargs)
 

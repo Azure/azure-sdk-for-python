@@ -10,11 +10,18 @@
   per-call headers, preserving unrelated dimensions without mutating defaults
   and replacing or clearing competing subject assertions.
 
+### Breaking Changes
+
+- Removed the internal `EXPERIMENTAL_LINK_MESSAGE` constant. When using
+  `azure-ai-agentserver-responses`, upgrade it to `2.4.0b3` or later alongside
+  Core; older Responses compatibility shims require the removed constant.
+
 ### Bugs Fixed
 
 - Preserve explicit Agent Card name and version attributes on spans emitted
   by the `Azure.AI.AgentServer.A2A` instrumentation scope. Other spans retain
   the existing Foundry deployment identity enrichment.
+- Removed the broken documentation link from experimental API warnings and docstrings.
 - Stop emitting standalone subject headers on outbound model calls while
   preserving platform-to-container ingress parsing.
 - Remove stale subject baggage even when a malformed member has properties before

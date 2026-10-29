@@ -22,14 +22,13 @@
 - Added development-stage OpenTelemetry A2A server spans for JSON-RPC
   operations, including Agent Card metadata, request task
   and conversation correlation, and unary JSON-RPC error classification.
-- Added non-advertised compatibility aliases at `POST /invocations/a2a` and
-  `GET /invocations/a2a/.well-known/agent-card.json` for older Foundry
-  passthrough services and clients.
+- Added non-advertised aliases at `POST /invocations/a2a` and
+  `GET /invocations/a2a/.well-known/agent-card.json`.
 
 ### Other Changes
 
 - Marked the public A2A host and task-store APIs as experimental.
-- Added Python 3.15 metadata and migrated sample/test HTTP clients to `httpx2`.
+- Added Python 3.15 metadata and `httpx2` sample/test HTTP clients.
 - Simplified A2A tracing to reuse Core's span lifecycle helpers. Response inspection
   captures only a missing Task ID for correlation, without collecting response-only
   context IDs or task states.
@@ -46,7 +45,7 @@
 
 - Bound encoded listing metadata to the storage tag limit without truncating
   Tasks; oversized summaries use the full-snapshot listing path.
-- Bound storage item keys for long Task IDs using owner-scoped hashes while
+- Bound storage item keys to 128 characters using owner-scoped hashes while
   preserving the complete original Task identifier.
 - Resolve header and query protocol selectors consistently for native dispatch
   and tracing. Reject conflicting selectors and unsupported minor versions.
@@ -64,8 +63,7 @@
   optional raw user-ID header; verify actual server-side user isolation before
   every item operation and keep per-request call IDs out of storage keys.
 - Require native `a2a-sdk>=1.2.3` so active-task subscription/cancellation
-  cache hits authorize through the caller-scoped task store. Earlier native
-  implementations can bypass storage isolation on these paths.
+  cache hits authorize through the caller-scoped task store.
 - Preserve shared request ID and server-version headers on exception-generated
   error responses.
 - Read telemetry identifiers only from A2A protocol fields,

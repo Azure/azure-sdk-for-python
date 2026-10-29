@@ -17,7 +17,8 @@ from azure.ai.agentserver.a2a import A2AAgentServerHost, FoundryTaskStore
 @pytest.mark.parametrize("public_api", [A2AAgentServerHost, FoundryTaskStore])
 def test_public_classes_are_marked_experimental(public_api):
     assert "This is an experimental class" in public_api.__doc__
-    assert "https://aka.ms/azure-ai-agentserver-experimental" in public_api.__doc__
+    assert "may change at any time" in public_api.__doc__
+    assert "https://" not in public_api.__doc__
 
 
 class _Executor(AgentExecutor):

@@ -4,6 +4,7 @@
 """Smoke tests for the actual runnable SDK samples and their native client."""
 
 import importlib.util
+import asyncio
 import logging
 from pathlib import Path
 from unittest.mock import patch
@@ -100,6 +101,30 @@ async def test_sample_task_lookup_and_context_reuse(load_sample, client_factory,
             assert _text(followup[0].task) == expected
         finally:
             await client.close()
+
+
+@pytest.mark.asyncio
+async def test_sample_shutdown_drains_background_work(load_sample, client_factory):
+    existing_tasks = set(asyncio.all_tasks())
+    module = load_sample("01-hello-world/hello_world.py")
+    try:
+        async with client_factory(module.host) as http_client:
+            client = await _native_client(http_client)
+            try:
+                responses = [
+                    response
+                    async for response in client.send_message(
+                        SendMessageRequest(message=new_text_message("hello", role=Role.ROLE_USER))
+                    )
+                ]
+                assert responses[0].task.status.state == TaskState.TASK_STATE_COMPLETED
+            finally:
+                await client.close()
+    finally:
+        await module.host._dispatch_shutdown()
+    await asyncio.sleep(0)
+    remaining = set(asyncio.all_tasks()) - existing_tasks
+    assert not [task for task in remaining if not task.done()]
 
 
 @pytest.mark.asyncio

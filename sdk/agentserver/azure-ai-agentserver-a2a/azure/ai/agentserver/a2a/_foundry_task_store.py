@@ -30,7 +30,7 @@ from azure.ai.agentserver.core.storage import (
 
 logger = logging.getLogger(__name__)
 _MAX_TAG_VALUE_LENGTH = 256
-_MAX_ITEM_KEY_LENGTH = 256
+_MAX_ITEM_KEY_LENGTH = 128
 
 
 @experimental
@@ -95,7 +95,7 @@ class FoundryTaskStore(TaskStore):
         encoded = base64.urlsafe_b64encode(task_id.encode("utf-8")).decode("ascii").rstrip("=")
         key = f"{owner}:{encoded}"
         if len(key) > _MAX_ITEM_KEY_LENGTH:
-            return f"{owner}:sha256:{hashlib.sha256(task_id.encode('utf-8')).hexdigest()}"
+            return hashlib.sha256(f"{owner}:{task_id}".encode("utf-8")).hexdigest()
         return key
 
     async def _store(self, *, create: bool = False) -> FoundryStateStore:
@@ -213,7 +213,7 @@ class FoundryTaskStore(TaskStore):
         if not await self._verify_isolation(store, missing_ok=True):
             return await view.list(params, context)
         after = None
-        legacy_tasks: dict[str, Task] = {}
+        full_tasks: dict[str, Task] = {}
         while True:
             try:
                 page = await store.list_keys(tags={"a2a_owner": owner}, limit=100, after=after)
@@ -224,12 +224,11 @@ class FoundryTaskStore(TaskStore):
                 if "a2a_list" in tags:
                     summary = self._decode_task(tags["a2a_list"], key.key, owner)
                 else:
-                    # Previously saved preview records have no lightweight listing metadata.
                     item = await store.get_item(key.key)
                     if item is None:
                         continue
                     summary = self._deserialize(item, owner)
-                    legacy_tasks[summary.id] = summary
+                    full_tasks[summary.id] = summary
                 await view.save(summary, context)
             if not page.has_more:
                 break
@@ -239,8 +238,8 @@ class FoundryTaskStore(TaskStore):
         result = await view.list(params, context)
         tasks = []
         for summary in result.tasks:
-            if summary.id in legacy_tasks:
-                tasks.append(legacy_tasks[summary.id])
+            if summary.id in full_tasks:
+                tasks.append(full_tasks[summary.id])
             else:
                 item = await store.get_item(self._key(summary.id, owner))
                 if item is not None:

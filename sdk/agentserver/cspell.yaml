@@ -26,6 +26,7 @@ words:
   - BYOK
   - cand
   - caplog
+  - capsys
   - caresp
   - cchain
   - configurators

@@ -67,7 +67,7 @@ Agent Card metadata-preservation fix.
 Requests select protocol version `1.0` with the `A2A-Version` header or the
 `a2a-version` query parameter. Selector names are case-insensitive. Matching
 selectors are accepted; conflicting selectors return an invalid-parameters
-error. Omitted or empty selectors retain the protocol's legacy `0.3` default,
+error. Omitted or empty selectors use the protocol's `0.3` default,
 which this v1-only host rejects. Unsupported versions also return a
 version-not-supported error. Trace protocol-version attributes describe an
 accepted selection, not an unsupported requested version.
@@ -80,8 +80,7 @@ accepted selection, not an unsupported requested version.
 
 - registers the native JSON-RPC handler at `POST /a2a`;
 - accepts `POST /invocations/a2a` and
-  `GET /invocations/a2a/.well-known/agent-card.json` as non-advertised
-  compatibility aliases for older Foundry service versions and clients;
+  `GET /invocations/a2a/.well-known/agent-card.json` as non-advertised aliases;
 - registers the native public agent card at
   `GET /a2a/.well-known/agent-card.json`;
 - captures `x-agent-foundry-call-id` and `x-agent-user-id` in the
@@ -93,7 +92,7 @@ accepted selection, not an unsupported requested version.
 
   Both POST routes execute the same native handler and semantic tracing wrapper.
   Both card routes use the same native card handler and `card_modifier`; the
-  compatibility alias does not rewrite the card or advertise an extra interface.
+  alias does not rewrite the card or advertise an extra interface.
 
 The Foundry passthrough advertises only the JSON-RPC binding. Push notifications,
 the authenticated extended card, HTTP+JSON/REST, and gRPC are not exposed in the
@@ -183,14 +182,14 @@ operations. It stores complete protobuf Task snapshots, including history and
 artifacts. Lightweight listing metadata is saved atomically with each snapshot;
 native filtering and pagination select the page before full snapshots are read.
 Listing still scans key metadata to preserve native ordering and total counts,
-but full history/artifact reads are limited to the requested page. Older preview
-records without listing metadata require full reads until saved again.
+but full history/artifact reads are limited to the requested page when listing
+metadata is present.
 Listing metadata is also omitted when its encoded value exceeds Foundry's
 256-character tag limit; the complete Task is still saved and uses the same
 full-read listing path. Task-list timestamp cutoffs are inclusive. Equal
 timestamps are ordered by descending Task ID, following the native SDK.
 The response `pageSize` is the page limit used, not the returned Task count.
-Task IDs that would exceed the storage item-key limit use an owner-scoped
+Task IDs that would exceed the 128-character storage item-key limit use an owner-scoped
 hash key; their original IDs remain unchanged in the saved Task.
 Foundry enforces its configured caller-isolation scope on hosted item
 operations using validated brokered context. Available platform-user, native
@@ -244,8 +243,6 @@ storage access with a caller-context error; enabling the endpoint alone is not
 proof that managed persistence is available. Do not disable isolation or supply
 fabricated platform identity headers to work around a missing service handoff.
 
-These APIs require the updated source or an alpha built after this feature;
-previously published alpha wheels do not gain the new behavior automatically.
 See [the persistence example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-a2a/samples/04-state-store/README.md) for a restart test.
 
 ### Call a Foundry service from an A2A handler

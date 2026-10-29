@@ -18,8 +18,8 @@
     {"name": "malformed", "headers": [["A2A-Version", "invalid"]], "query": [], "error_code": -32009}
   ],
   "storage_tag_cases": [
-    {"name": "key-at-256", "task_id_length": 143, "context_id_length": 1, "summary_tag": true, "key_chars": 256},
-    {"name": "key-over-256", "task_id_length": 144, "context_id_length": 1, "summary_tag": true, "key_chars": 136},
+    {"name": "key-at-128", "task_id_length": 47, "context_id_length": 1, "summary_tag": true, "key_chars": 128},
+    {"name": "key-over-128", "task_id_length": 48, "context_id_length": 1, "summary_tag": true, "key_chars": 64},
     {"name": "below-bound", "task_id_length": 171, "context_id_length": 1, "summary_tag": true},
     {"name": "at-256", "task_id_length": 176, "context_id_length": 1, "summary_tag": true, "summary_chars": 256},
     {"name": "above-256", "task_id_length": 177, "context_id_length": 1, "summary_tag": false},

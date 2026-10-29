@@ -193,7 +193,7 @@ async def test_one_task_page_reads_only_one_full_snapshot_from_105_large_tasks()
 
 
 @pytest.mark.asyncio
-async def test_listing_supports_legacy_records_without_metadata():
+async def test_listing_reads_full_snapshot_when_summary_is_absent():
     context = ServerCallContext()
     task = _task()
     async with FoundryTaskStore("test") as store:

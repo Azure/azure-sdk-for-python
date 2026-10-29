@@ -3,11 +3,6 @@
 This example uses the existing generic Core state store to persist native A2A
 Tasks. No LLM, subscription, or API key is needed for the local demonstration.
 
-**Use the updated source checkout.** The previously published
-`1.0.0a20261022002` A2A wheel does not include `FoundryTaskStore` or executor-based
-host construction. A newly published alpha must include this feature before
-using these APIs from a feed.
-
 ## Install
 
 From the parent `samples` directory, follow the [source setup](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-a2a/samples/README.md#setup).
