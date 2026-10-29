@@ -14,7 +14,6 @@ from azure.ai.agentserver.core import (
 from azure.ai.agentserver.core._experimental import (
     DISABLE_EXPERIMENTAL_WARNING_ENV_VAR,
     EXPERIMENTAL_CLASS_MESSAGE,
-    EXPERIMENTAL_LINK_MESSAGE,
     EXPERIMENTAL_METHOD_MESSAGE,
     _warning_cache,
 )
@@ -92,9 +91,10 @@ def test_experimental_decorator_on_class(caplog) -> None:
 
     assert ExperimentalClass.__doc__.startswith(".. note::")
     assert EXPERIMENTAL_CLASS_MESSAGE in ExperimentalClass.__doc__
-    assert EXPERIMENTAL_LINK_MESSAGE in ExperimentalClass.__doc__
     assert len(caplog.records) == 1
     assert EXPERIMENTAL_CLASS_MESSAGE in caplog.records[0].message
+    assert caplog.records[0].message.endswith("This is an experimental class, and may change at any time.")
+    assert "https://" not in ExperimentalClass.__doc__
 
 
 def test_experimental_decorator_on_function(caplog) -> None:
@@ -105,9 +105,10 @@ def test_experimental_decorator_on_function(caplog) -> None:
 
     assert experimental_function.__doc__.startswith(".. note::")
     assert EXPERIMENTAL_METHOD_MESSAGE in experimental_function.__doc__
-    assert EXPERIMENTAL_LINK_MESSAGE in experimental_function.__doc__
     assert len(caplog.records) == 1
     assert EXPERIMENTAL_METHOD_MESSAGE in caplog.records[0].message
+    assert caplog.records[0].message.endswith("This is an experimental method, and may change at any time.")
+    assert "https://" not in experimental_function.__doc__
 
 
 def test_experimental_decorator_on_async_function_preserves_coroutine_introspection(caplog) -> None:
@@ -121,9 +122,10 @@ def test_experimental_decorator_on_async_function_preserves_coroutine_introspect
 
     assert experimental_async_function.__doc__.startswith(".. note::")
     assert EXPERIMENTAL_METHOD_MESSAGE in experimental_async_function.__doc__
-    assert EXPERIMENTAL_LINK_MESSAGE in experimental_async_function.__doc__
     assert len(caplog.records) == 1
     assert EXPERIMENTAL_METHOD_MESSAGE in caplog.records[0].message
+    assert caplog.records[0].message.endswith("This is an experimental method, and may change at any time.")
+    assert "https://" not in experimental_async_function.__doc__
 
 
 def test_experimental_decorator_no_duplicate_warnings(caplog) -> None:
@@ -232,7 +234,7 @@ def test_original_subject_is_experimental(caplog) -> None:
     assert (subject.oid, subject.tid, subject.idtype) == ("subject", "tenant", "user")
     assert FoundryOriginalSubject.__doc__.startswith(".. note::")
     assert EXPERIMENTAL_CLASS_MESSAGE in FoundryOriginalSubject.__doc__
-    assert EXPERIMENTAL_LINK_MESSAGE in FoundryOriginalSubject.__doc__
+    assert "https://" not in FoundryOriginalSubject.__doc__
     assert len(caplog.records) == 1
     assert "FoundryOriginalSubject" in caplog.records[0].message
     assert EXPERIMENTAL_CLASS_MESSAGE in caplog.records[0].message
@@ -248,7 +250,7 @@ def test_model_attribution_headers_is_experimental(caplog) -> None:
     method = FoundryAgentRequestContext.model_attribution_headers
     assert method.__doc__.startswith(".. note::")
     assert EXPERIMENTAL_METHOD_MESSAGE in method.__doc__
-    assert EXPERIMENTAL_LINK_MESSAGE in method.__doc__
+    assert "https://" not in method.__doc__
     assert len(caplog.records) == 1
     assert "FoundryAgentRequestContext.model_attribution_headers" in caplog.records[0].message
     assert EXPERIMENTAL_METHOD_MESSAGE in caplog.records[0].message
