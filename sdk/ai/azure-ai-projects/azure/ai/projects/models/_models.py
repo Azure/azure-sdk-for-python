@@ -23134,16 +23134,22 @@ class SimulationSeedDataGenerationJobConfiguration(
     :ivar type: The data generation job type, which is SimulationSeed for this model. Required.
      Simulation seed for evaluation scenarios.
     :vartype type: str or ~azure.ai.projects.models.SIMULATION_SEED
+    :ivar max_samples: Maximum number of samples to generate, up to service-defined limits.
+     Required.
+    :vartype max_samples: int
     """
 
     type: Literal[DataGenerationJobType.SIMULATION_SEED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The data generation job type, which is SimulationSeed for this model. Required. Simulation seed
      for evaluation scenarios."""
+    max_samples: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of samples to generate, up to service-defined limits. Required."""
 
     @overload
     def __init__(
         self,
         *,
+        max_samples: int,
         train_split: Optional[float] = None,
         model_options: Optional["_models.DataGenerationModelOptions"] = None,
     ) -> None: ...

@@ -1005,5 +1005,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "6bc23fb38d44"
+    "CrossLanguageVersion": "1c8b2a2c820a"
 }
