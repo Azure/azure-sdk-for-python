@@ -89,9 +89,7 @@ async def test_dictionary_round_trip(async_respond, async_transport, request_pay
 
     sent = async_transport.send.call_args.args[0]
     assert sent.method == "POST"
-    assert sent.url == (
-        "https://example.inference.azure.com/inference/semanticReranking?api-version=2026-09-01-preview"
-    )
+    assert sent.url == ("https://example.inference.azure.com/inference/semanticReranking?api-version=2026-10-30")
     assert sent.headers["Content-Type"] == "application/json"
     assert sent.headers["Accept"] == "application/json"
     assert json.loads(sent.content) == original
@@ -257,7 +255,7 @@ async def test_token_authentication(
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("api_version", ["2026-09-01-preview", "test-api-version"])
+@pytest.mark.parametrize("api_version", ["2026-10-30", "test-api-version"])
 async def test_diagnostic_hook_and_request_options(
     async_respond, async_transport, request_payload, result_payload, api_version
 ):
@@ -304,7 +302,7 @@ async def test_request_options_and_endpoint_path_are_preserved(async_respond, as
     sent = async_transport.send.call_args.args[0]
     assert urlsplit(sent.url).path == "/prefix/inference/semanticReranking"
     assert parse_qs(urlsplit(sent.url).query) == {
-        "api-version": ["2026-09-01-preview"],
+        "api-version": ["2026-10-30"],
         "custom": ["value"],
     }
     assert sent.headers["Accept"] == "application/json"

@@ -1,12 +1,17 @@
 # Release History
 
-## 2.4.0 (2026-10-28)
+## 2.4.0 (2026-10-29)
+
+### Bugs Fixed
+
+- Removed the broken documentation link from experimental API warnings and docstrings by using the shared Core decorator.
 
 ### Other Changes
 
-- Stable release of the 2.4.0 preview series. No implementation changes since
-  2.4.0b2; the protocol-scoped task-runtime behavior and its breaking change
-  from earlier stable releases are documented in the preview entry below.
+- Stable release of the 2.4.0 preview series. The protocol-scoped task-runtime
+  behavior and its breaking change from earlier stable releases are documented
+  in the preview entry below.
+- Removed the duplicated experimental decorator compatibility fallback.
 - Require the stable `azure-ai-agentserver-core>=2.3.0` release. Publish Core
   before Responses.
 
