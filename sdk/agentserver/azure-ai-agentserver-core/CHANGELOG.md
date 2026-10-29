@@ -1,5 +1,26 @@
 # Release History
 
+## Unreleased
+
+### Features Added
+
+- Add one percent-encoded `foundry.original_subject` member containing the full
+  quoted dictionary to custom Foundry baggage for baggage-only model attribution.
+  The experimental `model_attribution_headers` helper accepts optional existing
+  per-call headers, preserving unrelated dimensions without mutating defaults
+  and replacing or clearing competing subject assertions.
+
+### Bugs Fixed
+
+- Stop emitting standalone subject headers on outbound model calls while
+  preserving platform-to-container ingress parsing.
+- Remove stale subject baggage even when a malformed member has properties before
+  its value, while preserving unrelated baggage order, encoding, and duplicates.
+- Reject subject tuples over 256 characters and merged baggage over 1024
+  characters rather than forwarding oversized model-attribution baggage.
+- Place the subject before unrelated baggage so bounded transport normalization
+  cannot displace the attribution member.
+
 ## 2.3.0b2 (2026-10-26)
 
 ### Features Added
