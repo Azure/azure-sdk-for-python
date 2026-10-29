@@ -37,7 +37,7 @@ class TestRecoveryServicesDataReplicationMgmtPrivateEndpointConnectionsOperation
             resource_group_name=resource_group.name,
             vault_name="str",
             private_endpoint_connection_name="str",
-            resource={
+            body={
                 "id": "str",
                 "name": "str",
                 "properties": {

@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -32,14 +32,14 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import RecoveryServicesDataReplicationMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -246,12 +246,9 @@ def build_vault_update_request(
 def build_vault_delete_request(
     resource_group_name: str, vault_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataReplication/replicationVaults/{vaultName}"
     path_format_arguments = {
@@ -265,10 +262,7 @@ def build_vault_delete_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_vault_list_request(
@@ -491,12 +485,9 @@ def build_fabric_update_request(
 def build_fabric_delete_request(
     resource_group_name: str, fabric_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataReplication/replicationFabrics/{fabricName}"
     path_format_arguments = {
@@ -510,10 +501,7 @@ def build_fabric_delete_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_fabric_list_request(
@@ -637,12 +625,9 @@ def build_fabric_agent_create_request(
 def build_fabric_agent_delete_request(
     resource_group_name: str, fabric_name: str, fabric_agent_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataReplication/replicationFabrics/{fabricName}/fabricAgents/{fabricAgentName}"
     path_format_arguments = {
@@ -657,10 +642,7 @@ def build_fabric_agent_delete_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_fabric_agent_list_request(
@@ -827,12 +809,9 @@ def build_policy_create_request(
 def build_policy_delete_request(
     resource_group_name: str, vault_name: str, policy_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataReplication/replicationVaults/{vaultName}/replicationPolicies/{policyName}"
     path_format_arguments = {
@@ -847,10 +826,7 @@ def build_policy_delete_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_policy_list_request(
@@ -961,12 +937,9 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataReplication/replicationVaults/{vaultName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -983,10 +956,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_private_endpoint_connections_list_request(  # pylint: disable=name-too-long
@@ -1015,180 +985,6 @@ def build_private_endpoint_connections_list_request(  # pylint: disable=name-too
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_private_endpoint_connection_proxies_get_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    vault_name: str,
-    private_endpoint_connection_proxy_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataReplication/replicationVaults/{vaultName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
-        "privateEndpointConnectionProxyName": _SERIALIZER.url(
-            "private_endpoint_connection_proxy_name", private_endpoint_connection_proxy_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_private_endpoint_connection_proxies_create_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    vault_name: str,
-    private_endpoint_connection_proxy_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataReplication/replicationVaults/{vaultName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
-        "privateEndpointConnectionProxyName": _SERIALIZER.url(
-            "private_endpoint_connection_proxy_name", private_endpoint_connection_proxy_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_private_endpoint_connection_proxies_delete_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    vault_name: str,
-    private_endpoint_connection_proxy_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataReplication/replicationVaults/{vaultName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
-        "privateEndpointConnectionProxyName": _SERIALIZER.url(
-            "private_endpoint_connection_proxy_name", private_endpoint_connection_proxy_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_private_endpoint_connection_proxies_list_request(  # pylint: disable=name-too-long
-    resource_group_name: str, vault_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataReplication/replicationVaults/{vaultName}/privateEndpointConnectionProxies"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_private_endpoint_connection_proxies_validate_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    vault_name: str,
-    private_endpoint_connection_proxy_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataReplication/replicationVaults/{vaultName}/privateEndpointConnectionProxies/{privateEndpointConnectionProxyName}/validate"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
-        "privateEndpointConnectionProxyName": _SERIALIZER.url(
-            "private_endpoint_connection_proxy_name", private_endpoint_connection_proxy_name, "str"
-        ),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_private_link_resources_get_request(
@@ -1350,12 +1146,9 @@ def build_protected_item_delete_request(
     force_delete: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataReplication/replicationVaults/{vaultName}/protectedItems/{protectedItemName}"
     path_format_arguments = {
@@ -1372,10 +1165,7 @@ def build_protected_item_delete_request(
     if force_delete is not None:
         _params["forceDelete"] = _SERIALIZER.query("force_delete", force_delete, "bool")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_protected_item_list_request(
@@ -1581,12 +1371,9 @@ def build_replication_extension_create_request(  # pylint: disable=name-too-long
 def build_replication_extension_delete_request(  # pylint: disable=name-too-long
     resource_group_name: str, vault_name: str, replication_extension_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-09-01"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataReplication/replicationVaults/{vaultName}/replicationExtensions/{replicationExtensionName}"
     path_format_arguments = {
@@ -1601,10 +1388,7 @@ def build_replication_extension_delete_request(  # pylint: disable=name-too-long
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_replication_extension_list_request(
@@ -1755,7 +1539,7 @@ def build_location_based_operation_results_get_request(  # pylint: disable=name-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1765,7 +1549,7 @@ class Operations:
         :attr:`operations` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -1775,7 +1559,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
@@ -1822,7 +1606,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1835,7 +1622,10 @@ class Operations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1851,7 +1641,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1859,7 +1652,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class EmailConfigurationOperations:
+class EmailConfigurationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1869,7 +1662,7 @@ class EmailConfigurationOperations:
         :attr:`email_configuration` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -1922,6 +1715,7 @@ class EmailConfigurationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1936,11 +1730,14 @@ class EmailConfigurationOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EmailConfigurationModel, response.json())
 
@@ -1955,7 +1752,7 @@ class EmailConfigurationOperations:
         resource_group_name: str,
         vault_name: str,
         email_configuration_name: str,
-        resource: _models.EmailConfigurationModel,
+        body: _models.EmailConfigurationModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1969,8 +1766,8 @@ class EmailConfigurationOperations:
         :type vault_name: str
         :param email_configuration_name: The email configuration name. Required.
         :type email_configuration_name: str
-        :param resource: EmailConfiguration model. Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.EmailConfigurationModel
+        :param body: EmailConfiguration model. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.EmailConfigurationModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1985,7 +1782,7 @@ class EmailConfigurationOperations:
         resource_group_name: str,
         vault_name: str,
         email_configuration_name: str,
-        resource: JSON,
+        body: _types.EmailConfigurationModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1999,8 +1796,8 @@ class EmailConfigurationOperations:
         :type vault_name: str
         :param email_configuration_name: The email configuration name. Required.
         :type email_configuration_name: str
-        :param resource: EmailConfiguration model. Required.
-        :type resource: JSON
+        :param body: EmailConfiguration model. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.types.EmailConfigurationModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2015,7 +1812,7 @@ class EmailConfigurationOperations:
         resource_group_name: str,
         vault_name: str,
         email_configuration_name: str,
-        resource: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2029,8 +1826,8 @@ class EmailConfigurationOperations:
         :type vault_name: str
         :param email_configuration_name: The email configuration name. Required.
         :type email_configuration_name: str
-        :param resource: EmailConfiguration model. Required.
-        :type resource: IO[bytes]
+        :param body: EmailConfiguration model. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2045,7 +1842,7 @@ class EmailConfigurationOperations:
         resource_group_name: str,
         vault_name: str,
         email_configuration_name: str,
-        resource: Union[_models.EmailConfigurationModel, JSON, IO[bytes]],
+        body: Union[_models.EmailConfigurationModel, _types.EmailConfigurationModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.EmailConfigurationModel:
         """Creates an alert configuration setting for the given vault.
@@ -2057,10 +1854,10 @@ class EmailConfigurationOperations:
         :type vault_name: str
         :param email_configuration_name: The email configuration name. Required.
         :type email_configuration_name: str
-        :param resource: EmailConfiguration model. Is one of the following types:
-         EmailConfigurationModel, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.EmailConfigurationModel or
-         JSON or IO[bytes]
+        :param body: EmailConfiguration model. Is either a EmailConfigurationModel type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.EmailConfigurationModel or
+         ~azure.mgmt.recoveryservicesdatareplication.types.EmailConfigurationModel or IO[bytes]
         :return: EmailConfigurationModel. The EmailConfigurationModel is compatible with MutableMapping
         :rtype: ~azure.mgmt.recoveryservicesdatareplication.models.EmailConfigurationModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2081,10 +1878,10 @@ class EmailConfigurationOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_email_configuration_create_request(
             resource_group_name=resource_group_name,
@@ -2102,6 +1899,7 @@ class EmailConfigurationOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2116,11 +1914,14 @@ class EmailConfigurationOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EmailConfigurationModel, response.json())
 
@@ -2132,7 +1933,7 @@ class EmailConfigurationOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, vault_name: str, **kwargs: Any
-    ) -> Iterable["_models.EmailConfigurationModel"]:
+    ) -> ItemPaged["_models.EmailConfigurationModel"]:
         """Gets the list of alert configuration settings for the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2187,7 +1988,10 @@ class EmailConfigurationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2200,7 +2004,10 @@ class EmailConfigurationOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.EmailConfigurationModel], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.EmailConfigurationModel],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2216,7 +2023,10 @@ class EmailConfigurationOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2224,7 +2034,7 @@ class EmailConfigurationOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class VaultOperations:
+class VaultOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2234,7 +2044,7 @@ class VaultOperations:
         :attr:`vault` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -2282,6 +2092,7 @@ class VaultOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2296,11 +2107,14 @@ class VaultOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.VaultModel, response.json())
 
@@ -2313,7 +2127,7 @@ class VaultOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        resource: Union[_models.VaultModel, JSON, IO[bytes]],
+        body: Union[_models.VaultModel, _types.VaultModel, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2332,10 +2146,10 @@ class VaultOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_vault_create_request(
             resource_group_name=resource_group_name,
@@ -2352,6 +2166,7 @@ class VaultOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2365,7 +2180,10 @@ class VaultOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2375,7 +2193,7 @@ class VaultOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2387,7 +2205,7 @@ class VaultOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        resource: _models.VaultModel,
+        body: _models.VaultModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2399,8 +2217,8 @@ class VaultOperations:
         :type resource_group_name: str
         :param vault_name: The vault name. Required.
         :type vault_name: str
-        :param resource: Vault properties. Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.VaultModel
+        :param body: Vault properties. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.VaultModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2416,7 +2234,7 @@ class VaultOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        resource: JSON,
+        body: _types.VaultModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2428,8 +2246,8 @@ class VaultOperations:
         :type resource_group_name: str
         :param vault_name: The vault name. Required.
         :type vault_name: str
-        :param resource: Vault properties. Required.
-        :type resource: JSON
+        :param body: Vault properties. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.types.VaultModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2445,7 +2263,7 @@ class VaultOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        resource: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2457,8 +2275,8 @@ class VaultOperations:
         :type resource_group_name: str
         :param vault_name: The vault name. Required.
         :type vault_name: str
-        :param resource: Vault properties. Required.
-        :type resource: IO[bytes]
+        :param body: Vault properties. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2474,7 +2292,7 @@ class VaultOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        resource: Union[_models.VaultModel, JSON, IO[bytes]],
+        body: Union[_models.VaultModel, _types.VaultModel, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VaultModel]:
         """Creates the vault.
@@ -2484,10 +2302,9 @@ class VaultOperations:
         :type resource_group_name: str
         :param vault_name: The vault name. Required.
         :type vault_name: str
-        :param resource: Vault properties. Is one of the following types: VaultModel, JSON, IO[bytes]
-         Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.VaultModel or JSON or
-         IO[bytes]
+        :param body: Vault properties. Is either a VaultModel type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.VaultModel or
+         ~azure.mgmt.recoveryservicesdatareplication.types.VaultModel or IO[bytes]
         :return: An instance of LROPoller that returns VaultModel. The VaultModel is compatible with
          MutableMapping
         :rtype:
@@ -2506,7 +2323,7 @@ class VaultOperations:
             raw_result = self._create_initial(
                 resource_group_name=resource_group_name,
                 vault_name=vault_name,
-                resource=resource,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -2550,7 +2367,7 @@ class VaultOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        properties: Union[_models.VaultModelUpdate, JSON, IO[bytes]],
+        body: Union[_models.VaultModelUpdate, _types.VaultModelUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2569,10 +2386,10 @@ class VaultOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_vault_update_request(
             resource_group_name=resource_group_name,
@@ -2589,6 +2406,7 @@ class VaultOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2602,7 +2420,10 @@ class VaultOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2610,7 +2431,7 @@ class VaultOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2622,7 +2443,7 @@ class VaultOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        properties: _models.VaultModelUpdate,
+        body: _models.VaultModelUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2634,8 +2455,8 @@ class VaultOperations:
         :type resource_group_name: str
         :param vault_name: The vault name. Required.
         :type vault_name: str
-        :param properties: Vault properties. Required.
-        :type properties: ~azure.mgmt.recoveryservicesdatareplication.models.VaultModelUpdate
+        :param body: Vault properties. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.VaultModelUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2651,7 +2472,7 @@ class VaultOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        properties: JSON,
+        body: _types.VaultModelUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2663,8 +2484,8 @@ class VaultOperations:
         :type resource_group_name: str
         :param vault_name: The vault name. Required.
         :type vault_name: str
-        :param properties: Vault properties. Required.
-        :type properties: JSON
+        :param body: Vault properties. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.types.VaultModelUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2680,7 +2501,7 @@ class VaultOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        properties: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2692,8 +2513,8 @@ class VaultOperations:
         :type resource_group_name: str
         :param vault_name: The vault name. Required.
         :type vault_name: str
-        :param properties: Vault properties. Required.
-        :type properties: IO[bytes]
+        :param body: Vault properties. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2709,7 +2530,7 @@ class VaultOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        properties: Union[_models.VaultModelUpdate, JSON, IO[bytes]],
+        body: Union[_models.VaultModelUpdate, _types.VaultModelUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VaultModel]:
         """Performs update on the vault.
@@ -2719,10 +2540,9 @@ class VaultOperations:
         :type resource_group_name: str
         :param vault_name: The vault name. Required.
         :type vault_name: str
-        :param properties: Vault properties. Is one of the following types: VaultModelUpdate, JSON,
-         IO[bytes] Required.
-        :type properties: ~azure.mgmt.recoveryservicesdatareplication.models.VaultModelUpdate or JSON
-         or IO[bytes]
+        :param body: Vault properties. Is either a VaultModelUpdate type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.VaultModelUpdate or
+         ~azure.mgmt.recoveryservicesdatareplication.types.VaultModelUpdate or IO[bytes]
         :return: An instance of LROPoller that returns VaultModel. The VaultModel is compatible with
          MutableMapping
         :rtype:
@@ -2741,7 +2561,7 @@ class VaultOperations:
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 vault_name=vault_name,
-                properties=properties,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -2808,6 +2628,7 @@ class VaultOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2821,7 +2642,10 @@ class VaultOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2829,7 +2653,7 @@ class VaultOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2896,7 +2720,7 @@ class VaultOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.VaultModel"]:
+    ) -> ItemPaged["_models.VaultModel"]:
         """Gets the list of vaults in the given subscription and resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2952,7 +2776,10 @@ class VaultOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2965,7 +2792,10 @@ class VaultOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.VaultModel], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.VaultModel],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2981,7 +2811,10 @@ class VaultOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2989,7 +2822,7 @@ class VaultOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.VaultModel"]:
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.VaultModel"]:
         """Gets the list of vaults in the given subscription.
 
         :return: An iterator like instance of VaultModel
@@ -3037,7 +2870,10 @@ class VaultOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3050,7 +2886,10 @@ class VaultOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.VaultModel], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.VaultModel],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3066,7 +2905,10 @@ class VaultOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3074,7 +2916,7 @@ class VaultOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class EventOperations:
+class EventOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3084,7 +2926,7 @@ class EventOperations:
         :attr:`event` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -3135,6 +2977,7 @@ class EventOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3149,11 +2992,14 @@ class EventOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EventModel, response.json())
 
@@ -3172,7 +3018,7 @@ class EventOperations:
         continuation_token_parameter: Optional[str] = None,
         page_size: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.EventModel"]:
+    ) -> ItemPaged["_models.EventModel"]:
         """Gets the list of events in the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3236,7 +3082,10 @@ class EventOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3249,7 +3098,10 @@ class EventOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.EventModel], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.EventModel],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3265,7 +3117,10 @@ class EventOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3273,7 +3128,7 @@ class EventOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class FabricOperations:
+class FabricOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3283,7 +3138,7 @@ class FabricOperations:
         :attr:`fabric` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -3331,6 +3186,7 @@ class FabricOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3345,11 +3201,14 @@ class FabricOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.FabricModel, response.json())
 
@@ -3362,7 +3221,7 @@ class FabricOperations:
         self,
         resource_group_name: str,
         fabric_name: str,
-        resource: Union[_models.FabricModel, JSON, IO[bytes]],
+        body: Union[_models.FabricModel, _types.FabricModel, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3381,10 +3240,10 @@ class FabricOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_fabric_create_request(
             resource_group_name=resource_group_name,
@@ -3401,6 +3260,7 @@ class FabricOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3414,7 +3274,10 @@ class FabricOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3424,7 +3287,7 @@ class FabricOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3436,7 +3299,7 @@ class FabricOperations:
         self,
         resource_group_name: str,
         fabric_name: str,
-        resource: _models.FabricModel,
+        body: _models.FabricModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3448,8 +3311,8 @@ class FabricOperations:
         :type resource_group_name: str
         :param fabric_name: The fabric name. Required.
         :type fabric_name: str
-        :param resource: Fabric properties. Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.FabricModel
+        :param body: Fabric properties. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.FabricModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3465,7 +3328,7 @@ class FabricOperations:
         self,
         resource_group_name: str,
         fabric_name: str,
-        resource: JSON,
+        body: _types.FabricModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3477,8 +3340,8 @@ class FabricOperations:
         :type resource_group_name: str
         :param fabric_name: The fabric name. Required.
         :type fabric_name: str
-        :param resource: Fabric properties. Required.
-        :type resource: JSON
+        :param body: Fabric properties. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.types.FabricModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3494,7 +3357,7 @@ class FabricOperations:
         self,
         resource_group_name: str,
         fabric_name: str,
-        resource: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3506,8 +3369,8 @@ class FabricOperations:
         :type resource_group_name: str
         :param fabric_name: The fabric name. Required.
         :type fabric_name: str
-        :param resource: Fabric properties. Required.
-        :type resource: IO[bytes]
+        :param body: Fabric properties. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3523,7 +3386,7 @@ class FabricOperations:
         self,
         resource_group_name: str,
         fabric_name: str,
-        resource: Union[_models.FabricModel, JSON, IO[bytes]],
+        body: Union[_models.FabricModel, _types.FabricModel, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.FabricModel]:
         """Creates the fabric.
@@ -3533,10 +3396,9 @@ class FabricOperations:
         :type resource_group_name: str
         :param fabric_name: The fabric name. Required.
         :type fabric_name: str
-        :param resource: Fabric properties. Is one of the following types: FabricModel, JSON, IO[bytes]
-         Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.FabricModel or JSON or
-         IO[bytes]
+        :param body: Fabric properties. Is either a FabricModel type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.FabricModel or
+         ~azure.mgmt.recoveryservicesdatareplication.types.FabricModel or IO[bytes]
         :return: An instance of LROPoller that returns FabricModel. The FabricModel is compatible with
          MutableMapping
         :rtype:
@@ -3555,7 +3417,7 @@ class FabricOperations:
             raw_result = self._create_initial(
                 resource_group_name=resource_group_name,
                 fabric_name=fabric_name,
-                resource=resource,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -3599,7 +3461,7 @@ class FabricOperations:
         self,
         resource_group_name: str,
         fabric_name: str,
-        properties: Union[_models.FabricModelUpdate, JSON, IO[bytes]],
+        body: Union[_models.FabricModelUpdate, _types.FabricModelUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3618,10 +3480,10 @@ class FabricOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_fabric_update_request(
             resource_group_name=resource_group_name,
@@ -3638,6 +3500,7 @@ class FabricOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3651,7 +3514,10 @@ class FabricOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3659,7 +3525,7 @@ class FabricOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3671,7 +3537,7 @@ class FabricOperations:
         self,
         resource_group_name: str,
         fabric_name: str,
-        properties: _models.FabricModelUpdate,
+        body: _models.FabricModelUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3683,8 +3549,8 @@ class FabricOperations:
         :type resource_group_name: str
         :param fabric_name: The fabric name. Required.
         :type fabric_name: str
-        :param properties: Fabric properties. Required.
-        :type properties: ~azure.mgmt.recoveryservicesdatareplication.models.FabricModelUpdate
+        :param body: Fabric properties. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.FabricModelUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3700,7 +3566,7 @@ class FabricOperations:
         self,
         resource_group_name: str,
         fabric_name: str,
-        properties: JSON,
+        body: _types.FabricModelUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3712,8 +3578,8 @@ class FabricOperations:
         :type resource_group_name: str
         :param fabric_name: The fabric name. Required.
         :type fabric_name: str
-        :param properties: Fabric properties. Required.
-        :type properties: JSON
+        :param body: Fabric properties. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.types.FabricModelUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3729,7 +3595,7 @@ class FabricOperations:
         self,
         resource_group_name: str,
         fabric_name: str,
-        properties: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3741,8 +3607,8 @@ class FabricOperations:
         :type resource_group_name: str
         :param fabric_name: The fabric name. Required.
         :type fabric_name: str
-        :param properties: Fabric properties. Required.
-        :type properties: IO[bytes]
+        :param body: Fabric properties. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3758,7 +3624,7 @@ class FabricOperations:
         self,
         resource_group_name: str,
         fabric_name: str,
-        properties: Union[_models.FabricModelUpdate, JSON, IO[bytes]],
+        body: Union[_models.FabricModelUpdate, _types.FabricModelUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.FabricModel]:
         """Performs update on the fabric.
@@ -3768,10 +3634,10 @@ class FabricOperations:
         :type resource_group_name: str
         :param fabric_name: The fabric name. Required.
         :type fabric_name: str
-        :param properties: Fabric properties. Is one of the following types: FabricModelUpdate, JSON,
-         IO[bytes] Required.
-        :type properties: ~azure.mgmt.recoveryservicesdatareplication.models.FabricModelUpdate or JSON
-         or IO[bytes]
+        :param body: Fabric properties. Is either a FabricModelUpdate type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.FabricModelUpdate or
+         ~azure.mgmt.recoveryservicesdatareplication.types.FabricModelUpdate or IO[bytes]
         :return: An instance of LROPoller that returns FabricModel. The FabricModel is compatible with
          MutableMapping
         :rtype:
@@ -3790,7 +3656,7 @@ class FabricOperations:
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 fabric_name=fabric_name,
-                properties=properties,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -3857,6 +3723,7 @@ class FabricOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3870,7 +3737,10 @@ class FabricOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3878,7 +3748,7 @@ class FabricOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3945,7 +3815,7 @@ class FabricOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.FabricModel"]:
+    ) -> ItemPaged["_models.FabricModel"]:
         """Gets the list of fabrics in the given subscription and resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4001,7 +3871,10 @@ class FabricOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4014,7 +3887,10 @@ class FabricOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.FabricModel], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.FabricModel],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4030,7 +3906,10 @@ class FabricOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4038,7 +3917,7 @@ class FabricOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.FabricModel"]:
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.FabricModel"]:
         """Gets the list of fabrics in the given subscription.
 
         :return: An iterator like instance of FabricModel
@@ -4086,7 +3965,10 @@ class FabricOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4099,7 +3981,10 @@ class FabricOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.FabricModel], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.FabricModel],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4115,7 +4000,10 @@ class FabricOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4123,7 +4011,7 @@ class FabricOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class FabricAgentOperations:
+class FabricAgentOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4133,7 +4021,7 @@ class FabricAgentOperations:
         :attr:`fabric_agent` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -4186,6 +4074,7 @@ class FabricAgentOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4200,11 +4089,14 @@ class FabricAgentOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.FabricAgentModel, response.json())
 
@@ -4218,7 +4110,7 @@ class FabricAgentOperations:
         resource_group_name: str,
         fabric_name: str,
         fabric_agent_name: str,
-        resource: Union[_models.FabricAgentModel, JSON, IO[bytes]],
+        body: Union[_models.FabricAgentModel, _types.FabricAgentModel, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4237,10 +4129,10 @@ class FabricAgentOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_fabric_agent_create_request(
             resource_group_name=resource_group_name,
@@ -4258,6 +4150,7 @@ class FabricAgentOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4271,7 +4164,10 @@ class FabricAgentOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4281,7 +4177,7 @@ class FabricAgentOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4294,7 +4190,7 @@ class FabricAgentOperations:
         resource_group_name: str,
         fabric_name: str,
         fabric_agent_name: str,
-        resource: _models.FabricAgentModel,
+        body: _models.FabricAgentModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4308,8 +4204,8 @@ class FabricAgentOperations:
         :type fabric_name: str
         :param fabric_agent_name: The fabric agent name. Required.
         :type fabric_agent_name: str
-        :param resource: Fabric agent model. Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.FabricAgentModel
+        :param body: Fabric agent model. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.FabricAgentModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4326,7 +4222,7 @@ class FabricAgentOperations:
         resource_group_name: str,
         fabric_name: str,
         fabric_agent_name: str,
-        resource: JSON,
+        body: _types.FabricAgentModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4340,8 +4236,8 @@ class FabricAgentOperations:
         :type fabric_name: str
         :param fabric_agent_name: The fabric agent name. Required.
         :type fabric_agent_name: str
-        :param resource: Fabric agent model. Required.
-        :type resource: JSON
+        :param body: Fabric agent model. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.types.FabricAgentModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4358,7 +4254,7 @@ class FabricAgentOperations:
         resource_group_name: str,
         fabric_name: str,
         fabric_agent_name: str,
-        resource: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4372,8 +4268,8 @@ class FabricAgentOperations:
         :type fabric_name: str
         :param fabric_agent_name: The fabric agent name. Required.
         :type fabric_agent_name: str
-        :param resource: Fabric agent model. Required.
-        :type resource: IO[bytes]
+        :param body: Fabric agent model. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4390,7 +4286,7 @@ class FabricAgentOperations:
         resource_group_name: str,
         fabric_name: str,
         fabric_agent_name: str,
-        resource: Union[_models.FabricAgentModel, JSON, IO[bytes]],
+        body: Union[_models.FabricAgentModel, _types.FabricAgentModel, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.FabricAgentModel]:
         """Creates the fabric agent.
@@ -4402,10 +4298,10 @@ class FabricAgentOperations:
         :type fabric_name: str
         :param fabric_agent_name: The fabric agent name. Required.
         :type fabric_agent_name: str
-        :param resource: Fabric agent model. Is one of the following types: FabricAgentModel, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.FabricAgentModel or JSON or
-         IO[bytes]
+        :param body: Fabric agent model. Is either a FabricAgentModel type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.FabricAgentModel or
+         ~azure.mgmt.recoveryservicesdatareplication.types.FabricAgentModel or IO[bytes]
         :return: An instance of LROPoller that returns FabricAgentModel. The FabricAgentModel is
          compatible with MutableMapping
         :rtype:
@@ -4425,7 +4321,7 @@ class FabricAgentOperations:
                 resource_group_name=resource_group_name,
                 fabric_name=fabric_name,
                 fabric_agent_name=fabric_agent_name,
-                resource=resource,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -4495,6 +4391,7 @@ class FabricAgentOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4508,7 +4405,10 @@ class FabricAgentOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4516,7 +4416,7 @@ class FabricAgentOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4586,7 +4486,7 @@ class FabricAgentOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, fabric_name: str, **kwargs: Any) -> Iterable["_models.FabricAgentModel"]:
+    def list(self, resource_group_name: str, fabric_name: str, **kwargs: Any) -> ItemPaged["_models.FabricAgentModel"]:
         """Gets the list of fabric agents in the given fabric.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4641,7 +4541,10 @@ class FabricAgentOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4654,7 +4557,10 @@ class FabricAgentOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.FabricAgentModel], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.FabricAgentModel],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4670,7 +4576,10 @@ class FabricAgentOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4678,7 +4587,7 @@ class FabricAgentOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class JobOperations:
+class JobOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4688,7 +4597,7 @@ class JobOperations:
         :attr:`job` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -4739,6 +4648,7 @@ class JobOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4753,11 +4663,14 @@ class JobOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.JobModel, response.json())
 
@@ -4776,7 +4689,7 @@ class JobOperations:
         continuation_token_parameter: Optional[str] = None,
         page_size: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.JobModel"]:
+    ) -> ItemPaged["_models.JobModel"]:
         """Gets the list of jobs in the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4840,7 +4753,10 @@ class JobOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4853,7 +4769,10 @@ class JobOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.JobModel], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.JobModel],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4869,7 +4788,10 @@ class JobOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4877,7 +4799,7 @@ class JobOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PolicyOperations:
+class PolicyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4887,7 +4809,7 @@ class PolicyOperations:
         :attr:`policy` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -4938,6 +4860,7 @@ class PolicyOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4952,11 +4875,14 @@ class PolicyOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PolicyModel, response.json())
 
@@ -4970,7 +4896,7 @@ class PolicyOperations:
         resource_group_name: str,
         vault_name: str,
         policy_name: str,
-        resource: Union[_models.PolicyModel, JSON, IO[bytes]],
+        body: Union[_models.PolicyModel, _types.PolicyModel, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4989,10 +4915,10 @@ class PolicyOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_policy_create_request(
             resource_group_name=resource_group_name,
@@ -5010,6 +4936,7 @@ class PolicyOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5023,7 +4950,10 @@ class PolicyOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5033,7 +4963,7 @@ class PolicyOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5046,7 +4976,7 @@ class PolicyOperations:
         resource_group_name: str,
         vault_name: str,
         policy_name: str,
-        resource: _models.PolicyModel,
+        body: _models.PolicyModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5060,8 +4990,8 @@ class PolicyOperations:
         :type vault_name: str
         :param policy_name: The policy name. Required.
         :type policy_name: str
-        :param resource: Policy model. Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.PolicyModel
+        :param body: Policy model. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.PolicyModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5078,7 +5008,7 @@ class PolicyOperations:
         resource_group_name: str,
         vault_name: str,
         policy_name: str,
-        resource: JSON,
+        body: _types.PolicyModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5092,8 +5022,8 @@ class PolicyOperations:
         :type vault_name: str
         :param policy_name: The policy name. Required.
         :type policy_name: str
-        :param resource: Policy model. Required.
-        :type resource: JSON
+        :param body: Policy model. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.types.PolicyModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5110,7 +5040,7 @@ class PolicyOperations:
         resource_group_name: str,
         vault_name: str,
         policy_name: str,
-        resource: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5124,8 +5054,8 @@ class PolicyOperations:
         :type vault_name: str
         :param policy_name: The policy name. Required.
         :type policy_name: str
-        :param resource: Policy model. Required.
-        :type resource: IO[bytes]
+        :param body: Policy model. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5142,7 +5072,7 @@ class PolicyOperations:
         resource_group_name: str,
         vault_name: str,
         policy_name: str,
-        resource: Union[_models.PolicyModel, JSON, IO[bytes]],
+        body: Union[_models.PolicyModel, _types.PolicyModel, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.PolicyModel]:
         """Creates the policy.
@@ -5154,10 +5084,9 @@ class PolicyOperations:
         :type vault_name: str
         :param policy_name: The policy name. Required.
         :type policy_name: str
-        :param resource: Policy model. Is one of the following types: PolicyModel, JSON, IO[bytes]
-         Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.PolicyModel or JSON or
-         IO[bytes]
+        :param body: Policy model. Is either a PolicyModel type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.PolicyModel or
+         ~azure.mgmt.recoveryservicesdatareplication.types.PolicyModel or IO[bytes]
         :return: An instance of LROPoller that returns PolicyModel. The PolicyModel is compatible with
          MutableMapping
         :rtype:
@@ -5177,7 +5106,7 @@ class PolicyOperations:
                 resource_group_name=resource_group_name,
                 vault_name=vault_name,
                 policy_name=policy_name,
-                resource=resource,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -5247,6 +5176,7 @@ class PolicyOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5260,7 +5190,10 @@ class PolicyOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5268,7 +5201,7 @@ class PolicyOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5338,7 +5271,7 @@ class PolicyOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, vault_name: str, **kwargs: Any) -> Iterable["_models.PolicyModel"]:
+    def list(self, resource_group_name: str, vault_name: str, **kwargs: Any) -> ItemPaged["_models.PolicyModel"]:
         """Gets the list of policies in the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5393,7 +5326,10 @@ class PolicyOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5406,7 +5342,10 @@ class PolicyOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PolicyModel], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.PolicyModel],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5422,7 +5361,10 @@ class PolicyOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5430,7 +5372,7 @@ class PolicyOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5440,7 +5382,7 @@ class PrivateEndpointConnectionsOperations:
         :attr:`private_endpoint_connections` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -5494,6 +5436,7 @@ class PrivateEndpointConnectionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5508,11 +5451,14 @@ class PrivateEndpointConnectionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PrivateEndpointConnection, response.json())
 
@@ -5527,7 +5473,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         vault_name: str,
         private_endpoint_connection_name: str,
-        resource: _models.PrivateEndpointConnection,
+        body: _models.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5542,8 +5488,8 @@ class PrivateEndpointConnectionsOperations:
         :type vault_name: str
         :param private_endpoint_connection_name: The private endpoint connection name. Required.
         :type private_endpoint_connection_name: str
-        :param resource: Private endpoint connection update input. Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnection
+        :param body: Private endpoint connection update input. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5559,7 +5505,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         vault_name: str,
         private_endpoint_connection_name: str,
-        resource: JSON,
+        body: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5574,8 +5520,8 @@ class PrivateEndpointConnectionsOperations:
         :type vault_name: str
         :param private_endpoint_connection_name: The private endpoint connection name. Required.
         :type private_endpoint_connection_name: str
-        :param resource: Private endpoint connection update input. Required.
-        :type resource: JSON
+        :param body: Private endpoint connection update input. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5591,7 +5537,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         vault_name: str,
         private_endpoint_connection_name: str,
-        resource: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5606,8 +5552,8 @@ class PrivateEndpointConnectionsOperations:
         :type vault_name: str
         :param private_endpoint_connection_name: The private endpoint connection name. Required.
         :type private_endpoint_connection_name: str
-        :param resource: Private endpoint connection update input. Required.
-        :type resource: IO[bytes]
+        :param body: Private endpoint connection update input. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5623,7 +5569,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         vault_name: str,
         private_endpoint_connection_name: str,
-        resource: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        body: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
         """Updated the private endpoint connection status (Approval/Rejected). This gets invoked by
@@ -5636,10 +5582,10 @@ class PrivateEndpointConnectionsOperations:
         :type vault_name: str
         :param private_endpoint_connection_name: The private endpoint connection name. Required.
         :type private_endpoint_connection_name: str
-        :param resource: Private endpoint connection update input. Is one of the following types:
-         PrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnection or
-         JSON or IO[bytes]
+        :param body: Private endpoint connection update input. Is either a PrivateEndpointConnection
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnection or
+         ~azure.mgmt.recoveryservicesdatareplication.types.PrivateEndpointConnection or IO[bytes]
         :return: PrivateEndpointConnection. The PrivateEndpointConnection is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnection
@@ -5661,10 +5607,10 @@ class PrivateEndpointConnectionsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_private_endpoint_connections_update_request(
             resource_group_name=resource_group_name,
@@ -5682,6 +5628,7 @@ class PrivateEndpointConnectionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5696,11 +5643,14 @@ class PrivateEndpointConnectionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PrivateEndpointConnection, response.json())
 
@@ -5739,6 +5689,7 @@ class PrivateEndpointConnectionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5752,7 +5703,10 @@ class PrivateEndpointConnectionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5760,7 +5714,7 @@ class PrivateEndpointConnectionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5832,7 +5786,7 @@ class PrivateEndpointConnectionsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, vault_name: str, **kwargs: Any
-    ) -> Iterable["_models.PrivateEndpointConnection"]:
+    ) -> ItemPaged["_models.PrivateEndpointConnection"]:
         """Gets the all private endpoint connections configured on the vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5887,509 +5841,10 @@ class PrivateEndpointConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PrivateEndpointConnection], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-
-class PrivateEndpointConnectionProxiesOperations:  # pylint: disable=name-too-long
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.recoveryservicesdatareplication.RecoveryServicesDataReplicationMgmtClient`'s
-        :attr:`private_endpoint_connection_proxies` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(
-        self, resource_group_name: str, vault_name: str, private_endpoint_connection_proxy_name: str, **kwargs: Any
-    ) -> _models.PrivateEndpointConnectionProxy:
-        """Gets the private endpoint connection proxy details.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The vault name. Required.
-        :type vault_name: str
-        :param private_endpoint_connection_proxy_name: The private endpoint connection proxy name.
-         Required.
-        :type private_endpoint_connection_proxy_name: str
-        :return: PrivateEndpointConnectionProxy. The PrivateEndpointConnectionProxy is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnectionProxy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.PrivateEndpointConnectionProxy] = kwargs.pop("cls", None)
-
-        _request = build_private_endpoint_connection_proxies_get_request(
-            resource_group_name=resource_group_name,
-            vault_name=vault_name,
-            private_endpoint_connection_proxy_name=private_endpoint_connection_proxy_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.PrivateEndpointConnectionProxy, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def create(
-        self,
-        resource_group_name: str,
-        vault_name: str,
-        private_endpoint_connection_proxy_name: str,
-        resource: _models.PrivateEndpointConnectionProxy,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PrivateEndpointConnectionProxy:
-        """Create a new private endpoint connection proxy which includes both auto and manual approval
-        types. Creating the proxy resource will also create a private endpoint connection resource.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The vault name. Required.
-        :type vault_name: str
-        :param private_endpoint_connection_proxy_name: The private endpoint connection proxy name.
-         Required.
-        :type private_endpoint_connection_proxy_name: str
-        :param resource: Private endpoint connection creation input. Required.
-        :type resource:
-         ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnectionProxy
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PrivateEndpointConnectionProxy. The PrivateEndpointConnectionProxy is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnectionProxy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self,
-        resource_group_name: str,
-        vault_name: str,
-        private_endpoint_connection_proxy_name: str,
-        resource: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PrivateEndpointConnectionProxy:
-        """Create a new private endpoint connection proxy which includes both auto and manual approval
-        types. Creating the proxy resource will also create a private endpoint connection resource.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The vault name. Required.
-        :type vault_name: str
-        :param private_endpoint_connection_proxy_name: The private endpoint connection proxy name.
-         Required.
-        :type private_endpoint_connection_proxy_name: str
-        :param resource: Private endpoint connection creation input. Required.
-        :type resource: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PrivateEndpointConnectionProxy. The PrivateEndpointConnectionProxy is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnectionProxy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self,
-        resource_group_name: str,
-        vault_name: str,
-        private_endpoint_connection_proxy_name: str,
-        resource: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PrivateEndpointConnectionProxy:
-        """Create a new private endpoint connection proxy which includes both auto and manual approval
-        types. Creating the proxy resource will also create a private endpoint connection resource.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The vault name. Required.
-        :type vault_name: str
-        :param private_endpoint_connection_proxy_name: The private endpoint connection proxy name.
-         Required.
-        :type private_endpoint_connection_proxy_name: str
-        :param resource: Private endpoint connection creation input. Required.
-        :type resource: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PrivateEndpointConnectionProxy. The PrivateEndpointConnectionProxy is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnectionProxy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def create(
-        self,
-        resource_group_name: str,
-        vault_name: str,
-        private_endpoint_connection_proxy_name: str,
-        resource: Union[_models.PrivateEndpointConnectionProxy, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PrivateEndpointConnectionProxy:
-        """Create a new private endpoint connection proxy which includes both auto and manual approval
-        types. Creating the proxy resource will also create a private endpoint connection resource.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The vault name. Required.
-        :type vault_name: str
-        :param private_endpoint_connection_proxy_name: The private endpoint connection proxy name.
-         Required.
-        :type private_endpoint_connection_proxy_name: str
-        :param resource: Private endpoint connection creation input. Is one of the following types:
-         PrivateEndpointConnectionProxy, JSON, IO[bytes] Required.
-        :type resource:
-         ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnectionProxy or JSON or
-         IO[bytes]
-        :return: PrivateEndpointConnectionProxy. The PrivateEndpointConnectionProxy is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnectionProxy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PrivateEndpointConnectionProxy] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
-        else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_private_endpoint_connection_proxies_create_request(
-            resource_group_name=resource_group_name,
-            vault_name=vault_name,
-            private_endpoint_connection_proxy_name=private_endpoint_connection_proxy_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.PrivateEndpointConnectionProxy, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    def _delete_initial(
-        self, resource_group_name: str, vault_name: str, private_endpoint_connection_proxy_name: str, **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_private_endpoint_connection_proxies_delete_request(
-            resource_group_name=resource_group_name,
-            vault_name=vault_name,
-            private_endpoint_connection_proxy_name=private_endpoint_connection_proxy_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202, 204]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_delete(
-        self, resource_group_name: str, vault_name: str, private_endpoint_connection_proxy_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
-        """Returns the operation to track the deletion of private endpoint connection proxy.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The vault name. Required.
-        :type vault_name: str
-        :param private_endpoint_connection_proxy_name: The private endpoint connection proxy name.
-         Required.
-        :type private_endpoint_connection_proxy_name: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._delete_initial(
-                resource_group_name=resource_group_name,
-                vault_name=vault_name,
-                private_endpoint_connection_proxy_name=private_endpoint_connection_proxy_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace
-    def list(
-        self, resource_group_name: str, vault_name: str, **kwargs: Any
-    ) -> Iterable["_models.PrivateEndpointConnectionProxy"]:
-        """Gets the all private endpoint connections proxies.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The vault name. Required.
-        :type vault_name: str
-        :return: An iterator like instance of PrivateEndpointConnectionProxy
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnectionProxy]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.PrivateEndpointConnectionProxy]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_private_endpoint_connection_proxies_list_request(
-                    resource_group_name=resource_group_name,
-                    vault_name=vault_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
                     headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6402,7 +5857,10 @@ class PrivateEndpointConnectionProxiesOperations:  # pylint: disable=name-too-lo
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PrivateEndpointConnectionProxy], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.PrivateEndpointConnection],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -6418,203 +5876,18 @@ class PrivateEndpointConnectionProxiesOperations:  # pylint: disable=name-too-lo
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
 
-    @overload
-    def validate(
-        self,
-        resource_group_name: str,
-        vault_name: str,
-        private_endpoint_connection_proxy_name: str,
-        body: _models.PrivateEndpointConnectionProxy,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PrivateEndpointConnectionProxy:
-        """Returns remote private endpoint connection information after validation.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The vault name. Required.
-        :type vault_name: str
-        :param private_endpoint_connection_proxy_name: The private endpoint connection proxy name.
-         Required.
-        :type private_endpoint_connection_proxy_name: str
-        :param body: The private endpoint connection proxy input. Required.
-        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnectionProxy
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PrivateEndpointConnectionProxy. The PrivateEndpointConnectionProxy is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnectionProxy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def validate(
-        self,
-        resource_group_name: str,
-        vault_name: str,
-        private_endpoint_connection_proxy_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PrivateEndpointConnectionProxy:
-        """Returns remote private endpoint connection information after validation.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The vault name. Required.
-        :type vault_name: str
-        :param private_endpoint_connection_proxy_name: The private endpoint connection proxy name.
-         Required.
-        :type private_endpoint_connection_proxy_name: str
-        :param body: The private endpoint connection proxy input. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PrivateEndpointConnectionProxy. The PrivateEndpointConnectionProxy is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnectionProxy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def validate(
-        self,
-        resource_group_name: str,
-        vault_name: str,
-        private_endpoint_connection_proxy_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PrivateEndpointConnectionProxy:
-        """Returns remote private endpoint connection information after validation.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The vault name. Required.
-        :type vault_name: str
-        :param private_endpoint_connection_proxy_name: The private endpoint connection proxy name.
-         Required.
-        :type private_endpoint_connection_proxy_name: str
-        :param body: The private endpoint connection proxy input. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PrivateEndpointConnectionProxy. The PrivateEndpointConnectionProxy is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnectionProxy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def validate(
-        self,
-        resource_group_name: str,
-        vault_name: str,
-        private_endpoint_connection_proxy_name: str,
-        body: Union[_models.PrivateEndpointConnectionProxy, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PrivateEndpointConnectionProxy:
-        """Returns remote private endpoint connection information after validation.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vault_name: The vault name. Required.
-        :type vault_name: str
-        :param private_endpoint_connection_proxy_name: The private endpoint connection proxy name.
-         Required.
-        :type private_endpoint_connection_proxy_name: str
-        :param body: The private endpoint connection proxy input. Is one of the following types:
-         PrivateEndpointConnectionProxy, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnectionProxy
-         or JSON or IO[bytes]
-        :return: PrivateEndpointConnectionProxy. The PrivateEndpointConnectionProxy is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnectionProxy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PrivateEndpointConnectionProxy] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_private_endpoint_connection_proxies_validate_request(
-            resource_group_name=resource_group_name,
-            vault_name=vault_name,
-            private_endpoint_connection_proxy_name=private_endpoint_connection_proxy_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.PrivateEndpointConnectionProxy, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6624,7 +5897,7 @@ class PrivateLinkResourcesOperations:
         :attr:`private_link_resources` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -6677,6 +5950,7 @@ class PrivateLinkResourcesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6691,11 +5965,14 @@ class PrivateLinkResourcesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.PrivateLinkResource, response.json())
 
@@ -6705,7 +5982,9 @@ class PrivateLinkResourcesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, vault_name: str, **kwargs: Any) -> Iterable["_models.PrivateLinkResource"]:
+    def list(
+        self, resource_group_name: str, vault_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.PrivateLinkResource"]:
         """Gets the list of private link resources.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -6760,7 +6039,10 @@ class PrivateLinkResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6773,7 +6055,10 @@ class PrivateLinkResourcesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PrivateLinkResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.PrivateLinkResource],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -6789,7 +6074,10 @@ class PrivateLinkResourcesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -6797,7 +6085,7 @@ class PrivateLinkResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ProtectedItemOperations:
+class ProtectedItemOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6807,7 +6095,7 @@ class ProtectedItemOperations:
         :attr:`protected_item` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -6860,6 +6148,7 @@ class ProtectedItemOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6874,11 +6163,14 @@ class ProtectedItemOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ProtectedItemModel, response.json())
 
@@ -6892,7 +6184,7 @@ class ProtectedItemOperations:
         resource_group_name: str,
         vault_name: str,
         protected_item_name: str,
-        resource: Union[_models.ProtectedItemModel, JSON, IO[bytes]],
+        body: Union[_models.ProtectedItemModel, _types.ProtectedItemModel, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6911,10 +6203,10 @@ class ProtectedItemOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_protected_item_create_request(
             resource_group_name=resource_group_name,
@@ -6932,6 +6224,7 @@ class ProtectedItemOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6945,7 +6238,10 @@ class ProtectedItemOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -6955,7 +6251,7 @@ class ProtectedItemOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6968,7 +6264,7 @@ class ProtectedItemOperations:
         resource_group_name: str,
         vault_name: str,
         protected_item_name: str,
-        resource: _models.ProtectedItemModel,
+        body: _models.ProtectedItemModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6982,8 +6278,8 @@ class ProtectedItemOperations:
         :type vault_name: str
         :param protected_item_name: The protected item name. Required.
         :type protected_item_name: str
-        :param resource: Protected item model. Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.ProtectedItemModel
+        :param body: Protected item model. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.ProtectedItemModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7000,7 +6296,7 @@ class ProtectedItemOperations:
         resource_group_name: str,
         vault_name: str,
         protected_item_name: str,
-        resource: JSON,
+        body: _types.ProtectedItemModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7014,8 +6310,8 @@ class ProtectedItemOperations:
         :type vault_name: str
         :param protected_item_name: The protected item name. Required.
         :type protected_item_name: str
-        :param resource: Protected item model. Required.
-        :type resource: JSON
+        :param body: Protected item model. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.types.ProtectedItemModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7032,7 +6328,7 @@ class ProtectedItemOperations:
         resource_group_name: str,
         vault_name: str,
         protected_item_name: str,
-        resource: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7046,8 +6342,8 @@ class ProtectedItemOperations:
         :type vault_name: str
         :param protected_item_name: The protected item name. Required.
         :type protected_item_name: str
-        :param resource: Protected item model. Required.
-        :type resource: IO[bytes]
+        :param body: Protected item model. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7064,7 +6360,7 @@ class ProtectedItemOperations:
         resource_group_name: str,
         vault_name: str,
         protected_item_name: str,
-        resource: Union[_models.ProtectedItemModel, JSON, IO[bytes]],
+        body: Union[_models.ProtectedItemModel, _types.ProtectedItemModel, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ProtectedItemModel]:
         """Creates the protected item.
@@ -7076,10 +6372,10 @@ class ProtectedItemOperations:
         :type vault_name: str
         :param protected_item_name: The protected item name. Required.
         :type protected_item_name: str
-        :param resource: Protected item model. Is one of the following types: ProtectedItemModel, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.ProtectedItemModel or JSON
-         or IO[bytes]
+        :param body: Protected item model. Is either a ProtectedItemModel type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.ProtectedItemModel or
+         ~azure.mgmt.recoveryservicesdatareplication.types.ProtectedItemModel or IO[bytes]
         :return: An instance of LROPoller that returns ProtectedItemModel. The ProtectedItemModel is
          compatible with MutableMapping
         :rtype:
@@ -7099,7 +6395,7 @@ class ProtectedItemOperations:
                 resource_group_name=resource_group_name,
                 vault_name=vault_name,
                 protected_item_name=protected_item_name,
-                resource=resource,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -7144,7 +6440,7 @@ class ProtectedItemOperations:
         resource_group_name: str,
         vault_name: str,
         protected_item_name: str,
-        properties: Union[_models.ProtectedItemModelUpdate, JSON, IO[bytes]],
+        body: Union[_models.ProtectedItemModelUpdate, _types.ProtectedItemModelUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7163,10 +6459,10 @@ class ProtectedItemOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_protected_item_update_request(
             resource_group_name=resource_group_name,
@@ -7184,6 +6480,7 @@ class ProtectedItemOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7197,7 +6494,10 @@ class ProtectedItemOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -7205,7 +6505,7 @@ class ProtectedItemOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7218,7 +6518,7 @@ class ProtectedItemOperations:
         resource_group_name: str,
         vault_name: str,
         protected_item_name: str,
-        properties: _models.ProtectedItemModelUpdate,
+        body: _models.ProtectedItemModelUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7232,8 +6532,8 @@ class ProtectedItemOperations:
         :type vault_name: str
         :param protected_item_name: The protected item name. Required.
         :type protected_item_name: str
-        :param properties: Protected item model. Required.
-        :type properties: ~azure.mgmt.recoveryservicesdatareplication.models.ProtectedItemModelUpdate
+        :param body: Protected item model. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.ProtectedItemModelUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7250,7 +6550,7 @@ class ProtectedItemOperations:
         resource_group_name: str,
         vault_name: str,
         protected_item_name: str,
-        properties: JSON,
+        body: _types.ProtectedItemModelUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7264,8 +6564,8 @@ class ProtectedItemOperations:
         :type vault_name: str
         :param protected_item_name: The protected item name. Required.
         :type protected_item_name: str
-        :param properties: Protected item model. Required.
-        :type properties: JSON
+        :param body: Protected item model. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.types.ProtectedItemModelUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7282,7 +6582,7 @@ class ProtectedItemOperations:
         resource_group_name: str,
         vault_name: str,
         protected_item_name: str,
-        properties: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7296,8 +6596,8 @@ class ProtectedItemOperations:
         :type vault_name: str
         :param protected_item_name: The protected item name. Required.
         :type protected_item_name: str
-        :param properties: Protected item model. Required.
-        :type properties: IO[bytes]
+        :param body: Protected item model. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7314,7 +6614,7 @@ class ProtectedItemOperations:
         resource_group_name: str,
         vault_name: str,
         protected_item_name: str,
-        properties: Union[_models.ProtectedItemModelUpdate, JSON, IO[bytes]],
+        body: Union[_models.ProtectedItemModelUpdate, _types.ProtectedItemModelUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ProtectedItemModel]:
         """Performs update on the protected item.
@@ -7326,10 +6626,10 @@ class ProtectedItemOperations:
         :type vault_name: str
         :param protected_item_name: The protected item name. Required.
         :type protected_item_name: str
-        :param properties: Protected item model. Is one of the following types:
-         ProtectedItemModelUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.recoveryservicesdatareplication.models.ProtectedItemModelUpdate
-         or JSON or IO[bytes]
+        :param body: Protected item model. Is either a ProtectedItemModelUpdate type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.ProtectedItemModelUpdate or
+         ~azure.mgmt.recoveryservicesdatareplication.types.ProtectedItemModelUpdate or IO[bytes]
         :return: An instance of LROPoller that returns ProtectedItemModel. The ProtectedItemModel is
          compatible with MutableMapping
         :rtype:
@@ -7349,7 +6649,7 @@ class ProtectedItemOperations:
                 resource_group_name=resource_group_name,
                 vault_name=vault_name,
                 protected_item_name=protected_item_name,
-                properties=properties,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -7426,6 +6726,7 @@ class ProtectedItemOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7439,7 +6740,10 @@ class ProtectedItemOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -7447,7 +6751,7 @@ class ProtectedItemOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7536,7 +6840,7 @@ class ProtectedItemOperations:
         continuation_token_parameter: Optional[str] = None,
         page_size: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.ProtectedItemModel"]:
+    ) -> ItemPaged["_models.ProtectedItemModel"]:
         """Gets the list of protected items in the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -7600,7 +6904,10 @@ class ProtectedItemOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7613,7 +6920,10 @@ class ProtectedItemOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ProtectedItemModel], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ProtectedItemModel],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -7629,7 +6939,10 @@ class ProtectedItemOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -7641,7 +6954,7 @@ class ProtectedItemOperations:
         resource_group_name: str,
         vault_name: str,
         protected_item_name: str,
-        body: Union[_models.PlannedFailoverModel, JSON, IO[bytes]],
+        body: Union[_models.PlannedFailoverModel, _types.PlannedFailoverModel, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7681,6 +6994,7 @@ class ProtectedItemOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7694,7 +7008,10 @@ class ProtectedItemOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -7702,7 +7019,7 @@ class ProtectedItemOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7747,7 +7064,7 @@ class ProtectedItemOperations:
         resource_group_name: str,
         vault_name: str,
         protected_item_name: str,
-        body: JSON,
+        body: _types.PlannedFailoverModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7762,7 +7079,7 @@ class ProtectedItemOperations:
         :param protected_item_name: The protected item name. Required.
         :type protected_item_name: str
         :param body: Planned failover model. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.types.PlannedFailoverModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7811,7 +7128,7 @@ class ProtectedItemOperations:
         resource_group_name: str,
         vault_name: str,
         protected_item_name: str,
-        body: Union[_models.PlannedFailoverModel, JSON, IO[bytes]],
+        body: Union[_models.PlannedFailoverModel, _types.PlannedFailoverModel, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.PlannedFailoverModel]:
         """Performs the planned failover on the protected item.
@@ -7823,10 +7140,10 @@ class ProtectedItemOperations:
         :type vault_name: str
         :param protected_item_name: The protected item name. Required.
         :type protected_item_name: str
-        :param body: Planned failover model. Is one of the following types: PlannedFailoverModel, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.PlannedFailoverModel or JSON or
-         IO[bytes]
+        :param body: Planned failover model. Is either a PlannedFailoverModel type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.PlannedFailoverModel or
+         ~azure.mgmt.recoveryservicesdatareplication.types.PlannedFailoverModel or IO[bytes]
         :return: An instance of LROPoller that returns PlannedFailoverModel. The PlannedFailoverModel
          is compatible with MutableMapping
         :rtype:
@@ -7857,14 +7174,10 @@ class ProtectedItemOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.PlannedFailoverModel, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -7891,7 +7204,7 @@ class ProtectedItemOperations:
         )
 
 
-class RecoveryPointOperations:
+class RecoveryPointOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7901,7 +7214,7 @@ class RecoveryPointOperations:
         :attr:`recovery_point` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -7962,6 +7275,7 @@ class RecoveryPointOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7976,11 +7290,14 @@ class RecoveryPointOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RecoveryPointModel, response.json())
 
@@ -7992,7 +7309,7 @@ class RecoveryPointOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, vault_name: str, protected_item_name: str, **kwargs: Any
-    ) -> Iterable["_models.RecoveryPointModel"]:
+    ) -> ItemPaged["_models.RecoveryPointModel"]:
         """Gets the list of recovery points of the given protected item.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -8050,7 +7367,10 @@ class RecoveryPointOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8063,7 +7383,10 @@ class RecoveryPointOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.RecoveryPointModel], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.RecoveryPointModel],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -8079,7 +7402,10 @@ class RecoveryPointOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -8087,7 +7413,7 @@ class RecoveryPointOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicationExtensionOperations:
+class ReplicationExtensionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8097,7 +7423,7 @@ class ReplicationExtensionOperations:
         :attr:`replication_extension` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -8151,6 +7477,7 @@ class ReplicationExtensionOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8165,11 +7492,14 @@ class ReplicationExtensionOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ReplicationExtensionModel, response.json())
 
@@ -8183,7 +7513,7 @@ class ReplicationExtensionOperations:
         resource_group_name: str,
         vault_name: str,
         replication_extension_name: str,
-        resource: Union[_models.ReplicationExtensionModel, JSON, IO[bytes]],
+        body: Union[_models.ReplicationExtensionModel, _types.ReplicationExtensionModel, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8202,10 +7532,10 @@ class ReplicationExtensionOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_replication_extension_create_request(
             resource_group_name=resource_group_name,
@@ -8223,6 +7553,7 @@ class ReplicationExtensionOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8236,7 +7567,10 @@ class ReplicationExtensionOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -8246,7 +7580,7 @@ class ReplicationExtensionOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8259,7 +7593,7 @@ class ReplicationExtensionOperations:
         resource_group_name: str,
         vault_name: str,
         replication_extension_name: str,
-        resource: _models.ReplicationExtensionModel,
+        body: _models.ReplicationExtensionModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8273,8 +7607,8 @@ class ReplicationExtensionOperations:
         :type vault_name: str
         :param replication_extension_name: The replication extension name. Required.
         :type replication_extension_name: str
-        :param resource: Replication extension model. Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.ReplicationExtensionModel
+        :param body: Replication extension model. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.ReplicationExtensionModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8291,7 +7625,7 @@ class ReplicationExtensionOperations:
         resource_group_name: str,
         vault_name: str,
         replication_extension_name: str,
-        resource: JSON,
+        body: _types.ReplicationExtensionModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8305,8 +7639,8 @@ class ReplicationExtensionOperations:
         :type vault_name: str
         :param replication_extension_name: The replication extension name. Required.
         :type replication_extension_name: str
-        :param resource: Replication extension model. Required.
-        :type resource: JSON
+        :param body: Replication extension model. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.types.ReplicationExtensionModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8323,7 +7657,7 @@ class ReplicationExtensionOperations:
         resource_group_name: str,
         vault_name: str,
         replication_extension_name: str,
-        resource: IO[bytes],
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8337,8 +7671,8 @@ class ReplicationExtensionOperations:
         :type vault_name: str
         :param replication_extension_name: The replication extension name. Required.
         :type replication_extension_name: str
-        :param resource: Replication extension model. Required.
-        :type resource: IO[bytes]
+        :param body: Replication extension model. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8355,7 +7689,7 @@ class ReplicationExtensionOperations:
         resource_group_name: str,
         vault_name: str,
         replication_extension_name: str,
-        resource: Union[_models.ReplicationExtensionModel, JSON, IO[bytes]],
+        body: Union[_models.ReplicationExtensionModel, _types.ReplicationExtensionModel, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ReplicationExtensionModel]:
         """Creates the replication extension in the given vault.
@@ -8367,10 +7701,10 @@ class ReplicationExtensionOperations:
         :type vault_name: str
         :param replication_extension_name: The replication extension name. Required.
         :type replication_extension_name: str
-        :param resource: Replication extension model. Is one of the following types:
-         ReplicationExtensionModel, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.recoveryservicesdatareplication.models.ReplicationExtensionModel or
-         JSON or IO[bytes]
+        :param body: Replication extension model. Is either a ReplicationExtensionModel type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.ReplicationExtensionModel or
+         ~azure.mgmt.recoveryservicesdatareplication.types.ReplicationExtensionModel or IO[bytes]
         :return: An instance of LROPoller that returns ReplicationExtensionModel. The
          ReplicationExtensionModel is compatible with MutableMapping
         :rtype:
@@ -8390,7 +7724,7 @@ class ReplicationExtensionOperations:
                 resource_group_name=resource_group_name,
                 vault_name=vault_name,
                 replication_extension_name=replication_extension_name,
-                resource=resource,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -8460,6 +7794,7 @@ class ReplicationExtensionOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8473,7 +7808,10 @@ class ReplicationExtensionOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -8481,7 +7819,7 @@ class ReplicationExtensionOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8553,7 +7891,7 @@ class ReplicationExtensionOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, vault_name: str, **kwargs: Any
-    ) -> Iterable["_models.ReplicationExtensionModel"]:
+    ) -> ItemPaged["_models.ReplicationExtensionModel"]:
         """Gets the list of replication extensions in the given vault.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -8608,7 +7946,10 @@ class ReplicationExtensionOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8621,7 +7962,10 @@ class ReplicationExtensionOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ReplicationExtensionModel], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ReplicationExtensionModel],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -8637,7 +7981,10 @@ class ReplicationExtensionOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -8645,7 +7992,7 @@ class ReplicationExtensionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CheckNameAvailabilityOperations:
+class CheckNameAvailabilityOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8655,7 +8002,7 @@ class CheckNameAvailabilityOperations:
         :attr:`check_name_availability` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -8692,7 +8039,12 @@ class CheckNameAvailabilityOperations:
 
     @overload
     def post(
-        self, location: str, body: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        body: Optional[_types.CheckNameAvailabilityModel] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponseModel:
         """Performs the resource name availability check.
 
@@ -8701,7 +8053,7 @@ class CheckNameAvailabilityOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param body: Resource details. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.types.CheckNameAvailabilityModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8736,7 +8088,7 @@ class CheckNameAvailabilityOperations:
     def post(
         self,
         location: str,
-        body: Optional[Union[_models.CheckNameAvailabilityModel, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.CheckNameAvailabilityModel, _types.CheckNameAvailabilityModel, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponseModel:
         """Performs the resource name availability check.
@@ -8745,10 +8097,10 @@ class CheckNameAvailabilityOperations:
 
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: Resource details. Is one of the following types: CheckNameAvailabilityModel, JSON,
-         IO[bytes] Default value is None.
+        :param body: Resource details. Is either a CheckNameAvailabilityModel type or a IO[bytes] type.
+         Default value is None.
         :type body: ~azure.mgmt.recoveryservicesdatareplication.models.CheckNameAvailabilityModel or
-         JSON or IO[bytes]
+         ~azure.mgmt.recoveryservicesdatareplication.types.CheckNameAvailabilityModel or IO[bytes]
         :return: CheckNameAvailabilityResponseModel. The CheckNameAvailabilityResponseModel is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.recoveryservicesdatareplication.models.CheckNameAvailabilityResponseModel
@@ -8766,9 +8118,10 @@ class CheckNameAvailabilityOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
         cls: ClsType[_models.CheckNameAvailabilityResponseModel] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if body else None
         _content = None
         if isinstance(body, (IOBase, bytes)):
             _content = body
@@ -8792,6 +8145,7 @@ class CheckNameAvailabilityOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8806,11 +8160,14 @@ class CheckNameAvailabilityOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CheckNameAvailabilityResponseModel, response.json())
 
@@ -8820,7 +8177,7 @@ class CheckNameAvailabilityOperations:
         return deserialized  # type: ignore
 
 
-class DeploymentPreflightOperations:
+class DeploymentPreflightOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8830,7 +8187,7 @@ class DeploymentPreflightOperations:
         :attr:`deployment_preflight` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -8874,7 +8231,7 @@ class DeploymentPreflightOperations:
         self,
         resource_group_name: str,
         deployment_id: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.DeploymentPreflightModel] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8889,7 +8246,7 @@ class DeploymentPreflightOperations:
         :param deployment_id: Deployment Id. Required.
         :type deployment_id: str
         :param body: Deployment preflight model. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.types.DeploymentPreflightModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8934,7 +8291,7 @@ class DeploymentPreflightOperations:
         self,
         resource_group_name: str,
         deployment_id: str,
-        body: Optional[Union[_models.DeploymentPreflightModel, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.DeploymentPreflightModel, _types.DeploymentPreflightModel, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.DeploymentPreflightModel:
         """Performs resource deployment validation.
@@ -8946,10 +8303,10 @@ class DeploymentPreflightOperations:
         :type resource_group_name: str
         :param deployment_id: Deployment Id. Required.
         :type deployment_id: str
-        :param body: Deployment preflight model. Is one of the following types:
-         DeploymentPreflightModel, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.DeploymentPreflightModel or JSON
-         or IO[bytes]
+        :param body: Deployment preflight model. Is either a DeploymentPreflightModel type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.recoveryservicesdatareplication.models.DeploymentPreflightModel or
+         ~azure.mgmt.recoveryservicesdatareplication.types.DeploymentPreflightModel or IO[bytes]
         :return: DeploymentPreflightModel. The DeploymentPreflightModel is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.recoveryservicesdatareplication.models.DeploymentPreflightModel
@@ -8967,9 +8324,10 @@ class DeploymentPreflightOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
         cls: ClsType[_models.DeploymentPreflightModel] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if body else None
         _content = None
         if isinstance(body, (IOBase, bytes)):
             _content = body
@@ -8994,6 +8352,7 @@ class DeploymentPreflightOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9008,11 +8367,14 @@ class DeploymentPreflightOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeploymentPreflightModel, response.json())
 
@@ -9022,7 +8384,7 @@ class DeploymentPreflightOperations:
         return deserialized  # type: ignore
 
 
-class OperationResultsOperations:
+class OperationResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9032,7 +8394,7 @@ class OperationResultsOperations:
         :attr:`operation_results` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -9082,6 +8444,7 @@ class OperationResultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9096,11 +8459,14 @@ class OperationResultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.OperationStatus, response.json())
 
@@ -9110,7 +8476,7 @@ class OperationResultsOperations:
         return deserialized  # type: ignore
 
 
-class LocationBasedOperationResultsOperations:
+class LocationBasedOperationResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9120,7 +8486,7 @@ class LocationBasedOperationResultsOperations:
         :attr:`location_based_operation_results` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: RecoveryServicesDataReplicationMgmtClientConfiguration = (
@@ -9173,6 +8539,7 @@ class LocationBasedOperationResultsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9187,11 +8554,14 @@ class LocationBasedOperationResultsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.OperationStatus, response.json())
 

@@ -38,7 +38,7 @@ class TestRecoveryServicesDataReplicationMgmtEmailConfigurationOperationsAsync(A
             resource_group_name=resource_group.name,
             vault_name="str",
             email_configuration_name="str",
-            resource={
+            body={
                 "id": "str",
                 "name": "str",
                 "properties": {
