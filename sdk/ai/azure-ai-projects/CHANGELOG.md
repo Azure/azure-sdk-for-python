@@ -4,6 +4,7 @@
 
 ### Features Added
 
+* Added preview GPT Live clients at `beta.voice_agents.live` for text and audio streaming, typed events, session controls, and Responses function-tool results. Both synchronous and asynchronous clients are available.
 * Added optional `VoiceAgentDefinition.soundscape` for built-in background ambience and event cues in telephony calls, with `VoiceAgentSoundscapeConfig`, `VoiceAgentSoundscapeSourceConfig`, `VoiceAgentSoundscapeTrackConfig`, `VoiceAgentSoundscapeWorkingTrackConfig`, and `VoiceAgentSoundscapeSound`.
 * Added optional `VoiceAgentInputTranscription.profanity_filter` and `VoiceAgentProfanityFilterMode` for configuring Azure Speech input-transcript filtering before a session starts.
 * Added `VoiceAgentInputTranscriptionModel.AZURE_SPEECH_STREAMING` for Azure Speech streaming transcription in cascaded text-model conversations. This model requires a nonempty `VoiceAgentInputTranscription.language` and is not supported with realtime speech-to-speech models.
@@ -23,6 +24,13 @@
 ### Bugs Fixed
 
 * Fixed tracing to record `temperature=0` and `top_p=0` instead of omitting these valid values.
+* Preserved Live and Realtime agent types when reading agents, without adding `sub_protocol` when it was omitted.
+* Accepted mappings other than dictionaries for GPT Live raw events and structured inputs.
+* Fixed overlapping async Voice Agent close calls to wait for the same cleanup, even if a caller is cancelled.
+
+### Sample updates
+
+* Added GPT Live samples for session setup, text conversations, function tools, WAV and microphone audio, and stored-conversation readback. The REST sample creates and cleans up a conversation when no ID is supplied, or reads an existing conversation without changing it. Audio downloads use a unique user-temporary folder.
 
 ## 2.9.0 (2026-10-16)
 

@@ -41,6 +41,46 @@ _ENDPOINT = "https://my-account.services.ai.azure.com/api/projects/my-project"
 
 
 @pytest.mark.parametrize(
+    "sub_protocol,expected_type",
+    [
+        (None, models.VoiceAgentDefinition),
+        ("realtime", models.VoiceAgentDefinition),
+        ("live", models.VoiceAgentLiveDefinition),
+        ("future-protocol", models.VoiceAgentBaseDefinition),
+    ],
+)
+def test_voice_agent_readback_preserves_concrete_types_and_wire_omission(sub_protocol, expected_type):
+    definition = {
+        "kind": "voice",
+        "model": "deployment-test",
+        "model_type": "self_deployed" if sub_protocol == "live" else "managed",
+    }
+    if sub_protocol is not None:
+        definition["sub_protocol"] = sub_protocol
+    version = models.AgentVersionDetails({"name": "agent-test", "version": "1", "definition": definition})
+
+    assert type(version.definition) is expected_type
+    assert version.definition.as_dict() == definition
+    assert expected_type(definition).as_dict() == definition
+    if isinstance(version.definition, (models.VoiceAgentDefinition, models.VoiceAgentLiveDefinition)):
+        assert version.definition.model == "deployment-test"
+
+
+@pytest.mark.parametrize(
+    "definition,expected_type",
+    [
+        ({"kind": "prompt", "model": "deployment-test"}, models.PromptAgentDefinition),
+        ({"kind": "future-agent-kind", "custom": {"setting": True}}, models.AgentDefinition),
+    ],
+)
+def test_voice_readback_customization_does_not_change_other_agent_kinds(definition, expected_type):
+    version = models.AgentVersionDetails({"name": "agent-test", "version": "1", "definition": definition})
+
+    assert type(version.definition) is expected_type
+    assert version.definition.as_dict() == definition
+
+
+@pytest.mark.parametrize(
     "definition_type,expected_annotation,expected_payload",
     [
         (
@@ -215,17 +255,13 @@ class TestRealtimeConnectionManagerEnter:
         assert headers["user-agent"] == "custom-user-agent"
 
     def test_enter_source_retains_client_identification_wiring(self):
-        # Regression guard for the SDK client-identification fix (ported from azure-ai-voicelive
-        # PR #48848) surviving a future TypeSpec regeneration. `_realtime.py` is a hand-written
-        # file that is NOT `_patch.py`-named, so it isn't covered by the code generator's own
-        # "never touch _patch.py" guarantee -- nothing in the TypeSpec emitter is aware this file
-        # exists. The tests above already fail on a *behavioral* regression (wrong header/query
-        # value), but they exercise the code through mocks and could, in principle, still pass
-        # against a rewritten implementation that happens to produce the same observable values by
-        # a different (less safe) path. This inspects the actual source of `enter()` so a partial
-        # revert -- one that drops the case-insensitive guard, say, while keeping the header value
-        # correct for the common case -- is caught directly, independent of the tests above.
-        source = inspect.getsource(BetaRealtimeConnectionManager.enter)
+        # SDK identification belongs to the authenticated transport shared by Live and Realtime.
+        source = "\n".join(
+            inspect.getsource(cls.__dict__[method])
+            for cls in BetaRealtimeConnectionManager.__mro__
+            for method in ("enter", "_get_query")
+            if method in cls.__dict__
+        )
         assert "_USER_AGENT" in source
         assert "_has_header_case_insensitive" in source
         assert "x-ms-client-sdk" in source

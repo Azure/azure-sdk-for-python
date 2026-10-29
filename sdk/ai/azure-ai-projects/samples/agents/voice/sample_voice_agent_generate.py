@@ -6,22 +6,19 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates guided authoring: generating and creating a voice
-    agent through `create_from_prompt` with `kind="voice"`.
-    The service creates a voice agent with a service-selected starter definition,
-    which is fully editable afterward through the standard create_version/update flow.
+    Describe the voice agent you want and create it with create_from_prompt.
+    The service chooses initial settings. You can later customize them by
+    creating another agent version.
 
 USAGE:
     python sample_voice_agent_generate.py
 
-    Before running the sample:
-
     pip install "azure-ai-projects>=2.7.0" python-dotenv
 
-    Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint.
-    2) FOUNDRY_VOICE_AGENT_NAME - Optional. The name of the voice agent. If not
-       set, defaults to "MyGeneratedVoiceAgent".
+    Environment variables:
+    1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
+    2) FOUNDRY_VOICE_AGENT_NAME (optional) - Agent name;
+       defaults to "MyGeneratedVoiceAgent".
 """
 
 import os
@@ -35,14 +32,7 @@ load_dotenv()
 
 
 def _safe_print(text: str) -> None:
-    """Print text that may contain characters the current console can't display.
-
-    The instructions below are model-generated and can contain characters (curly
-    quotes, em-dashes, etc.) outside some legacy, non-Unicode console encodings
-    (for example when stdout is piped/redirected on Windows). Rather than crashing
-    with UnicodeEncodeError, fall back to replacing just the unsupported characters;
-    a real interactive UTF-8 console prints unaffected.
-    """
+    """Print model text, replacing characters the console cannot display."""
     try:
         print(text)
     except UnicodeEncodeError:

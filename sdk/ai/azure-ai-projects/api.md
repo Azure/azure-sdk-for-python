@@ -635,6 +635,68 @@ namespace azure.ai.projects.aio.operations
             ) -> SessionFileWriteResult: ...
 
 
+    class azure.ai.projects.aio.operations.AsyncBetaLive:
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+        def connect(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_version: Optional[str] = ..., 
+                api_version: Optional[str] = ..., 
+                connection_url: Optional[str] = ..., 
+                credential_scopes: Optional[list[str]] = ..., 
+                extra_headers: Optional[Mapping[str, str]] = ..., 
+                extra_query: Optional[Mapping[str, str]] = ..., 
+                store: Optional[bool] = ..., 
+                structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                **kwargs: Any
+            ) -> AsyncBetaLiveConnectionManager: ...
+
+
+    class azure.ai.projects.aio.operations.AsyncBetaLiveConnection(_BaseWebSocketConnection[LiveServerEvent, LiveClientEvent]): implements AsyncContextManager 
+        property closed: bool    # Read-only
+
+        def __aiter__(self) -> AsyncIterator[LiveServerEvent]: ...
+
+        def __init__(
+                self, 
+                connection: ClientWebSocketResponse, 
+                session: ClientSession
+            ) -> None: ...
+
+        def __repr__(self) -> str: ...
+
+        async def close(
+                self, 
+                *, 
+                code: int = 1000, 
+                reason: str = ""
+            ) -> None: ...
+
+        async def recv(self) -> LiveServerEvent: ...
+
+        async def send(self, event: LiveClientEvent) -> None: ...
+
+
+    class azure.ai.projects.aio.operations.AsyncBetaLiveConnectionManager(_BaseWebSocketConnectionManager[AsyncBetaLiveConnection]): implements AsyncContextManager 
+
+        def __init__(
+                self, 
+                *, 
+                agent_version: Optional[str] = ..., 
+                store: Optional[bool] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        async def enter(self) -> AsyncBetaLiveConnection: ...
+
+
     class azure.ai.projects.aio.operations.AsyncBetaRealtime:
 
         def __init__(
@@ -659,7 +721,7 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncBetaRealtimeConnectionManager: ...
 
 
-    class azure.ai.projects.aio.operations.AsyncBetaRealtimeConnection: implements AsyncContextManager 
+    class azure.ai.projects.aio.operations.AsyncBetaRealtimeConnection(_BaseWebSocketConnection[ServerEvent, ClientEvent]): implements AsyncContextManager 
         property closed: bool    # Read-only
 
         def __aiter__(self) -> AsyncIterator[ServerEvent]: ...
@@ -684,7 +746,7 @@ namespace azure.ai.projects.aio.operations
         async def send(self, event: ClientEvent) -> None: ...
 
 
-    class azure.ai.projects.aio.operations.AsyncBetaRealtimeConnectionManager: implements AsyncContextManager 
+    class azure.ai.projects.aio.operations.AsyncBetaRealtimeConnectionManager(_BaseWebSocketConnectionManager[AsyncBetaRealtimeConnection]): implements AsyncContextManager 
 
         def __init__(
                 self, 
@@ -2167,8 +2229,101 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncItemPaged[VoiceResponse]: ...
 
 
+    class azure.ai.projects.aio.operations.BetaVoiceAgentsLiveConversationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def delete(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def download_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def download_audio_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def get(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceAgentLiveConversation: ...
+
+        @distributed_trace_async
+        async def get_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceRecording: ...
+
+        @distributed_trace_async
+        async def get_audio_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> VoiceAudioItem: ...
+
+        @distributed_trace_async
+        async def get_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> VoiceAgentLiveConversationItem: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                agent_name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[VoiceAgentLiveConversation]: ...
+
+        @distributed_trace
+        def list_items(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[VoiceAgentLiveConversationItem]: ...
+
+
     class azure.ai.projects.aio.operations.BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         conversations: BetaVoiceAgentsConversationsOperations
+        live: AsyncBetaLive
+        live_conversations: BetaVoiceAgentsLiveConversationsOperations
         realtime: AsyncBetaRealtime
         telephony: BetaVoiceAgentsTelephonyOperations
 
@@ -21262,6 +21417,68 @@ namespace azure.ai.projects.operations
             ) -> ItemPaged[Insight]: ...
 
 
+    class azure.ai.projects.operations.BetaLive:
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+        def connect(
+                self, 
+                *, 
+                agent_name: str, 
+                agent_version: Optional[str] = ..., 
+                api_version: Optional[str] = ..., 
+                connection_url: Optional[str] = ..., 
+                credential_scopes: Optional[list[str]] = ..., 
+                extra_headers: Optional[Mapping[str, str]] = ..., 
+                extra_query: Optional[Mapping[str, str]] = ..., 
+                store: Optional[bool] = ..., 
+                structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                **kwargs: Any
+            ) -> BetaLiveConnectionManager: ...
+
+
+    class azure.ai.projects.operations.BetaLiveConnection(_BaseWebSocketConnection[LiveServerEvent, LiveClientEvent]): implements ContextManager 
+        property closed: bool    # Read-only
+
+        def __init__(self, connection: ClientConnection) -> None: ...
+
+        def __iter__(self) -> Iterator[LiveServerEvent]: ...
+
+        def __repr__(self) -> str: ...
+
+        def close(
+                self, 
+                *, 
+                code: int = 1000, 
+                reason: str = ""
+            ) -> None: ...
+
+        def recv(
+                self, 
+                *, 
+                timeout: Optional[float] = ...
+            ) -> LiveServerEvent: ...
+
+        def send(self, event: LiveClientEvent) -> None: ...
+
+
+    class azure.ai.projects.operations.BetaLiveConnectionManager(_BaseWebSocketConnectionManager[BetaLiveConnection]): implements ContextManager 
+
+        def __init__(
+                self, 
+                *, 
+                agent_version: Optional[str] = ..., 
+                store: Optional[bool] = ..., 
+                **kwargs: Any
+            ) -> None: ...
+
+        def enter(self) -> BetaLiveConnection: ...
+
+
     class azure.ai.projects.operations.BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
         def __init__(
@@ -21822,7 +22039,7 @@ namespace azure.ai.projects.operations
             ) -> BetaRealtimeConnectionManager: ...
 
 
-    class azure.ai.projects.operations.BetaRealtimeConnection: implements ContextManager 
+    class azure.ai.projects.operations.BetaRealtimeConnection(_BaseWebSocketConnection[ServerEvent, ClientEvent]): implements ContextManager 
         property closed: bool    # Read-only
 
         def __init__(self, connection: ClientConnection) -> None: ...
@@ -21847,7 +22064,7 @@ namespace azure.ai.projects.operations
         def send(self, event: ClientEvent) -> None: ...
 
 
-    class azure.ai.projects.operations.BetaRealtimeConnectionManager: implements ContextManager 
+    class azure.ai.projects.operations.BetaRealtimeConnectionManager(_BaseWebSocketConnectionManager[BetaRealtimeConnection]): implements ContextManager 
 
         def __init__(
                 self, 
@@ -22413,8 +22630,101 @@ namespace azure.ai.projects.operations
             ) -> ItemPaged[VoiceResponse]: ...
 
 
+    class azure.ai.projects.operations.BetaVoiceAgentsLiveConversationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def delete(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def download_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def download_audio_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def get(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceAgentLiveConversation: ...
+
+        @distributed_trace
+        def get_audio(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                **kwargs: Any
+            ) -> VoiceRecording: ...
+
+        @distributed_trace
+        def get_audio_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> VoiceAudioItem: ...
+
+        @distributed_trace
+        def get_item(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                item_id: str, 
+                **kwargs: Any
+            ) -> VoiceAgentLiveConversationItem: ...
+
+        @distributed_trace
+        def list(
+                self, 
+                agent_name: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[VoiceAgentLiveConversation]: ...
+
+        @distributed_trace
+        def list_items(
+                self, 
+                agent_name: str, 
+                conversation_id: str, 
+                *, 
+                before: Optional[str] = ..., 
+                limit: Optional[int] = ..., 
+                order: Optional[Union[str, PageOrder]] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[VoiceAgentLiveConversationItem]: ...
+
+
     class azure.ai.projects.operations.BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         conversations: BetaVoiceAgentsConversationsOperations
+        live: BetaLive
+        live_conversations: BetaVoiceAgentsLiveConversationsOperations
         realtime: BetaRealtime
         telephony: BetaVoiceAgentsTelephonyOperations
 
