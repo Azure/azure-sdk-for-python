@@ -73,6 +73,7 @@ from ._enums import (
     VersionSelectorType,
     VoiceAgentSystemToolName,
     VoiceAgentTurnDetectionType,
+    VoiceAgentHandoffAbortReason,
 )
 
 if TYPE_CHECKING:
@@ -30632,6 +30633,270 @@ class VoiceAgentServerEventSessionAvatarSwitchToSpeaking(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = RealtimeServerEventType.SESSION_AVATAR_SWITCH_TO_SPEAKING  # type: ignore
+
+
+class VoiceAgentServerEventSessionHandoffAborted(
+    RealtimeServerEvent, discriminator="session.handoff.aborted"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The ``session.handoff.aborted`` server event.
+
+    :ivar type: The event type. Always ``session.handoff.aborted``. Required.
+     SESSION_HANDOFF_ABORTED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_HANDOFF_ABORTED
+    :ivar event_id: The server-generated event identifier. Required.
+    :vartype event_id: str
+    :ivar handoff_id: The server-generated handoff attempt identifier. Required.
+    :vartype handoff_id: str
+    :ivar edge_id: The configured edge selected for this handoff. Required.
+    :vartype edge_id: str
+    :ivar from_node_id: The source node identifier or ``$entrypoint``. Required.
+    :vartype from_node_id: str
+    :ivar to_node_id: The target node identifier or ``$entrypoint``. Required.
+    :vartype to_node_id: str
+    :ivar from_model: The model active before the handoff. Required.
+    :vartype from_model: str
+    :ivar to_model: The model prepared for the target behavior. Required.
+    :vartype to_model: str
+    :ivar tool_call_id: The function-call identifier that initiated the handoff. Required.
+    :vartype tool_call_id: str
+    :ivar node_generation: The source generation for started or aborted events, and the committed
+     target generation for completed events. Required.
+    :vartype node_generation: int
+    :ivar reason: Why the handoff ended before target commit. Required. Known values are:
+     "user_interruption" and "error".
+    :vartype reason: str or ~azure.ai.projects.models.VoiceAgentHandoffAbortReason
+    :ivar error: The handoff failure detail when ``reason`` is ``error``.
+    :vartype error: ~azure.ai.projects.models.RealtimeServerEventErrorError
+    """
+
+    type: Literal[RealtimeServerEventType.SESSION_HANDOFF_ABORTED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type. Always ``session.handoff.aborted``. Required. SESSION_HANDOFF_ABORTED."""
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated event identifier. Required."""
+    handoff_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated handoff attempt identifier. Required."""
+    edge_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The configured edge selected for this handoff. Required."""
+    from_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source node identifier or ``$entrypoint``. Required."""
+    to_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target node identifier or ``$entrypoint``. Required."""
+    from_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model active before the handoff. Required."""
+    to_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model prepared for the target behavior. Required."""
+    tool_call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The function-call identifier that initiated the handoff. Required."""
+    node_generation: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source generation for started or aborted events, and the committed target generation for
+     completed events. Required."""
+    reason: Union[str, "_models.VoiceAgentHandoffAbortReason"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Why the handoff ended before target commit. Required. Known values are: \"user_interruption\"
+     and \"error\"."""
+    error: Optional["_models.RealtimeServerEventErrorError"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The handoff failure detail when ``reason`` is ``error``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        handoff_id: str,
+        edge_id: str,
+        from_node_id: str,
+        to_node_id: str,
+        from_model: str,
+        to_model: str,
+        tool_call_id: str,
+        node_generation: int,
+        reason: Union[str, "_models.VoiceAgentHandoffAbortReason"],
+        error: Optional["_models.RealtimeServerEventErrorError"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = RealtimeServerEventType.SESSION_HANDOFF_ABORTED
+
+
+class VoiceAgentServerEventSessionHandoffCompleted(
+    RealtimeServerEvent, discriminator="session.handoff.completed"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The ``session.handoff.completed`` server event.
+
+    :ivar type: The event type. Always ``session.handoff.completed``. Required.
+     SESSION_HANDOFF_COMPLETED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_HANDOFF_COMPLETED
+    :ivar event_id: The server-generated event identifier. Required.
+    :vartype event_id: str
+    :ivar handoff_id: The server-generated handoff attempt identifier. Required.
+    :vartype handoff_id: str
+    :ivar edge_id: The configured edge selected for this handoff. Required.
+    :vartype edge_id: str
+    :ivar from_node_id: The source node identifier or ``$entrypoint``. Required.
+    :vartype from_node_id: str
+    :ivar to_node_id: The target node identifier or ``$entrypoint``. Required.
+    :vartype to_node_id: str
+    :ivar from_model: The model active before the handoff. Required.
+    :vartype from_model: str
+    :ivar to_model: The model prepared for the target behavior. Required.
+    :vartype to_model: str
+    :ivar tool_call_id: The function-call identifier that initiated the handoff. Required.
+    :vartype tool_call_id: str
+    :ivar node_generation: The source generation for started or aborted events, and the committed
+     target generation for completed events. Required.
+    :vartype node_generation: int
+    :ivar prepare_duration_ms: The target-preparation duration. Required.
+    :vartype prepare_duration_ms: ~datetime.timedelta
+    :ivar duration_ms: The total handoff duration. Required.
+    :vartype duration_ms: ~datetime.timedelta
+    """
+
+    type: Literal[RealtimeServerEventType.SESSION_HANDOFF_COMPLETED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type. Always ``session.handoff.completed``. Required. SESSION_HANDOFF_COMPLETED."""
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated event identifier. Required."""
+    handoff_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated handoff attempt identifier. Required."""
+    edge_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The configured edge selected for this handoff. Required."""
+    from_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source node identifier or ``$entrypoint``. Required."""
+    to_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target node identifier or ``$entrypoint``. Required."""
+    from_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model active before the handoff. Required."""
+    to_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model prepared for the target behavior. Required."""
+    tool_call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The function-call identifier that initiated the handoff. Required."""
+    node_generation: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source generation for started or aborted events, and the committed target generation for
+     completed events. Required."""
+    prepare_duration_ms: datetime.timedelta = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
+    )
+    """The target-preparation duration. Required."""
+    duration_ms: datetime.timedelta = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
+    )
+    """The total handoff duration. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        handoff_id: str,
+        edge_id: str,
+        from_node_id: str,
+        to_node_id: str,
+        from_model: str,
+        to_model: str,
+        tool_call_id: str,
+        node_generation: int,
+        prepare_duration_ms: datetime.timedelta,
+        duration_ms: datetime.timedelta,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = RealtimeServerEventType.SESSION_HANDOFF_COMPLETED
+
+
+class VoiceAgentServerEventSessionHandoffStarted(
+    RealtimeServerEvent, discriminator="session.handoff.started"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The ``session.handoff.started`` server event.
+
+    :ivar type: The event type. Always ``session.handoff.started``. Required.
+     SESSION_HANDOFF_STARTED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_HANDOFF_STARTED
+    :ivar event_id: The server-generated event identifier. Required.
+    :vartype event_id: str
+    :ivar handoff_id: The server-generated handoff attempt identifier. Required.
+    :vartype handoff_id: str
+    :ivar edge_id: The configured edge selected for this handoff. Required.
+    :vartype edge_id: str
+    :ivar from_node_id: The source node identifier or ``$entrypoint``. Required.
+    :vartype from_node_id: str
+    :ivar to_node_id: The target node identifier or ``$entrypoint``. Required.
+    :vartype to_node_id: str
+    :ivar from_model: The model active before the handoff. Required.
+    :vartype from_model: str
+    :ivar to_model: The model prepared for the target behavior. Required.
+    :vartype to_model: str
+    :ivar tool_call_id: The function-call identifier that initiated the handoff. Required.
+    :vartype tool_call_id: str
+    :ivar node_generation: The source generation for started or aborted events, and the committed
+     target generation for completed events. Required.
+    :vartype node_generation: int
+    """
+
+    type: Literal[RealtimeServerEventType.SESSION_HANDOFF_STARTED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type. Always ``session.handoff.started``. Required. SESSION_HANDOFF_STARTED."""
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated event identifier. Required."""
+    handoff_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated handoff attempt identifier. Required."""
+    edge_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The configured edge selected for this handoff. Required."""
+    from_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source node identifier or ``$entrypoint``. Required."""
+    to_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target node identifier or ``$entrypoint``. Required."""
+    from_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model active before the handoff. Required."""
+    to_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model prepared for the target behavior. Required."""
+    tool_call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The function-call identifier that initiated the handoff. Required."""
+    node_generation: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source generation for started or aborted events, and the committed target generation for
+     completed events. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        handoff_id: str,
+        edge_id: str,
+        from_node_id: str,
+        to_node_id: str,
+        from_model: str,
+        to_model: str,
+        tool_call_id: str,
+        node_generation: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = RealtimeServerEventType.SESSION_HANDOFF_STARTED
 
 
 class VoiceAgentServerEventSessionSubagentAborted(

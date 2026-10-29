@@ -15,6 +15,9 @@ can all be verified without a live service or a recorded transport.
 import json
 import inspect
 import logging
+from datetime import timedelta
+from pathlib import Path
+from typing import get_args
 from unittest.mock import MagicMock, patch
 from urllib.parse import parse_qs, urlparse
 
@@ -33,9 +36,17 @@ from azure.ai.projects._version import VERSION
 from azure.ai.projects.models import (
     RealtimeClientEventResponseCreate,
     RealtimeServerEventSessionCreated,
+    VoiceAgentServerEventSessionHandoffAborted,
+    VoiceAgentServerEventSessionHandoffCompleted,
+    VoiceAgentServerEventSessionHandoffStarted,
 )
+from azure.ai.projects._realtime import ServerEvent
+from azure.ai.projects.aio._realtime import ServerEvent as AsyncServerEvent
 
 _ENDPOINT = "https://my-account.services.ai.azure.com/api/projects/my-project"
+_HANDOFF_EVENTS = json.loads(
+    (Path(__file__).resolve().parents[1] / "test_data" / "handoff_events.json").read_text(encoding="utf-8")
+)
 
 
 class _FakeCredential:
@@ -305,6 +316,35 @@ class TestRealtimeConnectionManagerEnter:
 
 class TestRealtimeConnectionRecv:
     """Unit tests for ``BetaRealtimeConnection.recv()``: event dispatch and error/timeout handling."""
+
+    @pytest.mark.parametrize("payload", _HANDOFF_EVENTS, ids=lambda payload: payload["event_id"])
+    def test_recv_dispatches_handoff_events(self, request, payload):
+        fake_connection = MagicMock()
+        fake_connection.recv.return_value = json.dumps(payload)
+        with patch("websockets.sync.client.connect", return_value=fake_connection):
+            manager = _make_manager()
+            conn = manager.enter()
+            request.addfinalizer(manager.__exit__)
+            event = conn.recv()
+
+        expected_type = {
+            "session.handoff.started": VoiceAgentServerEventSessionHandoffStarted,
+            "session.handoff.completed": VoiceAgentServerEventSessionHandoffCompleted,
+            "session.handoff.aborted": VoiceAgentServerEventSessionHandoffAborted,
+        }[payload["type"]]
+        assert isinstance(event, expected_type)
+        assert event.as_dict() == payload
+        assert expected_type in get_args(ServerEvent)
+        assert expected_type in get_args(AsyncServerEvent)
+        if isinstance(event, VoiceAgentServerEventSessionHandoffCompleted):
+            assert event.prepare_duration_ms == timedelta(0)
+            assert event.duration_ms == timedelta(milliseconds=12)
+        if isinstance(event, VoiceAgentServerEventSessionHandoffAborted):
+            assert event.reason == payload["reason"]
+            if payload.get("error"):
+                assert event.error.message == payload["error"]["message"]
+            else:
+                assert event.error is None
 
     def test_recv_dispatches_known_event_type(self, request):
         fake_connection = MagicMock()

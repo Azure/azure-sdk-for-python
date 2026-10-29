@@ -15,6 +15,8 @@ live service or a recorded transport.
 import json
 import inspect
 import logging
+from datetime import timedelta
+from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 from urllib.parse import parse_qs, urlparse
 
@@ -26,9 +28,15 @@ from azure.ai.projects._version import VERSION
 from azure.ai.projects.models import (
     RealtimeClientEventResponseCreate,
     RealtimeServerEventSessionCreated,
+    VoiceAgentServerEventSessionHandoffAborted,
+    VoiceAgentServerEventSessionHandoffCompleted,
+    VoiceAgentServerEventSessionHandoffStarted,
 )
 
 _ENDPOINT = "https://my-account.services.ai.azure.com/api/projects/my-project"
+_HANDOFF_EVENTS = json.loads(
+    (Path(__file__).resolve().parents[1] / "test_data" / "handoff_events.json").read_text(encoding="utf-8")
+)
 
 pytestmark = pytest.mark.asyncio
 
@@ -238,6 +246,38 @@ class TestAsyncRealtimeConnectionManagerEnter:
 
 class TestAsyncRealtimeConnectionRecv:
     """Unit tests for ``AsyncBetaRealtimeConnection.recv()``: event dispatch and non-text frames."""
+
+    @pytest.mark.parametrize("payload", _HANDOFF_EVENTS, ids=lambda payload: payload["event_id"])
+    async def test_recv_dispatches_handoff_events(self, payload):
+        import aiohttp
+
+        fake_ws = _make_fake_ws()
+        fake_ws.receive = AsyncMock(return_value=_make_fake_msg(aiohttp.WSMsgType.TEXT, json.dumps(payload)))
+        patcher, _ = _patch_client_session(fake_ws)
+        with patcher:
+            manager = _make_manager()
+            conn = await manager.enter()
+            try:
+                event = await conn.recv()
+            finally:
+                await manager.__aexit__()
+
+        expected_type = {
+            "session.handoff.started": VoiceAgentServerEventSessionHandoffStarted,
+            "session.handoff.completed": VoiceAgentServerEventSessionHandoffCompleted,
+            "session.handoff.aborted": VoiceAgentServerEventSessionHandoffAborted,
+        }[payload["type"]]
+        assert isinstance(event, expected_type)
+        assert event.as_dict() == payload
+        if isinstance(event, VoiceAgentServerEventSessionHandoffCompleted):
+            assert event.prepare_duration_ms == timedelta(0)
+            assert event.duration_ms == timedelta(milliseconds=12)
+        if isinstance(event, VoiceAgentServerEventSessionHandoffAborted):
+            assert event.reason == payload["reason"]
+            if payload.get("error"):
+                assert event.error.message == payload["error"]["message"]
+            else:
+                assert event.error is None
 
     async def test_recv_dispatches_known_event_type(self):
         import aiohttp
