@@ -7,6 +7,7 @@
 - Changed the defualt `max_single_get_size` from 32 MiB to 4 MiB. This means the initial download request will now be 4 MiB rather than 32 MiB which may result in more requests than previous versions depending on blob size. This also means some blob downloads may use parallel requests when they were not previously, if `max_concurrency` is set greater than 1. To restore the previous behavior, pass `max_single_get_size = 32 * 1024 * 1024` when constructing the client.
 
 ### Features Added
+- Added opt-in client session-based authentication via the new `use_session` keyword argument. When enabled, eligible blob download requests are authenticated with a short-lived, per-container session credential obtained from the service rather than the bearer token. Requires a `TokenCredential`. Sessions are managed by a session provider, which can be shared across clients via the `session_provider` keyword, and the account name used for signing can be set explicitly with `session_account_name`.
 
 ### Bugs Fixed
 - Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning an empty list.
@@ -30,7 +31,6 @@ This version and all future versions will require Python 3.10+. Python 3.9 is no
 ### Features Added
 - Stable release of features from 12.31.0b1
 - Added `list` support to `BlobSasPermissions` for use with directory-scoped SAS tokens.
-- Added opt-in client session-based authentication via the new `use_session` keyword argument. When enabled, eligible blob download requests are authenticated with a short-lived, per-container session credential obtained from the service rather than the bearer token. Requires a `TokenCredential`. Sessions are managed by a session provider, which can be shared across clients via the `session_provider` keyword, and the account name used for signing can be set explicitly with `session_account_name`.
 
 ### Bugs Fixed
 - Fixed an issue where `destination_snapshot` on a blob's copy properties was always `None` when listing blobs with `response_format="arrow"`.

@@ -9,6 +9,7 @@
 - Added support for FileId-based clients via `ShareClient`'s `get_file_client_by_file_id` and
 `get_directory_client_by_file_id` APIs, and a new `get_file_links` API to `ShareFileClient` that returns the hard links
 to a file (FileId-based clients and `NFS` protocol only).
+- Added `creation_time` property to `ShareProperties`, which returns the time the share was created.
 
 ### Bugs Fixed
 - Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_share_sas`,
