@@ -146,6 +146,9 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VOICE."""
     INVOCATIONS_WS = "invocations_ws"
     """WebSocket-based protocol for hosted voice and real-time streaming agents."""
+    VOICE_CONVERSATION_ENGINE = "voice_conversation_engine"
+    """Text conversation protocol for a hosted agent used by Voice Live Bridge. Declare version
+    ``1.0.0``; audio transport remains outside this protocol."""
 
 
 class AgentIdentityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -394,6 +397,19 @@ class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The agent version is being deleted."""
     DELETED = "deleted"
     """The agent version has been deleted."""
+
+
+class AnswerResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AnswerResourceType."""
+
+    PREDICATE = "predicate"
+    """PREDICATE."""
+    CHOICE = "choice"
+    """CHOICE."""
+    SCORE = "score"
+    """SCORE."""
+    REFUSAL = "refusal"
+    """REFUSAL."""
 
 
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -970,9 +986,9 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Control how much effort the model will exert to match the style and features, especially facial
-    features, of input images. This parameter is only supported for ``gpt-image-1`` and
-    ``gpt-image-1.5`` and later models, unsupported for ``gpt-image-1-mini``. Supports ``high`` and
-    ``low``. Defaults to ``low``.
+    features, of input images. Supports ``high`` and ``low`` on ``gpt-image-1`` and
+    ``gpt-image-1.5``; ``gpt-image-1-mini`` supports only ``low``. For ``gpt-image-2``, omit this
+    parameter. Defaults to ``low`` on supported models.
     """
 
     HIGH = "high"
@@ -1031,18 +1047,52 @@ class LiveClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SESSION_INPUT_AUDIO_MUTE."""
     SESSION_INPUT_AUDIO_UNMUTE = "session.input_audio.unmute"
     """SESSION_INPUT_AUDIO_UNMUTE."""
+    SESSION_OUTPUT_AUDIO_FIXTURE_PLAY = "session.output_audio.fixture.play"
+    """SESSION_OUTPUT_AUDIO_FIXTURE_PLAY."""
     SESSION_INSTRUCTIONS_APPEND = "session.instructions.append"
     """SESSION_INSTRUCTIONS_APPEND."""
     SESSION_THINKING_APPEND = "session.thinking.append"
     """SESSION_THINKING_APPEND."""
     SESSION_COMMENTARY_APPEND = "session.commentary.append"
     """SESSION_COMMENTARY_APPEND."""
+    DECISION_CREATE = "decision.create"
+    """DECISION_CREATE."""
+    DECISION_ITEM_CREATE = "decision.item.create"
+    """DECISION_ITEM_CREATE."""
+    DECISION_ITEM_DELETE = "decision.item.delete"
+    """DECISION_ITEM_DELETE."""
     RESPONSE_ITEM_CREATE = "response.item.create"
     """RESPONSE_ITEM_CREATE."""
     RESPONSE_CREATE = "response.create"
     """RESPONSE_CREATE."""
     SESSION_CLOSE = "session.close"
     """SESSION_CLOSE."""
+
+
+class LiveContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveContainerMemoryLimit."""
+
+    ENUM_1_G = "1g"
+    """1_G."""
+    ENUM_4_G = "4g"
+    """4_G."""
+    ENUM_16_G = "16g"
+    """16_G."""
+    ENUM_64_G = "64g"
+    """64_G."""
+
+
+class LiveDetailEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveDetailEnum."""
+
+    LOW = "low"
+    """LOW."""
+    HIGH = "high"
+    """HIGH."""
+    AUTO = "auto"
+    """AUTO."""
+    ORIGINAL = "original"
+    """ORIGINAL."""
 
 
 class LiveInitialItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1121,6 +1171,10 @@ class LiveServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SESSION_INPUT_AUDIO_MUTED."""
     SESSION_INPUT_AUDIO_UNMUTED = "session.input_audio.unmuted"
     """SESSION_INPUT_AUDIO_UNMUTED."""
+    SESSION_OUTPUT_AUDIO_FIXTURE_PLAYING = "session.output_audio.fixture.playing"
+    """SESSION_OUTPUT_AUDIO_FIXTURE_PLAYING."""
+    SESSION_OUTPUT_AUDIO_FIXTURE_PLAYED = "session.output_audio.fixture.played"
+    """SESSION_OUTPUT_AUDIO_FIXTURE_PLAYED."""
     SESSION_INSTRUCTIONS_APPENDED = "session.instructions.appended"
     """SESSION_INSTRUCTIONS_APPENDED."""
     SESSION_THINKING_APPENDED = "session.thinking.appended"
@@ -1137,6 +1191,12 @@ class LiveServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SESSION_OUTPUT_TRANSCRIPT_DELTA."""
     SESSION_DELEGATION_CREATED = "session.delegation.created"
     """SESSION_DELEGATION_CREATED."""
+    DECISION_EVENT = "decision.event"
+    """DECISION_EVENT."""
+    DECISION_ITEM_CREATED = "decision.item.created"
+    """DECISION_ITEM_CREATED."""
+    DECISION_ITEM_DELETED = "decision.item.deleted"
+    """DECISION_ITEM_DELETED."""
     RESPONSE_EVENT = "response.event"
     """RESPONSE_EVENT."""
     SESSION_USAGE_UPDATED = "session.usage.updated"
@@ -1177,6 +1237,17 @@ class LiveToolChoiceEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AUTO."""
     NONE = "none"
     """NONE."""
+    REQUIRED = "required"
+    """REQUIRED."""
+
+
+class LiveToolChoiceValueEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveToolChoiceValueEnum."""
+
+    NONE = "none"
+    """NONE."""
+    AUTO = "auto"
+    """AUTO."""
     REQUIRED = "required"
     """REQUIRED."""
 
@@ -1361,6 +1432,17 @@ class PublishApprovalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NO_APPROVAL_NEEDED = "no_approval_needed"
     """The agent is published at a scope that does not go through Microsoft Agent Certification. Only
     tenant-scoped titles are reviewed."""
+
+
+class QuestionParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of QuestionParamType."""
+
+    PREDICATE = "predicate"
+    """PREDICATE."""
+    CHOICE = "choice"
+    """CHOICE."""
+    SCORE = "score"
+    """SCORE."""
 
 
 class RaiInvocationContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2658,7 +2740,10 @@ class VoiceAgentEndOfUtteranceThresholdLevel(str, Enum, metaclass=CaseInsensitiv
 class VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The input-audio transcription model identifier. This is a model name, not a Foundry deployment
     name. Mirrors the transcription models supported by the managed voice backend, covering the
-    OpenAI Realtime transcription models plus the Azure and MAI models. Additional values may be
+    OpenAI Realtime transcription models plus the Azure and MAI models. ``azure-speech-streaming``
+    is supported for cascaded text-model conversations only (not realtime speech-to-speech models),
+    requires a nonempty ``language`` such as ``en-US`` (comma-separated locales are supported), and
+    supports ``custom_speech``, ``phrase_list``, and ``profanity_filter``. Additional values may be
     added over time.
     """
 
@@ -2680,6 +2765,11 @@ class VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnum
     """MAI transcription."""
     AZURE_SPEECH = "azure-speech"
     """Azure AI Speech to text."""
+    AZURE_SPEECH_STREAMING = "azure-speech-streaming"
+    """Azure AI Speech streaming transcription for cascaded text-model conversations only. Requires a
+    nonempty ``language``, such as ``en-US``; comma-separated locales are supported. Supports
+    ``custom_speech``, ``phrase_list``, and ``profanity_filter``. Not supported with realtime
+    speech-to-speech models."""
 
 
 class VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2729,7 +2819,15 @@ class VoiceAgentLiveDelegationTarget(str, Enum, metaclass=CaseInsensitiveEnumMet
 
 
 class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The input audio noise reduction mode."""
+    """The input audio noise reduction mode.
+
+    * `azure_deep_noise_suppression_headset`: Azure headset-optimized noise suppression for local voice activity
+      detection. Optimized for low-sample-rate audio, including 8 kHz telephony audio. Enhances detection audio without
+      changing the audio used for recognition. The mode is not restricted to headset devices.
+    * `azure_personal_noise_suppression`: Azure personalized noise suppression for local voice activity detection.
+      Starts with headset suppression and personalizes detection after automatic speaker enrollment. Recognition audio
+      is unchanged; headset suppression remains active when personalization is unavailable.
+    """
 
     NEAR_FIELD = "near_field"
     """NEAR_FIELD."""
@@ -2737,6 +2835,14 @@ class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """FAR_FIELD."""
     AZURE_DEEP_NOISE_SUPPRESSION = "azure_deep_noise_suppression"
     """Azure deep noise suppression."""
+    AZURE_DEEP_NOISE_SUPPRESSION_HEADSET = "azure_deep_noise_suppression_headset"
+    """Azure headset-optimized noise suppression for local voice activity detection. Optimized for
+    low-sample-rate audio, including 8 kHz telephony audio. Enhances detection audio without
+    changing the audio used for recognition. The mode is not restricted to headset devices."""
+    AZURE_PERSONAL_NOISE_SUPPRESSION = "azure_personal_noise_suppression"
+    """Azure personalized noise suppression for local voice activity detection. Starts with headset
+    suppression and personalizes detection after automatic speaker enrollment. Recognition audio is
+    unchanged; headset suppression remains active when personalization is unavailable."""
 
 
 class VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2759,6 +2865,25 @@ class VoiceAgentSessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMet
     """INPUT_AUDIO_TRANSCRIPTION_PHRASES."""
     FILE_SEARCH_CALL_RESULTS = "file_search_call.results"
     """FILE_SEARCH_CALL_RESULTS."""
+
+
+class VoiceAgentSoundscapeSound(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The packaged sounds accepted by a built-in soundscape source."""
+
+    OFFICE = "office"
+    """Quiet office ambience."""
+    CALL_CENTER = "call_center"
+    """Busy call-center ambience."""
+    BUSY_STREET = "busy_street"
+    """Busy street ambience."""
+    PEOPLE_TALKING = "people_talking"
+    """Crowd conversation ambience."""
+    STREET_AND_METRO_STATION = "street_and_metro_station"
+    """Street and metro-station ambience."""
+    DING1 = "ding1"
+    """The first notification tone."""
+    DING2 = "ding2"
+    """The second notification tone."""
 
 
 class VoiceAgentSubagentAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -26,4 +26,6 @@ VoiceAgentLiveDelegation: TypeAlias = Union[
 ]
 VoiceAgentSessionUpdate: TypeAlias = "_models.VoiceAgentSessionUpdateConfig"
 VoiceAgentSessionResponse: TypeAlias = "_models.VoiceAgentSessionResponseConfig"
+ChoiceValueParam: TypeAlias = Union[str, bool]
+ChoiceValueResource: TypeAlias = Union[str, bool]
 GenerateAgentRequest: TypeAlias = "_models.GenerateVoiceAgentRequest"

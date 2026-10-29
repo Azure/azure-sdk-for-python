@@ -3671,6 +3671,7 @@ namespace azure.ai.projects.models
         MCP = "mcp"
         RESPONSES = "responses"
         VOICE = "voice"
+        VOICE_CONVERSATION_ENGINE = "voice_conversation_engine"
 
 
     class azure.ai.projects.models.AgentEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discriminator='agent'):
@@ -5107,6 +5108,101 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.AnswerResource(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AnswerResourceChoice(AnswerResource, discriminator='choice'):
+        choice: ChoiceValueResource
+        confidence: float
+        name: str
+        probabilities: list[ChoiceProbabilityResource]
+        type: Literal[AnswerResourceType.CHOICE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                choice: ChoiceValueResource, 
+                confidence: float, 
+                name: str, 
+                probabilities: list[ChoiceProbabilityResource]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AnswerResourcePredicate(AnswerResource, discriminator='predicate'):
+        name: str
+        probability: float
+        type: Literal[AnswerResourceType.PREDICATE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str, 
+                probability: float
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AnswerResourceRefusal(AnswerResource, discriminator='refusal'):
+        name: str
+        type: Literal[AnswerResourceType.REFUSAL]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AnswerResourceScore(AnswerResource, discriminator='score'):
+        confidence: float
+        name: str
+        probabilities: list[ScoreProbabilityResource]
+        score: float
+        type: Literal[AnswerResourceType.SCORE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                confidence: float, 
+                name: str, 
+                probabilities: list[ScoreProbabilityResource], 
+                score: float
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AnswerResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CHOICE = "choice"
+        PREDICATE = "predicate"
+        REFUSAL = "refusal"
+        SCORE = "score"
+
+
     class azure.ai.projects.models.ApiError(_Model):
         additional_info: Optional[dict[str, Any]]
         code: str
@@ -5155,21 +5251,6 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ApplyPatchToolParam(Tool, discriminator='apply_patch'):
-        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
-        type: Literal[ToolType.APPLY_PATCH]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...
-            ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
@@ -5980,6 +6061,38 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ChoiceOptionParam(_Model):
+        description: Optional[str]
+        value: ChoiceValueParam
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                value: ChoiceValueParam
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ChoiceProbabilityResource(_Model):
+        probability: float
+        value: ChoiceValueResource
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                probability: float, 
+                value: ChoiceValueResource
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ClusterInsightResult(_Model):
         clusters: list[InsightCluster]
         coordinates: Optional[dict[str, ChartCoordinate]]
@@ -6067,29 +6180,6 @@ namespace azure.ai.projects.models
         REMOTE_BUILD = "remote_build"
 
 
-    class azure.ai.projects.models.CodeInterpreterTool(Tool, discriminator='code_interpreter'):
-        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
-        container: Optional[Union[str, AutoCodeInterpreterToolParam]]
-        description: Optional[str]
-        name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
-        type: Literal[ToolType.CODE_INTERPRETER]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ..., 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.CodeInterpreterToolboxTool(ToolboxTool, discriminator='code_interpreter'):
         allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
         container: Optional[Union[str, AutoCodeInterpreterToolParam]]
@@ -6132,14 +6222,14 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.CompoundFilter(_Model):
-        filters: list[Union[ComparisonFilter, Any]]
+        filters: list[Union[ComparisonFilter, CompoundFilter]]
         type: Literal["and", "or"]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                filters: list[Union[ComparisonFilter, Any]], 
+                filters: list[Union[ComparisonFilter, CompoundFilter]], 
                 type: Literal["and", "or"]
             ) -> None: ...
 
@@ -6153,35 +6243,6 @@ namespace azure.ai.projects.models
         MAC = "mac"
         UBUNTU = "ubuntu"
         WINDOWS = "windows"
-
-
-    class azure.ai.projects.models.ComputerTool(Tool, discriminator='computer'):
-        type: Literal[ToolType.COMPUTER]
-
-        @overload
-        def __init__(self) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ComputerUsePreviewTool(Tool, discriminator='computer_use_preview'):
-        display_height: int
-        display_width: int
-        environment: Union[str, ComputerEnvironment]
-        type: Literal[ToolType.COMPUTER_USE_PREVIEW]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                display_height: int, 
-                display_width: int, 
-                environment: Union[str, ComputerEnvironment]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.Connection(_Model):
@@ -6607,14 +6668,14 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.CustomToolParam(Tool, discriminator='custom'):
+    class azure.ai.projects.models.CustomToolParam(_Model):
         allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
         async_property: Optional[bool]
         defer_loading: Optional[bool]
         description: Optional[str]
         format: Optional[CustomToolParamFormat]
         name: str
-        type: Literal[ToolType.CUSTOM]
+        type: Literal["custom"]
 
         @overload
         def __init__(
@@ -6951,6 +7012,24 @@ namespace azure.ai.projects.models
         THURSDAY = "Thursday"
         TUESDAY = "Tuesday"
         WEDNESDAY = "Wednesday"
+
+
+    class azure.ai.projects.models.DecisionResponse(_Model):
+        answers: list[AnswerResource]
+        model: str
+        usage: ResponseUsageResource
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                answers: list[AnswerResource], 
+                model: str, 
+                usage: ResponseUsageResource
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.Delegation(_Model):
@@ -8065,33 +8144,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.FileSearchTool(Tool, discriminator='file_search'):
-        description: Optional[str]
-        filters: Optional[Filters]
-        max_num_results: Optional[int]
-        name: Optional[str]
-        ranking_options: Optional[RankingOptions]
-        tool_configs: Optional[dict[str, ToolConfig]]
-        type: Literal[ToolType.FILE_SEARCH]
-        vector_store_ids: list[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                filters: Optional[Filters] = ..., 
-                max_num_results: Optional[int] = ..., 
-                name: Optional[str] = ..., 
-                ranking_options: Optional[RankingOptions] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
-                vector_store_ids: list[str]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.FileSearchToolboxTool(ToolboxTool, discriminator='file_search'):
         description: str
         filters: Optional[Filters]
@@ -8230,29 +8282,6 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.FunctionParameters(_Model):
 
 
-    class azure.ai.projects.models.FunctionShellToolParam(Tool, discriminator='shell'):
-        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
-        description: Optional[str]
-        environment: Optional[FunctionShellToolParamEnvironment]
-        name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
-        type: Literal[ToolType.SHELL]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                description: Optional[str] = ..., 
-                environment: Optional[FunctionShellToolParamEnvironment] = ..., 
-                name: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.FunctionShellToolParamEnvironment(_Model):
         type: str
 
@@ -8301,35 +8330,6 @@ namespace azure.ai.projects.models
         CONTAINER_AUTO = "container_auto"
         CONTAINER_REFERENCE = "container_reference"
         LOCAL = "local"
-
-
-    class azure.ai.projects.models.FunctionTool(Tool, discriminator='function'):
-        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
-        async_property: Optional[bool]
-        defer_loading: Optional[bool]
-        description: Optional[str]
-        name: str
-        output_schema: Optional[dict[str, Any]]
-        parameters: dict[str, Any]
-        strict: bool
-        type: Literal[ToolType.FUNCTION]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                async_property: Optional[bool] = ..., 
-                defer_loading: Optional[bool] = ..., 
-                description: Optional[str] = ..., 
-                name: str, 
-                output_schema: Optional[dict[str, Any]] = ..., 
-                parameters: dict[str, Any], 
-                strict: bool
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.FunctionToolParam(_Model):
@@ -8590,47 +8590,6 @@ namespace azure.ai.projects.models
         GENERATE = "generate"
 
 
-    class azure.ai.projects.models.ImageGenTool(Tool, discriminator='image_generation'):
-        action: Optional[Union[str, ImageGenAction]]
-        background: Optional[Literal["transparent", "opaque", "auto"]]
-        description: Optional[str]
-        input_fidelity: Optional[Union[str, InputFidelity]]
-        input_image_mask: Optional[ImageGenToolInputImageMask]
-        model: Optional[Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-5"], Literal["gpt-image-2"], Literal["gpt-image-2-2026-04-21"], Literal["gpt-image-5-sunburst"], Literal["gpt-image-5-sunburst-2026-09-08"], Literal["gpt-image-5-flare"], Literal["gpt-image-5-flare-2026-09-08"], str]]
-        moderation: Optional[Literal["auto", "low"]]
-        name: Optional[str]
-        output_compression: Optional[int]
-        output_format: Optional[Literal["png", "webp", "jpeg"]]
-        partial_images: Optional[int]
-        quality: Optional[Literal["low", "medium", "high", "xhigh", "max", "auto"]]
-        size: Optional[Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]]
-        tool_configs: Optional[dict[str, ToolConfig]]
-        type: Literal[ToolType.IMAGE_GENERATION]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                action: Optional[Union[str, ImageGenAction]] = ..., 
-                background: Optional[Literal[transparent, opaque, auto]] = ..., 
-                description: Optional[str] = ..., 
-                input_fidelity: Optional[Union[str, InputFidelity]] = ..., 
-                input_image_mask: Optional[ImageGenToolInputImageMask] = ..., 
-                model: Optional[Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-5], Literal[gpt-image-2], Literal[gpt-image-2-2026-04-21], Literal[gpt-image-5-sunburst], Literal[gpt-image-5-sunburst-2026-09-08], Literal[gpt-image-5-flare], Literal[gpt-image-5-flare-2026-09-08], str]] = ..., 
-                moderation: Optional[Literal[auto, low]] = ..., 
-                name: Optional[str] = ..., 
-                output_compression: Optional[int] = ..., 
-                output_format: Optional[Literal[png, webp, jpeg]] = ..., 
-                partial_images: Optional[int] = ..., 
-                quality: Optional[Literal[low, medium, high, xhigh, max, auto]] = ..., 
-                size: Optional[Union[Literal[1024x1024], Literal[1024x1536], Literal[1536x1024], Literal[auto], str]] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.ImageGenToolInputImageMask(_Model):
         file_id: Optional[str]
         image_url: Optional[str]
@@ -8712,6 +8671,22 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         HIGH = "high"
         LOW = "low"
+
+
+    class azure.ai.projects.models.InputTokensDetailsResource(_Model):
+        cache_write_tokens: int
+        cached_tokens: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                cache_write_tokens: int, 
+                cached_tokens: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.Insight(_Model):
@@ -8987,6 +8962,33 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.LiveAllowedToolsChoiceParam(_Model):
+        mode: Optional[Union[str, LiveToolChoiceValueEnum]]
+        tools: list[Union[LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam, LiveSpecificFileSearchParam, LiveSpecificWebSearchParam, LiveSpecificWebSearchPreviewParam, LiveSpecificImageGenParam, LiveSpecificComputerParam, LiveSpecificCodeInterpreterParam, LiveSpecificProgrammaticToolCallingParam, LiveSpecificFunctionShellParam, LiveSpecificCustomToolParam, LiveSpecificApplyPatchParam]]
+        type: Literal["allowed_tools"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                mode: Optional[Union[str, LiveToolChoiceValueEnum]] = ..., 
+                tools: list[Union[LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam, LiveSpecificFileSearchParam, LiveSpecificWebSearchParam, LiveSpecificWebSearchPreviewParam, LiveSpecificImageGenParam, LiveSpecificComputerParam, LiveSpecificCodeInterpreterParam, LiveSpecificProgrammaticToolCallingParam, LiveSpecificFunctionShellParam, LiveSpecificCustomToolParam, LiveSpecificApplyPatchParam]]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveApplyPatchToolInputParam(_Model):
+        type: Literal["apply_patch"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
     class azure.ai.projects.models.LiveAudioFormat(_Model):
         type: str
 
@@ -9064,6 +9066,55 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.LiveClientEventLiveDecisionCreateParam(LiveClientEvent, discriminator='decision.create'):
+        event_id: str
+        type: Literal[LiveClientEventType.DECISION_CREATE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveClientEventLiveDecisionItemCreateParam(LiveClientEvent, discriminator='decision.item.create'):
+        event_id: Optional[str]
+        item: LiveDecisionInputItemParam
+        type: Literal[LiveClientEventType.DECISION_ITEM_CREATE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: Optional[str] = ..., 
+                item: LiveDecisionInputItemParam
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveClientEventLiveDecisionItemDeleteParam(LiveClientEvent, discriminator='decision.item.delete'):
+        event_id: Optional[str]
+        item_id: str
+        type: Literal[LiveClientEventType.DECISION_ITEM_DELETE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: Optional[str] = ..., 
+                item_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.LiveClientEventLiveInputAudioAppendEvent(LiveClientEvent, discriminator='session.input_audio.append'):
         audio: str
         event_id: Optional[str]
@@ -9123,6 +9174,23 @@ namespace azure.ai.projects.models
                 *, 
                 content: str, 
                 delegation_id: str, 
+                event_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveClientEventLiveOutputAudioFixturePlayParam(LiveClientEvent, discriminator='session.output_audio.fixture.play'):
+        audio: str
+        event_id: Optional[str]
+        type: Literal[LiveClientEventType.SESSION_OUTPUT_AUDIO_FIXTURE_PLAY]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audio: str, 
                 event_id: Optional[str] = ...
             ) -> None: ...
 
@@ -9214,6 +9282,9 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.LiveClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DECISION_CREATE = "decision.create"
+        DECISION_ITEM_CREATE = "decision.item.create"
+        DECISION_ITEM_DELETE = "decision.item.delete"
         RESPONSE_CREATE = "response.create"
         RESPONSE_ITEM_CREATE = "response.item.create"
         SESSION_CLOSE = "session.close"
@@ -9222,9 +9293,62 @@ namespace azure.ai.projects.models
         SESSION_INPUT_AUDIO_MUTE = "session.input_audio.mute"
         SESSION_INPUT_AUDIO_UNMUTE = "session.input_audio.unmute"
         SESSION_INSTRUCTIONS_APPEND = "session.instructions.append"
+        SESSION_OUTPUT_AUDIO_FIXTURE_PLAY = "session.output_audio.fixture.play"
         SESSION_START = "session.start"
         SESSION_THINKING_APPEND = "session.thinking.append"
         SESSION_UPDATE = "session.update"
+
+
+    class azure.ai.projects.models.LiveCodeInterpreterToolInputParam(_Model):
+        type: Literal["code_interpreter"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.models.LiveComputerToolInputParam(_Model):
+        type: Literal["computer"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.models.LiveContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ENUM_16_G = "16g"
+        ENUM_1_G = "1g"
+        ENUM_4_G = "4g"
+        ENUM_64_G = "64g"
+
+
+    class azure.ai.projects.models.LiveContainerNetworkPolicyDisabledParam(_Model):
+        type: Literal["disabled"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.models.LiveContainerReferenceParam(_Model):
+        container_id: str
+        type: Literal["container_reference"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                container_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.LiveContextWindowUsage(_Model):
@@ -9239,6 +9363,16 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveCustomToolInputParam(_Model):
+        type: Literal["custom"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
 
 
     class azure.ai.projects.models.LiveCustomVoiceParam(_Model):
@@ -9265,6 +9399,184 @@ namespace azure.ai.projects.models
                 *, 
                 allowed_client_events: Optional[Union[Literal[all], list[str]]] = ..., 
                 allowed_server_events: Optional[Union[Literal[all], list[LiveAllowedServerEventParam]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionCompleted(_Model):
+        decision: DecisionResponse
+        type: Literal["completed"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                decision: DecisionResponse
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionInputImageParam(_Model):
+        detail: Optional[Union[str, LiveDetailEnum]]
+        image_url: str
+        type: Literal["input_image"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                detail: Optional[Union[str, LiveDetailEnum]] = ..., 
+                image_url: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionInputItemParam(_Model):
+        content: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]]
+        id: Optional[str]
+        role: Literal["user"]
+        type: Optional[Literal["message"]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]], 
+                id: Optional[str] = ..., 
+                type: Optional[Literal[message]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionInputTextParam(_Model):
+        text: str
+        type: Literal["input_text"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                text: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionQuestionsInputParam_2(_Model):
+        questions: list[QuestionParam]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                questions: list[QuestionParam]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionStoredInputItemParam(_Model):
+        content: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]]
+        id: str
+        role: Literal["user"]
+        type: Optional[Literal["message"]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                content: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]], 
+                id: str, 
+                type: Optional[Literal[message]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionTriggerInputParam_2(_Model):
+        decisions: LiveDecisionQuestionsInputParam_2
+        event_type: Literal["delta", "delta"]
+        type: Literal["decisions"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                decisions: LiveDecisionQuestionsInputParam_2, 
+                event_type: Literal["delta", "delta"]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionsDelegationParam_2(_Model):
+        decisions: LiveDecisionsSettingsInputParam_2
+        type: Literal["decisions"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                decisions: LiveDecisionsSettingsInputParam_2
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionsDelegationUpdateParam(_Model):
+        decisions: Optional[LiveDecisionsSettingsUpdateParam]
+        type: Literal["decisions"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                decisions: Optional[LiveDecisionsSettingsUpdateParam] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionsSettingsInputParam_2(_Model):
+        model: str
+        questions: list[QuestionParam]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                model: str, 
+                questions: list[QuestionParam]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionsSettingsUpdateParam(_Model):
+        model: Optional[str]
+        questions: Optional[list[QuestionParam]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                model: Optional[str] = ..., 
+                questions: Optional[list[QuestionParam]] = ...
             ) -> None: ...
 
         @overload
@@ -9301,6 +9613,23 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.LiveDetailEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUTO = "auto"
+        HIGH = "high"
+        LOW = "low"
+        ORIGINAL = "original"
+
+
+    class azure.ai.projects.models.LiveFileSearchToolInputParam(_Model):
+        type: Literal["file_search"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
     class azure.ai.projects.models.LiveFunctionToolChoiceParam(_Model):
         name: str
         type: Literal["function"]
@@ -9335,6 +9664,67 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveHostedShellContainerAutoParam(_Model):
+        file_ids: Optional[list[str]]
+        memory_limit: Optional[Union[str, LiveContainerMemoryLimit]]
+        network_policy: Optional[Union[LiveContainerNetworkPolicyDisabledParam, LiveHostedShellNetworkPolicyAllowlistParam]]
+        skills: Optional[list[Union[LiveSkillReferenceParam, LiveInlineSkillParam]]]
+        type: Literal["container_auto"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                file_ids: Optional[list[str]] = ..., 
+                memory_limit: Optional[Union[str, LiveContainerMemoryLimit]] = ..., 
+                network_policy: Optional[Union[LiveContainerNetworkPolicyDisabledParam, LiveHostedShellNetworkPolicyAllowlistParam]] = ..., 
+                skills: Optional[list[Union[LiveSkillReferenceParam, LiveInlineSkillParam]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveHostedShellNetworkPolicyAllowlistParam(_Model):
+        allowed_domains: list[str]
+        type: Literal["allowlist"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_domains: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveHostedShellToolInputParam(_Model):
+        environment: Optional[Union[LiveHostedShellContainerAutoParam, LiveContainerReferenceParam, LiveLocalEnvironmentParam]]
+        type: Literal["shell"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                environment: Optional[Union[LiveHostedShellContainerAutoParam, LiveContainerReferenceParam, LiveLocalEnvironmentParam]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveImageGenerationToolInputParam(_Model):
+        type: Literal["image_generation"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
 
 
     class azure.ai.projects.models.LiveInitialAssistantMessageItemParam(LiveInitialItem, discriminator='assistant'):
@@ -9436,13 +9826,13 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.LiveInitialSessionAudioOutputParam(_Model):
-        voice: Optional[Union[str, Literal["alloy"], Literal["ash"], Literal["ballad"], Literal["beacon"], Literal["bossa"], Literal["cedar"], Literal["cinder"], Literal["coral"], Literal["delta"], Literal["echo"], Literal["gleam"], Literal["marin"], Literal["meridian"], Literal["quartz"], Literal["ripple"], Literal["sage"], Literal["shimmer"], Literal["stone"], Literal["tempo"], Literal["verse"], Literal["vesper"], Literal["willow"], LiveCustomVoiceParam]]
+        voice: Optional[Union[str, Literal["alloy"], Literal["ash"], Literal["ballad"], Literal["beacon"], Literal["bossa"], Literal["brise"], Literal["cedar"], Literal["cinder"], Literal["coral"], Literal["delta"], Literal["echo"], Literal["flitz"], Literal["gleam"], Literal["harema"], Literal["juni"], Literal["marin"], Literal["meridian"], Literal["nira"], Literal["noeul"], Literal["nuri"], Literal["quartz"], Literal["ripple"], Literal["sage"], Literal["shida"], Literal["shimmer"], Literal["sillage"], Literal["stone"], Literal["tempo"], Literal["verse"], Literal["vesper"], Literal["willow"], LiveCustomVoiceParam]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                voice: Optional[Union[str, Literal[alloy], Literal[ash], Literal[ballad], Literal[beacon], Literal[bossa], Literal[cedar], Literal[cinder], Literal[coral], Literal[delta], Literal[echo], Literal[gleam], Literal[marin], Literal[meridian], Literal[quartz], Literal[ripple], Literal[sage], Literal[shimmer], Literal[stone], Literal[tempo], Literal[verse], Literal[vesper], Literal[willow], LiveCustomVoiceParam]] = ...
+                voice: Optional[Union[str, Literal[alloy], Literal[ash], Literal[ballad], Literal[beacon], Literal[bossa], Literal[brise], Literal[cedar], Literal[cinder], Literal[coral], Literal[delta], Literal[echo], Literal[flitz], Literal[gleam], Literal[harema], Literal[juni], Literal[marin], Literal[meridian], Literal[nira], Literal[noeul], Literal[nuri], Literal[quartz], Literal[ripple], Literal[sage], Literal[shida], Literal[shimmer], Literal[sillage], Literal[stone], Literal[tempo], Literal[verse], Literal[vesper], Literal[willow], LiveCustomVoiceParam]] = ...
             ) -> None: ...
 
         @overload
@@ -9502,6 +9892,41 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.LiveInlineSkillParam(_Model):
+        description: str
+        name: str
+        source: LiveInlineSkillSourceParam
+        type: Literal["inline"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: str, 
+                name: str, 
+                source: LiveInlineSkillSourceParam
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveInlineSkillSourceParam(_Model):
+        data: str
+        media_type: Literal["application/zip"]
+        type: Literal["base64"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                data: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.LiveInputAudioAppend(LiveServerEvent, discriminator='session.input_audio.append'):
         audio: str
         type: Literal[LiveServerEventType.SESSION_INPUT_AUDIO_APPEND]
@@ -9539,8 +9964,41 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.LiveMCPToolChoiceParam(_Model):
+    class azure.ai.projects.models.LiveLocalEnvironmentParam(_Model):
+        skills: Optional[list[LiveLocalSkillParam]]
+        type: Literal["local"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                skills: Optional[list[LiveLocalSkillParam]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveLocalSkillParam(_Model):
+        description: str
         name: str
+        path: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: str, 
+                name: str, 
+                path: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveMCPToolChoiceParam(_Model):
+        name: Optional[str]
         server_label: str
         type: Literal["mcp"]
 
@@ -9548,12 +10006,32 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
-                name: str, 
+                name: Optional[str] = ..., 
                 server_label: str
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveMCPToolInputParam(_Model):
+        type: Literal["mcp"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.models.LiveNamespaceToolInputParam(_Model):
+        type: Literal["namespace"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
 
 
     class azure.ai.projects.models.LiveOutputAudioDelta(LiveServerEvent, discriminator='session.output_audio.delta'):
@@ -9573,6 +10051,16 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveProgrammaticToolInputParam(_Model):
+        type: Literal["programmatic_tool_calling"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
 
 
     class azure.ai.projects.models.LiveReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -9613,8 +10101,8 @@ namespace azure.ai.projects.models
         reasoning: Optional[LiveDelegationReasoningInputParam]
         service_tier: Optional[Union[str, LiveResponsesServiceTier]]
         text: Optional[LiveDelegationTextInputParam]
-        tool_choice: Optional[Union[str, LiveToolChoiceEnum, LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam]]
-        tools: Optional[list[Union[LiveFunctionToolInputParam, LiveWebSearchToolInputParam]]]
+        tool_choice: Optional[Union[str, LiveToolChoiceEnum, LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam, LiveSpecificFileSearchParam, LiveSpecificWebSearchParam, LiveSpecificWebSearchPreviewParam, LiveSpecificImageGenParam, LiveSpecificComputerParam, LiveSpecificCodeInterpreterParam, LiveSpecificProgrammaticToolCallingParam, LiveSpecificFunctionShellParam, LiveSpecificCustomToolParam, LiveSpecificApplyPatchParam, LiveAllowedToolsChoiceParam]]
+        tools: Optional[list[Union[LiveFunctionToolInputParam, LiveWebSearchToolInputParam, LiveFileSearchToolInputParam, LiveCodeInterpreterToolInputParam, LiveHostedShellToolInputParam, LiveImageGenerationToolInputParam, LiveMCPToolInputParam, LiveCustomToolInputParam, LiveNamespaceToolInputParam, LiveToolSearchToolInputParam, LiveProgrammaticToolInputParam, LiveComputerToolInputParam, LiveApplyPatchToolInputParam]]]
 
         @overload
         def __init__(
@@ -9627,8 +10115,8 @@ namespace azure.ai.projects.models
                 reasoning: Optional[LiveDelegationReasoningInputParam] = ..., 
                 service_tier: Optional[Union[str, LiveResponsesServiceTier]] = ..., 
                 text: Optional[LiveDelegationTextInputParam] = ..., 
-                tool_choice: Optional[Union[str, LiveToolChoiceEnum, LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam]] = ..., 
-                tools: Optional[list[Union[LiveFunctionToolInputParam, LiveWebSearchToolInputParam]]] = ...
+                tool_choice: Optional[Union[str, LiveToolChoiceEnum, LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam, LiveSpecificFileSearchParam, LiveSpecificWebSearchParam, LiveSpecificWebSearchPreviewParam, LiveSpecificImageGenParam, LiveSpecificComputerParam, LiveSpecificCodeInterpreterParam, LiveSpecificProgrammaticToolCallingParam, LiveSpecificFunctionShellParam, LiveSpecificCustomToolParam, LiveSpecificApplyPatchParam, LiveAllowedToolsChoiceParam]] = ..., 
+                tools: Optional[list[Union[LiveFunctionToolInputParam, LiveWebSearchToolInputParam, LiveFileSearchToolInputParam, LiveCodeInterpreterToolInputParam, LiveHostedShellToolInputParam, LiveImageGenerationToolInputParam, LiveMCPToolInputParam, LiveCustomToolInputParam, LiveNamespaceToolInputParam, LiveToolSearchToolInputParam, LiveProgrammaticToolInputParam, LiveComputerToolInputParam, LiveApplyPatchToolInputParam]]] = ...
             ) -> None: ...
 
         @overload
@@ -9643,8 +10131,8 @@ namespace azure.ai.projects.models
         reasoning: Optional[LiveDelegationReasoningInputParam]
         service_tier: Optional[Union[str, LiveResponsesServiceTier]]
         text: Optional[LiveDelegationTextInputParam]
-        tool_choice: Optional[Union[str, LiveToolChoiceEnum, LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam]]
-        tools: Optional[list[Union[LiveFunctionToolInputParam, LiveWebSearchToolInputParam]]]
+        tool_choice: Optional[Union[str, LiveToolChoiceEnum, LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam, LiveSpecificFileSearchParam, LiveSpecificWebSearchParam, LiveSpecificWebSearchPreviewParam, LiveSpecificImageGenParam, LiveSpecificComputerParam, LiveSpecificCodeInterpreterParam, LiveSpecificProgrammaticToolCallingParam, LiveSpecificFunctionShellParam, LiveSpecificCustomToolParam, LiveSpecificApplyPatchParam, LiveAllowedToolsChoiceParam]]
+        tools: Optional[list[Union[LiveFunctionToolInputParam, LiveWebSearchToolInputParam, LiveFileSearchToolInputParam, LiveCodeInterpreterToolInputParam, LiveHostedShellToolInputParam, LiveImageGenerationToolInputParam, LiveMCPToolInputParam, LiveCustomToolInputParam, LiveNamespaceToolInputParam, LiveToolSearchToolInputParam, LiveProgrammaticToolInputParam, LiveComputerToolInputParam, LiveApplyPatchToolInputParam]]]
 
         @overload
         def __init__(
@@ -9657,8 +10145,8 @@ namespace azure.ai.projects.models
                 reasoning: Optional[LiveDelegationReasoningInputParam] = ..., 
                 service_tier: Optional[Union[str, LiveResponsesServiceTier]] = ..., 
                 text: Optional[LiveDelegationTextInputParam] = ..., 
-                tool_choice: Optional[Union[str, LiveToolChoiceEnum, LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam]] = ..., 
-                tools: Optional[list[Union[LiveFunctionToolInputParam, LiveWebSearchToolInputParam]]] = ...
+                tool_choice: Optional[Union[str, LiveToolChoiceEnum, LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam, LiveSpecificFileSearchParam, LiveSpecificWebSearchParam, LiveSpecificWebSearchPreviewParam, LiveSpecificImageGenParam, LiveSpecificComputerParam, LiveSpecificCodeInterpreterParam, LiveSpecificProgrammaticToolCallingParam, LiveSpecificFunctionShellParam, LiveSpecificCustomToolParam, LiveSpecificApplyPatchParam, LiveAllowedToolsChoiceParam]] = ..., 
+                tools: Optional[list[Union[LiveFunctionToolInputParam, LiveWebSearchToolInputParam, LiveFileSearchToolInputParam, LiveCodeInterpreterToolInputParam, LiveHostedShellToolInputParam, LiveImageGenerationToolInputParam, LiveMCPToolInputParam, LiveCustomToolInputParam, LiveNamespaceToolInputParam, LiveToolSearchToolInputParam, LiveProgrammaticToolInputParam, LiveComputerToolInputParam, LiveApplyPatchToolInputParam]]] = ...
             ) -> None: ...
 
         @overload
@@ -9718,6 +10206,69 @@ namespace azure.ai.projects.models
                 end_ms: int, 
                 event_id: str, 
                 start_ms: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveServerEventLiveDecisionEvent(LiveServerEvent, discriminator='decision.event'):
+        delegation_id: str
+        event: LiveDecisionCompleted
+        event_id: str
+        source_event_id: str
+        source_event_type: Literal["delta", "delta"]
+        trigger_id: str
+        type: Literal[LiveServerEventType.DECISION_EVENT]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                delegation_id: str, 
+                event: LiveDecisionCompleted, 
+                event_id: str, 
+                source_event_id: str, 
+                source_event_type: Literal["delta", "delta"], 
+                trigger_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveServerEventLiveDecisionItemCreated(LiveServerEvent, discriminator='decision.item.created'):
+        client_event_id: Optional[str]
+        event_id: str
+        item: LiveDecisionStoredInputItemParam
+        type: Literal[LiveServerEventType.DECISION_ITEM_CREATED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                client_event_id: Optional[str] = ..., 
+                event_id: str, 
+                item: LiveDecisionStoredInputItemParam
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveServerEventLiveDecisionItemDeleted(LiveServerEvent, discriminator='decision.item.deleted'):
+        client_event_id: Optional[str]
+        event_id: str
+        item_id: str
+        type: Literal[LiveServerEventType.DECISION_ITEM_DELETED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                client_event_id: Optional[str] = ..., 
+                event_id: str, 
+                item_id: str
             ) -> None: ...
 
         @overload
@@ -9857,6 +10408,40 @@ namespace azure.ai.projects.models
                 end_ms: int, 
                 event_id: str, 
                 start_ms: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveServerEventLiveOutputAudioFixturePlayed(LiveServerEvent, discriminator='session.output_audio.fixture.played'):
+        client_event_id: Optional[str]
+        event_id: str
+        type: Literal[LiveServerEventType.SESSION_OUTPUT_AUDIO_FIXTURE_PLAYED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                client_event_id: Optional[str] = ..., 
+                event_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveServerEventLiveOutputAudioFixturePlaying(LiveServerEvent, discriminator='session.output_audio.fixture.playing'):
+        client_event_id: Optional[str]
+        event_id: str
+        type: Literal[LiveServerEventType.SESSION_OUTPUT_AUDIO_FIXTURE_PLAYING]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                client_event_id: Optional[str] = ..., 
+                event_id: str
             ) -> None: ...
 
         @overload
@@ -10012,7 +10597,63 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.LiveServerEventLiveTransportAnswered(LiveServerEvent, discriminator='transport.answered'):
+        event_id: str
+        session_id: str
+        type: Literal[LiveServerEventType.TRANSPORT_ANSWERED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                session_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveServerEventLiveTransportFailed(LiveServerEvent, discriminator='transport.failed'):
+        error: LiveTransportCallError
+        event_id: str
+        session_id: str
+        type: Literal[LiveServerEventType.TRANSPORT_FAILED]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                error: LiveTransportCallError, 
+                event_id: str, 
+                session_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveServerEventLiveTransportRinging(LiveServerEvent, discriminator='transport.ringing'):
+        event_id: str
+        session_id: str
+        type: Literal[LiveServerEventType.TRANSPORT_RINGING]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                event_id: str, 
+                session_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.LiveServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DECISION_EVENT = "decision.event"
+        DECISION_ITEM_CREATED = "decision.item.created"
+        DECISION_ITEM_DELETED = "decision.item.deleted"
         ERROR = "error"
         INFO = "info"
         RESPONSE_EVENT = "response.event"
@@ -10025,6 +10666,8 @@ namespace azure.ai.projects.models
         SESSION_INPUT_TRANSCRIPT_DELTA = "session.input_transcript.delta"
         SESSION_INSTRUCTIONS_APPENDED = "session.instructions.appended"
         SESSION_OUTPUT_AUDIO_DELTA = "session.output_audio.delta"
+        SESSION_OUTPUT_AUDIO_FIXTURE_PLAYED = "session.output_audio.fixture.played"
+        SESSION_OUTPUT_AUDIO_FIXTURE_PLAYING = "session.output_audio.fixture.playing"
         SESSION_OUTPUT_TRANSCRIPT_DELTA = "session.output_transcript.delta"
         SESSION_STARTED = "session.started"
         SESSION_THINKING_APPENDED = "session.thinking.appended"
@@ -10085,11 +10728,12 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.LiveSessionCreateParams(_Model):
         audio: Optional[LiveInitialSessionAudioParam]
         client: Optional[LiveClientConfigParam]
-        delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationParam]]
+        delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationParam, LiveDecisionsDelegationParam_2]]
         input: Optional[list[LiveInitialItem]]
         instructions: Optional[str]
         model: Union[str, ModelIdsLive]
         store: Optional[bool]
+        triggers: Optional[list[LiveDecisionTriggerInputParam_2]]
 
         @overload
         def __init__(
@@ -10097,11 +10741,12 @@ namespace azure.ai.projects.models
                 *, 
                 audio: Optional[LiveInitialSessionAudioParam] = ..., 
                 client: Optional[LiveClientConfigParam] = ..., 
-                delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationParam]] = ..., 
+                delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationParam, LiveDecisionsDelegationParam_2]] = ..., 
                 input: Optional[list[LiveInitialItem]] = ..., 
                 instructions: Optional[str] = ..., 
                 model: Union[str, ModelIdsLive], 
-                store: Optional[bool] = ...
+                store: Optional[bool] = ..., 
+                triggers: Optional[list[LiveDecisionTriggerInputParam_2]] = ...
             ) -> None: ...
 
         @overload
@@ -10126,13 +10771,15 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.LiveSessionUpdateParams(_Model):
-        delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationUpdateParam]]
+        delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationUpdateParam, LiveDecisionsDelegationUpdateParam]]
+        triggers: Optional[list[LiveDecisionTriggerInputParam_2]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationUpdateParam]] = ...
+                delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationUpdateParam, LiveDecisionsDelegationUpdateParam]] = ..., 
+                triggers: Optional[list[LiveDecisionTriggerInputParam_2]] = ...
             ) -> None: ...
 
         @overload
@@ -10153,6 +10800,128 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.LiveSkillReferenceParam(_Model):
+        skill_id: str
+        type: Literal["skill_reference"]
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                skill_id: str, 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSpecificApplyPatchParam(_Model):
+        type: Literal["apply_patch"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSpecificCodeInterpreterParam(_Model):
+        type: Literal["code_interpreter"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSpecificComputerParam(_Model):
+        type: Literal["computer"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSpecificCustomToolParam(_Model):
+        name: str
+        type: Literal["custom"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSpecificFileSearchParam(_Model):
+        type: Literal["file_search"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSpecificFunctionShellParam(_Model):
+        type: Literal["shell"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSpecificImageGenParam(_Model):
+        type: Literal["image_generation"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSpecificProgrammaticToolCallingParam(_Model):
+        type: Literal["programmatic_tool_calling"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSpecificWebSearchParam(_Model):
+        type: Literal["web_search"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSpecificWebSearchPreviewParam(_Model):
+        type: Literal["web_search_preview"]
+
+        def __init__(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+
     class azure.ai.projects.models.LiveTextVerbosity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         HIGH = "high"
         LOW = "low"
@@ -10165,21 +10934,20 @@ namespace azure.ai.projects.models
         REQUIRED = "required"
 
 
-    class azure.ai.projects.models.LiveTransportAnswered(LiveServerEvent, discriminator='transport.answered'):
-        event_id: str
-        session_id: str
-        type: Literal[LiveServerEventType.TRANSPORT_ANSWERED]
+    class azure.ai.projects.models.LiveToolChoiceValueEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUTO = "auto"
+        NONE = "none"
+        REQUIRED = "required"
 
-        @overload
+
+    class azure.ai.projects.models.LiveToolSearchToolInputParam(_Model):
+        type: Literal["tool_search"]
+
         def __init__(
                 self, 
-                *, 
-                event_id: str, 
-                session_id: str
+                *args: Any, 
+                **kwargs: Any
             ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.LiveTransportCallError(_Model):
@@ -10219,6 +10987,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.LiveTransportDTMFSend(LiveServerEvent, discriminator='transport.dtmf.send'):
+        client_event_id: Optional[str]
         event: str
         event_id: str
         type: Literal[LiveServerEventType.TRANSPORT_DTMF_SEND]
@@ -10227,44 +10996,9 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
+                client_event_id: Optional[str] = ..., 
                 event: str, 
                 event_id: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.LiveTransportFailed(LiveServerEvent, discriminator='transport.failed'):
-        error: LiveTransportCallError
-        event_id: str
-        session_id: str
-        type: Literal[LiveServerEventType.TRANSPORT_FAILED]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                error: LiveTransportCallError, 
-                event_id: str, 
-                session_id: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.LiveTransportRinging(LiveServerEvent, discriminator='transport.ringing'):
-        event_id: str
-        session_id: str
-        type: Literal[LiveServerEventType.TRANSPORT_RINGING]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                event_id: str, 
-                session_id: str
             ) -> None: ...
 
         @overload
@@ -10279,25 +11013,6 @@ namespace azure.ai.projects.models
                 *args: Any, 
                 **kwargs: Any
             ) -> None: ...
-
-
-    class azure.ai.projects.models.LocalShellToolParam(Tool, discriminator='local_shell'):
-        description: Optional[str]
-        name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
-        type: Literal[ToolType.LOCAL_SHELL]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.LocalSkillParam(_Model):
@@ -10382,7 +11097,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.MCPListToolsToolInputSchema(_Model):
 
 
-    class azure.ai.projects.models.MCPTool(Tool, discriminator='mcp'):
+    class azure.ai.projects.models.MCPTool(_Model):
         allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
         allowed_tools: Optional[Union[list[str], MCPToolFilter]]
         authorization: Optional[str]
@@ -10396,7 +11111,7 @@ namespace azure.ai.projects.models
         server_url: Optional[str]
         tool_configs: Optional[dict[str, ToolConfig]]
         tunnel_id: Optional[str]
-        type: Literal[ToolType.MCP]
+        type: Literal["mcp"]
 
         @overload
         def __init__(
@@ -11003,6 +11718,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.MisalignmentErrorDetailsResource(_Model):
         detailed_explanation: Optional[str]
         error_type: Optional[Union[str, MisalignmentErrorType]]
+        review_target: Optional[str]
         steer: Optional[MisalignmentSteer]
 
         @overload
@@ -11011,6 +11727,7 @@ namespace azure.ai.projects.models
                 *, 
                 detailed_explanation: Optional[str] = ..., 
                 error_type: Optional[Union[str, MisalignmentErrorType]] = ..., 
+                review_target: Optional[str] = ..., 
                 steer: Optional[MisalignmentSteer] = ...
             ) -> None: ...
 
@@ -11483,6 +12200,20 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.OutputTokensDetailsResource(_Model):
+        reasoning_tokens: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                reasoning_tokens: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.PSTNTelephonyTransferDestination(TelephonyTransferDestination, discriminator='pstn'):
         kind: Literal[TelephonyTransferDestinationKind.PSTN]
         value: str
@@ -11577,16 +12308,6 @@ namespace azure.ai.projects.models
                 scope: str, 
                 updated_at: datetime
             ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ProgrammaticToolCallingParam(Tool, discriminator='programmatic_tool_calling'):
-        type: Literal[ToolType.PROGRAMMATIC_TOOL_CALLING]
-
-        @overload
-        def __init__(self) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
@@ -11759,6 +12480,81 @@ namespace azure.ai.projects.models
         NO_APPROVAL_NEEDED = "no_approval_needed"
         PENDING = "pending"
         REJECTED = "rejected"
+
+
+    class azure.ai.projects.models.QuestionParam(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.QuestionParamChoice(QuestionParam, discriminator='choice'):
+        choices: list[ChoiceOptionParam]
+        instructions: str
+        name: Optional[str]
+        type: Literal[QuestionParamType.CHOICE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                choices: list[ChoiceOptionParam], 
+                instructions: str, 
+                name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.QuestionParamPredicate(QuestionParam, discriminator='predicate'):
+        instructions: str
+        name: Optional[str]
+        type: Literal[QuestionParamType.PREDICATE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                instructions: str, 
+                name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.QuestionParamScore(QuestionParam, discriminator='score'):
+        instructions: str
+        levels: list[ScoreLevelParam]
+        name: Optional[str]
+        type: Literal[QuestionParamType.SCORE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                instructions: str, 
+                levels: list[ScoreLevelParam], 
+                name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.QuestionParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CHOICE = "choice"
+        PREDICATE = "predicate"
+        SCORE = "score"
 
 
     class azure.ai.projects.models.RaiConfig(_Model):
@@ -12570,6 +13366,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.RealtimeResponseStatusDetailsError(_Model):
         code: Optional[str]
+        message: Optional[str]
         type: Optional[str]
 
         @overload
@@ -12577,6 +13374,7 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 code: Optional[str] = ..., 
+                message: Optional[str] = ..., 
                 type: Optional[str] = ...
             ) -> None: ...
 
@@ -13978,6 +14776,28 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ResponseUsageResource(_Model):
+        input_tokens: int
+        input_tokens_details: InputTokensDetailsResource
+        output_tokens: int
+        output_tokens_details: OutputTokensDetailsResource
+        total_tokens: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                input_tokens: int, 
+                input_tokens_details: InputTokensDetailsResource, 
+                output_tokens: int, 
+                output_tokens_details: OutputTokensDetailsResource, 
+                total_tokens: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ResponsesProtocolConfiguration(_Model):
 
 
@@ -14345,6 +15165,40 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.ScheduleTaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         EVALUATION = "Evaluation"
         INSIGHT = "Insight"
+
+
+    class azure.ai.projects.models.ScoreLevelParam(_Model):
+        description: Optional[str]
+        label: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                label: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ScoreProbabilityResource(_Model):
+        label: str
+        probability: float
+        value: int
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                label: str, 
+                probability: float, 
+                value: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.SearchContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -15713,6 +16567,21 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ToolApplyPatchToolParam(Tool, discriminator='apply_patch'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        type: Literal[ToolType.APPLY_PATCH]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ToolChoiceAllowed(ToolChoiceParam, discriminator='allowed_tools'):
         mode: Literal["auto", "required"]
         tools: list[dict[str, Any]]
@@ -15895,6 +16764,58 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ToolCodeInterpreterTool(Tool, discriminator='code_interpreter'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        container: Optional[Union[str, AutoCodeInterpreterToolParam]]
+        description: Optional[str]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: Literal[ToolType.CODE_INTERPRETER]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
+                container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ..., 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolComputerTool(Tool, discriminator='computer'):
+        type: Literal[ToolType.COMPUTER]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolComputerUsePreviewTool(Tool, discriminator='computer_use_preview'):
+        display_height: int
+        display_width: int
+        environment: Union[str, ComputerEnvironment]
+        type: Literal[ToolType.COMPUTER_USE_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                display_height: int, 
+                display_width: int, 
+                environment: Union[str, ComputerEnvironment]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ToolConfig(_Model):
         additional_search_text: Optional[str]
         pin: Optional[bool]
@@ -15905,6 +16826,31 @@ namespace azure.ai.projects.models
                 *, 
                 additional_search_text: Optional[str] = ..., 
                 pin: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolCustomToolParam(Tool, discriminator='custom'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        async_property: Optional[bool]
+        defer_loading: Optional[bool]
+        description: Optional[str]
+        format: Optional[CustomToolParamFormat]
+        name: str
+        type: Literal[ToolType.CUSTOM]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
+                async_property: Optional[bool] = ..., 
+                defer_loading: Optional[bool] = ..., 
+                description: Optional[str] = ..., 
+                format: Optional[CustomToolParamFormat] = ..., 
+                name: str
             ) -> None: ...
 
         @overload
@@ -15932,6 +16878,194 @@ namespace azure.ai.projects.models
         key "name": str
 
 
+    class azure.ai.projects.models.ToolFileSearchTool(Tool, discriminator='file_search'):
+        description: Optional[str]
+        filters: Optional[Filters]
+        max_num_results: Optional[int]
+        name: Optional[str]
+        ranking_options: Optional[RankingOptions]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: Literal[ToolType.FILE_SEARCH]
+        vector_store_ids: list[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                filters: Optional[Filters] = ..., 
+                max_num_results: Optional[int] = ..., 
+                name: Optional[str] = ..., 
+                ranking_options: Optional[RankingOptions] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                vector_store_ids: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolFunctionShellToolParam(Tool, discriminator='shell'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        description: Optional[str]
+        environment: Optional[FunctionShellToolParamEnvironment]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: Literal[ToolType.SHELL]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
+                description: Optional[str] = ..., 
+                environment: Optional[FunctionShellToolParamEnvironment] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolFunctionTool(Tool, discriminator='function'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        async_property: Optional[bool]
+        defer_loading: Optional[bool]
+        description: Optional[str]
+        name: str
+        output_schema: Optional[dict[str, Any]]
+        parameters: dict[str, Any]
+        strict: bool
+        type: Literal[ToolType.FUNCTION]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
+                async_property: Optional[bool] = ..., 
+                defer_loading: Optional[bool] = ..., 
+                description: Optional[str] = ..., 
+                name: str, 
+                output_schema: Optional[dict[str, Any]] = ..., 
+                parameters: dict[str, Any], 
+                strict: bool
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolImageGenTool(Tool, discriminator='image_generation'):
+        action: Optional[Union[str, ImageGenAction]]
+        background: Optional[Literal["transparent", "opaque", "auto"]]
+        description: Optional[str]
+        input_fidelity: Optional[Union[str, InputFidelity]]
+        input_image_mask: Optional[ImageGenToolInputImageMask]
+        model: Optional[Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-5"], Literal["gpt-image-2"], Literal["gpt-image-2-2026-04-21"], Literal["gpt-image-5-sunburst"], Literal["gpt-image-5-sunburst-2026-09-08"], Literal["gpt-image-5-flare"], Literal["gpt-image-5-flare-2026-09-08"], str]]
+        moderation: Optional[Literal["auto", "low"]]
+        name: Optional[str]
+        output_compression: Optional[int]
+        output_format: Optional[Literal["png", "webp", "jpeg"]]
+        partial_images: Optional[int]
+        quality: Optional[Literal["low", "medium", "high", "xhigh", "max", "auto"]]
+        size: Optional[Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: Literal[ToolType.IMAGE_GENERATION]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                action: Optional[Union[str, ImageGenAction]] = ..., 
+                background: Optional[Literal[transparent, opaque, auto]] = ..., 
+                description: Optional[str] = ..., 
+                input_fidelity: Optional[Union[str, InputFidelity]] = ..., 
+                input_image_mask: Optional[ImageGenToolInputImageMask] = ..., 
+                model: Optional[Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-5], Literal[gpt-image-2], Literal[gpt-image-2-2026-04-21], Literal[gpt-image-5-sunburst], Literal[gpt-image-5-sunburst-2026-09-08], Literal[gpt-image-5-flare], Literal[gpt-image-5-flare-2026-09-08], str]] = ..., 
+                moderation: Optional[Literal[auto, low]] = ..., 
+                name: Optional[str] = ..., 
+                output_compression: Optional[int] = ..., 
+                output_format: Optional[Literal[png, webp, jpeg]] = ..., 
+                partial_images: Optional[int] = ..., 
+                quality: Optional[Literal[low, medium, high, xhigh, max, auto]] = ..., 
+                size: Optional[Union[Literal[1024x1024], Literal[1024x1536], Literal[1536x1024], Literal[auto], str]] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolLocalShellToolParam(Tool, discriminator='local_shell'):
+        description: Optional[str]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: Literal[ToolType.LOCAL_SHELL]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolMcpTool(Tool, discriminator='mcp'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        allowed_tools: Optional[Union[list[str], MCPToolFilter]]
+        authorization: Optional[str]
+        connector_id: Optional[Literal["connector_dropbox", "connector_gmail", "connector_googlecalendar", "connector_googledrive", "connector_microsoftteams", "connector_outlookcalendar", "connector_outlookemail", "connector_sharepoint"]]
+        defer_loading: Optional[bool]
+        headers: Optional[dict[str, str]]
+        project_connection_id: Optional[str]
+        require_approval: Optional[Union[MCPToolRequireApproval, Literal["always"], Literal["never"]]]
+        server_description: Optional[str]
+        server_label: str
+        server_url: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        tunnel_id: Optional[str]
+        type: Literal[ToolType.MCP]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
+                allowed_tools: Optional[Union[list[str], MCPToolFilter]] = ..., 
+                authorization: Optional[str] = ..., 
+                connector_id: Optional[Literal[connector_dropbox, connector_gmail, connector_googlecalendar, connector_googledrive, connector_microsoftteams, connector_outlookcalendar, connector_outlookemail, connector_sharepoint]] = ..., 
+                defer_loading: Optional[bool] = ..., 
+                headers: Optional[dict[str, str]] = ..., 
+                project_connection_id: Optional[str] = ..., 
+                require_approval: Optional[Union[MCPToolRequireApproval, Literal[always], Literal[never]]] = ..., 
+                server_description: Optional[str] = ..., 
+                server_label: str, 
+                server_url: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                tunnel_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolProgrammaticToolCallingParam(Tool, discriminator='programmatic_tool_calling'):
+        type: Literal[ToolType.PROGRAMMATIC_TOOL_CALLING]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ToolProjectConnection(_Model):
         project_connection_id: str
 
@@ -15951,25 +17085,6 @@ namespace azure.ai.projects.models
         SERVER = "server"
 
 
-    class azure.ai.projects.models.ToolSearchToolParam(Tool, discriminator='tool_search'):
-        description: Optional[str]
-        execution: Optional[Union[str, ToolSearchExecutionType]]
-        parameters: Optional[EmptyModelParam]
-        type: Literal[ToolType.TOOL_SEARCH]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                execution: Optional[Union[str, ToolSearchExecutionType]] = ..., 
-                parameters: Optional[EmptyModelParam] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.ToolSearchToolboxTool(ToolboxTool, discriminator='toolbox_search'):
         description: str
         name: str
@@ -15983,6 +17098,25 @@ namespace azure.ai.projects.models
                 description: Optional[str] = ..., 
                 name: Optional[str] = ..., 
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolToolSearchToolParam(Tool, discriminator='tool_search'):
+        description: Optional[str]
+        execution: Optional[Union[str, ToolSearchExecutionType]]
+        parameters: Optional[EmptyModelParam]
+        type: Literal[ToolType.TOOL_SEARCH]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                execution: Optional[Union[str, ToolSearchExecutionType]] = ..., 
+                parameters: Optional[EmptyModelParam] = ...
             ) -> None: ...
 
         @overload
@@ -16040,6 +17174,54 @@ namespace azure.ai.projects.models
                 max_samples: int, 
                 model_options: Optional[DataGenerationModelOptions] = ..., 
                 train_split: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolWebSearchPreviewTool(Tool, discriminator='web_search_preview'):
+        search_content_types: Optional[list[Union[str, SearchContentType]]]
+        search_context_size: Optional[Union[str, SearchContextSize]]
+        type: Literal[ToolType.WEB_SEARCH_PREVIEW]
+        user_location: Optional[ApproximateLocation]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                search_content_types: Optional[list[Union[str, SearchContentType]]] = ..., 
+                search_context_size: Optional[Union[str, SearchContextSize]] = ..., 
+                user_location: Optional[ApproximateLocation] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolWebSearchTool(Tool, discriminator='web_search'):
+        custom_search_configuration: Optional[WebSearchConfiguration]
+        description: Optional[str]
+        external_web_access: Optional[bool]
+        filters: Optional[WebSearchToolFilters]
+        name: Optional[str]
+        search_context_size: Optional[Literal["low", "medium", "high"]]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: Literal[ToolType.WEB_SEARCH]
+        user_location: Optional[WebSearchApproximateLocation]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                custom_search_configuration: Optional[WebSearchConfiguration] = ..., 
+                description: Optional[str] = ..., 
+                external_web_access: Optional[bool] = ..., 
+                filters: Optional[WebSearchToolFilters] = ..., 
+                name: Optional[str] = ..., 
+                search_context_size: Optional[Literal[low, medium, high]] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                user_location: Optional[WebSearchApproximateLocation] = ...
             ) -> None: ...
 
         @overload
@@ -17228,6 +18410,7 @@ namespace azure.ai.projects.models
         output_modalities: Optional[list[Union[str, VoiceOutputModality]]]
         parallel_tool_calls: Optional[bool]
         rai_config: RaiConfig
+        soundscape: Optional[VoiceAgentSoundscapeConfig]
         store: bool
         structured_inputs: dict[str, StructuredInputDefinition]
         sub_protocol: Optional[Literal["realtime"]]
@@ -17252,6 +18435,7 @@ namespace azure.ai.projects.models
                 output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ..., 
                 parallel_tool_calls: Optional[bool] = ..., 
                 rai_config: Optional[RaiConfig] = ..., 
+                soundscape: Optional[VoiceAgentSoundscapeConfig] = ..., 
                 store: Optional[bool] = ..., 
                 structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ..., 
                 sub_protocol: Optional[Literal[realtime]] = ..., 
@@ -17399,6 +18583,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AZURE_SPEECH = "azure-speech"
+        AZURE_SPEECH_STREAMING = "azure-speech-streaming"
         GPT4_O_MINI_TRANSCRIBE = "gpt-4o-mini-transcribe"
         GPT4_O_TRANSCRIBE = "gpt-4o-transcribe"
         GPT4_O_TRANSCRIBE_DIARIZE = "gpt-4o-transcribe-diarize"
@@ -17744,6 +18929,7 @@ namespace azure.ai.projects.models
         model: Union[str, ModelIdsLive]
         status: Literal["active"]
         store: Optional[bool]
+        triggers: Optional[list[LiveDecisionTriggerInputParam_2]]
 
         @overload
         def __init__(
@@ -17757,7 +18943,8 @@ namespace azure.ai.projects.models
                 input: Optional[list[LiveInitialItem]] = ..., 
                 instructions: Optional[str] = ..., 
                 model: Union[str, ModelIdsLive], 
-                store: Optional[bool] = ...
+                store: Optional[bool] = ..., 
+                triggers: Optional[list[LiveDecisionTriggerInputParam_2]] = ...
             ) -> None: ...
 
         @overload
@@ -17857,6 +19044,8 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AZURE_DEEP_NOISE_SUPPRESSION = "azure_deep_noise_suppression"
+        AZURE_DEEP_NOISE_SUPPRESSION_HEADSET = "azure_deep_noise_suppression_headset"
+        AZURE_PERSONAL_NOISE_SUPPRESSION = "azure_personal_noise_suppression"
         FAR_FIELD = "far_field"
         NEAR_FIELD = "near_field"
 
@@ -18503,6 +19692,87 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentSoundscapeConfig(_Model):
+        background: Optional[VoiceAgentSoundscapeTrackConfig]
+        closing: Optional[VoiceAgentSoundscapeTrackConfig]
+        opening: Optional[VoiceAgentSoundscapeTrackConfig]
+        transfer: Optional[VoiceAgentSoundscapeTrackConfig]
+        working: Optional[VoiceAgentSoundscapeWorkingTrackConfig]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                background: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
+                closing: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
+                opening: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
+                transfer: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
+                working: Optional[VoiceAgentSoundscapeWorkingTrackConfig] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSoundscapeSound(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BUSY_STREET = "busy_street"
+        CALL_CENTER = "call_center"
+        DING1 = "ding1"
+        DING2 = "ding2"
+        OFFICE = "office"
+        PEOPLE_TALKING = "people_talking"
+        STREET_AND_METRO_STATION = "street_and_metro_station"
+
+
+    class azure.ai.projects.models.VoiceAgentSoundscapeSourceConfig(_Model):
+        name: Union[str, VoiceAgentSoundscapeSound]
+        type: Literal["built_in"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Union[str, VoiceAgentSoundscapeSound]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSoundscapeTrackConfig(_Model):
+        gain: Optional[float]
+        source: VoiceAgentSoundscapeSourceConfig
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                gain: Optional[float] = ..., 
+                source: VoiceAgentSoundscapeSourceConfig
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSoundscapeWorkingTrackConfig(_Model):
+        delay_ms: Optional[timedelta]
+        gain: Optional[float]
+        source: VoiceAgentSoundscapeSourceConfig
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                delay_ms: Optional[timedelta] = ..., 
+                gain: Optional[float] = ..., 
+                source: VoiceAgentSoundscapeSourceConfig
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentStaticInterimResponseConfig(VoiceAgentInterimResponseConfig, discriminator='static_interim_response'):
         latency_threshold_ms: timedelta
         texts: Optional[list[str]]
@@ -19095,54 +20365,6 @@ namespace azure.ai.projects.models
                 *, 
                 instance_name: str, 
                 project_connection_id: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.WebSearchPreviewTool(Tool, discriminator='web_search_preview'):
-        search_content_types: Optional[list[Union[str, SearchContentType]]]
-        search_context_size: Optional[Union[str, SearchContextSize]]
-        type: Literal[ToolType.WEB_SEARCH_PREVIEW]
-        user_location: Optional[ApproximateLocation]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                search_content_types: Optional[list[Union[str, SearchContentType]]] = ..., 
-                search_context_size: Optional[Union[str, SearchContextSize]] = ..., 
-                user_location: Optional[ApproximateLocation] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.WebSearchTool(Tool, discriminator='web_search'):
-        custom_search_configuration: Optional[WebSearchConfiguration]
-        description: Optional[str]
-        external_web_access: Optional[bool]
-        filters: Optional[WebSearchToolFilters]
-        name: Optional[str]
-        search_context_size: Optional[Literal["low", "medium", "high"]]
-        tool_configs: Optional[dict[str, ToolConfig]]
-        type: Literal[ToolType.WEB_SEARCH]
-        user_location: Optional[WebSearchApproximateLocation]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                custom_search_configuration: Optional[WebSearchConfiguration] = ..., 
-                description: Optional[str] = ..., 
-                external_web_access: Optional[bool] = ..., 
-                filters: Optional[WebSearchToolFilters] = ..., 
-                name: Optional[str] = ..., 
-                search_context_size: Optional[Literal[low, medium, high]] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
-                user_location: Optional[WebSearchApproximateLocation] = ...
             ) -> None: ...
 
         @overload
