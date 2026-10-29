@@ -1,21 +1,20 @@
 # Azure Data AI client library for Python
 
-`azure-data-ai` provides access to **Azure Data AI**, hosted by Azure Inference Service. This initial preview
+`azure-data-ai` provides access to **Azure Data AI**, hosted by Azure Inference Service. It
 supports semantic reranking: rank caller-supplied documents by their relevance to a
 query, optionally returning the documents and sentence-level scores.
 
-The package uses the `2026-09-01-preview` service API.
+The package uses the `2026-10-30` service API.
 
 ## Getting started
 
 ### Install the package
 
 ```bash
-python -m pip install --pre azure-data-ai
+python -m pip install azure-data-ai
 ```
 
-For local development before this preview is published, run `python -m pip install -e .`
-from this package directory instead.
+For local development, run `python -m pip install -e .` from this package directory instead.
 
 ### Prerequisites
 
