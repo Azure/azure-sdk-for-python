@@ -40,7 +40,7 @@ def sanitize_log(text: str) -> str:
     text = re.sub(r"(?i)\b(Bearer|Basic)\s+[^\s\"',;<>]+", r"\1 <REDACTED>", text)
     text = re.sub(rf'(?i)("(?:{_SECRET_NAMES})"\s*:\s*)"(?:\\.|[^"\\])*"', r'\1"<REDACTED>"', text)
     text = re.sub(rf"(?i)('(?:{_SECRET_NAMES})'\s*:\s*)'(?:\\.|[^'\\])*'", r"\1'<REDACTED>'", text)
-    text = re.sub(rf"(?im)^([ \t]*(?:{_SECRET_NAMES})[ \t]*:[ \t]*).*$", r"\1<REDACTED>", text)
+    text = re.sub(rf"(?im)^([ \t]*(?:\d+\.[ \t]+)?(?:{_SECRET_NAMES})[ \t]*:[ \t]*).*$", r"\1<REDACTED>", text)
     text = re.sub(rf"(?i)(\b(?:{_SECRET_NAMES})=)[^;\s&\"'<>]+", r"\1<REDACTED>", text)
     text = re.sub(
         r"(?i)([?&](?:sig|token|access_token|api[-_]?key|key|code|client_secret)=)[^&\s\"'<>]+",
