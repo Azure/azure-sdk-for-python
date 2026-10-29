@@ -1033,6 +1033,14 @@ class ContainerOperations:  # pylint: disable=docstring-missing-param,too-many-p
     ) -> None:
         """Deletes the specified container.
 
+        When a container is deleted, a container with the same name can't be created for at least 30
+        seconds. The container might not be available for more than 30 seconds if the service is still
+        processing the request. While the container is being deleted, attempts to create a container of
+        the same name fail with status code 409 (Conflict). The service indicates that the container is
+        being deleted. Operations on blobs within the container, including reads and writes, may
+        continue to succeed for up to 30 seconds after the delete request is accepted. After this
+        period, all operations on the container and its blobs fail with status code 404 (Not Found).
+
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href=\\"`https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting
          <https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations\\">Setting>`_

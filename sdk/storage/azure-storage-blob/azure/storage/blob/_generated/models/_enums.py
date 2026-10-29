@@ -508,6 +508,8 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Copy ID mismatch."""
     FEATURE_VERSION_MISMATCH = "FeatureVersionMismatch"
     """Feature version mismatch."""
+    FEATURE_NOT_ENABLED = "FeatureNotEnabled"
+    """Feature is not enabled."""
     INCREMENTAL_COPY_BLOB_MISMATCH = "IncrementalCopyBlobMismatch"
     """Incremental copy blob mismatch."""
     INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED = "IncrementalCopyOfEarlierVersionSnapshotNotAllowed"

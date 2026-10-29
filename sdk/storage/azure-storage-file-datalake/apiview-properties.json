@@ -66,5 +66,5 @@
         "azure.storage.filedatalake.operations.ServiceOperations.list_file_systems": "Storage.DataLake.Service.listFileSystems",
         "azure.storage.filedatalake.aio.operations.ServiceOperations.list_file_systems": "Storage.DataLake.Service.listFileSystems"
     },
-    "CrossLanguageVersion": "98dc0b40b2d3"
+    "CrossLanguageVersion": "e598f9a6eacc"
 }
