@@ -3516,6 +3516,7 @@ namespace azure.ai.projects.models
         MCP = "mcp"
         RESPONSES = "responses"
         VOICE = "voice"
+        VOICE_CONVERSATION_ENGINE = "voice_conversation_engine"
 
 
     class azure.ai.projects.models.AgentEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discriminator='agent'):
@@ -15717,6 +15718,7 @@ namespace azure.ai.projects.models
         output_modalities: Optional[list[Union[str, VoiceOutputModality]]]
         parallel_tool_calls: Optional[bool]
         rai_config: RaiConfig
+        soundscape: Optional[VoiceAgentSoundscapeConfig]
         store: Optional[bool]
         structured_inputs: Optional[dict[str, StructuredInputDefinition]]
         subagent_config: Optional[VoiceAgentSubagentConfig]
@@ -15740,6 +15742,7 @@ namespace azure.ai.projects.models
                 output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ..., 
                 parallel_tool_calls: Optional[bool] = ..., 
                 rai_config: Optional[RaiConfig] = ..., 
+                soundscape: Optional[VoiceAgentSoundscapeConfig] = ..., 
                 store: Optional[bool] = ..., 
                 structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ..., 
                 subagent_config: Optional[VoiceAgentSubagentConfig] = ..., 
@@ -15886,6 +15889,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AZURE_SPEECH = "azure-speech"
+        AZURE_SPEECH_STREAMING = "azure-speech-streaming"
         GPT4_O_MINI_TRANSCRIBE = "gpt-4o-mini-transcribe"
         GPT4_O_TRANSCRIBE = "gpt-4o-transcribe"
         GPT4_O_TRANSCRIBE_DIARIZE = "gpt-4o-transcribe-diarize"
@@ -16012,6 +16016,8 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AZURE_DEEP_NOISE_SUPPRESSION = "azure_deep_noise_suppression"
+        AZURE_DEEP_NOISE_SUPPRESSION_HEADSET = "azure_deep_noise_suppression_headset"
+        AZURE_PERSONAL_NOISE_SUPPRESSION = "azure_personal_noise_suppression"
         FAR_FIELD = "far_field"
         NEAR_FIELD = "near_field"
 
@@ -16652,6 +16658,87 @@ namespace azure.ai.projects.models
                 temperature: Optional[float] = ..., 
                 tool_choice: Optional[VoiceAgentToolChoice] = ..., 
                 tools: Optional[list[VoiceAgentTool]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSoundscapeConfig(_Model):
+        background: Optional[VoiceAgentSoundscapeTrackConfig]
+        closing: Optional[VoiceAgentSoundscapeTrackConfig]
+        opening: Optional[VoiceAgentSoundscapeTrackConfig]
+        transfer: Optional[VoiceAgentSoundscapeTrackConfig]
+        working: Optional[VoiceAgentSoundscapeWorkingTrackConfig]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                background: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
+                closing: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
+                opening: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
+                transfer: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
+                working: Optional[VoiceAgentSoundscapeWorkingTrackConfig] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSoundscapeSound(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BUSY_STREET = "busy_street"
+        CALL_CENTER = "call_center"
+        DING1 = "ding1"
+        DING2 = "ding2"
+        OFFICE = "office"
+        PEOPLE_TALKING = "people_talking"
+        STREET_AND_METRO_STATION = "street_and_metro_station"
+
+
+    class azure.ai.projects.models.VoiceAgentSoundscapeSourceConfig(_Model):
+        name: Union[str, VoiceAgentSoundscapeSound]
+        type: Literal["built_in"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Union[str, VoiceAgentSoundscapeSound]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSoundscapeTrackConfig(_Model):
+        gain: Optional[float]
+        source: VoiceAgentSoundscapeSourceConfig
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                gain: Optional[float] = ..., 
+                source: VoiceAgentSoundscapeSourceConfig
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSoundscapeWorkingTrackConfig(_Model):
+        delay_ms: Optional[timedelta]
+        gain: Optional[float]
+        source: VoiceAgentSoundscapeSourceConfig
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                delay_ms: Optional[timedelta] = ..., 
+                gain: Optional[float] = ..., 
+                source: VoiceAgentSoundscapeSourceConfig
             ) -> None: ...
 
         @overload

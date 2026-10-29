@@ -27,7 +27,7 @@ class BackupSecretResult(_Model):
     """The backup blob containing the backed up secret."""
 
 
-class DeletedSecretBundle(_Model):
+class DeletedSecretBundle(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Deleted Secret consisting of its previous id, attributes and its tags, as well as information
     on when it will be purged.
 
@@ -122,7 +122,7 @@ class DeletedSecretBundle(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeletedSecretItem(_Model):
+class DeletedSecretItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The deleted secret item containing metadata about the deleted secret.
 
     :ivar id: Secret identifier.
@@ -225,7 +225,7 @@ class KeyVaultErrorError(_Model):
     """The key vault server error."""
 
 
-class SecretAttributes(_Model):
+class SecretAttributes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The secret management attributes.
 
     :ivar enabled: Determines whether the object is enabled.
@@ -297,7 +297,7 @@ class SecretAttributes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretBundle(_Model):
+class SecretBundle(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A secret consisting of a value, id and its attributes.
 
     :ivar value: The secret value.
@@ -371,7 +371,7 @@ class SecretBundle(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretItem(_Model):
+class SecretItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The secret item containing secret metadata.
 
     :ivar id: Secret identifier.
@@ -424,7 +424,7 @@ class SecretItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretRestoreParameters(_Model):
+class SecretRestoreParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The secret restore parameters.
 
     :ivar secret_bundle_backup: The backup blob associated with a secret bundle. Required.
@@ -454,7 +454,7 @@ class SecretRestoreParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretSetParameters(_Model):
+class SecretSetParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The secret set parameters.
 
     :ivar value: The value of the secret. Required.
@@ -501,7 +501,7 @@ class SecretSetParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecretUpdateParameters(_Model):
+class SecretUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The secret update parameters.
 
     :ivar content_type: Type of the secret value such as a password.

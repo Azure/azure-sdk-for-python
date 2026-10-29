@@ -638,6 +638,10 @@
         "azure.ai.projects.models.VoiceAgentSessionAvatarConfig": "Azure.AI.Projects.VoiceAgentSessionAvatarConfig",
         "azure.ai.projects.models.VoiceAgentSessionResponseConfig": "Azure.AI.Projects.VoiceAgentSessionResponseConfig",
         "azure.ai.projects.models.VoiceAgentSessionUpdateConfig": "Azure.AI.Projects.VoiceAgentSessionUpdateConfig",
+        "azure.ai.projects.models.VoiceAgentSoundscapeConfig": "Azure.AI.Projects.VoiceAgentSoundscapeConfig",
+        "azure.ai.projects.models.VoiceAgentSoundscapeSourceConfig": "Azure.AI.Projects.VoiceAgentSoundscapeSourceConfig",
+        "azure.ai.projects.models.VoiceAgentSoundscapeTrackConfig": "Azure.AI.Projects.VoiceAgentSoundscapeTrackConfig",
+        "azure.ai.projects.models.VoiceAgentSoundscapeWorkingTrackConfig": "Azure.AI.Projects.VoiceAgentSoundscapeWorkingTrackConfig",
         "azure.ai.projects.models.VoiceAgentStaticInterimResponseConfig": "Azure.AI.Projects.VoiceAgentStaticInterimResponseConfig",
         "azure.ai.projects.models.VoiceAgentSubagent": "Azure.AI.Projects.VoiceAgentSubagent",
         "azure.ai.projects.models.VoiceAgentSubagentConfig": "Azure.AI.Projects.VoiceAgentSubagentConfig",
@@ -742,6 +746,7 @@
         "azure.ai.projects.models.VoiceAgentInputTranscriptionModel": "Azure.AI.Projects.VoiceAgentInputTranscriptionModel",
         "azure.ai.projects.models.VoiceAgentProfanityFilterMode": "Azure.AI.Projects.VoiceAgentProfanityFilterMode",
         "azure.ai.projects.models.VoiceAgentAudioTimestampType": "Azure.AI.Projects.VoiceAgentAudioTimestampType",
+        "azure.ai.projects.models.VoiceAgentSoundscapeSound": "Azure.AI.Projects.VoiceAgentSoundscapeSound",
         "azure.ai.projects.models.VoiceOutputModality": "Azure.AI.Projects.VoiceOutputModality",
         "azure.ai.projects.models.VoiceAgentSessionIncludeOption": "Azure.AI.Projects.VoiceAgentSessionIncludeOption",
         "azure.ai.projects.models.VoiceAgentInterimResponseTrigger": "Azure.AI.Projects.VoiceAgentInterimResponseTrigger",
@@ -1000,5 +1005,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "349d72a995bc"
+    "CrossLanguageVersion": "6bc23fb38d44"
 }

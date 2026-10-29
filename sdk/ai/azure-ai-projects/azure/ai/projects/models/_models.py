@@ -16864,7 +16864,7 @@ class ProtocolVersionRecord(_Model):  # pylint: disable=docstring-keyword-should
     """A record mapping for a single protocol and its version.
 
     :ivar protocol: The protocol type. Required. Known values are: "activity", "responses", "a2a",
-     "mcp", "invocations", "voice", and "invocations_ws".
+     "mcp", "invocations", "voice", "invocations_ws", and "voice_conversation_engine".
     :vartype protocol: str or ~azure.ai.projects.models.AgentEndpointProtocol
     :ivar version: The version string for the protocol, e.g. 'v0.1.1'. Required.
     :vartype version: str
@@ -16874,7 +16874,7 @@ class ProtocolVersionRecord(_Model):  # pylint: disable=docstring-keyword-should
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The protocol type. Required. Known values are: \"activity\", \"responses\", \"a2a\", \"mcp\",
-     \"invocations\", \"voice\", and \"invocations_ws\"."""
+     \"invocations\", \"voice\", \"invocations_ws\", and \"voice_conversation_engine\"."""
     version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version string for the protocol, e.g. 'v0.1.1'. Required."""
 
@@ -28828,6 +28828,11 @@ class VoiceAgentDefinition(
      detection, noise reduction, and transcription. These values are session defaults; a client may
      override supported fields when connecting.
     :vartype audio: ~azure.ai.projects.models.VoiceAgentAudioConfig
+    :ivar soundscape: Optional background ambience and event cues, stored with the agent version
+     and separate from the audio configuration. Currently rendered only for telephony calls, not
+     browser WebRTC or direct voice WebSocket sessions. Omit this property to disable all auxiliary
+     audio. Persisted conversation recordings do not include the soundscape mix.
+    :vartype soundscape: ~azure.ai.projects.models.VoiceAgentSoundscapeConfig
     :ivar output_modalities: The output modalities the agent produces. Defaults to ``["audio"]``.
      ``animation`` and ``avatar`` are available when an avatar is configured.
     :vartype output_modalities: list[str or ~azure.ai.projects.models.VoiceOutputModality]
@@ -28907,6 +28912,13 @@ class VoiceAgentDefinition(
     """The audio configuration, including input and output formats, voice, turn detection, noise
      reduction, and transcription. These values are session defaults; a client may override
      supported fields when connecting."""
+    soundscape: Optional["_models.VoiceAgentSoundscapeConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional background ambience and event cues, stored with the agent version and separate from
+     the audio configuration. Currently rendered only for telephony calls, not browser WebRTC or
+     direct voice WebSocket sessions. Omit this property to disable all auxiliary audio. Persisted
+     conversation recordings do not include the soundscape mix."""
     output_modalities: Optional[list[Union[str, "_models.VoiceOutputModality"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -28976,6 +28988,7 @@ class VoiceAgentDefinition(
         instructions: Optional[str] = None,
         greeting: Optional["_models.VoiceAgentGreetingConfig"] = None,
         audio: Optional["_models.VoiceAgentAudioConfig"] = None,
+        soundscape: Optional["_models.VoiceAgentSoundscapeConfig"] = None,
         output_modalities: Optional[list[Union[str, "_models.VoiceOutputModality"]]] = None,
         max_output_tokens: Optional["_unions.VoiceAgentMaxOutputTokens"] = None,
         include: Optional[list[Union[str, "_models.VoiceAgentSessionIncludeOption"]]] = None,
@@ -29298,11 +29311,16 @@ class VoiceAgentGreetingConfig(_Model):  # pylint: disable=docstring-keyword-sho
 
 class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for transcribing input audio, including the transcription model, Custom Speech
-    deployments, and phrase hints.
+    deployments, and phrase hints. When ``model`` is ``azure-speech-streaming``, transcription is
+    supported for cascaded text-model conversations only (not realtime speech-to-speech models),
+    requires a nonempty ``language`` such as ``en-US`` (comma-separated locales are supported), and
+    supports ``custom_speech``, ``phrase_list``, and ``profanity_filter``.
 
     :ivar language: The language of the input audio. Supplying the input language in `ISO-639-1
      <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ (e.g. ``en``) format will improve
-     accuracy and latency.
+     accuracy and latency. Optional for other transcription models; required and must be nonempty
+     when ``model`` is ``azure-speech-streaming`` (such as ``en-US``; comma-separated locales are
+     supported).
     :vartype language: str
     :ivar languages: Possible languages of the input audio, in `ISO-639-1
      <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ format. Supported by
@@ -29324,28 +29342,34 @@ class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword
      Literal["minimal"], Literal["low"], Literal["medium"], Literal["high"], Literal["xhigh"]
     :vartype delay: str or str or str or str or str
     :ivar model: The transcription model identifier. Configure customer custom speech deployments
-     in ``custom_speech``. Required. Known values are: "whisper-1", "gpt-realtime-whisper",
+     in ``custom_speech``. ``azure-speech-streaming`` is for cascaded text-model conversations only
+     (not realtime speech-to-speech models), requires a nonempty ``language`` such as ``en-US``
+     (comma-separated locales are supported), and supports ``custom_speech``, ``phrase_list``, and
+     ``profanity_filter``. Required. Known values are: "whisper-1", "gpt-realtime-whisper",
      "gpt-4o-transcribe", "gpt-4o-mini-transcribe", "gpt-4o-transcribe-diarize", "gpt-transcribe",
-     "gpt-live-transcribe", "mai-transcribe", and "azure-speech".
+     "gpt-live-transcribe", "mai-transcribe", "azure-speech", and "azure-speech-streaming".
     :vartype model: str or ~azure.ai.projects.models.VoiceAgentInputTranscriptionModel
     :ivar custom_speech: Optional customer custom speech deployment configuration, keyed by locale.
     :vartype custom_speech: dict[str, str]
     :ivar phrase_list: Optional phrase hints that bias recognition toward domain terms.
     :vartype phrase_list: list[str]
     :ivar profanity_filter: Controls how profanity is handled in input transcripts. Supported only
-     with managed Azure Speech (``azure-speech``), including Custom Speech. Set this property before
-     the session starts. If omitted, the transcription provider's default applies. You cannot change
-     the mode during a session. Filtering affects transcript events and the text sent to cascaded
-     models. It does not change input audio, voice activity detection, or assistant speech;
-     audio-native models still receive the original audio. Mandatory service masking policies apply
-     even when you select ``unfiltered``. Known values are: "masked", "unfiltered", and "removed".
+     with managed Azure Speech (``azure-speech`` and ``azure-speech-streaming``), including Custom
+     Speech. Set this property before the session starts. If omitted, the transcription provider's
+     default applies. You cannot change the mode during a session. Filtering affects transcript
+     events and the text sent to cascaded models. It does not change input audio, voice activity
+     detection, or assistant speech; audio-native models still receive the original audio. Mandatory
+     service masking policies apply even when you select ``unfiltered``. Known values are: "masked",
+     "unfiltered", and "removed".
     :vartype profanity_filter: str or ~azure.ai.projects.models.VoiceAgentProfanityFilterMode
     """
 
     language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The language of the input audio. Supplying the input language in `ISO-639-1
      <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ (e.g. ``en``) format will improve
-     accuracy and latency."""
+     accuracy and latency. Optional for other transcription models; required and must be nonempty
+     when ``model`` is ``azure-speech-streaming`` (such as ``en-US``; comma-separated locales are
+     supported)."""
     languages: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Possible languages of the input audio, in `ISO-639-1
      <https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes>`_ format. Supported by
@@ -29371,9 +29395,13 @@ class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The transcription model identifier. Configure customer custom speech deployments in
-     ``custom_speech``. Required. Known values are: \"whisper-1\", \"gpt-realtime-whisper\",
+     ``custom_speech``. ``azure-speech-streaming`` is for cascaded text-model conversations only
+     (not realtime speech-to-speech models), requires a nonempty ``language`` such as ``en-US``
+     (comma-separated locales are supported), and supports ``custom_speech``, ``phrase_list``, and
+     ``profanity_filter``. Required. Known values are: \"whisper-1\", \"gpt-realtime-whisper\",
      \"gpt-4o-transcribe\", \"gpt-4o-mini-transcribe\", \"gpt-4o-transcribe-diarize\",
-     \"gpt-transcribe\", \"gpt-live-transcribe\", \"mai-transcribe\", and \"azure-speech\"."""
+     \"gpt-transcribe\", \"gpt-live-transcribe\", \"mai-transcribe\", \"azure-speech\", and
+     \"azure-speech-streaming\"."""
     custom_speech: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional customer custom speech deployment configuration, keyed by locale."""
     phrase_list: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -29382,12 +29410,13 @@ class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Controls how profanity is handled in input transcripts. Supported only with managed Azure
-     Speech (``azure-speech``), including Custom Speech. Set this property before the session
-     starts. If omitted, the transcription provider's default applies. You cannot change the mode
-     during a session. Filtering affects transcript events and the text sent to cascaded models. It
-     does not change input audio, voice activity detection, or assistant speech; audio-native models
-     still receive the original audio. Mandatory service masking policies apply even when you select
-     ``unfiltered``. Known values are: \"masked\", \"unfiltered\", and \"removed\"."""
+     Speech (``azure-speech`` and ``azure-speech-streaming``), including Custom Speech. Set this
+     property before the session starts. If omitted, the transcription provider's default applies.
+     You cannot change the mode during a session. Filtering affects transcript events and the text
+     sent to cascaded models. It does not change input audio, voice activity detection, or assistant
+     speech; audio-native models still receive the original audio. Mandatory service masking
+     policies apply even when you select ``unfiltered``. Known values are: \"masked\",
+     \"unfiltered\", and \"removed\"."""
 
     @overload
     def __init__(
@@ -29672,18 +29701,34 @@ class VoiceAgentMcpTool(
 
 
 class VoiceAgentNoiseReduction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Input audio noise reduction configuration.
+    """Input audio noise reduction configuration. ``azure_deep_noise_suppression_headset`` and
+    ``azure_personal_noise_suppression`` are modes for local voice activity detection that enhance
+    detection audio without changing the audio used for recognition.
 
-    :ivar type: The noise reduction mode. Required. Known values are: "near_field", "far_field",
-     and "azure_deep_noise_suppression".
+    :ivar type: The noise reduction mode. ``azure_deep_noise_suppression_headset`` provides
+     headset-optimized noise suppression for local voice activity detection, optimized for
+     low-sample-rate audio including 8 kHz telephony audio without changing recognition audio (not
+     restricted to headset devices). ``azure_personal_noise_suppression`` starts with headset
+     suppression for local voice activity detection and personalizes detection after automatic
+     speaker enrollment while keeping recognition audio unchanged and keeping headset suppression
+     active when personalization is unavailable. Required. Known values are: "near_field",
+     "far_field", "azure_deep_noise_suppression", "azure_deep_noise_suppression_headset", and
+     "azure_personal_noise_suppression".
     :vartype type: str or ~azure.ai.projects.models.VoiceAgentNoiseReductionType
     """
 
     type: Union[str, "_models.VoiceAgentNoiseReductionType"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The noise reduction mode. Required. Known values are: \"near_field\", \"far_field\", and
-     \"azure_deep_noise_suppression\"."""
+    """The noise reduction mode. ``azure_deep_noise_suppression_headset`` provides headset-optimized
+     noise suppression for local voice activity detection, optimized for low-sample-rate audio
+     including 8 kHz telephony audio without changing recognition audio (not restricted to headset
+     devices). ``azure_personal_noise_suppression`` starts with headset suppression for local voice
+     activity detection and personalizes detection after automatic speaker enrollment while keeping
+     recognition audio unchanged and keeping headset suppression active when personalization is
+     unavailable. Required. Known values are: \"near_field\", \"far_field\",
+     \"azure_deep_noise_suppression\", \"azure_deep_noise_suppression_headset\", and
+     \"azure_personal_noise_suppression\"."""
 
     @overload
     def __init__(
@@ -31363,6 +31408,194 @@ class VoiceAgentSessionUpdateConfig(_Model):  # pylint: disable=docstring-keywor
         self.type: Literal["realtime"] = "realtime"
 
 
+class VoiceAgentSoundscapeConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Agent-owned background ambience and event cues. Each omitted track is disabled. The service
+    rejects unknown fields; custom uploads, URLs, and inline audio are not supported.
+
+    :ivar background: Continuous background ambience that continues during caller and agent speech.
+    :vartype background: ~azure.ai.projects.models.VoiceAgentSoundscapeTrackConfig
+    :ivar working: A loop played while a non-call-control tool is pending and the agent is silent,
+     after the configured delay.
+    :vartype working: ~azure.ai.projects.models.VoiceAgentSoundscapeWorkingTrackConfig
+    :ivar opening: An interruptible cue played before the first agent speech.
+    :vartype opening: ~azure.ai.projects.models.VoiceAgentSoundscapeTrackConfig
+    :ivar transfer: A one-shot cue played after queued agent speech drains and before a committed
+     call transfer.
+    :vartype transfer: ~azure.ai.projects.models.VoiceAgentSoundscapeTrackConfig
+    :ivar closing: A one-shot cue played after queued agent speech drains and before a committed
+     session end.
+    :vartype closing: ~azure.ai.projects.models.VoiceAgentSoundscapeTrackConfig
+    """
+
+    background: Optional["_models.VoiceAgentSoundscapeTrackConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Continuous background ambience that continues during caller and agent speech."""
+    working: Optional["_models.VoiceAgentSoundscapeWorkingTrackConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A loop played while a non-call-control tool is pending and the agent is silent, after the
+     configured delay."""
+    opening: Optional["_models.VoiceAgentSoundscapeTrackConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An interruptible cue played before the first agent speech."""
+    transfer: Optional["_models.VoiceAgentSoundscapeTrackConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A one-shot cue played after queued agent speech drains and before a committed call transfer."""
+    closing: Optional["_models.VoiceAgentSoundscapeTrackConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A one-shot cue played after queued agent speech drains and before a committed session end."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        background: Optional["_models.VoiceAgentSoundscapeTrackConfig"] = None,
+        working: Optional["_models.VoiceAgentSoundscapeWorkingTrackConfig"] = None,
+        opening: Optional["_models.VoiceAgentSoundscapeTrackConfig"] = None,
+        transfer: Optional["_models.VoiceAgentSoundscapeTrackConfig"] = None,
+        closing: Optional["_models.VoiceAgentSoundscapeTrackConfig"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentSoundscapeSourceConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A packaged sound selected from the service-managed catalogue. The service rejects unknown
+    source fields and discriminator values.
+
+    :ivar type: The audio source type. Always ``built_in``. Required. Default value is "built_in".
+    :vartype type: str
+    :ivar name: The name of the packaged sound. Only the listed built-in sounds are accepted.
+     Required. Known values are: "office", "call_center", "busy_street", "people_talking",
+     "street_and_metro_station", "ding1", and "ding2".
+    :vartype name: str or ~azure.ai.projects.models.VoiceAgentSoundscapeSound
+    """
+
+    type: Literal["built_in"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The audio source type. Always ``built_in``. Required. Default value is \"built_in\"."""
+    name: Union[str, "_models.VoiceAgentSoundscapeSound"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the packaged sound. Only the listed built-in sounds are accepted. Required. Known
+     values are: \"office\", \"call_center\", \"busy_street\", \"people_talking\",
+     \"street_and_metro_station\", \"ding1\", and \"ding2\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Union[str, "_models.VoiceAgentSoundscapeSound"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["built_in"] = "built_in"
+
+
+class VoiceAgentSoundscapeTrackConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A soundscape track with its own audio source and playback volume.
+
+    :ivar source: The required audio source for this track. Required.
+    :vartype source: ~azure.ai.projects.models.VoiceAgentSoundscapeSourceConfig
+    :ivar gain: Linear playback gain from 0 to 1, independent of agent speech volume. If omitted,
+     the service defaults to 1. A value of 0 mutes this track.
+    :vartype gain: float
+    """
+
+    source: "_models.VoiceAgentSoundscapeSourceConfig" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The required audio source for this track. Required."""
+    gain: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Linear playback gain from 0 to 1, independent of agent speech volume. If omitted, the service
+     defaults to 1. A value of 0 mutes this track."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source: "_models.VoiceAgentSoundscapeSourceConfig",
+        gain: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentSoundscapeWorkingTrackConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A working-loop track with a delay measured from the first pending non-call-control tool.
+
+    :ivar source: The required audio source for this track. Required.
+    :vartype source: ~azure.ai.projects.models.VoiceAgentSoundscapeSourceConfig
+    :ivar gain: Linear playback gain from 0 to 1, independent of agent speech volume. If omitted,
+     the service defaults to 1. A value of 0 mutes this track.
+    :vartype gain: float
+    :ivar delay_ms: The delay in milliseconds before working audio starts, from 0 to 10000. If
+     omitted, the service defaults to 1000 milliseconds. This delays only working audio, not tool
+     execution, and is valid only on the working track.
+    :vartype delay_ms: ~datetime.timedelta
+    """
+
+    source: "_models.VoiceAgentSoundscapeSourceConfig" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The required audio source for this track. Required."""
+    gain: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Linear playback gain from 0 to 1, independent of agent speech volume. If omitted, the service
+     defaults to 1. A value of 0 mutes this track."""
+    delay_ms: Optional[datetime.timedelta] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
+    )
+    """The delay in milliseconds before working audio starts, from 0 to 10000. If omitted, the service
+     defaults to 1000 milliseconds. This delays only working audio, not tool execution, and is valid
+     only on the working track."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source: "_models.VoiceAgentSoundscapeSourceConfig",
+        gain: Optional[float] = None,
+        delay_ms: Optional[datetime.timedelta] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class VoiceAgentStaticInterimResponseConfig(
     VoiceAgentInterimResponseConfig, discriminator="static_interim_response"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -32064,8 +32297,12 @@ class VoiceHostedAgentConversationEngine(
     VoiceConversationEngine, discriminator="hosted_agent"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A closed reference to the hosted text agent that owns conversation handling for a voice agent.
-    The hosted agent is resolved within the same project and must support the ``invocations_ws``
-    protocol, Voice Live compatibility, and Bridge Protocol 1.0.
+    The hosted agent is resolved within the same project and must declare
+    ``voice_conversation_engine`` version ``1.0.0``. Voice Live connects through the dedicated
+    voice-conversation-engine endpoint using the existing Bridge Protocol 1.0 wire semantics; the
+    Bridge message version is independent of the container protocol version and the Hosted Agents
+    API version ``v1``. Declaring ``invocations_ws`` is optional and does not substitute for
+    ``voice_conversation_engine``.
 
     :ivar type: Selects a hosted Foundry agent as the conversation engine. Required. Default value
      is "hosted_agent".
