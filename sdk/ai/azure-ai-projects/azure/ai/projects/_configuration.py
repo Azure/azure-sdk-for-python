@@ -24,9 +24,9 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
     attributes.
 
     :param endpoint: Foundry Project endpoint in the form
-     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
+     \"https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}\". If you
      only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
-     the form "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project".
+     the form \"https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project\".
      Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
@@ -34,7 +34,7 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
     :param allow_preview: Whether to enable preview features. Must be specified and set to True to
      enable preview features. Default value is None.
     :type allow_preview: bool
-    :keyword api_version: The API version to use for this operation. Known values are "v1" and
+    :keyword api_version: The API version to use for this operation. Known values are 'v1' and
      None. Default value is None. If not set, the operation's default API version will be used. Note
      that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str

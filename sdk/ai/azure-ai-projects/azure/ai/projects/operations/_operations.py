@@ -5355,7 +5355,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         Returns a paged collection of agent resources.
 
         :keyword kind: Filter agents by kind. If not provided, all agents are returned. Known values
-         are: "prompt", "hosted", "workflow", "external", and "voice". Default value is None.
+         are: 'prompt', 'hosted', 'workflow', 'external', and 'voice'. Default value is None.
         :paramtype kind: str or ~azure.ai.projects.models.AgentKind
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -5363,7 +5363,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -5466,7 +5466,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          voice agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
@@ -5480,7 +5480,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
         :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
         :keyword digital_worker_type: (Preview) The type of digital worker (previously known as
-         ``autopilot``). If omitted, it is not a digital worker. "m365" Default value is None.
+         ``autopilot``). If omitted, it is not a digital worker. 'm365' Default value is None.
         :paramtype digital_worker_type: str or ~azure.ai.projects.models.DigitalWorkerType
         :keyword draft: (Preview) Whether this agent version is a draft (candidate) rather than a
          release. The service defaults to ``false`` if a value is not specified by the caller. Draft
@@ -5510,7 +5510,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
@@ -5535,7 +5535,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
@@ -5584,7 +5584,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
         :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
         :keyword digital_worker_type: (Preview) The type of digital worker (previously known as
-         ``autopilot``). If omitted, it is not a digital worker. "m365" Default value is None.
+         ``autopilot``). If omitted, it is not a digital worker. 'm365' Default value is None.
         :paramtype digital_worker_type: str or ~azure.ai.projects.models.DigitalWorkerType
         :keyword draft: (Preview) Whether this agent version is a draft (candidate) rather than a
          release. The service defaults to ``false`` if a value is not specified by the caller. Draft
@@ -5701,7 +5701,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          Agent. Required.
         :paramtype parameter_values: dict[str, any]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
@@ -5735,7 +5735,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
@@ -5760,7 +5760,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
@@ -6061,7 +6061,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -6157,7 +6157,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :keyword agent_endpoint: The endpoint configuration for the agent. Default value is None.
         :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpointConfig
@@ -6181,7 +6181,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: AgentDetails. The AgentDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentDetails
@@ -6201,7 +6201,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: AgentDetails. The AgentDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentDetails
@@ -6624,7 +6624,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :keyword version_indicator: Determines which agent version backs the session. Required.
         :paramtype version_indicator: ~azure.ai.projects.models.VersionIndicator
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :keyword agent_session_id: Optional caller-provided session ID. If specified, it must be unique
          within the agent endpoint. Auto-generated if omitted. Default value is None.
@@ -6649,7 +6649,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentSessionResource
@@ -6671,7 +6671,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentSessionResource
@@ -6989,7 +6989,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -7264,7 +7264,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
          AgentOptimizationJobResult is compatible with MutableMapping
@@ -7287,7 +7287,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
          AgentOptimizationJobResult is compatible with MutableMapping
@@ -7315,7 +7315,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: An instance of LROPoller that returns AgentOptimizationJobResult. The
          AgentOptimizationJobResult is compatible with MutableMapping
@@ -7416,7 +7416,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param inputs: The inputs to estimate against. Required.
         :type inputs: ~azure.ai.projects.models.AgentOptimizationEstimateInputs
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: AgentOptimizationEstimateResult. The AgentOptimizationEstimateResult is compatible
          with MutableMapping
@@ -7436,7 +7436,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param inputs: The inputs to estimate against. Required.
         :type inputs: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: AgentOptimizationEstimateResult. The AgentOptimizationEstimateResult is compatible
          with MutableMapping
@@ -7456,7 +7456,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param inputs: The inputs to estimate against. Required.
         :type inputs: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: AgentOptimizationEstimateResult. The AgentOptimizationEstimateResult is compatible
          with MutableMapping
@@ -7636,7 +7636,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -7644,8 +7644,8 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          subsequent call can include before=obj_foo in order to fetch the previous page of the list.
          Default value is None.
         :paramtype before: str
-        :keyword status: Filter to jobs in this lifecycle state. Known values are: "queued",
-         "in_progress", "succeeded", "failed", and "cancelled". Default value is None.
+        :keyword status: Filter to jobs in this lifecycle state. Known values are: 'queued',
+         'in_progress', 'succeeded', 'failed', and 'cancelled'. Default value is None.
         :paramtype status: str or ~azure.ai.projects.models.JobStatus
         :keyword agent_name: Filter to jobs targeting this agent name. Default value is None.
         :paramtype agent_name: str
@@ -7868,8 +7868,8 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          100, and the
          default is 20. Default value is None.
         :paramtype limit: int
-        :keyword order: Sort order by the candidate ``started_at`` timestamp. Known values are: "asc"
-         and "desc". Default value is None.
+        :keyword order: Sort order by the candidate ``started_at`` timestamp. Known values are: 'asc'
+         and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: Candidate-ID cursor identifying the first item from the following page.
          Default value is None.
@@ -8121,11 +8121,11 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
 
         :param agent_name: The name of the agent to publish. Required.
         :type agent_name: str
-        :keyword publish_scope: Publish scope for the Teams app. Known values are: "Personal",
-         "Shared", and "Tenant". Required.
+        :keyword publish_scope: Publish scope for the Teams app. Known values are: 'Personal',
+         'Shared', and 'Tenant'. Required.
         :paramtype publish_scope: str or ~azure.ai.projects.models.Microsoft365PublishScope
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :keyword agent_display_name: Display name used as the published Teams app name. When omitted,
          the agent name from the route is
@@ -8217,7 +8217,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: Microsoft365PublishResult. The Microsoft365PublishResult is compatible with
          MutableMapping
@@ -8239,7 +8239,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: Microsoft365PublishResult. The Microsoft365PublishResult is compatible with
          MutableMapping
@@ -8280,8 +8280,8 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :type agent_name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword publish_scope: Publish scope for the Teams app. Known values are: "Personal",
-         "Shared", and "Tenant". Required.
+        :keyword publish_scope: Publish scope for the Teams app. Known values are: 'Personal',
+         'Shared', and 'Tenant'. Required.
         :paramtype publish_scope: str or ~azure.ai.projects.models.Microsoft365PublishScope
         :keyword agent_display_name: Display name used as the published Teams app name. When omitted,
          the agent name from the route is
@@ -8476,11 +8476,11 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
 
         :param agent_name: The name of the agent to generate the app package for. Required.
         :type agent_name: str
-        :keyword publish_scope: Publish scope for the Teams app. Known values are: "Personal",
-         "Shared", and "Tenant". Required.
+        :keyword publish_scope: Publish scope for the Teams app. Known values are: 'Personal',
+         'Shared', and 'Tenant'. Required.
         :paramtype publish_scope: str or ~azure.ai.projects.models.Microsoft365PublishScope
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :keyword agent_display_name: Display name used as the published Teams app name. When omitted,
          the agent name from the route is
@@ -8571,7 +8571,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
@@ -8592,7 +8592,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
@@ -8632,8 +8632,8 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :type agent_name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword publish_scope: Publish scope for the Teams app. Known values are: "Personal",
-         "Shared", and "Tenant". Required.
+        :keyword publish_scope: Publish scope for the Teams app. Known values are: 'Personal',
+         'Shared', and 'Tenant'. Required.
         :paramtype publish_scope: str or ~azure.ai.projects.models.Microsoft365PublishScope
         :keyword agent_display_name: Display name used as the published Teams app name. When omitted,
          the agent name from the route is
@@ -8897,7 +8897,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          directory. Required.
         :paramtype path: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/octet-stream".
+         Default value is 'application/octet-stream'.
         :paramtype content_type: str
         :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SessionFileWriteResult
@@ -8930,7 +8930,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
          directory. Required.
         :paramtype path: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/octet-stream".
+         Default value is 'application/octet-stream'.
         :paramtype content_type: str
         :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SessionFileWriteResult
@@ -9125,7 +9125,7 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -9413,7 +9413,7 @@ class EvaluationRulesOperations:  # pylint: disable=docstring-missing-param
         :param evaluation_rule: Evaluation rule resource. Required.
         :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationRule
@@ -9433,7 +9433,7 @@ class EvaluationRulesOperations:  # pylint: disable=docstring-missing-param
         :param evaluation_rule: Evaluation rule resource. Required.
         :type evaluation_rule: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationRule
@@ -9453,7 +9453,7 @@ class EvaluationRulesOperations:  # pylint: disable=docstring-missing-param
         :param evaluation_rule: Evaluation rule resource. Required.
         :type evaluation_rule: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationRule
@@ -9553,7 +9553,7 @@ class EvaluationRulesOperations:  # pylint: disable=docstring-missing-param
         agent name, or enabled state.
 
         :keyword action_type: Filter by the type of evaluation rule. Known values are:
-         "continuousEvaluation" and "humanEvaluationPreview". Default value is None.
+         'continuousEvaluation' and 'humanEvaluationPreview'. Default value is None.
         :paramtype action_type: str or ~azure.ai.projects.models.EvaluationRuleActionType
         :keyword agent_name: Filter by the agent name. Default value is None.
         :paramtype agent_name: str
@@ -9989,7 +9989,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
         :param dataset_version: The DatasetVersion to create or update. Required.
         :type dataset_version: ~azure.ai.projects.models.DatasetVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetVersion
@@ -10017,7 +10017,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
         :param dataset_version: The DatasetVersion to create or update. Required.
         :type dataset_version: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetVersion
@@ -10045,7 +10045,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
         :param dataset_version: The DatasetVersion to create or update. Required.
         :type dataset_version: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetVersion
@@ -10154,7 +10154,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
         :param pending_upload_request: The pending upload request parameters. Required.
         :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.PendingUploadResponse
@@ -10182,7 +10182,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
         :param pending_upload_request: The pending upload request parameters. Required.
         :type pending_upload_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.PendingUploadResponse
@@ -10210,7 +10210,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
         :param pending_upload_request: The pending upload request parameters. Required.
         :type pending_upload_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.PendingUploadResponse
@@ -10458,7 +10458,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -10622,7 +10622,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: An instance of LROPoller that returns DataGenerationJobResult. The
          DataGenerationJobResult is compatible with MutableMapping
@@ -10644,7 +10644,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: An instance of LROPoller that returns DataGenerationJobResult. The
          DataGenerationJobResult is compatible with MutableMapping
@@ -10671,7 +10671,7 @@ class DatasetsOperations:  # pylint: disable=docstring-missing-param
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: An instance of LROPoller that returns DataGenerationJobResult. The
          DataGenerationJobResult is compatible with MutableMapping
@@ -11051,8 +11051,8 @@ class ConnectionsOperations:  # pylint: disable=docstring-missing-param
         default status.
 
         :keyword connection_type: Lists connections of this specific type. Known values are:
-         "AzureOpenAI", "AzureBlob", "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey",
-         "AppConfig", "AppInsights", "CustomKeys", "RemoteTool_Preview", "OpenAPI", and "RemoteA2A".
+         'AzureOpenAI', 'AzureBlob', 'AzureStorageAccount', 'CognitiveSearch', 'CosmosDB', 'ApiKey',
+         'AppConfig', 'AppInsights', 'CustomKeys', 'RemoteTool_Preview', 'OpenAPI', and 'RemoteA2A'.
          Default value is None.
         :paramtype connection_type: str or ~azure.ai.projects.models.ConnectionType
         :keyword default_connection: Lists connections that are default connections. Default value is
@@ -11249,7 +11249,7 @@ class DeploymentsOperations:  # pylint: disable=docstring-missing-param
         :keyword model_name: Model name (the publisher specific name) to filter models by. Default
          value is None.
         :paramtype model_name: str
-        :keyword deployment_type: Type of deployment to filter list by. "ModelDeployment" Default value
+        :keyword deployment_type: Type of deployment to filter list by. 'ModelDeployment' Default value
          is None.
         :paramtype deployment_type: str or ~azure.ai.projects.models.DeploymentType
         :return: An iterator like instance of Deployment
@@ -11682,7 +11682,7 @@ class IndexesOperations:  # pylint: disable=docstring-missing-param
         :param index: The Index to create or update. Required.
         :type index: ~azure.ai.projects.models.Index
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: Index. The Index is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Index
@@ -11704,7 +11704,7 @@ class IndexesOperations:  # pylint: disable=docstring-missing-param
         :param index: The Index to create or update. Required.
         :type index: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: Index. The Index is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Index
@@ -11732,7 +11732,7 @@ class IndexesOperations:  # pylint: disable=docstring-missing-param
         :param index: The Index to create or update. Required.
         :type index: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: Index. The Index is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Index
@@ -11854,7 +11854,7 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param name: The name of the resource. Required.
         :type name: str
         :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
-         of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
+         of the following types: Literal['builtin'], Literal['custom'], Literal['all'], str Default
          value is None.
         :paramtype type: str or str or str or str
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
@@ -11960,7 +11960,7 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
         Lists the latest version of each evaluator.
 
         :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
-         of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
+         of the following types: Literal['builtin'], Literal['custom'], Literal['all'], str Default
          value is None.
         :paramtype type: str or str or str or str
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
@@ -12191,7 +12191,7 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param evaluator_version: Required.
         :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
@@ -12211,7 +12211,7 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param evaluator_version: Required.
         :type evaluator_version: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
@@ -12231,7 +12231,7 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param evaluator_version: Required.
         :type evaluator_version: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
@@ -12337,7 +12337,7 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param evaluator_version: Evaluator resource. Required.
         :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
@@ -12359,7 +12359,7 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param evaluator_version: Evaluator resource. Required.
         :type evaluator_version: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
@@ -12387,7 +12387,7 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param evaluator_version: Evaluator resource. Required.
         :type evaluator_version: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
@@ -12571,7 +12571,7 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: An instance of LROPoller that returns EvaluatorVersion. The EvaluatorVersion is
          compatible with MutableMapping
@@ -12594,7 +12594,7 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: An instance of LROPoller that returns EvaluatorVersion. The EvaluatorVersion is
          compatible with MutableMapping
@@ -12622,7 +12622,7 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: An instance of LROPoller that returns EvaluatorVersion. The EvaluatorVersion is
          compatible with MutableMapping
@@ -12802,7 +12802,7 @@ class EvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -13040,7 +13040,7 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
         :keyword tools: The list of tools to include in this version. Required.
         :paramtype tools: list[~azure.ai.projects.models.ToolboxTool]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :keyword description: A human-readable description of the toolbox. Default value is None.
         :paramtype description: str
@@ -13072,7 +13072,7 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: ToolboxVersionObject. The ToolboxVersionObject is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ToolboxVersionObject
@@ -13093,7 +13093,7 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: ToolboxVersionObject. The ToolboxVersionObject is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ToolboxVersionObject
@@ -13301,7 +13301,7 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -13396,7 +13396,7 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -13631,7 +13631,7 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
          the toolbox's default version will resolve to this version instead of the latest. Required.
         :paramtype default_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: ToolboxObject. The ToolboxObject is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ToolboxObject
@@ -13651,7 +13651,7 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: ToolboxObject. The ToolboxObject is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ToolboxObject
@@ -13671,7 +13671,7 @@ class ToolboxesOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: ToolboxObject. The ToolboxObject is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ToolboxObject
@@ -14031,8 +14031,8 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :paramtype before: str
         :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
         :paramtype limit: int
-        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
-         and "desc". Default value is None.
+        :keyword order: Sort order by creation time. Defaults to descending. Known values are: 'asc'
+         and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword agent_name: Filter monitors by agent name. Default value is None.
         :paramtype agent_name: str
@@ -14111,7 +14111,7 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :param monitor: The monitor to create. Required.
         :type monitor: ~azure.ai.projects.models.AgentInsightMonitorCreate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentInsightMonitor
@@ -14127,7 +14127,7 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :param monitor: The monitor to create. Required.
         :type monitor: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentInsightMonitor
@@ -14143,7 +14143,7 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :param monitor: The monitor to create. Required.
         :type monitor: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentInsightMonitor
@@ -14363,7 +14363,7 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :param monitor: The monitor fields to update. Required.
         :type monitor: ~azure.ai.projects.models.AgentInsightMonitorUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentInsightMonitor
@@ -14381,7 +14381,7 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :param monitor: The monitor fields to update. Required.
         :type monitor: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentInsightMonitor
@@ -14399,7 +14399,7 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :param monitor: The monitor fields to update. Required.
         :type monitor: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: AgentInsightMonitor. The AgentInsightMonitor is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentInsightMonitor
@@ -14633,7 +14633,7 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
          is compatible with MutableMapping
@@ -14662,7 +14662,7 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
          is compatible with MutableMapping
@@ -14691,7 +14691,7 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
          server creates the job unconditionally. Default value is None.
         :paramtype operation_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: An instance of LROPoller that returns AgentInsightRunResult. The AgentInsightRunResult
          is compatible with MutableMapping
@@ -14802,13 +14802,13 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :paramtype before: str
         :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
         :paramtype limit: int
-        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
-         and "desc". Default value is None.
+        :keyword order: Sort order by creation time. Defaults to descending. Known values are: 'asc'
+         and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword status: Filter runs by status. Known values are: "queued", "in_progress", "succeeded",
-         "failed", and "cancelled". Default value is None.
+        :keyword status: Filter runs by status. Known values are: 'queued', 'in_progress', 'succeeded',
+         'failed', and 'cancelled'. Default value is None.
         :paramtype status: str or ~azure.ai.projects.models.JobStatus
-        :keyword trigger: Filter runs by trigger. Known values are: "on_demand" and "scheduled".
+        :keyword trigger: Filter runs by trigger. Known values are: 'on_demand' and 'scheduled'.
          Default value is None.
         :paramtype trigger: str or ~azure.ai.projects.models.AgentInsightRunTrigger
         :return: An iterator like instance of AgentInsightRun
@@ -15038,16 +15038,16 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :paramtype before: str
         :keyword limit: The maximum number of items to return. Defaults to 20. Default value is None.
         :paramtype limit: int
-        :keyword order: Sort order by creation time. Defaults to descending. Known values are: "asc"
-         and "desc". Default value is None.
+        :keyword order: Sort order by creation time. Defaults to descending. Known values are: 'asc'
+         and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword category: Filter insights by category. Default value is None.
         :paramtype category: str
-        :keyword severity: Filter insights by severity. Known values are: "high", "medium", and "low".
+        :keyword severity: Filter insights by severity. Known values are: 'high', 'medium', and 'low'.
          Default value is None.
         :paramtype severity: str or ~azure.ai.projects.models.AgentInsightSeverity
-        :keyword status: Filter insights by lifecycle status. Known values are: "active", "resolved",
-         and "ignored". Default value is None.
+        :keyword status: Filter insights by lifecycle status. Known values are: 'active', 'resolved',
+         and 'ignored'. Default value is None.
         :paramtype status: str or ~azure.ai.projects.models.AgentInsightStatus
         :keyword include_details: Whether to include expanded insight details such as evidence and run
          links in the response. Defaults to false. Default value is None.
@@ -15215,7 +15215,7 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :param update: The insight fields to update. Required.
         :type update: ~azure.ai.projects.models.AgentInsightUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: AgentInsight. The AgentInsight is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentInsight
@@ -15241,7 +15241,7 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :param update: The insight fields to update. Required.
         :type update: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: AgentInsight. The AgentInsight is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentInsight
@@ -15267,7 +15267,7 @@ class BetaAgentInsightMonitorsOperations:  # pylint: disable=docstring-missing-p
         :param update: The insight fields to update. Required.
         :type update: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: AgentInsight. The AgentInsight is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentInsight
@@ -15604,7 +15604,7 @@ class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-p
         :param taxonomy: The evaluation taxonomy. Required.
         :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
@@ -15624,7 +15624,7 @@ class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-p
         :param taxonomy: The evaluation taxonomy. Required.
         :type taxonomy: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
@@ -15644,7 +15644,7 @@ class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-p
         :param taxonomy: The evaluation taxonomy. Required.
         :type taxonomy: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
@@ -15742,7 +15742,7 @@ class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-p
         :param taxonomy: The evaluation taxonomy. Required.
         :type taxonomy: ~azure.ai.projects.models.EvaluationTaxonomy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
@@ -15762,7 +15762,7 @@ class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-p
         :param taxonomy: The evaluation taxonomy. Required.
         :type taxonomy: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
@@ -15782,7 +15782,7 @@ class BetaEvaluationTaxonomiesOperations:  # pylint: disable=docstring-missing-p
         :param taxonomy: The evaluation taxonomy. Required.
         :type taxonomy: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
@@ -15907,7 +15907,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param pending_upload_request: The pending upload request parameters. Required.
         :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.PendingUploadResponse
@@ -15936,7 +15936,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param pending_upload_request: The pending upload request parameters. Required.
         :type pending_upload_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.PendingUploadResponse
@@ -15965,7 +15965,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param pending_upload_request: The pending upload request parameters. Required.
         :type pending_upload_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.PendingUploadResponse
@@ -16085,7 +16085,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param credential_request: The credential request parameters. Required.
         :type credential_request: ~azure.ai.projects.models.EvaluatorCredentialRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetCredential
@@ -16114,7 +16114,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param credential_request: The credential request parameters. Required.
         :type credential_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetCredential
@@ -16143,7 +16143,7 @@ class BetaEvaluatorsOperations:  # pylint: disable=docstring-missing-param
         :param credential_request: The credential request parameters. Required.
         :type credential_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetCredential
@@ -16271,7 +16271,7 @@ class BetaInsightsOperations:  # pylint: disable=docstring-missing-param
          settings. Required.
         :type insight: ~azure.ai.projects.models.Insight
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: Insight. The Insight is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Insight
@@ -16288,7 +16288,7 @@ class BetaInsightsOperations:  # pylint: disable=docstring-missing-param
          settings. Required.
         :type insight: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: Insight. The Insight is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Insight
@@ -16305,7 +16305,7 @@ class BetaInsightsOperations:  # pylint: disable=docstring-missing-param
          settings. Required.
         :type insight: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: Insight. The Insight is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Insight
@@ -16475,8 +16475,8 @@ class BetaInsightsOperations:  # pylint: disable=docstring-missing-param
 
         Returns insights in reverse chronological order, with the most recent entries first.
 
-        :keyword type: Filter by the type of analysis. Known values are: "EvaluationRunClusterInsight",
-         "AgentClusterInsight", and "EvaluationComparison". Default value is None.
+        :keyword type: Filter by the type of analysis. Known values are: 'EvaluationRunClusterInsight',
+         'AgentClusterInsight', and 'EvaluationComparison'. Default value is None.
         :paramtype type: str or ~azure.ai.projects.models.InsightType
         :keyword eval_id: Filter by the evaluation ID. Default value is None.
         :paramtype eval_id: str
@@ -16618,7 +16618,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :keyword definition: The memory store definition. Required.
         :paramtype definition: ~azure.ai.projects.models.MemoryStoreDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :keyword description: A human-readable description of the memory store. Default value is None.
         :paramtype description: str
@@ -16641,7 +16641,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
@@ -16659,7 +16659,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
@@ -16784,7 +16784,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param name: The name of the memory store to update. Required.
         :type name: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :keyword description: A human-readable description of the memory store. Default value is None.
         :paramtype description: str
@@ -16809,7 +16809,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
@@ -16829,7 +16829,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
@@ -17017,7 +17017,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -17503,7 +17503,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
          user ID. Required.
         :paramtype scope: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
          MutableMapping
@@ -17524,7 +17524,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
          MutableMapping
@@ -17545,7 +17545,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
          MutableMapping
@@ -17665,11 +17665,11 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :paramtype scope: str
         :keyword content: The content of the memory. Required.
         :paramtype content: str
-        :keyword kind: The kind of the memory item. Known values are: "user_profile", "chat_summary",
-         and "procedural". Required.
+        :keyword kind: The kind of the memory item. Known values are: 'user_profile', 'chat_summary',
+         and 'procedural'. Required.
         :paramtype kind: str or ~azure.ai.projects.models.MemoryItemKind
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: MemoryItem. The MemoryItem is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryItem
@@ -17689,7 +17689,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: MemoryItem. The MemoryItem is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryItem
@@ -17709,7 +17709,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: MemoryItem. The MemoryItem is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryItem
@@ -17740,8 +17740,8 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :paramtype scope: str
         :keyword content: The content of the memory. Required.
         :paramtype content: str
-        :keyword kind: The kind of the memory item. Known values are: "user_profile", "chat_summary",
-         and "procedural". Required.
+        :keyword kind: The kind of the memory item. Known values are: 'user_profile', 'chat_summary',
+         and 'procedural'. Required.
         :paramtype kind: str or ~azure.ai.projects.models.MemoryItemKind
         :return: MemoryItem. The MemoryItem is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryItem
@@ -17836,7 +17836,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :keyword content: The updated content of the memory. Required.
         :paramtype content: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: MemoryItem. The MemoryItem is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryItem
@@ -17858,7 +17858,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: MemoryItem. The MemoryItem is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryItem
@@ -17880,7 +17880,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: MemoryItem. The MemoryItem is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryItem
@@ -18070,8 +18070,8 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
-        :keyword kind: The kind of the memory item. Known values are: "user_profile", "chat_summary",
-         and "procedural". Default value is None.
+        :keyword kind: The kind of the memory item. Known values are: 'user_profile', 'chat_summary',
+         and 'procedural'. Default value is None.
         :paramtype kind: str or ~azure.ai.projects.models.MemoryItemKind
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -18079,7 +18079,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -18088,7 +18088,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
          Default value is None.
         :paramtype before: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: An iterator like instance of MemoryItem
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.MemoryItem]
@@ -18116,8 +18116,8 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :type name: str
         :param body: Required.
         :type body: JSON
-        :keyword kind: The kind of the memory item. Known values are: "user_profile", "chat_summary",
-         and "procedural". Default value is None.
+        :keyword kind: The kind of the memory item. Known values are: 'user_profile', 'chat_summary',
+         and 'procedural'. Default value is None.
         :paramtype kind: str or ~azure.ai.projects.models.MemoryItemKind
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -18125,7 +18125,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -18134,7 +18134,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
          Default value is None.
         :paramtype before: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: An iterator like instance of MemoryItem
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.MemoryItem]
@@ -18162,8 +18162,8 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :type name: str
         :param body: Required.
         :type body: IO[bytes]
-        :keyword kind: The kind of the memory item. Known values are: "user_profile", "chat_summary",
-         and "procedural". Default value is None.
+        :keyword kind: The kind of the memory item. Known values are: 'user_profile', 'chat_summary',
+         and 'procedural'. Default value is None.
         :paramtype kind: str or ~azure.ai.projects.models.MemoryItemKind
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -18171,7 +18171,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -18180,7 +18180,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
          Default value is None.
         :paramtype before: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: An iterator like instance of MemoryItem
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.MemoryItem]
@@ -18211,8 +18211,8 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
-        :keyword kind: The kind of the memory item. Known values are: "user_profile", "chat_summary",
-         and "procedural". Default value is None.
+        :keyword kind: The kind of the memory item. Known values are: 'user_profile', 'chat_summary',
+         and 'procedural'. Default value is None.
         :paramtype kind: str or ~azure.ai.projects.models.MemoryItemKind
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -18220,7 +18220,7 @@ class BetaMemoryStoresOperations:  # pylint: disable=docstring-missing-param
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -18721,7 +18721,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param model_version_update: The UpdateModelVersionRequest to create or update. Required.
         :type model_version_update: ~azure.ai.projects.models.UpdateModelVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: ModelVersion. The ModelVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ModelVersion
@@ -18750,7 +18750,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param model_version_update: The UpdateModelVersionRequest to create or update. Required.
         :type model_version_update: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: ModelVersion. The ModelVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ModelVersion
@@ -18779,7 +18779,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param model_version_update: The UpdateModelVersionRequest to create or update. Required.
         :type model_version_update: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: ModelVersion. The ModelVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ModelVersion
@@ -18895,7 +18895,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param model_version: Model version to create. Required.
         :type model_version: ~azure.ai.projects.models.ModelVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: CreateAsyncResponse. The CreateAsyncResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.CreateAsyncResponse
@@ -18918,7 +18918,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param model_version: Model version to create. Required.
         :type model_version: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: CreateAsyncResponse. The CreateAsyncResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.CreateAsyncResponse
@@ -18947,7 +18947,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param model_version: Model version to create. Required.
         :type model_version: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: CreateAsyncResponse. The CreateAsyncResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.CreateAsyncResponse
@@ -19060,7 +19060,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param pending_upload_request: The pending upload request request body. Required.
         :type pending_upload_request: ~azure.ai.projects.models.ModelPendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: ModelPendingUploadResponse. The ModelPendingUploadResponse is compatible with
          MutableMapping
@@ -19089,7 +19089,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param pending_upload_request: The pending upload request request body. Required.
         :type pending_upload_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: ModelPendingUploadResponse. The ModelPendingUploadResponse is compatible with
          MutableMapping
@@ -19118,7 +19118,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param pending_upload_request: The pending upload request request body. Required.
         :type pending_upload_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: ModelPendingUploadResponse. The ModelPendingUploadResponse is compatible with
          MutableMapping
@@ -19234,7 +19234,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param credential_request: The credential request request body. Required.
         :type credential_request: ~azure.ai.projects.models.ModelCredentialRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetCredential
@@ -19262,7 +19262,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param credential_request: The credential request request body. Required.
         :type credential_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetCredential
@@ -19290,7 +19290,7 @@ class BetaModelsOperations:  # pylint: disable=docstring-missing-param
         :param credential_request: The credential request request body. Required.
         :type credential_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetCredential
@@ -19564,7 +19564,7 @@ class BetaRedTeamsOperations:  # pylint: disable=docstring-missing-param
         :param red_team: Redteam to be run. Required.
         :type red_team: ~azure.ai.projects.models.RedTeam
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RedTeam
@@ -19580,7 +19580,7 @@ class BetaRedTeamsOperations:  # pylint: disable=docstring-missing-param
         :param red_team: Redteam to be run. Required.
         :type red_team: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RedTeam
@@ -19596,7 +19596,7 @@ class BetaRedTeamsOperations:  # pylint: disable=docstring-missing-param
         :param red_team: Redteam to be run. Required.
         :type red_team: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RedTeam
@@ -19718,7 +19718,7 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :keyword description: A human-readable description of the routine. Default value is None.
         :paramtype description: str
@@ -19750,7 +19750,7 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: Routine. The Routine is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Routine
@@ -19770,7 +19770,7 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: Routine. The Routine is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Routine
@@ -20110,7 +20110,7 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
         :paramtype after: str
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :return: An iterator like instance of Routine
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Routine]
@@ -20285,7 +20285,7 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
         :paramtype after: str
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :return: An iterator like instance of RoutineRun
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RoutineRun]
@@ -20396,7 +20396,7 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
         :param routine_name: The unique name of the routine. Required.
         :type routine_name: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :keyword payload: A direct action-input override sent downstream when testing a routine.
          Default value is None.
@@ -20419,7 +20419,7 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: DispatchRoutineResult. The DispatchRoutineResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DispatchRoutineResult
@@ -20439,7 +20439,7 @@ class BetaRoutinesOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: DispatchRoutineResult. The DispatchRoutineResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DispatchRoutineResult
@@ -20681,7 +20681,7 @@ class BetaSchedulesOperations:  # pylint: disable=docstring-missing-param
 
         Returns schedules that match the supplied type and enabled filters.
 
-        :keyword type: Filter by the type of schedule. Known values are: "Evaluation" and "Insight".
+        :keyword type: Filter by the type of schedule. Known values are: 'Evaluation' and 'Insight'.
          Default value is None.
         :paramtype type: str or ~azure.ai.projects.models.ScheduleTaskType
         :keyword enabled: Filter by the enabled status. Default value is None.
@@ -20785,7 +20785,7 @@ class BetaSchedulesOperations:  # pylint: disable=docstring-missing-param
         :param schedule: The resource instance. Required.
         :type schedule: ~azure.ai.projects.models.Schedule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: Schedule. The Schedule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Schedule
@@ -20805,7 +20805,7 @@ class BetaSchedulesOperations:  # pylint: disable=docstring-missing-param
         :param schedule: The resource instance. Required.
         :type schedule: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: Schedule. The Schedule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Schedule
@@ -20825,7 +20825,7 @@ class BetaSchedulesOperations:  # pylint: disable=docstring-missing-param
         :param schedule: The resource instance. Required.
         :type schedule: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: Schedule. The Schedule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Schedule
@@ -20995,7 +20995,7 @@ class BetaSchedulesOperations:  # pylint: disable=docstring-missing-param
 
         :param schedule_id: Identifier of the schedule. Required.
         :type schedule_id: str
-        :keyword type: Filter by the type of schedule. Known values are: "Evaluation" and "Insight".
+        :keyword type: Filter by the type of schedule. Known values are: 'Evaluation' and 'Insight'.
          Default value is None.
         :paramtype type: str or ~azure.ai.projects.models.ScheduleTaskType
         :keyword enabled: Filter by the enabled status. Default value is None.
@@ -21191,7 +21191,7 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -21278,7 +21278,7 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
          skill's default version will resolve to this version instead of the latest. Required.
         :paramtype default_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: SkillDetails. The SkillDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SkillDetails
@@ -21298,7 +21298,7 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: SkillDetails. The SkillDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SkillDetails
@@ -21318,7 +21318,7 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: SkillDetails. The SkillDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SkillDetails
@@ -21498,7 +21498,7 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
         :param name: The name of the skill. If the skill does not exist, it will be created. Required.
         :type name: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :keyword inline_content: Inline skill content for simple skills without file uploads.
          Foundry-specific extension. Default value is None.
@@ -21523,7 +21523,7 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: SkillVersion. The SkillVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SkillVersion
@@ -21543,7 +21543,7 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: SkillVersion. The SkillVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SkillVersion
@@ -21777,7 +21777,7 @@ class BetaSkillsOperations:  # pylint: disable=docstring-missing-param
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -22171,7 +22171,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -22404,7 +22404,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -22587,7 +22587,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -22690,7 +22690,7 @@ class BetaVoiceAgentsConversationsOperations:  # pylint: disable=docstring-missi
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -23365,7 +23365,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :param telephony_binding: The provider-specific binding to create. Required.
         :type telephony_binding: ~azure.ai.projects.models.CreateTelephonyBindingRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyBinding
@@ -23385,7 +23385,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :param telephony_binding: The provider-specific binding to create. Required.
         :type telephony_binding: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyBinding
@@ -23405,7 +23405,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :param telephony_binding: The provider-specific binding to create. Required.
         :type telephony_binding: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyBinding
@@ -23519,11 +23519,11 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         :param agent_name: The name of the voice agent whose bindings are listed. Required.
         :type agent_name: str
-        :keyword provider: Filters bindings by provider. Known values are: "teams_phone_extensibility"
-         and "twilio". Default value is None.
+        :keyword provider: Filters bindings by provider. Known values are: 'teams_phone_extensibility'
+         and 'twilio'. Default value is None.
         :paramtype provider: str or ~azure.ai.projects.models.TelephonyProvider
-        :keyword status: Filters bindings by lifecycle status. Known values are: "active" and
-         "suspended". Default value is None.
+        :keyword status: Filters bindings by lifecycle status. Known values are: 'active' and
+         'suspended'. Default value is None.
         :paramtype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -23531,7 +23531,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -23707,7 +23707,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyBinding
@@ -23741,7 +23741,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyBinding
@@ -23775,7 +23775,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
+         Default value is 'application/merge-patch+json'.
         :paramtype content_type: str
         :return: TelephonyBinding. The TelephonyBinding is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyBinding
@@ -23980,11 +23980,11 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         :param agent_name: The name of the voice agent whose calls are listed. Required.
         :type agent_name: str
-        :keyword provider: Filters calls by provider. Known values are: "teams_phone_extensibility" and
-         "twilio". Default value is None.
+        :keyword provider: Filters calls by provider. Known values are: 'teams_phone_extensibility' and
+         'twilio'. Default value is None.
         :paramtype provider: str or ~azure.ai.projects.models.TelephonyProvider
-        :keyword status: Filters calls by lifecycle status. Known values are: "in_progress", "success",
-         and "failed". Default value is None.
+        :keyword status: Filters calls by lifecycle status. Known values are: 'in_progress', 'success',
+         and 'failed'. Default value is None.
         :paramtype status: str or ~azure.ai.projects.models.TelephonyCallStatus
         :keyword started_after_time: Includes calls that started at or after this Unix timestamp in
          seconds. Default value is None.
@@ -23998,7 +23998,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
+         for descending order. Known values are: 'asc' and 'desc'. Default value is None.
         :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
@@ -24161,7 +24161,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :keyword target: The name of a transfer target configured for the voice agent. Required.
         :paramtype target: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: TelephonyCallRecord. The TelephonyCallRecord is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyCallRecord
@@ -24183,7 +24183,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: TelephonyCallRecord. The TelephonyCallRecord is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyCallRecord
@@ -24205,7 +24205,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: TelephonyCallRecord. The TelephonyCallRecord is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyCallRecord
@@ -24475,7 +24475,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
          MutableMapping
@@ -24507,7 +24507,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
          MutableMapping
@@ -24539,7 +24539,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
         :keyword match_condition: The match condition to use upon the etag. Required.
         :paramtype match_condition: ~azure.core.MatchConditions
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: TelephonyTransferTargets. The TelephonyTransferTargets is compatible with
          MutableMapping
@@ -24682,7 +24682,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
          request returns the same call job. Required.
         :paramtype idempotency_key: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyCallJob
@@ -24712,7 +24712,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
          request returns the same call job. Required.
         :paramtype idempotency_key: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyCallJob
@@ -24742,7 +24742,7 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
          request returns the same call job. Required.
         :paramtype idempotency_key: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is 'application/json'.
         :paramtype content_type: str
         :return: TelephonyCallJob. The TelephonyCallJob is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.TelephonyCallJob
