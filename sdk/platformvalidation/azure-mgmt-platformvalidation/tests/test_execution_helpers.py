@@ -202,7 +202,7 @@ def test_workload_rejects_partial_success():
 
 
 def test_proxy_sanitizer_registration(monkeypatch):
-    import conftest
+    import _sanitizers as sanitizers
 
     header, body = Mock(), Mock()
     for name in (
@@ -211,10 +211,10 @@ def test_proxy_sanitizer_registration(monkeypatch):
         "add_remove_header_sanitizer",
         "add_general_regex_sanitizer",
     ):
-        monkeypatch.setattr(conftest, name, Mock())
-    monkeypatch.setattr(conftest, "add_header_regex_sanitizer", header)
-    monkeypatch.setattr(conftest, "add_body_key_sanitizer", body)
-    conftest.configure_test_proxy.__wrapped__(None, None, None)
+        monkeypatch.setattr(sanitizers, name, Mock())
+    monkeypatch.setattr(sanitizers, "add_header_regex_sanitizer", header)
+    monkeypatch.setattr(sanitizers, "add_body_key_sanitizer", body)
+    sanitizers.configure_sanitizers()
     header.assert_called_once_with(key="x-ms-operation-identifier", value="Sanitized")
     assert any(call.kwargs.get("json_path") == "$..planConfigurationJson" for call in body.call_args_list)
 
@@ -273,7 +273,7 @@ def test_common_sas_sanitizer_preserves_embedded_json_escapes(monkeypatch, key, 
 @pytest.mark.parametrize("depth", [0, 1, 2])
 @pytest.mark.parametrize("value", ["private", r"\/private", r"private\/tail", r"\u0070rivate"])
 def test_signed_url_sanitizer_removes_escaped_values(monkeypatch, key, depth, value):
-    import conftest
+    import _sanitizers as sanitizers
 
     general = Mock()
     for name in (
@@ -283,9 +283,9 @@ def test_signed_url_sanitizer_removes_escaped_values(monkeypatch, key, depth, va
         "add_header_regex_sanitizer",
         "add_body_key_sanitizer",
     ):
-        monkeypatch.setattr(conftest, name, Mock())
-    monkeypatch.setattr(conftest, "add_general_regex_sanitizer", general)
-    conftest.configure_test_proxy.__wrapped__(None, None, None)
+        monkeypatch.setattr(sanitizers, name, Mock())
+    monkeypatch.setattr(sanitizers, "add_general_regex_sanitizer", general)
+    sanitizers.configure_sanitizers()
     settings = next(call.kwargs for call in general.call_args_list if call.kwargs.get("group_for_replace") == "2")
     document = '{"url": "https://example.invalid/?' + key + "=" + value + '"}'
     for _ in range(depth):
