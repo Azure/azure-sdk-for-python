@@ -1,6 +1,6 @@
 # Release History
 
-## Unreleased
+## 2.3.0b3 (Unreleased)
 
 ### Features Added
 
@@ -10,8 +10,15 @@
   per-call headers, preserving unrelated dimensions without mutating defaults
   and replacing or clearing competing subject assertions.
 
+### Breaking Changes
+
+- Removed the internal `EXPERIMENTAL_LINK_MESSAGE` constant. When using
+  `azure-ai-agentserver-responses`, upgrade it to `2.4.0b3` or later alongside
+  Core; older Responses compatibility shims require the removed constant.
+
 ### Bugs Fixed
 
+- Removed the broken documentation link from experimental API warnings and docstrings.
 - Stop emitting standalone subject headers on outbound model calls while
   preserving platform-to-container ingress parsing.
 - Remove stale subject baggage even when a malformed member has properties before
