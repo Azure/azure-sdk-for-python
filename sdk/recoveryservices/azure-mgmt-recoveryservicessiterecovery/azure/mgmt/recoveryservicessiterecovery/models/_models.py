@@ -6328,7 +6328,7 @@ class AzureVmDiskDetails(_Model):
     )
     """The target Azure disk name."""
     lun_id: Optional[str] = rest_field(name="lunId", visibility=["read", "create", "update", "delete", "query"])
-    """Ordinal\LunId of the disk for the Azure VM."""
+    """Ordinal\\LunId of the disk for the Azure VM."""
     disk_encryption_set_id: Optional[str] = rest_field(
         name="diskEncryptionSetId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10180,7 +10180,7 @@ class HyperVReplicaAzureEnableProtectionInput(
     enable_rdp_on_target_option: Optional[str] = rest_field(
         name="enableRdpOnTargetOption", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The selected option to enable RDP\SSH on target vm after failover. String value of
+    """The selected option to enable RDP\\SSH on target vm after failover. String value of
      SrsDataContract.EnableRDPOnTargetOption enum."""
     target_azure_vm_name: Optional[str] = rest_field(
         name="targetAzureVmName", visibility=["read", "create", "update", "delete", "query"]
@@ -10936,7 +10936,7 @@ class HyperVReplicaAzureReplicationDetails(ReplicationProviderSpecificSettings, 
     enable_rdp_on_target_option: Optional[str] = rest_field(
         name="enableRdpOnTargetOption", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The selected option to enable RDP\SSH on target vm after failover. String value of
+    """The selected option to enable RDP\\SSH on target vm after failover. String value of
      SrsDataContract.EnableRDPOnTargetOption enum."""
     recovery_azure_resource_group_id: Optional[str] = rest_field(
         name="recoveryAzureResourceGroupId", visibility=["read", "create", "update", "delete", "query"]
@@ -12755,7 +12755,7 @@ class InMageAzureV2EnableProtectionInput(EnableProtectionProviderSpecificInput, 
     enable_rdp_on_target_option: Optional[str] = rest_field(
         name="enableRdpOnTargetOption", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The selected option to enable RDP\SSH on target VM after failover. String value of
+    """The selected option to enable RDP\\SSH on target VM after failover. String value of
      SrsDataContract.EnableRDPOnTargetOption enum."""
     target_azure_vm_name: Optional[str] = rest_field(
         name="targetAzureVmName", visibility=["read", "create", "update", "delete", "query"]
@@ -13664,7 +13664,7 @@ class InMageAzureV2ReplicationDetails(ReplicationProviderSpecificSettings, discr
     enable_rdp_on_target_option: Optional[str] = rest_field(
         name="enableRdpOnTargetOption", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The selected option to enable RDP\SSH on target vm after failover. String value of
+    """The selected option to enable RDP\\SSH on target vm after failover. String value of
      SrsDataContract.EnableRDPOnTargetOption enum."""
     datastores: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The datastores of the on-premise machine. Value can be list of strings that contain datastore
@@ -27917,7 +27917,7 @@ class UpdateReplicationProtectedItemInputProperties(_Model):  # pylint: disable=
     enable_rdp_on_target_option: Optional[str] = rest_field(
         name="enableRdpOnTargetOption", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The selected option to enable RDP\SSH on target vm after failover. String value of
+    """The selected option to enable RDP\\SSH on target vm after failover. String value of
      SrsDataContract.EnableRDPOnTargetOption enum."""
     vm_nics: Optional[list["_models.VMNicInputDetails"]] = rest_field(
         name="vmNics", visibility=["read", "create", "update", "delete", "query"]

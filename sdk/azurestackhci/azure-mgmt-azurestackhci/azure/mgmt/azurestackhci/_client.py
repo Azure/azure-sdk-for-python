@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -24,22 +24,25 @@ from .operations import (
     ClusterJobsOperations,
     ClustersOperations,
     DeploymentSettingsOperations,
-    DevicePoolsOperations,
     EdgeDeviceJobsOperations,
     EdgeDevicesOperations,
+    EdgeMachineDeploymentSettingsOperations,
+    EdgeMachineDiskJobsOperations,
+    EdgeMachineDiskPrivilegedJobsOperations,
+    EdgeMachineDisksOperations,
     EdgeMachineJobsOperations,
+    EdgeMachineNetworkAdapterJobsOperations,
+    EdgeMachineNetworkAdaptersOperations,
+    EdgeMachineSecuritySettingsOperationsOperations,
+    EdgeMachineVolumesOperations,
     EdgeMachinesOperations,
     ExtensionsOperations,
-    KubernetesVersionsOperations,
     OffersOperations,
     Operations,
     OsImagesOperations,
     OwnershipVouchersOperations,
-    PlatformUpdatesOperations,
-    PublishersOperations,
     SecuritySettingsOperations,
     SkusOperations,
-    UpdateContentsOperations,
     UpdateRunsOperations,
     UpdateSummariesOperationGroupOperations,
     UpdateSummariesOperations,
@@ -47,22 +50,21 @@ from .operations import (
     ValidatedSolutionRecipesOperations,
 )
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class AzureStackHCIClient:  # pylint: disable=too-many-instance-attributes
+class AzureStackHCIClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Azure Stack HCI service.
 
-    :ivar kubernetes_versions: KubernetesVersionsOperations operations
-    :vartype kubernetes_versions: azure.mgmt.azurestackhci.operations.KubernetesVersionsOperations
-    :ivar platform_updates: PlatformUpdatesOperations operations
-    :vartype platform_updates: azure.mgmt.azurestackhci.operations.PlatformUpdatesOperations
     :ivar os_images: OsImagesOperations operations
     :vartype os_images: azure.mgmt.azurestackhci.operations.OsImagesOperations
-    :ivar update_contents: UpdateContentsOperations operations
-    :vartype update_contents: azure.mgmt.azurestackhci.operations.UpdateContentsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.azurestackhci.operations.Operations
     :ivar arc_settings: ArcSettingsOperations operations
@@ -79,8 +81,6 @@ class AzureStackHCIClient:  # pylint: disable=too-many-instance-attributes
     :vartype edge_devices: azure.mgmt.azurestackhci.operations.EdgeDevicesOperations
     :ivar extensions: ExtensionsOperations operations
     :vartype extensions: azure.mgmt.azurestackhci.operations.ExtensionsOperations
-    :ivar publishers: PublishersOperations operations
-    :vartype publishers: azure.mgmt.azurestackhci.operations.PublishersOperations
     :ivar security_settings: SecuritySettingsOperations operations
     :vartype security_settings: azure.mgmt.azurestackhci.operations.SecuritySettingsOperations
     :ivar skus: SkusOperations operations
@@ -103,8 +103,29 @@ class AzureStackHCIClient:  # pylint: disable=too-many-instance-attributes
     :vartype ownership_vouchers: azure.mgmt.azurestackhci.operations.OwnershipVouchersOperations
     :ivar cluster_jobs: ClusterJobsOperations operations
     :vartype cluster_jobs: azure.mgmt.azurestackhci.operations.ClusterJobsOperations
-    :ivar device_pools: DevicePoolsOperations operations
-    :vartype device_pools: azure.mgmt.azurestackhci.operations.DevicePoolsOperations
+    :ivar edge_machine_network_adapters: EdgeMachineNetworkAdaptersOperations operations
+    :vartype edge_machine_network_adapters:
+     azure.mgmt.azurestackhci.operations.EdgeMachineNetworkAdaptersOperations
+    :ivar edge_machine_network_adapter_jobs: EdgeMachineNetworkAdapterJobsOperations operations
+    :vartype edge_machine_network_adapter_jobs:
+     azure.mgmt.azurestackhci.operations.EdgeMachineNetworkAdapterJobsOperations
+    :ivar edge_machine_disks: EdgeMachineDisksOperations operations
+    :vartype edge_machine_disks: azure.mgmt.azurestackhci.operations.EdgeMachineDisksOperations
+    :ivar edge_machine_volumes: EdgeMachineVolumesOperations operations
+    :vartype edge_machine_volumes: azure.mgmt.azurestackhci.operations.EdgeMachineVolumesOperations
+    :ivar edge_machine_disk_jobs: EdgeMachineDiskJobsOperations operations
+    :vartype edge_machine_disk_jobs:
+     azure.mgmt.azurestackhci.operations.EdgeMachineDiskJobsOperations
+    :ivar edge_machine_disk_privileged_jobs: EdgeMachineDiskPrivilegedJobsOperations operations
+    :vartype edge_machine_disk_privileged_jobs:
+     azure.mgmt.azurestackhci.operations.EdgeMachineDiskPrivilegedJobsOperations
+    :ivar edge_machine_security_settings_operations:
+     EdgeMachineSecuritySettingsOperationsOperations operations
+    :vartype edge_machine_security_settings_operations:
+     azure.mgmt.azurestackhci.operations.EdgeMachineSecuritySettingsOperationsOperations
+    :ivar edge_machine_deployment_settings: EdgeMachineDeploymentSettingsOperations operations
+    :vartype edge_machine_deployment_settings:
+     azure.mgmt.azurestackhci.operations.EdgeMachineDeploymentSettingsOperations
     :ivar update_summaries: UpdateSummariesOperations operations
     :vartype update_summaries: azure.mgmt.azurestackhci.operations.UpdateSummariesOperations
     :param credential: Credential used to authenticate requests to the service. Required.
@@ -116,9 +137,9 @@ class AzureStackHCIClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-04-01-preview". Default value is "2026-04-01-preview". Note that overriding this default
-     value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-10-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -171,14 +192,7 @@ class AzureStackHCIClient:  # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.kubernetes_versions = KubernetesVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.platform_updates = PlatformUpdatesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.os_images = OsImagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.update_contents = UpdateContentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.arc_settings = ArcSettingsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.offers = OffersOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -189,7 +203,6 @@ class AzureStackHCIClient:  # pylint: disable=too-many-instance-attributes
         self.edge_device_jobs = EdgeDeviceJobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.edge_devices = EdgeDevicesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.extensions = ExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.publishers = PublishersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.security_settings = SecuritySettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -210,7 +223,30 @@ class AzureStackHCIClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.cluster_jobs = ClusterJobsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.device_pools = DevicePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.edge_machine_network_adapters = EdgeMachineNetworkAdaptersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.edge_machine_network_adapter_jobs = EdgeMachineNetworkAdapterJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.edge_machine_disks = EdgeMachineDisksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.edge_machine_volumes = EdgeMachineVolumesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.edge_machine_disk_jobs = EdgeMachineDiskJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.edge_machine_disk_privileged_jobs = EdgeMachineDiskPrivilegedJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.edge_machine_security_settings_operations = EdgeMachineSecuritySettingsOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.edge_machine_deployment_settings = EdgeMachineDeploymentSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.update_summaries = UpdateSummariesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

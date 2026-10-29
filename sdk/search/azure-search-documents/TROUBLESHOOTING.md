@@ -1,18 +1,21 @@
-# Troubleshooting Azure Cognitive Search SDK Issues
+# Troubleshooting Azure AI Search SDK Issues
 
-The `azure-search-documents` package provides APIs for operations on the [Azure Cognitive Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search) cloud service.
+The `azure-search-documents` package provides APIs for operations on the [Azure AI Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search) cloud service.
 
 ## Table of Contents
 
-* [Identifying and Troubleshooting Issues by Response Code](#troubleshooting-issues-by-response-code)
-    * [HTTP 207 Errors](#207-multi-status)
-    * [HTTP 404 Errors](#404-not-found)
-    * [HTTP 429 Errors](#429-too-many-requests)
-* [Unexpected search query results](#unexpected-search-query-results)
+- [Troubleshooting Azure AI Search SDK Issues](#troubleshooting-azure-ai-search-sdk-issues)
+  - [Table of Contents](#table-of-contents)
+  - [Troubleshooting Issues By Response Code](#troubleshooting-issues-by-response-code)
+    - [207 Multi-Status](#207-multi-status)
+    - [403 Forbidden](#403-forbidden)
+    - [404 Not Found](#404-not-found)
+    - [429 too many requests](#429-too-many-requests)
+  - [Unexpected Search Query Results](#unexpected-search-query-results)
 
 ## Troubleshooting Issues By Response Code
 
-See [this page](https://learn.microsoft.com/rest/api/searchservice/http-status-codes) for the common response status codes sent by the Azure Cognitive Search service.
+See [this page](https://learn.microsoft.com/rest/api/searchservice/http-status-codes) for the common response status codes sent by the Azure AI Search service.
 
 ### 207 Multi-Status
 
@@ -22,7 +25,7 @@ This response status indicates a partial success for an indexing operation. Some
 
 Returned when you pass an invalid api-key. Search service uses two types of keys to control access: admin (read-write) and query (read-only). The **admin key** grants full rights to all operations, including the ability to manage the service, create and delete indexes, indexers, and data sources. The **query key** grants read-only access to indexes and documents. Ensure that the key used for an API call provides sufficient privileges for the operation. See [here](https://learn.microsoft.com/azure/search/search-security-api-keys) for details about managing API keys.
 
-If you are using the `azure-identity` package to authenticate requests to Azure Cognitive Search, please see our [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md).
+If you are using the `azure-identity` package to authenticate requests to Azure AI Search, please see our [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md).
 
 ### 404 Not Found
 
@@ -30,7 +33,7 @@ Returned when a resource does not exist on the server. If you are managing or qu
 
 ### 429 too many requests
 
-If this error occurs while you are trying to create an index, it means you already have the maximum number of indexes allowed for your pricing tier. A count of the indexes stored in Azure Cognitive Search is visible in the search service dashboard on the [Azure portal](https://portal.azure.com/). To view the indexes by name, click the Index tile. 
+If this error occurs while you are trying to create an index, it means you already have the maximum number of indexes allowed for your pricing tier. A count of the indexes stored in Azure AI Search is visible in the search service dashboard on the [Azure portal](https://portal.azure.com/). To view the indexes by name, click the Index tile.
 Alternatively, you can also get a list of the indexes by name using the [list_index_names() method](https://learn.microsoft.com/python/api/azure-search-documents/azure.search.documents.indexes.searchindexclient?view=azure-python#azure-search-documents-indexes-searchindexclient-list-index-names).
 
 If this error occurs during document upload, it indicates that you've exceeded your [quota](https://learn.microsoft.com/azure/search/search-limits-quotas-capacity) on the number of documents per index. You must either create a new index or upgrade for higher capacity limits.

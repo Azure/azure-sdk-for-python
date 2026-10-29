@@ -19,15 +19,19 @@ from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
 from settings.testcase import BlobPreparer
+from test_helpers import _deterministic_urandom
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
-from azure.storage.blob import BlobServiceClient, BlobType, ContentSettings
+from azure.storage.blob import BlobBlock, BlobServiceClient, BlobType, ContentSettings
 from azure.storage.blob._encryption import (
     _dict_to_encryption_data,
     _GCM_NONCE_LENGTH,
     _GCM_TAG_LENGTH,
+    _GCMRegionNonceValidator,
+    _region_nonce_encodings,
     _validate_and_unwrap_cek,
+    decrypt_blob,
 )
 
 TEST_CONTAINER_PREFIX = "encryptionv2_container"
@@ -127,7 +131,6 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    @mock.patch("os.urandom", mock_urandom)
     def test_validate_encryption_chunked_upload(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -148,7 +151,8 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         content = b"a" * 5 * 1024
 
         # Act
-        blob.upload_blob(content, overwrite=True)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            blob.upload_blob(content, overwrite=True)
 
         blob.require_encryption = False
         blob.key_encryption_key = None
@@ -388,6 +392,55 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
         assert "Decryption failed." in str(e.value)
 
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_encryption_v2_v1_downgrade_mid_download(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper("key1")
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=4 * MiB,
+            require_encryption=True,
+            encryption_version="2.0",
+            key_encryption_key=kek,
+        )
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b"abcd" * 2 * MiB  # 8 MiB spans multiple encryption regions -> multiple download requests
+
+        blob.upload_blob(content, overwrite=True)
+
+        # Build tampered metadata that downgrades the blob from V2 to V1
+        metadata = blob.get_blob_properties().metadata
+        tampered = loads(metadata["encryptiondata"])
+        tampered["EncryptionAgent"]["Protocol"] = "1.0"
+        tampered["EncryptionAgent"]["EncryptionAlgorithm"] = "AES_CBC_256"
+        tampered["ContentEncryptionIV"] = base64.b64encode(os.urandom(16)).decode("utf-8")
+        tampered_header = dumps(tampered)
+
+        # Simulate the service returning downgraded (V1) encryption metadata partway through the
+        # download by tampering with the response headers of every request after the initial one.
+        from azure.storage.blob import _download as download_module
+
+        real_process_content = download_module.process_content
+        call_count = {"value": 0}
+
+        def tampering_process_content(data, start_offset, end_offset, encryption, expected_encryption_data):
+            call_count["value"] += 1
+            if call_count["value"] > 1:
+                data.response.headers["x-ms-meta-encryptiondata"] = tampered_header
+            return real_process_content(data, start_offset, end_offset, encryption, expected_encryption_data)
+
+        # Act / Assert
+        with mock.patch.object(download_module, "process_content", tampering_process_content):
+            with pytest.raises(HttpResponseError) as e:
+                blob.download_blob().readall()
+
     @BlobPreparer()
     @recorded_by_proxy
     @mock.patch("os.urandom", mock_urandom)
@@ -418,6 +471,45 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         blob.set_blob_metadata(metadata)
         with pytest.raises(HttpResponseError) as e:
             blob.download_blob()
+
+        assert "Decryption failed." in str(e.value)
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    def test_encryption_reordered_regions(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper("key1")
+        # Each encrypted region is the plaintext region plus a nonce and tag. Size each
+        # block to a full encrypted region so every committed block is exactly one region.
+        region_length = 4 * MiB + _GCM_NONCE_LENGTH + _GCM_TAG_LENGTH
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+            max_single_put_size=1024,
+            max_block_size=region_length,
+            require_encryption=True,
+            encryption_version="2.0",
+            key_encryption_key=kek,
+        )
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b"abcd" * 3 * MiB  # 12 MiB -- three full 4 MiB encryption regions
+        blob.upload_blob(content, overwrite=True)
+
+        # Reorder the committed blocks so the encryption regions are out of order.
+        plain_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        metadata = plain_blob.get_blob_properties().metadata
+        committed, _ = plain_blob.get_block_list(block_list_type="committed")
+        reordered = committed[:-2] + committed[-1:] + committed[-2:-1]
+        reordered = [BlobBlock(block_id=block.id) for block in reordered]
+        plain_blob.commit_block_list(reordered, metadata=metadata)
+
+        # Act / Assert -- a region's nonce no longer matches its position
+        with pytest.raises(HttpResponseError) as e:
+            blob.download_blob().readall()
 
         assert "Decryption failed." in str(e.value)
 
@@ -473,7 +565,6 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    @mock.patch("os.urandom", mock_urandom)
     def test_put_blob_single_region_chunked(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -494,7 +585,8 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         content = b"abcde" * 1024
 
         # Act
-        blob.upload_blob(content, overwrite=True)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            blob.upload_blob(content, overwrite=True)
         data = blob.download_blob().readall()
 
         # Assert
@@ -1256,3 +1348,171 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
         blob.upload_blob(content, overwrite=True, raw_request_hook=assert_user_agent)
         blob.download_blob(raw_request_hook=assert_user_agent).readall()
+
+
+class TestGCMRegionNonceValidation:
+    REGION_DATA_LENGTH = 32
+
+    @staticmethod
+    def _encryption_headers(kek, cek, protocol, library, data_length=REGION_DATA_LENGTH):
+        # Wrap the CEK the way the V2 protocol requires (version prefix padded to 8 bytes).
+        wrapped_cek = kek.wrap_key(protocol.encode().ljust(8, b"\x00") + cek)
+        encryption_data = {
+            "WrappedContentKey": {
+                "KeyId": kek.get_kid(),
+                "EncryptedKey": base64.b64encode(wrapped_cek).decode(),
+                "Algorithm": kek.get_key_wrap_algorithm(),
+            },
+            "EncryptionAgent": {"Protocol": protocol, "EncryptionAlgorithm": "AES_GCM_256"},
+            "EncryptedRegionInfo": {"DataLength": data_length, "NonceLength": _GCM_NONCE_LENGTH},
+            "KeyWrappingMetadata": {"EncryptionLibrary": library},
+        }
+        return {"x-ms-meta-encryptiondata": dumps(encryption_data)}
+
+    @staticmethod
+    def _encrypt_regions(cek, nonce_for_region, plaintext_regions):
+        aesgcm = AESGCM(cek)
+        return [
+            nonce_for_region(i) + aesgcm.encrypt(nonce_for_region(i), region, None)
+            for i, region in enumerate(plaintext_regions)
+        ]
+
+    @staticmethod
+    def _decrypt(kek, headers, content, end_offset, nonce_validator):
+        return decrypt_blob(
+            require_encryption=True,
+            key_encryption_key=kek,
+            key_resolver=None,
+            content=content,
+            start_offset=0,
+            end_offset=end_offset,
+            response_headers=headers,
+            nonce_validator=nonce_validator,
+        )
+
+    def test_decrypt_dotnet_v2_1_nonce_encoding(self):
+        # Regression test for cross-SDK interoperability. The .NET Storage SDK encodes each
+        # region's GCM nonce as a one-based counter written little-endian into the final 8
+        # nonce bytes. Python must still decrypt these .NET-produced V2.1 blobs while
+        # continuing to detect reordered regions.
+        kek = KeyWrapper("key1")
+        cek = os.urandom(32)
+        num_regions = 3
+        plaintext_regions = [bytes([i]) * self.REGION_DATA_LENGTH for i in range(num_regions)]
+
+        def dotnet_nonce(region_index):
+            # 4 zero bytes + one-based counter, little-endian, 8 bytes -- see .NET
+            # GcmAuthenticatedCryptographicTransform.GetNewNonce().
+            return b"\x00\x00\x00\x00" + (region_index + 1).to_bytes(8, "little")
+
+        encrypted_regions = self._encrypt_regions(cek, dotnet_nonce, plaintext_regions)
+        headers = self._encryption_headers(kek, cek, "2.1", "Dotnet")
+        plaintext = b"".join(plaintext_regions)
+
+        # Act / Assert -- the .NET nonce encoding is accepted and the content round-trips.
+        decrypted = self._decrypt(kek, headers, b"".join(encrypted_regions), len(plaintext), _GCMRegionNonceValidator())
+        assert decrypted == plaintext
+
+        # Reordering the .NET-produced regions must still be detected.
+        reordered = encrypted_regions[0] + encrypted_regions[2] + encrypted_regions[1]
+        with pytest.raises(ValueError):
+            self._decrypt(kek, headers, reordered, len(plaintext), _GCMRegionNonceValidator())
+
+    def test_decrypt_java_v2_nonce_encoding(self):
+        # Regression test for cross-SDK interoperability. The Java Storage SDK encodes each
+        # region's GCM nonce as a zero-based counter written big-endian into the leading 8
+        # nonce bytes (ByteBuffer.allocate(12).putLong(index)), which differs from Python's
+        # full-width big-endian counter. Python must still decrypt Java-produced V2 blobs
+        # while continuing to detect reordered regions.
+        kek = KeyWrapper("key1")
+        cek = os.urandom(32)
+        num_regions = 3
+        plaintext_regions = [bytes([i]) * self.REGION_DATA_LENGTH for i in range(num_regions)]
+
+        def java_nonce(region_index):
+            # Zero-based counter, big-endian, in the leading 8 bytes; trailing bytes zeroed.
+            return region_index.to_bytes(8, "big") + b"\x00" * (_GCM_NONCE_LENGTH - 8)
+
+        encrypted_regions = self._encrypt_regions(cek, java_nonce, plaintext_regions)
+        headers = self._encryption_headers(kek, cek, "2.0", "Java")
+        plaintext = b"".join(plaintext_regions)
+
+        # Act / Assert -- the Java nonce encoding is accepted and the content round-trips.
+        decrypted = self._decrypt(kek, headers, b"".join(encrypted_regions), len(plaintext), _GCMRegionNonceValidator())
+        assert decrypted == plaintext
+
+        # Reordering the Java-produced regions must still be detected.
+        reordered = encrypted_regions[0] + encrypted_regions[2] + encrypted_regions[1]
+        with pytest.raises(ValueError):
+            self._decrypt(kek, headers, reordered, len(plaintext), _GCMRegionNonceValidator())
+
+    def test_decrypt_rejects_mixed_nonce_encodings(self):
+        # Regression test: the supported SDK nonce encodings share a value space, so accepting
+        # them independently per region would weaken reorder detection. For example Java's
+        # nonce for region 1 is identical to .NET's nonce for region 16,777,215, so a Java
+        # region could be moved to that position and still pass a per-region union check.
+        # decrypt_blob must instead select a single encoding and enforce it consistently.
+        encodings = _region_nonce_encodings(_GCM_NONCE_LENGTH)
+        # Document the overlap that motivates single-encoding enforcement.
+        assert encodings["java"](1) == encodings["dotnet"](16_777_215)
+
+        kek = KeyWrapper("key1")
+        cek = os.urandom(32)
+        aesgcm = AESGCM(cek)
+
+        # Region 0 uses the Java/Python encoding (all zeros); region 1 uses the .NET encoding.
+        # A per-region union check would accept both; single-encoding enforcement rejects the mix.
+        region0_nonce = encodings["java"](0)
+        region1_nonce = encodings["dotnet"](1)
+        region0 = region0_nonce + aesgcm.encrypt(region0_nonce, b"\x00" * self.REGION_DATA_LENGTH, None)
+        region1 = region1_nonce + aesgcm.encrypt(region1_nonce, b"\x11" * self.REGION_DATA_LENGTH, None)
+        headers = self._encryption_headers(kek, cek, "2.0", "Mixed")
+
+        # Act / Assert -- the mixed encoding is rejected rather than silently accepted.
+        with pytest.raises(ValueError):
+            self._decrypt(kek, headers, region0 + region1, 2 * self.REGION_DATA_LENGTH, _GCMRegionNonceValidator())
+
+    def test_nonce_validator_enforces_single_encoding_across_chunks(self):
+        # decrypt_blob runs once per download chunk, so a shared validator must intersect the
+        # candidate encodings across chunks; otherwise the encoding could change at a chunk
+        # boundary and, at a collision, let a relocated region pass.
+        encodings = _region_nonce_encodings(_GCM_NONCE_LENGTH)
+        # The collision that makes per-chunk validation unsound: Java region 1 == .NET region 16,777,215.
+        assert encodings["java"](1) == encodings["dotnet"](16_777_215)
+
+        validator = _GCMRegionNonceValidator()
+        # First chunk: two Java regions resolve the encoding to Java.
+        validator.validate_region(0, encodings["java"](0), _GCM_NONCE_LENGTH)
+        validator.validate_region(1, encodings["java"](1), _GCM_NONCE_LENGTH)
+
+        # Later chunk: a region relocated to the colliding .NET index carries Java's region-1
+        # nonce. Its only consistent encoding is .NET, which conflicts with the resolved Java
+        # encoding, so the shared validator rejects it.
+        with pytest.raises(ValueError):
+            validator.validate_region(16_777_215, encodings["java"](1), _GCM_NONCE_LENGTH)
+
+    def test_env_var_bypasses_nonce_validation(self):
+        # The AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS escape hatch disables nonce
+        # validation for data-recovery scenarios. With it set, a mix of nonce encodings that
+        # would normally be rejected must decrypt, and no validator is required.
+        encodings = _region_nonce_encodings(_GCM_NONCE_LENGTH)
+        kek = KeyWrapper("key1")
+        cek = os.urandom(32)
+        aesgcm = AESGCM(cek)
+
+        # Two regions using incompatible encodings (Java for region 0, .NET for region 1).
+        region0_plaintext = b"\x00" * self.REGION_DATA_LENGTH
+        region1_plaintext = b"\x11" * self.REGION_DATA_LENGTH
+        region0_nonce = encodings["java"](0)
+        region1_nonce = encodings["dotnet"](1)
+        region0 = region0_nonce + aesgcm.encrypt(region0_nonce, region0_plaintext, None)
+        region1 = region1_nonce + aesgcm.encrypt(region1_nonce, region1_plaintext, None)
+        headers = self._encryption_headers(kek, cek, "2.0", "Mixed")
+        plaintext = region0_plaintext + region1_plaintext
+
+        # Act / Assert -- with the bypass set, decryption succeeds without a validator.
+        with mock.patch.dict(os.environ, {"AZURE_STORAGE_CSE_V2_ALLOW_MISORDERED_AUTH_REGIONS": "true"}):
+            decrypted = self._decrypt(
+                kek, headers, region0 + region1, 2 * self.REGION_DATA_LENGTH, nonce_validator=None
+            )
+        assert decrypted == plaintext

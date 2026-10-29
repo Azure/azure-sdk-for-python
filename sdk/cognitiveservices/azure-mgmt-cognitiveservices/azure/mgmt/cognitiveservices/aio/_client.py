@@ -23,12 +23,15 @@ from .operations import (
     AccountCapabilityHostsOperations,
     AccountConnectionsOperations,
     AccountsOperations,
+    AdapterDeploymentsOperations,
     AgentApplicationsOperations,
     AgentDeploymentsOperations,
+    ArcDeploymentsOperations,
     CommitmentPlansOperations,
     CommitmentTiersOperations,
     ComputeOperationsOperations,
     ComputesOperations,
+    CostControlsOperations,
     DefenderForAISettingsOperations,
     DeletedAccountsOperations,
     DeploymentsOperations,
@@ -51,12 +54,14 @@ from .operations import (
     ProjectConnectionsOperations,
     ProjectsOperations,
     QuotaTiersOperations,
+    RaiBindingsOperations,
     RaiBlocklistItemsOperations,
     RaiBlocklistsOperations,
     RaiContentFiltersOperations,
     RaiExternalSafetyProviderOperations,
     RaiExternalSafetyProvidersOperations,
     RaiPoliciesOperations,
+    RaiRegosOperations,
     RaiToolLabelsOperations,
     RaiTopicsOperations,
     ResourceSkusOperations,
@@ -79,7 +84,7 @@ if TYPE_CHECKING:
 
 class CognitiveServicesManagementClient(
     _CognitiveServicesManagementClientOperationsMixin
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Cognitive Services Management Client.
 
     :ivar operations: Operations operations
@@ -105,6 +110,10 @@ class CognitiveServicesManagementClient(
     :ivar subscription_rai_policy: SubscriptionRaiPolicyOperations operations
     :vartype subscription_rai_policy:
      azure.mgmt.cognitiveservices.aio.operations.SubscriptionRaiPolicyOperations
+    :ivar rai_regos: RaiRegosOperations operations
+    :vartype rai_regos: azure.mgmt.cognitiveservices.aio.operations.RaiRegosOperations
+    :ivar rai_bindings: RaiBindingsOperations operations
+    :vartype rai_bindings: azure.mgmt.cognitiveservices.aio.operations.RaiBindingsOperations
     :ivar rai_blocklist_items: RaiBlocklistItemsOperations operations
     :vartype rai_blocklist_items:
      azure.mgmt.cognitiveservices.aio.operations.RaiBlocklistItemsOperations
@@ -134,12 +143,17 @@ class CognitiveServicesManagementClient(
      azure.mgmt.cognitiveservices.aio.operations.ProjectCapabilityHostsOperations
     :ivar quota_tiers: QuotaTiersOperations operations
     :vartype quota_tiers: azure.mgmt.cognitiveservices.aio.operations.QuotaTiersOperations
+    :ivar arc_deployments: ArcDeploymentsOperations operations
+    :vartype arc_deployments: azure.mgmt.cognitiveservices.aio.operations.ArcDeploymentsOperations
     :ivar agent_applications: AgentApplicationsOperations operations
     :vartype agent_applications:
      azure.mgmt.cognitiveservices.aio.operations.AgentApplicationsOperations
     :ivar managed_compute_deployments: ManagedComputeDeploymentsOperations operations
     :vartype managed_compute_deployments:
      azure.mgmt.cognitiveservices.aio.operations.ManagedComputeDeploymentsOperations
+    :ivar adapter_deployments: AdapterDeploymentsOperations operations
+    :vartype adapter_deployments:
+     azure.mgmt.cognitiveservices.aio.operations.AdapterDeploymentsOperations
     :ivar compute_operations: ComputeOperationsOperations operations
     :vartype compute_operations:
      azure.mgmt.cognitiveservices.aio.operations.ComputeOperationsOperations
@@ -154,6 +168,8 @@ class CognitiveServicesManagementClient(
     :ivar managed_compute_capacities: ManagedComputeCapacitiesOperations operations
     :vartype managed_compute_capacities:
      azure.mgmt.cognitiveservices.aio.operations.ManagedComputeCapacitiesOperations
+    :ivar cost_controls: CostControlsOperations operations
+    :vartype cost_controls: azure.mgmt.cognitiveservices.aio.operations.CostControlsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.cognitiveservices.aio.operations.PrivateLinkResourcesOperations
@@ -210,7 +226,7 @@ class CognitiveServicesManagementClient(
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-03-15-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-09-15-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -286,6 +302,8 @@ class CognitiveServicesManagementClient(
         self.subscription_rai_policy = SubscriptionRaiPolicyOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.rai_regos = RaiRegosOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.rai_bindings = RaiBindingsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.rai_blocklist_items = RaiBlocklistItemsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -309,10 +327,14 @@ class CognitiveServicesManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.quota_tiers = QuotaTiersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.arc_deployments = ArcDeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agent_applications = AgentApplicationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_compute_deployments = ManagedComputeDeploymentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.adapter_deployments = AdapterDeploymentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.compute_operations = ComputeOperationsOperations(
@@ -326,6 +348,7 @@ class CognitiveServicesManagementClient(
         self.managed_compute_capacities = ManagedComputeCapacitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.cost_controls = CostControlsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

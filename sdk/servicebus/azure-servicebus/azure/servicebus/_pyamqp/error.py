@@ -331,6 +331,21 @@ class MessageSendFailed(MessageException):
     """
 
 
+class MessageSettlementUnconfirmed(MessageException):
+    """The disposition was sent but the remote endpoint never reported a terminal outcome.
+
+    Raised only when a settlement outcome was explicitly awaited. The settlement may or may
+    not have been applied, so the caller must treat the result as unknown and re-confirm it
+    through an authoritative channel rather than assume either success or failure.
+
+    Distinct from a rejected outcome, where the remote endpoint gave a definitive answer.
+
+    :param bytes condition: The error code.
+    :keyword str description: A description of the error.
+    :keyword dict info: A dictionary of additional data associated with the error.
+    """
+
+
 class ErrorResponse(object):
     """AMQP error object."""
 

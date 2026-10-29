@@ -39,7 +39,7 @@ def main():
             "location": "NorthCentralUS",
             "properties": {
                 "wafPolicy": {
-                    "id": "/subscriptions/subid/resourcegroups/rg1/providers/Microsoft.Networking/applicationGatewayWebApplicationFirewallPolicies/wp-0"
+                    "id": "/subscriptions/subid/resourcegroups/rg1/providers/Microsoft.Network/applicationGatewayWebApplicationFirewallPolicies/wp-0"
                 }
             },
         },
@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01-preview/WafSecurityPolicyPut.json
+# x-ms-original-file: 2026-03-01/WafSecurityPolicyPut.json
 if __name__ == "__main__":
     main()

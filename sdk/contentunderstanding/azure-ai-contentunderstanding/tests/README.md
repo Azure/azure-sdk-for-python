@@ -4,13 +4,54 @@ This guide provides instructions for running tests for the Azure AI Content Unde
 
 ## Getting started
 
-To run the tests for this package, please follow the setup instructions in the main package README:
+To run the tests for this package, please follow the Microsoft Foundry setup in the [main package README][main_readme] and the environment / dependency setup in the [samples README][python_cu_samples_readme].
 
-[Step 3: Configure model deployments][main_readme_setup]
-
-This step ensures your environment is correctly configured with the necessary dependencies, environment variables, and model mappings required for the tests.
+This ensures your environment is correctly configured with the necessary dependencies, environment variables, and model mappings required for the tests.
 
 ## Running Tests
+
+### Dual API version matrix
+
+Shared tests use `CONTENTUNDERSTANDING_TEST_API_VERSION` (default: `2025-11-01` / GA) when
+constructing clients via `create_client()` / `create_async_client()`.
+
+Run the suite twice for full GA + preview coverage:
+
+```bash
+CONTENTUNDERSTANDING_TEST_API_VERSION=2025-11-01 pytest
+CONTENTUNDERSTANDING_TEST_API_VERSION=2026-06-01-preview pytest
+```
+
+Version-gated markers (registered in `conftest.py`):
+
+| Marker | Behavior |
+|--------|----------|
+| `@pytest.mark.preview` | Runs only when `CONTENTUNDERSTANDING_TEST_API_VERSION=2026-06-01-preview` |
+| `@pytest.mark.ga` | GA-surface / back-compat tests; runs in **both** passes (GA and preview) |
+| *(unmarked)* | Runs in both passes |
+
+Preview-only sample tests (inline, chunking, workflows, signatures, metadata, in-page segments,
+diagnostics) are marked `@pytest.mark.preview`.
+
+Live-only sample tests that are not preview-gated include field grounding sources
+(`test_sample_content_source*`) and long-running operation (LRO) continuation-token rehydration
+(`test_sample_rehydrate_operation*`). Keep those tests aligned with the matching sample files
+under `samples/` / `samples/async_samples/` whenever sample snippets change.
+
+For live tests, configure your own Microsoft Foundry endpoint and deployment names:
+
+```bash
+export CONTENTUNDERSTANDING_ENDPOINT=https://<your-resource-name>.services.ai.azure.com/
+export AZURE_TEST_RUN_LIVE=true
+export AZURE_SKIP_LIVE_RECORDING=true
+export AZURE_TEST_USE_CLI_AUTH=true
+export CU_COMPLETION_MODEL=gpt-5.2
+export CU_COMPLETION_MODEL_MINI=gpt-5.2
+export CU_EMBEDDING_MODEL=text-embedding-3-large
+export CU_COMPLETION_MODEL_DEPLOYMENT=my-completion-deployment
+export CU_COMPLETION_MINI_DEPLOYMENT=my-completion-mini-deployment
+export CU_EMBEDDING_DEPLOYMENT=my-embedding-deployment
+```
 
 ### Basic Test Execution
 
@@ -119,7 +160,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 <!-- LINKS -->
 
 [main_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md
-[main_readme_setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md#step-3-configure-model-deployments-required-for-prebuilt-analyzers
+[python_cu_samples_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/README.md
 [azure_sdk_testing_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md
 [test_proxy_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy
 [python_cu_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples

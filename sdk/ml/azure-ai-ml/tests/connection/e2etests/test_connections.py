@@ -8,7 +8,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient, load_connection, load_datastore
-from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionAuthType, ConnectionCategory
+from azure.ai.ml._restclient.arm_ml_service.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import (
     WorkspaceConnection,
@@ -40,7 +40,6 @@ from azure.ai.ml.entities._datastore.datastore import Datastore
 @pytest.mark.core_sdk_test
 @pytest.mark.usefixtures("recorded_test")
 class TestWorkspaceConnections(AzureRecordedTestCase):
-    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_secret_population(
         self,
         client: MLClient,
@@ -122,7 +121,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_workspace_connections_create_update_and_delete_snowflake_user_pwd(
         self,
         client: MLClient,
@@ -898,7 +896,6 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.connections.get(name=wps_connection_name)
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_container_registry_managed_id_crud(
         self,
         client: MLClient,

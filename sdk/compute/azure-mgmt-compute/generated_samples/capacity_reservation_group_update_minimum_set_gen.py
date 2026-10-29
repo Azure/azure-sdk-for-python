@@ -40,6 +40,7 @@ def main():
                     "capacityReservations": [
                         {
                             "name": "str",
+                            "reservationStateInfo": {"reservationState": "str"},
                             "statuses": [
                                 {
                                     "code": "str",
@@ -49,7 +50,11 @@ def main():
                                     "time": "2020-02-20 00:00:00",
                                 }
                             ],
-                            "utilizationInfo": {"currentCapacity": 0, "virtualMachinesAllocated": [{"id": "str"}]},
+                            "utilizationInfo": {
+                                "currentCapacity": 0,
+                                "usedReservedCountBySubscription": {"str": 0},
+                                "virtualMachinesAllocated": [{"id": "str"}],
+                            },
                         }
                     ],
                     "sharedSubscriptionIds": [{"id": "str"}],
@@ -64,6 +69,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/capacityReservationExamples/CapacityReservationGroup_Update_MinimumSet_Gen.json
+# x-ms-original-file: 2026-04-01/capacityReservationExamples/CapacityReservationGroup_Update_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

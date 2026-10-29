@@ -87,14 +87,27 @@ class TestCosmosDBManagementDatabaseAccountsOperations(AzureMgmtRecordedTestCase
                     "enablePartitionMerge": bool,
                     "enablePerRegionPerPartitionAutoscale": bool,
                     "enablePriorityBasedExecution": bool,
+                    "enforceHierarchicalPartitionKeyIdLastLevel": bool,
                     "ipRules": [{"ipAddressOrRange": "str"}],
                     "isVirtualNetworkFilterEnabled": bool,
                     "keyVaultKeyUri": "str",
                     "keysMetadata": {
-                        "primaryMasterKey": {"generationTime": "2020-02-20 00:00:00"},
-                        "primaryReadonlyMasterKey": {"generationTime": "2020-02-20 00:00:00"},
-                        "secondaryMasterKey": {"generationTime": "2020-02-20 00:00:00"},
-                        "secondaryReadonlyMasterKey": {"generationTime": "2020-02-20 00:00:00"},
+                        "primaryMasterKey": {
+                            "approximateLastUsageTime": "2020-02-20 00:00:00",
+                            "generationTime": "2020-02-20 00:00:00",
+                        },
+                        "primaryReadonlyMasterKey": {
+                            "approximateLastUsageTime": "2020-02-20 00:00:00",
+                            "generationTime": "2020-02-20 00:00:00",
+                        },
+                        "secondaryMasterKey": {
+                            "approximateLastUsageTime": "2020-02-20 00:00:00",
+                            "generationTime": "2020-02-20 00:00:00",
+                        },
+                        "secondaryReadonlyMasterKey": {
+                            "approximateLastUsageTime": "2020-02-20 00:00:00",
+                            "generationTime": "2020-02-20 00:00:00",
+                        },
                     },
                     "minimalTlsVersion": "str",
                     "networkAclBypass": "str",
@@ -109,6 +122,11 @@ class TestCosmosDBManagementDatabaseAccountsOperations(AzureMgmtRecordedTestCase
                         "restoreWithTtlDisabled": bool,
                         "sourceBackupLocation": "str",
                         "tablesToRestore": ["str"],
+                    },
+                    "softDeleteConfiguration": {
+                        "minMinutesBeforePermanentDeletionAllowed": 0,
+                        "softDeleteRetentionPeriodInMinutes": 0,
+                        "softDeletionEnabled": bool,
                     },
                     "virtualNetworkRules": [{"id": "str", "ignoreMissingVNetServiceEndpoint": bool}],
                 },
@@ -183,14 +201,27 @@ class TestCosmosDBManagementDatabaseAccountsOperations(AzureMgmtRecordedTestCase
                     "enablePartitionMerge": bool,
                     "enablePerRegionPerPartitionAutoscale": bool,
                     "enablePriorityBasedExecution": bool,
+                    "enforceHierarchicalPartitionKeyIdLastLevel": bool,
                     "ipRules": [{"ipAddressOrRange": "str"}],
                     "isVirtualNetworkFilterEnabled": bool,
                     "keyVaultKeyUri": "str",
                     "keysMetadata": {
-                        "primaryMasterKey": {"generationTime": "2020-02-20 00:00:00"},
-                        "primaryReadonlyMasterKey": {"generationTime": "2020-02-20 00:00:00"},
-                        "secondaryMasterKey": {"generationTime": "2020-02-20 00:00:00"},
-                        "secondaryReadonlyMasterKey": {"generationTime": "2020-02-20 00:00:00"},
+                        "primaryMasterKey": {
+                            "approximateLastUsageTime": "2020-02-20 00:00:00",
+                            "generationTime": "2020-02-20 00:00:00",
+                        },
+                        "primaryReadonlyMasterKey": {
+                            "approximateLastUsageTime": "2020-02-20 00:00:00",
+                            "generationTime": "2020-02-20 00:00:00",
+                        },
+                        "secondaryMasterKey": {
+                            "approximateLastUsageTime": "2020-02-20 00:00:00",
+                            "generationTime": "2020-02-20 00:00:00",
+                        },
+                        "secondaryReadonlyMasterKey": {
+                            "approximateLastUsageTime": "2020-02-20 00:00:00",
+                            "generationTime": "2020-02-20 00:00:00",
+                        },
                     },
                     "locations": [
                         {
@@ -206,6 +237,11 @@ class TestCosmosDBManagementDatabaseAccountsOperations(AzureMgmtRecordedTestCase
                     "networkAclBypass": "str",
                     "networkAclBypassResourceIds": ["str"],
                     "publicNetworkAccess": "str",
+                    "softDeleteConfiguration": {
+                        "minMinutesBeforePermanentDeletionAllowed": 0,
+                        "softDeleteRetentionPeriodInMinutes": 0,
+                        "softDeletionEnabled": bool,
+                    },
                     "virtualNetworkRules": [{"id": "str", "ignoreMissingVNetServiceEndpoint": bool}],
                 },
                 "tags": {"str": "str"},
@@ -330,7 +366,7 @@ class TestCosmosDBManagementDatabaseAccountsOperations(AzureMgmtRecordedTestCase
         response = self.client.database_accounts.begin_regenerate_key(
             resource_group_name=resource_group.name,
             account_name="str",
-            key_to_regenerate={"keyKind": "str"},
+            key_to_regenerate={"keyKind": "str", "skipAccountKeysLastUsageCheck": bool},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

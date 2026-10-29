@@ -20,8 +20,8 @@ class _InputOutputBase(DictMixin, RestTranslatableMixin):
 
         This class is introduced to support literal output in the future.
 
-        :param type: The type of the Input/Output.
-        :type type: str
+        :keyword type: The type of the Input/Output.
+        :paramtype type: str
         """
         self.type = type
 

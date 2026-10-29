@@ -44,6 +44,7 @@ from foundry_features_header_test_base import (
     EXPECTED_FOUNDRY_FEATURES,
     FAKE_ENDPOINT,
     FOUNDRY_FEATURES_HEADER,
+    NON_OPERATION_BETA_ATTRIBUTES,
     AsyncFakeCredential,
     FoundryFeaturesHeaderTestBase,
     _RequestCaptured,
@@ -99,6 +100,8 @@ def _discover_async_test_cases() -> list[pytest.param]:
     cases: list[pytest.param] = []
     for sc_name in sorted(dir(temp.beta)):
         if sc_name.startswith("_"):
+            continue
+        if sc_name in NON_OPERATION_BETA_ATTRIBUTES:
             continue
         sc = getattr(temp.beta, sc_name)
         # Sub-clients are non-callable objects (instances of operations classes).
@@ -243,6 +246,24 @@ class TestFoundryFeaturesHeaderOnBetaOperationsAsync(FoundryFeaturesHeaderTestBa
         await self._assert_header_async(
             label, self._make_fake_call(method, extra_kwargs=extra_kwargs), expected_header_value
         )
+
+    @pytest.mark.parametrize("subclient_name", ["conversations", "telephony"])
+    @pytest.mark.asyncio
+    async def test_foundry_features_header_on_voice_agent_subclients_async(
+        self, async_client: AsyncAIProjectClient, subclient_name: str
+    ) -> None:
+        """Assert every public nested voice-agent method sends the preview header."""
+        subclient = getattr(async_client.beta.voice_agents, subclient_name)
+        operation = getattr(subclient, "_operation", subclient)
+        for method_name in sorted(dir(operation)):
+            if method_name.startswith("_"):
+                continue
+            method = getattr(subclient, method_name)
+            if callable(method):
+                label = f".beta.voice_agents.{subclient_name}.{method_name}() [async]"
+                await self._assert_header_async(
+                    label, self._make_fake_call(method), EXPECTED_FOUNDRY_FEATURES["voice_agents"]
+                )
 
 
 # ---------------------------------------------------------------------------

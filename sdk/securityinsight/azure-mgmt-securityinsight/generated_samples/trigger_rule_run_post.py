@@ -30,15 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.alert_rule.begin_trigger_rule_run(
+    client.alert_rule.begin_trigger_rule_run(
         resource_group_name="myRg",
         workspace_name="myWorkspace",
         rule_id="65360bb0-8986-4ade-a89d-af3cf44d28aa",
         analytics_rule_run_trigger_parameter={"properties": {"executionTimeUtc": "2022-12-22T15:37:03.074Z"}},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/triggeredAnalyticsRuleRuns/triggerRuleRun_Post.json
+# x-ms-original-file: 2025-10-01-preview/triggeredAnalyticsRuleRuns/triggerRuleRun_Post.json
 if __name__ == "__main__":
     main()

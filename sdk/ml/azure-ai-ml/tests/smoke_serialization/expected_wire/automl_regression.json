@@ -1,0 +1,33 @@
+{
+  "properties": {
+    "computeId": "smoke-compute",
+    "experimentName": "smoke-experiment",
+    "isArchived": false,
+    "jobType": "AutoML",
+    "outputs": {},
+    "properties": {},
+    "tags": {},
+    "taskDetails": {
+      "limitSettings": {
+        "maxConcurrentTrials": 2,
+        "maxTrials": 10,
+        "sweepConcurrentTrials": 0,
+        "sweepTrials": 0,
+        "timeout": "PT1H"
+      },
+      "logVerbosity": "Info",
+      "primaryMetric": "R2Score",
+      "targetColumnName": "target",
+      "taskType": "Regression",
+      "trainingData": {
+        "jobInputType": "mltable",
+        "uri": "azureml://datastores/workspaceblobstore/paths/smoke/train/"
+      },
+      "trainingSettings": {},
+      "validationData": {
+        "jobInputType": "mltable",
+        "uri": "azureml://datastores/workspaceblobstore/paths/smoke/valid/"
+      }
+    }
+  }
+}

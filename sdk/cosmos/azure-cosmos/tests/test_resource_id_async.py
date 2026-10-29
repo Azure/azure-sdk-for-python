@@ -43,18 +43,20 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
         await self.key_client.close()
 
     async def test_id_unicode_validation_async(self):
+        # Ids are prefixed so the databases are attributable to this run; the unicode and
+        # special-character content this test exercises is preserved verbatim after it.
         # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
-        resource_id1 = (
+        resource_id1 = test_config.unique_database_id("unicode") + (
             u'\u0939\u093f\u0928\u094d\u0926\u0940 '
             u'\u092d\u093e\u0930\u0924 '
             u'\u0915\u0940 '
             u'\u0930\u093e\u0937\u094d\u091f\u094d\u0930\u0940\u092f '
             u'\u092d\u093e\u0937\u093e '
             u'\u0939\u0948'
-        ) + str(uuid.uuid4())
+        )
 
         # Special allowed chars for Id
-        resource_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>" + str(uuid.uuid4())
+        resource_id2 = test_config.unique_database_id("special-chars") + "!@$%^&*()-~`'_[]{}|;:,.<>"
 
         # verify that databases are created with specified IDs (control-plane -> key_client)
         created_db1 = await self.key_client.create_database_if_not_exists(resource_id1)
@@ -90,7 +92,7 @@ class TestResourceIdsAsync(unittest.IsolatedAsyncioTestCase):
         await self.key_client.delete_database(resource_id2)
 
     async def test_create_illegal_characters_async(self):
-        database_id = str(uuid.uuid4())
+        database_id = test_config.unique_database_id()
         container_id = str(uuid.uuid4())
         partition_key = PartitionKey(path="/id")
 

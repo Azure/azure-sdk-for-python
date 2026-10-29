@@ -1,5 +1,38 @@
 # Release History
 
+## 3.0.0 (2026-07-29)
+
+### Features Added
+
+  - Model `CurrentQuotaLimitBase` added property `system_data`
+  - Model `QuotaRequestDetails` added property `system_data`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Renamed client `AzureReservationAPI` to `ReservationsMgmtClient`
+  - Model `AppliedReservations` moved instance variable `reservation_order_ids` under property `properties` whose type is `AppliedReservationsProperties`
+  - Model `MergeRequest` moved instance variable `sources` under property `properties` whose type is `MergeProperties`
+  - Model `Patch` moved instance variable `applied_scope_properties`, `applied_scope_type`, `applied_scopes`, `instance_flexibility`, `name`, `renew`, `renew_properties` and `review_date_time` under property `properties` whose type is `PatchProperties`
+  - Model `PurchaseRequest` moved instance variable `applied_scope_properties`, `applied_scope_type`, `applied_scopes`, `billing_plan`, `billing_scope_id`, `display_name`, `quantity`, `renew`, `reserved_resource_properties`, `reserved_resource_type`, `review_date_time` and `term` under property `properties` whose type is `PurchaseRequestProperties`
+  - Model `QuotaRequestDetails` moved instance variable `message`, `provisioning_state`, `request_submit_time` and `value` under property `properties` whose type is `QuotaRequestProperties`
+  - Model `ReservationOrderResponse` moved instance variable `benefit_start_time`, `billing_plan`, `created_date_time`, `display_name`, `expiry_date`, `expiry_date_time`, `original_quantity`, `plan_information`, `provisioning_state`, `request_date_time`, `reservations`, `review_date_time` and `term` under property `properties` whose type is `ReservationOrderProperties`
+  - Model `SavingsPlanPurchaseRequest` moved instance variable `applied_scope_properties`, `applied_scope_type`, `billing_plan`, `billing_scope_id`, `commitment`, `display_name` and `term` under property `properties` whose type is `SavingsPlanPurchaseRequestProperties`
+  - Model `SkuRestriction` renamed its instance variable `values` to `values_property`
+  - Model `SplitRequest` moved instance variable `quantities` and `reservation_id` under property `properties` whose type is `SplitProperties`
+  - Method `QuotaRequestStatusOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationOperations.list_all` changed its parameter `orderby`/`refresh_summary`/`selected_state`/`skiptoken`/`take` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationOrderOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `OperationList`/`QuotaLimits`/`QuotaLimitsResponse`/`QuotaRequestDetailsList`/`ReservationList`/`ReservationOrderList` which actually were not used by SDK users
+  - Deleted model `CreateGenericQuotaRequestParameters`/`QuotaRequestOneResourceSubmitResponse`/`QuotaRequestSubmitResponse` which actually were not used by SDK users
+  - Deleted enum `DisplayProvisioningState`/`Location`/`UserFriendlyAppliedScopeType`/`UserFriendlyRenewState` which actually were not used by SDK users
+  - Deleted model `CatalogsResult`/`CurrentQuotaLimit`/`QuotaRequestSubmitResponse201`/`RefundResponse`/`ReservationsListResult` which actually were not used by SDK users
+
 ## 3.0.0b1 (2026-06-02)
 
 ### Features Added

@@ -340,9 +340,12 @@ Write-Host "  +-----------------------------------------------------------------
 Write-Host ""
 Write-Host "  Required for sample_update_defaults.py (one-time model config):"
 Write-Host "  +-----------------------------------------------------------------+"
-Write-Host "  | GPT_4_1_DEPLOYMENT              - Your GPT-4.1 deployment name  |"
-Write-Host "  | GPT_4_1_MINI_DEPLOYMENT         - Your GPT-4.1-mini deployment  |"
-Write-Host "  | TEXT_EMBEDDING_3_LARGE_DEPLOYMENT - Your embedding deployment   |"
+Write-Host "  | CU_COMPLETION_MODEL                - Completion model name       |"
+Write-Host "  | CU_COMPLETION_MODEL_MINI           - Mini model name             |"
+Write-Host "  | CU_EMBEDDING_MODEL                 - Embedding model name        |"
+Write-Host "  | CU_COMPLETION_MODEL_DEPLOYMENT     - Completion deployment       |"
+Write-Host "  | CU_COMPLETION_MINI_DEPLOYMENT      - Mini deployment             |"
+Write-Host "  | CU_EMBEDDING_DEPLOYMENT            - Embedding deployment        |"
 Write-Host "  +-----------------------------------------------------------------+"
 Write-Host ""
 
@@ -359,14 +362,27 @@ if ($configureNow -match '^[Yy]$') {
         Write-Host "  [WARN] Skipped CONTENTUNDERSTANDING_ENDPOINT (required - please set manually)"
     }
 
-    # CONTENTUNDERSTANDING_KEY
-    $apiKey = Read-Host "Enter CONTENTUNDERSTANDING_KEY (press Enter to use DefaultAzureCredential)"
+    # CONTENTUNDERSTANDING_KEY (SecureString prevents the secret from being echoed)
+    $apiKeySecure = Read-Host "Enter CONTENTUNDERSTANDING_KEY (press Enter to use DefaultAzureCredential)" -AsSecureString
+    $apiKey = [System.Net.NetworkCredential]::new('', $apiKeySecure).Password
     if ($apiKey) {
         Set-EnvValue 'CONTENTUNDERSTANDING_KEY' $apiKey
         Write-Host "  [OK] Set CONTENTUNDERSTANDING_KEY"
     } else {
         Write-Host "  [INFO] Using DefaultAzureCredential - make sure to run 'az login'"
     }
+
+    $completionModel = Read-Host "Enter CU_COMPLETION_MODEL (default: gpt-5.2)"
+    if (-not $completionModel) { $completionModel = 'gpt-5.2' }
+    Set-EnvValue 'CU_COMPLETION_MODEL' $completionModel
+
+    $miniCompletionModel = Read-Host "Enter CU_COMPLETION_MODEL_MINI (default: $completionModel)"
+    if (-not $miniCompletionModel) { $miniCompletionModel = $completionModel }
+    Set-EnvValue 'CU_COMPLETION_MODEL_MINI' $miniCompletionModel
+
+    $embeddingModel = Read-Host "Enter CU_EMBEDDING_MODEL (default: text-embedding-3-large)"
+    if (-not $embeddingModel) { $embeddingModel = 'text-embedding-3-large' }
+    Set-EnvValue 'CU_EMBEDDING_MODEL' $embeddingModel
 
     # Probe existing model defaults on the Foundry resource before prompting.
     # Exit codes:
@@ -375,9 +391,9 @@ if ($configureNow -match '^[Yy]$') {
     #   2  NONE      - no defaults configured
     #   3  AUTH      - 401/403 authentication error
     #   1  OTHER     - any other error
-    $gpt41 = ''
-    $gpt41mini = ''
-    $embedding = ''
+    $completionDeployment = ''
+    $miniCompletionDeployment = ''
+    $embeddingDeployment = ''
     $skipUpdateDefaults = $false
     $probeRc = 1
     $probeOut = ''
@@ -406,13 +422,20 @@ except HttpResponseError as e:
     sys.exit(3 if e.status_code in (401, 403) else 1)
 except Exception:
     sys.exit(1)
-keys = ["gpt-4.1", "gpt-4.1-mini", "text-embedding-3-large"]
+keys = [
+    os.environ["CU_COMPLETION_MODEL"],
+    os.environ["CU_COMPLETION_MODEL_MINI"],
+    os.environ["CU_EMBEDDING_MODEL"],
+]
 vals = [d.get(k, "") for k in keys]
-print(";".join(f"{k}={v}" for k, v in zip(keys, vals)))
+print(";".join(f"{label}={value}" for label, value in zip(("completion", "mini", "embedding"), vals)))
 sys.exit(0 if all(vals) else (2 if not any(vals) else 10))
 '@
         $env:CONTENTUNDERSTANDING_ENDPOINT = $endpoint
         $env:CONTENTUNDERSTANDING_KEY = $apiKey
+    $env:CU_COMPLETION_MODEL = $completionModel
+    $env:CU_COMPLETION_MODEL_MINI = $miniCompletionModel
+    $env:CU_EMBEDDING_MODEL = $embeddingModel
         try {
             $probeOut = & $venvPython -c $probeScript 2>$null
             $probeRc = $LASTEXITCODE
@@ -425,9 +448,9 @@ sys.exit(0 if all(vals) else (2 if not any(vals) else 10))
                 $kv = $pair -split '=', 2
                 if ($kv.Count -eq 2) {
                     switch ($kv[0]) {
-                        'gpt-4.1'                { $gpt41     = $kv[1] }
-                        'gpt-4.1-mini'           { $gpt41mini = $kv[1] }
-                        'text-embedding-3-large' { $embedding = $kv[1] }
+                        'completion' { $completionDeployment = $kv[1] }
+                        'mini'       { $miniCompletionDeployment = $kv[1] }
+                        'embedding'  { $embeddingDeployment = $kv[1] }
                     }
                 }
             }
@@ -436,14 +459,14 @@ sys.exit(0 if all(vals) else (2 if not any(vals) else 10))
         switch ($probeRc) {
             0 {
                 Write-Host "  [OK] Detected existing defaults:"
-                Write-Host "      gpt-4.1                = $gpt41"
-                Write-Host "      gpt-4.1-mini           = $gpt41mini"
-                Write-Host "      text-embedding-3-large = $embedding"
+                Write-Host "      $completionModel = $completionDeployment"
+                Write-Host "      $miniCompletionModel = $miniCompletionDeployment"
+                Write-Host "      $embeddingModel = $embeddingDeployment"
                 $useDetected = Read-Host "  Use these detected values? (Y/n)"
                 if ($useDetected -notmatch '^[Nn]$') {
                     $skipUpdateDefaults = $true
                 } else {
-                    $gpt41 = ''; $gpt41mini = ''; $embedding = ''
+                    $completionDeployment = ''; $miniCompletionDeployment = ''; $embeddingDeployment = ''
                 }
             }
             10 {
@@ -466,29 +489,29 @@ sys.exit(0 if all(vals) else (2 if not any(vals) else 10))
     Write-Host ""
     Write-Host "  Model deployment configuration (for sample_update_defaults.py):"
 
-    if (-not $gpt41) {
-        $gpt41 = Read-Host "Enter GPT_4_1_DEPLOYMENT (default: gpt-4.1)"
-        if (-not $gpt41) { $gpt41 = 'gpt-4.1' }
+    if (-not $completionDeployment) {
+        $completionDeployment = Read-Host "Enter CU_COMPLETION_MODEL_DEPLOYMENT (default: $completionModel)"
+        if (-not $completionDeployment) { $completionDeployment = $completionModel }
     } else {
-        Write-Host "  [OK] Using detected GPT_4_1_DEPLOYMENT=$gpt41"
+        Write-Host "  [OK] Using detected CU_COMPLETION_MODEL_DEPLOYMENT=$completionDeployment"
     }
-    Set-EnvValue 'GPT_4_1_DEPLOYMENT' $gpt41
+    Set-EnvValue 'CU_COMPLETION_MODEL_DEPLOYMENT' $completionDeployment
 
-    if (-not $gpt41mini) {
-        $gpt41mini = Read-Host "Enter GPT_4_1_MINI_DEPLOYMENT (default: gpt-4.1-mini)"
-        if (-not $gpt41mini) { $gpt41mini = 'gpt-4.1-mini' }
+    if (-not $miniCompletionDeployment) {
+        $miniCompletionDeployment = Read-Host "Enter CU_COMPLETION_MINI_DEPLOYMENT (default: $completionDeployment)"
+        if (-not $miniCompletionDeployment) { $miniCompletionDeployment = $completionDeployment }
     } else {
-        Write-Host "  [OK] Using detected GPT_4_1_MINI_DEPLOYMENT=$gpt41mini"
+        Write-Host "  [OK] Using detected CU_COMPLETION_MINI_DEPLOYMENT=$miniCompletionDeployment"
     }
-    Set-EnvValue 'GPT_4_1_MINI_DEPLOYMENT' $gpt41mini
+    Set-EnvValue 'CU_COMPLETION_MINI_DEPLOYMENT' $miniCompletionDeployment
 
-    if (-not $embedding) {
-        $embedding = Read-Host "Enter TEXT_EMBEDDING_3_LARGE_DEPLOYMENT (default: text-embedding-3-large)"
-        if (-not $embedding) { $embedding = 'text-embedding-3-large' }
+    if (-not $embeddingDeployment) {
+        $embeddingDeployment = Read-Host "Enter CU_EMBEDDING_DEPLOYMENT (default: $embeddingModel)"
+        if (-not $embeddingDeployment) { $embeddingDeployment = $embeddingModel }
     } else {
-        Write-Host "  [OK] Using detected TEXT_EMBEDDING_3_LARGE_DEPLOYMENT=$embedding"
+        Write-Host "  [OK] Using detected CU_EMBEDDING_DEPLOYMENT=$embeddingDeployment"
     }
-    Set-EnvValue 'TEXT_EMBEDDING_3_LARGE_DEPLOYMENT' $embedding
+    Set-EnvValue 'CU_EMBEDDING_DEPLOYMENT' $embeddingDeployment
 
     Write-Host ""
     Write-Host "  [OK] Environment variables configured"

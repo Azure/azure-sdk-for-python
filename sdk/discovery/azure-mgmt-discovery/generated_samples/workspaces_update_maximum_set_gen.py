@@ -33,24 +33,21 @@ def main():
 
     response = client.workspaces.begin_update(
         resource_group_name="rgdiscovery",
-        workspace_name="43ac331aecf462b646",
+        workspace_name="0b14055ab26dbe3f27",
         properties={
             "properties": {
-                "keyVaultProperties": {
-                    "keyName": "oxxinrlglrdihfqjrpkjc",
-                    "keyVersion": "xbvilcphokrwachseulvwywaekfh",
-                },
+                "keyVaultProperties": {"keyName": "lcbvobtzwghifm", "keyVersion": "vlwzjsyqztmmxdbc"},
                 "publicNetworkAccess": "Enabled",
                 "supercomputerIds": [
                     "/subscriptions/31735C59-6307-4464-8B80-3675223F23D2/resourceGroups/rgdiscovery/providers/Microsoft.Discovery/supercomputers/supercomputer12"
                 ],
             },
-            "tags": {"key6612": "ca"},
+            "tags": {"key133": "q"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/Workspaces_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Workspaces_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

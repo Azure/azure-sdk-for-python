@@ -17,7 +17,7 @@ from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesSe
 from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
 
 
-def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     async def _events():
         if False:  # pragma: no cover
             yield None
@@ -92,6 +92,7 @@ def test_tracing__span_tags_include_genai_parity_fields() -> None:
     assert tags["gen_ai.agent.name"] == "my-agent"
     assert tags["gen_ai.agent.id"] == "my-agent:v2"
     assert tags["gen_ai.provider.name"] == "AzureAI Hosted Agents"
+    assert tags["microsoft.foundry"] == "True"
     assert tags["service.name"] == "azure.ai.agentserver"
 
 
@@ -232,7 +233,7 @@ def test_tracing__incoming_baggage_merged_into_context() -> None:
 
     captured_baggage: dict = {}
 
-    def _baggage_capture_handler(request, context, cancellation_signal):
+    async def _baggage_capture_handler(request, context, cancellation_signal):
         captured_baggage.update(_otel_baggage.get_all())
 
         async def _events():
@@ -288,7 +289,7 @@ def test_tracing__framework_span_parented_under_incoming_traceparent() -> None:
     captured_trace_id = None
     captured_parent_id = None
 
-    def _span_handler(request, context, cancellation_signal):
+    async def _span_handler(request, context, cancellation_signal):
         nonlocal captured_trace_id, captured_parent_id
         tracer = trace.get_tracer("test.framework")
         with tracer.start_as_current_span("framework_create_response") as span:
@@ -358,7 +359,7 @@ def test_tracing__sdk_set_baggage_available_in_handler() -> None:
 
     captured_baggage: dict = {}
 
-    def _baggage_capture_handler(request, context, cancellation_signal):
+    async def _baggage_capture_handler(request, context, cancellation_signal):
         captured_baggage.update(_otel_baggage.get_all())
 
         async def _events():

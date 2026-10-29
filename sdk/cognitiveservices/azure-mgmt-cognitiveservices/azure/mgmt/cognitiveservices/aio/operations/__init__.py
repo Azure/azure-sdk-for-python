@@ -22,6 +22,8 @@ from ._operations import CommitmentPlansOperations  # type: ignore
 from ._operations import EncryptionScopesOperations  # type: ignore
 from ._operations import RaiPoliciesOperations  # type: ignore
 from ._operations import SubscriptionRaiPolicyOperations  # type: ignore
+from ._operations import RaiRegosOperations  # type: ignore
+from ._operations import RaiBindingsOperations  # type: ignore
 from ._operations import RaiBlocklistItemsOperations  # type: ignore
 from ._operations import RaiBlocklistsOperations  # type: ignore
 from ._operations import RaiTopicsOperations  # type: ignore
@@ -33,13 +35,16 @@ from ._operations import ProjectsOperations  # type: ignore
 from ._operations import ProjectConnectionsOperations  # type: ignore
 from ._operations import ProjectCapabilityHostsOperations  # type: ignore
 from ._operations import QuotaTiersOperations  # type: ignore
+from ._operations import ArcDeploymentsOperations  # type: ignore
 from ._operations import AgentApplicationsOperations  # type: ignore
 from ._operations import ManagedComputeDeploymentsOperations  # type: ignore
+from ._operations import AdapterDeploymentsOperations  # type: ignore
 from ._operations import ComputeOperationsOperations  # type: ignore
 from ._operations import ManagedComputeUsagesOperationGroupOperations  # type: ignore
 from ._operations import ComputesOperations  # type: ignore
 from ._operations import WorkbenchesOperations  # type: ignore
 from ._operations import ManagedComputeCapacitiesOperations  # type: ignore
+from ._operations import CostControlsOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import TestRaiExternalSafetyProviderOperations  # type: ignore
 from ._operations import RaiExternalSafetyProviderOperations  # type: ignore
@@ -73,6 +78,8 @@ __all__ = [
     "EncryptionScopesOperations",
     "RaiPoliciesOperations",
     "SubscriptionRaiPolicyOperations",
+    "RaiRegosOperations",
+    "RaiBindingsOperations",
     "RaiBlocklistItemsOperations",
     "RaiBlocklistsOperations",
     "RaiTopicsOperations",
@@ -84,13 +91,16 @@ __all__ = [
     "ProjectConnectionsOperations",
     "ProjectCapabilityHostsOperations",
     "QuotaTiersOperations",
+    "ArcDeploymentsOperations",
     "AgentApplicationsOperations",
     "ManagedComputeDeploymentsOperations",
+    "AdapterDeploymentsOperations",
     "ComputeOperationsOperations",
     "ManagedComputeUsagesOperationGroupOperations",
     "ComputesOperations",
     "WorkbenchesOperations",
     "ManagedComputeCapacitiesOperations",
+    "CostControlsOperations",
     "PrivateLinkResourcesOperations",
     "TestRaiExternalSafetyProviderOperations",
     "RaiExternalSafetyProviderOperations",

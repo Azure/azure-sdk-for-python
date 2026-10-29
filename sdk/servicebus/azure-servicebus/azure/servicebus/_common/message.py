@@ -9,12 +9,12 @@ from __future__ import annotations
 import time
 import warnings
 import datetime
+import struct
 import uuid
 from typing import Optional, Dict, List, Union, Iterable, Any, Mapping, cast, TYPE_CHECKING
 
 from .._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
 from .._pyamqp.message import Message as pyamqp_Message
-from .._pyamqp.utils import set_message_properties, set_message_annotations
 from .._transport._pyamqp_transport import PyamqpTransport
 
 from .constants import (
@@ -66,7 +66,10 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
     :type body: Optional[Union[str, bytes]]
 
     :keyword application_properties: The user defined properties on the message.
-    :paramtype application_properties: Dict[str, Union[int or float or bool or
+     Keys may be ``str`` or ``bytes``. Note that when a message is received, the
+     keys and any string values are returned as ``bytes`` - see the
+     ``application_properties`` property for details.
+    :paramtype application_properties: Dict[Union[str, bytes], Union[int or float or bool or
      bytes or str or uuid.UUID or datetime or None]]
     :keyword Optional[str] session_id: The session identifier of the message for a sessionful entity.
     :keyword Optional[str] message_id: The id to identify the message.
@@ -288,6 +291,27 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
     @property
     def application_properties(self) -> Optional[Dict[Union[str, bytes], PrimitiveTypes]]:
         """The user defined properties on the message.
+
+        .. note::
+            When a message is received, the keys and any string values in this
+            dictionary are returned as ``bytes``, not ``str`` (for example
+            ``{b"order_id": b"12345"}``). The property is ``None`` when the
+            message carries no application properties, so guard for that before
+            indexing. Access received properties using bytes keys, and decode
+            string values as needed::
+
+                props = message.application_properties or {}
+                value = props.get(b"order_id")
+                if isinstance(value, bytes):
+                    value = value.decode("utf-8")
+
+            Non-string values are returned as decoded by the AMQP layer:
+            ``int``, ``bool``, ``float`` and :class:`uuid.UUID` keep their
+            native types, while an AMQP timestamp is returned as an integer
+            (milliseconds since the Unix epoch), not a
+            :class:`datetime.datetime`. The same bytes behavior applies to the
+            raw AMQP ``annotations`` and ``delivery_annotations`` accessed
+            through ``raw_amqp_message``.
 
         :rtype: dict[str or bytes, PrimitiveTypes] or None
         """
@@ -678,14 +702,12 @@ class ServiceBusMessageBatch(object):
         self._messages.append(outgoing_sb_message)
 
         if self._count == 1:  # Populate properties on the batch envelope from the first message
-            if outgoing_sb_message.message_id or outgoing_sb_message.session_id:
-                properties: List[Optional[str]] = [None] * 13
-                properties[0] = outgoing_sb_message.message_id
-                properties[10] = outgoing_sb_message.session_id
-                set_message_properties(self._message, properties)
-
-            if outgoing_sb_message.partition_key:
-                set_message_annotations(self._message, {_X_OPT_PARTITION_KEY: outgoing_sb_message.partition_key})
+            self._amqp_transport.set_batch_envelope_properties(
+                self._message,
+                outgoing_sb_message.message_id,
+                outgoing_sb_message.session_id,
+                outgoing_sb_message.partition_key,
+            )
 
     @property
     def message(self) -> Union["BatchMessage", LegacyBatchMessage]:
@@ -810,6 +832,54 @@ class ServiceBusReceivedMessage(ServiceBusMessage):  # pylint: disable=too-many-
 
     def __setstate__(self, state: Dict[str, Any]) -> None:
         self.__dict__.update(state)
+
+    @classmethod
+    def from_bytes(cls, message: bytes) -> "ServiceBusReceivedMessage":
+        """Constructs a ServiceBusReceivedMessage from the raw bytes of an AMQP message payload.
+
+        The message payload should adhere to the Message Format specification
+        outlined in the AMQP v1.0 standard:
+        http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format
+
+        The returned message has no associated receiver. It is intended for reading
+        message content and metadata, and cannot be used to settle the message
+        (e.g., complete, abandon, defer, dead_letter) or renew its lock, because those
+        operations require a live receiver.
+
+        Broker metadata carried in the payload is preserved. When the encoded message
+        contains the corresponding sections, properties such as ``lock_token``,
+        ``locked_until_utc``, ``sequence_number``, and ``enqueued_time_utc`` are
+        populated; when a section is absent, the corresponding property returns ``None``.
+
+        Note that AMQP value and sequence body sections, as well as some string-typed
+        properties, are surfaced as ``bytes`` after decoding (for example, a value body
+        of ``{"key": "value"}`` decodes to ``{b"key": b"value"}``). This reflects the
+        raw AMQP wire encoding and is not converted to ``str``.
+
+        :param bytes message: The raw bytes representing the AMQP message payload.
+        :return: A ServiceBusReceivedMessage created from the provided message payload.
+        :rtype: ~azure.servicebus.ServiceBusReceivedMessage
+        :raises TypeError: If ``message`` is not a ``bytes`` object.
+        :raises ValueError: If ``message`` is empty, or is not a valid AMQP 1.0
+         message payload (decode failures are wrapped and chained).
+        """
+        from .._pyamqp._decode import decode_payload
+
+        if not isinstance(message, bytes):
+            raise TypeError("message must be bytes.")
+        if not message:
+            raise ValueError("message cannot be empty.")
+
+        try:
+            amqp_message = decode_payload(memoryview(message))
+        except (ValueError, KeyError, IndexError, TypeError, EOFError, struct.error) as exc:
+            raise ValueError("message is not a valid AMQP 1.0 message payload.") from exc
+
+        received_msg = cls(
+            message=amqp_message,
+            receiver=None,
+        )
+        return received_msg
 
     @property
     def _lock_expired(self) -> bool:

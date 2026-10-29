@@ -27,6 +27,9 @@ from ._operations import NetworkSecurityPerimeterConfigurationsOperations  # typ
 from ._operations import NotebookWorkspacesOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
+from ._operations import SoftDeletedDatabaseAccountsOperations  # type: ignore
+from ._operations import SoftDeletedSqlDatabasesOperations  # type: ignore
+from ._operations import SoftDeletedSqlContainersOperations  # type: ignore
 from ._operations import ChaosFaultOperations  # type: ignore
 from ._operations import DatabaseOperations  # type: ignore
 from ._operations import CollectionOperations  # type: ignore
@@ -85,6 +88,9 @@ __all__ = [
     "NotebookWorkspacesOperations",
     "PrivateEndpointConnectionsOperations",
     "PrivateLinkResourcesOperations",
+    "SoftDeletedDatabaseAccountsOperations",
+    "SoftDeletedSqlDatabasesOperations",
+    "SoftDeletedSqlContainersOperations",
     "ChaosFaultOperations",
     "DatabaseOperations",
     "CollectionOperations",

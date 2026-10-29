@@ -33,12 +33,12 @@ class MLTableMetadataPath:
 class MLTableMetadata:
     """MLTableMetadata for data assets.
 
-    :param paths: List of paths which the MLTableMetadata refers to.
-    :type paths: List[MLTableMetadataPath]
-    :param transformations: Any transformations to be applied to the data referenced in paths.
-    :type transformations: List[Any]
-    :param base_path: Base path to resolve relative paths from.
-    :type base_path: str
+    :keyword paths: List of paths which the MLTableMetadata refers to.
+    :paramtype paths: List[MLTableMetadataPath]
+    :keyword transformations: Any transformations to be applied to the data referenced in paths.
+    :paramtype transformations: List[Any]
+    :keyword base_path: Base path to resolve relative paths from.
+    :paramtype base_path: str
     """
 
     def __init__(

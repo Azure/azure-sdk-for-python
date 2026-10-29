@@ -1,5 +1,24 @@
 # Release History
 
+## 4.0.0 (2026-07-13)
+
+### Features Added
+
+  - Client `AzureRedHatOpenShiftClient` added method `send_request`
+  - Added model `CloudError`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `OpenShiftCluster` moved instance variable `apiserver_profile`, `cluster_profile`, `console_profile`, `ingress_profiles`, `master_profile`, `network_profile`, `platform_workload_identity_profile`, `provisioning_state`, `service_principal_profile`, `worker_profiles` and `worker_profiles_status` under property `properties` whose type is `OpenShiftClusterProperties`
+  - Model `OpenShiftClusterUpdate` moved instance variable `apiserver_profile`, `cluster_profile`, `console_profile`, `ingress_profiles`, `master_profile`, `network_profile`, `platform_workload_identity_profile`, `provisioning_state`, `service_principal_profile`, `worker_profiles` and `worker_profiles_status` under property `properties` whose type is `OpenShiftClusterProperties`
+  - Model `OpenShiftVersion` moved instance variable `version` under property `properties` whose type is `OpenShiftVersionProperties`
+  - Model `PlatformWorkloadIdentityRoleSet` moved instance variable `open_shift_version` and `platform_workload_identity_roles` under property `properties` whose type is `PlatformWorkloadIdentityRoleSetProperties`
+
+### Other Changes
+
+  - Deleted model `OpenShiftClusterList`/`OpenShiftVersionList`/`OperationList`/`PlatformWorkloadIdentityRoleSetList` which actually were not used by SDK users
+
 ## 4.0.0b1 (2026-05-26)
 
 ### Features Added

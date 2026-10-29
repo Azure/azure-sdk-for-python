@@ -18,6 +18,25 @@ from __future__ import annotations
 
 from typing import Final
 
+default_instructions: Final[str] = """
+We just ran Python code and captured print/log output in an attached log file (TXT).
+Validate whether the sample executed correctly and produced output consistent with its apparent purpose.
+
+Mark `correct = false` for:
+- Exceptions, stack traces, explicit error/failure messages.
+- Timeout/auth/connection/service errors that prevent normal completion.
+- Malformed or corrupted output indicating broken processing.
+- Failures that prevent the sample from completing its intended workflow.
+
+Intermediate progress, empty list results, and brief payloads can be valid and should not automatically fail.
+HTTP 404 or resource-not-found responses are acceptable and should not be marked as failures unless they
+prevent the sample from completing.
+
+Mark `correct = true` when execution succeeds and the output is coherent and consistent with the sample workflow.
+
+Always include `reason` with a concise explanation tied to the observed print output.
+""".strip()
+
 agent_tools_instructions: Final[str] = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for a tool-driven assistant workflow.
@@ -235,11 +254,14 @@ INSTRUCTIONS_BY_FOLDER: Final[dict[str, str]] = {
     "agents/tools": agent_tools_instructions,
     "agents": agents_instructions,
     "hosted_agents": hosted_agents_instructions,
+    "skills": resource_management_instructions,
+    "toolboxes": resource_management_instructions,
     "memories": memories_instructions,
     "connections": resource_management_instructions,
     "files": resource_management_instructions,
     "deployments": resource_management_instructions,
     "datasets": resource_management_instructions,
+    "models": resource_management_instructions,
     "chat_completions": chat_completions_instructions,
     "finetuning": fine_tuning_instructions,
     "evaluations/agentic_evaluators": evaluations_instructions,
@@ -253,7 +275,7 @@ def get_instructions_for_sample_path(sample_path: str) -> str:
     The sample path may be absolute or relative and may use either '\\' or '/'.
     Matching is done against the path segment under the `samples/` directory.
 
-    Falls back to resource_management_instructions when no folder match is found.
+    Returns generic validation instructions when no explicit folder mapping is found.
     """
 
     normalized = str(sample_path).replace("\\", "/")
@@ -272,4 +294,4 @@ def get_instructions_for_sample_path(sample_path: str) -> str:
         if folder == key or folder.startswith(f"{key}/"):
             return INSTRUCTIONS_BY_FOLDER[key]
 
-    return resource_management_instructions
+    return default_instructions

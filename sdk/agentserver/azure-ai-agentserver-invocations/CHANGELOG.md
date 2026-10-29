@@ -1,5 +1,157 @@
 # Release History
 
+## 1.3.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.3.0b1 (2026-10-26)
+
+### Features Added
+
+- Capture invocation-local original-subject assertions for HTTP, WebSocket and
+  typed Voice handlers. Model-header propagation is an explicit per-call opt-in.
+- Added immutable `InputDataPart` and `ResponseOutputDataDone` for structured application data in Bridge protocol `1.0`. Existing callbacks and explicit `ResponseNone` silent completion remain application-owned.
+- Added a standalone `/voice_conversation_engine` WebSocket route to the experimental `VoiceAgentServerHost`, reusing the existing typed Bridge event relay alongside `/invocations_ws`. Existing `invocations_ws` behavior and generic `InvocationAgentServerHost` raw WebSocket handlers are unchanged.
+- Aligned the experimental Voice caller-interruption contract with `user.barge_in`, `UserBargeIn`, `UserBargeInCallback`, and `VoiceAgentServerHost.on_user_barge_in`, preserving playback snapshots and application-owned cancellation/history. Voice Live senders must use the same event contract.
+
+### Bugs Fixed
+
+- Reject malformed platform attribution before binding HTTP context, and
+  finalize WebSocket connections with a classified error on invalid metadata.
+- Upgrade both typed Voice WebSocket endpoints before closing with code `1011`
+  on malformed platform attribution, instead of rejecting the HTTP handshake.
+- Apply the Invocations task-runtime switch to both typed Voice WebSocket
+  endpoints, including composed Voice/Responses hosts where Responses
+  independently enables the task manager.
+
+### Other Changes
+
+- Raised the minimum `azure-ai-agentserver-core` dependency to `2.3.0b2` for
+  protocol-scoped task-runtime support and original-subject attribution.
+  Publish that Core version before this package.
+- Invocations continues to opt into resilient tasks with
+  `set_resilient_tasks_enabled(True)` before host startup. Responses
+  protocol-scoped task-runtime activation does not change that global switch,
+  so enabling Responses does not implicitly activate Invocations.
+
+## 1.2.0 (2026-09-29)
+
+### Other Changes
+
+- Stable release of the 1.2.0 preview series.
+- Generate fallback invocation and session IDs only when no valid supplied ID is available.
+
+## 1.2.0b1 (2026-09-03)
+
+### Features Added
+
+- Added W3C Voice connection tracing with one `agentserver.connection` span,
+  content-free `voice.callback` dispatch spans, and aggregate duration and
+  propagation-failure metrics.
+- Added application-declared target-turn tracing through
+  `Session.start_target_turn`, `TargetTurn.activate`, and explicit
+  `TargetTurn.complete` outcomes. The SDK does not infer response lifecycle or
+  own application tasks.
+- Added source-aware `Session.termination` for classifying unfinished
+  application work during connection cleanup.
+
+### Samples
+
+- Updated `basic_voice_agent` to declare target turns around real background
+  generation work and report truthful response, timeout, cancellation,
+  end-call, and transport outcomes, with bounded per-connection concurrency and
+  retained model output. Unfinished turns now distinguish clean abandonment,
+  application/server errors, and protocol or transport loss.
+
+### Other Changes
+
+- Expanded supported `azure-ai-agentserver-core` versions to `<3.0.0`.
+
+## 1.1.0 (2026-08-24)
+
+### Features Added
+
+- Added the typed Voice event relay API under `azure.ai.agentserver.invocations.voice`, including `VoiceAgentServerHost`, typed protocol messages, session lifecycle callbacks, response cancellation and timeout handling, and a basic Voice agent sample.
+
+### Samples
+
+- Updated the resilient LangGraph sample to current `langgraph`,
+  `langgraph-checkpoint-sqlite`, and `langchain-core` release lines.
+
+### Other Changes
+
+- Constrained runtime, development, and sample dependencies to compatible release lines.
+- Updated the minimum `azure-ai-agentserver-core` dependency to the stable `2.1.0` release.
+
+## 1.1.0b1 (2026-08-11)
+
+### Samples
+
+- Simplified the resilient samples to use conversation-scoped `FoundryStateStore` instances directly for application state.
+
+### Other Changes
+
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.1.0b1` so
+  package tests and consumers use the Core release containing the local State
+  Store fallback.
+
+## 1.0.0 (2026-08-07)
+
+### Bugs Fixed
+
+- Added SSE keep-alive comments to idle `POST /invocations` event streams when
+  `SSE_KEEPALIVE_INTERVAL` is configured, preventing hosted proxy idle timeouts
+  from disconnecting clients before the agent emits its final events.
+
+### Other Changes
+
+- Updated the minimum `azure-ai-agentserver-core` dependency to the stable
+  `2.0.0` release.
+
+## 1.0.0b8 (2026-08-03)
+
+### Samples
+
+- Added samples showing how to build crash-resilient invocation agents on top of the new core resilient-task primitive: `resilient_multiturn` (suspend/resume conversation), `resilient_langgraph` (real-time streaming LangGraph integration with crash recovery + steering), and `resilient_research` (multi-stage research loop with checkpointing). See the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for the underlying API.
+
+### Bugs Fixed
+
+- The cancel (`POST /invocations/{id}/cancel`) and get (`GET /invocations/{id}`) endpoints now resolve the session id consistently with the invoke endpoint, so custom cancel/get handlers can reliably look up per-session state.
+
+### Other Changes
+
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b10`, which adds an opt-in gate for resilient-task startup recovery so invocations-only agents no longer make a blocking task-store call during startup.
+
+## 1.0.0b7 (2026-07-22)
+
+### Features Added
+
+- AsyncAPI docs endpoints — `InvocationAgentServerHost` now accepts optional
+  `asyncapi_spec_json` (dict) and/or `asyncapi_spec_yaml` (raw YAML string)
+  constructor args, served at `GET /invocations/docs/asyncapi.json` and
+  `GET /invocations/docs/asyncapi.yaml` respectively. Either representation
+  returns `404` if not registered. See README for details.
+
+### Other Changes
+
+- Bumped minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b8`.
+
+## 1.0.0b6 (2026-06-28)
+
+### Features Added
+
+- Container protocol version `2.0.0` support: reads `x-agent-user-id` and `x-agent-foundry-call-id` from inbound requests and binds them to the request-scoped platform context so the per-request call ID is forwarded on outbound Foundry 1P calls (`x-agent-user-id` is not forwarded to 1P). The values are also exposed on `request.state.user_id` and `request.state.call_id`.
+
+### Breaking Changes
+
+- Replaced `request.state.user_isolation_key` / `request.state.chat_isolation_key` with `request.state.user_id` / `request.state.call_id` per container protocol version `2.0.0`.
+
 ## 1.0.0b5 (2026-06-12)
 
 ### Bugs Fixed

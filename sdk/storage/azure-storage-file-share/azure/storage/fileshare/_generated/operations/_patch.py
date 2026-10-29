@@ -1,14 +1,37 @@
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+from typing import Any, List, Optional, Union
+
+from ._operations import (
+    DirectoryOperations,
+    FileOperations as _GeneratedFileOperations,
+    ServiceOperations,
+    ShareOperations,
+)
+from .. import models as _models
+
+
+class FileOperations(_GeneratedFileOperations):  # pylint: disable=too-many-public-methods
+
+    def upload_range(  # pylint: disable=arguments-differ
+        self,
+        optional_body: Optional[bytes] = None,
+        *,
+        file_range_write: Union[str, "_models.FileRangeWriteType"] = "update",
+        **kwargs: Any,
+    ) -> None:
+        return super().upload_range(optional_body, file_range_write=file_range_write, **kwargs)
+
+
+__all__: List[str] = ["FileOperations"]
 
 
 def patch_sdk():

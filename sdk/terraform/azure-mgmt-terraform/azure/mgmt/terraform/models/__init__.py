@@ -29,6 +29,8 @@ from ._models import (  # type: ignore
 
 from ._enums import (  # type: ignore
     ActionType,
+    AuthorizationScopeFilter,
+    AzureExtensionResourceType,
     Origin,
     ResourceProvisioningState,
     TargetProvider,
@@ -51,6 +53,8 @@ __all__ = [
     "OperationDisplay",
     "TerraformOperationStatus",
     "ActionType",
+    "AuthorizationScopeFilter",
+    "AzureExtensionResourceType",
     "Origin",
     "ResourceProvisioningState",
     "TargetProvider",

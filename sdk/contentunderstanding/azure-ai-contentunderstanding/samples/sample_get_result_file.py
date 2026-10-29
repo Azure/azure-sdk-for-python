@@ -122,9 +122,7 @@ def main() -> None:
         print(f"Keyframe image saved to: {output_path}")
     else:
         print("\nNote: This sample demonstrates GetResultFile API usage.")
-        print(
-            "      For video analysis with keyframes, use prebuilt-videoSearch analyzer."
-        )
+        print("      For video analysis with keyframes, use prebuilt-videoSearch analyzer.")
         print("      Keyframes are available in AudioVisualContent.key_frame_times_ms.")
     # [END get_result_file]
 

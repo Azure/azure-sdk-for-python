@@ -52,6 +52,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                         "avsDataStore": "str",
                         "backupId": "str",
                         "baremetalTenantId": "str",
+                        "breakthroughMode": "str",
                         "capacityPoolResourceId": "str",
                         "cloneProgress": 0,
                         "coolAccess": bool,

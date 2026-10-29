@@ -45,13 +45,13 @@ class TestChaosManagementScenarioRunsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_scenario_runs_cancel(self, resource_group):
-        response = self.client.scenario_runs.cancel(
+    def test_scenario_runs_begin_cancel(self, resource_group):
+        response = self.client.scenario_runs.begin_cancel(
             resource_group_name=resource_group.name,
             workspace_name="str",
             scenario_name="str",
             run_id="str",
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

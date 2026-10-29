@@ -65,7 +65,7 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.HTTPX2)
     def test_metrics_collection_non_streaming_responses(self, **kwargs):
         """Test that metrics are collected for non-streaming responses API calls."""
         self.cleanup()
@@ -112,7 +112,7 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.HTTPX2)
     def test_metrics_collection_streaming_responses(self, **kwargs):
         """Test that metrics are collected for streaming responses API calls."""
         self.cleanup()
@@ -165,7 +165,7 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.HTTPX2)
     def test_metrics_collection_conversation_create(self, **kwargs):
         """Test that metrics are collected for conversation creation calls."""
         self.cleanup()
@@ -202,7 +202,7 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.HTTPX2)
     def test_metrics_collection_multiple_operations(self, **kwargs):
         """Test that metrics are collected correctly for multiple operations."""
         self.cleanup()
@@ -254,7 +254,7 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.HTTPX2)
     def test_metrics_collection_without_content_recording(self, **kwargs):
         """Test that metrics are still collected when content recording is disabled."""
         self.cleanup()

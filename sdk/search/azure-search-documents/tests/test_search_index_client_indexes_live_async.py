@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Async live tests for ``SearchIndexClient`` index operations."""
+
 from __future__ import annotations
 
 from datetime import timedelta

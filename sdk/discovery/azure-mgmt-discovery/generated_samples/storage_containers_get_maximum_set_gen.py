@@ -32,11 +32,11 @@ def main():
 
     response = client.storage_containers.get(
         resource_group_name="rgdiscovery",
-        storage_container_name="8f3eba3d81d78de900",
+        storage_container_name="60fa9761e5831e6b1e",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/StorageContainers_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/StorageContainers_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

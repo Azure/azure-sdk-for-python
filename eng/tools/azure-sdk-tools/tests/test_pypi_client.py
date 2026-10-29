@@ -286,3 +286,55 @@ class TestPyPIOnlyMethods:
         filtered = client.get_ordered_versions(WELL_KNOWN_PACKAGE, True)
         unfiltered = client.get_ordered_versions(WELL_KNOWN_PACKAGE, False)
         assert len(filtered) < len(unfiltered)
+
+
+# ---------------------------------------------------------------------------
+# Backend selection — force_pypi bypasses the Azure Artifacts feed
+# ---------------------------------------------------------------------------
+
+
+class TestBackendSelection:
+    """The AzDO feed is curated and not a full PyPI mirror, so callers that need
+    public PyPI (e.g. the breaking-change checker) pass force_pypi=True.
+    """
+
+    def _with_index_url(self, index_url, **kwargs):
+        old = os.environ.get("PIP_INDEX_URL")
+        try:
+            os.environ["PIP_INDEX_URL"] = index_url
+            return PyPIClient(**kwargs)
+        finally:
+            if old is not None:
+                os.environ["PIP_INDEX_URL"] = old
+            elif "PIP_INDEX_URL" in os.environ:
+                del os.environ["PIP_INDEX_URL"]
+
+    def test_azdo_index_url_selects_azdo_backend_by_default(self):
+        client = self._with_index_url(AZDO_FEED_URL)
+        assert client._backend == "azdo"
+
+    def test_force_pypi_overrides_azdo_index_url(self):
+        client = self._with_index_url(AZDO_FEED_URL, force_pypi=True)
+        assert client._backend == "pypi"
+
+    def test_force_pypi_get_ordered_versions_queries_pypi_json(self):
+        # A package present on public PyPI but absent from the curated feed must
+        # still resolve when force_pypi=True, because get_ordered_versions goes
+        # through project() (pypi.org JSON API) rather than the AzDO feed.
+        project_data = {
+            "info": {"version": "1.0.0b1"},
+            "releases": {
+                "1.0.0b1": [
+                    {
+                        "packagetype": "sdist",
+                        "url": "https://example.test/pkg-1.0.0b1.tar.gz",
+                    }
+                ],
+            },
+        }
+        client = self._with_index_url(AZDO_FEED_URL, force_pypi=True)
+
+        with patch.object(PyPIClient, "project", return_value=project_data):
+            versions = client.get_ordered_versions("azure-mgmt-datatransfer")
+
+        assert versions == [Version("1.0.0b1")]

@@ -31,6 +31,7 @@ class TestAzureStackHCIOwnershipVouchersOperationsAsync(AzureMgmtRecordedTestCas
                         "ownerKeyType": "str",
                         "ownershipVoucher": "str",
                         "validationDetails": {
+                            "architecture": "str",
                             "azureMachineId": "str",
                             "error": {
                                 "additionalInfo": [{"info": {}, "type": "str"}],

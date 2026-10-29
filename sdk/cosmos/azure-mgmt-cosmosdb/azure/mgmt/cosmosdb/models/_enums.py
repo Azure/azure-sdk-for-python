@@ -235,6 +235,8 @@ class ContinuousTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CONTINUOUS7_DAYS."""
     CONTINUOUS30_DAYS = "Continuous30Days"
     """CONTINUOUS30_DAYS."""
+    CONTINUOUS35_DAYS = "Continuous35Days"
+    """Continuous 35 Days backup tier."""
 
 
 class CopyJobMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -442,6 +444,13 @@ class FleetspacePropertiesServiceTier(str, Enum, metaclass=CaseInsensitiveEnumMe
     """BUSINESS_CRITICAL."""
 
 
+class GarnetAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication method used for the Garnet cluster."""
+
+    ENTRA = "Entra"
+    """Microsoft Entra authentication."""
+
+
 class GarnetCacheProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the resource at the time the operation was called."""
 
@@ -588,19 +597,19 @@ class NetworkSecurityPerimeterConfigurationProvisioningState(  # pylint: disable
     """
 
     SUCCEEDED = "Succeeded"
-    """SUCCEEDED."""
+    """The configuration was provisioned successfully."""
     CREATING = "Creating"
-    """CREATING."""
+    """The configuration is being created."""
     UPDATING = "Updating"
-    """UPDATING."""
+    """The configuration is being updated."""
     DELETING = "Deleting"
-    """DELETING."""
+    """The configuration is being deleted."""
     ACCEPTED = "Accepted"
-    """ACCEPTED."""
+    """The configuration request was accepted and provisioning has not started yet."""
     FAILED = "Failed"
-    """FAILED."""
+    """The configuration failed to provision."""
     CANCELED = "Canceled"
-    """CANCELED."""
+    """The configuration provisioning was canceled."""
 
 
 class NodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -799,9 +808,18 @@ class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Severity of the issue."""
 
     WARNING = "Warning"
-    """WARNING."""
+    """The issue is a warning and does not prevent the configuration from being applied."""
     ERROR = "Error"
-    """ERROR."""
+    """The issue is an error and prevents the configuration from being applied."""
+
+
+class SoftDeleteActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of soft delete action to perform."""
+
+    RESTORE_SOFT_DELETED_RESOURCE = "RestoreSoftDeletedResource"
+    """Restores the soft-deleted resource to active/online state."""
+    PERMANENT_DELETE_RESOURCE = "PermanentDeleteResource"
+    """Permanently deletes the soft-deleted resource."""
 
 
 class SpatialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

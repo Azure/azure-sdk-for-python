@@ -3,7 +3,7 @@
 """Contract tests for eager eviction of terminal response records.
 
 Once a response reaches terminal status (completed, failed, cancelled,
-incomplete) and has been persisted to durable storage, the in-memory
+incomplete) and has been persisted to persistent storage, the in-memory
 runtime record should be immediately evicted.  Subsequent operations
 fall through to the provider (storage) path, freeing server memory.
 
@@ -31,7 +31,7 @@ from tests._helpers import poll_until
 # ── Helpers ───────────────────────────────────────────────
 
 
-def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     async def _events():
         if False:  # pragma: no cover
             yield None
@@ -231,7 +231,7 @@ def _make_cancellable_bg_handler() -> Any:
     """Handler that emits created + completed after a brief delay."""
     started = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -390,14 +390,14 @@ class TestTryEvict:
             response_id=rid,
             mode_flags=ResponseModeFlags(stream=False, store=True, background=False),
             status="completed",
-            chat_isolation_key="my_key",
+            user_id_key="my_key",
         )
         await state.add(record)
 
         # In-flight: static helper enforces isolation via the record's key
-        assert _RuntimeState.check_chat_isolation(record.chat_isolation_key, "my_key") is True
-        assert _RuntimeState.check_chat_isolation(record.chat_isolation_key, "wrong") is False
-        assert _RuntimeState.check_chat_isolation(record.chat_isolation_key, None) is False
+        assert _RuntimeState.check_user_isolation(record.user_id_key, "my_key") is True
+        assert _RuntimeState.check_user_isolation(record.user_id_key, "wrong") is False
+        assert _RuntimeState.check_user_isolation(record.user_id_key, None) is False
 
         await state.try_evict(rid)
 

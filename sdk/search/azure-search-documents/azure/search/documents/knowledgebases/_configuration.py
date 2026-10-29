@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -17,7 +18,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class KnowledgeBaseRetrievalClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class KnowledgeBaseRetrievalClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long,docstring-keyword-should-match-keyword-only
     """Configuration for KnowledgeBaseRetrievalClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -32,8 +33,9 @@ class KnowledgeBaseRetrievalClientConfiguration:  # pylint: disable=too-many-ins
     :param knowledge_base_name: The name of the knowledge base. Required.
     :type knowledge_base_name: str
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-05-01-preview". Default value is "2026-05-01-preview". Note that overriding this default
-     value may result in unsupported behavior.
+     "2026-08-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
@@ -44,7 +46,7 @@ class KnowledgeBaseRetrievalClientConfiguration:  # pylint: disable=too-many-ins
         knowledge_base_name: str,
         **kwargs: Any,
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2026-05-01-preview")
+        api_version: str = kwargs.pop("api_version", "2026-08-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

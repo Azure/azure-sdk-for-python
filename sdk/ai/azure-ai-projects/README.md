@@ -3,15 +3,17 @@
 The AI Projects client library is part of the Microsoft Foundry SDK, and provides easy access to
 resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 
-* **Create and run Agents** using methods on the `.agents` client property. This includes **Hosted Agents** (Preview), which let you run your own containerized agent runtime while using Microsoft Foundry for managed hosting and scaling.
-* **Enhance Agents with specialized tools**:
-  * Agent-to-Agent (A2A) (Preview)
+* **Create and run Agents** using methods on the `.agents` client property. This includes **Hosted Agents**, which let you run your own containerized agent runtime while using Microsoft Foundry for managed hosting and scaling.
+* **Build and run Voice Agents (preview)** for real-time, speech-to-speech conversational AI, reachable over a WebSocket (`.beta.voice_agents.realtime`) or telephony (`.beta.voice_agents.telephony`), with persisted conversation transcripts and audio through `.beta.voice_agents.conversations`.
+* **Enhance Agents with specialized tools and toolbox tools** such as:
+  * Agent-to-Agent (A2A)
   * Azure AI Search
   * Azure Functions
   * Bing Custom Search (Preview)
   * Bing Grounding
   * Browser Automation (Preview)
   * Code Interpreter
+  * Computer
   * Computer Use (Preview)
   * Fabric IQ (Preview)
   * File Search
@@ -22,11 +24,12 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
   * Microsoft SharePoint (Preview)
   * Model Context Protocol (MCP)
   * OpenAPI
-  * Toolbox Search (Preview)
+  * Reminder Tool (Preview)
+  * Toolbox Search
   * Web Search
-  * Web Search (Preview)
   * Work IQ (Preview)
 * **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evaluations and Fine-Tuning operations with your Agent.
+* **Create and version toolboxes** that bundle collections of tools and skills for your agents, using `.toolboxes` operations.
 * **Fine-tune** AI Models on your data.
 * **Enumerate AI Models** deployed to your Foundry Project using `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using `.connections` operations.
@@ -39,7 +42,8 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 * **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using `.beta.red_teams` operations.
 * **Create and manage routines (preview)** that execute triggered actions based on configured conditions, using `.beta.routines` operations.
 * **Manage skills (preview)** as reusable capabilities that can be included in toolboxes and agents, using `.beta.skills` operations.
-* **Create and version toolboxes (preview)** that bundle collections of tools and skills for your agents, using `.beta.toolboxes` operations.
+
+**Important:** This stable package includes Preview features. Preview features available through stable methods require setting `allow_preview=True` when constructing the client, while Preview features exposed via the .beta sub-clients do not. Preview features may change or be removed in future versions and are not recommended for production use.
 
 The client library uses version `v1` of the Microsoft Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
 
@@ -59,7 +63,7 @@ To report an issue with the client library, or request additional features, plea
 
 ### Prerequisite
 
-* Python 3.9 or later.
+* Python 3.10 or later.
 * An [Azure subscription][azure_sub].
 * A [project in Microsoft Foundry](https://learn.microsoft.com/azure/foundry/how-to/create-projects).
 * A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project home page. Below we will assume the environment variable `FOUNDRY_PROJECT_ENDPOINT` was defined to hold this value.
@@ -74,7 +78,7 @@ To report an issue with the client library, or request additional features, plea
 pip install azure-ai-projects
 ```
 
-Verify that you have version 2.2.0 or above installed by running:
+Verify that you have version 2.3.0 or above installed by running:
 
 ```bash
 pip show azure-ai-projects
@@ -124,6 +128,7 @@ async with (
     ) as project_client,
 ):
 ```
+
 ### Performing Responses operations using OpenAI client
 
 Use the `.get_openai_client()` method to obtain an authenticated [OpenAI](https://github.com/openai/openai-python) client and run Responses, Conversations, Evaluations, Files, and Fine-Tuning operations. See the **responses**, **agents**, **evaluations**, **files**, and **finetuning** folders in the [samples][samples] for complete working examples.
@@ -155,6 +160,7 @@ See the **responses** folder in the [samples][samples] for additional samples in
 ### Agents
 
 See Foundry documentation:
+
 * **[Microsoft Foundry Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview)** — concepts, setup, and quick-starts.
 * **[Runtime components](https://learn.microsoft.com/azure/foundry/agents/concepts/runtime-components?tabs=python)** — deep-dive into agent architecture.
 * **[Tool catalog](https://learn.microsoft.com/azure/foundry/agents/concepts/tool-catalog)** — all available tools and agent capabilities.
@@ -167,27 +173,62 @@ The table below lists the operation groups supported by the client library, with
 | Topic | Foundry documentation | Samples folder |
 |---|---|---|
 | Agents (create, run, stream) | [Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview) | `samples/agents/` |
-| Hosted agents (preview) | [Hosted agents concepts](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents), [Deploy your first hosted agent](https://learn.microsoft.com/azure/foundry/agents/quickstarts/quickstart-hosted-agent) | `samples/hosted_agents/` |
+| Agent Insights (preview) | | [On-demand analysis and scheduled monitors](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/agent_insights) |
+| Hosted agents | [Hosted agents concepts](https://learn.microsoft.com/azure/foundry/agents/concepts/hosted-agents), [Deploy your first hosted agent](https://learn.microsoft.com/azure/foundry/agents/quickstarts/quickstart-hosted-agent) | `samples/hosted_agents/` |
 | Agents tools | [Tool catalog](https://learn.microsoft.com/azure/foundry/agents/concepts/tool-catalog) | `samples/agents/tools/` |
+| Agents optimization | [Prompt optimizer](https://learn.microsoft.com/azure/foundry/observability/how-to/prompt-optimizer), [Agent optimizer overview](https://learn.microsoft.com/azure/foundry/agents/concepts/agent-optimizer-overview) | `samples/agents/optimization/` |
 | Connections | [Add a new connection to your project](https://learn.microsoft.com/azure/foundry/how-to/connections-add?tabs=foundry-portal)| `samples/connections/` |
+| Client-side tracing | [Add client-side tracing to Foundry agents](https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side?tabs=python) | `samples/telemetry/` |
 | Datasets | | `samples/datasets/` |
 | Deployments | [Deployment types](https://learn.microsoft.com/azure/foundry/foundry-models/concepts/deployment-types) | `samples/deployments/` |
 | Evaluation | [Evaluate agents](https://learn.microsoft.com/azure/foundry/observability/how-to/evaluate-agent) | `samples/evaluations/` |
 | Files (upload, retrieve, list, delete) | [OpenAI Files API](https://platform.openai.com/docs/api-reference/files) | `samples/files/` |
 | Fine-tuning | [When to use fine-tuning](https://learn.microsoft.com/azure/foundry/openai/concepts/fine-tuning-considerations), [Fine-Tuning in AI Foundry (GitHub repo)](https://github.com/microsoft-foundry/fine-tuning) | `samples/finetuning/` |
 | Indexes | [Azure AI Search](https://learn.microsoft.com/azure/search/search-what-is-azure-search) | `samples/indexes/` |
-| Memory stores (preview) | | `samples/memories/` |
+| Memory stores (preview) | [What is memory?](https://learn.microsoft.com/azure/foundry/agents/concepts/what-is-memory?tabs=conversational-agent) | `samples/memories/` |
 | Models (preview) | | `samples/models/` |
 | Red teams (preview) | | `samples/red_team/` |
 | Responses | [Responses API](https://platform.openai.com/docs/api-reference/responses) | `samples/responses/` |
-| Routines (preview) | | |
-| Skills (preview) | | `samples/hosted_agents/` |
-| Toolboxes (preview) | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/` |
+| Routines (preview) | [Routines overview](https://learn.microsoft.com/azure/foundry/agents/concepts/routines) | `samples/hosted_agents/` |
+| Sessions | [Manage hosted sessions](https://learn.microsoft.com/azure/foundry/agents/how-to/manage-hosted-sessions?pivots=python) | `samples/hosted_agents/` |
+| Skills (preview) | | `samples/skills/` |
+| Toolboxes | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/`, `samples/toolboxes/` |
+| Voice agents (preview) | | `samples/agents/voice/` |
 
+### Voice Agent realtime transport (preview)
+
+Select the connection transport with the optional `transport` keyword. The SDK constructs the wire
+query internally; callers do not need to put the transport in `extra_query`. Omitting the option
+preserves the service's default WebSocket behavior.
+
+```python
+from azure.ai.projects.models import VoiceAgentTransport
+
+with project_client.beta.voice_agents.realtime.connect(
+    agent_name="my-voice-agent",
+    transport=VoiceAgentTransport.WEBSOCKET,
+) as connection:
+    print("Voice Agent connection is ready.")
+```
+
+The asynchronous client uses the same keyword:
+
+```python
+async with async_project_client.beta.voice_agents.realtime.connect(
+    agent_name="my-voice-agent",
+    transport=VoiceAgentTransport.WEBSOCKET,
+) as connection:
+    print("Voice Agent connection is ready.")
+```
+
+`VoiceAgentTransport.WEBRTC` selects WebRTC signaling over the WebSocket. The application must manage
+the peer connection, media, and SDP offer/answer exchange using `rtc.call.sdp.create` and
+`rtc.call.sdp.created` events. Selecting this value does not automatically create a WebRTC media client.
 
 ## Client-side tracing
 
 See [Add client-side tracing to Foundry agents (preview)](https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-client-side?tabs=python).
+The same global Foundry tracing configuration applies to Voice Agents REST and realtime tracing.
 
 **Important:** GenAI tracing instrumentation is an experimental preview feature. Spans, attributes, and events may be modified in future versions. 
 
@@ -220,7 +261,7 @@ Operation returned an invalid status 'Unauthorized'
 
 ### Logging
 
-The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). The logs include HTTP request and response headers and body, which are often useful when troubleshooting or reporting an issue to Microsoft.
+The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). Logs can include request, response, and transport details that are useful when troubleshooting or reporting an issue to Microsoft.
 
 #### Default console logging
 
@@ -228,31 +269,42 @@ To turn on client console logging define the environment variable `AZURE_AI_PROJ
 
 #### Customizing your log
 
-Instead of using the above-mentioned environment variable, you can configure logging yourself and control the log level, format and destination. To log to `stdout`, add the following at the top of your Python script:
+Instead of using the above-mentioned environment variable, you can configure logging yourself and control the log level, format, and destination. You can optionally attach the same handler to the Azure SDK logger and, for `.get_openai_client()` scenarios, optionally attach it to the dedicated OpenAI transport logger as well:
 
 ```python
 import sys
 import logging
 
-# Acquire the logger for this client library. Use 'azure' to affect both
-# `azure.core` and `azure.ai.projects' libraries.
-logger = logging.getLogger("azure")
-
-# Set the desired logging level. logging.INFO or logging.DEBUG are good options.
-logger.setLevel(logging.DEBUG)
-
 # Direct logging output to stdout:
 handler = logging.StreamHandler(stream=sys.stdout)
 # Or direct logging output to a file:
 # handler = logging.FileHandler(filename="sample.log")
+
+# Optional: logger for azure-ai-projects and azure-core.
+logger = logging.getLogger("azure")
+logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
+# Optional: additional logger for an openai client generated from `.get_openai_client()`.
+openai_logger = logging.getLogger("azure.ai.projects.openai_transport")
+openai_logger.setLevel(logging.DEBUG)
+openai_logger.propagate = False
+openai_logger.addHandler(handler)
+
+# Optional: Voice Agent WebSocket transport logger.
+voice_logger = logging.getLogger("azure.ai.projects.realtime")
+voice_logger.setLevel(logging.DEBUG)
+voice_logger.propagate = False
+voice_logger.addHandler(handler)
+
 # Optional: change the default logging format. Here we add a timestamp.
-#formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
-#handler.setFormatter(formatter)
+# formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
+# handler.setFormatter(formatter)
 ```
 
-By default logs redact the values of URL query strings, the values of some HTTP request and response headers (including `Authorization` which holds the key or token), and the request and response payloads. To create logs without redaction, add `logging_enable=True` to the client constructor:
+The `azure` logger includes logs from `azure-ai-projects` and `azure-core`, including Voice Agent WebSocket transport logs. The dedicated OpenAI and Voice Agent loggers shown above can be used when you want only those transport logs. At `DEBUG` level, the Voice Agent logger records connection and close events and the type and byte count of each event sent or received. It does not log event payloads, URL query strings, request headers, or authentication tokens.
+
+By default, logs redact URL query values, some HTTP request and response headers (including `Authorization`), and request and response payloads. To create HTTP pipeline logs without redaction, add `logging_enable=True` to the client constructor:
 
 ```python
 project_client = AIProjectClient(
@@ -263,6 +315,8 @@ project_client = AIProjectClient(
 ```
 
 Note that the log level must be set to `logging.DEBUG` (see above code). Logs will be redacted with any other log level.
+
+See the logging samples in the `samples/logs/` folder for complete end-to-end examples, including console logging, file logging, OpenAI transport logging, and Voice Agent realtime logging.
 
 Be sure to protect non-redacted logs to avoid compromising security.
 

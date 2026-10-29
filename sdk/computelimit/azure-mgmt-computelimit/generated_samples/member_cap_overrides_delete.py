@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2026-07-01/MemberCapOverrides_Delete.json
+# x-ms-original-file: 2026-07-31/MemberCapOverrides_Delete.json
 if __name__ == "__main__":
     main()

@@ -16,7 +16,7 @@ from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
 class TestAgentFunctionToolAsync(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_function_tool_async(self, **kwargs):
         """
         Test agent with custom function tool (async version).
@@ -148,7 +148,7 @@ class TestAgentFunctionToolAsync(TestBase):
         print("Agent deleted")
 
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_function_tool_multi_turn_with_multiple_calls_async(
         self, **kwargs
     ):  # pylint: disable=too-many-statements
@@ -362,7 +362,7 @@ class TestAgentFunctionToolAsync(TestBase):
             print("Agent deleted")
 
     @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_function_tool_context_dependent_followup_async(self, **kwargs):
         """
         Test deeply context-dependent follow-ups (e.g., unit conversion, clarification) (async version).

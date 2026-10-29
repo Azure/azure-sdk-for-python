@@ -19,6 +19,15 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class CapacityOverageState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The capacity overage state for the Fabric capacity resource."""
+
+    DISABLED = "Disabled"
+    """Capacity overage is disabled."""
+    ENABLED = "Enabled"
+    """Capacity overage is enabled."""
+
+
 class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Possible reasons for a name not being available."""
 
@@ -64,44 +73,44 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     DELETING = "Deleting"
-    """Resource is deleting"""
+    """Resource is deleting."""
     PROVISIONING = "Provisioning"
-    """Resource is provisioning"""
+    """Resource is provisioning."""
     UPDATING = "Updating"
-    """Resource is updating"""
+    """Resource is updating."""
 
 
 class ResourceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the Fabric capacity resource."""
 
     ACTIVE = "Active"
-    """Resource is active"""
+    """Resource is active."""
     PROVISIONING = "Provisioning"
-    """Resource is provisioning"""
+    """Resource is provisioning."""
     FAILED = "Failed"
-    """Resource is failed"""
+    """Resource is failed."""
     UPDATING = "Updating"
-    """Resource is updating"""
+    """Resource is updating."""
     DELETING = "Deleting"
-    """Resource is deleting"""
+    """Resource is deleting."""
     SUSPENDING = "Suspending"
-    """Resource is suspending"""
+    """Resource is suspending."""
     SUSPENDED = "Suspended"
-    """Resource is suspended"""
+    """Resource is suspended."""
     PAUSING = "Pausing"
-    """Resource is pausing"""
+    """Resource is pausing."""
     PAUSED = "Paused"
-    """Resource is paused"""
+    """Resource is paused."""
     RESUMING = "Resuming"
-    """Resource is resuming"""
+    """Resource is resuming."""
     SCALING = "Scaling"
-    """Resource is scaling"""
+    """Resource is scaling."""
     PREPARING = "Preparing"
-    """Resource is preparing"""
+    """Resource is preparing."""
 
 
 class RpSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The name of the Azure pricing tier to which the SKU applies."""
 
     FABRIC = "Fabric"
-    """Fabric tier"""
+    """Fabric tier."""

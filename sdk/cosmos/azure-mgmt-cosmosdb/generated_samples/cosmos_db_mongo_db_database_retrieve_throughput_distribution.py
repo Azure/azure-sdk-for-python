@@ -41,6 +41,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-11-01-preview/CosmosDBMongoDBDatabaseRetrieveThroughputDistribution.json
+# x-ms-original-file: 2026-04-01-preview/CosmosDBMongoDBDatabaseRetrieveThroughputDistribution.json
 if __name__ == "__main__":
     main()

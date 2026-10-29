@@ -18,6 +18,9 @@ from azure.ai.agentserver.invocations import InvocationAgentServerHost
 def pytest_configure(config):
     config.addinivalue_line("markers", "tracing_e2e: end-to-end tracing tests against live Application Insights")
     config.addinivalue_line("markers", "slow: tests that send large payloads or otherwise take noticeable time in CI")
+    config.addinivalue_line(
+        "markers", "live: tests that require live external services (Azure OpenAI, github-copilot-sdk, etc.)"
+    )
 
 
 @pytest.fixture(autouse=True, scope="session")

@@ -798,11 +798,12 @@ class TestFeedRangeMultiPartitionAsync:
         finally:
             await client.close()
 
-    async def test_full_partition_key_query_pagination_resume_async(self):
+    async def test_full_partition_key_query_pagination_resume_and_count_is_index_only_async(self):
         """Query with a full partition key on a hierarchical container, drain
         page 1, resume from the returned continuation token, and confirm the
         resumed pages match the remaining pages of a fresh iterator and
-        cover the same documents as a baseline scan in the same order.
+        cover the same documents as a baseline scan in the same order. Also
+        confirm a partition-scoped aggregate remains index-only.
         """
         client = _client()
         try:
@@ -873,6 +874,62 @@ class TestFeedRangeMultiPartitionAsync:
                 assert baseline_ids == fetched_ids, (
                     "Page 1 plus the resumed pages must equal the baseline "
                     "documents for this partition key in the same order")
+
+                count_iterable = created_container.query_items(
+                    query="SELECT VALUE COUNT(1) FROM c",
+                    partition_key=full_key,
+                    populate_query_metrics=True,
+                )
+                count_pager = count_iterable.by_page()
+                count_pages = []
+                async for page in count_pager:
+                    count_pages.append([item async for item in page])
+                assert count_pages == [[25]]
+                assert count_pager.continuation_token is None
+
+                count_headers = count_iterable.get_response_headers()
+                count_metrics = dict(
+                    entry.split("=", 1)
+                    for entry in count_headers[http_constants.HttpHeaders.QueryMetrics].split(";")
+                    if entry
+                )
+                assert int(count_metrics["retrievedDocumentCount"]) == 0
+                assert int(count_metrics["retrievedDocumentSize"]) == 0
+                assert float(count_metrics["indexUtilizationRatio"]) == 1.0
+                assert float(count_headers[http_constants.HttpHeaders.RequestCharge]) < 20.0
+
+                # A single-partition feed-range query emits a legacy opaque
+                # continuation token; that token must still resume on the
+                # partition-key request path and return the same remaining items.
+                feed_range = await created_container.feed_range_from_partition_key(full_key)
+                epk_pager = created_container.query_items(
+                    query=query,
+                    feed_range=feed_range,
+                    max_item_count=7,
+                ).by_page()
+                epk_first_page_iter = await epk_pager.__anext__()
+                epk_first_page = [item async for item in epk_first_page_iter]
+                assert epk_first_page
+                legacy_token = epk_pager.continuation_token
+                assert legacy_token
+                assert _decode_token(legacy_token) is None
+
+                expected_epk_remaining_ids: List[str] = []
+                async for page in epk_pager:
+                    expected_epk_remaining_ids.extend(
+                        [item['id'] async for item in page])
+
+                resumed_via_partition_key_ids: List[str] = []
+                partition_key_pager = created_container.query_items(
+                    query=query,
+                    partition_key=full_key,
+                    max_item_count=7,
+                ).by_page(legacy_token)
+                async for page in partition_key_pager:
+                    resumed_via_partition_key_ids.extend(
+                        [item['id'] async for item in page])
+
+                assert expected_epk_remaining_ids == resumed_via_partition_key_ids
             finally:
                 try:
                     await db.delete_container(created_container.id)
@@ -885,7 +942,8 @@ class TestFeedRangeMultiPartitionAsync:
         """Query with a partition key prefix on a hierarchical container,
         drain page 1, resume from the returned token, and confirm the
         resumed pages match a fresh iterator and cover the baseline
-        documents in the same order.
+        documents in the same order. Also confirm aggregate results are
+        merged correctly across the EPK scope.
         """
         client = _client()
         try:
@@ -954,6 +1012,14 @@ class TestFeedRangeMultiPartitionAsync:
                 assert baseline_ids == fetched_ids, (
                     "Page 1 plus the resumed pages must equal the baseline "
                     "documents for this partition key prefix in the same order")
+
+                count_results = [
+                    item async for item in created_container.query_items(
+                        query="SELECT VALUE COUNT(1) FROM c",
+                        partition_key=['CA'],
+                    )
+                ]
+                assert count_results == [30]
             finally:
                 try:
                     await db.delete_container(created_container.id)
@@ -1079,5 +1145,3 @@ class TestFeedRangeMultiPartitionAsync:
 
 if __name__ == "__main__":
     unittest.main()
-
-

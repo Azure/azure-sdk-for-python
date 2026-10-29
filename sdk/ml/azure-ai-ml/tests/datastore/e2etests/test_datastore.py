@@ -5,7 +5,11 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient, load_datastore
 from azure.ai.ml.entities import AzureBlobDatastore, AzureFileDatastore
-from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
+from azure.ai.ml.entities._credentials import (
+    AccountKeyConfiguration,
+    NoneCredentialConfiguration,
+    SasTokenConfiguration,
+)
 from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
 from azure.ai.ml.entities._datastore.datastore import Datastore
 
@@ -79,7 +83,6 @@ class TestDatastore(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_blob_store(
         self,
         client: MLClient,
@@ -99,14 +102,13 @@ class TestDatastore(AzureRecordedTestCase):
         created_datastore = datastore_create_get_list(client, internal_blob_ds, random_name)
         assert isinstance(created_datastore, AzureBlobDatastore)
         assert created_datastore.container_name == internal_blob_ds.container_name
-        assert created_datastore.account_name == internal_blob_ds.account_name
-        assert created_datastore.credentials.account_key == primary_account_key
+        assert created_datastore.account_name == expected_account_name(internal_blob_ds.account_name)
+        assert_datastore_secret(created_datastore.credentials, primary_account_key)
         datastore_update_check_credential(client, created_datastore, secondary_account_key)
         client.datastores.delete(random_name)
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_blob_store_credential_less(
         self,
         client: MLClient,
@@ -123,13 +125,12 @@ class TestDatastore(AzureRecordedTestCase):
         created_datastore = datastore_create_get_list(client, internal_blob_ds, random_name)
         assert isinstance(created_datastore, AzureBlobDatastore)
         assert created_datastore.container_name == internal_blob_ds.container_name
-        assert created_datastore.account_name == internal_blob_ds.account_name
+        assert created_datastore.account_name == expected_account_name(internal_blob_ds.account_name)
         assert isinstance(created_datastore.credentials, NoneCredentialConfiguration)
         client.datastores.delete(random_name)
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_file_store(
         self,
         client: MLClient,
@@ -149,8 +150,8 @@ class TestDatastore(AzureRecordedTestCase):
         created_datastore = datastore_create_get_list(client, internal_file_ds, random_name)
         assert isinstance(created_datastore, AzureFileDatastore)
         assert created_datastore.file_share_name == internal_file_ds.file_share_name
-        assert created_datastore.account_name == internal_file_ds.account_name
-        assert created_datastore.credentials.account_key == primary_account_key
+        assert created_datastore.account_name == expected_account_name(internal_file_ds.account_name)
+        assert_datastore_secret(created_datastore.credentials, primary_account_key)
         datastore_update_check_credential(client, created_datastore, secondary_account_key)
         client.datastores.delete(random_name)
         with pytest.raises(Exception):
@@ -209,7 +210,7 @@ class TestDatastore(AzureRecordedTestCase):
         random_name = randstr("random_name")
         internal_adls_gen2 = load_datastore(adls_gen2_file, client._operation_scope)
         created_datastore = datastore_create_get_list(client, adls_gen2_file, random_name)
-        assert created_datastore.account_name == internal_adls_gen2.account_name
+        assert created_datastore.account_name == expected_account_name(internal_adls_gen2.account_name)
         assert created_datastore.credentials.tenant_id == internal_adls_gen2.credentials.tenant_id
         assert created_datastore.credentials.client_id == internal_adls_gen2.credentials.client_id
         assert created_datastore.credentials.client_secret == internal_adls_gen2.credentials.client_secret
@@ -217,7 +218,6 @@ class TestDatastore(AzureRecordedTestCase):
         with pytest.raises(Exception):
             client.datastores.get(random_name)
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     def test_credential_less_adls_gen2_store(
         self,
         client: MLClient,
@@ -230,7 +230,7 @@ class TestDatastore(AzureRecordedTestCase):
         ]
         internal_adls_gen2 = load_datastore(adls_gen2_credential_less_file, params_override=params_override)
         created_datastore = datastore_create_get_list(client, internal_adls_gen2, random_name)
-        assert created_datastore.account_name == internal_adls_gen2.account_name
+        assert created_datastore.account_name == expected_account_name(internal_adls_gen2.account_name)
         assert isinstance(created_datastore.credentials, NoneCredentialConfiguration)
         client.datastores.delete(random_name)
         with pytest.raises(Exception):
@@ -250,8 +250,20 @@ def datastore_update_check_credential(
     client: MLClient, created_datastore: Datastore, secondary_account_key: str
 ) -> None:
     # Update datastore with a new credential
-    created_datastore.credentials.account_key = secondary_account_key
+    created_datastore.credentials = AccountKeyConfiguration(account_key=secondary_account_key)
     client.datastores.create_or_update(created_datastore)
     updated_datastore = client.datastores.get(created_datastore.name, include_secrets=True)
     if is_live():
-        assert updated_datastore.credentials.account_key == secondary_account_key
+        assert_datastore_secret(updated_datastore.credentials, secondary_account_key)
+
+
+def assert_datastore_secret(credentials, expected_account_key: str) -> None:
+    if isinstance(credentials, AccountKeyConfiguration):
+        assert credentials.account_key == expected_account_key
+    else:
+        assert isinstance(credentials, SasTokenConfiguration)
+        assert credentials.sas_token
+
+
+def expected_account_name(account_name: str) -> str:
+    return account_name if is_live() else "Sanitized"

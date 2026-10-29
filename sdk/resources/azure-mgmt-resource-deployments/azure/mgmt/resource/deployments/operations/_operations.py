@@ -32,12 +32,11 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import DeploymentsMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -50,7 +49,7 @@ def build_deployments_get_at_scope_request(scope: str, deployment_name: str, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -76,7 +75,7 @@ def build_deployments_check_existence_at_scope_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -99,7 +98,7 @@ def build_deployments_create_or_update_at_scope_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -127,7 +126,7 @@ def build_deployments_delete_at_scope_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -149,7 +148,7 @@ def build_deployments_list_at_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -178,7 +177,7 @@ def build_deployments_cancel_at_scope_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/{scope}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"
     path_format_arguments = {
@@ -201,7 +200,7 @@ def build_deployments_validate_at_scope_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -230,7 +229,7 @@ def build_deployments_export_template_at_scope_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -257,7 +256,7 @@ def build_deployments_get_at_tenant_scope_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -282,7 +281,7 @@ def build_deployments_check_existence_at_tenant_scope_request(  # pylint: disabl
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -304,7 +303,7 @@ def build_deployments_create_or_update_at_tenant_scope_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -331,7 +330,7 @@ def build_deployments_delete_at_tenant_scope_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -351,7 +350,7 @@ def build_deployments_cancel_at_tenant_scope_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"
     path_format_arguments = {
@@ -373,7 +372,7 @@ def build_deployments_validate_at_tenant_scope_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -402,7 +401,7 @@ def build_deployments_what_if_at_tenant_scope_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -430,7 +429,7 @@ def build_deployments_export_template_at_tenant_scope_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -456,7 +455,7 @@ def build_deployments_list_at_tenant_scope_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -481,7 +480,7 @@ def build_deployments_get_at_management_group_scope_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -507,7 +506,7 @@ def build_deployments_check_existence_at_management_group_scope_request(  # pyli
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -530,7 +529,7 @@ def build_deployments_create_or_update_at_management_group_scope_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -558,7 +557,7 @@ def build_deployments_delete_at_management_group_scope_request(  # pylint: disab
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -580,7 +579,7 @@ def build_deployments_list_at_management_group_scope_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -609,7 +608,7 @@ def build_deployments_cancel_at_management_group_scope_request(  # pylint: disab
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/providers/Microsoft.Management/managementGroups/{groupId}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"
     path_format_arguments = {
@@ -632,7 +631,7 @@ def build_deployments_validate_at_management_group_scope_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -662,7 +661,7 @@ def build_deployments_what_if_at_management_group_scope_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -691,7 +690,7 @@ def build_deployments_export_template_at_management_group_scope_request(  # pyli
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -718,7 +717,7 @@ def build_deployments_get_at_subscription_scope_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -744,7 +743,7 @@ def build_deployments_check_existence_at_subscription_scope_request(  # pylint: 
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -767,7 +766,7 @@ def build_deployments_create_or_update_at_subscription_scope_request(  # pylint:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -795,7 +794,7 @@ def build_deployments_delete_at_subscription_scope_request(  # pylint: disable=n
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -817,7 +816,7 @@ def build_deployments_list_at_subscription_scope_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -846,7 +845,7 @@ def build_deployments_cancel_at_subscription_scope_request(  # pylint: disable=n
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"
     path_format_arguments = {
@@ -869,7 +868,7 @@ def build_deployments_validate_at_subscription_scope_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -899,7 +898,7 @@ def build_deployments_what_if_at_subscription_scope_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -928,7 +927,7 @@ def build_deployments_export_template_at_subscription_scope_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -955,7 +954,7 @@ def build_deployments_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -982,7 +981,7 @@ def build_deployments_check_existence_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -1006,7 +1005,7 @@ def build_deployments_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1035,7 +1034,7 @@ def build_deployments_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}"
     path_format_arguments = {
@@ -1063,7 +1062,7 @@ def build_deployments_list_by_resource_group_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1095,7 +1094,7 @@ def build_deployments_cancel_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Resources/deployments/{deploymentName}/cancel"
     path_format_arguments = {
@@ -1119,7 +1118,7 @@ def build_deployments_validate_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1150,7 +1149,7 @@ def build_deployments_what_if_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1180,7 +1179,7 @@ def build_deployments_export_template_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1207,7 +1206,7 @@ def build_deployments_calculate_template_hash_request(**kwargs: Any) -> HttpRequ
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1229,7 +1228,7 @@ def build_deployment_operations_get_at_scope_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1257,7 +1256,7 @@ def build_deployment_operations_list_at_scope_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1286,7 +1285,7 @@ def build_deployment_operations_get_at_tenant_scope_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1313,7 +1312,7 @@ def build_deployment_operations_list_at_tenant_scope_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1341,7 +1340,7 @@ def build_deployment_operations_get_at_management_group_scope_request(  # pylint
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1369,7 +1368,7 @@ def build_deployment_operations_list_at_management_group_scope_request(  # pylin
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1398,7 +1397,7 @@ def build_deployment_operations_get_at_subscription_scope_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1426,7 +1425,7 @@ def build_deployment_operations_list_at_subscription_scope_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1455,7 +1454,7 @@ def build_deployment_operations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1484,7 +1483,7 @@ def build_deployment_operations_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1508,7 +1507,7 @@ def build_deployment_operations_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class DeploymentsOperations:  # pylint: disable=too-many-public-methods
+class DeploymentsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1650,7 +1649,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         return 200 <= response.status_code <= 299
 
     def _create_or_update_at_scope_initial(
-        self, scope: str, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        scope: str,
+        deployment_name: str,
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1754,7 +1757,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         scope: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.Deployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1768,7 +1771,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.Deployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1811,7 +1814,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_create_or_update_at_scope(
-        self, scope: str, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        scope: str,
+        deployment_name: str,
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.DeploymentExtended]:
         """Deploys resources at a given scope.
 
@@ -1821,9 +1828,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type scope: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation. Is one of the following
-         types: Deployment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or JSON or IO[bytes]
+        :param parameters: Additional parameters supplied to the operation. Is either a Deployment type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or
+         ~azure.mgmt.resource.deployments.types.Deployment or IO[bytes]
         :return: An instance of LROPoller that returns DeploymentExtended. The DeploymentExtended is
          compatible with MutableMapping
         :rtype:
@@ -2173,7 +2181,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     def _validate_at_scope_initial(
-        self, scope: str, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        scope: str,
+        deployment_name: str,
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2276,7 +2288,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         scope: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.Deployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2289,7 +2301,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.Deployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2331,7 +2343,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_validate_at_scope(
-        self, scope: str, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        scope: str,
+        deployment_name: str,
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.DeploymentValidateResult]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
@@ -2340,9 +2356,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type scope: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types: Deployment, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or JSON or IO[bytes]
+        :param parameters: Parameters to validate. Is either a Deployment type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or
+         ~azure.mgmt.resource.deployments.types.Deployment or IO[bytes]
         :return: An instance of LROPoller that returns DeploymentValidateResult. The
          DeploymentValidateResult is compatible with MutableMapping
         :rtype:
@@ -2590,7 +2607,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         return 200 <= response.status_code <= 299
 
     def _create_or_update_at_tenant_scope_initial(  # pylint: disable=name-too-long
-        self, deployment_name: str, parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2687,7 +2707,12 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def begin_create_or_update_at_tenant_scope(
-        self, deployment_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: _types.ScopedDeployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.DeploymentExtended]:
         """Deploys resources at tenant scope.
 
@@ -2696,7 +2721,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.ScopedDeployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2731,7 +2756,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_create_or_update_at_tenant_scope(
-        self, deployment_name: str, parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.DeploymentExtended]:
         """Deploys resources at tenant scope.
 
@@ -2739,9 +2767,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation. Is one of the following
-         types: ScopedDeployment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or JSON or IO[bytes]
+        :param parameters: Additional parameters supplied to the operation. Is either a
+         ScopedDeployment type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or
+         ~azure.mgmt.resource.deployments.types.ScopedDeployment or IO[bytes]
         :return: An instance of LROPoller that returns DeploymentExtended. The DeploymentExtended is
          compatible with MutableMapping
         :rtype:
@@ -2973,7 +3002,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     def _validate_at_tenant_scope_initial(
-        self, deployment_name: str, parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3069,7 +3101,12 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def begin_validate_at_tenant_scope(
-        self, deployment_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: _types.ScopedDeployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.DeploymentValidateResult]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
@@ -3077,7 +3114,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.ScopedDeployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3111,16 +3148,20 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_validate_at_tenant_scope(
-        self, deployment_name: str, parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.DeploymentValidateResult]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types: ScopedDeployment,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or JSON or IO[bytes]
+        :param parameters: Parameters to validate. Is either a ScopedDeployment type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or
+         ~azure.mgmt.resource.deployments.types.ScopedDeployment or IO[bytes]
         :return: An instance of LROPoller that returns DeploymentValidateResult. The
          DeploymentValidateResult is compatible with MutableMapping
         :rtype:
@@ -3179,7 +3220,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         )
 
     def _what_if_at_tenant_scope_initial(
-        self, deployment_name: str, parameters: Union[_models.ScopedDeploymentWhatIf, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.ScopedDeploymentWhatIf, _types.ScopedDeploymentWhatIf, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3275,7 +3319,12 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def begin_what_if_at_tenant_scope(
-        self, deployment_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: _types.ScopedDeploymentWhatIf,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.WhatIfOperationResult]:
         """Returns changes that will be made by the deployment if executed at the scope of the tenant
         group.
@@ -3283,7 +3332,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.ScopedDeploymentWhatIf
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3317,17 +3366,20 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_what_if_at_tenant_scope(
-        self, deployment_name: str, parameters: Union[_models.ScopedDeploymentWhatIf, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.ScopedDeploymentWhatIf, _types.ScopedDeploymentWhatIf, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.WhatIfOperationResult]:
         """Returns changes that will be made by the deployment if executed at the scope of the tenant
         group.
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types:
-         ScopedDeploymentWhatIf, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeploymentWhatIf or JSON or
-         IO[bytes]
+        :param parameters: Parameters to validate. Is either a ScopedDeploymentWhatIf type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeploymentWhatIf or
+         ~azure.mgmt.resource.deployments.types.ScopedDeploymentWhatIf or IO[bytes]
         :return: An instance of LROPoller that returns WhatIfOperationResult. The WhatIfOperationResult
          is compatible with MutableMapping
         :rtype:
@@ -3685,7 +3737,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]],
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3790,7 +3842,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.ScopedDeployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3804,7 +3856,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.ScopedDeployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3850,7 +3902,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]],
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DeploymentExtended]:
         """Deploys resources at management group scope.
@@ -3861,9 +3913,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type group_id: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation. Is one of the following
-         types: ScopedDeployment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or JSON or IO[bytes]
+        :param parameters: Additional parameters supplied to the operation. Is either a
+         ScopedDeployment type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or
+         ~azure.mgmt.resource.deployments.types.ScopedDeployment or IO[bytes]
         :return: An instance of LROPoller that returns DeploymentExtended. The DeploymentExtended is
          compatible with MutableMapping
         :rtype:
@@ -4220,7 +4273,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]],
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4324,7 +4377,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.ScopedDeployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4337,7 +4390,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.ScopedDeployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4382,7 +4435,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]],
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DeploymentValidateResult]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
@@ -4392,9 +4445,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type group_id: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types: ScopedDeployment,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or JSON or IO[bytes]
+        :param parameters: Parameters to validate. Is either a ScopedDeployment type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or
+         ~azure.mgmt.resource.deployments.types.ScopedDeployment or IO[bytes]
         :return: An instance of LROPoller that returns DeploymentValidateResult. The
          DeploymentValidateResult is compatible with MutableMapping
         :rtype:
@@ -4457,7 +4511,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: Union[_models.ScopedDeploymentWhatIf, JSON, IO[bytes]],
+        parameters: Union[_models.ScopedDeploymentWhatIf, _types.ScopedDeploymentWhatIf, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4561,7 +4615,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.ScopedDeploymentWhatIf,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4574,7 +4628,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.ScopedDeploymentWhatIf
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4619,7 +4673,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: Union[_models.ScopedDeploymentWhatIf, JSON, IO[bytes]],
+        parameters: Union[_models.ScopedDeploymentWhatIf, _types.ScopedDeploymentWhatIf, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.WhatIfOperationResult]:
         """Returns changes that will be made by the deployment if executed at the scope of the management
@@ -4629,10 +4683,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type group_id: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types:
-         ScopedDeploymentWhatIf, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeploymentWhatIf or JSON or
-         IO[bytes]
+        :param parameters: Parameters to validate. Is either a ScopedDeploymentWhatIf type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeploymentWhatIf or
+         ~azure.mgmt.resource.deployments.types.ScopedDeploymentWhatIf or IO[bytes]
         :return: An instance of LROPoller that returns WhatIfOperationResult. The WhatIfOperationResult
          is compatible with MutableMapping
         :rtype:
@@ -4882,7 +4936,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         return 200 <= response.status_code <= 299
 
     def _create_or_update_at_subscription_scope_initial(  # pylint: disable=name-too-long
-        self, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self, deployment_name: str, parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4980,7 +5034,12 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def begin_create_or_update_at_subscription_scope(  # pylint: disable=name-too-long
-        self, deployment_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: _types.Deployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.DeploymentExtended]:
         """Deploys resources at subscription scope.
 
@@ -4989,7 +5048,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.Deployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5024,7 +5083,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_create_or_update_at_subscription_scope(  # pylint: disable=name-too-long
-        self, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self, deployment_name: str, parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.DeploymentExtended]:
         """Deploys resources at subscription scope.
 
@@ -5032,9 +5091,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation. Is one of the following
-         types: Deployment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or JSON or IO[bytes]
+        :param parameters: Additional parameters supplied to the operation. Is either a Deployment type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or
+         ~azure.mgmt.resource.deployments.types.Deployment or IO[bytes]
         :return: An instance of LROPoller that returns DeploymentExtended. The DeploymentExtended is
          compatible with MutableMapping
         :rtype:
@@ -5372,7 +5432,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     def _validate_at_subscription_scope_initial(
-        self, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self, deployment_name: str, parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5469,7 +5529,12 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def begin_validate_at_subscription_scope(
-        self, deployment_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: _types.Deployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.DeploymentValidateResult]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
@@ -5477,7 +5542,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.Deployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5511,16 +5576,17 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_validate_at_subscription_scope(
-        self, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self, deployment_name: str, parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]], **kwargs: Any
     ) -> LROPoller[_models.DeploymentValidateResult]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types: Deployment, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or JSON or IO[bytes]
+        :param parameters: Parameters to validate. Is either a Deployment type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or
+         ~azure.mgmt.resource.deployments.types.Deployment or IO[bytes]
         :return: An instance of LROPoller that returns DeploymentValidateResult. The
          DeploymentValidateResult is compatible with MutableMapping
         :rtype:
@@ -5579,7 +5645,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         )
 
     def _what_if_at_subscription_scope_initial(
-        self, deployment_name: str, parameters: Union[_models.DeploymentWhatIf, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.DeploymentWhatIf, _types.DeploymentWhatIf, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5676,7 +5745,12 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def begin_what_if_at_subscription_scope(
-        self, deployment_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: _types.DeploymentWhatIf,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.WhatIfOperationResult]:
         """Returns changes that will be made by the deployment if executed at the scope of the
         subscription.
@@ -5684,7 +5758,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to What If. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.DeploymentWhatIf
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5718,16 +5792,20 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_what_if_at_subscription_scope(
-        self, deployment_name: str, parameters: Union[_models.DeploymentWhatIf, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.DeploymentWhatIf, _types.DeploymentWhatIf, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.WhatIfOperationResult]:
         """Returns changes that will be made by the deployment if executed at the scope of the
         subscription.
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to What If. Is one of the following types: DeploymentWhatIf,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.DeploymentWhatIf or JSON or IO[bytes]
+        :param parameters: Parameters to What If. Is either a DeploymentWhatIf type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.DeploymentWhatIf or
+         ~azure.mgmt.resource.deployments.types.DeploymentWhatIf or IO[bytes]
         :return: An instance of LROPoller that returns WhatIfOperationResult. The WhatIfOperationResult
          is compatible with MutableMapping
         :rtype:
@@ -5983,7 +6061,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: Union[_models.Deployment, JSON, IO[bytes]],
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6089,7 +6167,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.Deployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6103,7 +6181,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.Deployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6149,7 +6227,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: Union[_models.Deployment, JSON, IO[bytes]],
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DeploymentExtended]:
         """Deploys resources to a resource group.
@@ -6160,9 +6238,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation. Is one of the following
-         types: Deployment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or JSON or IO[bytes]
+        :param parameters: Additional parameters supplied to the operation. Is either a Deployment type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or
+         ~azure.mgmt.resource.deployments.types.Deployment or IO[bytes]
         :return: An instance of LROPoller that returns DeploymentExtended. The DeploymentExtended is
          compatible with MutableMapping
         :rtype:
@@ -6519,7 +6598,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: Union[_models.Deployment, JSON, IO[bytes]],
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6624,7 +6703,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.Deployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6637,7 +6716,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.Deployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6682,7 +6761,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: Union[_models.Deployment, JSON, IO[bytes]],
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DeploymentValidateResult]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
@@ -6692,9 +6771,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types: Deployment, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or JSON or IO[bytes]
+        :param parameters: Parameters to validate. Is either a Deployment type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or
+         ~azure.mgmt.resource.deployments.types.Deployment or IO[bytes]
         :return: An instance of LROPoller that returns DeploymentValidateResult. The
          DeploymentValidateResult is compatible with MutableMapping
         :rtype:
@@ -6757,7 +6837,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: Union[_models.DeploymentWhatIf, JSON, IO[bytes]],
+        parameters: Union[_models.DeploymentWhatIf, _types.DeploymentWhatIf, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6862,7 +6942,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.DeploymentWhatIf,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6875,7 +6955,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.DeploymentWhatIf
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6920,7 +7000,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: Union[_models.DeploymentWhatIf, JSON, IO[bytes]],
+        parameters: Union[_models.DeploymentWhatIf, _types.DeploymentWhatIf, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.WhatIfOperationResult]:
         """Returns changes that will be made by the deployment if executed at the scope of the resource
@@ -6930,9 +7010,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types: DeploymentWhatIf,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.DeploymentWhatIf or JSON or IO[bytes]
+        :param parameters: Parameters to validate. Is either a DeploymentWhatIf type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.DeploymentWhatIf or
+         ~azure.mgmt.resource.deployments.types.DeploymentWhatIf or IO[bytes]
         :return: An instance of LROPoller that returns WhatIfOperationResult. The WhatIfOperationResult
          is compatible with MutableMapping
         :rtype:
@@ -7132,7 +7213,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class DeploymentOperationsOperations:
+class DeploymentOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

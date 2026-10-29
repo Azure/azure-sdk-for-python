@@ -8,6 +8,8 @@ from fixedint import Int32  # pylint: disable=no-name-in-module
 
 from azure.monitor.opentelemetry.exporter.export.trace._utils import (
     _get_DJB2_sample_score,
+    _get_default_port_db,
+    _is_sql_db,
 )
 
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -15,6 +17,22 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _INT32_MAX,
     _INT32_MIN,
 )
+
+
+class TestDatabaseSystemNames(unittest.TestCase):
+    def test_legacy_and_stable_names(self):
+        test_cases = (
+            ("h2", "h2database", 8082),
+            ("db2", "ibm.db2", 50000),
+            ("mssql", "microsoft.sql_server", 1433),
+            ("oracle", "oracle.db", 1521),
+        )
+
+        for legacy_name, stable_name, default_port in test_cases:
+            for db_system in (legacy_name, stable_name):
+                with self.subTest(db_system=db_system):
+                    self.assertTrue(_is_sql_db(db_system))
+                    self.assertEqual(_get_default_port_db(db_system), default_port)
 
 
 class TestGetDJB2SampleScore(unittest.TestCase):

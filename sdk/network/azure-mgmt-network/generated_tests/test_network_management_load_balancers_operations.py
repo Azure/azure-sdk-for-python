@@ -25,7 +25,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
         response = self.client.load_balancers.get(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -123,6 +123,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 "name": "str",
                                                 "properties": {
                                                     "ddosSettings": {
+                                                        "ddosCustomPolicy": {"id": "str"},
                                                         "ddosProtectionPlan": {"id": "str"},
                                                         "protectionMode": "str",
                                                     },
@@ -373,6 +374,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "type": "str",
                                                                                                     }
                                                                                                 ],
+                                                                                                "billingSku": "str",
                                                                                                 "customDnsConfigs": [
                                                                                                     {
                                                                                                         "fqdn": "str",
@@ -401,6 +403,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -425,6 +430,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -488,6 +496,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                }
+                                                                                                            },
+                                                                                                            "enableConnectionTracking": bool,
                                                                                                             "gatewayLoadBalancer": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -563,6 +577,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                             "type": "str",
                                                                                                                         }
                                                                                                                     ],
+                                                                                                                    "billingSku": "str",
                                                                                                                     "customDnsConfigs": [
                                                                                                                         {
                                                                                                                             "fqdn": "str",
@@ -591,6 +606,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                             "id": "str",
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
+                                                                                                                                "approvalReference": {
+                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                },
                                                                                                                                 "groupIds": [
                                                                                                                                     "str"
                                                                                                                                 ],
@@ -615,6 +633,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                             "id": "str",
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
+                                                                                                                                "approvalReference": {
+                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                },
                                                                                                                                 "groupIds": [
                                                                                                                                     "str"
                                                                                                                                 ],
@@ -679,6 +700,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "ddosSettings": {
+                                                                                                                        "ddosCustomPolicy": {
+                                                                                                                            "id": "str"
+                                                                                                                        }
+                                                                                                                    },
+                                                                                                                    "enableConnectionTracking": bool,
                                                                                                                     "gatewayLoadBalancer": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -833,6 +860,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -859,6 +887,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -1144,6 +1175,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    }
+                                                                                                                },
+                                                                                                                "enableConnectionTracking": bool,
                                                                                                                 "gatewayLoadBalancer": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -1235,6 +1272,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "ddosSettings": {
+                                                                                                                            "ddosCustomPolicy": {
+                                                                                                                                "id": "str"
+                                                                                                                            }
+                                                                                                                        },
+                                                                                                                        "enableConnectionTracking": bool,
                                                                                                                         "gatewayLoadBalancer": {
                                                                                                                             "id": "str"
                                                                                                                         },
@@ -1306,6 +1349,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -1349,6 +1395,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "disableBgpRoutePropagation": bool,
+                                                                            "disablePeeringRoute": "str",
                                                                             "provisioningState": "str",
                                                                             "resourceGuid": "str",
                                                                             "routes": [
@@ -1360,6 +1407,11 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "nextHopType": "str",
                                                                                         "addressPrefix": "str",
                                                                                         "hasBgpOverride": bool,
+                                                                                        "nextHop": {
+                                                                                            "nextHopIpAddresses": [
+                                                                                                "str"
+                                                                                            ]
+                                                                                        },
                                                                                         "nextHopIpAddress": "str",
                                                                                         "provisioningState": "str",
                                                                                     },
@@ -1435,7 +1487,13 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             },
                                                         },
                                                     },
-                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                    "ipTags": [
+                                                        {
+                                                            "firstPartyServiceTagId": "str",
+                                                            "ipTagType": "str",
+                                                            "tag": "str",
+                                                        }
+                                                    ],
                                                     "linkedPublicIPAddress": ...,
                                                     "migrationPhase": "str",
                                                     "natGateway": {
@@ -1445,6 +1503,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         "name": "str",
                                                         "properties": {
                                                             "idleTimeoutInMinutes": 0,
+                                                            "nat64": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -1466,6 +1525,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     "publicIPPrefix": {"id": "str"},
                                                     "resourceGuid": "str",
                                                     "servicePublicIPAddress": ...,
+                                                    "upgradedToV2": bool,
                                                 },
                                                 "sku": {"name": "str", "tier": "str"},
                                                 "tags": {"str": "str"},
@@ -1532,6 +1592,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -1545,7 +1606,13 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "idleTimeoutInMinutes": 0,
                                                                         "ipAddress": "str",
                                                                         "ipConfiguration": ...,
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -1555,6 +1622,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -1576,6 +1644,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -1747,6 +1816,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -1773,6 +1843,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -1793,6 +1866,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -1852,6 +1928,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -1882,6 +1964,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -1910,6 +1995,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -1923,6 +2009,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -1976,6 +2063,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -2028,6 +2116,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             "type": "str",
                                                                                                         }
                                                                                                     ],
+                                                                                                    "billingSku": "str",
                                                                                                     "customDnsConfigs": [
                                                                                                         {
                                                                                                             "fqdn": "str",
@@ -2056,6 +2145,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -2080,6 +2172,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -2140,6 +2235,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -2170,6 +2271,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                },
                                                                                                                 "ddosProtectionPlan": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -2198,6 +2302,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             },
                                                                                                             "ipTags": [
                                                                                                                 {
+                                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                                     "ipTagType": "str",
                                                                                                                     "tag": "str",
                                                                                                                 }
@@ -2211,6 +2316,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                                    "nat64": "str",
                                                                                                                     "provisioningState": "str",
                                                                                                                     "publicIpAddresses": [
                                                                                                                         {
@@ -2264,6 +2370,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             },
                                                                                                             "resourceGuid": "str",
                                                                                                             "servicePublicIPAddress": ...,
+                                                                                                            "upgradedToV2": bool,
                                                                                                         },
                                                                                                         "sku": {
                                                                                                             "name": "str",
@@ -2390,6 +2497,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "billingSku": "str",
                                                                 "customDnsConfigs": [
                                                                     {"fqdn": "str", "ipAddresses": ["str"]}
                                                                 ],
@@ -2413,6 +2521,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -2688,6 +2799,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    }
+                                                                                                },
+                                                                                                "enableConnectionTracking": bool,
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -2718,6 +2835,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            },
                                                                                                             "ddosProtectionPlan": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -2746,6 +2866,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         },
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -2759,6 +2880,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                "nat64": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "publicIpAddresses": [
                                                                                                                     {
@@ -2812,6 +2934,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -2880,6 +3003,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            }
+                                                                                                        },
+                                                                                                        "enableConnectionTracking": bool,
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -2918,6 +3047,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    },
                                                                                                                     "ddosProtectionPlan": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -2946,6 +3078,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                 },
                                                                                                                 "ipTags": [
                                                                                                                     {
+                                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                                         "ipTagType": "str",
                                                                                                                         "tag": "str",
                                                                                                                     }
@@ -2959,6 +3092,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                                        "nat64": "str",
                                                                                                                         "provisioningState": "str",
                                                                                                                         "publicIpAddresses": [
                                                                                                                             {
@@ -3012,6 +3146,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                 },
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                                "upgradedToV2": bool,
                                                                                                             },
                                                                                                             "sku": {
                                                                                                                 "name": "str",
@@ -3062,6 +3197,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "approvalReference": {
+                                                                                "privateEndpointId": "str"
+                                                                            },
                                                                             "groupIds": ["str"],
                                                                             "privateLinkServiceConnectionState": {
                                                                                 "actionsRequired": "str",
@@ -3105,6 +3243,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         "name": "str",
                                                         "properties": {
                                                             "disableBgpRoutePropagation": bool,
+                                                            "disablePeeringRoute": "str",
                                                             "provisioningState": "str",
                                                             "resourceGuid": "str",
                                                             "routes": [
@@ -3116,6 +3255,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "nextHopType": "str",
                                                                         "addressPrefix": "str",
                                                                         "hasBgpOverride": bool,
+                                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                         "nextHopIpAddress": "str",
                                                                         "provisioningState": "str",
                                                                     },
@@ -3199,6 +3339,8 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                                "enableConnectionTracking": bool,
                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                 "inboundNatPools": [{"id": "str"}],
                                                                 "inboundNatRules": [{"id": "str"}],
@@ -3216,6 +3358,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -3486,6 +3629,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                             "type": "str",
                                                                                                                         }
                                                                                                                     ],
+                                                                                                                    "billingSku": "str",
                                                                                                                     "customDnsConfigs": [
                                                                                                                         {
                                                                                                                             "fqdn": "str",
@@ -3514,6 +3658,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                             "id": "str",
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
+                                                                                                                                "approvalReference": {
+                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                },
                                                                                                                                 "groupIds": [
                                                                                                                                     "str"
                                                                                                                                 ],
@@ -3538,6 +3685,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                             "id": "str",
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
+                                                                                                                                "approvalReference": {
+                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                },
                                                                                                                                 "groupIds": [
                                                                                                                                     "str"
                                                                                                                                 ],
@@ -3638,6 +3788,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                                                 "type": "str",
                                                                                                                                             }
                                                                                                                                         ],
+                                                                                                                                        "billingSku": "str",
                                                                                                                                         "customDnsConfigs": [
                                                                                                                                             {
                                                                                                                                                 "fqdn": "str",
@@ -3666,6 +3817,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                                                 "id": "str",
                                                                                                                                                 "name": "str",
                                                                                                                                                 "properties": {
+                                                                                                                                                    "approvalReference": {
+                                                                                                                                                        "privateEndpointId": "str"
+                                                                                                                                                    },
                                                                                                                                                     "groupIds": [
                                                                                                                                                         "str"
                                                                                                                                                     ],
@@ -3690,6 +3844,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                                                 "id": "str",
                                                                                                                                                 "name": "str",
                                                                                                                                                 "properties": {
+                                                                                                                                                    "approvalReference": {
+                                                                                                                                                        "privateEndpointId": "str"
+                                                                                                                                                    },
                                                                                                                                                     "groupIds": [
                                                                                                                                                         "str"
                                                                                                                                                     ],
@@ -3861,6 +4018,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             "type": "str",
                                                                                                         }
                                                                                                     ],
+                                                                                                    "billingSku": "str",
                                                                                                     "customDnsConfigs": [
                                                                                                         {
                                                                                                             "fqdn": "str",
@@ -3889,6 +4047,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -4251,6 +4412,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -4296,6 +4460,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                                "disablePeeringRoute": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "resourceGuid": "str",
                                                                                                 "routes": [
@@ -4307,6 +4472,11 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             "nextHopType": "str",
                                                                                                             "addressPrefix": "str",
                                                                                                             "hasBgpOverride": bool,
+                                                                                                            "nextHop": {
+                                                                                                                "nextHopIpAddresses": [
+                                                                                                                    "str"
+                                                                                                                ]
+                                                                                                            },
                                                                                                             "nextHopIpAddress": "str",
                                                                                                             "provisioningState": "str",
                                                                                                         },
@@ -4388,7 +4558,13 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                 },
                                                                             },
                                                                         },
-                                                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                        "ipTags": [
+                                                                            {
+                                                                                "firstPartyServiceTagId": "str",
+                                                                                "ipTagType": "str",
+                                                                                "tag": "str",
+                                                                            }
+                                                                        ],
                                                                         "linkedPublicIPAddress": ...,
                                                                         "migrationPhase": "str",
                                                                         "natGateway": {
@@ -4398,6 +4574,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -4419,6 +4596,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "publicIPPrefix": {"id": "str"},
                                                                         "resourceGuid": "str",
                                                                         "servicePublicIPAddress": ...,
+                                                                        "upgradedToV2": bool,
                                                                     },
                                                                     "sku": {"name": "str", "tier": "str"},
                                                                     "tags": {"str": "str"},
@@ -4492,6 +4670,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -4509,6 +4690,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "ipConfiguration": ...,
                                                                                             "ipTags": [
                                                                                                 {
+                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                     "ipTagType": "str",
                                                                                                     "tag": "str",
                                                                                                 }
@@ -4522,6 +4704,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -4559,6 +4742,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             },
                                                                                             "resourceGuid": "str",
                                                                                             "servicePublicIPAddress": ...,
+                                                                                            "upgradedToV2": bool,
                                                                                         },
                                                                                         "sku": {
                                                                                             "name": "str",
@@ -4758,6 +4942,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             "type": "str",
                                                                                                         }
                                                                                                     ],
+                                                                                                    "billingSku": "str",
                                                                                                     "customDnsConfigs": [
                                                                                                         {
                                                                                                             "fqdn": "str",
@@ -4786,6 +4971,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -4810,6 +4998,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "approvalReference": {
+                                                                                                                    "privateEndpointId": "str"
+                                                                                                                },
                                                                                                                 "groupIds": [
                                                                                                                     "str"
                                                                                                                 ],
@@ -4906,6 +5097,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                                 "type": "str",
                                                                                                                             }
                                                                                                                         ],
+                                                                                                                        "billingSku": "str",
                                                                                                                         "customDnsConfigs": [
                                                                                                                             {
                                                                                                                                 "fqdn": "str",
@@ -4934,6 +5126,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                                 "id": "str",
                                                                                                                                 "name": "str",
                                                                                                                                 "properties": {
+                                                                                                                                    "approvalReference": {
+                                                                                                                                        "privateEndpointId": "str"
+                                                                                                                                    },
                                                                                                                                     "groupIds": [
                                                                                                                                         "str"
                                                                                                                                     ],
@@ -4958,6 +5153,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                                 "id": "str",
                                                                                                                                 "name": "str",
                                                                                                                                 "properties": {
+                                                                                                                                    "approvalReference": {
+                                                                                                                                        "privateEndpointId": "str"
+                                                                                                                                    },
                                                                                                                                     "groupIds": [
                                                                                                                                         "str"
                                                                                                                                     ],
@@ -5121,6 +5319,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -5147,6 +5346,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -5505,6 +5707,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -5548,6 +5753,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                "disablePeeringRoute": "str",
                                                                                 "provisioningState": "str",
                                                                                 "resourceGuid": "str",
                                                                                 "routes": [
@@ -5559,6 +5765,11 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "nextHopType": "str",
                                                                                             "addressPrefix": "str",
                                                                                             "hasBgpOverride": bool,
+                                                                                            "nextHop": {
+                                                                                                "nextHopIpAddresses": [
+                                                                                                    "str"
+                                                                                                ]
+                                                                                            },
                                                                                             "nextHopIpAddress": "str",
                                                                                             "provisioningState": "str",
                                                                                         },
@@ -5699,6 +5910,8 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                             "id": "str",
                             "name": "str",
                             "properties": {
+                                "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                "enableConnectionTracking": bool,
                                 "gatewayLoadBalancer": {"id": "str"},
                                 "inboundNatPools": [{"id": "str"}],
                                 "inboundNatRules": [{"id": "str"}],
@@ -5715,7 +5928,11 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                     "location": "str",
                                     "name": "str",
                                     "properties": {
-                                        "ddosSettings": {"ddosProtectionPlan": {"id": "str"}, "protectionMode": "str"},
+                                        "ddosSettings": {
+                                            "ddosCustomPolicy": {"id": "str"},
+                                            "ddosProtectionPlan": {"id": "str"},
+                                            "protectionMode": "str",
+                                        },
                                         "deleteOption": "str",
                                         "dnsSettings": {
                                             "domainNameLabel": "str",
@@ -6130,6 +6347,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -6156,6 +6374,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -6176,6 +6397,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "approvalReference": {
+                                                                                                    "privateEndpointId": "str"
+                                                                                                },
                                                                                                 "groupIds": ["str"],
                                                                                                 "privateLinkServiceConnectionState": {
                                                                                                     "actionsRequired": "str",
@@ -6266,6 +6490,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                 "type": "str",
                                                                                                             }
                                                                                                         ],
+                                                                                                        "billingSku": "str",
                                                                                                         "customDnsConfigs": [
                                                                                                             {
                                                                                                                 "fqdn": "str",
@@ -6294,6 +6519,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -6318,6 +6546,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "approvalReference": {
+                                                                                                                        "privateEndpointId": "str"
+                                                                                                                    },
                                                                                                                     "groupIds": [
                                                                                                                         "str"
                                                                                                                     ],
@@ -6645,6 +6876,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "billingSku": "str",
                                                                     "customDnsConfigs": [
                                                                         {"fqdn": "str", "ipAddresses": ["str"]}
                                                                     ],
@@ -6668,6 +6900,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -7369,6 +7604,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -7412,6 +7650,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "name": "str",
                                                             "properties": {
                                                                 "disableBgpRoutePropagation": bool,
+                                                                "disablePeeringRoute": "str",
                                                                 "provisioningState": "str",
                                                                 "resourceGuid": "str",
                                                                 "routes": [
@@ -7423,6 +7662,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             "nextHopType": "str",
                                                                             "addressPrefix": "str",
                                                                             "hasBgpOverride": bool,
+                                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                             "nextHopIpAddress": "str",
                                                                             "provisioningState": "str",
                                                                         },
@@ -7496,7 +7736,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 },
                                             },
                                         },
-                                        "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                        "ipTags": [{"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}],
                                         "linkedPublicIPAddress": ...,
                                         "migrationPhase": "str",
                                         "natGateway": {
@@ -7506,6 +7746,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                             "name": "str",
                                             "properties": {
                                                 "idleTimeoutInMinutes": 0,
+                                                "nat64": "str",
                                                 "provisioningState": "str",
                                                 "publicIpAddresses": [{"id": "str"}],
                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -7527,6 +7768,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                         "publicIPPrefix": {"id": "str"},
                                         "resourceGuid": "str",
                                         "servicePublicIPAddress": ...,
+                                        "upgradedToV2": bool,
                                     },
                                     "sku": {"name": "str", "tier": "str"},
                                     "tags": {"str": "str"},
@@ -7591,6 +7833,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         "name": "str",
                                                         "properties": {
                                                             "ddosSettings": {
+                                                                "ddosCustomPolicy": {"id": "str"},
                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                 "protectionMode": "str",
                                                             },
@@ -7604,7 +7847,13 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "idleTimeoutInMinutes": 0,
                                                             "ipAddress": "str",
                                                             "ipConfiguration": ...,
-                                                            "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                            "ipTags": [
+                                                                {
+                                                                    "firstPartyServiceTagId": "str",
+                                                                    "ipTagType": "str",
+                                                                    "tag": "str",
+                                                                }
+                                                            ],
                                                             "linkedPublicIPAddress": ...,
                                                             "migrationPhase": "str",
                                                             "natGateway": {
@@ -7614,6 +7863,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "idleTimeoutInMinutes": 0,
+                                                                    "nat64": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
                                                                     "publicIpAddressesV6": [{"id": "str"}],
@@ -7635,6 +7885,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "publicIPPrefix": {"id": "str"},
                                                             "resourceGuid": "str",
                                                             "servicePublicIPAddress": ...,
+                                                            "upgradedToV2": bool,
                                                         },
                                                         "sku": {"name": "str", "tier": "str"},
                                                         "tags": {"str": "str"},
@@ -7914,6 +8165,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -7939,7 +8191,11 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                     },
                                                                                 },
                                                                                 "ipTags": [
-                                                                                    {"ipTagType": "str", "tag": "str"}
+                                                                                    {
+                                                                                        "firstPartyServiceTagId": "str",
+                                                                                        "ipTagType": "str",
+                                                                                        "tag": "str",
+                                                                                    }
                                                                                 ],
                                                                                 "linkedPublicIPAddress": ...,
                                                                                 "migrationPhase": "str",
@@ -7950,6 +8206,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -7981,6 +8238,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                 "publicIPPrefix": {"id": "str"},
                                                                                 "resourceGuid": "str",
                                                                                 "servicePublicIPAddress": ...,
+                                                                                "upgradedToV2": bool,
                                                                             },
                                                                             "sku": {"name": "str", "tier": "str"},
                                                                             "tags": {"str": "str"},
@@ -8047,6 +8305,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "billingSku": "str",
                                                                     "customDnsConfigs": [
                                                                         {"fqdn": "str", "ipAddresses": ["str"]}
                                                                     ],
@@ -8070,6 +8329,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -8090,6 +8352,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "approvalReference": {
+                                                                                    "privateEndpointId": "str"
+                                                                                },
                                                                                 "groupIds": ["str"],
                                                                                 "privateLinkServiceConnectionState": {
                                                                                     "actionsRequired": "str",
@@ -8171,6 +8436,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                 "type": "str",
                                                                                             }
                                                                                         ],
+                                                                                        "billingSku": "str",
                                                                                         "customDnsConfigs": [
                                                                                             {
                                                                                                 "fqdn": "str",
@@ -8197,6 +8463,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -8217,6 +8486,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "approvalReference": {
+                                                                                                        "privateEndpointId": "str"
+                                                                                                    },
                                                                                                     "groupIds": ["str"],
                                                                                                     "privateLinkServiceConnectionState": {
                                                                                                         "actionsRequired": "str",
@@ -8427,6 +8699,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -8455,6 +8730,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -8468,6 +8744,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -8519,6 +8796,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -8637,6 +8915,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "billingSku": "str",
                                                     "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                     "customNetworkInterfaceName": "str",
                                                     "ipConfigurations": [
@@ -8658,6 +8937,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -8847,6 +9127,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -8875,6 +9158,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                     },
                                                                                     "ipTags": [
                                                                                         {
+                                                                                            "firstPartyServiceTagId": "str",
                                                                                             "ipTagType": "str",
                                                                                             "tag": "str",
                                                                                         }
@@ -8888,6 +9172,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -8921,6 +9206,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                     "publicIPPrefix": {"id": "str"},
                                                                                     "resourceGuid": "str",
                                                                                     "servicePublicIPAddress": ...,
+                                                                                    "upgradedToV2": bool,
                                                                                 },
                                                                                 "sku": {"name": "str", "tier": "str"},
                                                                                 "tags": {"str": "str"},
@@ -9374,6 +9660,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -9402,6 +9691,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -9415,6 +9705,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -9468,6 +9759,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -9510,6 +9802,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "approvalReference": {"privateEndpointId": "str"},
                                                                 "groupIds": ["str"],
                                                                 "privateLinkServiceConnectionState": {
                                                                     "actionsRequired": "str",
@@ -9553,6 +9846,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                             "name": "str",
                                             "properties": {
                                                 "disableBgpRoutePropagation": bool,
+                                                "disablePeeringRoute": "str",
                                                 "provisioningState": "str",
                                                 "resourceGuid": "str",
                                                 "routes": [
@@ -9564,6 +9858,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                             "nextHopType": "str",
                                                             "addressPrefix": "str",
                                                             "hasBgpOverride": bool,
+                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                             "nextHopIpAddress": "str",
                                                             "provisioningState": "str",
                                                         },
@@ -9759,6 +10054,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                             "name": "str",
                                             "properties": {
                                                 "ddosSettings": {
+                                                    "ddosCustomPolicy": {"id": "str"},
                                                     "ddosProtectionPlan": {"id": "str"},
                                                     "protectionMode": "str",
                                                 },
@@ -10001,6 +10297,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                     "type": "str",
                                                                                                 }
                                                                                             ],
+                                                                                            "billingSku": "str",
                                                                                             "customDnsConfigs": [
                                                                                                 {
                                                                                                     "fqdn": "str",
@@ -10029,6 +10326,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -10051,6 +10351,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "approvalReference": {
+                                                                                                            "privateEndpointId": "str"
+                                                                                                        },
                                                                                                         "groupIds": [
                                                                                                             "str"
                                                                                                         ],
@@ -10112,6 +10415,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            }
+                                                                                                        },
+                                                                                                        "enableConnectionTracking": bool,
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -10183,6 +10492,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                         "type": "str",
                                                                                                                     }
                                                                                                                 ],
+                                                                                                                "billingSku": "str",
                                                                                                                 "customDnsConfigs": [
                                                                                                                     {
                                                                                                                         "fqdn": "str",
@@ -10211,6 +10521,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -10235,6 +10548,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -10297,6 +10613,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    }
+                                                                                                                },
+                                                                                                                "enableConnectionTracking": bool,
                                                                                                                 "gatewayLoadBalancer": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -10447,6 +10769,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                     "type": "str",
                                                                                 }
                                                                             ],
+                                                                            "billingSku": "str",
                                                                             "customDnsConfigs": [
                                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                                             ],
@@ -10470,6 +10793,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -10755,6 +11081,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                }
+                                                                                                            },
+                                                                                                            "enableConnectionTracking": bool,
                                                                                                             "gatewayLoadBalancer": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -10846,6 +11178,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "ddosSettings": {
+                                                                                                                        "ddosCustomPolicy": {
+                                                                                                                            "id": "str"
+                                                                                                                        }
+                                                                                                                    },
+                                                                                                                    "enableConnectionTracking": bool,
                                                                                                                     "gatewayLoadBalancer": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -10915,6 +11253,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -10958,6 +11299,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "disableBgpRoutePropagation": bool,
+                                                                        "disablePeeringRoute": "str",
                                                                         "provisioningState": "str",
                                                                         "resourceGuid": "str",
                                                                         "routes": [
@@ -10969,6 +11311,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                     "nextHopType": "str",
                                                                                     "addressPrefix": "str",
                                                                                     "hasBgpOverride": bool,
+                                                                                    "nextHop": {
+                                                                                        "nextHopIpAddresses": ["str"]
+                                                                                    },
                                                                                     "nextHopIpAddress": "str",
                                                                                     "provisioningState": "str",
                                                                                 },
@@ -11044,7 +11389,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         },
                                                     },
                                                 },
-                                                "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                "ipTags": [
+                                                    {"firstPartyServiceTagId": "str", "ipTagType": "str", "tag": "str"}
+                                                ],
                                                 "linkedPublicIPAddress": ...,
                                                 "migrationPhase": "str",
                                                 "natGateway": {
@@ -11054,6 +11401,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     "name": "str",
                                                     "properties": {
                                                         "idleTimeoutInMinutes": 0,
+                                                        "nat64": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
                                                         "publicIpAddressesV6": [{"id": "str"}],
@@ -11075,6 +11423,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                 "publicIPPrefix": {"id": "str"},
                                                 "resourceGuid": "str",
                                                 "servicePublicIPAddress": ...,
+                                                "upgradedToV2": bool,
                                             },
                                             "sku": {"name": "str", "tier": "str"},
                                             "tags": {"str": "str"},
@@ -11141,6 +11490,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -11154,7 +11504,13 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "idleTimeoutInMinutes": 0,
                                                                     "ipAddress": "str",
                                                                     "ipConfiguration": ...,
-                                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                    "ipTags": [
+                                                                        {
+                                                                            "firstPartyServiceTagId": "str",
+                                                                            "ipTagType": "str",
+                                                                            "tag": "str",
+                                                                        }
+                                                                    ],
                                                                     "linkedPublicIPAddress": ...,
                                                                     "migrationPhase": "str",
                                                                     "natGateway": {
@@ -11164,6 +11520,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -11185,6 +11542,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "publicIPPrefix": {"id": "str"},
                                                                     "resourceGuid": "str",
                                                                     "servicePublicIPAddress": ...,
+                                                                    "upgradedToV2": bool,
                                                                 },
                                                                 "sku": {"name": "str", "tier": "str"},
                                                                 "tags": {"str": "str"},
@@ -11353,6 +11711,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                     "type": "str",
                                                                                 }
                                                                             ],
+                                                                            "billingSku": "str",
                                                                             "customDnsConfigs": [
                                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                                             ],
@@ -11376,6 +11735,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -11396,6 +11758,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "approvalReference": {
+                                                                                            "privateEndpointId": "str"
+                                                                                        },
                                                                                         "groupIds": ["str"],
                                                                                         "privateLinkServiceConnectionState": {
                                                                                             "actionsRequired": "str",
@@ -11453,6 +11818,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
+                                                                                        "enableConnectionTracking": bool,
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -11483,6 +11854,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -11511,6 +11885,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                 },
                                                                                                 "ipTags": [
                                                                                                     {
+                                                                                                        "firstPartyServiceTagId": "str",
                                                                                                         "ipTagType": "str",
                                                                                                         "tag": "str",
                                                                                                     }
@@ -11524,6 +11899,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -11575,6 +11951,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                 },
                                                                                                 "resourceGuid": "str",
                                                                                                 "servicePublicIPAddress": ...,
+                                                                                                "upgradedToV2": bool,
                                                                                             },
                                                                                             "sku": {
                                                                                                 "name": "str",
@@ -11625,6 +12002,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "type": "str",
                                                                                                     }
                                                                                                 ],
+                                                                                                "billingSku": "str",
                                                                                                 "customDnsConfigs": [
                                                                                                     {
                                                                                                         "fqdn": "str",
@@ -11653,6 +12031,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -11677,6 +12058,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -11735,6 +12119,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    }
+                                                                                                },
+                                                                                                "enableConnectionTracking": bool,
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -11765,6 +12155,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            },
                                                                                                             "ddosProtectionPlan": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -11793,6 +12186,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         },
                                                                                                         "ipTags": [
                                                                                                             {
+                                                                                                                "firstPartyServiceTagId": "str",
                                                                                                                 "ipTagType": "str",
                                                                                                                 "tag": "str",
                                                                                                             }
@@ -11806,6 +12200,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                "nat64": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "publicIpAddresses": [
                                                                                                                     {
@@ -11859,6 +12254,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         },
                                                                                                         "resourceGuid": "str",
                                                                                                         "servicePublicIPAddress": ...,
+                                                                                                        "upgradedToV2": bool,
                                                                                                     },
                                                                                                     "sku": {
                                                                                                         "name": "str",
@@ -11983,6 +12379,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "billingSku": "str",
                                                             "customDnsConfigs": [
                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                             ],
@@ -12006,6 +12403,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "approvalReference": {
+                                                                            "privateEndpointId": "str"
+                                                                        },
                                                                         "groupIds": ["str"],
                                                                         "privateLinkServiceConnectionState": {
                                                                             "actionsRequired": "str",
@@ -12274,6 +12674,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
+                                                                                            "enableConnectionTracking": bool,
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -12304,6 +12710,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -12332,6 +12741,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                     },
                                                                                                     "ipTags": [
                                                                                                         {
+                                                                                                            "firstPartyServiceTagId": "str",
                                                                                                             "ipTagType": "str",
                                                                                                             "tag": "str",
                                                                                                         }
@@ -12345,6 +12755,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -12398,6 +12809,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                     },
                                                                                                     "resourceGuid": "str",
                                                                                                     "servicePublicIPAddress": ...,
+                                                                                                    "upgradedToV2": bool,
                                                                                                 },
                                                                                                 "sku": {
                                                                                                     "name": "str",
@@ -12464,6 +12876,12 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        }
+                                                                                                    },
+                                                                                                    "enableConnectionTracking": bool,
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -12494,6 +12912,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                },
                                                                                                                 "ddosProtectionPlan": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -12522,6 +12943,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             },
                                                                                                             "ipTags": [
                                                                                                                 {
+                                                                                                                    "firstPartyServiceTagId": "str",
                                                                                                                     "ipTagType": "str",
                                                                                                                     "tag": "str",
                                                                                                                 }
@@ -12535,6 +12957,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                                    "nat64": "str",
                                                                                                                     "provisioningState": "str",
                                                                                                                     "publicIpAddresses": [
                                                                                                                         {
@@ -12588,6 +13011,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                             },
                                                                                                             "resourceGuid": "str",
                                                                                                             "servicePublicIPAddress": ...,
+                                                                                                            "upgradedToV2": bool,
                                                                                                         },
                                                                                                         "sku": {
                                                                                                             "name": "str",
@@ -12638,6 +13062,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "approvalReference": {
+                                                                            "privateEndpointId": "str"
+                                                                        },
                                                                         "groupIds": ["str"],
                                                                         "privateLinkServiceConnectionState": {
                                                                             "actionsRequired": "str",
@@ -12681,6 +13108,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                     "name": "str",
                                                     "properties": {
                                                         "disableBgpRoutePropagation": bool,
+                                                        "disablePeeringRoute": "str",
                                                         "provisioningState": "str",
                                                         "resourceGuid": "str",
                                                         "routes": [
@@ -12692,6 +13120,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "nextHopType": "str",
                                                                     "addressPrefix": "str",
                                                                     "hasBgpOverride": bool,
+                                                                    "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                     "nextHopIpAddress": "str",
                                                                     "provisioningState": "str",
                                                                 },
@@ -12775,6 +13204,8 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
+                                                            "enableConnectionTracking": bool,
                                                             "gatewayLoadBalancer": {"id": "str"},
                                                             "inboundNatPools": [{"id": "str"}],
                                                             "inboundNatRules": [{"id": "str"}],
@@ -12792,6 +13223,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -13058,6 +13490,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                         "type": "str",
                                                                                                                     }
                                                                                                                 ],
+                                                                                                                "billingSku": "str",
                                                                                                                 "customDnsConfigs": [
                                                                                                                     {
                                                                                                                         "fqdn": "str",
@@ -13086,6 +13519,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -13110,6 +13546,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "approvalReference": {
+                                                                                                                                "privateEndpointId": "str"
+                                                                                                                            },
                                                                                                                             "groupIds": [
                                                                                                                                 "str"
                                                                                                                             ],
@@ -13210,6 +13649,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                                             "type": "str",
                                                                                                                                         }
                                                                                                                                     ],
+                                                                                                                                    "billingSku": "str",
                                                                                                                                     "customDnsConfigs": [
                                                                                                                                         {
                                                                                                                                             "fqdn": "str",
@@ -13238,6 +13678,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                                             "id": "str",
                                                                                                                                             "name": "str",
                                                                                                                                             "properties": {
+                                                                                                                                                "approvalReference": {
+                                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                                },
                                                                                                                                                 "groupIds": [
                                                                                                                                                     "str"
                                                                                                                                                 ],
@@ -13262,6 +13705,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                                             "id": "str",
                                                                                                                                             "name": "str",
                                                                                                                                             "properties": {
+                                                                                                                                                "approvalReference": {
+                                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                                },
                                                                                                                                                 "groupIds": [
                                                                                                                                                     "str"
                                                                                                                                                 ],
@@ -13433,6 +13879,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "type": "str",
                                                                                                     }
                                                                                                 ],
+                                                                                                "billingSku": "str",
                                                                                                 "customDnsConfigs": [
                                                                                                     {
                                                                                                         "fqdn": "str",
@@ -13461,6 +13908,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -13823,6 +14273,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -13868,6 +14321,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                            "disablePeeringRoute": "str",
                                                                                             "provisioningState": "str",
                                                                                             "resourceGuid": "str",
                                                                                             "routes": [
@@ -13879,6 +14333,11 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "nextHopType": "str",
                                                                                                         "addressPrefix": "str",
                                                                                                         "hasBgpOverride": bool,
+                                                                                                        "nextHop": {
+                                                                                                            "nextHopIpAddresses": [
+                                                                                                                "str"
+                                                                                                            ]
+                                                                                                        },
                                                                                                         "nextHopIpAddress": "str",
                                                                                                         "provisioningState": "str",
                                                                                                     },
@@ -13958,7 +14417,13 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                             },
                                                                         },
                                                                     },
-                                                                    "ipTags": [{"ipTagType": "str", "tag": "str"}],
+                                                                    "ipTags": [
+                                                                        {
+                                                                            "firstPartyServiceTagId": "str",
+                                                                            "ipTagType": "str",
+                                                                            "tag": "str",
+                                                                        }
+                                                                    ],
                                                                     "linkedPublicIPAddress": ...,
                                                                     "migrationPhase": "str",
                                                                     "natGateway": {
@@ -13968,6 +14433,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -13989,6 +14455,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                     "publicIPPrefix": {"id": "str"},
                                                                     "resourceGuid": "str",
                                                                     "servicePublicIPAddress": ...,
+                                                                    "upgradedToV2": bool,
                                                                 },
                                                                 "sku": {"name": "str", "tier": "str"},
                                                                 "tags": {"str": "str"},
@@ -14062,6 +14529,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -14079,6 +14549,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "ipConfiguration": ...,
                                                                                         "ipTags": [
                                                                                             {
+                                                                                                "firstPartyServiceTagId": "str",
                                                                                                 "ipTagType": "str",
                                                                                                 "tag": "str",
                                                                                             }
@@ -14092,6 +14563,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -14127,6 +14599,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "publicIPPrefix": {"id": "str"},
                                                                                         "resourceGuid": "str",
                                                                                         "servicePublicIPAddress": ...,
+                                                                                        "upgradedToV2": bool,
                                                                                     },
                                                                                     "sku": {
                                                                                         "name": "str",
@@ -14322,6 +14795,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "type": "str",
                                                                                                     }
                                                                                                 ],
+                                                                                                "billingSku": "str",
                                                                                                 "customDnsConfigs": [
                                                                                                     {
                                                                                                         "fqdn": "str",
@@ -14350,6 +14824,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -14374,6 +14851,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "approvalReference": {
+                                                                                                                "privateEndpointId": "str"
+                                                                                                            },
                                                                                                             "groupIds": [
                                                                                                                 "str"
                                                                                                             ],
@@ -14470,6 +14950,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                             "type": "str",
                                                                                                                         }
                                                                                                                     ],
+                                                                                                                    "billingSku": "str",
                                                                                                                     "customDnsConfigs": [
                                                                                                                         {
                                                                                                                             "fqdn": "str",
@@ -14498,6 +14979,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                             "id": "str",
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
+                                                                                                                                "approvalReference": {
+                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                },
                                                                                                                                 "groupIds": [
                                                                                                                                     "str"
                                                                                                                                 ],
@@ -14522,6 +15006,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                                                             "id": "str",
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
+                                                                                                                                "approvalReference": {
+                                                                                                                                    "privateEndpointId": "str"
+                                                                                                                                },
                                                                                                                                 "groupIds": [
                                                                                                                                     "str"
                                                                                                                                 ],
@@ -14679,6 +15166,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -14705,6 +15193,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -15049,6 +15540,9 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "approvalReference": {
+                                                                                                "privateEndpointId": "str"
+                                                                                            },
                                                                                             "groupIds": ["str"],
                                                                                             "privateLinkServiceConnectionState": {
                                                                                                 "actionsRequired": "str",
@@ -15092,6 +15586,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "disableBgpRoutePropagation": bool,
+                                                                            "disablePeeringRoute": "str",
                                                                             "provisioningState": "str",
                                                                             "resourceGuid": "str",
                                                                             "routes": [
@@ -15103,6 +15598,11 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                                                                                         "nextHopType": "str",
                                                                                         "addressPrefix": "str",
                                                                                         "hasBgpOverride": bool,
+                                                                                        "nextHop": {
+                                                                                            "nextHopIpAddresses": [
+                                                                                                "str"
+                                                                                            ]
+                                                                                        },
                                                                                         "nextHopIpAddress": "str",
                                                                                         "provisioningState": "str",
                                                                                     },
@@ -15242,6 +15742,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                             "type": "str",
                         }
                     ],
+                    "mode": "str",
                     "outboundRules": [
                         {
                             "etag": "str",
@@ -15286,7 +15787,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -15299,7 +15800,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -15311,7 +15812,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
         response = self.client.load_balancers.begin_delete(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -15322,7 +15823,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
     def test_load_balancers_list(self, resource_group):
         response = self.client.load_balancers.list(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -15332,7 +15833,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_load_balancers_list_all(self, resource_group):
         response = self.client.load_balancers.list_all(
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -15344,7 +15845,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
         response = self.client.load_balancers.migrate_to_ip_based(
             group_name="str",
             load_balancer_name="str",
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -15358,7 +15859,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
             load_balancer_name="str",
             backend_pool_name="str",
             parameters={"ipAddress": "str", "ipConfiguration": {"id": "str"}},
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -15370,7 +15871,7 @@ class TestNetworkManagementLoadBalancersOperations(AzureMgmtRecordedTestCase):
         response = self.client.load_balancers.begin_swap_public_ip_addresses(
             location="str",
             parameters={"frontendIPConfigurations": [{"id": "str", "properties": {"publicIPAddress": {"id": "str"}}}]},
-            api_version="2025-05-01",
+            api_version="2026-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

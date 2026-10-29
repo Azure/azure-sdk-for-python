@@ -8,6 +8,8 @@ from unittest.mock import patch, MagicMock
 
 import pytest
 
+from azure.core.rest import HttpRequest
+
 from azure.ai.agentserver.optimization._resolver import (
     resolve_candidate,
     _downloaded,
@@ -16,6 +18,8 @@ from azure.ai.agentserver.optimization._resolver import (
     _fetch_candidate_config,
     _is_skill_file,
     _build_client,
+    _api_get_json,
+    _agent_identity_headers,
 )
 from azure.ai.agentserver.optimization._models import OptimizationConfig
 
@@ -824,3 +828,103 @@ class TestBuildClient:
             client = _build_client("http://example.com")
             assert isinstance(client, PipelineClient)
             client.close()
+
+
+# ── Agent identity headers ───────────────────────────────────────────
+
+
+class TestAgentIdentityHeaders:
+    """Tests for _agent_identity_headers and its use in _api_get_json."""
+
+    def test_no_headers_when_env_unset(self, monkeypatch):
+        monkeypatch.delenv("FOUNDRY_AGENT_NAME", raising=False)
+        monkeypatch.delenv("FOUNDRY_AGENT_VERSION", raising=False)
+        assert _agent_identity_headers() == {}
+
+    def test_includes_name_and_version(self, monkeypatch):
+        monkeypatch.setenv("FOUNDRY_AGENT_NAME", "my-weather-agent")
+        monkeypatch.setenv("FOUNDRY_AGENT_VERSION", "3")
+        assert _agent_identity_headers() == {
+            "x-ms-optimization-agent-name": "my-weather-agent",
+            "x-ms-optimization-agent-version": "3",
+        }
+
+    def test_only_name_when_version_unset(self, monkeypatch):
+        monkeypatch.setenv("FOUNDRY_AGENT_NAME", "my-weather-agent")
+        monkeypatch.delenv("FOUNDRY_AGENT_VERSION", raising=False)
+        assert _agent_identity_headers() == {
+            "x-ms-optimization-agent-name": "my-weather-agent"
+        }
+
+    def test_only_version_when_name_unset(self, monkeypatch):
+        monkeypatch.delenv("FOUNDRY_AGENT_NAME", raising=False)
+        monkeypatch.setenv("FOUNDRY_AGENT_VERSION", "3")
+        assert _agent_identity_headers() == {"x-ms-optimization-agent-version": "3"}
+
+    def test_ignores_empty_values(self, monkeypatch):
+        monkeypatch.setenv("FOUNDRY_AGENT_NAME", "")
+        monkeypatch.setenv("FOUNDRY_AGENT_VERSION", "")
+        assert _agent_identity_headers() == {}
+
+    def test_api_get_json_sends_agent_headers(self, mock_client, monkeypatch):
+        monkeypatch.setenv("FOUNDRY_AGENT_NAME", "my-weather-agent")
+        monkeypatch.setenv("FOUNDRY_AGENT_VERSION", "3")
+
+        response = MagicMock()
+        response.json.return_value = {"ok": True}
+        response.raise_for_status.return_value = None
+        mock_client.send_request.return_value = response
+
+        result = _api_get_json(mock_client, "/candidates/cand-1/config")
+
+        assert result == {"ok": True}
+        sent_request = mock_client.send_request.call_args[0][0]
+        assert sent_request.headers["x-ms-optimization-agent-name"] == "my-weather-agent"
+        assert sent_request.headers["x-ms-optimization-agent-version"] == "3"
+
+    def test_api_get_json_no_agent_headers_when_env_unset(
+        self, mock_client, monkeypatch
+    ):
+        monkeypatch.delenv("FOUNDRY_AGENT_NAME", raising=False)
+        monkeypatch.delenv("FOUNDRY_AGENT_VERSION", raising=False)
+
+        response = MagicMock()
+        response.json.return_value = {"ok": True}
+        response.raise_for_status.return_value = None
+        mock_client.send_request.return_value = response
+
+        _api_get_json(mock_client, "/candidates/cand-1/config")
+
+        sent_request = mock_client.send_request.call_args[0][0]
+        assert "x-ms-optimization-agent-name" not in sent_request.headers
+        assert "x-ms-optimization-agent-version" not in sent_request.headers
+
+    def test_api_get_json_preserves_existing_headers(self, mock_client, monkeypatch):
+        """Agent headers are merged, not replacing pre-existing request headers."""
+        monkeypatch.setenv("FOUNDRY_AGENT_NAME", "my-weather-agent")
+        monkeypatch.setenv("FOUNDRY_AGENT_VERSION", "3")
+
+        response = MagicMock()
+        response.json.return_value = {"ok": True}
+        response.raise_for_status.return_value = None
+        mock_client.send_request.return_value = response
+
+        # Seed a pre-existing header on the constructed request to emulate a
+        # header set before _agent_identity_headers() is merged in.
+        real_http_request = HttpRequest
+
+        def make_request(*args, **kwargs):
+            request = real_http_request(*args, **kwargs)
+            request.headers["Authorization"] = "Bearer test-token"
+            return request
+
+        with patch(
+            "azure.ai.agentserver.optimization._resolver.HttpRequest",
+            side_effect=make_request,
+        ):
+            _api_get_json(mock_client, "/candidates/cand-1/config")
+
+        sent_request = mock_client.send_request.call_args[0][0]
+        assert sent_request.headers["Authorization"] == "Bearer test-token"
+        assert sent_request.headers["x-ms-optimization-agent-name"] == "my-weather-agent"
+        assert sent_request.headers["x-ms-optimization-agent-version"] == "3"

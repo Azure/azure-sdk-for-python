@@ -1,0 +1,14 @@
+{
+  "assetName": "smoke-data-import-db",
+  "dataType": "uri_folder",
+  "dataUri": "azureml://datastores/workspaceblobstore/paths/smoke-import/",
+  "isAnonymous": false,
+  "isArchived": false,
+  "properties": {},
+  "source": {
+    "connection": "azureml:smoke-sql-connection",
+    "query": "SELECT * FROM smoke_table WHERE region = 'westus'",
+    "sourceType": "database"
+  },
+  "tags": {}
+}

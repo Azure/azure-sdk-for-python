@@ -12,10 +12,12 @@ USAGE — capture baselines from production-proven ``main`` code:
 The baselines represent the known-correct (pre-migration) wire and are the source of truth. NEVER
 regenerate them from a migration branch — that would make the equivalence check circular and
 meaningless. Only regenerate from main, or from a commit whose wire is independently known-correct.
-"""
-import sys
 
+Builders are auto-discovered from every ``_builders*.py`` module (see ``_registry.all_builders``), so
+adding a new family module requires no edit here.
+"""
 import os
+import sys
 
 from azure.ai.ml._utils.utils import AZUREML_PRIVATE_FEATURES_ENV_VAR
 
@@ -23,36 +25,28 @@ from azure.ai.ml._utils.utils import AZUREML_PRIVATE_FEATURES_ENV_VAR
 # so ImportJob and other private-preview entities serialize identically at capture and at assert time.
 os.environ[AZUREML_PRIVATE_FEATURES_ENV_VAR] = "true"
 
-from _builders import (
-    AOAI_FINETUNING_BUILDERS,
-    COMMAND_JOB_BUILDERS,
-    FINETUNING_BUILDERS,
-    IMPORT_JOB_BUILDERS,
-    SCHEDULE_BUILDERS,
-    SPARK_JOB_BUILDERS,
-    SWEEP_JOB_BUILDERS,
-)
+from _registry import all_builders
 from _wire import save_expected_wire, serialize_wire
 
 
 def main():
     """Capture every builder's wire into expected_wire/<case_name>.json."""
-    all_builders = {}
-    all_builders.update(COMMAND_JOB_BUILDERS)
-    all_builders.update(SWEEP_JOB_BUILDERS)
-    all_builders.update(SPARK_JOB_BUILDERS)
-    all_builders.update(IMPORT_JOB_BUILDERS)
-    all_builders.update(SCHEDULE_BUILDERS)
-    all_builders.update(FINETUNING_BUILDERS)
-    all_builders.update(AOAI_FINETUNING_BUILDERS)
+    builders = all_builders()
+    failures = []
+    for name in sorted(builders):
+        try:
+            wire = serialize_wire(builders[name]()._to_rest_object())
+            save_expected_wire(name, wire)
+            print("wrote baseline:", name)
+        except Exception as exc:  # noqa: BLE001 - report all, fail at end
+            failures.append((name, type(exc).__name__ + ": " + str(exc)[:200]))
 
-    for name in sorted(all_builders):
-        entity = all_builders[name]()
-        wire = serialize_wire(entity._to_rest_object())
-        save_expected_wire(name, wire)
-        print("wrote baseline:", name)
-
-    print("done: {0} baseline(s)".format(len(all_builders)))
+    print("done: {0} baseline(s)".format(len(builders) - len(failures)))
+    if failures:
+        print("FAILURES ({0}):".format(len(failures)))
+        for name, msg in failures:
+            print("  FAIL", name, "->", msg)
+        return 1
     return 0
 
 

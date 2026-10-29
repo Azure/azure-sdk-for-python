@@ -21,7 +21,10 @@ USAGE:
 import os
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
-from testpreparer_async import ContentUnderstandingPreparer, ContentUnderstandingClientTestBaseAsync
+from testpreparer_async import (
+    ContentUnderstandingPreparer,
+    ContentUnderstandingClientTestBaseAsync,
+)
 from azure.ai.contentunderstanding.models import AnalysisInput
 
 
