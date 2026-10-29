@@ -19,7 +19,7 @@ from starlette.routing import Route
 
 from azure.ai.agentserver.a2a import A2AAgentServerHost
 from azure.ai.agentserver.a2a._version import VERSION
-from azure.ai.agentserver.core import get_request_context
+from azure.ai.agentserver.core import AgentServerHost, get_request_context
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 _RPC_PATH = "/a2a"
@@ -88,16 +88,19 @@ def _host(**kwargs) -> A2AAgentServerHost:
 
 def test_registers_canonical_and_foundry_compatibility_routes():
     host = _host()
+    base_host = AgentServerHost(configure_observability=None)
 
     paths = [getattr(route, "path", None) for route in host.routes]
+    base_paths = [getattr(route, "path", None) for route in base_host.routes]
 
-    assert paths == [
+    a2a_paths = [
         _RPC_PATH,
         _FOUNDRY_COMPAT_RPC_PATH,
         _CARD_PATH,
         _FOUNDRY_COMPAT_CARD_PATH,
-        "/readiness",
     ]
+    assert paths == a2a_paths + base_paths
+    assert "/readiness" in base_paths
     assert "/.well-known/agent-card.json" not in paths
     assert "/a2a/extendedAgentCard" not in paths
 

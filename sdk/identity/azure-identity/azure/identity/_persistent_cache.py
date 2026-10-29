@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     import msal_extensions
 
 _LOGGER = logging.getLogger(__name__)
+_DEFAULT_CACHE_NAME = "msal.cache"
 
 
 class TokenCachePersistenceOptions:
@@ -47,7 +48,9 @@ class TokenCachePersistenceOptions:
         always try to encrypt its data.
     """
 
-    def __init__(self, *, allow_unencrypted_storage: bool = False, name: str = "msal.cache", **kwargs: Any) -> None:
+    def __init__(
+        self, *, allow_unencrypted_storage: bool = False, name: str = _DEFAULT_CACHE_NAME, **kwargs: Any
+    ) -> None:
         # pylint:disable=unused-argument
         self.allow_unencrypted_storage = allow_unencrypted_storage
         self.name = name
@@ -92,7 +95,9 @@ def _get_persistence(
     if sys.platform.startswith("darwin"):
         # the cache uses this file's modified timestamp to decide whether to reload
         file_path = os.path.expanduser(os.path.join("~", ".IdentityService", cache_name))
-        return msal_extensions.KeychainPersistence(file_path, "Microsoft.Developer.IdentityService", account_name)
+        default_cache_name = _DEFAULT_CACHE_NAME + CACHE_NON_CAE_SUFFIX
+        keychain_account = account_name if cache_name == default_cache_name else cache_name
+        return msal_extensions.KeychainPersistence(file_path, "Microsoft.Developer.IdentityService", keychain_account)
 
     if sys.platform.startswith("linux"):
         # The cache uses this file's modified timestamp to decide whether to reload. Note this path is the same

@@ -3,10 +3,20 @@
 ## 1.0.0b59 (Unreleased)
 
 ### Features Added
+- Add support for experimental features flag
+  ([#49682](https://github.com/Azure/azure-sdk-for-python/pull/49682))
+- Increase the custom properties truncation limit for `gen_ai.input.messages` and
+  `gen_ai.output.messages` to 4MB to support GenAI multimodal (blob) content when the
+  `gen_ai_input_output_limit_increase` experimental feature is enabled; otherwise the
+  existing limits apply (256kb for GenAI attributes and 8kb for all other custom properties)
+  ([#49648](https://github.com/Azure/azure-sdk-for-python/pull/49648))
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fix HTTP dependency target being rendered as `host:None` when the span has
+  `server.address` but no `server.port` (e.g. default-port requests traced by azure-core)
+  ([#49344](https://github.com/Azure/azure-sdk-for-python/pull/49344))
 
 ### Other Changes
 

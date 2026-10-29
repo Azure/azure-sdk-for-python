@@ -1146,6 +1146,20 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.compute.bulkaction.models.BillingProfile(_Model):
+        max_price: Optional[float]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_price: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.compute.bulkaction.models.BootDiagnostics(_Model):
         enabled: Optional[bool]
         storage_uri: Optional[str]
@@ -1197,23 +1211,29 @@ namespace azure.mgmt.compute.bulkaction.models
 
 
     class azure.mgmt.compute.bulkaction.models.BulkCreateCustomOverride(_Model):
+        extended_location: Optional[ExtendedLocation]
         extensions: Optional[list[BulkactionVMExtension]]
         identity: Optional[VirtualMachineIdentity]
+        placement: Optional[Placement]
         plan: Optional[Plan]
         tags: Optional[dict[str, str]]
         virtual_machine_name: Optional[str]
         virtual_machine_profile: Optional[BulkactionVMProperties]
+        zone: Optional[str]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                extended_location: Optional[ExtendedLocation] = ..., 
                 extensions: Optional[list[BulkactionVMExtension]] = ..., 
                 identity: Optional[VirtualMachineIdentity] = ..., 
+                placement: Optional[Placement] = ..., 
                 plan: Optional[Plan] = ..., 
                 tags: Optional[dict[str, str]] = ..., 
                 virtual_machine_name: Optional[str] = ..., 
-                virtual_machine_profile: Optional[BulkactionVMProperties] = ...
+                virtual_machine_profile: Optional[BulkactionVMProperties] = ..., 
+                zone: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -1236,34 +1256,13 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.compute.bulkaction.models.BulkCreateCustomPriorityProfile(_Model):
-        eviction_policy: Optional[Union[str, EvictionPolicy]]
-        max_price_per_vm: Optional[float]
-        type: Optional[Union[str, PriorityType]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                eviction_policy: Optional[Union[str, EvictionPolicy]] = ..., 
-                max_price_per_vm: Optional[float] = ..., 
-                type: Optional[Union[str, PriorityType]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.compute.bulkaction.models.BulkCreateCustomProperties(_Model):
         capacity: int
         capacity_type: Optional[Union[str, CapacityType]]
         compute_profile: ComputeProfile
         created_time: Optional[datetime]
         execution_parameters: Optional[ExecutionParameters]
-        min_capacity: Optional[int]
         overrides_profile: Optional[BulkCreateCustomOverridesProfile]
-        partial_fulfillment_policy: Optional[PartialFulfillmentPolicy]
-        priority_profile: BulkCreateCustomPriorityProfile
         provisioning_state: Optional[Union[str, ProvisioningState]]
         resources: Optional[list[BulkCreateCustomResource]]
 
@@ -1275,10 +1274,7 @@ namespace azure.mgmt.compute.bulkaction.models
                 capacity_type: Optional[Union[str, CapacityType]] = ..., 
                 compute_profile: ComputeProfile, 
                 execution_parameters: Optional[ExecutionParameters] = ..., 
-                min_capacity: Optional[int] = ..., 
-                overrides_profile: Optional[BulkCreateCustomOverridesProfile] = ..., 
-                partial_fulfillment_policy: Optional[PartialFulfillmentPolicy] = ..., 
-                priority_profile: BulkCreateCustomPriorityProfile
+                overrides_profile: Optional[BulkCreateCustomOverridesProfile] = ...
             ) -> None: ...
 
         @overload
@@ -1323,9 +1319,6 @@ namespace azure.mgmt.compute.bulkaction.models
         compute_profile: ComputeProfile
         created_time: Optional[datetime]
         execution_parameters: Optional[ExecutionParameters]
-        min_capacity: Optional[int]
-        partial_fulfillment_policy: Optional[PartialFulfillmentPolicy]
-        priority_profile: PriorityProfile
         provisioning_state: Optional[Union[str, ProvisioningState]]
 
         @overload
@@ -1335,10 +1328,7 @@ namespace azure.mgmt.compute.bulkaction.models
                 capacity: int, 
                 capacity_type: Optional[Union[str, CapacityType]] = ..., 
                 compute_profile: ComputeProfile, 
-                execution_parameters: Optional[ExecutionParameters] = ..., 
-                min_capacity: Optional[int] = ..., 
-                partial_fulfillment_policy: Optional[PartialFulfillmentPolicy] = ..., 
-                priority_profile: PriorityProfile
+                execution_parameters: Optional[ExecutionParameters] = ...
             ) -> None: ...
 
         @overload
@@ -1364,13 +1354,16 @@ namespace azure.mgmt.compute.bulkaction.models
     class azure.mgmt.compute.bulkaction.models.BulkactionVMProperties(_Model):
         additional_capabilities: Optional[AdditionalCapabilities]
         application_profile: Optional[ApplicationProfile]
+        billing_profile: Optional[BillingProfile]
         capacity_reservation: Optional[CapacityReservationProfile]
         diagnostics_profile: Optional[DiagnosticsProfile]
+        eviction_policy: Optional[Union[str, EvictionPolicy]]
         extensions_time_budget: Optional[str]
         hardware_profile: Optional[HardwareProfile]
         license_type: Optional[str]
         network_profile: Optional[NetworkProfile]
         os_profile: Optional[OSProfile]
+        priority: Optional[Union[str, PriorityType]]
         scheduled_events_policy: Optional[ScheduledEventsPolicy]
         scheduled_events_profile: Optional[ScheduledEventsProfile]
         security_profile: Optional[SecurityProfile]
@@ -1384,13 +1377,16 @@ namespace azure.mgmt.compute.bulkaction.models
                 *, 
                 additional_capabilities: Optional[AdditionalCapabilities] = ..., 
                 application_profile: Optional[ApplicationProfile] = ..., 
+                billing_profile: Optional[BillingProfile] = ..., 
                 capacity_reservation: Optional[CapacityReservationProfile] = ..., 
                 diagnostics_profile: Optional[DiagnosticsProfile] = ..., 
+                eviction_policy: Optional[Union[str, EvictionPolicy]] = ..., 
                 extensions_time_budget: Optional[str] = ..., 
                 hardware_profile: Optional[HardwareProfile] = ..., 
                 license_type: Optional[str] = ..., 
                 network_profile: Optional[NetworkProfile] = ..., 
                 os_profile: Optional[OSProfile] = ..., 
+                priority: Optional[Union[str, PriorityType]] = ..., 
                 scheduled_events_policy: Optional[ScheduledEventsPolicy] = ..., 
                 scheduled_events_profile: Optional[ScheduledEventsProfile] = ..., 
                 security_profile: Optional[SecurityProfile] = ..., 
@@ -1979,6 +1975,27 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.compute.bulkaction.models.ExtendedLocation(_Model):
+        name: str
+        type: Union[str, ExtendedLocationType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str, 
+                type: Union[str, ExtendedLocationType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.compute.bulkaction.models.ExtendedLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CUSTOM_LOCATION = "CustomLocation"
+        EDGE_ZONE = "EdgeZone"
+
+
     class azure.mgmt.compute.bulkaction.models.ExtensionResource(Resource):
         id: str
         name: str
@@ -2225,9 +2242,11 @@ namespace azure.mgmt.compute.bulkaction.models
 
 
     class azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreate(ProxyResource):
+        extended_location: Optional[ExtendedLocation]
         id: str
         identity: Optional[ManagedServiceIdentity]
         name: str
+        placement: Optional[Placement]
         plan: Optional[Plan]
         properties: Optional[BulkCreateProperties]
         system_data: SystemData
@@ -2239,7 +2258,9 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(
                 self, 
                 *, 
+                extended_location: Optional[ExtendedLocation] = ..., 
                 identity: Optional[ManagedServiceIdentity] = ..., 
+                placement: Optional[Placement] = ..., 
                 plan: Optional[Plan] = ..., 
                 properties: Optional[BulkCreateProperties] = ..., 
                 tags: Optional[dict[str, str]] = ..., 
@@ -2251,9 +2272,11 @@ namespace azure.mgmt.compute.bulkaction.models
 
 
     class azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreateCustom(ProxyResource):
+        extended_location: Optional[ExtendedLocation]
         id: str
         identity: Optional[ManagedServiceIdentity]
         name: str
+        placement: Optional[Placement]
         plan: Optional[Plan]
         properties: Optional[BulkCreateCustomProperties]
         system_data: SystemData
@@ -2265,7 +2288,9 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(
                 self, 
                 *, 
+                extended_location: Optional[ExtendedLocation] = ..., 
                 identity: Optional[ManagedServiceIdentity] = ..., 
+                placement: Optional[Placement] = ..., 
                 plan: Optional[Plan] = ..., 
                 properties: Optional[BulkCreateCustomProperties] = ..., 
                 tags: Optional[dict[str, str]] = ..., 
@@ -2735,33 +2760,6 @@ namespace azure.mgmt.compute.bulkaction.models
         USER_SYSTEM = "user,system"
 
 
-    class azure.mgmt.compute.bulkaction.models.PartialFulfillmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DISABLED = "Disabled"
-        ENABLED = "Enabled"
-
-
-    class azure.mgmt.compute.bulkaction.models.PartialFulfillmentPolicy(_Model):
-        fulfilled_capacity: Optional[int]
-        mode: Optional[Union[str, PartialFulfillmentMode]]
-        reason: Optional[Union[str, PartialFulfillmentReason]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                mode: Optional[Union[str, PartialFulfillmentMode]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.PartialFulfillmentReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        INSUFFICIENT_CAPACITY = "InsufficientCapacity"
-        INSUFFICIENT_QUOTA = "InsufficientQuota"
-        NONE = "None"
-
-
     class azure.mgmt.compute.bulkaction.models.PatchSettings(_Model):
         assessment_mode: Optional[Union[str, WindowsPatchAssessmentMode]]
         automatic_by_platform_settings: Optional[WindowsVMGuestPatchAutomaticByPlatformSettings]
@@ -2776,6 +2774,24 @@ namespace azure.mgmt.compute.bulkaction.models
                 automatic_by_platform_settings: Optional[WindowsVMGuestPatchAutomaticByPlatformSettings] = ..., 
                 enable_hotpatching: Optional[bool] = ..., 
                 patch_mode: Optional[Union[str, WindowsVMGuestPatchMode]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.compute.bulkaction.models.Placement(_Model):
+        exclude_zones: Optional[list[str]]
+        include_zones: Optional[list[str]]
+        zone_placement_policy: Optional[Union[str, ZonePlacementPolicyType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                exclude_zones: Optional[list[str]] = ..., 
+                include_zones: Optional[list[str]] = ..., 
+                zone_placement_policy: Optional[Union[str, ZonePlacementPolicyType]] = ...
             ) -> None: ...
 
         @overload
@@ -2798,24 +2814,6 @@ namespace azure.mgmt.compute.bulkaction.models
                 promotion_code: Optional[str] = ..., 
                 publisher: str, 
                 version: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.PriorityProfile(_Model):
-        eviction_policy: Optional[Union[str, EvictionPolicy]]
-        max_price_per_vm: Optional[float]
-        type: Optional[Union[str, PriorityType]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                eviction_policy: Optional[Union[str, EvictionPolicy]] = ..., 
-                max_price_per_vm: Optional[float] = ..., 
-                type: Optional[Union[str, PriorityType]] = ...
             ) -> None: ...
 
         @overload
@@ -4256,6 +4254,11 @@ namespace azure.mgmt.compute.bulkaction.models
         MANUAL = "Manual"
 
 
+    class azure.mgmt.compute.bulkaction.models.ZonePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ANY = "Any"
+        AUTO = "Auto"
+
+
 namespace azure.mgmt.compute.bulkaction.operations
 
     class azure.mgmt.compute.bulkaction.operations.BulkCreateCustomOperations:
@@ -5254,6 +5257,11 @@ namespace azure.mgmt.compute.bulkaction.types
         galleryApplications: list[VMGalleryApplication]
 
 
+    class azure.mgmt.compute.bulkaction.types.BillingProfile(TypedDict, total=False):
+        key "maxPrice": float
+        maxPrice: float
+
+
     class azure.mgmt.compute.bulkaction.types.BootDiagnostics(TypedDict, total=False):
         key "enabled": bool
         key "storageUri": str
@@ -5284,16 +5292,22 @@ namespace azure.mgmt.compute.bulkaction.types
 
 
     class azure.mgmt.compute.bulkaction.types.BulkCreateCustomOverride(TypedDict, total=False):
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
         key "identity": ForwardRef('VirtualMachineIdentity', module='types')
+        key "placement": ForwardRef('Placement', module='types')
         key "plan": ForwardRef('Plan', module='types')
         key "virtualMachineName": str
         key "virtualMachineProfile": ForwardRef('BulkactionVMProperties', module='types')
+        key "zone": str
+        extendedLocation: ExtendedLocation
         extensions: list[BulkactionVMExtension]
         identity: VirtualMachineIdentity
+        placement: Placement
         plan: Plan
         tags: dict[str, str]
         virtualMachineName: str
         virtualMachineProfile: BulkactionVMProperties
+        zone: str
 
 
     class azure.mgmt.compute.bulkaction.types.BulkCreateCustomOverridesProfile(TypedDict, total=False):
@@ -5302,35 +5316,20 @@ namespace azure.mgmt.compute.bulkaction.types
         virtualMachineNamePrefix: str
 
 
-    class azure.mgmt.compute.bulkaction.types.BulkCreateCustomPriorityProfile(TypedDict, total=False):
-        key "evictionPolicy": Union[str, EvictionPolicy]
-        key "maxPricePerVM": float
-        key "type": Union[str, PriorityType]
-        evictionPolicy: Union[str, EvictionPolicy]
-        maxPricePerVM: float
-        type: Union[str, PriorityType]
-
-
     class azure.mgmt.compute.bulkaction.types.BulkCreateCustomProperties(TypedDict, total=False):
         key "capacity": Required[int]
         key "capacityType": Union[str, CapacityType]
         key "computeProfile": Required[ComputeProfile]
         key "createdTime": str
         key "executionParameters": ForwardRef('ExecutionParameters', module='types')
-        key "minCapacity": int
         key "overridesProfile": ForwardRef('BulkCreateCustomOverridesProfile', module='types')
-        key "partialFulfillmentPolicy": ForwardRef('PartialFulfillmentPolicy', module='types')
-        key "priorityProfile": Required[BulkCreateCustomPriorityProfile]
         key "provisioningState": Union[str, ProvisioningState]
         capacity: int
         capacityType: Union[str, CapacityType]
         computeProfile: ComputeProfile
         createdTime: str
         executionParameters: ExecutionParameters
-        minCapacity: int
         overridesProfile: BulkCreateCustomOverridesProfile
-        partialFulfillmentPolicy: PartialFulfillmentPolicy
-        priorityProfile: BulkCreateCustomPriorityProfile
         provisioningState: Union[str, ProvisioningState]
         resources: list[BulkCreateCustomResource]
 
@@ -5355,18 +5354,12 @@ namespace azure.mgmt.compute.bulkaction.types
         key "computeProfile": Required[ComputeProfile]
         key "createdTime": str
         key "executionParameters": ForwardRef('ExecutionParameters', module='types')
-        key "minCapacity": int
-        key "partialFulfillmentPolicy": ForwardRef('PartialFulfillmentPolicy', module='types')
-        key "priorityProfile": Required[PriorityProfile]
         key "provisioningState": Union[str, ProvisioningState]
         capacity: int
         capacityType: Union[str, CapacityType]
         computeProfile: ComputeProfile
         createdTime: str
         executionParameters: ExecutionParameters
-        minCapacity: int
-        partialFulfillmentPolicy: PartialFulfillmentPolicy
-        priorityProfile: PriorityProfile
         provisioningState: Union[str, ProvisioningState]
 
 
@@ -5380,13 +5373,16 @@ namespace azure.mgmt.compute.bulkaction.types
     class azure.mgmt.compute.bulkaction.types.BulkactionVMProperties(TypedDict, total=False):
         key "additionalCapabilities": ForwardRef('AdditionalCapabilities', module='types')
         key "applicationProfile": ForwardRef('ApplicationProfile', module='types')
+        key "billingProfile": ForwardRef('BillingProfile', module='types')
         key "capacityReservation": ForwardRef('CapacityReservationProfile', module='types')
         key "diagnosticsProfile": ForwardRef('DiagnosticsProfile', module='types')
+        key "evictionPolicy": Union[str, EvictionPolicy]
         key "extensionsTimeBudget": str
         key "hardwareProfile": ForwardRef('HardwareProfile', module='types')
         key "licenseType": str
         key "networkProfile": ForwardRef('NetworkProfile', module='types')
         key "osProfile": ForwardRef('OSProfile', module='types')
+        key "priority": Union[str, PriorityType]
         key "scheduledEventsPolicy": ForwardRef('ScheduledEventsPolicy', module='types')
         key "scheduledEventsProfile": ForwardRef('ScheduledEventsProfile', module='types')
         key "securityProfile": ForwardRef('SecurityProfile', module='types')
@@ -5394,13 +5390,16 @@ namespace azure.mgmt.compute.bulkaction.types
         key "userData": str
         additionalCapabilities: AdditionalCapabilities
         applicationProfile: ApplicationProfile
+        billingProfile: BillingProfile
         capacityReservation: CapacityReservationProfile
         diagnosticsProfile: DiagnosticsProfile
+        evictionPolicy: Union[str, EvictionPolicy]
         extensionsTimeBudget: str
         hardwareProfile: HardwareProfile
         licenseType: str
         networkProfile: NetworkProfile
         osProfile: OSProfile
+        priority: Union[str, PriorityType]
         scheduledEventsPolicy: ScheduledEventsPolicy
         scheduledEventsProfile: ScheduledEventsProfile
         securityProfile: SecurityProfile
@@ -5572,6 +5571,13 @@ namespace azure.mgmt.compute.bulkaction.types
         verifyVmAgentHealth: bool
 
 
+    class azure.mgmt.compute.bulkaction.types.ExtendedLocation(TypedDict, total=False):
+        key "name": Required[str]
+        key "type": Required[Union[str, ExtendedLocationType]]
+        name: str
+        type: Union[str, ExtendedLocationType]
+
+
     class azure.mgmt.compute.bulkaction.types.GetOperationStatusContent(TypedDict, total=False):
         key "operationIds": Required[list[str]]
         operationIds: list[str]
@@ -5652,16 +5658,20 @@ namespace azure.mgmt.compute.bulkaction.types
 
 
     class azure.mgmt.compute.bulkaction.types.LocationBasedBulkCreate(ProxyResource):
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
         key "id": str
         key "identity": ForwardRef('ManagedServiceIdentity', module='types')
         key "name": str
+        key "placement": ForwardRef('Placement', module='types')
         key "plan": ForwardRef('Plan', module='types')
         key "properties": ForwardRef('BulkCreateProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
+        extendedLocation: ExtendedLocation
         id: str
         identity: ManagedServiceIdentity
         name: str
+        placement: Placement
         plan: Plan
         properties: BulkCreateProperties
         systemData: SystemData
@@ -5671,16 +5681,20 @@ namespace azure.mgmt.compute.bulkaction.types
 
 
     class azure.mgmt.compute.bulkaction.types.LocationBasedBulkCreateCustom(ProxyResource):
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
         key "id": str
         key "identity": ForwardRef('ManagedServiceIdentity', module='types')
         key "name": str
+        key "placement": ForwardRef('Placement', module='types')
         key "plan": ForwardRef('Plan', module='types')
         key "properties": ForwardRef('BulkCreateCustomProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
+        extendedLocation: ExtendedLocation
         id: str
         identity: ManagedServiceIdentity
         name: str
+        placement: Placement
         plan: Plan
         properties: BulkCreateCustomProperties
         systemData: SystemData
@@ -5803,15 +5817,6 @@ namespace azure.mgmt.compute.bulkaction.types
         customData: str
 
 
-    class azure.mgmt.compute.bulkaction.types.PartialFulfillmentPolicy(TypedDict, total=False):
-        key "fulfilledCapacity": int
-        key "mode": Union[str, PartialFulfillmentMode]
-        key "reason": Union[str, PartialFulfillmentReason]
-        fulfilledCapacity: int
-        mode: Union[str, PartialFulfillmentMode]
-        reason: Union[str, PartialFulfillmentReason]
-
-
     class azure.mgmt.compute.bulkaction.types.PatchSettings(TypedDict, total=False):
         key "assessmentMode": Union[str, WindowsPatchAssessmentMode]
         key "automaticByPlatformSettings": ForwardRef('WindowsVMGuestPatchAutomaticByPlatformSettings', module='types')
@@ -5821,6 +5826,13 @@ namespace azure.mgmt.compute.bulkaction.types
         automaticByPlatformSettings: WindowsVMGuestPatchAutomaticByPlatformSettings
         enableHotpatching: bool
         patchMode: Union[str, WindowsVMGuestPatchMode]
+
+
+    class azure.mgmt.compute.bulkaction.types.Placement(TypedDict, total=False):
+        key "zonePlacementPolicy": Union[str, ZonePlacementPolicyType]
+        excludeZones: list[str]
+        includeZones: list[str]
+        zonePlacementPolicy: Union[str, ZonePlacementPolicyType]
 
 
     class azure.mgmt.compute.bulkaction.types.Plan(TypedDict, total=False):
@@ -5834,15 +5846,6 @@ namespace azure.mgmt.compute.bulkaction.types
         promotionCode: str
         publisher: str
         version: str
-
-
-    class azure.mgmt.compute.bulkaction.types.PriorityProfile(TypedDict, total=False):
-        key "evictionPolicy": Union[str, EvictionPolicy]
-        key "maxPricePerVM": float
-        key "type": Union[str, PriorityType]
-        evictionPolicy: Union[str, EvictionPolicy]
-        maxPricePerVM: float
-        type: Union[str, PriorityType]
 
 
     class azure.mgmt.compute.bulkaction.types.ProxyAgentSettings(TypedDict, total=False):

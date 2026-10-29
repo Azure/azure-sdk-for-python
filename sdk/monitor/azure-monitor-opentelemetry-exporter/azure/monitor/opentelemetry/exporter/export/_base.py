@@ -8,7 +8,8 @@ import time
 import sys
 from pathlib import Path
 from enum import Enum
-from typing import Dict, List, Optional, Any
+from threading import Lock
+from typing import Dict, FrozenSet, List, Optional, Any
 from urllib.parse import urlparse
 import psutil
 
@@ -31,6 +32,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _ALLOWED_REDIRECT_DOMAIN_SUFFIXES,
     _AZURE_MONITOR_DISTRO_VERSION_ARG,
     _APPLICATIONINSIGHTS_AUTHENTICATION_STRING,
+    _APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES,
     _INVALID_STATUS_CODES,
     _REACHED_INGESTION_STATUS_CODES,
     _REDIRECT_STATUS_CODES,
@@ -43,6 +45,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _RETRYABLE_STATUS_CODES,
     _THROTTLE_STATUS_CODES,
     _ONE_SETTINGS_FEATURE_LOCAL_STORAGE,
+    _SUPPORTED_EXPERIMENTAL_FEATURES,
     DropCode,
     _exception_categories,
 )
@@ -95,6 +98,9 @@ _AZURE_TEMPDIR_PREFIX = "Microsoft-AzureMonitor-"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
 
+_enabled_experimental_features: Optional[FrozenSet[str]] = None
+_experimental_features_lock = Lock()
+
 
 class ExportResult(Enum):
     SUCCESS = 0
@@ -120,6 +126,7 @@ class BaseExporter:
         :keyword int max_envelopes_per_second: Maximum number of telemetry envelopes sent per second. Acts as a client-side safety cap to prevent overloading shared ingestion infrastructure during telemetry bursts. Defaults to 10000. Set to 0 to disable rate limiting.
         :rtype: None
         """
+        _get_experimental_features()
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
@@ -256,6 +263,10 @@ class BaseExporter:
 
             # Collect customer sdkstats metrics
             collect_customer_sdkstats(self)
+
+    def _is_experimental_feature_enabled(self, feature_name: str) -> bool:
+        # Return whether the named experimental feature was explicitly enabled at startup.
+        return feature_name.strip().lower() in _get_experimental_features()
 
     # Maximum number of blobs to drain from storage per invocation.
     # Prevents a retry storm when many blobs have accumulated during
@@ -962,3 +973,25 @@ def _get_storage_directory(instrumentation_key: str) -> str:
         _TEMPDIR_PREFIX + instrumentation_key,
     )
     return storage_directory
+
+
+def _get_experimental_features() -> FrozenSet[str]:
+    """Read and freeze the enabled features on the first internal lookup or exporter construction."""
+    global _enabled_experimental_features  # pylint: disable=global-statement
+    if _enabled_experimental_features is None:
+        with _experimental_features_lock:
+            if _enabled_experimental_features is None:
+                requested_features = frozenset(
+                    name.strip().lower()
+                    for name in os.environ.get(_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES, "").split(",")
+                    if name.strip()
+                )
+                unknown_features = requested_features - _SUPPORTED_EXPERIMENTAL_FEATURES
+                if unknown_features:
+                    logger.warning(
+                        "Ignoring unknown experimental features in %s: %s",
+                        _APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES,
+                        ", ".join(sorted(unknown_features)),
+                    )
+                _enabled_experimental_features = requested_features & _SUPPORTED_EXPERIMENTAL_FEATURES
+    return _enabled_experimental_features

@@ -54,7 +54,7 @@ python -m pip install --pre `
 Install both packages from the same run to include the core tracing enrichment
 changes. The dev-build tooling rewrites A2A's core dependency to an alpha range;
 pinning both versions also prevents accidentally testing a different core build.
-Regular preview installations require core 2.3.0b1 or later, which contains the
+Regular preview installations require core 2.3.0b3 or later, which contains the
 Agent Card metadata-preservation fix.
 
 ### Prerequisites

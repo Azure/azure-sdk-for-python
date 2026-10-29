@@ -24,7 +24,7 @@ keywords = ["azure", "azure sdk", "agent", "agentserver", "a2a"]
 dependencies = [
     "a2a-sdk[http-server]>=1.2.3,<2.0.0",
     # The SDK dev-version rewriter matches canonical requirement ordering.
-    "azure-ai-agentserver-core<3.0.0,>=2.3.0b1",
+    "azure-ai-agentserver-core<3.0.0,>=2.3.0b3",
     "opentelemetry-api>=1.43.0,<2.0.0",
     "starlette>=0.45.0,<2.0.0",
 ]

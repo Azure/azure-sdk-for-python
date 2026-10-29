@@ -63,6 +63,7 @@ _ATTR_GEN_AI_OPERATION_NAME = "gen_ai.operation.name"
 _ATTR_GEN_AI_CONVERSATION_ID = "gen_ai.conversation.id"
 _ATTR_FOUNDRY_PROJECT_ID = "microsoft.foundry.project.id"
 _ATTR_SESSION_ID = "microsoft.session.id"
+_ATTR_MICROSOFT_FOUNDRY = "microsoft.foundry"
 
 # Baggage keys consumed by tracing.
 # Currently, the invocations package sets the session-id baggage key.
@@ -79,6 +80,7 @@ _A2A_INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer.A2A"
 _SERVICE_NAME_VALUE = "azure.ai.agentserver"
 _GEN_AI_SYSTEM_VALUE = "azure.ai.agentserver"
 _GEN_AI_PROVIDER_NAME_VALUE = "AzureAI Hosted Agents"
+_MICROSOFT_FOUNDRY_VALUE = "True"
 
 logger = logging.getLogger("azure.ai.agentserver")
 
@@ -813,6 +815,7 @@ class _FoundryEnrichmentSpanProcessor:
         self.agent_tenant_id = agent_tenant_id
 
     def on_start(self, span: Any, parent_context: Any = None) -> None:
+        span.set_attribute(_ATTR_MICROSOFT_FOUNDRY, _MICROSOFT_FOUNDRY_VALUE)
         if self.project_id:
             span.set_attribute(_ATTR_FOUNDRY_PROJECT_ID, self.project_id)
 
@@ -830,8 +833,9 @@ class _FoundryEnrichmentSpanProcessor:
             span.set_attribute(_ATTR_INVOCATION_ID, invocation_id)
 
     def _on_ending(self, span: Any) -> None:
-        # Set agent identity attributes at span end so they cannot be
-        # overwritten by underlying frameworks (e.g. LangChain, Semantic Kernel).
+        # Set the microsoft.foundry marker and agent identity attributes at span
+        # end so they cannot be overwritten by underlying frameworks (e.g.
+        # LangChain, Semantic Kernel).
         #
         # Workaround: opentelemetry-sdk sets _end_time before calling
         # _on_ending, which causes set_attribute() to silently no-op despite the
@@ -848,6 +852,7 @@ class _FoundryEnrichmentSpanProcessor:
             return
         try:
             target = getattr(attrs, "_dict", attrs)
+            target[_ATTR_MICROSOFT_FOUNDRY] = _MICROSOFT_FOUNDRY_VALUE
             scope = getattr(span, "instrumentation_scope", None)
             preserve_agent_card_metadata = getattr(scope, "name", "") == _A2A_INSTRUMENTATION_SCOPE
             if self.agent_name:
@@ -876,7 +881,7 @@ class _FoundryEnrichmentSpanProcessor:
 
 
 class _BaggageLogRecordProcessor:
-    """OTel log record processor that copies W3C Baggage entries into log attributes.
+    """Enrich OTel log records with Foundry identity and W3C Baggage.
 
     Per container-image-spec §6.1, all baggage key-value pairs from the
     current span context should appear as attributes on every log record
@@ -904,6 +909,8 @@ class _BaggageLogRecordProcessor:
             if not hasattr(log_data, "log_record") or not log_data.log_record:
                 return
 
+            if log_data.log_record.attributes is None:
+                log_data.log_record.attributes = {}
             attrs = log_data.log_record.attributes  # type: ignore[assignment]
 
             ctx = _otel_context.get_current()
@@ -912,13 +919,18 @@ class _BaggageLogRecordProcessor:
                 for key, value in entries.items():
                     attrs[key] = value  # type: ignore[index]
 
+            attrs[_ATTR_MICROSOFT_FOUNDRY] = _MICROSOFT_FOUNDRY_VALUE
             if self.agent_name and _ATTR_GEN_AI_AGENT_NAME not in attrs:
                 attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
             if self.agent_version and _ATTR_GEN_AI_AGENT_VERSION not in attrs:
                 attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
 
             bag_session = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
-            resolved_session = bag_session or self.session_id
+            resolved_session = (
+                bag_session
+                or _config.resolve_session_id()
+                or self.session_id
+            )
             if resolved_session and _ATTR_SESSION_ID not in attrs:
                 attrs[_ATTR_SESSION_ID] = resolved_session
         except Exception:  # pylint: disable=broad-except

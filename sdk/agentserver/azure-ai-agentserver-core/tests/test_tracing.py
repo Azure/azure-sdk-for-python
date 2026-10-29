@@ -4,6 +4,7 @@
 """Tests for tracing configuration — not invocation spans (those live in the invocations package)."""
 
 import asyncio
+import logging
 import os
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
@@ -13,6 +14,9 @@ from unittest import mock
 
 import pytest
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
+from opentelemetry._logs import LogRecord
+from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+from opentelemetry.sdk._logs.export import InMemoryLogRecordExporter, SimpleLogRecordProcessor
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, SpanExporter, SpanExportResult
 from opentelemetry.sdk.resources import Resource
@@ -622,6 +626,25 @@ class TestFoundryEnrichmentSpanProcessor:
         assert attrs["gen_ai.agent.id"] == "my-agent:1.0"
         assert attrs["microsoft.foundry.project.id"] == "proj-123"
 
+    def test_microsoft_foundry_on_parent_and_child_spans(self) -> None:
+        """All spans get microsoft.foundry=True, and gen_ai.provider.name is left untouched."""
+        provider, collector = self._create_provider(_FoundryEnrichmentSpanProcessor())
+        tracer = provider.get_tracer("framework")
+        try:
+            with tracer.start_as_current_span("parent", attributes={"gen_ai.provider.name": "other-provider"}) as parent:
+                assert parent.attributes["microsoft.foundry"] == "True"
+                assert parent.attributes["gen_ai.provider.name"] == "other-provider"
+                with tracer.start_as_current_span("child") as child:
+                    assert child.attributes["microsoft.foundry"] == "True"
+                    child.set_attribute("microsoft.foundry", "framework-value")
+                parent.set_attribute("microsoft.foundry", "framework-value")
+
+            assert len(collector.spans) == 2
+            for span in collector.spans:
+                assert span.attributes["microsoft.foundry"] == "True"
+        finally:
+            provider.shutdown()
+
     def test_agent_attrs_survive_framework_overwrite(self) -> None:
         """A framework setting agent attrs mid-span must not win."""
         proc = _FoundryEnrichmentSpanProcessor(
@@ -653,11 +676,13 @@ class TestFoundryEnrichmentSpanProcessor:
         with tracer.start_as_current_span("SendMessage") as span:
             span.set_attribute("gen_ai.agent.name", "Agent Card Name")
             span.set_attribute("gen_ai.agent.version", "1.2.3")
+            span.set_attribute("microsoft.foundry", "framework-value")
 
         attrs = dict(collector.spans[0].attributes)
         assert attrs["gen_ai.agent.name"] == "Agent Card Name"
         assert attrs["gen_ai.agent.version"] == "1.2.3"
         assert attrs["gen_ai.agent.id"] == "foundry-deployment:7"
+        assert attrs["microsoft.foundry"] == "True"
 
     def test_blueprint_id_uses_correct_attribute_key(self) -> None:
         """agent_blueprint_id must be emitted under microsoft.a365.agent.blueprint.id."""
@@ -906,6 +931,47 @@ class _FakeLogData:
 
 
 class TestBaggageLogRecordProcessor:
+    @pytest.mark.parametrize("attributes", [None, {}, {"microsoft.foundry": "other-value"}])
+    @pytest.mark.parametrize("baggage_provider", [None, "baggage-value"])
+    def test_microsoft_foundry_on_all_logs(self, attributes, baggage_provider) -> None:
+        proc = _BaggageLogRecordProcessor()
+        log_data = _FakeLogData(None if attributes is None else attributes.copy())
+        ctx = _otel_context.Context()
+        if baggage_provider:
+            ctx = _otel_baggage.set_baggage("microsoft.foundry", baggage_provider, context=ctx)
+        token = _otel_context.attach(ctx)
+        try:
+            proc.on_emit(log_data)
+        finally:
+            _otel_context.detach(token)
+
+        assert log_data.log_record.attributes["microsoft.foundry"] == "True"
+
+    @pytest.mark.parametrize("attributes", [None, {}, {"microsoft.foundry": "other-value"}])
+    def test_microsoft_foundry_on_exported_otel_and_python_logs(self, attributes) -> None:
+        collector = InMemoryLogRecordExporter()
+        provider = LoggerProvider()
+        provider.add_log_record_processor(_BaggageLogRecordProcessor())
+        provider.add_log_record_processor(SimpleLogRecordProcessor(collector))
+        handler = LoggingHandler(logger_provider=provider)
+        python_logger = logging.Logger("agentserver.test")
+        python_logger.addHandler(handler)
+        ctx = _otel_baggage.set_baggage("microsoft.foundry", "baggage-value")
+        token = _otel_context.attach(ctx)
+        try:
+            provider.get_logger("agentserver.test").emit(LogRecord(body="otel log", attributes=attributes))
+            python_logger.warning("python log", extra=attributes)
+
+            records = collector.get_finished_logs()
+            assert {record.log_record.body for record in records} == {"otel log", "python log"}
+            for record in records:
+                assert record.log_record.attributes["microsoft.foundry"] == "True"
+        finally:
+            _otel_context.detach(token)
+            python_logger.removeHandler(handler)
+            handler.close()
+            provider.shutdown()
+
     def test_adds_agent_and_fallback_session_attributes(self) -> None:
         proc = _BaggageLogRecordProcessor(
             agent_name="agent-a",
@@ -941,6 +1007,18 @@ class TestBaggageLogRecordProcessor:
 
         attrs = log_data.log_record.attributes
         assert attrs["microsoft.session.id"] == "session-from-baggage"
+
+    def test_refreshes_fallback_session_id_from_environment(self) -> None:
+        proc = _BaggageLogRecordProcessor(session_id="captured-session")
+        log_data = _FakeLogData({})
+
+        with mock.patch.dict(
+            os.environ,
+            {"FOUNDRY_AGENT_SESSION_ID": "restored-session"},
+        ):
+            proc.on_emit(log_data)
+
+        assert log_data.log_record.attributes["microsoft.session.id"] == "restored-session"
 
     def test_does_not_overwrite_existing_log_attributes(self) -> None:
         proc = _BaggageLogRecordProcessor(

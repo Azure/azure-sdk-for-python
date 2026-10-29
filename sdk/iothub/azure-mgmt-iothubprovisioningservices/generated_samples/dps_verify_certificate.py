@@ -41,6 +41,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-08-31/DPSVerifyCertificate.json
+# x-ms-original-file: 2026-11-01/DPSVerifyCertificate.json
 if __name__ == "__main__":
     main()
