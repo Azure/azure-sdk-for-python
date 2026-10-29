@@ -257,13 +257,10 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         RunApiStubGen: false
-<<<<<<< HEAD
         InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
         MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
         MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
-=======
         SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
->>>>>>> main
 
   - job: 'Analyze'
     condition: and(succeeded(), ne(variables['Skip.Analyze'], 'true'))

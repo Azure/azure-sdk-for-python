@@ -74,10 +74,29 @@ def test_rust_support_is_disabled_by_default_and_forwarded():
     for job in jobs["jobs"]:
         if job.get("job") not in ("Build_Linux", "Build_Windows", "Build_MacOS"):
             continue
-        assert job[RUST_GATE]["timeoutInMinutes"] == 240
-        assert job["${{ else }}"]["timeoutInMinutes"] == 90
+        timeout_gate = "${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}"
+        assert job[timeout_gate]["timeoutInMinutes"] == 240
+        assert job["${{ else }}"]["timeoutInMinutes"] == "${{ parameters.BuildTimeoutInMinutes }}"
         forwarded = job["steps"][0]["parameters"]
         assert all(forwarded[name] == "${{ parameters." + name + " }}" for name in RUST_PARAMETERS)
+
+
+def test_sbom_timeout_is_preserved_with_rust_documentation_configuration():
+    jobs = load_template("jobs/ci.yml")
+    build = load_template("steps/build-extended-artifacts.yml")
+    for template in (jobs, build):
+        timeout = next(
+            parameter for parameter in template["parameters"]
+            if parameter["name"] == "SbomGenerationTimeoutInMinutes"
+        )
+        assert timeout == {"name": "SbomGenerationTimeoutInMinutes", "type": "number", "default": 30}
+
+    for job in jobs["jobs"]:
+        if job.get("job") not in ("Build_Extended", "Build_Documentation"):
+            continue
+        assert job["steps"][-1]["parameters"]["SbomGenerationTimeoutInMinutes"] == (
+            "${{ parameters.SbomGenerationTimeoutInMinutes }}"
+        )
 
 
 def test_rust_credentials_and_target_setup_are_opt_in():

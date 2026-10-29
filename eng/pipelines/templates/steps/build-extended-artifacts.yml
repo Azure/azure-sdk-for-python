@@ -20,7 +20,6 @@ parameters:
   - name: RunApiStubGen
     type: boolean
     default: true
-<<<<<<< HEAD
   - name: InstallMsRustToolchain
     type: boolean
     default: false
@@ -30,11 +29,9 @@ parameters:
   - name: MsRustToolchainFeed
     type: string
     default: ''
-=======
   - name: SbomGenerationTimeoutInMinutes
     type: number
     default: 30
->>>>>>> main
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
