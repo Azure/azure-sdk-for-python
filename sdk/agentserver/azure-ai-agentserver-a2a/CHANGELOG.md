@@ -44,6 +44,12 @@
 
 ### Bugs Fixed
 
+- Bound encoded listing metadata to the storage tag limit without truncating
+  Tasks; oversized summaries use the full-snapshot listing path.
+- Bound storage item keys for long Task IDs using owner-scoped hashes while
+  preserving the complete original Task identifier.
+- Resolve header and query protocol selectors consistently for native dispatch
+  and tracing. Reject conflicting selectors and unsupported minor versions.
 - Select native Task-list pages from lightweight metadata before reading full
   snapshots, avoiding history/artifact downloads for every retained Task.
 - Preserve explicit request conversation IDs on both A2A request spans when

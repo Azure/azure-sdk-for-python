@@ -12,6 +12,7 @@ from collections.abc import Awaitable, Callable
 from typing import Any, Optional
 
 from a2a.types import AgentCard
+from a2a.utils.errors import A2AError
 from opentelemetry import baggage, context, trace
 from opentelemetry.trace import SpanKind, StatusCode
 from starlette.requests import Request
@@ -21,6 +22,7 @@ from starlette.types import Message, Receive, Scope, Send
 from azure.ai.agentserver.core import AgentConfig, detach_context, end_span, schedule_flush_spans
 
 from ._version import VERSION
+from ._protocol import resolve_protocol_version
 
 _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer.A2A"
 _HOST_INSTRUMENTATION_SCOPE = "azure.ai.agentserver.a2a"
@@ -234,8 +236,11 @@ async def _request_attributes(request: Request) -> Optional[dict[str, Any]]:
     message = message if isinstance(message, dict) else {}
     attributes: dict[str, Any] = {
         "a2a.method.name": method,
-        "a2a.protocol.version": request.headers.get("A2A-Version") or request.query_params.get("a2a-version") or "1.0",
     }
+    try:
+        attributes["a2a.protocol.version"] = resolve_protocol_version(request)
+    except A2AError:
+        pass  # The native dispatcher returns the selection error; no version was processed.
     for name, value in (
         ("a2a.message.id", message.get("messageId")),
         ("a2a.tenant", params.get("tenant")),

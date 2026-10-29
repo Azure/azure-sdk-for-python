@@ -45,6 +45,7 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
 
 from ._tracing import trace_jsonrpc_endpoint
 from ._foundry_task_store import FoundryTaskStore
+from ._protocol import ProtocolContextBuilder
 from ._version import VERSION as _A2A_VERSION
 
 _A2A_RPC_PATH = "/a2a"
@@ -167,7 +168,7 @@ def _get_a2a_routes(
     jsonrpc_routes = create_jsonrpc_routes(
         request_handler=request_handler,
         rpc_url=_A2A_RPC_PATH,
-        context_builder=context_builder,
+        context_builder=ProtocolContextBuilder(context_builder),
         enable_v0_3_compat=False,
     )
     jsonrpc_route = jsonrpc_routes[0]

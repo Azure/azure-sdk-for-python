@@ -29,6 +29,8 @@ from azure.ai.agentserver.core.storage import (
 )
 
 logger = logging.getLogger(__name__)
+_MAX_TAG_VALUE_LENGTH = 256
+_MAX_ITEM_KEY_LENGTH = 256
 
 
 @experimental
@@ -91,7 +93,10 @@ class FoundryTaskStore(TaskStore):
         if not task_id:
             raise ValueError("task_id must be a non-empty string")
         encoded = base64.urlsafe_b64encode(task_id.encode("utf-8")).decode("ascii").rstrip("=")
-        return f"{owner}:{encoded}"
+        key = f"{owner}:{encoded}"
+        if len(key) > _MAX_ITEM_KEY_LENGTH:
+            return f"{owner}:sha256:{hashlib.sha256(task_id.encode('utf-8')).hexdigest()}"
+        return key
 
     async def _store(self, *, create: bool = False) -> FoundryStateStore:
         async with self._lock:
@@ -160,15 +165,16 @@ class FoundryTaskStore(TaskStore):
             summary.status.state = task.status.state
             if task.status.HasField("timestamp"):
                 summary.status.timestamp.CopyFrom(task.status.timestamp)
+        tags = {"a2a_owner": owner}
+        encoded_summary = base64.b64encode(summary.SerializeToString()).decode("ascii")
+        if len(encoded_summary) <= _MAX_TAG_VALUE_LENGTH:
+            tags["a2a_list"] = encoded_summary
         store = await self._store(create=True)
         await self._verify_isolation(store)
         await store.set_item(
             key,
             value,
-            tags={
-                "a2a_owner": owner,
-                "a2a_list": base64.b64encode(summary.SerializeToString()).decode("ascii"),
-            },
+            tags=tags,
         )
 
     async def get(self, task_id: str, context: ServerCallContext) -> Task | None:
