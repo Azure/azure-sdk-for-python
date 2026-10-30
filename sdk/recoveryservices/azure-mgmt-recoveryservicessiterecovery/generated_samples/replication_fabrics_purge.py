@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-08-01/ReplicationFabrics_Purge.json
+# x-ms-original-file: 2026-11-01/ReplicationFabrics_Purge.json
 if __name__ == "__main__":
     main()
