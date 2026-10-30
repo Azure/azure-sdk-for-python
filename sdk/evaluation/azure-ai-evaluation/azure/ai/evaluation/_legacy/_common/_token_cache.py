@@ -8,10 +8,10 @@ Developer credentials such as ``AzureCliCredential`` start a process for every t
 requested a token for each model call were slow and, when concurrent, could fail. A token is kept per credential and
 scope until shortly before it expires, as azure-core's bearer token policy does. Credentials are keyed by identity
 through a weak reference and never kept alive; a credential that cannot be weakly referenced, or a token without a
-numeric expiry, is not cached.
+numeric expiry, is not cached. A token that a service rejected is dropped, and a token whose acquisition began before
+that rejection is not stored, so a rejected token never re-enters the cache through a slower request.
 """
 
-import hashlib
 import inspect
 import math
 import threading
@@ -56,7 +56,8 @@ def describe_credential_failure(error: BaseException) -> Optional[Dict[str, Any]
 
 
 class _CredentialTokens:
-    """One credential's cached token for one scope, the lock for its token requests and its latest failed request."""
+    """One credential's cached token for one scope, the lock for its token requests, its latest failed request and
+    the count of rejections that invalidates acquisitions begun before them."""
 
     def __init__(self, reference: Any) -> None:
         self.reference = reference
@@ -64,20 +65,18 @@ class _CredentialTokens:
         self.lock = threading.Lock()
         self.attempts = 0
         self.failure: Optional[Dict[str, Any]] = None
-        # The digest of the latest token a service rejected, so a request that was still awaiting that same token
-        # cannot store it again.
-        self.rejected: Optional[str] = None
-
-
-def _digest(token: str) -> str:
-    return hashlib.sha256(token.encode("utf-8")).hexdigest()
+        # Incremented when a service rejects a token. An acquisition that began before the latest rejection may
+        # return the rejected token, so a token is stored only under the generation its acquisition began with.
+        self.generation = 0
 
 
 class CredentialTokenCache:
     """Share each caller credential's token for a scope across requests until shortly before it expires.
 
     Concurrent requests that share a synchronous credential wait for one token request. A caller can also ask that
-    requests which waited on a failed token request share its failure instead of each requesting a token again.
+    requests which waited on a failed token request share its failure instead of each requesting a token again. A
+    token a service rejected is discarded; the credential's next token is cached again, even when it is the same
+    token, while an acquisition that began before the rejection is never stored.
     """
 
     def __init__(self) -> None:
@@ -113,18 +112,30 @@ class CredentialTokenCache:
             token = entry.token if entry is not None else None
         return token if _is_fresh(token) else None
 
-    def store(self, credential: Any, scope: str, token: Any) -> None:
+    def generation(self, credential: Any, scope: str) -> int:
+        """Return the rejection generation to pass to ``store`` for a token acquisition that begins now."""
+        entry = self._entry(credential, scope)
+        with self._guard:
+            return entry.generation if entry is not None else 0
+
+    def store(self, credential: Any, scope: str, token: Any, generation: Optional[int] = None) -> None:
+        """Keep a fresh token for reuse.
+
+        ``generation`` is what ``generation`` returned when the acquisition began. A token acquired before a later
+        rejection is not stored, because it may be the rejected token; without a generation the token is stored.
+        """
         entry = self._entry(credential, scope, create=True) if _is_fresh(token) else None
         if entry is not None:
             with self._guard:
-                if entry.rejected != _digest(token.token):
+                if generation is None or generation == entry.generation:
                     entry.token = token
 
     def discard(self, credential: Any, scope: str, token: str) -> None:
+        """Stop reusing a token a service rejected, and invalidate acquisitions that began before the rejection."""
         entry = self._entry(credential, scope, create=True)
         if entry is not None:
             with self._guard:
-                entry.rejected = _digest(token)
+                entry.generation += 1
                 if entry.token is not None and entry.token.token == token:
                     entry.token = None
 
@@ -171,6 +182,8 @@ class CredentialTokenCache:
                     failure = entry.failure if entry.attempts != queued_after else None
                 if failure is not None:
                     raise failure_type(**failure)
+            with self._guard:
+                generation = entry.generation
             try:
                 token = credential.get_token(scope)
             except Exception as error:
@@ -182,7 +195,7 @@ class CredentialTokenCache:
                 entry.attempts += 1
                 entry.failure = None
             if not inspect.isawaitable(token):
-                self.store(credential, scope, token)
+                self.store(credential, scope, token, generation)
             return token
         finally:
             entry.lock.release()

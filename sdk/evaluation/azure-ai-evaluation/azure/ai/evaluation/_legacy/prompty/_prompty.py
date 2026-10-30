@@ -455,7 +455,8 @@ class _ReusedTokenProvider:
     Concurrent requests that share a synchronous credential wait for one token request. The request that made a
     failed token request raises the credential's error. When that failure was an authentication failure, requests
     that waited on it raise a ``ClientAuthenticationError`` with the same message instead of each requesting a token
-    again; after any other failure, each waiting request makes its own attempt.
+    again; after any other failure, each waiting request makes its own attempt. A token the service rejected is
+    discarded, and an acquisition that began before the rejection is not stored.
     """
 
     def __init__(self, credential: Union[TokenCredential, AsyncTokenCredential], scope: str) -> None:
@@ -466,6 +467,7 @@ class _ReusedTokenProvider:
     async def __call__(self) -> str:
         token = TOKENS.cached(self._credential, self._scope)
         if token is None:
+            generation = TOKENS.generation(self._credential, self._scope)
             token = TOKENS.fetch(
                 self._credential,
                 self._scope,
@@ -474,7 +476,7 @@ class _ReusedTokenProvider:
             )
             if isinstance(token, Awaitable):
                 token = await token
-                TOKENS.store(self._credential, self._scope, token)
+                TOKENS.store(self._credential, self._scope, token, generation)
         self._token = token.token
         return self._token
 

@@ -739,9 +739,12 @@ class DecisionModelRunner:
         credential = self._credential
         token = _TOKENS.cached(credential, _DECISION_TOKEN_SCOPE)
         if token is None:
+            # An acquisition that begins before a service rejects a token may return that token; the generation it
+            # began under lets the cache refuse it.
+            generation = _TOKENS.generation(credential, _DECISION_TOKEN_SCOPE)
             if inspect.iscoroutinefunction(credential.get_token):
                 token = await credential.get_token(_DECISION_TOKEN_SCOPE)
-                _TOKENS.store(credential, _DECISION_TOKEN_SCOPE, token)
+                _TOKENS.store(credential, _DECISION_TOKEN_SCOPE, token, generation)
             else:
                 abandoned = threading.Event()
                 try:
@@ -759,7 +762,7 @@ class DecisionModelRunner:
                     return None
                 if inspect.isawaitable(token):
                     token = await token
-                    _TOKENS.store(credential, _DECISION_TOKEN_SCOPE, token)
+                    _TOKENS.store(credential, _DECISION_TOKEN_SCOPE, token, generation)
         return token.token
 
     async def _post(self, content: bytes, *, deadline: float, execution: DecisionExecution) -> Any:

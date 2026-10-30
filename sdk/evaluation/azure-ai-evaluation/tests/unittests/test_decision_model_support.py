@@ -645,6 +645,57 @@ class TestDecisionTokenReuse:
         assert credential.get_token.call_count == 2
         assert self.authorizations(client) == ["Bearer rejected", "Bearer renewed", "Bearer renewed"]
 
+    def test_a_token_the_credential_reissues_after_a_rejection_is_cached_again(self, client):
+        client.response = FakeResponse(status_code=401, body=b"{}")
+        credential = Mock(get_token=Mock(return_value=self.access_token("same")))
+        runner = DecisionModelRunner(self.CONFIG, credential)
+        with pytest.raises(EvaluationException, match="HTTP 401"):
+            run(runner)
+        assert _model_runners._TOKENS.cached(credential, _model_runners._DECISION_TOKEN_SCOPE) is None
+        # The service accepts the token now, for example after a role assignment propagated. The credential
+        # re-issues the same token: it is requested once more, then reused again instead of once per request.
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        for _ in range(3):
+            run(runner)
+        assert credential.get_token.call_count == 2
+        assert self.authorizations(client) == ["Bearer same"] * 4
+        assert _model_runners._TOKENS.cached(credential, _model_runners._DECISION_TOKEN_SCOPE).token == "same"
+
+    def test_an_acquisition_that_began_before_two_rejections_is_not_stored(self):
+        scope = _model_runners._DECISION_TOKEN_SCOPE
+
+        async def scenario():
+            gate = asyncio.Event()
+            calls = []
+
+            class AsyncCredential:
+                async def get_token(self, *_, **__):
+                    calls.append(1)
+                    call = len(calls)
+                    if call == 1:
+                        await gate.wait()
+                    # The delayed first acquisition and the second return token A; later ones return token B.
+                    return TestDecisionTokenReuse.access_token("token-A" if call <= 2 else "token-B")
+
+            credential = AsyncCredential()
+            runner = DecisionModelRunner(self.CONFIG, credential)
+            deadline = time.monotonic() + 10
+            pending = asyncio.ensure_future(runner._get_token(deadline))
+            await asyncio.sleep(0)
+            # Two later acquisitions complete first, and the service rejects each token with a 401.
+            for expected in ("token-A", "token-B"):
+                assert await runner._get_token(deadline) == expected
+                _model_runners._TOKENS.discard(credential, scope, expected)
+            gate.set()
+            # The delayed acquisition returns a token the service already rejected; it must not be cached.
+            assert await pending == "token-A"
+            assert _model_runners._TOKENS.cached(credential, scope) is None
+            # The next acquisition is cached again.
+            assert await runner._get_token(deadline) == "token-B"
+            assert _model_runners._TOKENS.cached(credential, scope).token == "token-B"
+
+        asyncio.run(scenario())
+
     def test_credential_without_weak_references_is_used_without_caching(self, client):
         client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
         requested = []

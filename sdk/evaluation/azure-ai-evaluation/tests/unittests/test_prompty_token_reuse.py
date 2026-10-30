@@ -257,3 +257,51 @@ class TestChatTokenReuse:
             assert TOKENS.cached(credential, CHAT_SCOPE).token == "new"
 
         asyncio.run(scenario())
+
+    def test_a_token_the_credential_reissues_after_a_rejection_is_cached_again(self):
+        credential = Credential(access_token("same"))
+
+        async def reject_once():
+            provider = AsyncPrompty.get_token_provider(credential)
+            assert await provider() == "same"
+            # The service rejects the token with a 401, for example while a role assignment still propagates.
+            provider.discard()
+
+        asyncio.run(reject_once())
+        assert TOKENS.cached(credential, CHAT_SCOPE) is None
+        # The credential re-issues the same token: it is requested once more, then reused again.
+        assert [request_token(credential) for _ in range(3)] == ["same"] * 3
+        assert len(credential.scopes) == 2
+        assert TOKENS.cached(credential, CHAT_SCOPE).token == "same"
+
+    def test_an_acquisition_that_began_before_two_rejections_is_not_stored(self):
+        async def scenario():
+            gate = asyncio.Event()
+            calls = []
+
+            class AsyncCredential:
+                async def get_token(self, *_, **__):
+                    calls.append(1)
+                    call = len(calls)
+                    if call == 1:
+                        await gate.wait()
+                    # The delayed first acquisition and the second return token A; later ones return token B.
+                    return access_token("token-A" if call <= 2 else "token-B")
+
+            credential = AsyncCredential()
+            pending = asyncio.ensure_future(AsyncPrompty.get_token_provider(credential)())
+            await asyncio.sleep(0)
+            # Two later acquisitions complete first, and the service rejects each token with a 401.
+            for expected in ("token-A", "token-B"):
+                provider = AsyncPrompty.get_token_provider(credential)
+                assert await provider() == expected
+                provider.discard()
+            gate.set()
+            # The delayed acquisition returns a token the service already rejected; it must not be cached.
+            assert await pending == "token-A"
+            assert TOKENS.cached(credential, CHAT_SCOPE) is None
+            # The next acquisition is cached again.
+            assert await AsyncPrompty.get_token_provider(credential)() == "token-B"
+            assert TOKENS.cached(credential, CHAT_SCOPE).token == "token-B"
+
+        asyncio.run(scenario())
