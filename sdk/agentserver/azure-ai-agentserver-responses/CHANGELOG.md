@@ -1,6 +1,6 @@
 # Release History
 
-## 2.4.0b3 (Unreleased)
+## 2.5.0b1 (Unreleased)
 
 ### Features Added
 
@@ -13,13 +13,28 @@
 
 ### Other Changes
 
-- Require Core `2.3.0b3` or later for snapshot task deferral/rollback handling.
+- Require Core `2.4.0b1` or later for snapshot task deferral/rollback handling.
   Publish that Core version before this package.
 - Require Core's snapshot lifecycle integration. While task startup is deferred
   (`FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true`), enabled-but-uninitialized
   task errors are propagated instead of running non-durably; intentional opt-out
   and absent/`false` keep the existing in-process fallback. No new HTTP 503 mapping or
   author startup-task replay is introduced.
+
+## 2.4.0 (2026-10-29)
+
+### Bugs Fixed
+
+- Removed the broken documentation link from experimental API warnings and docstrings by using the shared Core decorator.
+
+### Other Changes
+
+- Stable release of the 2.4.0 preview series. The protocol-scoped task-runtime
+  behavior and its breaking change from earlier stable releases are documented
+  in the preview entry below.
+- Removed the duplicated experimental decorator compatibility fallback.
+- Require the stable `azure-ai-agentserver-core>=2.3.0` release. Publish Core
+  before Responses.
 
 ## 2.4.0b2 (2026-10-27)
 

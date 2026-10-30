@@ -212,17 +212,13 @@ def run_pip_freeze(python_executable: Optional[str] = None) -> List[str]:
     return collected_output
 
 
-def get_pip_list_output(python_executable: Optional[str] = None) -> dict[str, str]:
-    """List installed versions, including direct-reference and editable packages.
-
-    :param python_executable: Interpreter whose installed distributions are queried.
-    :return: Installed distribution names and versions.
-    """
+def get_pip_list_output(python_executable: Optional[str] = None):
+    """List installed versions, including direct-URL and editable installs, in the requested environment."""
     executable = python_executable or sys.executable
-    command = get_pip_command(executable) + ["list", "--format=json"]
-    if command[0] == "uv":
+    pip_cmd = get_pip_command(executable)
+    command = pip_cmd + ["list", "--format=json", "--disable-pip-version-check"]
+    if pip_cmd[0] == "uv":
         command += ["--python", executable]
-    else:
-        command.append("--disable-pip-version-check")
-    output = subprocess.check_output(command, encoding="utf-8")
+
+    output = subprocess.check_output(command, text=True)
     return {package["name"]: package["version"] for package in json.loads(output)}

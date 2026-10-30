@@ -40,11 +40,11 @@ def test_inventory_includes_direct_and_editable_installs(
 
     assert venv.get_pip_list_output(executable) == {package["name"]: package["version"] for package in packages}
     expected = (
-        ["uv", "pip", "list", "--format=json", "--python", expected_executable]
+        ["uv", "pip", "list", "--format=json", "--disable-pip-version-check", "--python", expected_executable]
         if backend == "uv"
         else [expected_executable, "-m", "pip", "list", "--format=json", "--disable-pip-version-check"]
     )
-    inventory_commands.assert_called_once_with(expected, encoding="utf-8")
+    inventory_commands.assert_called_once_with(expected, text=True)
 
 
 @pytest.mark.parametrize("backend", ["pip", "uv"])
