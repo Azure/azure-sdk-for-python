@@ -58,3 +58,8 @@ def test_playback_default_remains_available_without_secret(monkeypatch):
         os.environ["LLM_VALIDATION_PROJECT_ENDPOINT"]
         == "https://sanitized.services.ai.azure.com/api/projects/sanitized"
     )
+
+
+def test_other_unspecified_options_still_use_preparer_defaults():
+    configure_cli_environment({})
+    assert os.environ["FOUNDRY_MODEL_NAME"] == "sanitized-model"
