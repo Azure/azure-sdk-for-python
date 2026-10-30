@@ -75,6 +75,7 @@ _BAGGAGE_CONVERSATION_ID = "azure.ai.agentserver.conversation_id"
 _BAGGAGE_INVOCATION_ID = "azure.ai.agentserver.invocation_id"
 
 _ATTR_INVOCATION_ID = "azure.ai.agentserver.invocations.invocation_id"
+_A2A_INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer.A2A"
 
 _SERVICE_NAME_VALUE = "azure.ai.agentserver"
 _GEN_AI_SYSTEM_VALUE = "azure.ai.agentserver"
@@ -852,10 +853,14 @@ class _FoundryEnrichmentSpanProcessor:
         try:
             target = getattr(attrs, "_dict", attrs)
             target[_ATTR_MICROSOFT_FOUNDRY] = _MICROSOFT_FOUNDRY_VALUE
+            scope = getattr(span, "instrumentation_scope", None)
+            preserve_agent_card_metadata = getattr(scope, "name", "") == _A2A_INSTRUMENTATION_SCOPE
             if self.agent_name:
-                target[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
+                if not preserve_agent_card_metadata or _ATTR_GEN_AI_AGENT_NAME not in target:
+                    target[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
             if self.agent_version:
-                target[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
+                if not preserve_agent_card_metadata or _ATTR_GEN_AI_AGENT_VERSION not in target:
+                    target[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
             if self.agent_id:
                 target[_ATTR_GEN_AI_AGENT_ID] = self.agent_id
             if self.agent_blueprint_id:
