@@ -32,12 +32,12 @@ def main():
 
     response = client.policy.get(
         resource_group_name="rgrecoveryservicesdatareplication",
-        vault_name="4",
-        policy_name="wdqsacasc",
+        vault_name="fooVault",
+        policy_name="fooPolicy",
     )
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/Policy_Get.json
+# x-ms-original-file: 2026-05-01/Policy_Get.json
 if __name__ == "__main__":
     main()

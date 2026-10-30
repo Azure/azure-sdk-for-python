@@ -32,11 +32,11 @@ def main():
 
     client.replication_extension.begin_delete(
         resource_group_name="rgrecoveryservicesdatareplication",
-        vault_name="4",
-        replication_extension_name="g16yjJ",
+        vault_name="lftqijwwzmqhexnl",
+        replication_extension_name="xtcicpcmjvocohaznrk",
     ).result()
 
 
-# x-ms-original-file: 2024-09-01/ReplicationExtension_Delete.json
+# x-ms-original-file: 2026-05-01/ReplicationExtension_Delete.json
 if __name__ == "__main__":
     main()

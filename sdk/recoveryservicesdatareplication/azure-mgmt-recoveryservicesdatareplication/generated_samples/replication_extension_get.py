@@ -32,12 +32,12 @@ def main():
 
     response = client.replication_extension.get(
         resource_group_name="rgrecoveryservicesdatareplication",
-        vault_name="4",
-        replication_extension_name="g16yjJ",
+        vault_name="lftqijwwzmqhexnl",
+        replication_extension_name="xtcicpcmjvocohaznrk",
     )
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/ReplicationExtension_Get.json
+# x-ms-original-file: 2026-05-01/ReplicationExtension_Get.json
 if __name__ == "__main__":
     main()

@@ -15,7 +15,7 @@ from azure.mgmt.recoveryservicesdatareplication import RecoveryServicesDataRepli
     pip install azure-identity
     pip install azure-mgmt-recoveryservicesdatareplication
 # USAGE
-    python private_endpoint_connection_proxy_delete.py
+    python vault_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,19 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.private_endpoint_connection_proxies.begin_delete(
-        resource_group_name="rgswagger_2024-09-01",
-        vault_name="4",
-        private_endpoint_connection_proxy_name="d",
+    response = client.vault.begin_create(
+        resource_group_name="rgrecoveryservicesdatareplication",
+        vault_name="lftqijwwzmqhexnl",
+        body={
+            "identity": {"type": "None", "userAssignedIdentities": {"key8731": {}}},
+            "location": "mjoapgbjcedsmnhbf",
+            "properties": {"vaultType": "DisasterRecovery"},
+            "tags": {"key9825": "ulsvnotfqmkajvouraavmibhvkmg"},
+        },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2024-09-01/PrivateEndpointConnectionProxy_Delete.json
+# x-ms-original-file: 2026-05-01/Vault_Create.json
 if __name__ == "__main__":
     main()

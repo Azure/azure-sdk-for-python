@@ -32,12 +32,12 @@ def main():
 
     response = client.fabric_agent.get(
         resource_group_name="rgrecoveryservicesdatareplication",
-        fabric_name="wPR",
-        fabric_agent_name="M",
+        fabric_name="lftqijwwzmqhexnl",
+        fabric_agent_name="oulwdidoguvd",
     )
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/FabricAgent_Get.json
+# x-ms-original-file: 2026-05-01/FabricAgent_Get.json
 if __name__ == "__main__":
     main()
