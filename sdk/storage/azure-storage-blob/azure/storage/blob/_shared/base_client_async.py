@@ -144,7 +144,6 @@ class AsyncStorageAccountHostsMixin(object):
             config.headers_policy,
             StorageRequestHook(**kwargs),
             self._credential_policy,
-            StorageSensitiveHeaderCleanupPolicy(**kwargs),
         ]
         use_session = bool(kwargs.pop("use_session", False))
         session_provider = kwargs.pop("session_provider", None)
@@ -156,6 +155,7 @@ class AsyncStorageAccountHostsMixin(object):
                 sub_kwargs.pop("pipeline", None)
                 sub_kwargs.pop("sdk_moniker", None)
                 sub_kwargs["transport"] = AsyncTransportWrapper(transport)
+                sub_kwargs["logging_body"] = False
                 session_provider = ContainerSessionProvider(
                     f"{self.scheme}://{self.primary_hostname}",
                     cast(AsyncTokenCredential, credential),
@@ -170,6 +170,7 @@ class AsyncStorageAccountHostsMixin(object):
             )
         policies.extend(
             [
+                StorageSensitiveHeaderCleanupPolicy(**kwargs),
                 config.logging_policy,
                 AsyncStorageResponseHook(**kwargs),
                 DistributedTracingPolicy(**kwargs),

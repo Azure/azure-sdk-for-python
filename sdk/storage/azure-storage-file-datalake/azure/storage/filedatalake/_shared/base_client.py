@@ -335,7 +335,6 @@ class StorageAccountHostsMixin(object):
             config.headers_policy,
             StorageRequestHook(**kwargs),
             self._credential_policy,
-            StorageSensitiveHeaderCleanupPolicy(**kwargs),
         ]
         use_session = bool(kwargs.pop("use_session", False))
         session_provider = kwargs.pop("session_provider", None)
@@ -347,6 +346,7 @@ class StorageAccountHostsMixin(object):
                 sub_kwargs.pop("pipeline", None)
                 sub_kwargs.pop("sdk_moniker", None)
                 sub_kwargs["transport"] = transport
+                sub_kwargs["logging_body"] = False
                 session_provider = ContainerSessionProvider(
                     f"{self.scheme}://{self.primary_hostname}".replace(".dfs.", ".blob.", 1),
                     cast(TokenCredential, credential),
@@ -362,6 +362,7 @@ class StorageAccountHostsMixin(object):
             )
         policies.extend(
             [
+                StorageSensitiveHeaderCleanupPolicy(**kwargs),
                 config.logging_policy,
                 StorageResponseHook(**kwargs),
                 DistributedTracingPolicy(**kwargs),
