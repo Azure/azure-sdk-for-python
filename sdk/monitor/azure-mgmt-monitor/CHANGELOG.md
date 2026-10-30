@@ -1,5 +1,51 @@
 # Release History
 
+## 8.0.0b4 (2026-10-24)
+
+### Features Added
+
+  - Client `MonitorManagementClient` added method `begin_create_notifications_at_tenant_action_group_resource_level`
+  - Client `MonitorManagementClient` added method `get_test_notifications_at_tenant_action_group_resource_level`
+  - Client `MonitorManagementClient` added operation group `diagnostic_settings`
+  - Client `MonitorManagementClient` added operation group `diagnostic_settings_category`
+  - Client `MonitorManagementClient` added operation group `tenant_action_groups`
+  - Client `MonitorManagementClient` added operation group `vm_insights`
+  - Model `AutoscaleSettingResource` added property `identity`
+  - Model `AutoscaleSettingResourcePatch` added property `identity`
+  - Model `PrivateEndpointConnectionProperties` added property `group_ids`
+  - Added enum `CategoryType`
+  - Added model `DataContainer`
+  - Added enum `DataStatus`
+  - Added model `DiagnosticSettings`
+  - Added model `DiagnosticSettingsCategory`
+  - Added model `DiagnosticSettingsCategoryResource`
+  - Added model `DiagnosticSettingsResource`
+  - Added model `DiagnosticsLogSettings`
+  - Added model `DiagnosticsMetricSettings`
+  - Added model `Error`
+  - Added enum `OnboardingStatus`
+  - Added model `ResponseWithError`
+  - Added model `TenantActionGroup`
+  - Added model `TenantActionGroupActionDetail`
+  - Added model `TenantActionGroupPatchBody`
+  - Added model `TenantActionGroupResource`
+  - Added model `TenantActionGroupTestNotificationDetailsResponse`
+  - Added model `TenantActionGroupWebhookReceiver`
+  - Added model `TenantNotificationRequestBody`
+  - Added model `VMInsightsOnboardingStatus`
+  - Added model `VMInsightsOnboardingStatusProperties`
+  - Added model `WorkspaceInfo`
+  - Added model `WorkspaceInfoProperties`
+  - Added operation group `DiagnosticSettingsCategoryOperations`
+  - Added operation group `DiagnosticSettingsOperations`
+  - Added operation group `TenantActionGroupsOperations`
+  - Added operation group `VMInsightsOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed model `LogSettings`
+  - Deleted or renamed model `MetricSettings`
+
 ## 8.0.0b3 (2026-06-10)
 
 ### Features Added
