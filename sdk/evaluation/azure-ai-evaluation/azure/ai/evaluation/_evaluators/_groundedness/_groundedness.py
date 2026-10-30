@@ -12,6 +12,7 @@ else:
     from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy
 from azure.ai.evaluation._evaluators._common._validators import (
     GroundednessConversationValidator,
     ValidatorInterface,
@@ -52,7 +53,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     Groundedness scores range from 1 to 5, with 1 being the least grounded and 5 being the most grounded.
 
-    :param model_config: Configuration for the Azure OpenAI model.
+    :param model_config: Configuration for the Azure OpenAI model, or a decision model configuration with
+        ``type="decision"``, ``azure_endpoint`` and ``azure_deployment``. With a decision model, a plain text
+        response without context is not applicable rather than grounded in itself.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the groundedness evaluator. Default is 3.
@@ -100,9 +103,12 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE_NO_QUERY = "groundedness_without_query.prompty"
     _PROMPTY_FILE_WITH_QUERY = "groundedness_with_query.prompty"
+    _DECISION_FILE = "groundedness.decision.yaml"
+    _NO_QUERY_DECISION_FILE = "groundedness_without_query.decision.yaml"
     _RESULT_KEY = "groundedness"
     _OPTIONAL_PARAMS = ["query"]
     _SUPPORTED_TOOLS = ["file_search"]
+    _supports_decision_models = True
 
     _validator: ValidatorInterface
     _validator_with_query: ValidatorInterface
@@ -146,6 +152,15 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._credential = credential
         self.threshold = threshold
         # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
+
+        # Both rubrics are built so each call can choose by whether it has a query.
+        self._decision = self._no_query_decision = None
+        if self._uses_decision_model:
+            target = ErrorTarget.GROUNDEDNESS_EVALUATOR
+            self._decision = rubric_strategy(self, os.path.join(current_dir, self._DECISION_FILE), target)
+            self._no_query_decision = rubric_strategy(
+                self, os.path.join(current_dir, self._NO_QUERY_DECISION_FILE), target
+            )
 
     @overload
     def __call__(
@@ -237,6 +252,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     def _ensure_query_prompty_loaded(self):
         """Switch to the query prompty file if not already loaded."""
+        if self._uses_decision_model:
+            return
 
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_WITH_QUERY)
@@ -319,6 +336,12 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Replace and call the parent method
         return await super()._do_eval(simplified_eval_input)
 
+    @override
+    async def _do_decision_eval(self, eval_input: Dict) -> Dict[str, Union[str, float]]:
+        if eval_input.get("query") is not None:
+            return await self._decision.evaluate({key: eval_input[key] for key in ("query", "response", "context")})
+        return await self._no_query_decision.evaluate({key: eval_input[key] for key in ("response", "context")})
+
     async def _real_call(self, **kwargs):
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
@@ -371,6 +394,14 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # If response is a string, we can skip the context extraction and just return the eval input
         if response and isinstance(response, str):
+            if self._uses_decision_model:
+                # A chat prompt grounds the response in itself here; a decision model must not.
+                raise EvaluationException(
+                    message="Groundedness requires grounding context; none was provided with a plain text response.",
+                    blame=ErrorBlame.USER_ERROR,
+                    category=ErrorCategory.NOT_APPLICABLE,
+                    target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
+                )
             return super()._convert_kwargs_to_eval_input(query=query, response=response, context=response)
 
         context = self._get_context_from_agent_response(response, tool_definitions)

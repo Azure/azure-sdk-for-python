@@ -1,5 +1,14 @@
 # Release History
 
+## 1.18.11 (Unreleased)
+
+### Features Added
+
+- `CoherenceEvaluator`, `FluencyEvaluator`, `GroundednessEvaluator`, `IntentResolutionEvaluator`, `RelevanceEvaluator`, `ResponseCompletenessEvaluator`, `RetrievalEvaluator`, `SimilarityEvaluator`, `ToolCallAccuracyEvaluator`, `TaskAdherenceEvaluator`, `_TaskCompletionEvaluator`, `_ToolCallSuccessEvaluator`, `_ToolInputAccuracyEvaluator`, `_ToolOutputUtilizationEvaluator` and `_ToolSelectionEvaluator` accept a Decision model configuration (`type="decision"`) and use the same rubrics as their Microsoft Foundry catalog versions. Chat model behavior is unchanged. With a Decision model, `GroundednessEvaluator` reports a plain text response without context as not applicable rather than grounding the response in itself. The tool evaluators prepare tool calls as their chat versions do, which can differ from the catalog versions.
+- `QAEvaluator` accepts a Decision model configuration and passes `credential` and the Decision execution controls to its model-based evaluators, which run on separate threads, so the credential must be synchronous. With a chat model they are not passed, as before.
+- The binary evaluators (task adherence, task completion, tool call success, tool input accuracy, tool output utilization and tool selection) accept a `probability_threshold` keyword. For Decision models it sets the probability at or above which the score is 1 (default 0.75) and overrides the value in `model_config`; chat models ignore it with a warning.
+- Conversation inputs are handled as before with a Decision model: evaluators that accept them score each user and assistant turn separately and aggregate the results. The catalog's whole-conversation rubrics are not included.
+
 ## 1.18.10 (2026-10-22)
 
 ### Features Added

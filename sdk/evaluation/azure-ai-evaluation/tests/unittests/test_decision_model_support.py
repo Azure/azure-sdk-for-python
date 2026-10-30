@@ -696,12 +696,15 @@ class TestSharedBaseSelection:
         assert isinstance(evaluator._model_runner, PromptyModelRunner)
         assert evaluator._flow is flow and not evaluator._uses_decision_model
 
-    def test_prompty_only_evaluators_reject_a_decision_configuration(self):
+    def test_evaluators_without_decision_support_reject_a_decision_configuration(self):
+        class PromptyOnlyEvaluator(ProbeModelEvaluator):
+            _supports_decision_models = False
+
         with patch.object(_model_runners.AsyncPrompty, "load", side_effect=AssertionError("prompty loaded")):
             with pytest.raises(EvaluationException) as raised:
-                FluencyEvaluator(DECISION_CONFIG)
+                PromptyOnlyEvaluator(result_key="probe", model_config=DECISION_CONFIG)
         assert raised.value.blame == ErrorBlame.USER_ERROR
-        assert "FluencyEvaluator" in str(raised.value)
+        assert "PromptyOnlyEvaluator does not support decision models." in str(raised.value)
 
     def test_wrapper_is_initialized_once(self):
         original = EvaluatorBase.__init__
