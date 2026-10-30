@@ -1042,10 +1042,17 @@ chain record itself does not carry the per-turn diagnostic.
 | Sub-key | Type | Meaning |
 |---|---|---|
 | `pending_inputs` | array of input values OR refs (§23) | FIFO of queued steering inputs. |
+| `pending_ack_ids` | array of opaque strings or nulls | Internal acknowledgment IDs aligned with `pending_inputs`. Each new append adds a unique ID in the same PATCH; drain and queued cancel remove the corresponding ID. Null marks an untagged slot from a pre-upgrade task record. These are independent of the caller's `input_id`. |
 | `next_input_seq` | integer | Monotonic counter for promoted-attachment key allocation (NEVER reused). |
 | `cancel_requested` | boolean | Resilient cancel signal; set on steering append; cleared after drain when pending is empty. |
-| `drain_in_progress` | boolean | True between the start of a drain PATCH and the next turn-start; protects against partial drain on crash. |
+| `drain_in_progress` | boolean | True after the drain-start PATCH; cleared at turn-start Phase 3 or atomically with active fields at turn end. Protects against partial drain on crash. |
 | `active_input` | any JSON value OR ref | The single input being drained (mirror copy used by the race-recovery contract). Cleared at suspend / terminal. |
+| `active_ack_id` | opaque string or null | Internal acknowledgment ID for `active_input`. Written in the same drain PATCH and cleared with `active_input`; lets a committed drain reconcile after a lost response. |
+
+Older task records may omit `pending_ack_ids`; those queued slots are treated
+as untagged. Workers handling the same chain concurrently must all understand
+this field, since older workers do not keep it aligned when draining or
+cancelling inputs.
 
 Implementers in other languages MUST use these exact key names. A
 process built in language X must be able to recover a task created
@@ -1348,6 +1355,8 @@ These transitions MUST be single PATCHes carrying BOTH `payload` and
 3. **Suspend (multi-turn turn-end via `return X`)**:
    - `payload["input"] = null`
    - `payload["steering"]["active_input"] = null`
+   - `payload["steering"]["active_ack_id"] = null`
+   - `payload["steering"]["drain_in_progress"] = false`
    - `payload["retry_attempt"] = null` (fresh budget for the next turn)
    - `attachments["input"] = null` (delete) IF the input was a ref
 4. **Steering append (promoted)**: `payload["steering"]["pending_inputs"]
@@ -1549,8 +1558,11 @@ Lock lifecycle:
 
 - Per-`task_id` `asyncio.Lock` allocated lazily on first write.
 - Released after the PATCH response is recorded (etag updated).
+- A holder/waiter count is registered before acquisition, so releasing
+  a holder cannot remove the lock while another caller is queued.
 - Removed from the in-memory lock table when the local active-task
-  entry is torn down (no leaked locks).
+  entry is torn down, or when the final holder/waiter exits for a task
+  that has no local active entry (no leaked remote-task locks).
 
 In-process contention now serializes; cross-process contention
 (another worker reclaimed the lease) still surfaces as 412 because
@@ -3024,6 +3036,8 @@ executes this PATCH as a single round-trip:
      pending.append(input)         # raw inline
      attachments_patch = None
 7. steering['pending_inputs']   = pending
+   steering['pending_ack_ids']  = existing IDs (null-padded for untagged
+                                  legacy slots) + [new unique ack ID]
    steering['cancel_requested'] = True
 8. payload_patch = {'steering': steering}
    if input_id provided: payload_patch['last_input_id'] = input_id
@@ -3055,6 +3069,8 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
   4. If pending is empty: return None (no drain happens; caller
      proceeds to suspend/complete normally).
   5. next_entry  = pending.pop(0)
+     next_ack_id = steering['pending_ack_ids'].pop(0) if present,
+                   or null for an untagged legacy entry
   6. attachments_patch = {}
   7. If next_entry is a ref (§23.3):
         attachments_patch[ref_key(next_entry)] = None    # delete attachment
@@ -3062,12 +3078,15 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
      else:
         active_input_value = next_entry
   8. steering['active_input']      = active_input_value
+     steering['active_ack_id']     = next_ack_id
   9. steering['pending_inputs']    = pending
+     steering['pending_ack_ids']   = remaining IDs
  10. steering['drain_in_progress'] = True
  11. steering['cancel_requested']  = len(pending) > 0     # more pending => keep advisory
- 12. payload['steering']          = steering
- 13. payload['turn_started_at']   = utc_now_iso()        # fresh turn-start boundary
- 14. PATCH(task_id, status='in_progress', payload=payload,
+ 12. payload['input']             = active_input_value or its function-input ref
+ 13. payload['steering']          = steering
+ 14. payload['turn_started_at']   = utc_now_iso()        # fresh turn-start boundary
+ 15. PATCH(task_id, status='in_progress', payload=payload,
         attachments=attachments_patch, lease piggyback, if_match=etag)
 
      [NB: status MUST be set to 'in_progress' in this PATCH. The turn-end
@@ -3080,35 +3099,48 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
       of a suspended->in_progress *claim*. Omitting the status flip makes the
       Phase-1 PATCH 409 and the steered turn never runs.]
 
-     [NB: Phase 1 does NOT set payload['input'] or write a ref/attachment
-      for active_input. Only the in-memory ctx receives the value (Phase 2).
-      Recovery from a crash BETWEEN Phase 1 and Phase 3 reads
-      steering['active_input'] as the source of truth for the input,
-      via the race-recovery contract.
+     [NB: Phase 1 publishes the promoted turn as the canonical current
+      `payload['input']`, using the function-input attachment when required,
+      in the same PATCH that removes it from the steering queue. Recovery from
+      a crash BETWEEN Phase 1 and Phase 3 also retains `active_input` as the
+      steering-specific recovery source.
+      Only the recursive retry for that exact Phase-1 transition may reconcile
+      `drain_in_progress=true`, and only when its expected acknowledgment ID
+      matches `active_ack_id`. A later ordinary drain MUST NOT redispatch the
+      active turn or consume another pending queue entry.
       No output co-clear is needed — the framework does not write
       payload['output'] / output attachments on any transition.]
 
 Phase 2 — Handler re-entry (in-memory only):
- 15. Construct a fresh TaskContext with:
+ 16. Construct a fresh TaskContext with:
        entry_mode='resumed', is_steered_turn=True,
        input=active_input_value (deserialized via input_type),
        metadata reused from previous ctx,
        cancel_event=fresh (re-set if cancel_requested still True),
        retry_attempt=0.
- 16. Update the in-process _ActiveTask.context pointer.
- 17. Invoke the handler with the new ctx.
+ 17. Update the in-process _ActiveTask.context pointer.
+ 18. Invoke the handler with the new ctx.
 
 Phase 3 — "Drain end" PATCH (after handler re-entered):
- 18. steering['drain_in_progress'] = False
- 19. payload['steering']          = steering
- 20. payload['retry_attempt']     = 0     # Drain resets retry budget
- 21. PATCH(task_id, payload=payload, lease piggyback)
+ 19. steering['drain_in_progress'] = False
+ 20. payload['steering']          = steering
+ 21. payload['retry_attempt']     = 0     # Drain resets retry budget
+ 22. PATCH(task_id, payload=payload, lease piggyback)
      (No attachments touched in Phase 3.)
 
 Phase 4 — On the next turn-end:
- 22. The handler returns/suspends/raises. The terminal handler clears
-     active_input as part of its suspend/complete PATCH (§53).
+ 23. The handler returns/suspends/raises. The terminal handler clears
+     active_input, active_ack_id, and drain_in_progress together as part
+     of its suspend/complete PATCH (§53).
 ```
+
+**Terminal-persistence barrier.** A turn result, failure, or cancellation is
+not acknowledged as final, and no queued successor is dispatched, until the
+turn-end PATCH succeeds. If that PATCH fails, the current caller receives the
+persistence error, local queued acknowledgment futures receive
+`TaskConflictError(current_status="in_progress")`, and the durable task remains
+available for recovery. This prevents a stale active turn from being executed
+again after its caller already received a definitive handler outcome.
 
 **Race-recovery contract.** If the process crashes:
 

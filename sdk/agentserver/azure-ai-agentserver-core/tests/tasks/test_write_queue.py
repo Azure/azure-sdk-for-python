@@ -110,7 +110,7 @@ async def test_reads_do_not_acquire_lock(local) -> None:
     @multi_turn_task(name="reads_no_lock")
     async def my_task(ctx: TaskContext[str]) -> str:
         del ctx
-        async with manager._get_task_write_lock("t-reads"):  # pylint: disable=protected-access
+        async with manager._task_write_guard("t-reads"):  # pylint: disable=protected-access
             in_write_barrier.set()
             await release_write.wait()
         return "done"
@@ -135,6 +135,83 @@ async def test_reads_do_not_acquire_lock(local) -> None:
     finally:
         await manager.shutdown()
         mgr_mod._manager = None
+
+
+@pytest.mark.asyncio
+async def test_remote_write_lock_cleanup_waits_for_queued_users(local) -> None:
+    """Remote-task lock cleanup cannot split queued callers across two locks."""
+    manager = TaskManager(config=_config_stub(), provider=local)
+    first_acquired = asyncio.Event()
+    release_first = asyncio.Event()
+    second_acquired = asyncio.Event()
+    release_second = asyncio.Event()
+    third_acquired = asyncio.Event()
+
+    async def _first() -> None:
+        async with manager._task_write_guard("t-remote"):  # pylint: disable=protected-access
+            first_acquired.set()
+            await release_first.wait()
+
+    async def _second() -> None:
+        async with manager._task_write_guard("t-remote"):  # pylint: disable=protected-access
+            second_acquired.set()
+            await release_second.wait()
+
+    async def _third() -> None:
+        async with manager._task_write_guard("t-remote"):  # pylint: disable=protected-access
+            third_acquired.set()
+
+    first = asyncio.create_task(_first())
+    await first_acquired.wait()
+    shared_lock = manager._task_write_locks["t-remote"]  # pylint: disable=protected-access
+    second = asyncio.create_task(_second())
+    await asyncio.sleep(0)
+    assert manager._task_write_lock_users["t-remote"] == 2  # pylint: disable=protected-access
+
+    release_first.set()
+    await second_acquired.wait()
+    assert manager._task_write_locks["t-remote"] is shared_lock  # pylint: disable=protected-access
+
+    third = asyncio.create_task(_third())
+    await asyncio.sleep(0)
+    assert not third_acquired.is_set()
+    assert manager._task_write_lock_users["t-remote"] == 2  # pylint: disable=protected-access
+
+    release_second.set()
+    await asyncio.gather(first, second, third)
+    assert third_acquired.is_set()
+    assert "t-remote" not in manager._task_write_locks  # pylint: disable=protected-access
+    assert "t-remote" not in manager._task_write_lock_users  # pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
+async def test_active_teardown_defers_registry_cleanup_until_waiter_exits(local) -> None:
+    """Active teardown preserves one shared lock until its queued user exits."""
+    manager = TaskManager(config=_config_stub(), provider=local)
+    acquired = asyncio.Event()
+    release = asyncio.Event()
+
+    async def _holder() -> None:
+        async with manager._task_write_guard("t-active"):  # pylint: disable=protected-access
+            acquired.set()
+            await release.wait()
+
+    manager._active_tasks["t-active"] = object()  # type: ignore[assignment]  # pylint: disable=protected-access
+    manager._task_etag_cache["t-active"] = "etag-1"  # pylint: disable=protected-access
+    holder = asyncio.create_task(_holder())
+    await acquired.wait()
+
+    manager._active_tasks_pop("t-active")  # pylint: disable=protected-access
+    assert "t-active" in manager._task_write_locks  # pylint: disable=protected-access
+    assert "t-active" in manager._task_write_cleanup_pending  # pylint: disable=protected-access
+    assert manager._task_etag_cache["t-active"] == "etag-1"  # pylint: disable=protected-access
+
+    release.set()
+    await holder
+    assert "t-active" not in manager._task_write_locks  # pylint: disable=protected-access
+    assert "t-active" not in manager._task_write_lock_users  # pylint: disable=protected-access
+    assert "t-active" not in manager._task_write_cleanup_pending  # pylint: disable=protected-access
+    assert "t-active" not in manager._task_etag_cache  # pylint: disable=protected-access
 
 
 @pytest.mark.asyncio
