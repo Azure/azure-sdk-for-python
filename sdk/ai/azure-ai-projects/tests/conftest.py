@@ -68,10 +68,12 @@ def pytest_configure(config):
 
     for option_name, environment_variable in _CLI_ENV_OPTIONS.items():
         value = config.getoption(option_name)
-        if value is None:
-            value = _SERVICE_PREPARER_DEFAULTS.get(option_name)
         if value is not None:
             os.environ[environment_variable] = value
+        elif environment_variable not in os.environ:
+            default_value = _SERVICE_PREPARER_DEFAULTS.get(option_name)
+            if default_value is not None:
+                os.environ[environment_variable] = default_value
 
 
 def pytest_collection_modifyitems(items):
