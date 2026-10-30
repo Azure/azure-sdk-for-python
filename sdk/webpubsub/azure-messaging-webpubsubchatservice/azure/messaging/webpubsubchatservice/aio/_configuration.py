@@ -31,14 +31,14 @@ class WebPubSubChatServiceClientConfiguration:  # pylint: disable=too-many-insta
      alpha-numeric characters or underscore. Required.
     :type hub: str
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-02-01-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-08-01-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", hub: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2026-02-01-preview")
+        api_version: str = kwargs.pop("api_version", "2026-08-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
