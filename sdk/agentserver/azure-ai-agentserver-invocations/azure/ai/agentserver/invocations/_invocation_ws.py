@@ -31,7 +31,12 @@ from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
+    FoundryAgentRequestContext,
+    FoundryOriginalSubject,
+    reset_request_context,
+    set_request_context,
 )
+from azure.ai.agentserver.core.platform_headers import FOUNDRY_CALL_ID, USER_ID
 
 from ._constants import InvocationsWSConstants
 
@@ -236,7 +241,24 @@ class _WSHandlerMixin(_MixinBase):
 
         close_code: int = InvocationsWSConstants.CLOSE_NORMAL
         handler_exc: Optional[BaseException] = None
+        error_code: Optional[str] = None
+        context_token = None
+        # The platform dispatch binds one invocation to this connection. Never
+        # infer an original subject from arbitrary WebSocket message payloads.
         try:
+            try:
+                original_subject = FoundryOriginalSubject.from_headers(websocket.headers)
+            except ValueError:
+                close_code = InvocationsWSConstants.CLOSE_INTERNAL_ERROR
+                error_code = "invalid_original_subject"
+                logger.warning("WebSocket rejected: invalid original-subject platform header.")
+                return
+            context_token = set_request_context(FoundryAgentRequestContext(
+                call_id=websocket.headers.get(FOUNDRY_CALL_ID),
+                user_id=websocket.headers.get(USER_ID),
+                session_id=session_id,
+                original_subject=original_subject,
+            ))
             close_code, handler_exc = await self._invoke_user_handler(websocket, session_id)
         except BaseException as exc:  # pylint: disable=broad-exception-caught
             # ``_invoke_user_handler`` catches ``Exception`` but not
@@ -248,16 +270,13 @@ class _WSHandlerMixin(_MixinBase):
             handler_exc = exc
             raise
         finally:
+            if context_token is not None:
+                reset_request_context(context_token)
             # Always finalize — emits the close-event log line and
             # best-effort closes the socket — even when the handler
             # raised a ``BaseException`` like ``CancelledError``.
-            error_code: Optional[str]
-            if handler_exc is None:
-                error_code = None
-            elif isinstance(handler_exc, Exception):
-                error_code = "internal_error"
-            else:
-                error_code = "cancelled"
+            if error_code is None and handler_exc is not None:
+                error_code = "internal_error" if isinstance(handler_exc, Exception) else "cancelled"
             await self._finalize_session(
                 websocket=websocket,
                 session_id=session_id,

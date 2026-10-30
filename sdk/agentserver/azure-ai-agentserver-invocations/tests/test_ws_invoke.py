@@ -8,15 +8,87 @@ clean close), the unhappy path (handler exception → 1011), and the
 WebSocket-only bidirectional streaming property.
 """
 import asyncio
+import logging
+from urllib.parse import unquote
 
 import pytest
 from starlette.testclient import TestClient
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from azure.ai.agentserver.core import get_request_context
 from azure.ai.agentserver.invocations._constants import InvocationsWSConstants
 
 from conftest import _make_echo_ws_app, _make_failing_ws_app
+
+
+@pytest.mark.parametrize("value", ["malformed", 'oid="one", oid="two"', 'unknown="value"'])
+def test_ws_malformed_original_subject_closes_and_finalizes(value, caplog):
+    app = InvocationAgentServerHost(configure_observability=None)
+    handled = []
+
+    @app.ws_handler
+    async def handler(websocket: WebSocket) -> None:
+        handled.append(True)
+        await websocket.send_json(get_request_context().model_attribution_headers())
+
+    client = TestClient(app)
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        with pytest.raises(WebSocketDisconnect) as error:
+            with client.websocket_connect("/invocations_ws", headers={"x-ms-original-subject": value}) as websocket:
+                websocket.receive_json()
+    assert error.value.code == 1011
+    assert not handled
+    assert any(
+        getattr(record, InvocationsWSConstants.ATTR_SPAN_ERROR_CODE, None) == "invalid_original_subject"
+        for record in caplog.records
+    )
+    with client.websocket_connect("/invocations_ws") as websocket:
+        assert websocket.receive_json() == {}
+    assert get_request_context().original_subject is None
+
+
+def test_ws_original_subject_is_invocation_local():
+    app = InvocationAgentServerHost()
+
+    @app.ws_handler
+    async def handler(websocket: WebSocket) -> None:
+        await websocket.send_json(get_request_context().model_attribution_headers())
+
+    subject = {
+        "x-ms-original-subject": 'oid="original-oid", tid="original-tid", idtype="user"',
+    }
+    client = TestClient(app)
+    with client.websocket_connect("/invocations_ws", headers=dict(subject)) as websocket:
+        forwarded = websocket.receive_json()
+        assert not any(name.lower().startswith("x-ms-original-subject") for name in forwarded)
+        assert unquote(forwarded["x-ms-foundry-baggage"].split("=", 1)[1]) == subject["x-ms-original-subject"]
+        assert len(forwarded) == 1
+    with client.websocket_connect("/invocations_ws") as websocket:
+        assert websocket.receive_json() == {}
+    assert get_request_context().original_subject is None
+
+
+def test_overlapping_websockets_keep_subject_baggage_isolated():
+    app = InvocationAgentServerHost(configure_observability=None)
+
+    @app.ws_handler
+    async def handler(websocket: WebSocket) -> None:
+        await websocket.receive_text()
+        await websocket.send_json(get_request_context().model_attribution_headers())
+
+    alice = 'oid="alice", tid="tenant-alice", idtype="user"'
+    bob = 'oid="bob", tid="tenant-bob", idtype="app"'
+    with TestClient(app) as client:
+        with client.websocket_connect("/invocations_ws", headers={"x-ms-original-subject": alice}) as first:
+            with client.websocket_connect("/invocations_ws", headers={"x-ms-original-subject": bob}) as second:
+                first.send_text("ready")
+                second.send_text("ready")
+                for websocket, subject in ((first, alice), (second, bob)):
+                    forwarded = websocket.receive_json()
+                    assert not any(name.lower().startswith("x-ms-original-subject") for name in forwarded)
+                    assert unquote(forwarded["x-ms-foundry-baggage"].split("=", 1)[1]) == subject
+    assert get_request_context().original_subject is None
 
 
 # ---------------------------------------------------------------------------

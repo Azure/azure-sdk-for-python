@@ -664,6 +664,26 @@ class TestFoundryEnrichmentSpanProcessor:
         assert attrs["gen_ai.agent.name"] == "my-agent"
         assert attrs["gen_ai.agent.id"] == "my-agent:1.0"
 
+    def test_a2a_span_preserves_agent_card_name_and_version(self) -> None:
+        proc = _FoundryEnrichmentSpanProcessor(
+            agent_name="foundry-deployment",
+            agent_version="7",
+            agent_id="foundry-deployment:7",
+        )
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("Azure.AI.AgentServer.A2A")
+
+        with tracer.start_as_current_span("SendMessage") as span:
+            span.set_attribute("gen_ai.agent.name", "Agent Card Name")
+            span.set_attribute("gen_ai.agent.version", "1.2.3")
+            span.set_attribute("microsoft.foundry", "framework-value")
+
+        attrs = dict(collector.spans[0].attributes)
+        assert attrs["gen_ai.agent.name"] == "Agent Card Name"
+        assert attrs["gen_ai.agent.version"] == "1.2.3"
+        assert attrs["gen_ai.agent.id"] == "foundry-deployment:7"
+        assert attrs["microsoft.foundry"] == "True"
+
     def test_blueprint_id_uses_correct_attribute_key(self) -> None:
         """agent_blueprint_id must be emitted under microsoft.a365.agent.blueprint.id."""
         proc = _FoundryEnrichmentSpanProcessor(

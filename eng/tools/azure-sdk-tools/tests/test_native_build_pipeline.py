@@ -44,6 +44,15 @@ def run_powershell(script, **environment):
     )
 
 
+def test_analysis_checkout_has_history_for_api_comparison():
+    jobs = load_template("jobs/ci.yml")
+    analyze = next(job for job in jobs["jobs"] if job.get("job") == "Analyze")
+    assert analyze["steps"][0] == {
+        "checkout": "self",
+        "${{ if eq(variables['Build.Reason'], 'PullRequest') }}": {"fetchDepth": 0, "fetchTags": False},
+    }
+
+
 def test_rust_support_is_disabled_by_default_and_forwarded():
     archetype = load_template("stages/archetype-sdk-client.yml")
     jobs = load_template("jobs/ci.yml")
@@ -61,11 +70,14 @@ def test_rust_support_is_disabled_by_default_and_forwarded():
     forwarded = build_stage["jobs"][0]["parameters"]
     assert all(forwarded[name] == "${{ parameters." + name + " }}" for name in RUST_PARAMETERS)
 
+    job_defaults = {parameter["name"]: parameter.get("default") for parameter in jobs["parameters"]}
+    assert job_defaults["BuildTimeoutInMinutes"] == 90
+    timeout_gate = "${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}"
     for job in jobs["jobs"]:
         if job.get("job") not in ("Build_Linux", "Build_Windows", "Build_MacOS"):
             continue
-        assert job[RUST_GATE]["timeoutInMinutes"] == 240
-        assert job["${{ else }}"]["timeoutInMinutes"] == 90
+        assert job[timeout_gate]["timeoutInMinutes"] == 240
+        assert job["${{ else }}"]["timeoutInMinutes"] == "${{ parameters.BuildTimeoutInMinutes }}"
         forwarded = job["steps"][0]["parameters"]
         assert all(forwarded[name] == "${{ parameters." + name + " }}" for name in RUST_PARAMETERS)
 

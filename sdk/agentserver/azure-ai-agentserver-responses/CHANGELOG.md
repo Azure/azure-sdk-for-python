@@ -1,9 +1,26 @@
 # Release History
 
-## 2.4.0b2 (Unreleased)
+## 2.4.0 (2026-10-29)
+
+### Bugs Fixed
+
+- Removed the broken documentation link from experimental API warnings and docstrings by using the shared Core decorator.
+
+### Other Changes
+
+- Stable release of the 2.4.0 preview series. The protocol-scoped task-runtime
+  behavior and its breaking change from earlier stable releases are documented
+  in the preview entry below.
+- Removed the duplicated experimental decorator compatibility fallback.
+- Require the stable `azure-ai-agentserver-core>=2.3.0` release. Publish Core
+  before Responses.
+
+## 2.4.0b2 (2026-10-27)
 
 ### Features Added
 
+- Preserve original-subject assertions in `PlatformContext` and the ambient
+  request context across streaming and in-process stored Responses execution.
 - Responses hosts now request the task runtime when either
   `resilient_background` or `steerable_conversations` is enabled. Steering-only
   hosts receive persistent queue/cancel behavior; after a crash the interrupted
@@ -12,6 +29,8 @@
 
 ### Bugs Fixed
 
+- Classify malformed platform attribution headers and end the request span
+  before returning an error, without invoking the handler.
 - Bind recovery callbacks and task options to their owning Responses host so
   constructing another host cannot redirect recovered work to its handler or
   response provider.
@@ -30,7 +49,8 @@
 ### Other Changes
 
 - Raised the minimum `azure-ai-agentserver-core` dependency to `2.3.0b2` for
-  protocol-scoped task-runtime support.
+  protocol-scoped task-runtime support and original-subject attribution.
+  Publish that Core version before this package.
 
 ## 2.4.0b1 (2026-10-15)
 

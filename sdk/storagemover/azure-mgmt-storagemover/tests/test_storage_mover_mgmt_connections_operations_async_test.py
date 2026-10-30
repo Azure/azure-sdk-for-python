@@ -8,13 +8,14 @@
 See the sync sibling (test_storage_mover_mgmt_connections_operations_test.py)
 for the full rationale.
 """
+
 import os
 
 import pytest
 from azure.core.exceptions import ResourceNotFoundError
 from azure.mgmt.storagemover.aio import StorageMoverMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, EnvironmentVariableLoader, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 
 # PrivateLinkService lives in westcentralus, so storage mover must too.
@@ -23,13 +24,12 @@ AZURE_LOCATION = "westcentralus"
 # The subscription id is read from the environment for live runs and defaults to
 # the sanitized zero-GUID so the real subscription is never committed.
 SYNTHETICS_SUBSCRIPTION_ID = (
-    os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID")
-    or "00000000-0000-0000-0000-000000000000"
+    os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID") or "00000000-0000-0000-0000-000000000000"
 )
-REAL_PRIVATE_LINK_SERVICE_ID = (
+PRIVATE_LINK_SERVICE_ID_PREFIX = (
     f"/subscriptions/{SYNTHETICS_SUBSCRIPTION_ID}"
     "/resourceGroups/E2E-Management-RGsyn"
-    "/providers/Microsoft.Network/privateLinkServices/test-pls-wcs"
+    "/providers/Microsoft.Network/privateLinkServices/"
 )
 
 
@@ -37,35 +37,44 @@ class TestStorageMoverMgmtConnectionsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient, is_async=True)
 
+    @EnvironmentVariableLoader("storagemover", storagemover_private_link_service_name="test-pls-wcs")
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_get_list_update_delete(self, resource_group):
+    async def test_create_get_list_update_delete(self, resource_group, storagemover_private_link_service_name):
         rg = resource_group.name
         sm_name = "testsm-conn"
         connection_name = "testconn1"
+        private_link_service_id = PRIVATE_LINK_SERVICE_ID_PREFIX + storagemover_private_link_service_name
 
         await self.client.storage_movers.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"location": AZURE_LOCATION},
         )
 
         # Create
         created = await self.client.connections.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
-            connection={"properties": {
-                "privateLinkServiceId": REAL_PRIVATE_LINK_SERVICE_ID,
-                "description": "ConnectionDesc",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            connection_name=connection_name,
+            connection={
+                "properties": {
+                    "privateLinkServiceId": private_link_service_id,
+                    "description": "ConnectionDesc",
+                }
+            },
         )
         # See sync sibling for why we compare by PLS name suffix instead of full ARM ID.
-        pls_id_suffix = "/providers/Microsoft.Network/privateLinkServices/test-pls-wcs"
+        pls_id_suffix = "/providers/Microsoft.Network/privateLinkServices/" + storagemover_private_link_service_name
         assert created.name == connection_name
         assert created.properties.private_link_service_id.endswith(pls_id_suffix)
         assert created.properties.description == "ConnectionDesc"
 
         # Get
         fetched = await self.client.connections.get(
-            resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            connection_name=connection_name,
         )
         assert fetched.name == connection_name
         assert fetched.id == created.id
@@ -73,27 +82,39 @@ class TestStorageMoverMgmtConnectionsOperationsAsync(AzureMgmtRecordedTestCase):
         # NOTE: do not assert on `connection_status` — see sync sibling docstring.
 
         # List
-        items = [c async for c in self.client.connections.list(
-            resource_group_name=rg, storage_mover_name=sm_name,
-        )]
+        items = [
+            c
+            async for c in self.client.connections.list(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+            )
+        ]
         assert len(items) >= 1
         assert connection_name in [c.name for c in items]
 
         # Update — see sync sibling docstring for why we don't assert on the response.
         await self.client.connections.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
-            connection={"properties": {
-                "privateLinkServiceId": REAL_PRIVATE_LINK_SERVICE_ID,
-                "description": "ConnectionDescUpdate",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            connection_name=connection_name,
+            connection={
+                "properties": {
+                    "privateLinkServiceId": private_link_service_id,
+                    "description": "ConnectionDescUpdate",
+                }
+            },
         )
 
         # Delete + 404 verification
         poller = await self.client.connections.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            connection_name=connection_name,
         )
         await poller.result()
         with pytest.raises(ResourceNotFoundError):
             await self.client.connections.get(
-                resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                connection_name=connection_name,
             )

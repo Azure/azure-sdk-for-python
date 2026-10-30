@@ -1,15 +1,60 @@
 # Release History
 
-## 2.3.0b2 (Unreleased)
+## 2.3.1b1 (Unreleased)
+
+### Bugs Fixed
+
+- Preserve explicit Agent Card name and version attributes on spans emitted
+  by the `Azure.AI.AgentServer.A2A` instrumentation scope. Other spans retain
+  the existing Foundry deployment identity enrichment.
+
+## 2.3.0 (2026-10-29)
 
 ### Features Added
 
+- Add one percent-encoded `foundry.original_subject` member containing the full
+  quoted dictionary to custom Foundry baggage for baggage-only model attribution.
+  The experimental `model_attribution_headers` helper accepts optional existing
+  per-call headers, preserving unrelated dimensions without mutating defaults
+  and replacing or clearing competing subject assertions.
+
+### Breaking Changes
+
+- Removed the internal `EXPERIMENTAL_LINK_MESSAGE` constant. When using
+  `azure-ai-agentserver-responses`, upgrade it to `2.4.0` or later alongside
+  Core; older Responses compatibility shims require the removed constant.
+
+### Bugs Fixed
+
+- Removed the broken documentation link from experimental API warnings and docstrings.
+- Stop emitting standalone subject headers on outbound model calls while
+  preserving platform-to-container ingress parsing.
+- Remove stale subject baggage even when a malformed member has properties before
+  its value, while preserving unrelated baggage order, encoding, and duplicates.
+- Reject subject tuples over 256 characters and merged baggage over 1024
+  characters rather than forwarding oversized model-attribution baggage.
+- Place the subject before unrelated baggage so bounded transport normalization
+  cannot displace the attribution member.
+
+### Other Changes
+
+- Stable release of the 2.3.0 preview series, including the protocol-scoped task
+  runtime and recovery protections described in the preview entries below.
+
+## 2.3.0b2 (2026-10-26)
+
+### Features Added
+
+- Added immutable `FoundryOriginalSubject` assertions and invocation-local
+  `FoundryAgentRequestContext.original_subject` with an explicit, model-only
+  `model_attribution_headers()` helper for the proposed `x-ms-original-subject`
+  dictionary contract. The assertions do not establish identity proof or change
+  model authentication; model integration remains an explicit per-call opt-in.
+  Both the assertions class and header helper are marked experimental.
 - Added protocol-scoped task-runtime startup requests so protocol hosts can
   obtain scoped `TaskManager` access without mutating the process-wide
   resilient-task switch. This prevents one protocol's enablement from
   activating another protocol in a mixed host.
-
-### Breaking Changes
 
 ### Bugs Fixed
 
@@ -22,8 +67,6 @@
 - Treat a persisted task function identity as authoritative before recovery
   cleanup or reclaim. Legacy callback fallback applies only when that
   identity is absent.
-
-### Other Changes
 
 ## 2.3.0b1 (2026-10-15)
 

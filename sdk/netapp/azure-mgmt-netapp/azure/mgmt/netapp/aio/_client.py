@@ -22,6 +22,7 @@ from .._utils.serialization import Deserializer, Serializer
 from ._configuration import NetAppManagementClientConfiguration
 from .operations import (
     AccountsOperations,
+    ActiveDirectoryConfigsOperations,
     BackupPoliciesOperations,
     BackupVaultsOperations,
     BackupsOperations,
@@ -30,6 +31,19 @@ from .operations import (
     BackupsUnderVolumeOperations,
     BucketsOperations,
     CachesOperations,
+    ClusterPeersOperations,
+    ElasticAccountsOperations,
+    ElasticBackupPoliciesOperations,
+    ElasticBackupVaultsOperations,
+    ElasticBackupsOperations,
+    ElasticCapacityPoolsOperations,
+    ElasticSnapshotPoliciesOperations,
+    ElasticSnapshotsOperations,
+    ElasticVolumesOperations,
+    ExternalCacheConnectionsOperations,
+    ExternalCachesOperations,
+    ExternalClustersOperations,
+    ExternalSvmsOperations,
     NetAppResourceOperations,
     NetAppResourceQuotaLimitsAccountOperations,
     NetAppResourceQuotaLimitsOperations,
@@ -41,6 +55,7 @@ from .operations import (
     SnapshotPoliciesOperations,
     SnapshotsOperations,
     SubvolumesOperations,
+    SvmPeersOperations,
     VolumeGroupsOperations,
     VolumeQuotaRulesOperations,
     VolumesOperations,
@@ -87,6 +102,41 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes,do
     :vartype buckets: azure.mgmt.netapp.aio.operations.BucketsOperations
     :ivar caches: CachesOperations operations
     :vartype caches: azure.mgmt.netapp.aio.operations.CachesOperations
+    :ivar elastic_accounts: ElasticAccountsOperations operations
+    :vartype elastic_accounts: azure.mgmt.netapp.aio.operations.ElasticAccountsOperations
+    :ivar elastic_capacity_pools: ElasticCapacityPoolsOperations operations
+    :vartype elastic_capacity_pools:
+     azure.mgmt.netapp.aio.operations.ElasticCapacityPoolsOperations
+    :ivar elastic_volumes: ElasticVolumesOperations operations
+    :vartype elastic_volumes: azure.mgmt.netapp.aio.operations.ElasticVolumesOperations
+    :ivar elastic_snapshots: ElasticSnapshotsOperations operations
+    :vartype elastic_snapshots: azure.mgmt.netapp.aio.operations.ElasticSnapshotsOperations
+    :ivar elastic_snapshot_policies: ElasticSnapshotPoliciesOperations operations
+    :vartype elastic_snapshot_policies:
+     azure.mgmt.netapp.aio.operations.ElasticSnapshotPoliciesOperations
+    :ivar elastic_backup_vaults: ElasticBackupVaultsOperations operations
+    :vartype elastic_backup_vaults: azure.mgmt.netapp.aio.operations.ElasticBackupVaultsOperations
+    :ivar elastic_backup_policies: ElasticBackupPoliciesOperations operations
+    :vartype elastic_backup_policies:
+     azure.mgmt.netapp.aio.operations.ElasticBackupPoliciesOperations
+    :ivar elastic_backups: ElasticBackupsOperations operations
+    :vartype elastic_backups: azure.mgmt.netapp.aio.operations.ElasticBackupsOperations
+    :ivar active_directory_configs: ActiveDirectoryConfigsOperations operations
+    :vartype active_directory_configs:
+     azure.mgmt.netapp.aio.operations.ActiveDirectoryConfigsOperations
+    :ivar external_clusters: ExternalClustersOperations operations
+    :vartype external_clusters: azure.mgmt.netapp.aio.operations.ExternalClustersOperations
+    :ivar cluster_peers: ClusterPeersOperations operations
+    :vartype cluster_peers: azure.mgmt.netapp.aio.operations.ClusterPeersOperations
+    :ivar external_svms: ExternalSvmsOperations operations
+    :vartype external_svms: azure.mgmt.netapp.aio.operations.ExternalSvmsOperations
+    :ivar svm_peers: SvmPeersOperations operations
+    :vartype svm_peers: azure.mgmt.netapp.aio.operations.SvmPeersOperations
+    :ivar external_caches: ExternalCachesOperations operations
+    :vartype external_caches: azure.mgmt.netapp.aio.operations.ExternalCachesOperations
+    :ivar external_cache_connections: ExternalCacheConnectionsOperations operations
+    :vartype external_cache_connections:
+     azure.mgmt.netapp.aio.operations.ExternalCacheConnectionsOperations
     :ivar net_app_resource_quota_limits: NetAppResourceQuotaLimitsOperations operations
     :vartype net_app_resource_quota_limits:
      azure.mgmt.netapp.aio.operations.NetAppResourceQuotaLimitsOperations
@@ -120,9 +170,10 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes,do
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-08-01"
-     and None. Default value is None. If not set, the operation's default API version will be used.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-08-15-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -198,6 +249,39 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes,do
         self.backup_vaults = BackupVaultsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.buckets = BucketsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.caches = CachesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.elastic_accounts = ElasticAccountsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.elastic_capacity_pools = ElasticCapacityPoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.elastic_volumes = ElasticVolumesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.elastic_snapshots = ElasticSnapshotsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.elastic_snapshot_policies = ElasticSnapshotPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.elastic_backup_vaults = ElasticBackupVaultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.elastic_backup_policies = ElasticBackupPoliciesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.elastic_backups = ElasticBackupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.active_directory_configs = ActiveDirectoryConfigsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.external_clusters = ExternalClustersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.cluster_peers = ClusterPeersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.external_svms = ExternalSvmsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.svm_peers = SvmPeersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.external_caches = ExternalCachesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.external_cache_connections = ExternalCacheConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.net_app_resource_quota_limits = NetAppResourceQuotaLimitsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
