@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,16 +34,11 @@ def main():
         resource_group_name="example-rg",
         network_fabric_name="example-nf",
         network_to_network_interconnect_name="example-nni",
-        body={
-            "resourceIds": [
-                "/subscriptions/0000ABCD-0A0B-0000-0000-000000ABCDEF/resourceGroups/example-rg/providers/Microsoft.ManagedNetworkFabric/networkFabrics/example-nf/networkToNetworkInterconnects/example-nni"
-            ],
-            "state": "Enable",
-        },
+        body={"resourceIds": [""], "state": "Enable"},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-07-15/NetworkToNetworkInterconnects_UpdateAdministrativeState.json
+# x-ms-original-file: 2026-01-15-preview/NetworkToNetworkInterconnects_UpdateAdministrativeState.json
 if __name__ == "__main__":
     main()

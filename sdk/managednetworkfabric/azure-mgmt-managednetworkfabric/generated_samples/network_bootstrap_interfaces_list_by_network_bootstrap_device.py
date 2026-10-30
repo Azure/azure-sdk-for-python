@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-07-15/NetworkBootstrapInterfaces_ListByNetworkBootstrapDevice.json
+# x-ms-original-file: 2026-01-15-preview/NetworkBootstrapInterfaces_ListByNetworkBootstrapDevice.json
 if __name__ == "__main__":
     main()

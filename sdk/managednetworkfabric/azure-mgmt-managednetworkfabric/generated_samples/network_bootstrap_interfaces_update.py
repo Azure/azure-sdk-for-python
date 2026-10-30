@@ -34,13 +34,11 @@ def main():
         resource_group_name="example-rg",
         network_bootstrap_device_name="example-device",
         network_bootstrap_interface_name="example-interface",
-        body={
-            "properties": {"annotation": "annotation", "serialNumber": "Vendor;Model;HardwareRevisionId;SerialNumber"}
-        },
+        body={"properties": {"annotation": "annotation"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-07-15/NetworkBootstrapInterfaces_Update.json
+# x-ms-original-file: 2026-01-15-preview/NetworkBootstrapInterfaces_Update.json
 if __name__ == "__main__":
     main()
