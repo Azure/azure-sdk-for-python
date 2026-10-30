@@ -46,7 +46,7 @@ from azure.ai.projects.models import (
     PromptAgentDefinition,
     ResponseRetrievalItemGenerationParams,
     Tool,
-    FunctionTool,
+    ToolFunctionTool,
 )
 
 load_dotenv()
@@ -55,7 +55,7 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
 
 # Define a function tool for the model to use
-func_tool = FunctionTool(
+func_tool = ToolFunctionTool(
     name="get_horoscope",
     parameters={
         "type": "object",

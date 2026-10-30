@@ -12,7 +12,7 @@ DESCRIPTION:
     working-directory contents of its auto-provisioned, network-isolated container.
 
     The sample downloads the persisted Skill's `SKILL.md` into the Prompt Agent
-    instructions. The agent reaches the shell through an `MCPTool` pointed at
+    instructions. The agent reaches the shell through a `ToolMcpTool` pointed at
     the Toolbox's versioned `/mcp` URL. The sample prints the tools exposed by
     the MCP server, each shell command's arguments and output, and the agent's
     final response.
@@ -41,7 +41,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    MCPTool,
+    ToolMcpTool,
     PromptAgentDefinition,
     ShellToolboxTool,
     SkillInlineContent,
@@ -116,7 +116,7 @@ with (
         toolbox_mcp_url = f"{endpoint}/toolboxes/{TOOLBOX_NAME}/versions/{toolbox_version.version}/mcp?api-version=v1"
         token = credential.get_token("https://ai.azure.com/.default").token
 
-        toolbox_mcp_tool = MCPTool(
+        toolbox_mcp_tool = ToolMcpTool(
             server_label=TOOLBOX_MCP_LABEL,
             server_url=toolbox_mcp_url,
             authorization=token,

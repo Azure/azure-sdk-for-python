@@ -29,7 +29,7 @@ from dotenv import load_dotenv
 # Azure AI imports
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolFileSearchTool
 
 load_dotenv()
 
@@ -52,7 +52,7 @@ with (
         file = openai_client.vector_stores.files.upload_and_poll(vector_store_id=vector_store.id, file=f)
     print(f"File uploaded to vector store (id: {file.id})")
 
-    tool = FileSearchTool(vector_store_ids=[vector_store.id])
+    tool = ToolFileSearchTool(vector_store_ids=[vector_store.id])
 
     # Create agent with file search tool
     agent = project_client.agents.create_version(

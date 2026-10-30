@@ -35,7 +35,7 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool, StructuredInputDefinition
+from azure.ai.projects.models import PromptAgentDefinition, ToolFileSearchTool, StructuredInputDefinition
 
 load_dotenv()
 
@@ -59,7 +59,7 @@ with (
     print(f"File uploaded to vector store (id: {file.id})")
 
     # Tool resources are templated and resolved at runtime via structured inputs.
-    tool = FileSearchTool(vector_store_ids=["{{vector_store_id}}"])
+    tool = ToolFileSearchTool(vector_store_ids=["{{vector_store_id}}"])
 
     agent_definition = PromptAgentDefinition(
         model=os.environ["FOUNDRY_MODEL_NAME"],

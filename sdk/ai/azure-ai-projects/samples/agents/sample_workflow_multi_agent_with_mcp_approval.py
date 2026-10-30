@@ -36,7 +36,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     WorkflowAgentDefinition,
-    MCPTool,
+    ToolMcpTool,
 )
 
 load_dotenv()
@@ -50,7 +50,7 @@ with (
 ):
     # Define MCP tool for accessing external resources (optional - can be removed for simpler demo)
     # Note: MCP tools in workflows may require special handling depending on the use case
-    mcp_tool = MCPTool(
+    mcp_tool = ToolMcpTool(
         server_label="api-specs",
         server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
         require_approval="always",
