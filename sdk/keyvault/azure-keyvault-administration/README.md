@@ -161,11 +161,19 @@ A `KeyVaultSettingsClient` manages Managed HSM account settings.
 
 ### KeyVaultEkmClient
 
-A `KeyVaultEkmClient` manages the Managed HSM's External Key Manager (EKM) connection.
+A `KeyVaultEkmClient` manages the Managed HSM's External Key Manager (EKM) connection and its EKM proxy private
+endpoints.
 
 ### EKM Connection
 
 An EKM connection represents the connection of an Azure Managed HSM resource with an external HSM.
+
+### EKM Proxy Private Endpoint
+
+An EKM proxy private endpoint lets a Managed HSM reach an EKM proxy through an Azure Private Link Service instead of
+the public internet. A Managed HSM may have up to two EKM proxy private endpoints. To route an EKM connection through
+one, set the connection's `host` to the private endpoint's name and its `connectivity_mode` to
+`KeyVaultEkmConnectivityMode.PRIVATE_ENDPOINT`.
 
 ## Examples
 This section contains code snippets covering common tasks:
@@ -440,6 +448,7 @@ Several samples are available in the Azure SDK for Python GitHub repository. The
 - [Full backup and restore][backup_operations_sample] ([async version][backup_operations_async_sample])
 - [List and update Key Vault settings][settings_operations_sample] ([async version][settings_operations_async_sample])
 - [Retrieve and manage EKM connections][ekm_operations_sample] ([async version][ekm_operations_async_sample])
+- [Manage EKM proxy private endpoints][ekm_private_endpoint_operations_sample] ([async version][ekm_private_endpoint_operations_async_sample])
 
 ###  Additional documentation
 For more extensive documentation on Azure Key Vault, see the [API reference documentation][reference_docs].
@@ -503,6 +512,8 @@ contact opencode@microsoft.com with any additional questions or comments.
 [settings_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/settings_operations_async.py
 [ekm_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/ekm_operations.py
 [ekm_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/ekm_operations_async.py
+[ekm_private_endpoint_operations_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/ekm_private_endpoint_operations.py
+[ekm_private_endpoint_operations_async_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-administration/samples/ekm_private_endpoint_operations_async.py
 [storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob/README.md
 [storage_explorer]: https://learn.microsoft.com/azure/vs-azure-tools-storage-manage-with-storage-explorer
 
