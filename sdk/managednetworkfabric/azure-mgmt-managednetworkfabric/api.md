@@ -8499,22 +8499,6 @@ namespace azure.mgmt.managednetworkfabric.models
         UNMANAGED = "unmanaged"
 
 
-    class azure.mgmt.managednetworkfabric.models.ManagementNetworkConfigurationPatchableProperties(_Model):
-        infrastructure_vpn_configuration: Optional[VpnConfigurationPatchableProperties]
-        workload_vpn_configuration: Optional[VpnConfigurationPatchableProperties]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                infrastructure_vpn_configuration: Optional[VpnConfigurationPatchableProperties] = ..., 
-                workload_vpn_configuration: Optional[VpnConfigurationPatchableProperties] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.managednetworkfabric.models.ManagementNetworkConfigurationProperties(_Model):
         infrastructure_vpn_configuration: VpnConfigurationProperties
         workload_vpn_configuration: VpnConfigurationProperties
@@ -8525,6 +8509,22 @@ namespace azure.mgmt.managednetworkfabric.models
                 *, 
                 infrastructure_vpn_configuration: VpnConfigurationProperties, 
                 workload_vpn_configuration: VpnConfigurationProperties
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.managednetworkfabric.models.ManagementNetworkPatchConfiguration(_Model):
+        infrastructure_vpn_configuration: Optional[VpnConfigurationPatchableProperties]
+        workload_vpn_configuration: Optional[VpnConfigurationPatchableProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                infrastructure_vpn_configuration: Optional[VpnConfigurationPatchableProperties] = ..., 
+                workload_vpn_configuration: Optional[VpnConfigurationPatchableProperties] = ...
             ) -> None: ...
 
         @overload
@@ -9737,13 +9737,13 @@ namespace azure.mgmt.managednetworkfabric.models
         hardware_alert_threshold: Optional[int]
         ipv4_prefix: Optional[str]
         ipv6_prefix: Optional[str]
-        management_network_configuration: Optional[ManagementNetworkConfigurationPatchableProperties]
+        management_network_configuration: Optional[ManagementNetworkPatchConfiguration]
         qos_configuration: Optional[QosPatchProperties]
         rack_count: Optional[int]
         secret_archive_settings: Optional[SecretArchivePatchSettings]
         server_count_per_rack: Optional[int]
         storage_account_configuration: Optional[StorageAccountPatchConfiguration]
-        terminal_server_configuration: Optional[NetworkFabricPatchablePropertiesTerminalServerConfiguration]
+        terminal_server_configuration: Optional[TerminalServerPatchConfiguration]
         trusted_ip_prefixes: Optional[list[str]]
         unique_rd_configuration: Optional[UniqueRouteDistinguisherPatchProperties]
         upgrade_profile: Optional[list[UpgradeProfilePropertiesPatchProperties]]
@@ -9760,42 +9760,16 @@ namespace azure.mgmt.managednetworkfabric.models
                 hardware_alert_threshold: Optional[int] = ..., 
                 ipv4_prefix: Optional[str] = ..., 
                 ipv6_prefix: Optional[str] = ..., 
-                management_network_configuration: Optional[ManagementNetworkConfigurationPatchableProperties] = ..., 
+                management_network_configuration: Optional[ManagementNetworkPatchConfiguration] = ..., 
                 qos_configuration: Optional[QosPatchProperties] = ..., 
                 rack_count: Optional[int] = ..., 
                 secret_archive_settings: Optional[SecretArchivePatchSettings] = ..., 
                 server_count_per_rack: Optional[int] = ..., 
                 storage_account_configuration: Optional[StorageAccountPatchConfiguration] = ..., 
-                terminal_server_configuration: Optional[NetworkFabricPatchablePropertiesTerminalServerConfiguration] = ..., 
+                terminal_server_configuration: Optional[TerminalServerPatchConfiguration] = ..., 
                 trusted_ip_prefixes: Optional[list[str]] = ..., 
                 unique_rd_configuration: Optional[UniqueRouteDistinguisherPatchProperties] = ..., 
                 upgrade_profile: Optional[list[UpgradeProfilePropertiesPatchProperties]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.managednetworkfabric.models.NetworkFabricPatchablePropertiesTerminalServerConfiguration(_Model):
-        password: Optional[str]
-        primary_ipv4_prefix: Optional[str]
-        primary_ipv6_prefix: Optional[str]
-        secondary_ipv4_prefix: Optional[str]
-        secondary_ipv6_prefix: Optional[str]
-        serial_number: Optional[str]
-        username: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                password: Optional[str] = ..., 
-                primary_ipv4_prefix: Optional[str] = ..., 
-                primary_ipv6_prefix: Optional[str] = ..., 
-                secondary_ipv4_prefix: Optional[str] = ..., 
-                secondary_ipv6_prefix: Optional[str] = ..., 
-                serial_number: Optional[str] = ..., 
-                username: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -11253,24 +11227,6 @@ namespace azure.mgmt.managednetworkfabric.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.managednetworkfabric.models.OptionBProperties(_Model):
-        export_route_targets: Optional[list[str]]
-        import_route_targets: Optional[list[str]]
-        route_targets: Optional[RouteTargetInformation]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                export_route_targets: Optional[list[str]] = ..., 
-                import_route_targets: Optional[list[str]] = ..., 
-                route_targets: Optional[RouteTargetInformation] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.managednetworkfabric.models.Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         SYSTEM = "system"
         USER = "user"
@@ -12378,6 +12334,32 @@ namespace azure.mgmt.managednetworkfabric.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.managednetworkfabric.models.TerminalServerPatchConfiguration(_Model):
+        password: Optional[str]
+        primary_ipv4_prefix: Optional[str]
+        primary_ipv6_prefix: Optional[str]
+        secondary_ipv4_prefix: Optional[str]
+        secondary_ipv6_prefix: Optional[str]
+        serial_number: Optional[str]
+        username: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                password: Optional[str] = ..., 
+                primary_ipv4_prefix: Optional[str] = ..., 
+                primary_ipv6_prefix: Optional[str] = ..., 
+                secondary_ipv4_prefix: Optional[str] = ..., 
+                secondary_ipv6_prefix: Optional[str] = ..., 
+                serial_number: Optional[str] = ..., 
+                username: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.managednetworkfabric.models.TrackedResource(Resource):
         id: str
         location: str
@@ -12809,7 +12791,7 @@ namespace azure.mgmt.managednetworkfabric.models
         administrative_state: Optional[Union[str, AdministrativeState]]
         network_to_network_interconnect_id: Optional[str]
         option_a_properties: Optional[VpnOptionAProperties]
-        option_b_properties: Optional[OptionBProperties]
+        option_b_properties: Optional[VpnOptionBProperties]
         peering_option: Union[str, PeeringOption]
 
         @overload
@@ -12818,7 +12800,7 @@ namespace azure.mgmt.managednetworkfabric.models
                 *, 
                 network_to_network_interconnect_id: Optional[str] = ..., 
                 option_a_properties: Optional[VpnOptionAProperties] = ..., 
-                option_b_properties: Optional[OptionBProperties] = ..., 
+                option_b_properties: Optional[VpnOptionBProperties] = ..., 
                 peering_option: Union[str, PeeringOption]
             ) -> None: ...
 
@@ -12894,6 +12876,24 @@ namespace azure.mgmt.managednetworkfabric.models
                 export_route_targets: Optional[list[str]] = ..., 
                 import_route_targets: Optional[list[str]] = ..., 
                 route_targets: Optional[RouteTargetPatchInformation] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.managednetworkfabric.models.VpnOptionBProperties(_Model):
+        export_route_targets: Optional[list[str]]
+        import_route_targets: Optional[list[str]]
+        route_targets: Optional[RouteTargetInformation]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                export_route_targets: Optional[list[str]] = ..., 
+                import_route_targets: Optional[list[str]] = ..., 
+                route_targets: Optional[RouteTargetInformation] = ...
             ) -> None: ...
 
         @overload
@@ -18830,18 +18830,18 @@ namespace azure.mgmt.managednetworkfabric.types
         userAssignedIdentities: dict[str, UserAssignedIdentity]
 
 
-    class azure.mgmt.managednetworkfabric.types.ManagementNetworkConfigurationPatchableProperties(TypedDict, total=False):
-        key "infrastructureVpnConfiguration": ForwardRef('VpnConfigurationPatchableProperties', module='types')
-        key "workloadVpnConfiguration": ForwardRef('VpnConfigurationPatchableProperties', module='types')
-        infrastructureVpnConfiguration: VpnConfigurationPatchableProperties
-        workloadVpnConfiguration: VpnConfigurationPatchableProperties
-
-
     class azure.mgmt.managednetworkfabric.types.ManagementNetworkConfigurationProperties(TypedDict, total=False):
         key "infrastructureVpnConfiguration": Required[VpnConfigurationProperties]
         key "workloadVpnConfiguration": Required[VpnConfigurationProperties]
         infrastructureVpnConfiguration: VpnConfigurationProperties
         workloadVpnConfiguration: VpnConfigurationProperties
+
+
+    class azure.mgmt.managednetworkfabric.types.ManagementNetworkPatchConfiguration(TypedDict, total=False):
+        key "infrastructureVpnConfiguration": ForwardRef('VpnConfigurationPatchableProperties', module='types')
+        key "workloadVpnConfiguration": ForwardRef('VpnConfigurationPatchableProperties', module='types')
+        infrastructureVpnConfiguration: VpnConfigurationPatchableProperties
+        workloadVpnConfiguration: VpnConfigurationPatchableProperties
 
 
     class azure.mgmt.managednetworkfabric.types.NativeIpv4PrefixLimitPatchProperties(TypedDict, total=False):
@@ -19255,13 +19255,13 @@ namespace azure.mgmt.managednetworkfabric.types
         key "hardwareAlertThreshold": int
         key "ipv4Prefix": str
         key "ipv6Prefix": str
-        key "managementNetworkConfiguration": ForwardRef('ManagementNetworkConfigurationPatchableProperties', module='types')
+        key "managementNetworkConfiguration": ForwardRef('ManagementNetworkPatchConfiguration', module='types')
         key "qosConfiguration": ForwardRef('QosPatchProperties', module='types')
         key "rackCount": int
         key "secretArchiveSettings": Optional[SecretArchivePatchSettings]
         key "serverCountPerRack": int
         key "storageAccountConfiguration": ForwardRef('StorageAccountPatchConfiguration', module='types')
-        key "terminalServerConfiguration": ForwardRef('NetworkFabricPatchablePropertiesTerminalServerConfiguration', module='types')
+        key "terminalServerConfiguration": ForwardRef('TerminalServerPatchConfiguration', module='types')
         key "uniqueRdConfiguration": ForwardRef('UniqueRouteDistinguisherPatchProperties', module='types')
         annotation: str
         authorizedTransceiver: AuthorizedTransceiverPatchProperties
@@ -19271,33 +19271,16 @@ namespace azure.mgmt.managednetworkfabric.types
         hardwareAlertThreshold: int
         ipv4Prefix: str
         ipv6Prefix: str
-        managementNetworkConfiguration: ManagementNetworkConfigurationPatchableProperties
+        managementNetworkConfiguration: ManagementNetworkPatchConfiguration
         qosConfiguration: QosPatchProperties
         rackCount: int
         secretArchiveSettings: SecretArchivePatchSettings
         serverCountPerRack: int
         storageAccountConfiguration: StorageAccountPatchConfiguration
-        terminalServerConfiguration: NetworkFabricPatchablePropertiesTerminalServerConfiguration
+        terminalServerConfiguration: TerminalServerPatchConfiguration
         trustedIpPrefixes: list[str]
         uniqueRdConfiguration: UniqueRouteDistinguisherPatchProperties
         upgradeProfile: list[UpgradeProfilePropertiesPatchProperties]
-
-
-    class azure.mgmt.managednetworkfabric.types.NetworkFabricPatchablePropertiesTerminalServerConfiguration(TypedDict, total=False):
-        key "password": str
-        key "primaryIpv4Prefix": str
-        key "primaryIpv6Prefix": str
-        key "secondaryIpv4Prefix": str
-        key "secondaryIpv6Prefix": str
-        key "serialNumber": str
-        key "username": str
-        password: str
-        primaryIpv4Prefix: str
-        primaryIpv6Prefix: str
-        secondaryIpv4Prefix: str
-        secondaryIpv6Prefix: str
-        serialNumber: str
-        username: str
 
 
     class azure.mgmt.managednetworkfabric.types.NetworkFabricProperties(AnnotationResource):
@@ -19928,13 +19911,6 @@ namespace azure.mgmt.managednetworkfabric.types
         maximumRoutes: int
 
 
-    class azure.mgmt.managednetworkfabric.types.OptionBProperties(TypedDict, total=False):
-        key "routeTargets": ForwardRef('RouteTargetInformation', module='types')
-        exportRouteTargets: list[str]
-        importRouteTargets: list[str]
-        routeTargets: RouteTargetInformation
-
-
     class azure.mgmt.managednetworkfabric.types.PatchInfraNetwork(TypedDict, total=False):
         key "ipv4EndAddr": str
         key "ipv4Gateway": str
@@ -20424,6 +20400,23 @@ namespace azure.mgmt.managednetworkfabric.types
         username: str
 
 
+    class azure.mgmt.managednetworkfabric.types.TerminalServerPatchConfiguration(TypedDict, total=False):
+        key "password": str
+        key "primaryIpv4Prefix": str
+        key "primaryIpv6Prefix": str
+        key "secondaryIpv4Prefix": str
+        key "secondaryIpv6Prefix": str
+        key "serialNumber": str
+        key "username": str
+        password: str
+        primaryIpv4Prefix: str
+        primaryIpv6Prefix: str
+        secondaryIpv4Prefix: str
+        secondaryIpv6Prefix: str
+        serialNumber: str
+        username: str
+
+
     class azure.mgmt.managednetworkfabric.types.TrackedResource(Resource):
         key "id": str
         key "location": Required[str]
@@ -20547,12 +20540,12 @@ namespace azure.mgmt.managednetworkfabric.types
         key "administrativeState": Union[str, AdministrativeState]
         key "networkToNetworkInterconnectId": str
         key "optionAProperties": ForwardRef('VpnOptionAProperties', module='types')
-        key "optionBProperties": ForwardRef('OptionBProperties', module='types')
+        key "optionBProperties": ForwardRef('VpnOptionBProperties', module='types')
         key "peeringOption": Required[Union[str, PeeringOption]]
         administrativeState: Union[str, AdministrativeState]
         networkToNetworkInterconnectId: str
         optionAProperties: VpnOptionAProperties
-        optionBProperties: OptionBProperties
+        optionBProperties: VpnOptionBProperties
         peeringOption: Union[str, PeeringOption]
 
 
@@ -20599,6 +20592,13 @@ namespace azure.mgmt.managednetworkfabric.types
         exportRouteTargets: list[str]
         importRouteTargets: list[str]
         routeTargets: RouteTargetPatchInformation
+
+
+    class azure.mgmt.managednetworkfabric.types.VpnOptionBProperties(TypedDict, total=False):
+        key "routeTargets": ForwardRef('RouteTargetInformation', module='types')
+        exportRouteTargets: list[str]
+        importRouteTargets: list[str]
+        routeTargets: RouteTargetInformation
 
 
 ```

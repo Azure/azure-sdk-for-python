@@ -4322,21 +4322,6 @@ class ManagedServiceIdentityPatch(TypedDict, total=False):
     """The identities assigned to this resource by the user."""
 
 
-class ManagementNetworkConfigurationPatchableProperties(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Configuration to be used to setup the management network.
-
-    :ivar infrastructureVpnConfiguration: VPN Configuration properties.
-    :vartype infrastructureVpnConfiguration: "VpnConfigurationPatchableProperties"
-    :ivar workloadVpnConfiguration: VPN Configuration properties.
-    :vartype workloadVpnConfiguration: "VpnConfigurationPatchableProperties"
-    """
-
-    infrastructureVpnConfiguration: "VpnConfigurationPatchableProperties"
-    """VPN Configuration properties."""
-    workloadVpnConfiguration: "VpnConfigurationPatchableProperties"
-    """VPN Configuration properties."""
-
-
 class ManagementNetworkConfigurationProperties(TypedDict, total=False):
     """Configuration to be used to setup the management network.
 
@@ -4350,6 +4335,21 @@ class ManagementNetworkConfigurationProperties(TypedDict, total=False):
     """VPN Configuration properties. Required."""
     workloadVpnConfiguration: Required["VpnConfigurationProperties"]
     """VPN Configuration properties. Required."""
+
+
+class ManagementNetworkPatchConfiguration(TypedDict, total=False):
+    """Configuration to be used to setup the management network.
+
+    :ivar infrastructureVpnConfiguration: VPN Configuration properties.
+    :vartype infrastructureVpnConfiguration: "VpnConfigurationPatchableProperties"
+    :ivar workloadVpnConfiguration: VPN Configuration properties.
+    :vartype workloadVpnConfiguration: "VpnConfigurationPatchableProperties"
+    """
+
+    infrastructureVpnConfiguration: "VpnConfigurationPatchableProperties"
+    """VPN Configuration properties."""
+    workloadVpnConfiguration: "VpnConfigurationPatchableProperties"
+    """VPN Configuration properties."""
 
 
 class NativeIpv4PrefixLimitPatchProperties(TypedDict, total=False):
@@ -5321,43 +5321,6 @@ class NetworkFabricPatch(TagsUpdate):
     """The managed service identities assigned to this resource."""
 
 
-class NetworkFabricPatchablePropertiesTerminalServerConfiguration(
-    TypedDict, total=False
-):  # pylint: disable=name-too-long
-    """Network and credentials configuration already applied to terminal server.
-
-    :ivar username: Username for the terminal server connection.
-    :vartype username: str
-    :ivar password: Password for the terminal server connection.
-    :vartype password: str
-    :ivar serialNumber: Serial Number of Terminal server.
-    :vartype serialNumber: str
-    :ivar primaryIpv4Prefix: IPv4 Address Prefix.
-    :vartype primaryIpv4Prefix: str
-    :ivar primaryIpv6Prefix: IPv6 Address Prefix.
-    :vartype primaryIpv6Prefix: str
-    :ivar secondaryIpv4Prefix: Secondary IPv4 Address Prefix.
-    :vartype secondaryIpv4Prefix: str
-    :ivar secondaryIpv6Prefix: Secondary IPv6 Address Prefix.
-    :vartype secondaryIpv6Prefix: str
-    """
-
-    username: str
-    """Username for the terminal server connection."""
-    password: str
-    """Password for the terminal server connection."""
-    serialNumber: str
-    """Serial Number of Terminal server."""
-    primaryIpv4Prefix: str
-    """IPv4 Address Prefix."""
-    primaryIpv6Prefix: str
-    """IPv6 Address Prefix."""
-    secondaryIpv4Prefix: str
-    """Secondary IPv4 Address Prefix."""
-    secondaryIpv6Prefix: str
-    """Secondary IPv6 Address Prefix."""
-
-
 class NetworkFabricPatchProperties(TypedDict, total=False):
     """Network Fabric Patch properties.
 
@@ -5375,10 +5338,9 @@ class NetworkFabricPatchProperties(TypedDict, total=False):
     :vartype fabricASN: int
     :ivar terminalServerConfiguration: Network and credentials configuration already applied to
      terminal server.
-    :vartype terminalServerConfiguration:
-     "NetworkFabricPatchablePropertiesTerminalServerConfiguration"
+    :vartype terminalServerConfiguration: "TerminalServerPatchConfiguration"
     :ivar managementNetworkConfiguration: Configuration to be used to setup the management network.
-    :vartype managementNetworkConfiguration: "ManagementNetworkConfigurationPatchableProperties"
+    :vartype managementNetworkConfiguration: "ManagementNetworkPatchConfiguration"
     :ivar storageAccountConfiguration: Bring your own storage account configurations for Network
      Fabric.
     :vartype storageAccountConfiguration: "StorageAccountPatchConfiguration"
@@ -5417,9 +5379,9 @@ class NetworkFabricPatchProperties(TypedDict, total=False):
     """IPv6Prefix for Management Network. Example: 3FFE:FFFF:0:CD40::/59."""
     fabricASN: int
     """ASN of CE devices for CE/PE connectivity."""
-    terminalServerConfiguration: "NetworkFabricPatchablePropertiesTerminalServerConfiguration"
+    terminalServerConfiguration: "TerminalServerPatchConfiguration"
     """Network and credentials configuration already applied to terminal server."""
-    managementNetworkConfiguration: "ManagementNetworkConfigurationPatchableProperties"
+    managementNetworkConfiguration: "ManagementNetworkPatchConfiguration"
     """Configuration to be used to setup the management network."""
     storageAccountConfiguration: "StorageAccountPatchConfiguration"
     """Bring your own storage account configurations for Network Fabric."""
@@ -6915,27 +6877,6 @@ class OptionBLayer3PrefixLimitProperties(TypedDict, total=False):
     """Maximum number of routes allowed."""
 
 
-class OptionBProperties(TypedDict, total=False):
-    """Option B configuration to be used for Management VPN.
-
-    :ivar importRouteTargets: Route Targets to be applied for incoming routes into CE. This is for
-     backward compatibility.
-    :vartype importRouteTargets: list[str]
-    :ivar exportRouteTargets: Route Targets to be applied for outgoing routes from CE. This is for
-     backward compatibility.
-    :vartype exportRouteTargets: list[str]
-    :ivar routeTargets: Route Targets to be applied.
-    :vartype routeTargets: "RouteTargetInformation"
-    """
-
-    importRouteTargets: list[str]
-    """Route Targets to be applied for incoming routes into CE. This is for backward compatibility."""
-    exportRouteTargets: list[str]
-    """Route Targets to be applied for outgoing routes from CE. This is for backward compatibility."""
-    routeTargets: "RouteTargetInformation"
-    """Route Targets to be applied."""
-
-
 class PatchInfraNetwork(TypedDict, total=False):
     """Infrastructure network definition for PATCH. All fields optional.
 
@@ -7969,6 +7910,41 @@ class TerminalServerConfiguration(TypedDict, total=False):
     """Secret rotation status for the terminal server's secrets."""
 
 
+class TerminalServerPatchConfiguration(TypedDict, total=False):
+    """Network and credentials configuration already applied to terminal server.
+
+    :ivar username: Username for the terminal server connection.
+    :vartype username: str
+    :ivar password: Password for the terminal server connection.
+    :vartype password: str
+    :ivar serialNumber: Serial Number of Terminal server.
+    :vartype serialNumber: str
+    :ivar primaryIpv4Prefix: IPv4 Address Prefix.
+    :vartype primaryIpv4Prefix: str
+    :ivar primaryIpv6Prefix: IPv6 Address Prefix.
+    :vartype primaryIpv6Prefix: str
+    :ivar secondaryIpv4Prefix: Secondary IPv4 Address Prefix.
+    :vartype secondaryIpv4Prefix: str
+    :ivar secondaryIpv6Prefix: Secondary IPv6 Address Prefix.
+    :vartype secondaryIpv6Prefix: str
+    """
+
+    username: str
+    """Username for the terminal server connection."""
+    password: str
+    """Password for the terminal server connection."""
+    serialNumber: str
+    """Serial Number of Terminal server."""
+    primaryIpv4Prefix: str
+    """IPv4 Address Prefix."""
+    primaryIpv6Prefix: str
+    """IPv6 Address Prefix."""
+    secondaryIpv4Prefix: str
+    """Secondary IPv4 Address Prefix."""
+    secondaryIpv6Prefix: str
+    """Secondary IPv6 Address Prefix."""
+
+
 class UniqueRouteDistinguisherPatchProperties(TypedDict, total=False):
     """Unique Route Distinguisher configuration properties.
 
@@ -8255,7 +8231,7 @@ class VpnConfigurationProperties(TypedDict, total=False):
     :ivar peeringOption: Peering option list. Required. Known values are: "OptionA" and "OptionB".
     :vartype peeringOption: Union[str, "PeeringOption"]
     :ivar optionBProperties: option B properties.
-    :vartype optionBProperties: "OptionBProperties"
+    :vartype optionBProperties: "VpnOptionBProperties"
     :ivar optionAProperties: option A properties.
     :vartype optionAProperties: "VpnOptionAProperties"
     """
@@ -8267,7 +8243,7 @@ class VpnConfigurationProperties(TypedDict, total=False):
      \"RMA\", \"UnderMaintenance\", and \"EnabledDegraded\"."""
     peeringOption: Required[Union[str, "PeeringOption"]]
     """Peering option list. Required. Known values are: \"OptionA\" and \"OptionB\"."""
-    optionBProperties: "OptionBProperties"
+    optionBProperties: "VpnOptionBProperties"
     """option B properties."""
     optionAProperties: "VpnOptionAProperties"
     """option A properties."""
@@ -8353,4 +8329,25 @@ class VpnOptionBPatchProperties(TypedDict, total=False):
     exportRouteTargets: list[str]
     """Route Targets to be applied for outgoing routes from CE. This is for backward compatibility."""
     routeTargets: "RouteTargetPatchInformation"
+    """Route Targets to be applied."""
+
+
+class VpnOptionBProperties(TypedDict, total=False):
+    """Option B configuration to be used for Management VPN.
+
+    :ivar importRouteTargets: Route Targets to be applied for incoming routes into CE. This is for
+     backward compatibility.
+    :vartype importRouteTargets: list[str]
+    :ivar exportRouteTargets: Route Targets to be applied for outgoing routes from CE. This is for
+     backward compatibility.
+    :vartype exportRouteTargets: list[str]
+    :ivar routeTargets: Route Targets to be applied.
+    :vartype routeTargets: "RouteTargetInformation"
+    """
+
+    importRouteTargets: list[str]
+    """Route Targets to be applied for incoming routes into CE. This is for backward compatibility."""
+    exportRouteTargets: list[str]
+    """Route Targets to be applied for outgoing routes from CE. This is for backward compatibility."""
+    routeTargets: "RouteTargetInformation"
     """Route Targets to be applied."""

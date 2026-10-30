@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0b1 (2026-10-28)
+## 3.0.0b1 (2026-10-30)
 
 ### Features Added
 
@@ -72,9 +72,6 @@
 
 ### Breaking Changes
 
-  - Renamed model `ManagementNetworkPatchConfiguration` to `ManagementNetworkConfigurationPatchableProperties`
-  - Renamed model `TerminalServerPatchConfiguration` to `NetworkFabricPatchablePropertiesTerminalServerConfiguration`
-  - Renamed model `VpnOptionBProperties` to `OptionBProperties`
   - Deleted or renamed model `ValidateConfigurationResponse`
   - Method `AccessControlListsOperations.begin_validate_configuration` changed return type from `AsyncLROPoller[ValidateConfigurationResponse]` to `AsyncLROPoller[ValidateConfigurationResponseV2]`
   - Method `L2IsolationDomainsOperations.begin_validate_configuration` changed return type from `AsyncLROPoller[ValidateConfigurationResponse]` to `AsyncLROPoller[ValidateConfigurationResponseV2]`

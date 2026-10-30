@@ -10443,47 +10443,6 @@ class ManagedServiceIdentityPatch(_Model):  # pylint: disable=docstring-keyword-
         super().__init__(*args, **kwargs)
 
 
-class ManagementNetworkConfigurationPatchableProperties(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """Configuration to be used to setup the management network.
-
-    :ivar infrastructure_vpn_configuration: VPN Configuration properties.
-    :vartype infrastructure_vpn_configuration:
-     ~azure.mgmt.managednetworkfabric.models.VpnConfigurationPatchableProperties
-    :ivar workload_vpn_configuration: VPN Configuration properties.
-    :vartype workload_vpn_configuration:
-     ~azure.mgmt.managednetworkfabric.models.VpnConfigurationPatchableProperties
-    """
-
-    infrastructure_vpn_configuration: Optional["_models.VpnConfigurationPatchableProperties"] = rest_field(
-        name="infrastructureVpnConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """VPN Configuration properties."""
-    workload_vpn_configuration: Optional["_models.VpnConfigurationPatchableProperties"] = rest_field(
-        name="workloadVpnConfiguration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """VPN Configuration properties."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        infrastructure_vpn_configuration: Optional["_models.VpnConfigurationPatchableProperties"] = None,
-        workload_vpn_configuration: Optional["_models.VpnConfigurationPatchableProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ManagementNetworkConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration to be used to setup the management network.
 
@@ -10510,6 +10469,45 @@ class ManagementNetworkConfigurationProperties(_Model):  # pylint: disable=docst
         *,
         infrastructure_vpn_configuration: "_models.VpnConfigurationProperties",
         workload_vpn_configuration: "_models.VpnConfigurationProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagementNetworkPatchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration to be used to setup the management network.
+
+    :ivar infrastructure_vpn_configuration: VPN Configuration properties.
+    :vartype infrastructure_vpn_configuration:
+     ~azure.mgmt.managednetworkfabric.models.VpnConfigurationPatchableProperties
+    :ivar workload_vpn_configuration: VPN Configuration properties.
+    :vartype workload_vpn_configuration:
+     ~azure.mgmt.managednetworkfabric.models.VpnConfigurationPatchableProperties
+    """
+
+    infrastructure_vpn_configuration: Optional["_models.VpnConfigurationPatchableProperties"] = rest_field(
+        name="infrastructureVpnConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """VPN Configuration properties."""
+    workload_vpn_configuration: Optional["_models.VpnConfigurationPatchableProperties"] = rest_field(
+        name="workloadVpnConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """VPN Configuration properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        infrastructure_vpn_configuration: Optional["_models.VpnConfigurationPatchableProperties"] = None,
+        workload_vpn_configuration: Optional["_models.VpnConfigurationPatchableProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -13796,76 +13794,6 @@ class NetworkFabricPatch(TagsUpdate):  # pylint: disable=docstring-keyword-shoul
             super().__setattr__(key, value)
 
 
-class NetworkFabricPatchablePropertiesTerminalServerConfiguration(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """Network and credentials configuration already applied to terminal server.
-
-    :ivar username: Username for the terminal server connection.
-    :vartype username: str
-    :ivar password: Password for the terminal server connection.
-    :vartype password: str
-    :ivar serial_number: Serial Number of Terminal server.
-    :vartype serial_number: str
-    :ivar primary_ipv4_prefix: IPv4 Address Prefix.
-    :vartype primary_ipv4_prefix: str
-    :ivar primary_ipv6_prefix: IPv6 Address Prefix.
-    :vartype primary_ipv6_prefix: str
-    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
-    :vartype secondary_ipv4_prefix: str
-    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
-    :vartype secondary_ipv6_prefix: str
-    """
-
-    username: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Username for the terminal server connection."""
-    password: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Password for the terminal server connection."""
-    serial_number: Optional[str] = rest_field(
-        name="serialNumber", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Serial Number of Terminal server."""
-    primary_ipv4_prefix: Optional[str] = rest_field(
-        name="primaryIpv4Prefix", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """IPv4 Address Prefix."""
-    primary_ipv6_prefix: Optional[str] = rest_field(
-        name="primaryIpv6Prefix", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """IPv6 Address Prefix."""
-    secondary_ipv4_prefix: Optional[str] = rest_field(
-        name="secondaryIpv4Prefix", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Secondary IPv4 Address Prefix."""
-    secondary_ipv6_prefix: Optional[str] = rest_field(
-        name="secondaryIpv6Prefix", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Secondary IPv6 Address Prefix."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        serial_number: Optional[str] = None,
-        primary_ipv4_prefix: Optional[str] = None,
-        primary_ipv6_prefix: Optional[str] = None,
-        secondary_ipv4_prefix: Optional[str] = None,
-        secondary_ipv6_prefix: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class NetworkFabricPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Fabric Patch properties.
 
@@ -13884,11 +13812,11 @@ class NetworkFabricPatchProperties(_Model):  # pylint: disable=docstring-keyword
     :ivar terminal_server_configuration: Network and credentials configuration already applied to
      terminal server.
     :vartype terminal_server_configuration:
-     ~azure.mgmt.managednetworkfabric.models.NetworkFabricPatchablePropertiesTerminalServerConfiguration
+     ~azure.mgmt.managednetworkfabric.models.TerminalServerPatchConfiguration
     :ivar management_network_configuration: Configuration to be used to setup the management
      network.
     :vartype management_network_configuration:
-     ~azure.mgmt.managednetworkfabric.models.ManagementNetworkConfigurationPatchableProperties
+     ~azure.mgmt.managednetworkfabric.models.ManagementNetworkPatchConfiguration
     :ivar storage_account_configuration: Bring your own storage account configurations for Network
      Fabric.
     :vartype storage_account_configuration:
@@ -13938,12 +13866,12 @@ class NetworkFabricPatchProperties(_Model):  # pylint: disable=docstring-keyword
     """IPv6Prefix for Management Network. Example: 3FFE:FFFF:0:CD40::/59."""
     fabric_asn: Optional[int] = rest_field(name="fabricASN", visibility=["read", "create", "update", "delete", "query"])
     """ASN of CE devices for CE/PE connectivity."""
-    terminal_server_configuration: Optional["_models.NetworkFabricPatchablePropertiesTerminalServerConfiguration"] = (
-        rest_field(name="terminalServerConfiguration", visibility=["read", "create", "update", "delete", "query"])
+    terminal_server_configuration: Optional["_models.TerminalServerPatchConfiguration"] = rest_field(
+        name="terminalServerConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """Network and credentials configuration already applied to terminal server."""
-    management_network_configuration: Optional["_models.ManagementNetworkConfigurationPatchableProperties"] = (
-        rest_field(name="managementNetworkConfiguration", visibility=["read", "create", "update", "delete", "query"])
+    management_network_configuration: Optional["_models.ManagementNetworkPatchConfiguration"] = rest_field(
+        name="managementNetworkConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """Configuration to be used to setup the management network."""
     storage_account_configuration: Optional["_models.StorageAccountPatchConfiguration"] = rest_field(
@@ -13998,10 +13926,8 @@ class NetworkFabricPatchProperties(_Model):  # pylint: disable=docstring-keyword
         ipv4_prefix: Optional[str] = None,
         ipv6_prefix: Optional[str] = None,
         fabric_asn: Optional[int] = None,
-        terminal_server_configuration: Optional[
-            "_models.NetworkFabricPatchablePropertiesTerminalServerConfiguration"
-        ] = None,
-        management_network_configuration: Optional["_models.ManagementNetworkConfigurationPatchableProperties"] = None,
+        terminal_server_configuration: Optional["_models.TerminalServerPatchConfiguration"] = None,
+        management_network_configuration: Optional["_models.ManagementNetworkPatchConfiguration"] = None,
         storage_account_configuration: Optional["_models.StorageAccountPatchConfiguration"] = None,
         hardware_alert_threshold: Optional[int] = None,
         control_plane_acls: Optional[list[str]] = None,
@@ -17981,52 +17907,6 @@ class OptionBLayer3PrefixLimitProperties(_Model):  # pylint: disable=docstring-k
         super().__init__(*args, **kwargs)
 
 
-class OptionBProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Option B configuration to be used for Management VPN.
-
-    :ivar import_route_targets: Route Targets to be applied for incoming routes into CE. This is
-     for backward compatibility.
-    :vartype import_route_targets: list[str]
-    :ivar export_route_targets: Route Targets to be applied for outgoing routes from CE. This is
-     for backward compatibility.
-    :vartype export_route_targets: list[str]
-    :ivar route_targets: Route Targets to be applied.
-    :vartype route_targets: ~azure.mgmt.managednetworkfabric.models.RouteTargetInformation
-    """
-
-    import_route_targets: Optional[list[str]] = rest_field(
-        name="importRouteTargets", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Route Targets to be applied for incoming routes into CE. This is for backward compatibility."""
-    export_route_targets: Optional[list[str]] = rest_field(
-        name="exportRouteTargets", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Route Targets to be applied for outgoing routes from CE. This is for backward compatibility."""
-    route_targets: Optional["_models.RouteTargetInformation"] = rest_field(
-        name="routeTargets", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Route Targets to be applied."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        import_route_targets: Optional[list[str]] = None,
-        export_route_targets: Optional[list[str]] = None,
-        route_targets: Optional["_models.RouteTargetInformation"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class PatchInfraNetwork(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Infrastructure network definition for PATCH. All fields optional.
 
@@ -20322,6 +20202,74 @@ class TerminalServerConfiguration(_Model):  # pylint: disable=docstring-keyword-
         super().__init__(*args, **kwargs)
 
 
+class TerminalServerPatchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Network and credentials configuration already applied to terminal server.
+
+    :ivar username: Username for the terminal server connection.
+    :vartype username: str
+    :ivar password: Password for the terminal server connection.
+    :vartype password: str
+    :ivar serial_number: Serial Number of Terminal server.
+    :vartype serial_number: str
+    :ivar primary_ipv4_prefix: IPv4 Address Prefix.
+    :vartype primary_ipv4_prefix: str
+    :ivar primary_ipv6_prefix: IPv6 Address Prefix.
+    :vartype primary_ipv6_prefix: str
+    :ivar secondary_ipv4_prefix: Secondary IPv4 Address Prefix.
+    :vartype secondary_ipv4_prefix: str
+    :ivar secondary_ipv6_prefix: Secondary IPv6 Address Prefix.
+    :vartype secondary_ipv6_prefix: str
+    """
+
+    username: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Username for the terminal server connection."""
+    password: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Password for the terminal server connection."""
+    serial_number: Optional[str] = rest_field(
+        name="serialNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Serial Number of Terminal server."""
+    primary_ipv4_prefix: Optional[str] = rest_field(
+        name="primaryIpv4Prefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IPv4 Address Prefix."""
+    primary_ipv6_prefix: Optional[str] = rest_field(
+        name="primaryIpv6Prefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IPv6 Address Prefix."""
+    secondary_ipv4_prefix: Optional[str] = rest_field(
+        name="secondaryIpv4Prefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Secondary IPv4 Address Prefix."""
+    secondary_ipv6_prefix: Optional[str] = rest_field(
+        name="secondaryIpv6Prefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Secondary IPv6 Address Prefix."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        serial_number: Optional[str] = None,
+        primary_ipv4_prefix: Optional[str] = None,
+        primary_ipv6_prefix: Optional[str] = None,
+        secondary_ipv4_prefix: Optional[str] = None,
+        secondary_ipv6_prefix: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class UniqueRouteDistinguisherPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Unique Route Distinguisher configuration properties.
 
@@ -21309,7 +21257,7 @@ class VpnConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-s
     :ivar peering_option: Peering option list. Required. Known values are: "OptionA" and "OptionB".
     :vartype peering_option: str or ~azure.mgmt.managednetworkfabric.models.PeeringOption
     :ivar option_b_properties: option B properties.
-    :vartype option_b_properties: ~azure.mgmt.managednetworkfabric.models.OptionBProperties
+    :vartype option_b_properties: ~azure.mgmt.managednetworkfabric.models.VpnOptionBProperties
     :ivar option_a_properties: option A properties.
     :vartype option_a_properties: ~azure.mgmt.managednetworkfabric.models.VpnOptionAProperties
     """
@@ -21327,7 +21275,7 @@ class VpnConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-s
         name="peeringOption", visibility=["read", "create", "update", "delete", "query"]
     )
     """Peering option list. Required. Known values are: \"OptionA\" and \"OptionB\"."""
-    option_b_properties: Optional["_models.OptionBProperties"] = rest_field(
+    option_b_properties: Optional["_models.VpnOptionBProperties"] = rest_field(
         name="optionBProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """option B properties."""
@@ -21342,7 +21290,7 @@ class VpnConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-s
         *,
         peering_option: Union[str, "_models.PeeringOption"],
         network_to_network_interconnect_id: Optional[str] = None,
-        option_b_properties: Optional["_models.OptionBProperties"] = None,
+        option_b_properties: Optional["_models.VpnOptionBProperties"] = None,
         option_a_properties: Optional["_models.VpnOptionAProperties"] = None,
     ) -> None: ...
 
@@ -21506,6 +21454,52 @@ class VpnOptionBPatchProperties(_Model):  # pylint: disable=docstring-keyword-sh
         import_route_targets: Optional[list[str]] = None,
         export_route_targets: Optional[list[str]] = None,
         route_targets: Optional["_models.RouteTargetPatchInformation"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VpnOptionBProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Option B configuration to be used for Management VPN.
+
+    :ivar import_route_targets: Route Targets to be applied for incoming routes into CE. This is
+     for backward compatibility.
+    :vartype import_route_targets: list[str]
+    :ivar export_route_targets: Route Targets to be applied for outgoing routes from CE. This is
+     for backward compatibility.
+    :vartype export_route_targets: list[str]
+    :ivar route_targets: Route Targets to be applied.
+    :vartype route_targets: ~azure.mgmt.managednetworkfabric.models.RouteTargetInformation
+    """
+
+    import_route_targets: Optional[list[str]] = rest_field(
+        name="importRouteTargets", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Route Targets to be applied for incoming routes into CE. This is for backward compatibility."""
+    export_route_targets: Optional[list[str]] = rest_field(
+        name="exportRouteTargets", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Route Targets to be applied for outgoing routes from CE. This is for backward compatibility."""
+    route_targets: Optional["_models.RouteTargetInformation"] = rest_field(
+        name="routeTargets", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Route Targets to be applied."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        import_route_targets: Optional[list[str]] = None,
+        export_route_targets: Optional[list[str]] = None,
+        route_targets: Optional["_models.RouteTargetInformation"] = None,
     ) -> None: ...
 
     @overload
