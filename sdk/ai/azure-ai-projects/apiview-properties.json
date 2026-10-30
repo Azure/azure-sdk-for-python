@@ -642,6 +642,10 @@
         "azure.ai.projects.models.VoiceAgentSoundscapeSourceConfig": "Azure.AI.Projects.VoiceAgentSoundscapeSourceConfig",
         "azure.ai.projects.models.VoiceAgentSoundscapeTrackConfig": "Azure.AI.Projects.VoiceAgentSoundscapeTrackConfig",
         "azure.ai.projects.models.VoiceAgentSoundscapeWorkingTrackConfig": "Azure.AI.Projects.VoiceAgentSoundscapeWorkingTrackConfig",
+        "azure.ai.projects.models.VoiceAgentSoundscapeConfig": "Azure.AI.Projects.VoiceAgentSoundscapeConfig",
+        "azure.ai.projects.models.VoiceAgentSoundscapeSourceConfig": "Azure.AI.Projects.VoiceAgentSoundscapeSourceConfig",
+        "azure.ai.projects.models.VoiceAgentSoundscapeTrackConfig": "Azure.AI.Projects.VoiceAgentSoundscapeTrackConfig",
+        "azure.ai.projects.models.VoiceAgentSoundscapeWorkingTrackConfig": "Azure.AI.Projects.VoiceAgentSoundscapeWorkingTrackConfig",
         "azure.ai.projects.models.VoiceAgentStaticInterimResponseConfig": "Azure.AI.Projects.VoiceAgentStaticInterimResponseConfig",
         "azure.ai.projects.models.VoiceAgentSubagent": "Azure.AI.Projects.VoiceAgentSubagent",
         "azure.ai.projects.models.VoiceAgentSubagentConfig": "Azure.AI.Projects.VoiceAgentSubagentConfig",
@@ -1005,5 +1009,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "6bc23fb38d44"
+    "CrossLanguageVersion": "1c8b2a2c820a"
 }

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,6 +9,7 @@
 Mirrors .NET EndpointTests at:
   https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/storagemover/Azure.ResourceManager.StorageMover/tests/Scenario/EndpointTests.cs
 """
+
 import os
 
 import pytest
@@ -26,8 +28,7 @@ FAKE_SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
 # real subscription is never committed to the repo (recordings are sanitized to
 # this same value).
 SYNTHETICS_SUBSCRIPTION_ID = (
-    os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID")
-    or "00000000-0000-0000-0000-000000000000"
+    os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID") or "00000000-0000-0000-0000-000000000000"
 )
 MULTI_CLOUD_CONNECTOR_ID = (
     f"/subscriptions/{SYNTHETICS_SUBSCRIPTION_ID}"
@@ -49,13 +50,23 @@ def _account_id(rg):
     )
 
 
+# Partner-tenant storage accounts for the cross-tenant allow-list (matrix row #33).
+# The RP stores these ARM IDs as given; the accounts do not need to exist.
+PARTNER_STORAGE_ACCOUNT_IDS = [
+    "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/partner-rg"
+    f"/providers/Microsoft.Storage/storageAccounts/partnersa{i}"
+    for i in range(1, 4)
+]
+
+
 class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient)
 
     def _create_storage_mover(self, rg, sm_name):
         self.client.storage_movers.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"location": AZURE_LOCATION},
         )
 
@@ -75,33 +86,43 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
 
         # --- Container endpoint ---
         c = self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=c_name,
-            endpoint={"properties": {
-                "endpointType": "AzureStorageBlobContainer",
-                "storageAccountResourceId": _account_id(rg),
-                "blobContainerName": CONTAINER_NAME,
-                "description": "New container endpoint",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=c_name,
+            endpoint={
+                "properties": {
+                    "endpointType": "AzureStorageBlobContainer",
+                    "storageAccountResourceId": _account_id(rg),
+                    "blobContainerName": CONTAINER_NAME,
+                    "description": "New container endpoint",
+                }
+            },
         )
         assert c.name == c_name
         assert c.properties.endpoint_type == "AzureStorageBlobContainer"
 
         c_get = self.client.endpoints.get(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=c_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=c_name,
         )
         assert c_get.name == c_name
         assert c_get.properties.endpoint_type == "AzureStorageBlobContainer"
 
         # --- NFS mount endpoint ---
         nfs = self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=nfs_name,
-            endpoint={"properties": {
-                "endpointType": "NfsMount",
-                "host": "10.0.0.1",
-                "export": "/",
-                "nfsVersion": "NFSv3",
-                "description": "New NFS endpoint",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=nfs_name,
+            endpoint={
+                "properties": {
+                    "endpointType": "NfsMount",
+                    "host": "10.0.0.1",
+                    "export": "/",
+                    "nfsVersion": "NFSv3",
+                    "description": "New NFS endpoint",
+                }
+            },
         )
         assert nfs.name == nfs_name
         assert nfs.properties.endpoint_type == "NfsMount"
@@ -109,25 +130,31 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
         assert nfs.properties.host == "10.0.0.1"
 
         nfs_get = self.client.endpoints.get(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=nfs_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=nfs_name,
         )
         assert nfs_get.properties.host == "10.0.0.1"
         assert nfs_get.properties.export == "/"
 
         # --- SMB mount endpoint with credentials ---
         smb = self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=smb_name,
-            endpoint={"properties": {
-                "endpointType": "SmbMount",
-                "host": "10.0.0.1",
-                "shareName": "testshare",
-                "credentials": {
-                    "type": "AzureKeyVaultSmb",
-                    "usernameUri": "https://examples-azureKeyVault.vault.azure.net/secrets/examples-username",
-                    "passwordUri": "https://examples-azureKeyVault.vault.azure.net/secrets/examples-password",
-                },
-                "description": "New Smb mount endpoint",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=smb_name,
+            endpoint={
+                "properties": {
+                    "endpointType": "SmbMount",
+                    "host": "10.0.0.1",
+                    "shareName": "testshare",
+                    "credentials": {
+                        "type": "AzureKeyVaultSmb",
+                        "usernameUri": "https://examples-azureKeyVault.vault.azure.net/secrets/examples-username",
+                        "passwordUri": "https://examples-azureKeyVault.vault.azure.net/secrets/examples-password",
+                    },
+                    "description": "New Smb mount endpoint",
+                }
+            },
         )
         assert smb.name == smb_name
         assert smb.properties.endpoint_type == "SmbMount"
@@ -143,7 +170,9 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
         # satisfies the check. The .NET test omits identity entirely and would also
         # fail today against this api-version.
         smb_updated = self.client.endpoints.update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=smb_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=smb_name,
             endpoint={
                 "identity": {"type": "None"},
                 "properties": {
@@ -163,42 +192,57 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
         assert smb_updated.properties.share_name == "testshare"
 
         self.client.endpoints.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=smb_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=smb_name,
         ).result()
 
         # --- Azure Storage SMB FileShare endpoint ---
         fs = self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=fs_name,
-            endpoint={"properties": {
-                "endpointType": "AzureStorageSmbFileShare",
-                "storageAccountResourceId": _account_id(rg),
-                "fileShareName": "testfileshare",
-                "description": "new file share endpoint",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=fs_name,
+            endpoint={
+                "properties": {
+                    "endpointType": "AzureStorageSmbFileShare",
+                    "storageAccountResourceId": _account_id(rg),
+                    "fileShareName": "testfileshare",
+                    "description": "new file share endpoint",
+                }
+            },
         )
         assert fs.name == fs_name
         assert fs.properties.endpoint_type == "AzureStorageSmbFileShare"
         assert fs.properties.file_share_name == "testfileshare"
 
         fs_get = self.client.endpoints.get(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=fs_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=fs_name,
         )
         assert fs_get.properties.file_share_name == "testfileshare"
         assert fs_get.properties.description == "new file share endpoint"
 
         # --- list + missing-endpoint check ---
-        items = list(self.client.endpoints.list(
-            resource_group_name=rg, storage_mover_name=sm_name,
-        ))
+        items = list(
+            self.client.endpoints.list(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+            )
+        )
         assert len(items) > 1
 
         with pytest.raises(ResourceNotFoundError):
             self.client.endpoints.get(
-                resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=c_name + "111",
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name=c_name + "111",
             )
         with pytest.raises(ResourceNotFoundError):
             self.client.endpoints.get(
-                resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=smb_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name=smb_name,
             )
 
     # ----- EndpointTests.MultiCloudConnectorEndpointCreateGetDeleteTest -----
@@ -211,22 +255,28 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
         self._create_storage_mover(rg, sm_name)
 
         endpoint_name = "mcc-1"
-        body = {"properties": {
-            "endpointType": "AzureMultiCloudConnector",
-            "multiCloudConnectorId": MULTI_CLOUD_CONNECTOR_ID,
-            "awsS3BucketId": AWS_S3_BUCKET_ID,
-            "description": "Test multi-cloud connector endpoint",
-        }}
+        body = {
+            "properties": {
+                "endpointType": "AzureMultiCloudConnector",
+                "multiCloudConnectorId": MULTI_CLOUD_CONNECTOR_ID,
+                "awsS3BucketId": AWS_S3_BUCKET_ID,
+                "description": "Test multi-cloud connector endpoint",
+            }
+        }
 
         endpoint = self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
             endpoint=body,
         )
         assert endpoint.name == endpoint_name
         assert endpoint.properties.endpoint_type == "AzureMultiCloudConnector"
 
         endpoint = self.client.endpoints.get(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
         )
         assert endpoint.name == endpoint_name
         assert endpoint.properties.description == "Test multi-cloud connector endpoint"
@@ -234,11 +284,15 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
         assert endpoint.properties.aws_s3_bucket_id is not None
 
         self.client.endpoints.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
         ).result()
         with pytest.raises(ResourceNotFoundError):
             self.client.endpoints.get(
-                resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name=endpoint_name,
             )
 
     # ----- EndpointTests.S3WithHmacEndpointCreateGetDeleteTest -----
@@ -254,44 +308,58 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
         self._create_storage_mover(rg, sm_name)
 
         endpoint_name = "s3hmac-1"
-        body = {"properties": {
-            "endpointType": "S3WithHMAC",
-            "sourceUri": "https://s3.example.com/bucket",
-            "sourceType": "MINIO",
-            "description": "Test S3 with HMAC endpoint",
-            "credentials": {
-                "type": "AzureKeyVaultS3WithHMAC",
-                "accessKeyUri": "https://examples-azureKeyVault.vault.azure.net/secrets/examples-accesskey",
-                "secretKeyUri": "https://examples-azureKeyVault.vault.azure.net/secrets/examples-secretkey",
-            },
-        }}
+        body = {
+            "properties": {
+                "endpointType": "S3WithHMAC",
+                "sourceUri": "https://s3.example.com/bucket",
+                "sourceType": "MINIO",
+                "description": "Test S3 with HMAC endpoint",
+                "credentials": {
+                    "type": "AzureKeyVaultS3WithHMAC",
+                    "accessKeyUri": "https://examples-azureKeyVault.vault.azure.net/secrets/examples-accesskey",
+                    "secretKeyUri": "https://examples-azureKeyVault.vault.azure.net/secrets/examples-secretkey",
+                },
+            }
+        }
 
         endpoint = self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
             endpoint=body,
         )
         assert endpoint.name == endpoint_name
         assert endpoint.properties.endpoint_type == "S3WithHMAC"
 
         endpoint = self.client.endpoints.get(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
         )
         assert endpoint.name == endpoint_name
         assert endpoint.properties.source_uri == "https://s3.example.com/bucket"
         assert endpoint.properties.source_type == "MINIO"
         assert endpoint.properties.description == "Test S3 with HMAC endpoint"
         assert endpoint.properties.credentials is not None
-        assert endpoint.properties.credentials.access_key_uri == \
-            "https://examples-azureKeyVault.vault.azure.net/secrets/examples-accesskey"
-        assert endpoint.properties.credentials.secret_key_uri == \
-            "https://examples-azureKeyVault.vault.azure.net/secrets/examples-secretkey"
+        assert (
+            endpoint.properties.credentials.access_key_uri
+            == "https://examples-azureKeyVault.vault.azure.net/secrets/examples-accesskey"
+        )
+        assert (
+            endpoint.properties.credentials.secret_key_uri
+            == "https://examples-azureKeyVault.vault.azure.net/secrets/examples-secretkey"
+        )
 
         self.client.endpoints.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
         ).result()
         with pytest.raises(ResourceNotFoundError):
             self.client.endpoints.get(
-                resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name=endpoint_name,
             )
 
     # ----- EndpointTests valid-EndpointKind tests -----
@@ -305,19 +373,25 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
 
         endpoint_name = "nfs-src-1"
         endpoint = self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
-            endpoint={"properties": {
-                "endpointType": "NfsMount",
-                "host": "10.0.0.1",
-                "export": "/",
-                "endpointKind": "Source",
-                "description": "NFS source endpoint",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
+            endpoint={
+                "properties": {
+                    "endpointType": "NfsMount",
+                    "host": "10.0.0.1",
+                    "export": "/",
+                    "endpointKind": "Source",
+                    "description": "NFS source endpoint",
+                }
+            },
         )
         assert endpoint.properties.endpoint_kind == "Source"
 
         self.client.endpoints.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
         ).result()
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
@@ -329,19 +403,25 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
 
         endpoint_name = "smb-src-1"
         endpoint = self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
-            endpoint={"properties": {
-                "endpointType": "SmbMount",
-                "host": "10.0.0.1",
-                "shareName": "testshare",
-                "endpointKind": "Source",
-                "description": "SMB source endpoint",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
+            endpoint={
+                "properties": {
+                    "endpointType": "SmbMount",
+                    "host": "10.0.0.1",
+                    "shareName": "testshare",
+                    "endpointKind": "Source",
+                    "description": "SMB source endpoint",
+                }
+            },
         )
         assert endpoint.properties.endpoint_kind == "Source"
 
         self.client.endpoints.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
         ).result()
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
@@ -353,19 +433,25 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
 
         endpoint_name = "mcc-src-1"
         endpoint = self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
-            endpoint={"properties": {
-                "endpointType": "AzureMultiCloudConnector",
-                "multiCloudConnectorId": MULTI_CLOUD_CONNECTOR_ID,
-                "awsS3BucketId": AWS_S3_BUCKET_ID,
-                "endpointKind": "Source",
-                "description": "Multi-cloud connector source endpoint",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
+            endpoint={
+                "properties": {
+                    "endpointType": "AzureMultiCloudConnector",
+                    "multiCloudConnectorId": MULTI_CLOUD_CONNECTOR_ID,
+                    "awsS3BucketId": AWS_S3_BUCKET_ID,
+                    "endpointKind": "Source",
+                    "description": "Multi-cloud connector source endpoint",
+                }
+            },
         )
         assert endpoint.properties.endpoint_kind == "Source"
 
         self.client.endpoints.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
         ).result()
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
@@ -377,19 +463,25 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
 
         endpoint_name = "blob-src-1"
         endpoint = self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
-            endpoint={"properties": {
-                "endpointType": "AzureStorageBlobContainer",
-                "storageAccountResourceId": _account_id(rg),
-                "blobContainerName": CONTAINER_NAME,
-                "endpointKind": "Source",
-                "description": "Blob container source endpoint",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
+            endpoint={
+                "properties": {
+                    "endpointType": "AzureStorageBlobContainer",
+                    "storageAccountResourceId": _account_id(rg),
+                    "blobContainerName": CONTAINER_NAME,
+                    "endpointKind": "Source",
+                    "description": "Blob container source endpoint",
+                }
+            },
         )
         assert endpoint.properties.endpoint_kind == "Source"
 
         self.client.endpoints.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
         ).result()
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
@@ -401,19 +493,25 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
 
         endpoint_name = "blob-tgt-1"
         endpoint = self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
-            endpoint={"properties": {
-                "endpointType": "AzureStorageBlobContainer",
-                "storageAccountResourceId": _account_id(rg),
-                "blobContainerName": CONTAINER_NAME,
-                "endpointKind": "Target",
-                "description": "Blob container target endpoint",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
+            endpoint={
+                "properties": {
+                    "endpointType": "AzureStorageBlobContainer",
+                    "storageAccountResourceId": _account_id(rg),
+                    "blobContainerName": CONTAINER_NAME,
+                    "endpointKind": "Target",
+                    "description": "Blob container target endpoint",
+                }
+            },
         )
         assert endpoint.properties.endpoint_kind == "Target"
 
         self.client.endpoints.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
         ).result()
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
@@ -425,19 +523,25 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
 
         endpoint_name = "smbfs-tgt-1"
         endpoint = self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
-            endpoint={"properties": {
-                "endpointType": "AzureStorageSmbFileShare",
-                "storageAccountResourceId": _account_id(rg),
-                "fileShareName": "testfileshare",
-                "endpointKind": "Target",
-                "description": "SMB file share target endpoint",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
+            endpoint={
+                "properties": {
+                    "endpointType": "AzureStorageSmbFileShare",
+                    "storageAccountResourceId": _account_id(rg),
+                    "fileShareName": "testfileshare",
+                    "endpointKind": "Target",
+                    "description": "SMB file share target endpoint",
+                }
+            },
         )
         assert endpoint.properties.endpoint_kind == "Target"
 
         self.client.endpoints.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
         ).result()
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
@@ -449,19 +553,25 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
 
         endpoint_name = "nfsfs-tgt-1"
         endpoint = self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
-            endpoint={"properties": {
-                "endpointType": "AzureStorageNfsFileShare",
-                "storageAccountResourceId": _account_id(rg),
-                "fileShareName": "testnfsfileshare",
-                "endpointKind": "Target",
-                "description": "NFS file share target endpoint",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
+            endpoint={
+                "properties": {
+                    "endpointType": "AzureStorageNfsFileShare",
+                    "storageAccountResourceId": _account_id(rg),
+                    "fileShareName": "testnfsfileshare",
+                    "endpointKind": "Target",
+                    "description": "NFS file share target endpoint",
+                }
+            },
         )
         assert endpoint.properties.endpoint_kind == "Target"
 
         self.client.endpoints.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
         ).result()
 
     # ----- EndpointTests invalid-EndpointKind tests -----
@@ -475,13 +585,17 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
 
         with pytest.raises(HttpResponseError):
             self.client.endpoints.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name, endpoint_name="nfs-tgt-1",
-                endpoint={"properties": {
-                    "endpointType": "NfsMount",
-                    "host": "10.0.0.1",
-                    "export": "/",
-                    "endpointKind": "Target",
-                }},
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name="nfs-tgt-1",
+                endpoint={
+                    "properties": {
+                        "endpointType": "NfsMount",
+                        "host": "10.0.0.1",
+                        "export": "/",
+                        "endpointKind": "Target",
+                    }
+                },
             )
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
@@ -493,13 +607,17 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
 
         with pytest.raises(HttpResponseError):
             self.client.endpoints.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name, endpoint_name="smb-tgt-1",
-                endpoint={"properties": {
-                    "endpointType": "SmbMount",
-                    "host": "10.0.0.1",
-                    "shareName": "testshare",
-                    "endpointKind": "Target",
-                }},
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name="smb-tgt-1",
+                endpoint={
+                    "properties": {
+                        "endpointType": "SmbMount",
+                        "host": "10.0.0.1",
+                        "shareName": "testshare",
+                        "endpointKind": "Target",
+                    }
+                },
             )
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
@@ -511,13 +629,17 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
 
         with pytest.raises(HttpResponseError):
             self.client.endpoints.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name, endpoint_name="mcc-tgt-1",
-                endpoint={"properties": {
-                    "endpointType": "AzureMultiCloudConnector",
-                    "multiCloudConnectorId": MULTI_CLOUD_CONNECTOR_ID,
-                    "awsS3BucketId": AWS_S3_BUCKET_ID,
-                    "endpointKind": "Target",
-                }},
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name="mcc-tgt-1",
+                endpoint={
+                    "properties": {
+                        "endpointType": "AzureMultiCloudConnector",
+                        "multiCloudConnectorId": MULTI_CLOUD_CONNECTOR_ID,
+                        "awsS3BucketId": AWS_S3_BUCKET_ID,
+                        "endpointKind": "Target",
+                    }
+                },
             )
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
@@ -529,13 +651,17 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
 
         with pytest.raises(HttpResponseError):
             self.client.endpoints.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name, endpoint_name="smbfs-src-1",
-                endpoint={"properties": {
-                    "endpointType": "AzureStorageSmbFileShare",
-                    "storageAccountResourceId": _account_id(rg),
-                    "fileShareName": "testfileshare",
-                    "endpointKind": "Source",
-                }},
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name="smbfs-src-1",
+                endpoint={
+                    "properties": {
+                        "endpointType": "AzureStorageSmbFileShare",
+                        "storageAccountResourceId": _account_id(rg),
+                        "fileShareName": "testfileshare",
+                        "endpointKind": "Source",
+                    }
+                },
             )
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
@@ -547,13 +673,17 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
 
         with pytest.raises(HttpResponseError):
             self.client.endpoints.create_or_update(
-                resource_group_name=rg, storage_mover_name=sm_name, endpoint_name="nfsfs-src-1",
-                endpoint={"properties": {
-                    "endpointType": "AzureStorageNfsFileShare",
-                    "storageAccountResourceId": _account_id(rg),
-                    "fileShareName": "testnfsfileshare",
-                    "endpointKind": "Source",
-                }},
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name="nfsfs-src-1",
+                endpoint={
+                    "properties": {
+                        "endpointType": "AzureStorageNfsFileShare",
+                        "storageAccountResourceId": _account_id(rg),
+                        "fileShareName": "testnfsfileshare",
+                        "endpointKind": "Source",
+                    }
+                },
             )
 
     # ----- EndpointTests.NfsFileShareEndpointCreateGetDeleteTest -----
@@ -566,22 +696,28 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
         self._create_storage_mover(rg, sm_name)
 
         endpoint_name = "nfsfs-1"
-        body = {"properties": {
-            "endpointType": "AzureStorageNfsFileShare",
-            "storageAccountResourceId": _account_id(rg),
-            "fileShareName": "testnfsfileshare",
-            "description": "Test NFS file share endpoint",
-        }}
+        body = {
+            "properties": {
+                "endpointType": "AzureStorageNfsFileShare",
+                "storageAccountResourceId": _account_id(rg),
+                "fileShareName": "testnfsfileshare",
+                "description": "Test NFS file share endpoint",
+            }
+        }
 
         endpoint = self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
             endpoint=body,
         )
         assert endpoint.name == endpoint_name
         assert endpoint.properties.endpoint_type == "AzureStorageNfsFileShare"
 
         endpoint = self.client.endpoints.get(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
         )
         assert endpoint.name == endpoint_name
         assert endpoint.properties.file_share_name == "testnfsfileshare"
@@ -589,9 +725,120 @@ class TestStorageMoverMgmtEndpointsOperations(AzureMgmtRecordedTestCase):
         assert endpoint.properties.storage_account_resource_id is not None
 
         self.client.endpoints.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
         ).result()
         with pytest.raises(ResourceNotFoundError):
             self.client.endpoints.get(
-                resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name=endpoint_name,
             )
+
+    # ----- Matrix row #33: EndpointTests.BlobContainerEndpointCrossTenantTest (API 2026-05-01) -----
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_blob_container_cross_tenant_settings(self, resource_group):
+        rg = resource_group.name
+        sm_name = "testsm-blobxt"
+        self._create_storage_mover(rg, sm_name)
+
+        # Without the new properties the endpoint is not cross-tenant enabled.
+        default_name = "blob-xt-default"
+        endpoint = self.client.endpoints.create_or_update(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=default_name,
+            endpoint={
+                "properties": {
+                    "endpointType": "AzureStorageBlobContainer",
+                    "storageAccountResourceId": _account_id(rg),
+                    "blobContainerName": CONTAINER_NAME,
+                }
+            },
+        )
+        assert endpoint.properties.enable_cross_tenant_transfer is False
+        assert endpoint.properties.allowed_storage_accounts == []
+
+        endpoint_name = "blob-xt-1"
+        body = {
+            "properties": {
+                "endpointType": "AzureStorageBlobContainer",
+                "storageAccountResourceId": _account_id(rg),
+                "blobContainerName": CONTAINER_NAME,
+                "enableCrossTenantTransfer": True,
+            }
+        }
+
+        # Enabling cross-tenant transfer requires a non-empty allow-list.
+        with pytest.raises(HttpResponseError) as exc_info:
+            self.client.endpoints.create_or_update(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name=endpoint_name,
+                endpoint=body,
+            )
+        assert exc_info.value.status_code == 400
+        assert exc_info.value.error.code == "InvalidRequestPropertyValue"
+
+        body["properties"]["allowedStorageAccounts"] = PARTNER_STORAGE_ACCOUNT_IDS[:2]
+        endpoint = self.client.endpoints.create_or_update(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
+            endpoint=body,
+        )
+        assert endpoint.properties.enable_cross_tenant_transfer is True
+        assert endpoint.properties.allowed_storage_accounts == PARTNER_STORAGE_ACCOUNT_IDS[:2]
+
+        endpoint = self.client.endpoints.get(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
+        )
+        assert endpoint.properties.enable_cross_tenant_transfer is True
+        assert endpoint.properties.allowed_storage_accounts == PARTNER_STORAGE_ACCOUNT_IDS[:2]
+
+        # The endpoint PATCH handler requires a non-null `identity` (see
+        # test_create_update_get_delete); this endpoint has no managed identity.
+        def patch(properties):
+            return self.client.endpoints.update(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name=endpoint_name,
+                endpoint={
+                    "identity": {"type": "None"},
+                    "properties": {"endpointType": "AzureStorageBlobContainer", **properties},
+                },
+            )
+
+        # PATCH replaces the whole allow-list.
+        endpoint = patch({"allowedStorageAccounts": PARTNER_STORAGE_ACCOUNT_IDS[2:]})
+        assert endpoint.properties.allowed_storage_accounts == PARTNER_STORAGE_ACCOUNT_IDS[2:]
+        assert endpoint.properties.enable_cross_tenant_transfer is True
+
+        # Omitting the allow-list on PATCH preserves it.
+        endpoint = patch({"description": "Cross-tenant endpoint"})
+        assert endpoint.properties.description == "Cross-tenant endpoint"
+        assert endpoint.properties.allowed_storage_accounts == PARTNER_STORAGE_ACCOUNT_IDS[2:]
+
+        endpoint = patch({"enableCrossTenantTransfer": False, "allowedStorageAccounts": []})
+        assert endpoint.properties.enable_cross_tenant_transfer is False
+        assert endpoint.properties.allowed_storage_accounts == []
+
+        endpoint = self.client.endpoints.get(
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
+        )
+        assert endpoint.properties.enable_cross_tenant_transfer is False
+        assert endpoint.properties.allowed_storage_accounts == []
+
+        for name in (endpoint_name, default_name):
+            self.client.endpoints.begin_delete(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                endpoint_name=name,
+            ).result()
