@@ -28,7 +28,7 @@ from pydantic import BaseModel
 import json
 import unittest.mock as mock
 from typing import cast
-from io import BytesIO
+from io import BytesIO, StringIO
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from devtools_testutils.fake_credentials import FakeTokenCredential
@@ -37,6 +37,7 @@ from devtools_testutils import is_live
 from devtools_testutils import add_general_string_sanitizer
 from azure.ai.projects import AIProjectClient
 from llm_instructions import get_instructions_for_sample_path
+from sample_log import sanitize_log, write_log_file
 
 # Fixed timestamp for playback mode (Nov 2023).
 # Must match the timestamp sanitizers in conftest.py (e.g., `Evaluation -\d{10}`).
@@ -192,12 +193,16 @@ class BaseSampleExecutor:
         env_vars: dict[str, str] = {},
         allowed_llm_validation_failures: Optional[set[str]] = None,
         validation_text_preprocessor: Optional[Callable[[list[str]], str]] = None,
+        log_directory: Optional[str] = None,
         **kwargs,
     ):
         self.test_instance = test_instance
         self.sample_path = sample_path
         self.print_calls: list[str] = []
         self.print_output_calls: list[str] = []
+        self.log_directory = log_directory
+        self.log_file_path: Optional[str] = None
+        self.print_output_file_path: Optional[str] = None
         self._original_print = print
         self.allowed_llm_validation_failures = allowed_llm_validation_failures or set()
         self._validation_text_preprocessor = validation_text_preprocessor
@@ -243,17 +248,6 @@ class BaseSampleExecutor:
     def _capture_debug_logs(self):
         """Capture logger DEBUG output into the same array used for print capture."""
 
-        bearer_token_pattern = re.compile(r"(?i)(Bearer\s+)([^\s\"',;]+)")
-        # Matches raw JWT-like tokens assigned to an "authorization" JSON field
-        # (e.g., when a sample passes `authorization=token` to MCPTool, the request
-        # body is logged as `"authorization": "eyJ..."` without a "Bearer " prefix).
-        json_authorization_pattern = re.compile(r"(?i)(\"authorization\"\s*:\s*\")([^\"]+)(\")")
-
-        def _sanitize_log_message(message: str) -> str:
-            message = bearer_token_pattern.sub(r"\1<REDACTED>", message)
-            message = json_authorization_pattern.sub(r"\1<REDACTED>\3", message)
-            return message
-
         class _PrintCaptureLogHandler(logging.Handler):
             def __init__(self, sink: list[str]):
                 super().__init__(level=logging.DEBUG)
@@ -270,7 +264,7 @@ class BaseSampleExecutor:
                     message = self.format(record)
                 except Exception:  # pylint: disable=broad-exception-caught
                     message = record.getMessage()
-                self._sink.append(_sanitize_log_message(message))
+                self._sink.append(sanitize_log(message))
 
         root_logger = logging.getLogger()
         previous_root_level = root_logger.level
@@ -333,7 +327,7 @@ class BaseSampleExecutor:
                 module_logger.isEnabledFor = original_is_enabled_for
 
     def _build_live_log_file_path(self, suffix: str) -> Optional[str]:
-        """Build a live-mode sample log path in the system temp directory."""
+        """Build a live-mode sample log path in the requested or system temp directory."""
 
         # Only create logs in live mode
         if not _is_live_mode():
@@ -343,7 +337,9 @@ class BaseSampleExecutor:
         sample_filename = os.path.basename(self.sample_path).replace(".py", "")
 
         log_filename = f"{sample_filename}_{suffix}_{timestamp}.log"
-        log_file = os.path.join(tempfile.gettempdir(), log_filename)
+        log_directory = self.log_directory or tempfile.gettempdir()
+        os.makedirs(log_directory, exist_ok=True)
+        log_file = os.path.join(log_directory, log_filename)
 
         # Remove existing file if present to ensure clean overwrite
         if os.path.exists(log_file):
@@ -372,24 +368,7 @@ class BaseSampleExecutor:
         Returns:
             Path to the created log file, or None if logging is disabled
         """
-        log_file = self._build_live_log_file_path("errors")
-        if not log_file:
-            return None
-
-        self._write_output_log()
-        sample_display_path = self._get_sample_display_path()
-
-        with open(log_file, "w", encoding="utf-8") as f:
-            f.write(f"Sample: {sample_display_path}\n")
-            f.write(f"Execution Error:\n{reason}\n\n")
-            f.write("Exception Details:\n")
-            f.write("=" * 80 + "\n")
-            f.write(exception_info)
-            f.write("\n" + "=" * 80 + "\n\n")
-            f.write("API Logs and Print Statements:\n")
-            f.write("=" * 80 + "\n")
-            self._write_numbered_print_calls(f)
-        return log_file
+        return self._write_sample_log("errors", f"Execution Error:\n{reason}\n\n", exception_info)
 
     def _write_failed_log(self, reason: str) -> Optional[str]:
         """Write captured print statements to a log file for validation failures.
@@ -400,20 +379,7 @@ class BaseSampleExecutor:
         Returns:
             Path to the created log file, or None if logging is disabled
         """
-        log_file = self._build_live_log_file_path("failed")
-        if not log_file:
-            return None
-
-        self._write_output_log()
-        sample_display_path = self._get_sample_display_path()
-
-        with open(log_file, "w", encoding="utf-8") as f:
-            f.write(f"Sample: {sample_display_path}\n")
-            f.write(f"Validation Failed: {reason}\n\n")
-            f.write("API Logs and Print Statements:\n")
-            f.write("=" * 80 + "\n")
-            self._write_numbered_print_calls(f)
-        return log_file
+        return self._write_sample_log("failed", f"Validation Failed: {reason}\n\n")
 
     def _write_passed_log(self, reason: str = "Validation passed") -> Optional[str]:
         """Write captured print statements to a log file for validation passes.
@@ -424,39 +390,53 @@ class BaseSampleExecutor:
         Returns:
             Path to the created log file, or None if logging is disabled
         """
-        log_file = self._build_live_log_file_path("success")
+        return self._write_sample_log("success", f"Validation Passed: {reason}\n\n")
+
+    def _write_sample_log(self, suffix: str, heading: str, exception_info: Optional[str] = None) -> Optional[str]:
+        """Format the existing API/print log once and sanitize it through the shared writer."""
+        log_file = self._build_live_log_file_path(suffix)
         if not log_file:
             return None
 
         self._write_output_log()
-        sample_display_path = self._get_sample_display_path()
-
-        with open(log_file, "w", encoding="utf-8") as f:
-            f.write(f"Sample: {sample_display_path}\n")
-            f.write(f"Validation Passed: {reason}\n\n")
-            f.write("API Logs and Print Statements:\n")
-            f.write("=" * 80 + "\n")
-            self._write_numbered_print_calls(f)
+        content = StringIO()
+        content.write(f"Sample: {self._get_sample_display_path()}\n{heading}")
+        if exception_info is not None:
+            content.write("Exception Details:\n" + "=" * 80 + "\n")
+            content.write(exception_info + "\n" + "=" * 80 + "\n\n")
+        content.write("API Logs and Print Statements:\n" + "=" * 80 + "\n")
+        self._write_numbered_print_calls(content)
+        write_log_file(log_file, content.getvalue())
+        self.log_file_path = log_file
         return log_file
 
     def _write_output_log(self) -> Optional[str]:
-        """Write captured print-only output to a live-mode temp log file."""
+        """Write captured print-only output through the same shared sanitizer as API logs."""
         log_file = self._build_live_log_file_path("output")
         if not log_file:
             return None
 
-        sample_display_path = self._get_sample_display_path()
-
-        with open(log_file, "w", encoding="utf-8") as file_handle:
-            file_handle.write(f"Sample: {sample_display_path}\n")
-            file_handle.write("Print Output:\n")
-            file_handle.write("=" * 80 + "\n")
-            if self.print_output_calls:
-                for print_call in self.print_output_calls:
-                    file_handle.write(f"{print_call}\n")
-            else:
-                file_handle.write("(No print() output was captured before the sample stopped.)\n")
+        content = StringIO()
+        content.write(f"Sample: {self._get_sample_display_path()}\nPrint Output:\n" + "=" * 80 + "\n")
+        content.write(
+            "\n".join(self.print_output_calls)
+            if self.print_output_calls
+            else "(No print() output was captured before the sample stopped.)"
+        )
+        content.write("\n")
+        write_log_file(log_file, content.getvalue())
+        self.print_output_file_path = log_file
         return log_file
+
+    def write_capture_logs(self) -> list[str]:
+        """Return existing live log files, creating capture-only logs if no validation wrote them."""
+        if not _is_live_mode():
+            return []
+        if self.log_file_path is None:
+            self._write_sample_log("capture", "Captured sample output (no validation result recorded).\n\n")
+        elif self.print_output_file_path is None:
+            self._write_output_log()
+        return [path for path in (self.log_file_path, self.print_output_file_path) if path is not None]
 
     def _write_numbered_print_calls(self, file_handle) -> None:
         """Write captured entries with numbering anchored to the first meaningful line."""
@@ -578,9 +558,10 @@ class BaseSampleExecutor:
         """Assert validation result and print reason."""
         sample_filename = os.path.basename(self.sample_path)
         is_allowed_to_fail = sample_filename in self.allowed_llm_validation_failures
+        reason = sanitize_log(test_report["reason"])
 
         if not test_report["correct"]:
-            log_file = self._write_failed_log(test_report["reason"])
+            log_file = self._write_failed_log(reason)
             if log_file:
                 print(f"\nValidation failed! Print statements logged to: {log_file}")
 
@@ -588,14 +569,14 @@ class BaseSampleExecutor:
                 print(
                     f"\nWARNING: '{sample_filename}' is in allowed_llm_validation_failures - test passing despite validation failure"
                 )
-                print(f"Reason: {test_report['reason']}")
+                print(f"Reason: {reason}")
             else:
-                assert False, f"Error is identified: {test_report['reason']}"
+                assert False, f"Error is identified: {reason}"
         else:
-            log_file = self._write_passed_log(test_report["reason"])
+            log_file = self._write_passed_log(reason)
             if log_file:
                 print(f"\nValidation passed! Print statements logged to: {log_file}")
-            print(f"Reason: {test_report['reason']}")
+            print(f"Reason: {reason}")
 
     def _resolve_local_module_file(
         self,
@@ -803,7 +784,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
         else:
             endpoint = PLAYBACK_LLM_VALIDATION_PROJECT_ENDPOINT
             model = PLAYBACK_LLM_VALIDATION_MODEL
-        print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
+        print("For validating console output, using the configured LLM validation project.")
         assert isinstance(self.tokenCredential, TokenCredential) or isinstance(
             self.tokenCredential, FakeTokenCredential
         )
@@ -1006,7 +987,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         else:
             endpoint = PLAYBACK_LLM_VALIDATION_PROJECT_ENDPOINT
             model = PLAYBACK_LLM_VALIDATION_MODEL
-        print(f"For validating console output, creating AIProjectClient with endpoint: {endpoint}")
+        print("For validating console output, using the configured LLM validation project.")
         assert isinstance(self.tokenCredential, AsyncTokenCredential) or isinstance(
             self.tokenCredential, AsyncFakeCredential
         )
