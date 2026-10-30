@@ -56,7 +56,7 @@ class AsyncSearchPageIterator(AsyncPageIterator):
         self._initial_request = initial_request
         self._kwargs = kwargs
         self._facets: Optional[Dict[str, List[Dict[str, Any]]]] = None
-        self._api_version = kwargs.get("api_version", "2026-08-01-preview")
+        self._api_version = kwargs.get("api_version", "2026-11-01-preview")
 
     async def _get_next_cb(self, continuation_token):
         if continuation_token is None:
@@ -376,6 +376,8 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         semantic_error_mode: Optional[Union[str, _models.SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         debug: Optional[Union[str, _models.QueryDebugMode]] = None,
+        more_like_this: Optional[str] = None,
+        agentic_options: Optional[_models.AgenticSearchOptions] = None,
         query_source_authorization: Optional[str] = None,
         enable_elevated_read: Optional[bool] = None,
         **kwargs: Any,
@@ -481,6 +483,10 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "innerHits",
             and "all".
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
+        :keyword str more_like_this: Document key to use to find similar documents. Cannot be
+            combined with search text.
+        :keyword agentic_options: Runtime options when query_type is 'agentic'.
+        :paramtype agentic_options: ~azure.search.documents.models.AgenticSearchOptions
         :keyword vector_queries: The query parameters for vector and hybrid search queries.
         :paramtype vector_queries: list[~azure.search.documents.models.VectorQuery]
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
@@ -572,6 +578,8 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             semantic_error_mode=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,
+            more_like_this=more_like_this,
+            agentic_options=agentic_options,
         )
 
         # Create kwargs for the search_post call

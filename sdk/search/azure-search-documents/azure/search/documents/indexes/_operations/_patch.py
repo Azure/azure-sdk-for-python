@@ -56,6 +56,9 @@ def _convert_index_response(response: _SearchIndexResponse) -> _models.SearchInd
         vector_search=response.vector_search,
         permission_filter_option=response.permission_filter_option,
         purview_enabled=response.purview_enabled,
+        graph_profile=response.graph_profile,
+        share_point_connector_app_registration=response.share_point_connector_app_registration,
+        one_lake_security_source=response.one_lake_security_source,
         e_tag=response.e_tag,
     )
 
@@ -562,7 +565,7 @@ class _SearchIndexClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return list(
-            self._get_synonym_maps(
+            self.list_synonym_maps(
                 select=select,
                 search=search,
                 page_size=page_size,
@@ -965,7 +968,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return list(
-            self._get_skillsets(
+            self.list_skillsets(
                 select=select,
                 search=search,
                 page_size=page_size,
@@ -1002,7 +1005,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return list(
-            self._get_indexers(
+            self.list_indexers(
                 select=select,
                 search=search,
                 page_size=page_size,
@@ -1058,7 +1061,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return list(
-            self._get_data_source_connections(
+            self.list_data_source_connections(
                 select=select,
                 search=search,
                 page_size=page_size,

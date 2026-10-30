@@ -8,11 +8,20 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union, overload
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Mapping, Optional, Union, overload
 from ._models import SearchField as _SearchField
 from ._models import SearchIndexerDataSourceConnection as _SearchIndexerDataSourceConnection
 from ._models import KnowledgeBase as _KnowledgeBase
 from ._models import SearchResourceEncryptionKey as _SearchResourceEncryptionKey
+from ._models import ScoringFunction as _ScoringFunction
+from ._models import (
+    DistanceScoringFunction as _DistanceScoringFunction,
+    FreshnessScoringFunction as _FreshnessScoringFunction,
+    MagnitudeScoringFunction as _MagnitudeScoringFunction,
+    RandomScoringFunction as _RandomScoringFunction,
+    TagScoringFunction as _TagScoringFunction,
+)
+from ..._utils.model_base import rest_discriminator, rest_field
 from ._enums import (
     LexicalAnalyzerName,
     SearchFieldDataType as _SearchFieldDataType,
@@ -29,7 +38,69 @@ if TYPE_CHECKING:
         SearchIndexerDataContainer,
         SearchIndexerDataIdentity,
     )
-    from ._enums import SearchIndexerDataSourceType
+    from ._enums import ScoringFunctionInterpolation, SearchIndexerDataSourceType
+
+
+class ScoringFunction(_ScoringFunction):
+    """Base scoring function, preserving field and boost compatibility.
+
+    Prefer a concrete scoring function when creating a scoring profile.
+
+    :ivar field_name: Field to which this scoring function applies.
+    :vartype field_name: str
+    :ivar boost: Multiplier for the document score.
+    :vartype boost: float
+    """
+
+    field_name: str = rest_field(name="fieldName")
+    boost: float = rest_field()
+    type: str = rest_discriminator(name="type")
+
+    @overload
+    def __init__(
+        self,
+        *,
+        field_name: str,
+        boost: float,
+        type: str,
+        interpolation: Optional[Union[str, "ScoringFunctionInterpolation"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DistanceScoringFunction(_DistanceScoringFunction, ScoringFunction, discriminator="distance"):
+    """Boosts scores based on distance from a geographic location."""
+
+    type: Literal["distance"] = rest_discriminator(name="type")
+
+
+class FreshnessScoringFunction(_FreshnessScoringFunction, ScoringFunction, discriminator="freshness"):
+    """Boosts scores based on the age of a document."""
+
+    type: Literal["freshness"] = rest_discriminator(name="type")
+
+
+class MagnitudeScoringFunction(_MagnitudeScoringFunction, ScoringFunction, discriminator="magnitude"):
+    """Boosts scores based on the magnitude of a numeric field."""
+
+    type: Literal["magnitude"] = rest_discriminator(name="type")
+
+
+class RandomScoringFunction(_RandomScoringFunction, ScoringFunction, discriminator="random"):
+    """Produces deterministic random scores using a query-time seed."""
+
+    type: Literal["random"] = rest_discriminator(name="type")
+
+
+class TagScoringFunction(_TagScoringFunction, ScoringFunction, discriminator="tag"):
+    """Boosts scores based on document tags."""
+
+    type: Literal["tag"] = rest_discriminator(name="type")
 
 
 class SearchField(_SearchField):
@@ -485,6 +556,12 @@ def ComplexField(
 
 
 __all__: list[str] = [
+    "ScoringFunction",
+    "DistanceScoringFunction",
+    "FreshnessScoringFunction",
+    "MagnitudeScoringFunction",
+    "RandomScoringFunction",
+    "TagScoringFunction",
     "KnowledgeBase",
     "SearchField",
     "SearchFieldDataType",

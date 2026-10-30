@@ -1,5 +1,58 @@
 # Release History
 
+## 12.1.0b3 (Unreleased)
+
+### Features Added
+
+- Added `ApiVersion.V2026_11_01_PREVIEW` and made `2026-11-01-preview` the default.
+  Previously advertised API versions remain selectable.
+- Below operations and models are added for graph querying, index configuration, and retrieval:
+  - `SearchClient.graph` (synchronous and asynchronous), including typed provenance,
+    diagnostics, evidence, statistics, and explain results.
+  - `indexes.models.GraphFieldMappings` and `indexes.models.GraphProfile`.
+  - `indexes.models.KnowledgeSourceGraphExtractionParameters`, grounding, and ontology models.
+  - `knowledgebases.models.AgentRuntimeGraphParams`, graph hydration and provenance parameters.
+  - `knowledgebases.models.KnowledgeBaseGraphSearchActivityRecord` and
+    `knowledgebases.models.KnowledgeBaseGraphSearchReference`.
+- Below models and properties are added for retrieval and query configuration:
+  - `indexes.models.KnowledgeBaseMicrosoftRetriever1Model` and
+    `indexes.models.KnowledgeBaseOpenAICompatibleModel`.
+  - `indexes.models.KnowledgeBaseTool` and knowledge-source tool references.
+  - `indexes.models.OpenAICompatibleVectorizer`.
+  - `indexes.models.SearchIndexKnowledgeSourceFilterHint.auto_configuration` and
+    `SearchIndexKnowledgeSourceFilterHintAutoConfiguration` for facet-grounded hints.
+  - `indexes.models.VectorSearchTopicGraphProfile` and none, diverse, and balanced
+    vector-query topic-graph models in `documents.models`.
+  - `knowledgebases.models.KnowledgeSourceCache` and
+    `knowledgebases.models.KnowledgeSourceOpenAICompatibleVectorizer`.
+  - `models.AgenticSearchOptions`, agentic debug information, and `QueryType.AGENTIC`.
+- Below operations and models are added for asynchronous File knowledge-source ingestion:
+  - `SearchIndexClient.begin_ingest_knowledge_source_file_multipart` and
+    `SearchIndexClient.begin_ingest_knowledge_source_file_replacement`, including async clients.
+  - File ingestion operation status/listing, capacity, and error models.
+- Added `indexes.models.RandomScoringFunction` and `RandomScoringParameters`.
+- Added `more_like_this` and `agentic_options` to synchronous and asynchronous
+  `SearchClient.search`. Restored preview query, skill, knowledge-source, and indexer
+  surfaces remain present in the generated package.
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 11.6.0.
+> Only code written against a beta version such as 12.1.0b2 may be affected.
+
+- The service removes stored `query_hints` and request-time `query_hint_overrides`
+  from indexed knowledge sources other than search-index knowledge sources.
+- The service removes `query_hint_processing` from knowledge-base activity models
+  other than search-index activity models.
+
+### Bugs Fixed
+
+- Preserved existing resource `get_*` list wrappers after generated method renames.
+- Preserved `ScoringFunction.field_name` and `boost` compatibility without adding
+  those fields to random scoring.
+- Corrected generated File-ingestion poller namespace references through the
+  package's reproducible post-generation workaround.
+
 ## 12.1.0b2 (2026-08-27)
 
 ### Features Added

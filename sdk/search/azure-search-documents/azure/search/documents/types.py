@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,11 +10,14 @@
 from typing import Literal, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
-from .models._enums import VectorQueryKind, VectorThresholdKind
+from .models._enums import VectorQueryKind, VectorSearchTopicGraphKind, VectorThresholdKind
 
 if TYPE_CHECKING:
     from .models import (
         AutocompleteMode,
+        GraphQueryExecutionMode,
+        GraphQueryExplainStage,
+        GraphQueryProvenanceKind,
         HybridCountAndFacetMode,
         IndexActionType,
         QueryAnswerType,
@@ -28,6 +32,98 @@ if TYPE_CHECKING:
         SemanticErrorMode,
         VectorFilterMode,
     )
+
+
+class AgenticSearchOptions(TypedDict, total=False):
+    """Request-scoped runtime options for agentic search; service safety limits apply independently.
+
+    :ivar maxRuntimeInSeconds: Maximum duration in seconds for the complete agentic search request,
+     including retrieval, ranking and retries.
+    :vartype maxRuntimeInSeconds: int
+    """
+
+    maxRuntimeInSeconds: int
+    """Maximum duration in seconds for the complete agentic search request, including retrieval,
+     ranking and retries."""
+
+
+class BalancedVectorQueryTopicGraph(TypedDict, total=False):
+    """Blends pure vector similarity with diversity-aware retrieval. Recommended default to balance
+    diversity with relevance.
+
+    :ivar kind: The discriminator value. Required. Blends pure vector similarity with
+     diversity-aware retrieval. Recommended default to balance diversity with relevance.
+    :vartype kind: Literal[VectorSearchTopicGraphKind.BALANCED]
+    :ivar minDiversityPoolSize: The minimum number of vector candidates to retrieve before topic
+     graph sampling. The default is 1,000.
+    :vartype minDiversityPoolSize: int
+    """
+
+    kind: Required[Literal[VectorSearchTopicGraphKind.BALANCED]]
+    """The discriminator value. Required. Blends pure vector similarity with diversity-aware
+     retrieval. Recommended default to balance diversity with relevance."""
+    minDiversityPoolSize: int
+    """The minimum number of vector candidates to retrieve before topic graph sampling. The default is
+     1,000."""
+
+
+class DiverseVectorQueryTopicGraph(TypedDict, total=False):
+    """Uses topic graph diverse retrieval.
+
+    :ivar kind: The discriminator value. Required. Use topic graph diverse retrieval.
+    :vartype kind: Literal[VectorSearchTopicGraphKind.DIVERSE]
+    :ivar diversityFactor: The diversity factor used for topic graph diverse retrieval. If omitted,
+     the default configured on the topic graph profile is used.
+    :vartype diversityFactor: float
+    :ivar minDiversityPoolSize: The minimum number of vector candidates to retrieve before topic
+     graph sampling. The default is 1,000.
+    :vartype minDiversityPoolSize: int
+    """
+
+    kind: Required[Literal[VectorSearchTopicGraphKind.DIVERSE]]
+    """The discriminator value. Required. Use topic graph diverse retrieval."""
+    diversityFactor: float
+    """The diversity factor used for topic graph diverse retrieval. If omitted, the default configured
+     on the topic graph profile is used."""
+    minDiversityPoolSize: int
+    """The minimum number of vector candidates to retrieve before topic graph sampling. The default is
+     1,000."""
+
+
+class GraphQueryProvenanceHydrateDocumentsParameters(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Selects fields from the source index configured by graphProfile.provenanceIndexName.
+
+    :ivar select: Comma-separated source document fields to return; omitted selects the service's
+     default retrievable fields.
+    :vartype select: str
+    """
+
+    select: str
+    """Comma-separated source document fields to return; omitted selects the service's default
+     retrievable fields."""
+
+
+class GraphQueryProvenanceParameters(TypedDict, total=False):
+    """Bounded provenance collection options for a graph query.
+
+    :ivar kind: Whether to return evidence identifiers or also hydrate their source documents.
+     Required. Known values are: "ids" and "hydrate".
+    :vartype kind: Union[str, "GraphQueryProvenanceKind"]
+    :ivar maxEvidencePerRow: Maximum evidence entries collected per result row. When bounded, the
+     response indicates whether the evidence count is exact or a lower bound.
+    :vartype maxEvidencePerRow: int
+    :ivar hydrateDocuments: Source-document selection options. Required when kind is hydrate.
+    :vartype hydrateDocuments: "GraphQueryProvenanceHydrateDocumentsParameters"
+    """
+
+    kind: Required[Union[str, "GraphQueryProvenanceKind"]]
+    """Whether to return evidence identifiers or also hydrate their source documents. Required. Known
+     values are: \"ids\" and \"hydrate\"."""
+    maxEvidencePerRow: int
+    """Maximum evidence entries collected per result row. When bounded, the response indicates whether
+     the evidence count is exact or a lower bound."""
+    hydrateDocuments: "GraphQueryProvenanceHydrateDocumentsParameters"
+    """Source-document selection options. Required when kind is hydrate."""
 
 
 class HybridSearch(TypedDict, total=False):
@@ -83,6 +179,19 @@ class IndexDocumentsBatch(TypedDict, total=False):
 
     value: Required[list["IndexAction"]]
     """The actions in the batch. Required."""
+
+
+class NoneVectorQueryTopicGraph(TypedDict, total=False):
+    """Uses normal vector search without topic graph diverse retrieval.
+
+    :ivar kind: The discriminator value. Required. Use normal vector search when topic graph
+     diverse retrieval is off.
+    :vartype kind: Literal[VectorSearchTopicGraphKind.NONE]
+    """
+
+    kind: Required[Literal[VectorSearchTopicGraphKind.NONE]]
+    """The discriminator value. Required. Use normal vector search when topic graph diverse retrieval
+     is off."""
 
 
 class SearchScoreThreshold(TypedDict, total=False):
@@ -142,6 +251,8 @@ class VectorizableImageBinaryQuery(TypedDict, total=False):
      guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
      relevant vectors from the same document to be matched. Default is 0.
     :vartype perDocumentVectorLimit: int
+    :ivar topicGraph: Topic graph vector search options.
+    :vartype topicGraph: "VectorQueryTopicGraph"
     :ivar base64Image: The base 64 encoded binary of an image to be vectorized to perform a vector
      search query.
     :vartype base64Image: str
@@ -181,6 +292,8 @@ class VectorizableImageBinaryQuery(TypedDict, total=False):
      it to 1 ensures at most one vector per document is matched, guaranteeing results come from
      distinct documents. Setting it to 0 (unlimited) allows multiple relevant vectors from the same
      document to be matched. Default is 0."""
+    topicGraph: "VectorQueryTopicGraph"
+    """Topic graph vector search options."""
     base64Image: str
     """The base 64 encoded binary of an image to be vectorized to perform a vector search query."""
     kind: Required[Literal[VectorQueryKind.IMAGE_BINARY]]
@@ -225,6 +338,8 @@ class VectorizableImageUrlQuery(TypedDict, total=False):
      guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
      relevant vectors from the same document to be matched. Default is 0.
     :vartype perDocumentVectorLimit: int
+    :ivar topicGraph: Topic graph vector search options.
+    :vartype topicGraph: "VectorQueryTopicGraph"
     :ivar url: The URL of an image to be vectorized to perform a vector search query.
     :vartype url: str
     :ivar kind: The kind of vector query being performed. Required. Vector query where an url that
@@ -263,6 +378,8 @@ class VectorizableImageUrlQuery(TypedDict, total=False):
      it to 1 ensures at most one vector per document is matched, guaranteeing results come from
      distinct documents. Setting it to 0 (unlimited) allows multiple relevant vectors from the same
      document to be matched. Default is 0."""
+    topicGraph: "VectorQueryTopicGraph"
+    """Topic graph vector search options."""
     url: str
     """The URL of an image to be vectorized to perform a vector search query."""
     kind: Required[Literal[VectorQueryKind.IMAGE_URL]]
@@ -307,6 +424,8 @@ class VectorizableTextQuery(TypedDict, total=False):
      guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
      relevant vectors from the same document to be matched. Default is 0.
     :vartype perDocumentVectorLimit: int
+    :ivar topicGraph: Topic graph vector search options.
+    :vartype topicGraph: "VectorQueryTopicGraph"
     :ivar text: The text to be vectorized to perform a vector search query. Required.
     :vartype text: str
     :ivar queryRewrites: Can be configured to let a generative model rewrite the query before
@@ -348,6 +467,8 @@ class VectorizableTextQuery(TypedDict, total=False):
      it to 1 ensures at most one vector per document is matched, guaranteeing results come from
      distinct documents. Setting it to 0 (unlimited) allows multiple relevant vectors from the same
      document to be matched. Default is 0."""
+    topicGraph: "VectorQueryTopicGraph"
+    """Topic graph vector search options."""
     text: Required[str]
     """The text to be vectorized to perform a vector search query. Required."""
     queryRewrites: Union[str, "QueryRewritesType"]
@@ -394,6 +515,8 @@ class VectorizedQuery(TypedDict, total=False):
      guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
      relevant vectors from the same document to be matched. Default is 0.
     :vartype perDocumentVectorLimit: int
+    :ivar topicGraph: Topic graph vector search options.
+    :vartype topicGraph: "VectorQueryTopicGraph"
     :ivar vector: The vector representation of a search query. Required.
     :vartype vector: list[float]
     :ivar kind: The kind of vector query being performed. Required. Vector query where a raw vector
@@ -432,6 +555,8 @@ class VectorizedQuery(TypedDict, total=False):
      it to 1 ensures at most one vector per document is matched, guaranteeing results come from
      distinct documents. Setting it to 0 (unlimited) allows multiple relevant vectors from the same
      document to be matched. Default is 0."""
+    topicGraph: "VectorQueryTopicGraph"
+    """Topic graph vector search options."""
     vector: Required[list[float]]
     """The vector representation of a search query. Required."""
     kind: Required[Literal[VectorQueryKind.VECTOR]]
@@ -468,6 +593,56 @@ class VectorSimilarityThreshold(TypedDict, total=False):
      will be chosen automatically according to the metric used by the field."""
 
 
+class GraphRequest(TypedDict, total=False):
+    """GraphRequest.
+
+    :ivar gql: The nonempty GQL query to bind and execute. Required.
+    :vartype gql: str
+    :ivar search: Full-text search text used to constrain graph backend requests.
+    :vartype search: str
+    :ivar filter: An OData filter over graph-index fields applied throughout graph execution.
+    :vartype filter: str
+    :ivar vectorQueries: Vector queries used to constrain the graph's backend searches.
+    :vartype vectorQueries: list["VectorQuery"]
+    :ivar executionMode: Executes the query by default. planOnly builds the plan without backend
+     query execution and requires at least one explain stage. Known values are: "execute" and
+     "planOnly".
+    :vartype executionMode: Union[str, "GraphQueryExecutionMode"]
+    :ivar explain: Diagnostic plan stages to include in the response. Plan representations are
+     diagnostic information rather than an executable client contract.
+    :vartype explain: list[Union[str, "GraphQueryExplainStage"]]
+    :ivar includeStatistics: Whether to include graph execution statistics. Defaults to true.
+    :vartype includeStatistics: bool
+    :ivar includeDiagnostics: Whether to include informational diagnostics. Errors and warnings are
+     returned regardless of this setting.
+    :vartype includeDiagnostics: bool
+    :ivar provenance: Controls bounded assertion evidence and optional source-document hydration.
+    :vartype provenance: "GraphQueryProvenanceParameters"
+    """
+
+    gql: Required[str]
+    """The nonempty GQL query to bind and execute. Required."""
+    search: str
+    """Full-text search text used to constrain graph backend requests."""
+    filter: str
+    """An OData filter over graph-index fields applied throughout graph execution."""
+    vectorQueries: list["VectorQuery"]
+    """Vector queries used to constrain the graph's backend searches."""
+    executionMode: Union[str, "GraphQueryExecutionMode"]
+    """Executes the query by default. planOnly builds the plan without backend query execution and
+     requires at least one explain stage. Known values are: \"execute\" and \"planOnly\"."""
+    explain: list[Union[str, "GraphQueryExplainStage"]]
+    """Diagnostic plan stages to include in the response. Plan representations are diagnostic
+     information rather than an executable client contract."""
+    includeStatistics: bool
+    """Whether to include graph execution statistics. Defaults to true."""
+    includeDiagnostics: bool
+    """Whether to include informational diagnostics. Errors and warnings are returned regardless of
+     this setting."""
+    provenance: "GraphQueryProvenanceParameters"
+    """Controls bounded assertion evidence and optional source-document hydration."""
+
+
 class SearchPostRequest(TypedDict, total=False):
     """SearchPostRequest.
 
@@ -494,6 +669,9 @@ class SearchPostRequest(TypedDict, total=False):
      parameter can be useful for ensuring search availability even for services with only one
      replica. The default is 100.
     :vartype minimumCoverage: float
+    :ivar moreLikeThis: The key of the document to use as the basis for finding similar documents.
+     This parameter cannot be used together with search text.
+    :vartype moreLikeThis: str
     :ivar orderby: The comma-separated list of OData $orderby expressions by which to sort the
      results. Each expression can be either a field name or a call to either the geo.distance() or
      the search.score() functions. Each expression can be followed by asc to indicate ascending, or
@@ -503,8 +681,11 @@ class SearchPostRequest(TypedDict, total=False):
     :vartype orderby: list[str]
     :ivar queryType: A value that specifies the syntax of the search query. The default is
      'simple'. Use 'full' if your query uses the Lucene query syntax. Known values are: "simple",
-     "full", and "semantic".
+     "full", "semantic", and "agentic".
     :vartype queryType: Union[str, "QueryType"]
+    :ivar agenticOptions: Request-scoped runtime options when queryType is set to 'agentic'. Not
+     supported with other query modes. Use the existing debug selector for diagnostics.
+    :vartype agenticOptions: "AgenticSearchOptions"
     :ivar scoringStatistics: A value that specifies whether we want to calculate scoring statistics
      (such as document frequency) globally for more consistent scoring, or locally, for lower
      latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally before
@@ -527,8 +708,8 @@ class SearchPostRequest(TypedDict, total=False):
      documents in order to sort the results.
     :vartype scoringProfile: str
     :ivar debug: Enables a debugging tool that can be used to further explore your reranked
-     results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "innerHits", and
-     "all".
+     results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "agentic",
+     "innerHits", and "all".
     :vartype debug: Union[str, "QueryDebugMode"]
     :ivar search: A full-text search query expression; Use "*" or omit this parameter to match all
      documents.
@@ -624,6 +805,9 @@ class SearchPostRequest(TypedDict, total=False):
     """A number between 0 and 100 indicating the percentage of the index that must be covered by a
      search query in order for the query to be reported as a success. This parameter can be useful
      for ensuring search availability even for services with only one replica. The default is 100."""
+    moreLikeThis: str
+    """The key of the document to use as the basis for finding similar documents. This parameter
+     cannot be used together with search text."""
     orderby: list[str]
     """The comma-separated list of OData $orderby expressions by which to sort the results. Each
      expression can be either a field name or a call to either the geo.distance() or the
@@ -633,8 +817,11 @@ class SearchPostRequest(TypedDict, total=False):
      match score. There can be at most 32 $orderby clauses."""
     queryType: Union[str, "QueryType"]
     """A value that specifies the syntax of the search query. The default is 'simple'. Use 'full' if
-     your query uses the Lucene query syntax. Known values are: \"simple\", \"full\", and
-     \"semantic\"."""
+     your query uses the Lucene query syntax. Known values are: \"simple\", \"full\", \"semantic\",
+     and \"agentic\"."""
+    agenticOptions: "AgenticSearchOptions"
+    """Request-scoped runtime options when queryType is set to 'agentic'. Not supported with other
+     query modes. Use the existing debug selector for diagnostics."""
     scoringStatistics: Union[str, "ScoringStatistics"]
     """A value that specifies whether we want to calculate scoring statistics (such as document
      frequency) globally for more consistent scoring, or locally, for lower latency. The default is
@@ -657,8 +844,8 @@ class SearchPostRequest(TypedDict, total=False):
      the results."""
     debug: Union[str, "QueryDebugMode"]
     """Enables a debugging tool that can be used to further explore your reranked results. Known
-     values are: \"disabled\", \"semantic\", \"vector\", \"queryRewrites\", \"innerHits\", and
-     \"all\"."""
+     values are: \"disabled\", \"semantic\", \"vector\", \"queryRewrites\", \"agentic\",
+     \"innerHits\", and \"all\"."""
     search: str
     """A full-text search query expression; Use \"*\" or omit this parameter to match all documents."""
     searchFields: list[str]
@@ -893,5 +1080,6 @@ class AutocompletePostRequest(TypedDict, total=False):
      default is 5."""
 
 
+VectorQueryTopicGraph = Union[BalancedVectorQueryTopicGraph, DiverseVectorQueryTopicGraph, NoneVectorQueryTopicGraph]
 VectorThreshold = Union[SearchScoreThreshold, VectorSimilarityThreshold]
 VectorQuery = Union[VectorizableImageBinaryQuery, VectorizableImageUrlQuery, VectorizableTextQuery, VectorizedQuery]

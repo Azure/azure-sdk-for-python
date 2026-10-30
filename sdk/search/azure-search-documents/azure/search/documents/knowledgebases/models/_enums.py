@@ -13,6 +13,8 @@ from azure.core import CaseInsensitiveEnumMeta
 class KnowledgeBaseActivityRecordType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of activity record."""
 
+    GRAPH_SEARCH = "graphSearch"
+    """Graph retrieval over a graph-enabled knowledge source."""
     SEARCH_INDEX = "searchIndex"
     """Search index retrieval activity."""
     AZURE_BLOB = "azureBlob"
@@ -59,6 +61,8 @@ class KnowledgeBaseMessageContentType(str, Enum, metaclass=CaseInsensitiveEnumMe
 class KnowledgeBaseReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of reference."""
 
+    GRAPH_SEARCH = "graphSearch"
+    """Graph result or hydrated graph-source document reference."""
     SEARCH_INDEX = "searchIndex"
     """Search index document reference."""
     AZURE_BLOB = "azureBlob"
@@ -122,6 +126,15 @@ class KnowledgeRetrievalReasoningEffortKind(str, Enum, metaclass=CaseInsensitive
     AUTO = "auto"
     """Automatically select the reasoning effort during retrieval, escalating from the cheapest tier
     only as far as needed."""
+
+
+class KnowledgeSourceGraphProvenanceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source-document behavior for graph-based knowledge retrieval."""
+
+    NONE = "none"
+    """Return graph results without hydrating their source documents."""
+    HYDRATE = "hydrate"
+    """Also return selected source documents from the configured provenance index."""
 
 
 class KnowledgeSourceNetworkAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
