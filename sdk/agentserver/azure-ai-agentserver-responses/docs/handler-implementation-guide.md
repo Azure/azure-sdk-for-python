@@ -603,8 +603,14 @@ history = await context.get_history()
 - Two-step resolution: resolves history item IDs, then fetches actual items
 - Ascending order — oldest-first
 - Configurable limit via `ResponsesServerOptions.default_fetch_history_count`
-  (default: 100)
+  (default: `-1`, unlimited). Positive values retain only the newest N items.
 - Lazy singleton — computed once and cached
+
+The same limit applies to history references saved when chaining stored responses.
+Unlimited history avoids item-count truncation, but does not provide model context
+window management or summarization; long conversations can increase memory usage,
+latency, and model input size. Configure a positive limit if needed, taking care
+not to separate tool calls from their results when preparing model input.
 
 ### Client Headers
 
@@ -1290,17 +1296,17 @@ Handlers that do not interact with an LLM typically omit usage.
 | Option | Default | Description |
 |--------|---------|-------------|
 | `default_model` | `None` | Default model when `model` is omitted from the request |
-| `default_fetch_history_count` | `100` | Maximum history items resolved by `get_history()` |
-| `sse_keep_alive_interval_seconds` | `None` (disabled) | Interval between SSE keep-alive comments |
+| `default_fetch_history_count` | `-1` | Maximum history items resolved by `get_history()`; `-1` fetches all history |
+| `sse_keep_alive_interval_seconds` | `None` (inherits from `AgentConfig`) | Interval between SSE keep-alive comments |
 | `shutdown_grace_period_seconds` | `10` | Seconds to wait for in-flight requests on shutdown |
 
 Platform environment variables (read once at startup via `AgentConfig`):
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `SSE_KEEPALIVE_INTERVAL` | Disabled | Interval (seconds) between SSE keep-alive comments |
+| `SSE_KEEPALIVE_INTERVAL` | `15` | Interval (seconds) between SSE keep-alive comments; `0` disables keep-alive when no explicit option overrides it |
 | `PORT` | `8088` | HTTP listen port |
-| `DEFAULT_FETCH_HISTORY_ITEM_COUNT` | `100` | Override for `default_fetch_history_count` |
+| `DEFAULT_FETCH_HISTORY_ITEM_COUNT` | `-1` | Override for `default_fetch_history_count` when using `ResponsesServerOptions.from_env()` |
 | `FOUNDRY_PROJECT_ENDPOINT` | — | Foundry project endpoint (enables persistence) |
 | `FOUNDRY_AGENT_SESSION_ID` | — | Platform-supplied session ID |
 | `FOUNDRY_AGENT_NAME` | — | Agent name for tracing |
@@ -1326,8 +1332,11 @@ The library sets baggage items on the span:
 
 ### SSE Keep-Alive
 
-The server can send periodic keep-alive comments during SSE streaming to prevent
-reverse proxies from closing idle connections. Disabled by default.
+The server sends periodic keep-alive comments during SSE streaming to prevent
+reverse proxies from closing idle connections. When
+`sse_keep_alive_interval_seconds` is unset, the host inherits the interval from
+`AgentConfig`, which defaults to 15 seconds. Set `SSE_KEEPALIVE_INTERVAL=0` to
+disable keep-alive comments when no explicit option overrides it.
 
 Enable via environment variable:
 

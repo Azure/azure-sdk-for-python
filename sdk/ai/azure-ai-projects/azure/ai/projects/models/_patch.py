@@ -8,14 +8,15 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from collections.abc import MutableMapping
 from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
-    LROBasePolling,
     OperationFailed,
     _raise_if_bad_http_status_and_method,
 )
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from azure.core.utils import case_insensitive_dict
+from .._utils.polling import AIProjectsLROBasePolling, AsyncAIProjectsLROBasePolling
 from ._patch_evaluation_typeddicts import (
     AzureAIAgentTargetParam,
     AzureAIBenchmarkPreviewEvalRunDataSource,
@@ -57,7 +58,11 @@ _AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
         _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.EXTERNAL_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.DRAFT_AGENTS_V1_PREVIEW.value,
-        _FoundryFeaturesOptInKeys.AGENTS_OPTIMIZATION_V2_PREVIEW.value,
+        _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.DIGITAL_WORKER_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.GITHUB_COPILOT_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.SKILLS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.MICROSOFT_COPILOT_V1_PREVIEW.value,
         _FoundryFeaturesOptInKeys.MODEL_ROUTER_CONTROLS_V1_PREVIEW.value,
     ]
 )
@@ -73,10 +78,39 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "routines": _FoundryFeaturesOptInKeys.ROUTINES_V2_PREVIEW.value,
     "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
     "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
-    "datasets": _FoundryFeaturesOptInKeys.DATA_GENERATION_JOBS_V1_PREVIEW.value,
+    "voice_agents": _AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW.value,
     "agents": _AGENT_OPERATION_FEATURE_HEADERS,
 }
 """Foundry-Features header values keyed by beta sub-client property name."""
+
+
+_DATA_GENERATION_JOBS_FEATURE_HEADER: Final[str] = _FoundryFeaturesOptInKeys.DATA_GENERATION_JOBS_V1_PREVIEW.value
+"""Foundry-Features header value sent by the data generation job methods on the `.datasets` sub-client."""
+
+
+def _merge_foundry_features_header(headers: Any, foundry_features_value: str) -> MutableMapping[str, Any]:
+    """Return a copy of *headers* whose Foundry-Features header includes *foundry_features_value*.
+
+    A caller-supplied Foundry-Features value is preserved; the new value is appended to it
+    (comma-separated) unless it is already present.
+
+    :param headers: Caller-supplied request headers, or None.
+    :type headers: Any
+    :param foundry_features_value: The Foundry-Features opt-in value to add, e.g. "DataGenerationJobs=V1Preview".
+    :type foundry_features_value: str
+    :return: A case-insensitive headers dictionary including the merged Foundry-Features header.
+    :rtype: MutableMapping[str, Any]
+    """
+    merged = case_insensitive_dict(headers or {})
+    existing = merged.get(_FOUNDRY_FEATURES_HEADER_NAME)
+    if not existing:
+        merged[_FOUNDRY_FEATURES_HEADER_NAME] = foundry_features_value
+        return merged
+    values = [value.strip() for value in str(existing).split(",") if value.strip()]
+    if foundry_features_value.lower() not in (value.lower() for value in values):
+        values.append(foundry_features_value)
+    merged[_FOUNDRY_FEATURES_HEADER_NAME] = ",".join(values)
+    return merged
 
 
 def _has_header_case_insensitive(headers: Any, header_name: str) -> bool:
@@ -144,7 +178,7 @@ _FINISHED: Final[FrozenSet[str]] = frozenset(["completed", "superseded", "failed
 _FAILED: Final[FrozenSet[str]] = frozenset(["failed"])
 
 
-class _UpdateMemoriesLROPollingMethod(LROBasePolling):
+class _UpdateMemoriesLROPollingMethod(AIProjectsLROBasePolling):
     """A custom polling method implementation for Memory Store updates."""
 
     @property
@@ -215,7 +249,7 @@ class _UpdateMemoriesLROPollingMethod(LROBasePolling):
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
 
-class _AsyncUpdateMemoriesLROPollingMethod(AsyncLROBasePolling):
+class _AsyncUpdateMemoriesLROPollingMethod(AsyncAIProjectsLROBasePolling):
     """A custom polling method implementation for Memory Store updates."""
 
     @property
@@ -557,6 +591,15 @@ class AgentOptimizationLROPoller(LROPoller[AgentOptimizationJobResult]):
         self._job_id = DatasetGenerationLROPoller._get_job_id(initial_response)
         super().__init__(client, initial_response, deserialization_callback, polling_method)
 
+    def status(self) -> str:
+        """Return the job status using the service spelling ``cancelled``.
+
+        :return: The current job status.
+        :rtype: str
+        """
+        status = super().status()
+        return "cancelled" if status.lower() == "canceled" else status
+
     @property
     def details(self) -> Mapping[str, Any]:
         """Returns metadata associated with the agent optimization job operation.
@@ -593,6 +636,15 @@ class AsyncAgentOptimizationLROPoller(AsyncLROPoller[AgentOptimizationJobResult]
     def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
         super().__init__(client, initial_response, deserialization_callback, polling_method)
         self._job_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+
+    def status(self) -> str:
+        """Return the job status using the service spelling ``cancelled``.
+
+        :return: The current job status.
+        :rtype: str
+        """
+        status = super().status()
+        return "cancelled" if status.lower() == "canceled" else status
 
     @property
     def details(self) -> Mapping[str, Any]:

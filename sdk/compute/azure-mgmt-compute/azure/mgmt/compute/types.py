@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
@@ -71,6 +71,7 @@ if TYPE_CHECKING:
         LinuxVMGuestPatchAutomaticByPlatformRebootSetting,
         LinuxVMGuestPatchMode,
         MaintenanceOperationResultCodeTypes,
+        MetadataType,
         Mode,
         Modes,
         NetworkAccessPolicy,
@@ -107,6 +108,7 @@ if TYPE_CHECKING:
         ResourceIdentityType,
         RestorePointEncryptionType,
         ScriptShellTypes,
+        SecretsProvisioningComponentName,
         SecurityEncryptionTypes,
         SecurityTypes,
         SettingNames,
@@ -1586,16 +1588,39 @@ class DataDiskImageEncryption(DiskImageEncryption):
     :ivar diskEncryptionSetId: A relative URI containing the resource ID of the disk encryption
      set.
     :vartype diskEncryptionSetId: str
+    :ivar securityProfile: This property specifies the security profile of a data disk image.
+    :vartype securityProfile: "DataDiskImageSecurityProfile"
     :ivar lun: This property specifies the logical unit number of the data disk. This value is used
      to identify data disks within the Virtual Machine and therefore must be unique for each data
      disk attached to the Virtual Machine. Required.
     :vartype lun: int
     """
 
+    securityProfile: "DataDiskImageSecurityProfile"
+    """This property specifies the security profile of a data disk image."""
     lun: Required[int]
     """This property specifies the logical unit number of the data disk. This value is used to
      identify data disks within the Virtual Machine and therefore must be unique for each data disk
      attached to the Virtual Machine. Required."""
+
+
+class DataDiskImageSecurityProfile(TypedDict, total=False):
+    """Contains security profile for a DataDisk image.
+
+    :ivar confidentialVMEncryptionType: confidential VM encryption types. Known values are:
+     "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", "EncryptedWithCmk", "NonPersistedTPM",
+     and "DataDiskEncryptedWithCmk".
+    :vartype confidentialVMEncryptionType: Union[str, "ConfidentialVMEncryptionType"]
+    :ivar secureVMDiskEncryptionSetId: secure VM disk encryption set id.
+    :vartype secureVMDiskEncryptionSetId: str
+    """
+
+    confidentialVMEncryptionType: Union[str, "ConfidentialVMEncryptionType"]
+    """confidential VM encryption types. Known values are: \"EncryptedVMGuestStateOnlyWithPmk\",
+     \"EncryptedWithPmk\", \"EncryptedWithCmk\", \"NonPersistedTPM\", and
+     \"DataDiskEncryptedWithCmk\"."""
+    secureVMDiskEncryptionSetId: str
+    """secure VM disk encryption set id."""
 
 
 class DataDisksToAttach(TypedDict, total=False):
@@ -3128,6 +3153,32 @@ class ExternalHealthPolicy(TypedDict, total=False):
      Uses the ISO 8601 format. Minimum: 5 minutes (PT5M), Maximum: 4 hours (PT4H)."""
 
 
+class FlexProfile(TypedDict, total=False):
+    """Specifies the FlexProfile for a virtual machine. When set, Azure may deploy a compatible
+    alternative VM size based on capacity and placement considerations, and the deployed size is
+    returned in hardwareProfile.vmSize. See the properties.flexProfile description for the full
+    usage rules, including how it interacts with hardwareProfile.vmSize.
+
+    :ivar preferredVMSize: Specifies the preferred VM size, for example Standard_D4s_v5. Azure may
+     deploy a compatible alternative size based on capacity and placement considerations. Supported
+     VM families for FlexProfile may vary by region. The recommended way to get the list of
+     available sizes is using these APIs: `List all available virtual machine sizes in a region
+     <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_, `List all available virtual
+     machine sizes for resizing
+     <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. Required.
+    :vartype preferredVMSize: str
+    """
+
+    preferredVMSize: Required[str]
+    """Specifies the preferred VM size, for example Standard_D4s_v5. Azure may deploy a compatible
+     alternative size based on capacity and placement considerations. Supported VM families for
+     FlexProfile may vary by region. The recommended way to get the list of available sizes is using
+     these APIs: `List all available virtual machine sizes in a region
+     <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_, `List all available virtual
+     machine sizes for resizing
+     <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. Required."""
+
+
 class Gallery(TrackedResource):
     """Specifies information about the Shared Image Gallery that you want to create or update.
 
@@ -3932,6 +3983,9 @@ class GalleryImageVersionProperties(TypedDict, total=False):
     :vartype restore: bool
     :ivar validationsProfile: This is the validations profile of a Gallery Image Version.
     :vartype validationsProfile: "ValidationsProfile"
+    :ivar imageMetadataProfiles: The image metadata profiles associated with the gallery image
+     version.
+    :vartype imageMetadataProfiles: list["ImageMetadataProfile"]
     """
 
     publishingProfile: "GalleryImageVersionPublishingProfile"
@@ -3951,6 +4005,8 @@ class GalleryImageVersionProperties(TypedDict, total=False):
     """Indicates if this is a soft-delete resource restoration request."""
     validationsProfile: "ValidationsProfile"
     """This is the validations profile of a Gallery Image Version."""
+    imageMetadataProfiles: list["ImageMetadataProfile"]
+    """The image metadata profiles associated with the gallery image version."""
 
 
 class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
@@ -4987,6 +5043,34 @@ class ImageDiskReference(TypedDict, total=False):
      data disks in the image to use. For OS disks, this field is null."""
 
 
+class ImageMetadataProfile(TypedDict, total=False):
+    """Describes the metadata profile of an image.
+
+    :ivar type: The type of metadata. Required. Known values are:
+     "SecretsProvisioningImageMetadata" and "UserProvidedSecretsProvisioningMetadata".
+    :vartype type: Union[str, "MetadataType"]
+    :ivar publicMetadataList: The list of public metadata key-value pairs. Contains non-sensitive
+     image capability metadata such as supported OS, component names, and versions. No secret
+     material is emitted in this list.
+    :vartype publicMetadataList: list["MetadataKeyValue"]
+    :ivar internalMetadataList: The list of internal metadata key-value pairs. Contains
+     non-sensitive service-internal metadata for diagnostics and tracking. No secret material is
+     emitted in this list.
+    :vartype internalMetadataList: list["MetadataKeyValue"]
+    """
+
+    type: Required[Union[str, "MetadataType"]]
+    """The type of metadata. Required. Known values are: \"SecretsProvisioningImageMetadata\" and
+     \"UserProvidedSecretsProvisioningMetadata\"."""
+    publicMetadataList: list["MetadataKeyValue"]
+    """The list of public metadata key-value pairs. Contains non-sensitive image capability metadata
+     such as supported OS, component names, and versions. No secret material is emitted in this
+     list."""
+    internalMetadataList: list["MetadataKeyValue"]
+    """The list of internal metadata key-value pairs. Contains non-sensitive service-internal metadata
+     for diagnostics and tracking. No secret material is emitted in this list."""
+
+
 class ImageOSDisk(ImageDisk):
     """Describes an Operating System disk.
 
@@ -5194,10 +5278,16 @@ class ImageVersionSecurityProfile(TypedDict, total=False):
 
     :ivar uefiSettings: Contains UEFI settings for the image version.
     :vartype uefiSettings: "GalleryImageVersionUefiSettings"
+    :ivar secretsProvisioningSettings: Specifies the secrets provisioning settings for the gallery
+     image version. Used on create or update to configure secrets provisioning.
+    :vartype secretsProvisioningSettings: "SecretsProvisioningSettings"
     """
 
     uefiSettings: "GalleryImageVersionUefiSettings"
     """Contains UEFI settings for the image version."""
+    secretsProvisioningSettings: "SecretsProvisioningSettings"
+    """Specifies the secrets provisioning settings for the gallery image version. Used on create or
+     update to configure secrets provisioning."""
 
 
 class ImmutabilityPolicy(TypedDict, total=False):
@@ -5912,6 +6002,30 @@ class MaxInstancePercentPerZonePolicy(TypedDict, total=False):
      virtual machine scale set."""
 
 
+class MetadataKeyValue(TypedDict, total=False):
+    """Describes a key-value pair for image metadata.
+
+    :ivar metadataKey: The metadata key. Known keys emitted by the service include
+     'Linux.AzureSecretsProvisioning.Enabled', 'OS.Name', and '{componentName}.Version' (e.g.,
+     'AzureGuestAgent.Version'). All values are non-sensitive configuration; no secrets,
+     credentials, or cryptographic material transit this field. Required.
+    :vartype metadataKey: str
+    :ivar metadataValue: The metadata value. Contains non-sensitive configuration such as
+     capability flags ('true'/'false'), OS names ('Linux', 'Windows'), and version strings (e.g.,
+     '1.0.0').
+    :vartype metadataValue: str
+    """
+
+    metadataKey: Required[str]
+    """The metadata key. Known keys emitted by the service include
+     'Linux.AzureSecretsProvisioning.Enabled', 'OS.Name', and '{componentName}.Version' (e.g.,
+     'AzureGuestAgent.Version'). All values are non-sensitive configuration; no secrets,
+     credentials, or cryptographic material transit this field. Required."""
+    metadataValue: str
+    """The metadata value. Contains non-sensitive configuration such as capability flags
+     ('true'/'false'), OS names ('Linux', 'Windows'), and version strings (e.g., '1.0.0')."""
+
+
 class MigrateToVirtualMachineScaleSetInput(TypedDict, total=False):
     """Describes the Virtual Machine Scale Set to migrate from Availability Set.
 
@@ -6189,8 +6303,8 @@ class OSDiskImageSecurityProfile(TypedDict, total=False):
     """Contains security profile for an OS disk image.
 
     :ivar confidentialVMEncryptionType: confidential VM encryption types. Known values are:
-     "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", "EncryptedWithCmk", and
-     "NonPersistedTPM".
+     "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", "EncryptedWithCmk", "NonPersistedTPM",
+     and "DataDiskEncryptedWithCmk".
     :vartype confidentialVMEncryptionType: Union[str, "ConfidentialVMEncryptionType"]
     :ivar secureVMDiskEncryptionSetId: secure VM disk encryption set id.
     :vartype secureVMDiskEncryptionSetId: str
@@ -6198,7 +6312,8 @@ class OSDiskImageSecurityProfile(TypedDict, total=False):
 
     confidentialVMEncryptionType: Union[str, "ConfidentialVMEncryptionType"]
     """confidential VM encryption types. Known values are: \"EncryptedVMGuestStateOnlyWithPmk\",
-     \"EncryptedWithPmk\", \"EncryptedWithCmk\", and \"NonPersistedTPM\"."""
+     \"EncryptedWithPmk\", \"EncryptedWithCmk\", \"NonPersistedTPM\", and
+     \"DataDiskEncryptedWithCmk\"."""
     secureVMDiskEncryptionSetId: str
     """secure VM disk encryption set id."""
 
@@ -7193,14 +7308,20 @@ class RestorePointInstanceView(TypedDict, total=False):
 
     :ivar diskRestorePoints: The disk restore points information.
     :vartype diskRestorePoints: list["DiskRestorePointInstanceView"]
-    :ivar statuses: The resource status information.
+    :ivar statuses: The aggregate status information for the restore point. The list may include
+     separate aggregate entries for replication and, in supported API versions, Instant Access, as
+     applicable. For more information about Instant Access, see `Use virtual machine restore points
+     <https://learn.microsoft.com/azure/virtual-machines/virtual-machines-create-restore-points#instant-access>`_.
     :vartype statuses: list["InstanceViewStatus"]
     """
 
     diskRestorePoints: list["DiskRestorePointInstanceView"]
     """The disk restore points information."""
     statuses: list["InstanceViewStatus"]
-    """The resource status information."""
+    """The aggregate status information for the restore point. The list may include separate aggregate
+     entries for replication and, in supported API versions, Instant Access, as applicable. For more
+     information about Instant Access, see `Use virtual machine restore points
+     <https://learn.microsoft.com/azure/virtual-machines/virtual-machines-create-restore-points#instant-access>`_."""
 
 
 class RestorePointProperties(TypedDict, total=False):
@@ -7721,6 +7842,42 @@ class ScriptSource(TypedDict, total=False):
     parameters: list["GalleryScriptParameter"]
     """Optional. Any input parameters that needs to passed to the script and are accessed within the
      script for its execution."""
+
+
+class SecretsProvisioningComponent(TypedDict, total=False):
+    """Describes a component involved in secrets provisioning.
+
+    :ivar name: The name of the component. Known values are: "OS", "CloudInit", "AzureGuestAgent",
+     and "SecretsProvisioningLibrary".
+    :vartype name: Union[str, "SecretsProvisioningComponentName"]
+    :ivar version: The version of the component.
+    :vartype version: str
+    """
+
+    name: Union[str, "SecretsProvisioningComponentName"]
+    """The name of the component. Known values are: \"OS\", \"CloudInit\", \"AzureGuestAgent\", and
+     \"SecretsProvisioningLibrary\"."""
+    version: str
+    """The version of the component."""
+
+
+class SecretsProvisioningSettings(TypedDict, total=False):
+    """Describes the secrets provisioning settings for a gallery image version.
+
+    :ivar isSupported: Specifies whether the image version supports secrets provisioning.
+    :vartype isSupported: bool
+    :ivar osName: The name of the operating system (e.g., "mariner").
+    :vartype osName: str
+    :ivar components: The list of component versions involved in secrets provisioning.
+    :vartype components: list["SecretsProvisioningComponent"]
+    """
+
+    isSupported: bool
+    """Specifies whether the image version supports secrets provisioning."""
+    osName: str
+    """The name of the operating system (e.g., \"mariner\")."""
+    components: list["SecretsProvisioningComponent"]
+    """The list of component versions involved in secrets provisioning."""
 
 
 class SecurityPostureReference(TypedDict, total=False):
@@ -8289,11 +8446,26 @@ class SoftDeletePolicy(TypedDict, total=False):
     :ivar isSoftDeleteEnabled: Enables soft-deletion for resources in this gallery, allowing them
      to be recovered within retention time.
     :vartype isSoftDeleteEnabled: bool
+    :ivar retentionPeriodInDays: The retention period in days for a soft-deleted resource. After
+     this period elapses, the soft-deleted gallery image version transitions to a simulated
+     hard-deleted state.
+    :vartype retentionPeriodInDays: int
+    :ivar gracePeriodInDays: The grace period in days for a simulated hard-deleted resource. During
+     this period the gallery image version is unusable but can still be recovered if required. After
+     this period elapses, the gallery image version is permanently (hard) deleted.
+    :vartype gracePeriodInDays: int
     """
 
     isSoftDeleteEnabled: bool
     """Enables soft-deletion for resources in this gallery, allowing them to be recovered within
      retention time."""
+    retentionPeriodInDays: int
+    """The retention period in days for a soft-deleted resource. After this period elapses, the
+     soft-deleted gallery image version transitions to a simulated hard-deleted state."""
+    gracePeriodInDays: int
+    """The grace period in days for a simulated hard-deleted resource. During this period the gallery
+     image version is unusable but can still be recovered if required. After this period elapses,
+     the gallery image version is permanently (hard) deleted."""
 
 
 class SourceVault(TypedDict, total=False):
@@ -9752,6 +9924,10 @@ class VirtualMachineNetworkInterfaceIPConfigurationProperties(TypedDict, total=F
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype privateIPAddressVersion: Union[str, "IPVersions"]
+    :ivar privateIPAddressPrefixLength: The private IP address prefix length. If specified and the
+     allocation method is dynamic, the service will allocate a CIDR block instead of a single IP
+     address.
+    :vartype privateIPAddressPrefixLength: int
     :ivar applicationSecurityGroups: Specifies an array of references to application security
      group.
     :vartype applicationSecurityGroups: list["SubResource"]
@@ -9778,6 +9954,9 @@ class VirtualMachineNetworkInterfaceIPConfigurationProperties(TypedDict, total=F
     """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
      ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
      'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
+    privateIPAddressPrefixLength: int
+    """The private IP address prefix length. If specified and the allocation method is dynamic, the
+     service will allocate a CIDR block instead of a single IP address."""
     applicationSecurityGroups: list["SubResource"]
     """Specifies an array of references to application security group."""
     applicationGatewayBackendAddressPools: list["SubResource"]
@@ -9816,6 +9995,16 @@ class VirtualMachineProperties(TypedDict, total=False):
 
     :ivar hardwareProfile: Specifies the hardware settings for the virtual machine.
     :vartype hardwareProfile: "HardwareProfile"
+    :ivar flexProfile: [Preview Feature] Specifies a FlexProfile for VM size. Azure may deploy a
+     compatible alternative VM size based on capacity and placement considerations, and returns the
+     deployed size in hardwareProfile.vmSize. A request that adds flexProfile must omit
+     hardwareProfile.vmSize. For a virtual machine that uses FlexProfile, a hardwareProfile.vmSize
+     equal to the deployed size is ignored, so a GET response can be sent back unchanged. A PATCH
+     request that omits flexProfile keeps it. A PUT request that omits flexProfile and sets
+     hardwareProfile.vmSize clears it. This property cannot exist along with a non-null
+     properties.availabilitySet, properties.capacityReservation, properties.host,
+     properties.hostGroup, properties.proximityPlacementGroup or properties.virtualMachineScaleSet.
+    :vartype flexProfile: "FlexProfile"
     :ivar scheduledEventsPolicy: Specifies Redeploy, Reboot and
      ScheduledEventsAdditionalPublishingTargets Scheduled Event related configurations for the
      virtual machine.
@@ -9928,6 +10117,16 @@ class VirtualMachineProperties(TypedDict, total=False):
 
     hardwareProfile: "HardwareProfile"
     """Specifies the hardware settings for the virtual machine."""
+    flexProfile: "FlexProfile"
+    """[Preview Feature] Specifies a FlexProfile for VM size. Azure may deploy a compatible
+     alternative VM size based on capacity and placement considerations, and returns the deployed
+     size in hardwareProfile.vmSize. A request that adds flexProfile must omit
+     hardwareProfile.vmSize. For a virtual machine that uses FlexProfile, a hardwareProfile.vmSize
+     equal to the deployed size is ignored, so a GET response can be sent back unchanged. A PATCH
+     request that omits flexProfile keeps it. A PUT request that omits flexProfile and sets
+     hardwareProfile.vmSize clears it. This property cannot exist along with a non-null
+     properties.availabilitySet, properties.capacityReservation, properties.host,
+     properties.hostGroup, properties.proximityPlacementGroup or properties.virtualMachineScaleSet."""
     scheduledEventsPolicy: "ScheduledEventsPolicy"
     """Specifies Redeploy, Reboot and ScheduledEventsAdditionalPublishingTargets Scheduled Event
      related configurations for the virtual machine."""
@@ -10795,6 +10994,10 @@ class VirtualMachineScaleSetIPConfigurationProperties(TypedDict, total=False):  
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype privateIPAddressVersion: Union[str, "IPVersion"]
+    :ivar privateIPAddressPrefixLength: The private IP address prefix length. If specified and the
+     allocation method is dynamic, the service will allocate a CIDR block instead of a single IP
+     address.
+    :vartype privateIPAddressPrefixLength: int
     :ivar applicationGatewayBackendAddressPools: Specifies an array of references to backend
      address pools of application gateways. A scale set can reference backend address pools of
      multiple application gateways. Multiple scale sets cannot use the same application gateway.
@@ -10823,6 +11026,9 @@ class VirtualMachineScaleSetIPConfigurationProperties(TypedDict, total=False):  
     """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
      ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
      'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
+    privateIPAddressPrefixLength: int
+    """The private IP address prefix length. If specified and the allocation method is dynamic, the
+     service will allocate a CIDR block instead of a single IP address."""
     applicationGatewayBackendAddressPools: list["SubResource"]
     """Specifies an array of references to backend address pools of application gateways. A scale set
      can reference backend address pools of multiple application gateways. Multiple scale sets
@@ -11645,6 +11851,10 @@ class VirtualMachineScaleSetUpdateIPConfigurationProperties(TypedDict, total=Fal
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype privateIPAddressVersion: Union[str, "IPVersion"]
+    :ivar privateIPAddressPrefixLength: The private IP address prefix length. If specified and the
+     allocation method is dynamic, the service will allocate a CIDR block instead of a single IP
+     address.
+    :vartype privateIPAddressPrefixLength: int
     :ivar applicationGatewayBackendAddressPools: The application gateway backend address pools.
     :vartype applicationGatewayBackendAddressPools: list["SubResource"]
     :ivar applicationSecurityGroups: Specifies an array of references to application security
@@ -11667,6 +11877,9 @@ class VirtualMachineScaleSetUpdateIPConfigurationProperties(TypedDict, total=Fal
     """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
      ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
      'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
+    privateIPAddressPrefixLength: Optional[int]
+    """The private IP address prefix length. If specified and the allocation method is dynamic, the
+     service will allocate a CIDR block instead of a single IP address."""
     applicationGatewayBackendAddressPools: list["SubResource"]
     """The application gateway backend address pools."""
     applicationSecurityGroups: list["SubResource"]

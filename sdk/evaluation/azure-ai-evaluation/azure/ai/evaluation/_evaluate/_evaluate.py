@@ -63,6 +63,7 @@ from ._evaluate_aoai import (
     _split_evaluators_and_grader_configs,
     _get_evaluation_run_results,
     OAIEvalRunCreationInfo,
+    WRAPPER_KEY,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -1010,7 +1011,8 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if need_oai_run:
         try:
             aoi_name = evaluation_name if evaluation_name else DEFAULT_OAI_EVAL_RUN_NAME
-            eval_run_info_list = _begin_aoai_evaluation(graders, column_mapping, input_data_df, aoi_name, **kwargs)
+            aoai_column_mapping = _complete_aoai_default_column_mapping(column_mapping, input_data_df)
+            eval_run_info_list = _begin_aoai_evaluation(graders, aoai_column_mapping, input_data_df, aoi_name, **kwargs)
             need_get_oai_results = len(eval_run_info_list) > 0
         except EvaluationException as e:
             if need_local_run:
@@ -1137,6 +1139,14 @@ def _build_internal_log_attributes(
     # Add threshold if present
     if event_data.get("threshold") is not None:
         internal_log_attributes["gen_ai.evaluation.threshold"] = str(event_data["threshold"])
+
+    status = event_data.get("status")
+    if isinstance(status, str) and status:
+        internal_log_attributes["gen_ai.evaluation.status"] = status
+
+    passed = event_data.get("passed")
+    if isinstance(passed, bool):
+        internal_log_attributes["gen_ai.evaluation.passed"] = str(passed).lower()
 
     # Add testing criteria details if present
     testing_criteria_name = event_data.get("name")
@@ -1746,6 +1756,41 @@ def _preprocess_data(
         batch_run_client=batch_run_client,
         batch_run_data=batch_run_data,
     )
+
+
+def _complete_aoai_default_column_mapping(
+    column_mapping: Dict[str, Dict[str, str]], input_data_df: pd.DataFrame
+) -> Dict[str, Dict[str, str]]:
+    """Copy automatic mappings for AOAI, retaining nested sources with colliding leaf names."""
+    completed = {name: mapping.copy() for name, mapping in column_mapping.items()}
+    default_mapping = completed.setdefault("default", {})
+    mapped_sources = set(default_mapping.values())
+    # Run outputs occupy root fields inside AOAI's item wrapper, regardless of alias.
+    target_paths = {
+        f"{WRAPPER_KEY}.{source[2:-1].split('.')[-1]}"
+        for source in mapped_sources
+        if source.startswith("${run.outputs.")
+    }
+    for col in sorted(input_data_df.columns):
+        if "." not in col or col.startswith(Prefixes.TSG_OUTPUTS) or col in target_paths:
+            continue
+        source = f"${{data.{col}}}"
+        if source in mapped_sources:
+            continue
+        parts = col.split(".")
+        for depth in range(1, len(parts) + 1):
+            alias = ".".join(parts[-depth:])
+            if alias not in default_mapping:
+                break
+        else:
+            suffix = 1
+            alias = f"{col}__{suffix}"
+            while alias in default_mapping:
+                suffix += 1
+                alias = f"{col}__{suffix}"
+        default_mapping[alias] = source
+        mapped_sources.add(source)
+    return completed
 
 
 def _flatten_object_columns_for_default_mapping(
@@ -2790,6 +2835,9 @@ def _extract_metric_values(
                     type(metric_value).__name__,
                 )
             continue
+        # Skip per-turn breakdown columns; they are per-turn lists, not scalar AOAI result fields, and misroute by suffix into scalar slots.
+        if metric_key == "evaluation_per_turn" or metric_key.startswith("evaluation_per_turn."):
+            continue
         metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
         temp_result_per_metric = {}
         if metric not in result_per_metric:
@@ -3253,6 +3301,8 @@ def _add_error_summaries(
     for criteria that failed during evaluation, ensuring proper error reporting.
     When per-line errors are available, only the error for the current row is used;
     rows that succeeded are not stamped with another row's error.
+    Decision-only per-line metadata preserves known usage/provenance in ``properties`` and the
+    existing ``sample`` schema, without treating failed attempts as completed scoring results.
 
     :param run_output_results: List to append error result objects to
     :type run_output_results: List[Dict[str, Any]]
@@ -3309,6 +3359,7 @@ def _add_error_summaries(
         # Use per-line error if available, otherwise fall back to batch-level error
         per_line_errors = criteria_summary.get("per_line_errors", {})
         per_line_error_msg = per_line_errors.get(row_idx, None)
+        decision_error_metadata = criteria_summary.get("per_line_error_metadata", {}).get(row_idx)
 
         if per_line_error_msg is not None:
             # This row has a specific error
@@ -3316,6 +3367,9 @@ def _add_error_summaries(
                 "code": criteria_summary.get("error_code"),
                 "message": per_line_error_msg,
             }
+            if decision_error_metadata is not None:
+                error_info["code"] = decision_error_metadata["code"]
+                error_info["blame"] = decision_error_metadata["blame"]
         elif per_line_errors:
             # Per-line errors exist but not for this row — this row succeeded, skip error stamping
             continue
@@ -3330,6 +3384,12 @@ def _add_error_summaries(
 
         metrics = testing_criteria_metadata.get(criteria_name, {}).get("metrics", [])
         criteria_type = testing_criteria_metadata.get(criteria_name, {}).get("type", "azure_ai_evaluator")
+        if decision_error_metadata is not None:
+            evaluator_name = testing_criteria_metadata.get(criteria_name, {}).get("evaluator_name")
+            if isinstance(evaluator_name, str):
+                primary_metric = evaluator_name.removeprefix("builtin.")
+                metrics = sorted(metrics, key=lambda metric: metric != primary_metric)
+        decision_usage_added = False
 
         for metric in metrics:
             if not _should_add_error_summary(run_output_results, criteria_name, metric):
@@ -3347,6 +3407,22 @@ def _add_error_summaries(
                 "status": "error",
                 "sample": sample,
             }
+            if decision_error_metadata is not None:
+                properties = decision_error_metadata["properties"]
+                error_result["properties"] = properties
+                # One failed evaluator invocation may produce several metric errors, but only one billed usage.
+                error_result["sample"] = {"error": error_info}
+                usage = {
+                    key: properties[key]
+                    for key in ("prompt_tokens", "completion_tokens", "total_tokens")
+                    if key in properties
+                }
+                if not decision_usage_added:
+                    if usage:
+                        error_result["sample"]["usage"] = usage
+                    if "model" in properties:
+                        error_result["sample"]["model"] = properties["model"]
+                    decision_usage_added = True
             run_output_results.append(error_result)
 
 

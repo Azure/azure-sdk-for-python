@@ -16,13 +16,14 @@ steps:
     displayName: "Use Python $(PythonVersion)"
     inputs:
       versionSpec: $(PythonVersion)
+      architecture: $(PythonArchitecture)
 
   - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
     parameters:
       DevFeedName: ${{ parameters.DevFeedName }}
 
   - script: |
-      python -m pip install pip==20.0.2
+      python -m pip install pip==26.2.2
       pip --version
     displayName: pip --version
 

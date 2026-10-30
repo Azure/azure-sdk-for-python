@@ -53,7 +53,9 @@ def main():
                 "dnsPrefix": "dnsprefix1",
                 "kubernetesVersion": "",
                 "linuxProfile": {"adminUsername": "azureuser", "ssh": {"publicKeys": [{"keyData": "keydata"}]}},
-                "networkProfile": {"bastionProfile": {"enabled": True, "scaleUnits": 3, "sku": "Premium"}},
+                "networkProfile": {
+                    "clusterAPIConnectivityProfile": {"bastion": {"enabled": True, "scaleUnits": 3, "sku": "Premium"}}
+                },
                 "servicePrincipalProfile": {"clientId": "clientid", "secret": "secret"},
                 "windowsProfile": {"adminPassword": "replacePassword1234$", "adminUsername": "azureuser"},
             },
@@ -64,6 +66,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-06-02-preview/ManagedClustersCreate_EnableManagedBastion.json
+# x-ms-original-file: 2026-08-02-preview/ManagedClustersCreate_EnableManagedBastion.json
 if __name__ == "__main__":
     main()

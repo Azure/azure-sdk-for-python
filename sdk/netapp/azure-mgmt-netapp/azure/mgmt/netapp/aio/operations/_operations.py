@@ -91,6 +91,8 @@ from ...operations._operations import (
     build_caches_pool_change_request,
     build_caches_reset_smb_password_request,
     build_caches_update_request,
+    build_cluster_peers_get_request,
+    build_cluster_peers_list_by_parent_request,
     build_elastic_accounts_create_or_update_request,
     build_elastic_accounts_delete_request,
     build_elastic_accounts_get_request,
@@ -135,6 +137,25 @@ from ...operations._operations import (
     build_elastic_volumes_list_by_elastic_pool_request,
     build_elastic_volumes_revert_request,
     build_elastic_volumes_update_request,
+    build_external_cache_connections_create_or_update_request,
+    build_external_cache_connections_delete_request,
+    build_external_cache_connections_get_request,
+    build_external_cache_connections_list_by_resource_group_request,
+    build_external_cache_connections_list_by_subscription_request,
+    build_external_cache_connections_update_request,
+    build_external_caches_get_request,
+    build_external_caches_list_by_parent_request,
+    build_external_clusters_create_or_update_request,
+    build_external_clusters_delete_request,
+    build_external_clusters_get_request,
+    build_external_clusters_list_by_resource_group_request,
+    build_external_clusters_list_by_subscription_request,
+    build_external_clusters_update_request,
+    build_external_svms_create_or_update_request,
+    build_external_svms_delete_request,
+    build_external_svms_get_request,
+    build_external_svms_list_by_parent_request,
+    build_external_svms_update_request,
     build_net_app_resource_check_file_path_availability_request,
     build_net_app_resource_check_name_availability_request,
     build_net_app_resource_check_quota_availability_request,
@@ -176,6 +197,8 @@ from ...operations._operations import (
     build_subvolumes_get_request,
     build_subvolumes_list_by_volume_request,
     build_subvolumes_update_request,
+    build_svm_peers_get_request,
+    build_svm_peers_list_by_parent_request,
     build_volume_groups_create_request,
     build_volume_groups_delete_request,
     build_volume_groups_get_request,
@@ -376,6 +399,10 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=docstring-m
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def get(
@@ -473,6 +500,10 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=docstring-m
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     def list(self, resource_group_name: str, account_name: str, **kwargs: Any) -> AsyncItemPaged["_models.QuotaItem"]:
@@ -4005,6 +4036,10 @@ class VolumesOperations:  # pylint: disable=docstring-missing-param,too-many-pub
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def _list_get_group_id_list_for_ldap_user_initial(  # pylint: disable=name-too-long
@@ -4224,6 +4259,10 @@ class VolumesOperations:  # pylint: disable=docstring-missing-param,too-many-pub
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def begin_list_get_group_id_list_for_ldap_user(  # pylint: disable=name-too-long
@@ -5037,6 +5076,10 @@ class VolumesOperations:  # pylint: disable=docstring-missing-param,too-many-pub
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     def list_replications(
@@ -7295,6 +7338,10 @@ class VolumesOperations:  # pylint: disable=docstring-missing-param,too-many-pub
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def _list_quota_report_initial(
@@ -7513,6 +7560,10 @@ class VolumesOperations:  # pylint: disable=docstring-missing-param,too-many-pub
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def begin_list_quota_report(
@@ -11416,6 +11467,10 @@ class RansomwareReportsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def get(
@@ -11535,6 +11590,10 @@ class RansomwareReportsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     def list(
@@ -11676,6 +11735,10 @@ class RansomwareReportsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def _clear_suspects_initial(
@@ -11906,6 +11969,10 @@ class RansomwareReportsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def begin_clear_suspects(
@@ -12859,6 +12926,10 @@ class BucketsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def get(
@@ -12975,6 +13046,10 @@ class BucketsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -13205,6 +13280,10 @@ class BucketsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -13321,6 +13400,10 @@ class BucketsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def _update_initial(
@@ -13549,6 +13632,10 @@ class BucketsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def begin_update(
@@ -13663,6 +13750,10 @@ class BucketsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def _delete_initial(
@@ -13764,6 +13855,10 @@ class BucketsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def begin_delete(
@@ -13865,6 +13960,10 @@ class BucketsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     def list(
@@ -14120,6 +14219,10 @@ class BucketsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def generate_credentials(
@@ -14251,6 +14354,10 @@ class BucketsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def _generate_akv_credentials_initial(
@@ -14474,6 +14581,10 @@ class BucketsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def begin_generate_akv_credentials(
@@ -14583,6 +14694,10 @@ class BucketsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def _refresh_certificate_initial(
@@ -14683,6 +14798,10 @@ class BucketsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def begin_refresh_certificate(
@@ -14803,6 +14922,10 @@ class CachesOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def get(
@@ -14908,6 +15031,10 @@ class CachesOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -15120,6 +15247,10 @@ class CachesOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -15229,6 +15360,10 @@ class CachesOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def _update_initial(
@@ -15442,6 +15577,10 @@ class CachesOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def begin_update(
@@ -15551,6 +15690,10 @@ class CachesOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def _delete_initial(
@@ -15641,6 +15784,10 @@ class CachesOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def begin_delete(
@@ -15731,6 +15878,10 @@ class CachesOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     def list(
@@ -15863,6 +16014,10 @@ class CachesOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def list_peering_passphrases(
@@ -15969,6 +16124,10 @@ class CachesOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def _pool_change_initial(
@@ -16179,6 +16338,10 @@ class CachesOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def begin_pool_change(
@@ -16289,6 +16452,10 @@ class CachesOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def _reset_smb_password_initial(
@@ -16380,6 +16547,10 @@ class CachesOperations:  # pylint: disable=docstring-missing-param
             "2026-05-15-preview",
             "2026-06-01",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def begin_reset_smb_password(
@@ -16483,6 +16654,8 @@ class ElasticAccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def get(self, resource_group_name: str, account_name: str, **kwargs: Any) -> _models.ElasticAccount:
@@ -16573,6 +16746,8 @@ class ElasticAccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -16756,6 +16931,8 @@ class ElasticAccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -16852,6 +17029,8 @@ class ElasticAccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _update_initial(
@@ -17036,6 +17215,8 @@ class ElasticAccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_update(
@@ -17125,6 +17306,8 @@ class ElasticAccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _delete_initial(self, resource_group_name: str, account_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
@@ -17199,6 +17382,8 @@ class ElasticAccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_delete(self, resource_group_name: str, account_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
@@ -17268,6 +17453,8 @@ class ElasticAccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     def list_by_resource_group(
@@ -17379,6 +17566,8 @@ class ElasticAccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ElasticAccount"]:
@@ -17511,6 +17700,8 @@ class ElasticCapacityPoolsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def get(
@@ -17607,6 +17798,8 @@ class ElasticCapacityPoolsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -17805,6 +17998,8 @@ class ElasticCapacityPoolsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -17907,6 +18102,8 @@ class ElasticCapacityPoolsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _update_initial(
@@ -18103,6 +18300,8 @@ class ElasticCapacityPoolsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_update(
@@ -18196,6 +18395,8 @@ class ElasticCapacityPoolsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _delete_initial(
@@ -18273,6 +18474,8 @@ class ElasticCapacityPoolsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_delete(
@@ -18349,6 +18552,8 @@ class ElasticCapacityPoolsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     def list_by_elastic_account(
@@ -18472,6 +18677,8 @@ class ElasticCapacityPoolsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _change_zone_initial(
@@ -18665,6 +18872,8 @@ class ElasticCapacityPoolsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_change_zone(
@@ -18860,6 +19069,8 @@ class ElasticCapacityPoolsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def check_volume_file_path_availability(
@@ -18999,6 +19210,8 @@ class ElasticVolumesOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def get(
@@ -19099,6 +19312,8 @@ class ElasticVolumesOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -19306,6 +19521,8 @@ class ElasticVolumesOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -19412,6 +19629,8 @@ class ElasticVolumesOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _update_initial(
@@ -19620,6 +19839,8 @@ class ElasticVolumesOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_update(
@@ -19724,6 +19945,8 @@ class ElasticVolumesOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _delete_initial(
@@ -19809,6 +20032,8 @@ class ElasticVolumesOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_delete(
@@ -19895,6 +20120,8 @@ class ElasticVolumesOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     def list_by_elastic_pool(
@@ -20022,6 +20249,8 @@ class ElasticVolumesOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _revert_initial(
@@ -20227,6 +20456,8 @@ class ElasticVolumesOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_revert(
@@ -20352,6 +20583,8 @@ class ElasticSnapshotsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def get(
@@ -20462,6 +20695,8 @@ class ElasticSnapshotsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -20681,6 +20916,8 @@ class ElasticSnapshotsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -20790,6 +21027,8 @@ class ElasticSnapshotsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _delete_initial(
@@ -20883,6 +21122,8 @@ class ElasticSnapshotsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_delete(
@@ -20979,6 +21220,8 @@ class ElasticSnapshotsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     def list_by_elastic_volume(
@@ -21126,6 +21369,8 @@ class ElasticSnapshotPoliciesOperations:  # pylint: disable=docstring-missing-pa
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def get(
@@ -21222,6 +21467,8 @@ class ElasticSnapshotPoliciesOperations:  # pylint: disable=docstring-missing-pa
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -21417,6 +21664,8 @@ class ElasticSnapshotPoliciesOperations:  # pylint: disable=docstring-missing-pa
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -21518,6 +21767,8 @@ class ElasticSnapshotPoliciesOperations:  # pylint: disable=docstring-missing-pa
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _update_initial(
@@ -21714,6 +21965,8 @@ class ElasticSnapshotPoliciesOperations:  # pylint: disable=docstring-missing-pa
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_update(
@@ -21813,6 +22066,8 @@ class ElasticSnapshotPoliciesOperations:  # pylint: disable=docstring-missing-pa
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _delete_initial(
@@ -21896,6 +22151,8 @@ class ElasticSnapshotPoliciesOperations:  # pylint: disable=docstring-missing-pa
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_delete(
@@ -21972,6 +22229,8 @@ class ElasticSnapshotPoliciesOperations:  # pylint: disable=docstring-missing-pa
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     def list_by_elastic_account(
@@ -22096,6 +22355,8 @@ class ElasticSnapshotPoliciesOperations:  # pylint: disable=docstring-missing-pa
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     def list_elastic_volumes(
@@ -22240,6 +22501,8 @@ class ElasticBackupVaultsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def get(
@@ -22336,6 +22599,8 @@ class ElasticBackupVaultsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -22531,6 +22796,8 @@ class ElasticBackupVaultsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -22632,6 +22899,8 @@ class ElasticBackupVaultsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _update_initial(
@@ -22828,6 +23097,8 @@ class ElasticBackupVaultsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_update(
@@ -22927,6 +23198,8 @@ class ElasticBackupVaultsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _delete_initial(
@@ -23010,6 +23283,8 @@ class ElasticBackupVaultsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_delete(
@@ -23086,6 +23361,8 @@ class ElasticBackupVaultsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     def list_by_elastic_account(
@@ -23227,6 +23504,8 @@ class ElasticBackupPoliciesOperations:  # pylint: disable=docstring-missing-para
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def get(
@@ -23323,6 +23602,8 @@ class ElasticBackupPoliciesOperations:  # pylint: disable=docstring-missing-para
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -23518,6 +23799,8 @@ class ElasticBackupPoliciesOperations:  # pylint: disable=docstring-missing-para
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -23619,6 +23902,8 @@ class ElasticBackupPoliciesOperations:  # pylint: disable=docstring-missing-para
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _update_initial(
@@ -23812,6 +24097,8 @@ class ElasticBackupPoliciesOperations:  # pylint: disable=docstring-missing-para
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_update(
@@ -23911,6 +24198,8 @@ class ElasticBackupPoliciesOperations:  # pylint: disable=docstring-missing-para
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _delete_initial(
@@ -23994,6 +24283,8 @@ class ElasticBackupPoliciesOperations:  # pylint: disable=docstring-missing-para
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_delete(
@@ -24070,6 +24361,8 @@ class ElasticBackupPoliciesOperations:  # pylint: disable=docstring-missing-para
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     def list_by_elastic_account(
@@ -24212,6 +24505,8 @@ class ElasticBackupsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def get(
@@ -24312,6 +24607,8 @@ class ElasticBackupsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -24519,6 +24816,8 @@ class ElasticBackupsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -24625,6 +24924,8 @@ class ElasticBackupsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _update_initial(
@@ -24833,6 +25134,8 @@ class ElasticBackupsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_update(
@@ -24937,6 +25240,8 @@ class ElasticBackupsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _delete_initial(
@@ -25022,6 +25327,8 @@ class ElasticBackupsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_delete(
@@ -25108,6 +25415,8 @@ class ElasticBackupsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     def list_by_vault(
@@ -25251,6 +25560,8 @@ class ActiveDirectoryConfigsOperations:  # pylint: disable=docstring-missing-par
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def get(
@@ -25343,6 +25654,8 @@ class ActiveDirectoryConfigsOperations:  # pylint: disable=docstring-missing-par
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -25526,6 +25839,8 @@ class ActiveDirectoryConfigsOperations:  # pylint: disable=docstring-missing-par
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_create_or_update(
@@ -25622,6 +25937,8 @@ class ActiveDirectoryConfigsOperations:  # pylint: disable=docstring-missing-par
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _update_initial(
@@ -25806,6 +26123,8 @@ class ActiveDirectoryConfigsOperations:  # pylint: disable=docstring-missing-par
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_update(
@@ -25900,6 +26219,8 @@ class ActiveDirectoryConfigsOperations:  # pylint: disable=docstring-missing-par
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def _delete_initial(
@@ -25981,6 +26302,8 @@ class ActiveDirectoryConfigsOperations:  # pylint: disable=docstring-missing-par
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     async def begin_delete(
@@ -26052,6 +26375,8 @@ class ActiveDirectoryConfigsOperations:  # pylint: disable=docstring-missing-par
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     def list_by_resource_group(
@@ -26164,6 +26489,8 @@ class ActiveDirectoryConfigsOperations:  # pylint: disable=docstring-missing-par
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-15-preview",
+            "2026-08-15-preview",
         ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ActiveDirectoryConfig"]:
@@ -26232,6 +26559,3582 @@ class ActiveDirectoryConfigsOperations:  # pylint: disable=docstring-missing-par
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
                 List[_models.ActiveDirectoryConfig],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ExternalClustersOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.aio.NetAppManagementClient`'s
+        :attr:`external_clusters` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def get(self, resource_group_name: str, external_cluster_name: str, **kwargs: Any) -> _models.ExternalCluster:
+        """Get the External Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :return: ExternalCluster. The ExternalCluster is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.ExternalCluster
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ExternalCluster] = kwargs.pop("cls", None)
+
+        _request = build_external_clusters_get_request(
+            resource_group_name=resource_group_name,
+            external_cluster_name=external_cluster_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ExternalCluster, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        resource: Union[_models.ExternalCluster, _types.ExternalCluster, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_external_clusters_create_or_update_request(
+            resource_group_name=resource_group_name,
+            external_cluster_name=external_cluster_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        resource: _models.ExternalCluster,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCluster]:
+        """Create or update the specified External Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.netapp.models.ExternalCluster
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalCluster. The ExternalCluster is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        resource: _types.ExternalCluster,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCluster]:
+        """Create or update the specified External Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.netapp.types.ExternalCluster
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalCluster. The ExternalCluster is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCluster]:
+        """Create or update the specified External Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalCluster. The ExternalCluster is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        resource: Union[_models.ExternalCluster, _types.ExternalCluster, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCluster]:
+        """Create or update the specified External Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param resource: Resource create parameters. Is either a ExternalCluster type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.netapp.models.ExternalCluster or
+         ~azure.mgmt.netapp.types.ExternalCluster or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ExternalCluster. The ExternalCluster is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ExternalCluster] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                external_cluster_name=external_cluster_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ExternalCluster, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ExternalCluster].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ExternalCluster](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        properties: Union[_models.ExternalClusterUpdate, _types.ExternalClusterUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_external_clusters_update_request(
+            resource_group_name=resource_group_name,
+            external_cluster_name=external_cluster_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        properties: _models.ExternalClusterUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCluster]:
+        """Patch the specified External Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.netapp.models.ExternalClusterUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalCluster. The ExternalCluster is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        properties: _types.ExternalClusterUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCluster]:
+        """Patch the specified External Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.netapp.types.ExternalClusterUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalCluster. The ExternalCluster is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCluster]:
+        """Patch the specified External Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalCluster. The ExternalCluster is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        properties: Union[_models.ExternalClusterUpdate, _types.ExternalClusterUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCluster]:
+        """Patch the specified External Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param properties: The resource properties to be updated. Is either a ExternalClusterUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.netapp.models.ExternalClusterUpdate or
+         ~azure.mgmt.netapp.types.ExternalClusterUpdate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ExternalCluster. The ExternalCluster is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ExternalCluster] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                external_cluster_name=external_cluster_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ExternalCluster, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ExternalCluster].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ExternalCluster](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": ["api_version", "subscription_id", "resource_group_name", "external_cluster_name"]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, external_cluster_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_external_clusters_delete_request(
+            resource_group_name=resource_group_name,
+            external_cluster_name=external_cluster_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": ["api_version", "subscription_id", "resource_group_name", "external_cluster_name"]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, external_cluster_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete the specified External Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                external_cluster_name=external_cluster_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={"2026-08-15-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-08-15-preview"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ExternalCluster"]:
+        """List all External Clusters in the resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of ExternalCluster
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.ExternalCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ExternalCluster]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_external_clusters_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ExternalCluster],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={"2026-08-15-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-08-15-preview"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ExternalCluster"]:
+        """List all External Clusters in the subscription.
+
+        :return: An iterator like instance of ExternalCluster
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.ExternalCluster]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ExternalCluster]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_external_clusters_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ExternalCluster],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ClusterPeersOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.aio.NetAppManagementClient`'s
+        :attr:`cluster_peers` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "peer_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, external_cluster_name: str, peer_id: str, **kwargs: Any
+    ) -> _models.ClusterPeer:
+        """Get the Cluster Peer.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param peer_id: The name of the ClusterPeer. Required.
+        :type peer_id: str
+        :return: ClusterPeer. The ClusterPeer is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.ClusterPeer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ClusterPeer] = kwargs.pop("cls", None)
+
+        _request = build_cluster_peers_get_request(
+            resource_group_name=resource_group_name,
+            external_cluster_name=external_cluster_name,
+            peer_id=peer_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ClusterPeer, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    def list_by_parent(
+        self, resource_group_name: str, external_cluster_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ClusterPeer"]:
+        """List all Cluster Peers under an External Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :return: An iterator like instance of ClusterPeer
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.ClusterPeer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ClusterPeer]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_cluster_peers_list_by_parent_request(
+                    resource_group_name=resource_group_name,
+                    external_cluster_name=external_cluster_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ClusterPeer],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ExternalSvmsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.aio.NetAppManagementClient`'s
+        :attr:`external_svms` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "external_svm_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, external_cluster_name: str, external_svm_name: str, **kwargs: Any
+    ) -> _models.ExternalSvm:
+        """Get the External SVM resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param external_svm_name: The name of the ExternalSvm. Required.
+        :type external_svm_name: str
+        :return: ExternalSvm. The ExternalSvm is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.ExternalSvm
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ExternalSvm] = kwargs.pop("cls", None)
+
+        _request = build_external_svms_get_request(
+            resource_group_name=resource_group_name,
+            external_cluster_name=external_cluster_name,
+            external_svm_name=external_svm_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ExternalSvm, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "external_svm_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        external_svm_name: str,
+        resource: Union[_models.ExternalSvm, _types.ExternalSvm, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_external_svms_create_or_update_request(
+            resource_group_name=resource_group_name,
+            external_cluster_name=external_cluster_name,
+            external_svm_name=external_svm_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        external_svm_name: str,
+        resource: _models.ExternalSvm,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalSvm]:
+        """Create or update the specified External SVM.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param external_svm_name: The name of the ExternalSvm. Required.
+        :type external_svm_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.netapp.models.ExternalSvm
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalSvm. The ExternalSvm is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalSvm]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        external_svm_name: str,
+        resource: _types.ExternalSvm,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalSvm]:
+        """Create or update the specified External SVM.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param external_svm_name: The name of the ExternalSvm. Required.
+        :type external_svm_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.netapp.types.ExternalSvm
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalSvm. The ExternalSvm is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalSvm]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        external_svm_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalSvm]:
+        """Create or update the specified External SVM.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param external_svm_name: The name of the ExternalSvm. Required.
+        :type external_svm_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalSvm. The ExternalSvm is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalSvm]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "external_svm_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        external_svm_name: str,
+        resource: Union[_models.ExternalSvm, _types.ExternalSvm, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalSvm]:
+        """Create or update the specified External SVM.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param external_svm_name: The name of the ExternalSvm. Required.
+        :type external_svm_name: str
+        :param resource: Resource create parameters. Is either a ExternalSvm type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.netapp.models.ExternalSvm or ~azure.mgmt.netapp.types.ExternalSvm
+         or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ExternalSvm. The ExternalSvm is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalSvm]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ExternalSvm] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                external_cluster_name=external_cluster_name,
+                external_svm_name=external_svm_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ExternalSvm, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ExternalSvm].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ExternalSvm](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "external_svm_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        external_svm_name: str,
+        properties: Union[_models.ExternalSvmTagsUpdate, _types.ExternalSvmTagsUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_external_svms_update_request(
+            resource_group_name=resource_group_name,
+            external_cluster_name=external_cluster_name,
+            external_svm_name=external_svm_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        external_svm_name: str,
+        properties: _models.ExternalSvmTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalSvm]:
+        """Patch the specified External SVM.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param external_svm_name: The name of the ExternalSvm. Required.
+        :type external_svm_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.netapp.models.ExternalSvmTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalSvm. The ExternalSvm is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalSvm]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        external_svm_name: str,
+        properties: _types.ExternalSvmTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalSvm]:
+        """Patch the specified External SVM.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param external_svm_name: The name of the ExternalSvm. Required.
+        :type external_svm_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.netapp.types.ExternalSvmTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalSvm. The ExternalSvm is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalSvm]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        external_svm_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalSvm]:
+        """Patch the specified External SVM.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param external_svm_name: The name of the ExternalSvm. Required.
+        :type external_svm_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalSvm. The ExternalSvm is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalSvm]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "external_svm_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        external_svm_name: str,
+        properties: Union[_models.ExternalSvmTagsUpdate, _types.ExternalSvmTagsUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalSvm]:
+        """Patch the specified External SVM.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param external_svm_name: The name of the ExternalSvm. Required.
+        :type external_svm_name: str
+        :param properties: The resource properties to be updated. Is either a ExternalSvmTagsUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.netapp.models.ExternalSvmTagsUpdate or
+         ~azure.mgmt.netapp.types.ExternalSvmTagsUpdate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ExternalSvm. The ExternalSvm is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalSvm]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ExternalSvm] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                external_cluster_name=external_cluster_name,
+                external_svm_name=external_svm_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ExternalSvm, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ExternalSvm].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ExternalSvm](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "external_svm_name",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, external_cluster_name: str, external_svm_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_external_svms_delete_request(
+            resource_group_name=resource_group_name,
+            external_cluster_name=external_cluster_name,
+            external_svm_name=external_svm_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "external_svm_name",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, external_cluster_name: str, external_svm_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete the specified External SVM.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param external_svm_name: The name of the ExternalSvm. Required.
+        :type external_svm_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                external_cluster_name=external_cluster_name,
+                external_svm_name=external_svm_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    def list_by_parent(
+        self, resource_group_name: str, external_cluster_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ExternalSvm"]:
+        """List all External SVMs under an External Cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :return: An iterator like instance of ExternalSvm
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.ExternalSvm]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ExternalSvm]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_external_svms_list_by_parent_request(
+                    resource_group_name=resource_group_name,
+                    external_cluster_name=external_cluster_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ExternalSvm],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class SvmPeersOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.aio.NetAppManagementClient`'s
+        :attr:`svm_peers` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "peer_id",
+                "svm_peer_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, external_cluster_name: str, peer_id: str, svm_peer_id: str, **kwargs: Any
+    ) -> _models.SvmPeer:
+        """Get the SVM Peer.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param peer_id: The name of the ClusterPeer. Required.
+        :type peer_id: str
+        :param svm_peer_id: The name of the SvmPeer. Required.
+        :type svm_peer_id: str
+        :return: SvmPeer. The SvmPeer is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.SvmPeer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SvmPeer] = kwargs.pop("cls", None)
+
+        _request = build_svm_peers_get_request(
+            resource_group_name=resource_group_name,
+            external_cluster_name=external_cluster_name,
+            peer_id=peer_id,
+            svm_peer_id=svm_peer_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SvmPeer, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "peer_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    def list_by_parent(
+        self, resource_group_name: str, external_cluster_name: str, peer_id: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.SvmPeer"]:
+        """List and describe all SVM Peers under a Cluster Peer.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param peer_id: The name of the ClusterPeer. Required.
+        :type peer_id: str
+        :return: An iterator like instance of SvmPeer
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.SvmPeer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.SvmPeer]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_svm_peers_list_by_parent_request(
+                    resource_group_name=resource_group_name,
+                    external_cluster_name=external_cluster_name,
+                    peer_id=peer_id,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.SvmPeer],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ExternalCachesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.aio.NetAppManagementClient`'s
+        :attr:`external_caches` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "external_svm_name",
+                "external_cache_resource_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        external_cluster_name: str,
+        external_svm_name: str,
+        external_cache_resource_name: str,
+        **kwargs: Any
+    ) -> _models.ExternalCache:
+        """Get the External Cache.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param external_svm_name: The name of the ExternalSvm. Required.
+        :type external_svm_name: str
+        :param external_cache_resource_name: The externalCacheName with unique identifier added and
+         leading underscores (if any) removed. Required.
+        :type external_cache_resource_name: str
+        :return: ExternalCache. The ExternalCache is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.ExternalCache
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ExternalCache] = kwargs.pop("cls", None)
+
+        _request = build_external_caches_get_request(
+            resource_group_name=resource_group_name,
+            external_cluster_name=external_cluster_name,
+            external_svm_name=external_svm_name,
+            external_cache_resource_name=external_cache_resource_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ExternalCache, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cluster_name",
+                "external_svm_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    def list_by_parent(
+        self, resource_group_name: str, external_cluster_name: str, external_svm_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ExternalCache"]:
+        """List all External Caches under an External SVM.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cluster_name: The name of the ExternalCluster. Required.
+        :type external_cluster_name: str
+        :param external_svm_name: The name of the ExternalSvm. Required.
+        :type external_svm_name: str
+        :return: An iterator like instance of ExternalCache
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.ExternalCache]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ExternalCache]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_external_caches_list_by_parent_request(
+                    resource_group_name=resource_group_name,
+                    external_cluster_name=external_cluster_name,
+                    external_svm_name=external_svm_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ExternalCache],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ExternalCacheConnectionsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.netapp.aio.NetAppManagementClient`'s
+        :attr:`external_cache_connections` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cache_connection_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, external_cache_connection_name: str, **kwargs: Any
+    ) -> _models.ExternalCacheConnection:
+        """Get the External Cache Connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cache_connection_name: The name of the ExternalCacheConnection. Required.
+        :type external_cache_connection_name: str
+        :return: ExternalCacheConnection. The ExternalCacheConnection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.netapp.models.ExternalCacheConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ExternalCacheConnection] = kwargs.pop("cls", None)
+
+        _request = build_external_cache_connections_get_request(
+            resource_group_name=resource_group_name,
+            external_cache_connection_name=external_cache_connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ExternalCacheConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cache_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        external_cache_connection_name: str,
+        resource: Union[_models.ExternalCacheConnection, _types.ExternalCacheConnection, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_external_cache_connections_create_or_update_request(
+            resource_group_name=resource_group_name,
+            external_cache_connection_name=external_cache_connection_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        external_cache_connection_name: str,
+        resource: _models.ExternalCacheConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCacheConnection]:
+        """Create or update the specified External Cache Connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cache_connection_name: The name of the ExternalCacheConnection. Required.
+        :type external_cache_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.netapp.models.ExternalCacheConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalCacheConnection. The
+         ExternalCacheConnection is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCacheConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        external_cache_connection_name: str,
+        resource: _types.ExternalCacheConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCacheConnection]:
+        """Create or update the specified External Cache Connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cache_connection_name: The name of the ExternalCacheConnection. Required.
+        :type external_cache_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.netapp.types.ExternalCacheConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalCacheConnection. The
+         ExternalCacheConnection is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCacheConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        external_cache_connection_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCacheConnection]:
+        """Create or update the specified External Cache Connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cache_connection_name: The name of the ExternalCacheConnection. Required.
+        :type external_cache_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalCacheConnection. The
+         ExternalCacheConnection is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCacheConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cache_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        external_cache_connection_name: str,
+        resource: Union[_models.ExternalCacheConnection, _types.ExternalCacheConnection, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCacheConnection]:
+        """Create or update the specified External Cache Connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cache_connection_name: The name of the ExternalCacheConnection. Required.
+        :type external_cache_connection_name: str
+        :param resource: Resource create parameters. Is either a ExternalCacheConnection type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.netapp.models.ExternalCacheConnection or
+         ~azure.mgmt.netapp.types.ExternalCacheConnection or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ExternalCacheConnection. The
+         ExternalCacheConnection is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCacheConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ExternalCacheConnection] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                external_cache_connection_name=external_cache_connection_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ExternalCacheConnection, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ExternalCacheConnection].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ExternalCacheConnection](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cache_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        external_cache_connection_name: str,
+        properties: Union[
+            _models.ExternalCacheConnectionTagsUpdate, _types.ExternalCacheConnectionTagsUpdate, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_external_cache_connections_update_request(
+            resource_group_name=resource_group_name,
+            external_cache_connection_name=external_cache_connection_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        external_cache_connection_name: str,
+        properties: _models.ExternalCacheConnectionTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCacheConnection]:
+        """Patch the specified External Cache Connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cache_connection_name: The name of the ExternalCacheConnection. Required.
+        :type external_cache_connection_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.netapp.models.ExternalCacheConnectionTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalCacheConnection. The
+         ExternalCacheConnection is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCacheConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        external_cache_connection_name: str,
+        properties: _types.ExternalCacheConnectionTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCacheConnection]:
+        """Patch the specified External Cache Connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cache_connection_name: The name of the ExternalCacheConnection. Required.
+        :type external_cache_connection_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.netapp.types.ExternalCacheConnectionTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalCacheConnection. The
+         ExternalCacheConnection is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCacheConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        external_cache_connection_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCacheConnection]:
+        """Patch the specified External Cache Connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cache_connection_name: The name of the ExternalCacheConnection. Required.
+        :type external_cache_connection_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ExternalCacheConnection. The
+         ExternalCacheConnection is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCacheConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cache_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        external_cache_connection_name: str,
+        properties: Union[
+            _models.ExternalCacheConnectionTagsUpdate, _types.ExternalCacheConnectionTagsUpdate, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ExternalCacheConnection]:
+        """Patch the specified External Cache Connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cache_connection_name: The name of the ExternalCacheConnection. Required.
+        :type external_cache_connection_name: str
+        :param properties: The resource properties to be updated. Is either a
+         ExternalCacheConnectionTagsUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.netapp.models.ExternalCacheConnectionTagsUpdate or
+         ~azure.mgmt.netapp.types.ExternalCacheConnectionTagsUpdate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ExternalCacheConnection. The
+         ExternalCacheConnection is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.ExternalCacheConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ExternalCacheConnection] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                external_cache_connection_name=external_cache_connection_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ExternalCacheConnection, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ExternalCacheConnection].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ExternalCacheConnection](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cache_connection_name",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, external_cache_connection_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_external_cache_connections_delete_request(
+            resource_group_name=resource_group_name,
+            external_cache_connection_name=external_cache_connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={
+            "2026-08-15-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "external_cache_connection_name",
+            ]
+        },
+        api_versions_list=["2026-08-15-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, external_cache_connection_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete the specified External Cache Connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param external_cache_connection_name: The name of the ExternalCacheConnection. Required.
+        :type external_cache_connection_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                external_cache_connection_name=external_cache_connection_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={"2026-08-15-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-08-15-preview"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ExternalCacheConnection"]:
+        """List all External Cache Connections in the resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of ExternalCacheConnection
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.ExternalCacheConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ExternalCacheConnection]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_external_cache_connections_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ExternalCacheConnection],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-15-preview",
+        params_added_on={"2026-08-15-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-08-15-preview"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ExternalCacheConnection"]:
+        """List all External Cache Connections in the subscription.
+
+        :return: An iterator like instance of ExternalCacheConnection
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.ExternalCacheConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ExternalCacheConnection]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_external_cache_connections_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ExternalCacheConnection],
                 deserialized.get("value", []),
             )
             if cls:
@@ -26966,6 +30869,10 @@ class AccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def _update_initial(
@@ -27147,6 +31054,10 @@ class AccountsOperations:  # pylint: disable=docstring-missing-param
             "2026-04-15-preview",
             "2026-05-15-preview",
             "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
         ],
     )
     async def begin_update(
@@ -28273,7 +32184,15 @@ class AccountsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name"]
         },
-        api_versions_list=["2026-04-15-preview", "2026-05-15-preview", "2026-06-15-preview"],
+        api_versions_list=[
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
+        ],
     )
     async def _refresh_ldap_bind_password_initial(
         self, resource_group_name: str, account_name: str, **kwargs: Any
@@ -28344,7 +32263,15 @@ class AccountsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "account_name"]
         },
-        api_versions_list=["2026-04-15-preview", "2026-05-15-preview", "2026-06-15-preview"],
+        api_versions_list=[
+            "2026-04-15-preview",
+            "2026-05-15-preview",
+            "2026-06-15-preview",
+            "2026-07-01",
+            "2026-07-15-preview",
+            "2026-08-01",
+            "2026-08-15-preview",
+        ],
     )
     async def begin_refresh_ldap_bind_password(
         self, resource_group_name: str, account_name: str, **kwargs: Any

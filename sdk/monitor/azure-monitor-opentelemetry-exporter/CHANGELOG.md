@@ -1,18 +1,36 @@
 # Release History
 
-## 1.0.0b58 (Unreleased)
+## 1.0.0b59 (Unreleased)
 
 ### Features Added
+- Add support for experimental features flag
+  ([#49682](https://github.com/Azure/azure-sdk-for-python/pull/49682))
+- Increase the custom properties truncation limit for `gen_ai.input.messages` and
+  `gen_ai.output.messages` to 4MB to support GenAI multimodal (blob) content when the
+  `gen_ai_input_output_limit_increase` experimental feature is enabled; otherwise the
+  existing limits apply (256kb for GenAI attributes and 8kb for all other custom properties)
+  ([#49648](https://github.com/Azure/azure-sdk-for-python/pull/49648))
 
 ### Breaking Changes
+
+### Bugs Fixed
+- Fix HTTP dependency target being rendered as `host:None` when the span has
+  `server.address` but no `server.port` (e.g. default-port requests traced by azure-core)
+  ([#49344](https://github.com/Azure/azure-sdk-for-python/pull/49344))
+
+### Other Changes
+
+## 1.0.0b58 (2026-10-07)
+
+### Features Added
+- Map the `session.id` attribute on spans and logs to the Azure Monitor session context
+  ([#49179](https://github.com/Azure/azure-sdk-for-python/pull/49179))
 
 ### Bugs Fixed
 - Update to the new stable OpenTelemetry database semantic conventions
   (`db.system.name`, `db.query.text`, `db.operation.name`, `db.namespace`) when
   mapping `CLIENT` spans to `RemoteDependencyData`
   ([#48979](https://github.com/Azure/azure-sdk-for-python/pull/48979))
-
-### Other Changes
 
 ## 1.0.0b57 (2026-09-02)
 

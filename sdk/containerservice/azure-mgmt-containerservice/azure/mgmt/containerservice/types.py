@@ -7,8 +7,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, Literal, TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
+
+from .models._enums import UpgradeType
 
 if TYPE_CHECKING:
     from .models import (
@@ -16,6 +18,8 @@ if TYPE_CHECKING:
         AddonAutoscaling,
         AdoptionPolicy,
         AdvancedNetworkPolicies,
+        AgentFabricMembershipProvisioningState,
+        AgentFabricMembershipSkuName,
         AgentPoolMode,
         AgentPoolNICPublicIPAddressVersion,
         AgentPoolNetworkInterfaceType,
@@ -26,6 +30,8 @@ if TYPE_CHECKING:
         ArtifactSource,
         BackendPoolType,
         BastionSku,
+        CloudShellProfileMode,
+        CloudShellStorageProfileMode,
         ClusterServiceLoadBalancerHealthProbeMode,
         Code,
         ConnectionStatus,
@@ -289,6 +295,59 @@ class ProxyResource(Resource):
     """
 
 
+class AgentFabricMembership(ProxyResource):
+    """The AgentFabric membership of a managed cluster. A cluster may belong to at most one
+    AgentFabric, so this resource always has the name 'default'. See
+    `https://aka.ms/aks/agentfabric-membership <https://aka.ms/aks/agentfabric-membership>`_.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "AgentFabricMembershipProperties"
+    :ivar managedBy: Resource ID of the AgentFabric that this cluster is a member of. The
+     AgentFabric must be in the same tenant and subscription as the managed cluster. As the ARM
+     envelope property, it also stops a complete mode deployment from deleting the membership and
+     silently detaching the cluster. Required.
+    :vartype managedBy: str
+    """
+
+    properties: "AgentFabricMembershipProperties"
+    """The resource-specific properties for this resource."""
+    managedBy: Required[str]
+    """Resource ID of the AgentFabric that this cluster is a member of. The AgentFabric must be in the
+     same tenant and subscription as the managed cluster. As the ARM envelope property, it also
+     stops a complete mode deployment from deleting the membership and silently detaching the
+     cluster. Required."""
+
+
+class AgentFabricMembershipProperties(TypedDict, total=False):
+    """Properties of the AgentFabric membership of a managed cluster.
+
+    :ivar provisioningState: The current provisioning state of the AgentFabric membership. Known
+     values are: "Canceled", "Creating", "Deleting", "Failed", "Succeeded", and "Updating".
+    :vartype provisioningState: Union[str, "AgentFabricMembershipProvisioningState"]
+    :ivar sku: The SKU of the AgentFabric membership. Determines which AgentFabric components are
+     deployed to the cluster. Required. Known values are: "Standard" and "Premium".
+    :vartype sku: Union[str, "AgentFabricMembershipSkuName"]
+    """
+
+    provisioningState: Union[str, "AgentFabricMembershipProvisioningState"]
+    """The current provisioning state of the AgentFabric membership. Known values are: \"Canceled\",
+     \"Creating\", \"Deleting\", \"Failed\", \"Succeeded\", and \"Updating\"."""
+    sku: Required[Union[str, "AgentFabricMembershipSkuName"]]
+    """The SKU of the AgentFabric membership. Determines which AgentFabric components are deployed to
+     the cluster. Required. Known values are: \"Standard\" and \"Premium\"."""
+
+
 class AgentPool(ProxyResource):
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
@@ -406,6 +465,25 @@ class AgentPoolGatewayProfile(TypedDict, total=False):
      the size of the Gateway agent pool. Due to Azure public IPPrefix size limitation, the valid
      value range is [28, 31] (/31 = 2 nodes/IPs, /30 = 4 nodes/IPs, /29 = 8 nodes/IPs, /28 = 16
      nodes/IPs). The default value is 31."""
+
+
+class AgentPoolGenerateUpgradeInsightsContent(TypedDict, total=False):
+    """Request body to evaluate a single agent pool Kubernetes version upgrade.
+
+    :ivar upgradeType: Required. An agent pool (node pool) Kubernetes version upgrade.
+    :vartype upgradeType: Literal[UpgradeType.AGENT_POOL]
+    :ivar agentPoolName: The name of the agent pool to evaluate. Required.
+    :vartype agentPoolName: str
+    :ivar targetKubernetesVersion: The target Kubernetes version to evaluate. Required.
+    :vartype targetKubernetesVersion: str
+    """
+
+    upgradeType: Required[Literal[UpgradeType.AGENT_POOL]]
+    """Required. An agent pool (node pool) Kubernetes version upgrade."""
+    agentPoolName: Required[str]
+    """The name of the agent pool to evaluate. Required."""
+    targetKubernetesVersion: Required[str]
+    """The target Kubernetes version to evaluate. Required."""
 
 
 class AgentPoolManagedClusterAgentPoolProfileProperties(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -1138,6 +1216,13 @@ class AgentPoolUpgradeSettings(TypedDict, total=False):
      still being in a running state, can also cause undrainable nodes. Known values are: "Cordon"
      and "Schedule".
     :vartype undrainableNodeBehavior: Union[str, "UndrainableNodeBehavior"]
+    :ivar upgradeGateSettings: Settings for upgrade gating on upgrades of this agent pool. Health
+     signals are ``HealthSignal`` custom resources published by monitoring components running in the
+     cluster. When the cluster-level ``enabled`` is unset or ``false``, this agent pool can opt in
+     independently. When the cluster-level ``enabled`` is ``true``, gating is inherited and setting
+     this agent pool's ``enabled`` to ``false`` is rejected; an omitted value on a newly created
+     agent pool is defaulted to ``true``.
+    :vartype upgradeGateSettings: "UpgradeGateSettings"
     """
 
     maxSurge: str
@@ -1177,6 +1262,13 @@ class AgentPoolUpgradeSettings(TypedDict, total=False):
      nodes is Pod Disruption Budgets (PDBs), but other issues, such as pod termination grace period
      is exceeding the remaining per-node drain timeout or pod is still being in a running state, can
      also cause undrainable nodes. Known values are: \"Cordon\" and \"Schedule\"."""
+    upgradeGateSettings: "UpgradeGateSettings"
+    """Settings for upgrade gating on upgrades of this agent pool. Health signals are ``HealthSignal``
+     custom resources published by monitoring components running in the cluster. When the
+     cluster-level ``enabled`` is unset or ``false``, this agent pool can opt in independently. When
+     the cluster-level ``enabled`` is ``true``, gating is inherited and setting this agent pool's
+     ``enabled`` to ``false`` is rejected; an omitted value on a newly created agent pool is
+     defaulted to ``true``."""
 
 
 class AgentPoolWindowsProfile(TypedDict, total=False):
@@ -1306,11 +1398,15 @@ class AzureKeyVaultKms(TypedDict, total=False):
 
     :ivar enabled: Whether to enable Azure Key Vault key management service. The default is false.
     :vartype enabled: bool
-    :ivar keyId: Identifier of Azure Key Vault key. See `key identifier format
-     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_
-     for more details. When Azure Key Vault key management service is enabled, this field is
-     required and must be a valid key identifier. When Azure Key Vault key management service is
-     disabled, leave the field empty.
+    :ivar keyId: The identifier of the Azure Key Vault key. For more information, see `Azure Key
+     Vault key identifiers
+     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_.
+     This property is required when Azure Key Vault key management service is enabled and must be
+     omitted when the service is disabled. Starting with API versions 2026-07-01 and
+     2026-07-02-preview, a versioned key identifier uses the legacy KMS experience, while an
+     unversioned key identifier uses the new KMS experience. For more information, see `KMS data
+     encryption concepts
+     <https://learn.microsoft.com/en-us/azure/aks/kms-data-encryption-concepts>`_.
     :vartype keyId: str
     :ivar keyVaultNetworkAccess: Network access of the key vault. Network access of key vault. The
      possible values are ``Public`` and ``Private``. ``Public`` means the key vault allows public
@@ -1326,11 +1422,15 @@ class AzureKeyVaultKms(TypedDict, total=False):
     enabled: bool
     """Whether to enable Azure Key Vault key management service. The default is false."""
     keyId: str
-    """Identifier of Azure Key Vault key. See `key identifier format
-     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_
-     for more details. When Azure Key Vault key management service is enabled, this field is
-     required and must be a valid key identifier. When Azure Key Vault key management service is
-     disabled, leave the field empty."""
+    """The identifier of the Azure Key Vault key. For more information, see `Azure Key Vault key
+     identifiers
+     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_.
+     This property is required when Azure Key Vault key management service is enabled and must be
+     omitted when the service is disabled. Starting with API versions 2026-07-01 and
+     2026-07-02-preview, a versioned key identifier uses the legacy KMS experience, while an
+     unversioned key identifier uses the new KMS experience. For more information, see `KMS data
+     encryption concepts
+     <https://learn.microsoft.com/en-us/azure/aks/kms-data-encryption-concepts>`_."""
     keyVaultNetworkAccess: Union[str, "KeyVaultNetworkAccessTypes"]
     """Network access of the key vault. Network access of key vault. The possible values are
      ``Public`` and ``Private``. ``Public`` means the key vault allows public access from all
@@ -1436,15 +1536,160 @@ class CapacityReservationGroup(TypedDict, total=False):
      Reservation <aka.ms/CapacityReservation>`_."""
 
 
+class CloudShellNetworkProfile(TypedDict, total=False):
+    """Network resources used by Cloud Shell. AKS peers the subnet's virtual network with the cluster
+    virtual network. For Custom resources, their address spaces must not overlap. See
+    `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_.
+
+    :ivar subnetId: Dedicated IPv4 subnet used by Cloud Shell containers. For Custom networking,
+     this subnet must be delegated to Microsoft.ContainerInstance/containerGroups and be /24 or
+     larger. Grant the cluster identity Network Contributor on the containing virtual network and
+     grant the Azure Container Instance service principal Network Contributor on this subnet or its
+     containing virtual network. Required when Cloud Shell mode is Custom.
+    :vartype subnetId: str
+    :ivar relayNamespaceId: Azure Relay namespace used by Cloud Shell. For Custom networking, this
+     existing namespace is required with subnetId. Grant the cluster identity Reader and the Azure
+     Container Instance service principal Contributor on the namespace. Required when Cloud Shell
+     mode is Custom.
+    :vartype relayNamespaceId: str
+    """
+
+    subnetId: str
+    """Dedicated IPv4 subnet used by Cloud Shell containers. For Custom networking, this subnet must
+     be delegated to Microsoft.ContainerInstance/containerGroups and be /24 or larger. Grant the
+     cluster identity Network Contributor on the containing virtual network and grant the Azure
+     Container Instance service principal Network Contributor on this subnet or its containing
+     virtual network. Required when Cloud Shell mode is Custom."""
+    relayNamespaceId: str
+    """Azure Relay namespace used by Cloud Shell. For Custom networking, this existing namespace is
+     required with subnetId. Grant the cluster identity Reader and the Azure Container Instance
+     service principal Contributor on the namespace. Required when Cloud Shell mode is Custom."""
+
+
+class CloudShellProfile(TypedDict, total=False):
+    """Cloud Shell connectivity and storage settings for a private managed cluster. For more
+    information, see `https://aka.ms/aks/CloudShellConnect
+    <https://aka.ms/aks/CloudShellConnect>`_.
+
+    :ivar mode: Whether Cloud Shell connectivity is disabled, uses AKS-managed network resources,
+     or uses user-provided network resources. Defaults to Disabled when omitted during create. On
+     update, omission preserves the existing mode. Setting this property to Disabled removes
+     AKS-created resources and connectivity artifacts. For Custom mode, AKS unregisters the
+     user-provided resources but does not delete them. Known values are: "Disabled", "Managed", and
+     "Custom".
+    :vartype mode: Union[str, "CloudShellProfileMode"]
+    :ivar network: Network resources used by Cloud Shell. When configuring Custom networking, users
+     must provide both subnetId and relayNamespaceId. When updating an existing Custom
+     configuration, either resource ID can be changed independently; omitted fields preserve their
+     existing values. In Custom mode, AKS returns the user-provided values. In Managed mode, AKS
+     populates the effective values. Users may omit Managed values or resubmit values returned by
+     GET unchanged; different values are rejected. This property must be omitted when mode is
+     Disabled. See `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_
+     for Custom networking requirements.
+    :vartype network: "CloudShellNetworkProfile"
+    :ivar storage: Storage resources used for Cloud Shell file persistence. When configuring Custom
+     storage, users must provide both storageAccountId and fileShareName. When updating an existing
+     Custom configuration, either property can be changed independently; omitted fields preserve
+     their existing values. In Custom mode, AKS returns the user-provided values. In Managed mode,
+     AKS populates the effective values. Users may omit Managed values or resubmit values returned
+     by GET unchanged; different values are rejected. Both properties must be omitted when mode is
+     Disabled. See `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_
+     for Custom storage requirements.
+    :vartype storage: "CloudShellStorageProfile"
+    """
+
+    mode: Union[str, "CloudShellProfileMode"]
+    """Whether Cloud Shell connectivity is disabled, uses AKS-managed network resources, or uses
+     user-provided network resources. Defaults to Disabled when omitted during create. On update,
+     omission preserves the existing mode. Setting this property to Disabled removes AKS-created
+     resources and connectivity artifacts. For Custom mode, AKS unregisters the user-provided
+     resources but does not delete them. Known values are: \"Disabled\", \"Managed\", and
+     \"Custom\"."""
+    network: "CloudShellNetworkProfile"
+    """Network resources used by Cloud Shell. When configuring Custom networking, users must provide
+     both subnetId and relayNamespaceId. When updating an existing Custom configuration, either
+     resource ID can be changed independently; omitted fields preserve their existing values. In
+     Custom mode, AKS returns the user-provided values. In Managed mode, AKS populates the effective
+     values. Users may omit Managed values or resubmit values returned by GET unchanged; different
+     values are rejected. This property must be omitted when mode is Disabled. See
+     `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_ for Custom
+     networking requirements."""
+    storage: "CloudShellStorageProfile"
+    """Storage resources used for Cloud Shell file persistence. When configuring Custom storage, users
+     must provide both storageAccountId and fileShareName. When updating an existing Custom
+     configuration, either property can be changed independently; omitted fields preserve their
+     existing values. In Custom mode, AKS returns the user-provided values. In Managed mode, AKS
+     populates the effective values. Users may omit Managed values or resubmit values returned by
+     GET unchanged; different values are rejected. Both properties must be omitted when mode is
+     Disabled. See `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_
+     for Custom storage requirements."""
+
+
+class CloudShellStorageProfile(TypedDict, total=False):
+    """Storage used for Cloud Shell file persistence.
+
+    :ivar mode: Whether persistent storage is disabled, managed by AKS, or provided by the user.
+     Defaults to Disabled when omitted during initial Cloud Shell enablement. On update, omission
+     preserves the existing mode. Known values are: "Disabled", "Managed", and "Custom".
+    :vartype mode: Union[str, "CloudShellStorageProfileMode"]
+    :ivar storageAccountId: Storage account used for Cloud Shell files. For Custom storage, grant
+     the cluster identity Storage File Data SMB Share Contributor on this existing storage account.
+     Required when mode is Custom.
+    :vartype storageAccountId: str
+    :ivar fileShareName: File share used for Cloud Shell files. Required when mode is Custom.
+    :vartype fileShareName: str
+    """
+
+    mode: Union[str, "CloudShellStorageProfileMode"]
+    """Whether persistent storage is disabled, managed by AKS, or provided by the user. Defaults to
+     Disabled when omitted during initial Cloud Shell enablement. On update, omission preserves the
+     existing mode. Known values are: \"Disabled\", \"Managed\", and \"Custom\"."""
+    storageAccountId: str
+    """Storage account used for Cloud Shell files. For Custom storage, grant the cluster identity
+     Storage File Data SMB Share Contributor on this existing storage account. Required when mode is
+     Custom."""
+    fileShareName: str
+    """File share used for Cloud Shell files. Required when mode is Custom."""
+
+
+class ClusterAPIConnectivityProfile(TypedDict, total=False):
+    """Configuration for accessing the managed cluster API through Bastion or Cloud Shell.
+
+    :ivar bastion: Azure Bastion connectivity settings. See `https://aka.ms/aks/BastionConnect
+     <https://aka.ms/aks/BastionConnect>`_ for more details.
+    :vartype bastion: "BastionProfile"
+    :ivar cloudShell: Cloud Shell connectivity settings. For more information, see
+     `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_.
+    :vartype cloudShell: "CloudShellProfile"
+    """
+
+    bastion: "BastionProfile"
+    """Azure Bastion connectivity settings. See `https://aka.ms/aks/BastionConnect
+     <https://aka.ms/aks/BastionConnect>`_ for more details."""
+    cloudShell: "CloudShellProfile"
+    """Cloud Shell connectivity settings. For more information, see
+     `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_."""
+
+
 class ClusterUpgradeSettings(TypedDict, total=False):
     """Settings for upgrading a cluster.
 
     :ivar overrideSettings: Settings for overrides.
     :vartype overrideSettings: "UpgradeOverrideSettings"
+    :ivar upgradeGateSettings: Settings for upgrade gating on upgrades in this managed cluster.
+     Health signals are ``HealthSignal`` custom resources published by monitoring components running
+     in the cluster. Setting ``enabled`` to ``true`` here is a cluster-wide opt-in that applies to
+     all agent pool upgrades in this cluster; an agent pool cannot opt out of it.
+    :vartype upgradeGateSettings: "UpgradeGateSettings"
     """
 
     overrideSettings: "UpgradeOverrideSettings"
     """Settings for overrides."""
+    upgradeGateSettings: "UpgradeGateSettings"
+    """Settings for upgrade gating on upgrades in this managed cluster. Health signals are
+     ``HealthSignal`` custom resources published by monitoring components running in the cluster.
+     Setting ``enabled`` to ``true`` here is a cluster-wide opt-in that applies to all agent pool
+     upgrades in this cluster; an agent pool cannot opt out of it."""
 
 
 class ContainerServiceLinuxProfile(TypedDict, total=False):
@@ -1502,9 +1747,9 @@ class ContainerServiceNetworkProfile(TypedDict, total=False):
     :vartype loadBalancerSku: Union[str, "LoadBalancerSku"]
     :ivar loadBalancerProfile: Profile of the cluster load balancer.
     :vartype loadBalancerProfile: "ManagedClusterLoadBalancerProfile"
-    :ivar bastionProfile: Profile of the Bastion Host associated with the managed cluster. See
-     `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more details.
-    :vartype bastionProfile: "BastionProfile"
+    :ivar clusterAPIConnectivityProfile: Configuration for accessing the managed cluster API
+     through Bastion or Cloud Shell.
+    :vartype clusterAPIConnectivityProfile: "ClusterAPIConnectivityProfile"
     :ivar natGatewayProfile: Profile of the cluster NAT gateway.
     :vartype natGatewayProfile: "ManagedClusterNATGatewayProfile"
     :ivar natGatewayId: The Azure resource ID of the NAT gateway to use for egress at cluster
@@ -1580,9 +1825,8 @@ class ContainerServiceNetworkProfile(TypedDict, total=False):
      and \"basic\"."""
     loadBalancerProfile: "ManagedClusterLoadBalancerProfile"
     """Profile of the cluster load balancer."""
-    bastionProfile: "BastionProfile"
-    """Profile of the Bastion Host associated with the managed cluster. See
-     `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more details."""
+    clusterAPIConnectivityProfile: "ClusterAPIConnectivityProfile"
+    """Configuration for accessing the managed cluster API through Bastion or Cloud Shell."""
     natGatewayProfile: "ManagedClusterNATGatewayProfile"
     """Profile of the cluster NAT gateway."""
     natGatewayId: str
@@ -1704,6 +1948,42 @@ class ContainerServiceSshPublicKey(TypedDict, total=False):
     keyData: Required[str]
     """Certificate public key used to authenticate with VMs through SSH. The certificate must be in
      PEM format with or without headers. Required."""
+
+
+class ControlPlaneAndAgentPoolsGenerateUpgradeInsightsContent(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Request body to evaluate the combined control plane and agent pools Kubernetes version upgrade.
+
+    :ivar upgradeType: Required. A combined evaluation of the control plane plus every agent pool
+     for a single target Kubernetes version. This scope covers Kubernetes version upgrades only;
+     node OS image upgrades are not included and must be evaluated separately using the NodeImage
+     scope.
+    :vartype upgradeType: Literal[UpgradeType.CONTROL_PLANE_AND_AGENT_POOLS]
+    :ivar targetKubernetesVersion: The target Kubernetes version to evaluate for all scopes.
+     Required.
+    :vartype targetKubernetesVersion: str
+    """
+
+    upgradeType: Required[Literal[UpgradeType.CONTROL_PLANE_AND_AGENT_POOLS]]
+    """Required. A combined evaluation of the control plane plus every agent pool for a single target
+     Kubernetes version. This scope covers Kubernetes version upgrades only; node OS image upgrades
+     are not included and must be evaluated separately using the NodeImage scope."""
+    targetKubernetesVersion: Required[str]
+    """The target Kubernetes version to evaluate for all scopes. Required."""
+
+
+class ControlPlaneGenerateUpgradeInsightsContent(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Request body to evaluate a control plane (managed cluster) Kubernetes version upgrade.
+
+    :ivar upgradeType: Required. The control plane (managed cluster) Kubernetes version upgrade.
+    :vartype upgradeType: Literal[UpgradeType.CONTROL_PLANE]
+    :ivar targetKubernetesVersion: The target Kubernetes version to evaluate. Required.
+    :vartype targetKubernetesVersion: str
+    """
+
+    upgradeType: Required[Literal[UpgradeType.CONTROL_PLANE]]
+    """Required. The control plane (managed cluster) Kubernetes version upgrade."""
+    targetKubernetesVersion: Required[str]
+    """The target Kubernetes version to evaluate. Required."""
 
 
 class CreationData(TypedDict, total=False):
@@ -1914,6 +2194,11 @@ class IdentityBinding(ProxyResource):
     :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "IdentityBindingProperties"
+    :ivar managedBy: The fully qualified resource ID of the resource that manages this resource.
+     Indicates if this resource is managed by another Azure resource. If this is present, complete
+     mode deployment will not delete the resource if it is removed from the template since it is
+     managed by another resource.
+    :vartype managedBy: str
     :ivar eTag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
      same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
@@ -1923,6 +2208,11 @@ class IdentityBinding(ProxyResource):
 
     properties: "IdentityBindingProperties"
     """The resource-specific properties for this resource."""
+    managedBy: str
+    """The fully qualified resource ID of the resource that manages this resource. Indicates if this
+     resource is managed by another Azure resource. If this is present, complete mode deployment
+     will not delete the resource if it is removed from the template since it is managed by another
+     resource."""
     eTag: str
     """If eTag is provided in the response body, it may also be provided as a header per the normal
      etag convention.  Entity tags are used for comparing two or more entities from the same
@@ -2510,8 +2800,7 @@ class KubernetesResourceObjectEncryptionProfile(TypedDict, total=False):  # pyli
     :ivar infrastructureEncryption: Whether to enable encryption at rest of Kubernetes resource
      objects using service-managed keys. More information on this can be found under
      `https://aka.ms/aks/kubernetesResourceObjectEncryption
-     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. Known values are: "Enabled" and
-     "Disabled".
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. "Enabled"
     :vartype infrastructureEncryption: Union[str, "InfrastructureEncryption"]
     """
 
@@ -2519,8 +2808,7 @@ class KubernetesResourceObjectEncryptionProfile(TypedDict, total=False):  # pyli
     """Whether to enable encryption at rest of Kubernetes resource objects using service-managed keys.
      More information on this can be found under
      `https://aka.ms/aks/kubernetesResourceObjectEncryption
-     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. Known values are: \"Enabled\" and
-     \"Disabled\"."""
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. \"Enabled\""""
 
 
 class LabelSelector(TypedDict, total=False):
@@ -2948,6 +3236,10 @@ class MachineNetworkProperties(TypedDict, total=False):
      form:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
     :vartype podSubnetID: str
+    :ivar podIPAllocationMode: Pod IP Allocation Mode. The IP allocation mode for pods on the
+     machine. Must be used with podSubnetID. The default is 'DynamicIndividual'. Known values are:
+     "DynamicIndividual" and "StaticBlock".
+    :vartype podIPAllocationMode: Union[str, "PodIPAllocationMode"]
     :ivar enableNodePublicIP: Whether the machine is allocated its own public IP. Some scenarios
      may require the machine to receive their own dedicated public IP addresses. A common scenario
      is for gaming workloads, where a console needs to make a direct connection to a cloud virtual
@@ -2972,6 +3264,10 @@ class MachineNetworkProperties(TypedDict, total=False):
     """The ID of the subnet which pods will join when launched. If omitted, pod IPs are statically
      assigned on the node subnet (see vnetSubnetID for more details). This is of the form:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}."""
+    podIPAllocationMode: Union[str, "PodIPAllocationMode"]
+    """Pod IP Allocation Mode. The IP allocation mode for pods on the machine. Must be used with
+     podSubnetID. The default is 'DynamicIndividual'. Known values are: \"DynamicIndividual\" and
+     \"StaticBlock\"."""
     enableNodePublicIP: bool
     """Whether the machine is allocated its own public IP. Some scenarios may require the machine to
      receive their own dedicated public IP addresses. A common scenario is for gaming workloads,
@@ -4291,6 +4587,19 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      Windows agent pool names must be 6 characters or less. Required."""
 
 
+class ManagedClusterAgentSandboxProfile(TypedDict, total=False):
+    """Settings for the Agent Sandbox core extension managed by Azure Kubernetes Service (AKS).
+
+    :ivar enabled: Whether the Agent Sandbox core extension is enabled for the cluster. On cluster
+     creation, the default is false.
+    :vartype enabled: bool
+    """
+
+    enabled: bool
+    """Whether the Agent Sandbox core extension is enabled for the cluster. On cluster creation, the
+     default is false."""
+
+
 class ManagedClusterAIToolchainOperatorProfile(TypedDict, total=False):
     """When enabling the operator, a set of AKS managed CRDs and controllers will be installed in the
     cluster. The operator automates the deployment of OSS models for inference and/or training
@@ -5392,6 +5701,18 @@ class ManagedClusterPodIdentityProvisioningInfo(TypedDict, total=False):  # pyli
     """Pod identity assignment error (if any)."""
 
 
+class ManagedClusterPodSnapshotProfile(TypedDict, total=False):
+    """The Pod Snapshot Restore profile for the managed cluster.
+
+    :ivar enabled: Whether the Pod Snapshot Restore core extension is enabled for the managed
+     cluster.
+    :vartype enabled: bool
+    """
+
+    enabled: bool
+    """Whether the Pod Snapshot Restore core extension is enabled for the managed cluster."""
+
+
 class ManagedClusterProperties(TypedDict, total=False):
     """Properties of the managed cluster.
 
@@ -5465,7 +5786,10 @@ class ManagedClusterProperties(TypedDict, total=False):
      enforces FIPS compliance for all AKS-managed components, such as the node operating system,
      addons, and `managed containerized components <https://aka.ms/aks/components/docs>`_. See
      `Enable cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is
-     enabled, all node pools in the cluster must also be FIPS-enabled.
+     enabled, all node pools in the cluster must also be FIPS-enabled. Although this property is
+     available in a stable API version, cluster-wide FIPS remains a preview feature. Write requests
+     whose resulting cluster state has this property set to true require the
+     ``Microsoft.ContainerService/EnableFIPSPreview`` subscription feature registration.
     :vartype enableFIPS: bool
     :ivar enableNodeHardening: Whether to enable node hardening at the cluster level. When enabled,
      AKS applies hardened defaults for soft eviction thresholds, kube-reserved, and system-reserved
@@ -5536,6 +5860,10 @@ class ManagedClusterProperties(TypedDict, total=False):
     :ivar aiToolchainOperatorProfile: AI toolchain operator settings that apply to the whole
      cluster.
     :vartype aiToolchainOperatorProfile: "ManagedClusterAIToolchainOperatorProfile"
+    :ivar agentSandboxProfile: Agent Sandbox settings that apply to the whole cluster.
+    :vartype agentSandboxProfile: "ManagedClusterAgentSandboxProfile"
+    :ivar podSnapshotProfile: The Pod Snapshot Restore profile for the managed cluster.
+    :vartype podSnapshotProfile: "ManagedClusterPodSnapshotProfile"
     :ivar schedulerProfile: Profile with scheduler-related settings, like the configuration mode
      for each scheduler managed by AKS. See `https://aka.ms/aks/scheduler-profile
      <https://aka.ms/aks/scheduler-profile>`_.
@@ -5627,7 +5955,10 @@ class ManagedClusterProperties(TypedDict, total=False):
      compliance for all AKS-managed components, such as the node operating system, addons, and
      `managed containerized components <https://aka.ms/aks/components/docs>`_. See `Enable
      cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is enabled,
-     all node pools in the cluster must also be FIPS-enabled."""
+     all node pools in the cluster must also be FIPS-enabled. Although this property is available in
+     a stable API version, cluster-wide FIPS remains a preview feature. Write requests whose
+     resulting cluster state has this property set to true require the
+     ``Microsoft.ContainerService/EnableFIPSPreview`` subscription feature registration."""
     enableNodeHardening: bool
     """Whether to enable node hardening at the cluster level. When enabled, AKS applies hardened
      defaults for soft eviction thresholds, kube-reserved, and system-reserved on all Linux node
@@ -5694,6 +6025,10 @@ class ManagedClusterProperties(TypedDict, total=False):
     """Profile of the cluster bootstrap configuration."""
     aiToolchainOperatorProfile: "ManagedClusterAIToolchainOperatorProfile"
     """AI toolchain operator settings that apply to the whole cluster."""
+    agentSandboxProfile: "ManagedClusterAgentSandboxProfile"
+    """Agent Sandbox settings that apply to the whole cluster."""
+    podSnapshotProfile: "ManagedClusterPodSnapshotProfile"
+    """The Pod Snapshot Restore profile for the managed cluster."""
     schedulerProfile: "SchedulerProfile"
     """Profile with scheduler-related settings, like the configuration mode for each scheduler managed
      by AKS. See `https://aka.ms/aks/scheduler-profile <https://aka.ms/aks/scheduler-profile>`_."""
@@ -6218,10 +6553,49 @@ class ManagedClusterStorageProfileDiskCSIDriver(TypedDict, total=False):  # pyli
 
     :ivar enabled: Whether to enable AzureDisk CSI Driver. The default value is true.
     :vartype enabled: bool
+    :ivar quickAttachDetach: Quick Attach Detach settings for the AzureDisk CSI driver. Quick
+     Attach Detach enables faster, higher-scale Azure Disk attach and detach operations for stateful
+     AKS workloads by bypassing ARM/CRP control-plane bottlenecks. For more information, see
+     `https://aka.ms/aks/qad <https://aka.ms/aks/qad>`_.
+    :vartype quickAttachDetach: "ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach"
     """
 
     enabled: bool
     """Whether to enable AzureDisk CSI Driver. The default value is true."""
+    quickAttachDetach: "ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach"
+    """Quick Attach Detach settings for the AzureDisk CSI driver. Quick Attach Detach enables faster,
+     higher-scale Azure Disk attach and detach operations for stateful AKS workloads by bypassing
+     ARM/CRP control-plane bottlenecks. For more information, see `https://aka.ms/aks/qad
+     <https://aka.ms/aks/qad>`_."""
+
+
+class ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach(
+    TypedDict, total=False
+):  # pylint: disable=name-too-long
+    """Quick Attach Detach settings for the AzureDisk CSI driver.
+
+    :ivar enabled: Whether to enable Quick Attach Detach for the AzureDisk CSI driver. The default
+     value is false.
+    :vartype enabled: bool
+    :ivar identity: Identity used by Quick Attach Detach. This property is returned by GET and
+     cannot be set by clients. The Quick Attach Detach feature uses a managed identity that is
+     automatically created and managed by the AKS resource provider. In most scenarios, no user
+     action is required. An exception applies when using customer-managed disks that are located
+     outside of the AKS node resource group (Bring Your Own Disk scenario). In this case, users must
+     grant the Quick Attach Detach managed identity the required permissions on the resource group
+     containing the disk.
+    :vartype identity: "UserAssignedIdentity"
+    """
+
+    enabled: bool
+    """Whether to enable Quick Attach Detach for the AzureDisk CSI driver. The default value is false."""
+    identity: "UserAssignedIdentity"
+    """Identity used by Quick Attach Detach. This property is returned by GET and cannot be set by
+     clients. The Quick Attach Detach feature uses a managed identity that is automatically created
+     and managed by the AKS resource provider. In most scenarios, no user action is required. An
+     exception applies when using customer-managed disks that are located outside of the AKS node
+     resource group (Bring Your Own Disk scenario). In this case, users must grant the Quick Attach
+     Detach managed identity the required permissions on the resource group containing the disk."""
 
 
 class ManagedClusterStorageProfileFileCSIDriver(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -6663,6 +7037,35 @@ class NodeDisruptionProfile(TypedDict, total=False):
      \"AllowDuringMaintenanceWindow\", and \"Block\"."""
 
 
+class NodeImageGenerateUpgradeInsightsContent(TypedDict, total=False):
+    """Request body to evaluate a single agent pool node OS image upgrade.
+
+    :ivar upgradeType: Required. An agent pool node OS image upgrade. NodeImage upgrade insights
+     are evaluated per agent pool, mirroring the per-pool node-image upgrade API
+     (.../agentPools/{name}), and cover the node OS image only; agent-pool Kubernetes version
+     readiness is evaluated separately via the AgentPool or ControlPlaneAndAgentPools scopes.
+    :vartype upgradeType: Literal[UpgradeType.NODE_IMAGE]
+    :ivar agentPoolName: The name of the agent pool to evaluate. Required.
+    :vartype agentPoolName: str
+    :ivar targetNodeImageVersion: The target node OS image version to evaluate. If omitted, the
+     server resolves and evaluates the latest available node image. The resolved full version is
+     always returned in the generated insight's read-only ``targetNodeImageVersion`` property.
+    :vartype targetNodeImageVersion: str
+    """
+
+    upgradeType: Required[Literal[UpgradeType.NODE_IMAGE]]
+    """Required. An agent pool node OS image upgrade. NodeImage upgrade insights are evaluated per
+     agent pool, mirroring the per-pool node-image upgrade API (.../agentPools/{name}), and cover
+     the node OS image only; agent-pool Kubernetes version readiness is evaluated separately via the
+     AgentPool or ControlPlaneAndAgentPools scopes."""
+    agentPoolName: Required[str]
+    """The name of the agent pool to evaluate. Required."""
+    targetNodeImageVersion: str
+    """The target node OS image version to evaluate. If omitted, the server resolves and evaluates the
+     latest available node image. The resolved full version is always returned in the generated
+     insight's read-only ``targetNodeImageVersion`` property."""
+
+
 class NvidiaGPUProfile(TypedDict, total=False):
     """NVIDIA-specific GPU settings.
 
@@ -6679,6 +7082,14 @@ class NvidiaGPUProfile(TypedDict, total=False):
      support. For more information about the different strategies, visit aka.ms/aks/managed-gpu.
      When not specified, the default is None. Known values are: "None", "Single", and "Mixed".
     :vartype migStrategy: Union[str, "MigStrategy"]
+    :ivar migProfiles: The ordered list of MIG (Multi-Instance GPU) partition profiles to assign to
+     each supported NVIDIA GPU. When ``migStrategy`` is ``Single``, exactly one profile must be
+     specified. When ``migStrategy`` is ``Mixed``, one or more profiles may be specified and the
+     combination is validated against the supported MIG geometry for the agent pool's GPU VM size.
+     The same value may appear more than once to request multiple partitions of that size. This
+     field is mutually exclusive with the top-level ``gpuInstanceProfile`` property. For more
+     information, see `https://aka.ms/aks/managed-gpu <https://aka.ms/aks/managed-gpu>`_.
+    :vartype migProfiles: list[Union[str, "GPUInstanceProfile"]]
     """
 
     managementMode: Union[str, "ManagementMode"]
@@ -6692,6 +7103,14 @@ class NvidiaGPUProfile(TypedDict, total=False):
     """Sets the MIG (Multi-Instance GPU) strategy that will be used for managed MIG support. For more
      information about the different strategies, visit aka.ms/aks/managed-gpu. When not specified,
      the default is None. Known values are: \"None\", \"Single\", and \"Mixed\"."""
+    migProfiles: list[Union[str, "GPUInstanceProfile"]]
+    """The ordered list of MIG (Multi-Instance GPU) partition profiles to assign to each supported
+     NVIDIA GPU. When ``migStrategy`` is ``Single``, exactly one profile must be specified. When
+     ``migStrategy`` is ``Mixed``, one or more profiles may be specified and the combination is
+     validated against the supported MIG geometry for the agent pool's GPU VM size. The same value
+     may appear more than once to request multiple partitions of that size. This field is mutually
+     exclusive with the top-level ``gpuInstanceProfile`` property. For more information, see
+     `https://aka.ms/aks/managed-gpu <https://aka.ms/aks/managed-gpu>`_."""
 
 
 class PortRange(TypedDict, total=False):
@@ -7484,6 +7903,33 @@ class TrustedAccessRoleBindingProperties(TypedDict, total=False):
      'Microsoft.MachineLearningServices/workspaces/reader'. Required."""
 
 
+class UpgradeGateSettings(TypedDict, total=False):
+    """Settings for health-aware upgrade gating.
+
+    :ivar enabled: Whether upgrade gating is enabled. Defaults to ``false`` when unset, except on a
+     newly created agent pool in a cluster where upgrade gating is enabled, which defaults to
+     ``true``. When ``true``, upgrade-gated health checks are enabled for upgrades in the
+     corresponding scope. Setting this to ``true`` at the cluster scope enables gating for the
+     entire cluster, including all agent pool upgrades. When the cluster scope is unset or
+     ``false``, an agent pool can opt in independently by setting this to ``true``. When the cluster
+     scope is ``true``, an agent pool cannot set this to ``false``. Force upgrade
+     (``overrideSettings.forceUpgrade``) overrides the gate: while the override window is active,
+     the upgrade skips health signal validation and proceeds.
+    :vartype enabled: bool
+    """
+
+    enabled: bool
+    """Whether upgrade gating is enabled. Defaults to ``false`` when unset, except on a newly created
+     agent pool in a cluster where upgrade gating is enabled, which defaults to ``true``. When
+     ``true``, upgrade-gated health checks are enabled for upgrades in the corresponding scope.
+     Setting this to ``true`` at the cluster scope enables gating for the entire cluster, including
+     all agent pool upgrades. When the cluster scope is unset or ``false``, an agent pool can opt in
+     independently by setting this to ``true``. When the cluster scope is ``true``, an agent pool
+     cannot set this to ``false``. Force upgrade (``overrideSettings.forceUpgrade``) overrides the
+     gate: while the override window is active, the upgrade skips health signal validation and
+     proceeds."""
+
+
 class UpgradeOverrideSettings(TypedDict, total=False):
     """Settings for overrides when upgrading a cluster.
 
@@ -7575,3 +8021,11 @@ class WindowsGmsaProfile(TypedDict, total=False):
     rootDomainName: str
     """Specifies the root domain name for Windows gMSA. <br><br> Set it to empty if you have
      configured the DNS server in the vnet which is used to create the managed cluster."""
+
+
+GenerateUpgradeInsightsContent = Union[
+    AgentPoolGenerateUpgradeInsightsContent,
+    ControlPlaneGenerateUpgradeInsightsContent,
+    ControlPlaneAndAgentPoolsGenerateUpgradeInsightsContent,
+    NodeImageGenerateUpgradeInsightsContent,
+]

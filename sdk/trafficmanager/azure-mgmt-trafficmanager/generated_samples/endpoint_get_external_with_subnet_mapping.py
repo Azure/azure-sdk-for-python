@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-04-01-preview/Endpoint-GET-External-WithSubnetMapping.json
+# x-ms-original-file: 2026-09-01/Endpoint-GET-External-WithSubnetMapping.json
 if __name__ == "__main__":
     main()

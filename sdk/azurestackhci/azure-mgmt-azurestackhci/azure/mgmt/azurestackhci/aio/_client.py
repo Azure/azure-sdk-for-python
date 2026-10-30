@@ -21,13 +21,26 @@ from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AzureStackHCIClientConfiguration
 from .operations import (
     ArcSettingsOperations,
+    ClusterJobsOperations,
     ClustersOperations,
     DeploymentSettingsOperations,
     EdgeDeviceJobsOperations,
     EdgeDevicesOperations,
+    EdgeMachineDeploymentSettingsOperations,
+    EdgeMachineDiskJobsOperations,
+    EdgeMachineDiskPrivilegedJobsOperations,
+    EdgeMachineDisksOperations,
+    EdgeMachineJobsOperations,
+    EdgeMachineNetworkAdapterJobsOperations,
+    EdgeMachineNetworkAdaptersOperations,
+    EdgeMachineSecuritySettingsOperationsOperations,
+    EdgeMachineVolumesOperations,
+    EdgeMachinesOperations,
     ExtensionsOperations,
     OffersOperations,
     Operations,
+    OsImagesOperations,
+    OwnershipVouchersOperations,
     SecuritySettingsOperations,
     SkusOperations,
     UpdateRunsOperations,
@@ -47,9 +60,11 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureStackHCIClient:  # pylint: disable=too-many-instance-attributes
+class AzureStackHCIClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Azure Stack HCI service.
 
+    :ivar os_images: OsImagesOperations operations
+    :vartype os_images: azure.mgmt.azurestackhci.aio.operations.OsImagesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.azurestackhci.aio.operations.Operations
     :ivar arc_settings: ArcSettingsOperations operations
@@ -81,6 +96,39 @@ class AzureStackHCIClient:  # pylint: disable=too-many-instance-attributes
     :ivar validated_solution_recipes: ValidatedSolutionRecipesOperations operations
     :vartype validated_solution_recipes:
      azure.mgmt.azurestackhci.aio.operations.ValidatedSolutionRecipesOperations
+    :ivar edge_machines: EdgeMachinesOperations operations
+    :vartype edge_machines: azure.mgmt.azurestackhci.aio.operations.EdgeMachinesOperations
+    :ivar edge_machine_jobs: EdgeMachineJobsOperations operations
+    :vartype edge_machine_jobs: azure.mgmt.azurestackhci.aio.operations.EdgeMachineJobsOperations
+    :ivar ownership_vouchers: OwnershipVouchersOperations operations
+    :vartype ownership_vouchers:
+     azure.mgmt.azurestackhci.aio.operations.OwnershipVouchersOperations
+    :ivar cluster_jobs: ClusterJobsOperations operations
+    :vartype cluster_jobs: azure.mgmt.azurestackhci.aio.operations.ClusterJobsOperations
+    :ivar edge_machine_network_adapters: EdgeMachineNetworkAdaptersOperations operations
+    :vartype edge_machine_network_adapters:
+     azure.mgmt.azurestackhci.aio.operations.EdgeMachineNetworkAdaptersOperations
+    :ivar edge_machine_network_adapter_jobs: EdgeMachineNetworkAdapterJobsOperations operations
+    :vartype edge_machine_network_adapter_jobs:
+     azure.mgmt.azurestackhci.aio.operations.EdgeMachineNetworkAdapterJobsOperations
+    :ivar edge_machine_disks: EdgeMachineDisksOperations operations
+    :vartype edge_machine_disks: azure.mgmt.azurestackhci.aio.operations.EdgeMachineDisksOperations
+    :ivar edge_machine_volumes: EdgeMachineVolumesOperations operations
+    :vartype edge_machine_volumes:
+     azure.mgmt.azurestackhci.aio.operations.EdgeMachineVolumesOperations
+    :ivar edge_machine_disk_jobs: EdgeMachineDiskJobsOperations operations
+    :vartype edge_machine_disk_jobs:
+     azure.mgmt.azurestackhci.aio.operations.EdgeMachineDiskJobsOperations
+    :ivar edge_machine_disk_privileged_jobs: EdgeMachineDiskPrivilegedJobsOperations operations
+    :vartype edge_machine_disk_privileged_jobs:
+     azure.mgmt.azurestackhci.aio.operations.EdgeMachineDiskPrivilegedJobsOperations
+    :ivar edge_machine_security_settings_operations:
+     EdgeMachineSecuritySettingsOperationsOperations operations
+    :vartype edge_machine_security_settings_operations:
+     azure.mgmt.azurestackhci.aio.operations.EdgeMachineSecuritySettingsOperationsOperations
+    :ivar edge_machine_deployment_settings: EdgeMachineDeploymentSettingsOperations operations
+    :vartype edge_machine_deployment_settings:
+     azure.mgmt.azurestackhci.aio.operations.EdgeMachineDeploymentSettingsOperations
     :ivar update_summaries: UpdateSummariesOperations operations
     :vartype update_summaries: azure.mgmt.azurestackhci.aio.operations.UpdateSummariesOperations
     :param credential: Credential used to authenticate requests to the service. Required.
@@ -92,7 +140,7 @@ class AzureStackHCIClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-04-30"
+    :keyword api_version: The API version to use for this operation. Known values are "2026-10-01"
      and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -149,6 +197,7 @@ class AzureStackHCIClient:  # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self.os_images = OsImagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.arc_settings = ArcSettingsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.offers = OffersOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -169,6 +218,38 @@ class AzureStackHCIClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.validated_solution_recipes = ValidatedSolutionRecipesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.edge_machines = EdgeMachinesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.edge_machine_jobs = EdgeMachineJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ownership_vouchers = OwnershipVouchersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.cluster_jobs = ClusterJobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.edge_machine_network_adapters = EdgeMachineNetworkAdaptersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.edge_machine_network_adapter_jobs = EdgeMachineNetworkAdapterJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.edge_machine_disks = EdgeMachineDisksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.edge_machine_volumes = EdgeMachineVolumesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.edge_machine_disk_jobs = EdgeMachineDiskJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.edge_machine_disk_privileged_jobs = EdgeMachineDiskPrivilegedJobsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.edge_machine_security_settings_operations = EdgeMachineSecuritySettingsOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.edge_machine_deployment_settings = EdgeMachineDeploymentSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.update_summaries = UpdateSummariesOperations(

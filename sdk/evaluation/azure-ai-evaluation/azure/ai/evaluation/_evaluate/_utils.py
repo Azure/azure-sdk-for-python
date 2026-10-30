@@ -33,6 +33,26 @@ from azure.ai.evaluation._azure._clients import LiteMLClient
 
 LOGGER = logging.getLogger(__name__)
 
+# Allow-list mapping of image MIME subtypes (the ``<subtype>`` in ``data:image/<subtype>;``) to the
+# file extension used when persisting the decoded image. The subtype originates from untrusted input,
+# so only these known-safe values are accepted; everything else is rejected to prevent path traversal
+# (CWE-22) through crafted values such as ``../../../evil``.
+_IMAGE_SUBTYPE_TO_EXTENSION = {
+    "png": "png",
+    "jpeg": "jpeg",
+    "jpg": "jpg",
+    "gif": "gif",
+    "bmp": "bmp",
+    "webp": "webp",
+    "tiff": "tiff",
+    "avif": "avif",
+    "heic": "heic",
+    "heif": "heif",
+    "svg+xml": "svg",
+    "x-icon": "ico",
+    "vnd.microsoft.icon": "ico",
+}
+
 AZURE_WORKSPACE_REGEX_FORMAT = (
     "^azureml:[/]{1,2}subscriptions/([^/]+)/resource(groups|Groups)/([^/]+)"
     "(/providers/Microsoft.MachineLearningServices)?/workspaces/([^/]+)$"
@@ -115,19 +135,32 @@ def process_message_content(content, images_folder_path):
         if not match:
             return None
 
-        ext = match.group(1)
-        # Extract the base64 string
-        base64image = image_url["url"].replace(f"data:image/{ext};base64,", "")
+        subtype = match.group(1)
+        # The MIME subtype is attacker-controlled (it comes from the input data URL) and must
+        # never be used directly to build a file name. Map it through a fixed allow-list of known
+        # image subtypes; reject anything unexpected so a value such as "../../../evil" cannot be
+        # used to traverse out of ``images_folder_path`` and overwrite arbitrary files (CWE-22).
+        ext = _IMAGE_SUBTYPE_TO_EXTENSION.get(subtype.lower())
+        if ext is None:
+            return None
 
-        # Generate a unique filename
+        # Extract the base64 string
+        base64image = image_url["url"].replace(f"data:image/{subtype};base64,", "")
+
+        # Generate a unique filename using only the sanitized extension.
         image_file_name = f"{str(uuid.uuid4())}.{ext}"
         image_url["url"] = f"images/{image_file_name}"  # Replace the base64 URL with the file path
 
         # Decode the base64 string to binary image data
         image_data_binary = base64.b64decode(base64image)
 
-        # Write the binary image data to the file
+        # Defense-in-depth: ensure the resolved path stays inside the images folder before writing.
         image_file_path = os.path.join(images_folder_path, image_file_name)
+        base_dir = os.path.realpath(images_folder_path)
+        if os.path.commonpath([base_dir, os.path.realpath(image_file_path)]) != base_dir:
+            return None
+
+        # Write the binary image data to the file
         with open(image_file_path, "wb") as f:
             f.write(image_data_binary)
     return None

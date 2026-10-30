@@ -39,6 +39,10 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deseria
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
 from ...operations._operations import (
+    build_agent_fabric_memberships_create_or_update_request,
+    build_agent_fabric_memberships_delete_request,
+    build_agent_fabric_memberships_get_request,
+    build_agent_fabric_memberships_list_by_managed_cluster_request,
     build_agent_pools_abort_latest_operation_request,
     build_agent_pools_complete_upgrade_request,
     build_agent_pools_create_or_update_request,
@@ -150,6 +154,9 @@ from ...operations._operations import (
     build_trusted_access_role_bindings_get_request,
     build_trusted_access_role_bindings_list_request,
     build_trusted_access_roles_list_request,
+    build_upgrade_insights_generate_request,
+    build_upgrade_insights_get_request,
+    build_upgrade_insights_list_request,
     build_vm_skus_list_request,
 )
 from .._configuration import ContainerServiceClientConfiguration
@@ -940,9 +947,9 @@ class AgentPoolsOperations:  # pylint: disable=docstring-missing-param
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -950,7 +957,7 @@ class AgentPoolsOperations:  # pylint: disable=docstring-missing-param
                 "agent_pool_name",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def _complete_upgrade_initial(
         self, resource_group_name: str, resource_name: str, agent_pool_name: str, **kwargs: Any
@@ -1019,9 +1026,9 @@ class AgentPoolsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -1029,7 +1036,7 @@ class AgentPoolsOperations:  # pylint: disable=docstring-missing-param
                 "agent_pool_name",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def begin_complete_upgrade(
         self, resource_group_name: str, resource_name: str, agent_pool_name: str, **kwargs: Any
@@ -1567,9 +1574,9 @@ class AgentPoolsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -1579,7 +1586,7 @@ class AgentPoolsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def list_bootstrap_data(
         self,
@@ -1677,9 +1684,9 @@ class AgentPoolsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -1691,7 +1698,7 @@ class AgentPoolsOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def _update_initial(
         self,
@@ -1906,9 +1913,9 @@ class AgentPoolsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -1920,7 +1927,7 @@ class AgentPoolsOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def begin_update(
         self,
@@ -2813,7 +2820,7 @@ class ManagedClustersOperations:  # pylint: disable=docstring-missing-param,too-
         )
 
     @api_version_validation(
-        params_added_on={"2026-06-02-preview": ["ignore_pod_disruption_budget"]},
+        params_added_on={"2026-08-02-preview": ["ignore_pod_disruption_budget"]},
         api_versions_list=[
             "2025-10-01",
             "2026-01-01",
@@ -2822,7 +2829,9 @@ class ManagedClustersOperations:  # pylint: disable=docstring-missing-param,too-
             "2026-04-01",
             "2026-05-01",
             "2026-06-01",
-            "2026-06-02-preview",
+            "2026-07-01",
+            "2026-08-01",
+            "2026-08-02-preview",
         ],
     )
     async def _delete_initial(
@@ -2907,7 +2916,7 @@ class ManagedClustersOperations:  # pylint: disable=docstring-missing-param,too-
 
     @distributed_trace_async
     @api_version_validation(
-        params_added_on={"2026-06-02-preview": ["ignore_pod_disruption_budget"]},
+        params_added_on={"2026-08-02-preview": ["ignore_pod_disruption_budget"]},
         api_versions_list=[
             "2025-10-01",
             "2026-01-01",
@@ -2916,7 +2925,9 @@ class ManagedClustersOperations:  # pylint: disable=docstring-missing-param,too-
             "2026-04-01",
             "2026-05-01",
             "2026-06-01",
-            "2026-06-02-preview",
+            "2026-07-01",
+            "2026-08-01",
+            "2026-08-02-preview",
         ],
     )
     async def begin_delete(
@@ -5042,9 +5053,9 @@ class ManagedClustersOperations:  # pylint: disable=docstring-missing-param,too-
         return AsyncItemPaged(get_next, extract_data)
 
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -5052,7 +5063,7 @@ class ManagedClustersOperations:  # pylint: disable=docstring-missing-param,too-
                 "content_type",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def _rebalance_load_balancers_initial(
         self,
@@ -5220,9 +5231,9 @@ class ManagedClustersOperations:  # pylint: disable=docstring-missing-param,too-
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -5230,7 +5241,7 @@ class ManagedClustersOperations:  # pylint: disable=docstring-missing-param,too-
                 "content_type",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def begin_rebalance_load_balancers(
         self,
@@ -6622,9 +6633,9 @@ class MaintenanceWindowsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -6632,7 +6643,7 @@ class MaintenanceWindowsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def get(
         self, resource_group_name: str, maintenance_window_name: str, **kwargs: Any
@@ -6707,9 +6718,9 @@ class MaintenanceWindowsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -6718,7 +6729,7 @@ class MaintenanceWindowsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -6886,9 +6897,9 @@ class MaintenanceWindowsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -6897,7 +6908,7 @@ class MaintenanceWindowsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -7064,9 +7075,9 @@ class MaintenanceWindowsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -7075,7 +7086,7 @@ class MaintenanceWindowsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def update_tags(
         self,
@@ -7168,11 +7179,11 @@ class MaintenanceWindowsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": ["api_version", "subscription_id", "resource_group_name", "maintenance_window_name"]
+            "2026-08-02-preview": ["api_version", "subscription_id", "resource_group_name", "maintenance_window_name"]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, maintenance_window_name: str, **kwargs: Any
@@ -7237,11 +7248,11 @@ class MaintenanceWindowsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": ["api_version", "subscription_id", "resource_group_name", "maintenance_window_name"]
+            "2026-08-02-preview": ["api_version", "subscription_id", "resource_group_name", "maintenance_window_name"]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, maintenance_window_name: str, **kwargs: Any
@@ -7303,9 +7314,9 @@ class MaintenanceWindowsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
-        params_added_on={"2026-06-02-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2026-06-02-preview"],
+        method_added_on="2026-08-02-preview",
+        params_added_on={"2026-08-02-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-08-02-preview"],
     )
     def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.MaintenanceWindowResource"]:
         """Lists maintenance windows in the specified resource group.
@@ -7406,9 +7417,9 @@ class MaintenanceWindowsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
-        params_added_on={"2026-06-02-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2026-06-02-preview"],
+        method_added_on="2026-08-02-preview",
+        params_added_on={"2026-08-02-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-08-02-preview"],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.MaintenanceWindowResource"]:
         """Lists maintenance windows in the specified subscription.
@@ -8449,9 +8460,9 @@ class MachinesOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -8464,7 +8475,7 @@ class MachinesOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -8683,9 +8694,9 @@ class MachinesOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -8698,7 +8709,7 @@ class MachinesOperations:  # pylint: disable=docstring-missing-param
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -10084,11 +10095,11 @@ class ManagedClusterSnapshotsOperations:  # pylint: disable=docstring-missing-pa
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-08-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def get(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> _models.ManagedClusterSnapshot:
         """Gets a managed cluster snapshot.
@@ -10242,9 +10253,9 @@ class ManagedClusterSnapshotsOperations:  # pylint: disable=docstring-missing-pa
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10253,7 +10264,7 @@ class ManagedClusterSnapshotsOperations:  # pylint: disable=docstring-missing-pa
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def create_or_update(
         self,
@@ -10430,9 +10441,9 @@ class ManagedClusterSnapshotsOperations:  # pylint: disable=docstring-missing-pa
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -10441,7 +10452,7 @@ class ManagedClusterSnapshotsOperations:  # pylint: disable=docstring-missing-pa
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def update_tags(
         self,
@@ -10534,11 +10545,11 @@ class ManagedClusterSnapshotsOperations:  # pylint: disable=docstring-missing-pa
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name"]
+            "2026-08-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name"]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def delete(self, resource_group_name: str, resource_name: str, **kwargs: Any) -> None:
         """Deletes a managed cluster snapshot.
@@ -10598,9 +10609,9 @@ class ManagedClusterSnapshotsOperations:  # pylint: disable=docstring-missing-pa
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
-        params_added_on={"2026-06-02-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2026-06-02-preview"],
+        method_added_on="2026-08-02-preview",
+        params_added_on={"2026-08-02-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-08-02-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
@@ -10703,9 +10714,9 @@ class ManagedClusterSnapshotsOperations:  # pylint: disable=docstring-missing-pa
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
-        params_added_on={"2026-06-02-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2026-06-02-preview"],
+        method_added_on="2026-08-02-preview",
+        params_added_on={"2026-08-02-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-08-02-preview"],
     )
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.ManagedClusterSnapshot"]:
         """Gets a list of managed cluster snapshots in the specified subscription.
@@ -11404,9 +11415,9 @@ class LoadBalancersOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11415,7 +11426,7 @@ class LoadBalancersOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def get(
         self, resource_group_name: str, resource_name: str, load_balancer_name: str, **kwargs: Any
@@ -11583,9 +11594,9 @@ class LoadBalancersOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11595,7 +11606,7 @@ class LoadBalancersOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def create_or_update(
         self,
@@ -11691,9 +11702,9 @@ class LoadBalancersOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11701,7 +11712,7 @@ class LoadBalancersOperations:  # pylint: disable=docstring-missing-param
                 "load_balancer_name",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, resource_name: str, load_balancer_name: str, **kwargs: Any
@@ -11770,9 +11781,9 @@ class LoadBalancersOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -11780,7 +11791,7 @@ class LoadBalancersOperations:  # pylint: disable=docstring-missing-param
                 "load_balancer_name",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, resource_name: str, load_balancer_name: str, **kwargs: Any
@@ -11845,11 +11856,11 @@ class LoadBalancersOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-08-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     def list_by_managed_cluster(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -11984,7 +11995,7 @@ class IdentityBindingsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-06-02-preview"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01", "2026-08-01", "2026-08-02-preview"],
     )
     async def get(
         self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
@@ -12073,7 +12084,7 @@ class IdentityBindingsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-06-02-preview"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01", "2026-08-01", "2026-08-02-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -12262,7 +12273,7 @@ class IdentityBindingsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-06-02-preview"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01", "2026-08-01", "2026-08-02-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -12354,7 +12365,7 @@ class IdentityBindingsOperations:  # pylint: disable=docstring-missing-param
                 "identity_binding_name",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-06-02-preview"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01", "2026-08-01", "2026-08-02-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
@@ -12433,7 +12444,7 @@ class IdentityBindingsOperations:  # pylint: disable=docstring-missing-param
                 "identity_binding_name",
             ]
         },
-        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-06-02-preview"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01", "2026-08-01", "2026-08-02-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, resource_name: str, identity_binding_name: str, **kwargs: Any
@@ -12502,7 +12513,7 @@ class IdentityBindingsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-04-01": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-06-02-preview"],
+        api_versions_list=["2026-04-01", "2026-05-01", "2026-06-01", "2026-07-01", "2026-08-01", "2026-08-02-preview"],
     )
     def list_by_managed_cluster(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -12626,9 +12637,9 @@ class JWTAuthenticatorsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -12637,7 +12648,7 @@ class JWTAuthenticatorsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def get(
         self, resource_group_name: str, resource_name: str, jwt_authenticator_name: str, **kwargs: Any
@@ -12714,9 +12725,9 @@ class JWTAuthenticatorsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -12726,7 +12737,7 @@ class JWTAuthenticatorsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -12906,9 +12917,9 @@ class JWTAuthenticatorsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -12918,7 +12929,7 @@ class JWTAuthenticatorsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -13002,9 +13013,9 @@ class JWTAuthenticatorsOperations:  # pylint: disable=docstring-missing-param
         )
 
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13012,7 +13023,7 @@ class JWTAuthenticatorsOperations:  # pylint: disable=docstring-missing-param
                 "jwt_authenticator_name",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, resource_name: str, jwt_authenticator_name: str, **kwargs: Any
@@ -13081,9 +13092,9 @@ class JWTAuthenticatorsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13091,7 +13102,7 @@ class JWTAuthenticatorsOperations:  # pylint: disable=docstring-missing-param
                 "jwt_authenticator_name",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, resource_name: str, jwt_authenticator_name: str, **kwargs: Any
@@ -13156,11 +13167,11 @@ class JWTAuthenticatorsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-08-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     def list_by_managed_cluster(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -13284,9 +13295,9 @@ class MeshMembershipsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13295,7 +13306,7 @@ class MeshMembershipsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def get(
         self, resource_group_name: str, resource_name: str, mesh_membership_name: str, **kwargs: Any
@@ -13372,9 +13383,9 @@ class MeshMembershipsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13384,7 +13395,7 @@ class MeshMembershipsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -13560,9 +13571,9 @@ class MeshMembershipsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13572,7 +13583,7 @@ class MeshMembershipsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -13654,9 +13665,9 @@ class MeshMembershipsOperations:  # pylint: disable=docstring-missing-param
         )
 
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13664,7 +13675,7 @@ class MeshMembershipsOperations:  # pylint: disable=docstring-missing-param
                 "mesh_membership_name",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, resource_name: str, mesh_membership_name: str, **kwargs: Any
@@ -13733,9 +13744,9 @@ class MeshMembershipsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -13743,7 +13754,7 @@ class MeshMembershipsOperations:  # pylint: disable=docstring-missing-param
                 "mesh_membership_name",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, resource_name: str, mesh_membership_name: str, **kwargs: Any
@@ -13808,11 +13819,11 @@ class MeshMembershipsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-08-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     def list_by_managed_cluster(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -13889,6 +13900,662 @@ class MeshMembershipsOperations:  # pylint: disable=docstring-missing-param
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
                 List[_models.MeshMembership],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class AgentFabricMembershipsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.containerservice.aio.ContainerServiceClient`'s
+        :attr:`agent_fabric_memberships` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerServiceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-02-preview",
+        params_added_on={
+            "2026-08-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "resource_name",
+                "agent_fabric_membership_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-02-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, resource_name: str, agent_fabric_membership_name: str, **kwargs: Any
+    ) -> _models.AgentFabricMembership:
+        """Gets the AgentFabric membership of a managed cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param agent_fabric_membership_name: The name of the AgentFabricMembership. Required.
+        :type agent_fabric_membership_name: str
+        :return: AgentFabricMembership. The AgentFabricMembership is compatible with MutableMapping
+        :rtype: ~azure.mgmt.containerservice.models.AgentFabricMembership
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentFabricMembership] = kwargs.pop("cls", None)
+
+        _request = build_agent_fabric_memberships_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            agent_fabric_membership_name=agent_fabric_membership_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentFabricMembership, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-08-02-preview",
+        params_added_on={
+            "2026-08-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "resource_name",
+                "agent_fabric_membership_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-02-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        agent_fabric_membership_name: str,
+        resource: Union[_models.AgentFabricMembership, _types.AgentFabricMembership, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_fabric_memberships_create_or_update_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            agent_fabric_membership_name=agent_fabric_membership_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        agent_fabric_membership_name: str,
+        resource: _models.AgentFabricMembership,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentFabricMembership]:
+        """Creates or updates the AgentFabric membership of a managed cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param agent_fabric_membership_name: The name of the AgentFabricMembership. Required.
+        :type agent_fabric_membership_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.containerservice.models.AgentFabricMembership
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AgentFabricMembership. The
+         AgentFabricMembership is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservice.models.AgentFabricMembership]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        agent_fabric_membership_name: str,
+        resource: _types.AgentFabricMembership,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentFabricMembership]:
+        """Creates or updates the AgentFabric membership of a managed cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param agent_fabric_membership_name: The name of the AgentFabricMembership. Required.
+        :type agent_fabric_membership_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.containerservice.types.AgentFabricMembership
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AgentFabricMembership. The
+         AgentFabricMembership is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservice.models.AgentFabricMembership]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        agent_fabric_membership_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentFabricMembership]:
+        """Creates or updates the AgentFabric membership of a managed cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param agent_fabric_membership_name: The name of the AgentFabricMembership. Required.
+        :type agent_fabric_membership_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AgentFabricMembership. The
+         AgentFabricMembership is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservice.models.AgentFabricMembership]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-02-preview",
+        params_added_on={
+            "2026-08-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "resource_name",
+                "agent_fabric_membership_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-02-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        agent_fabric_membership_name: str,
+        resource: Union[_models.AgentFabricMembership, _types.AgentFabricMembership, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentFabricMembership]:
+        """Creates or updates the AgentFabric membership of a managed cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param agent_fabric_membership_name: The name of the AgentFabricMembership. Required.
+        :type agent_fabric_membership_name: str
+        :param resource: Resource create parameters. Is either a AgentFabricMembership type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.containerservice.models.AgentFabricMembership or
+         ~azure.mgmt.containerservice.types.AgentFabricMembership or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns AgentFabricMembership. The
+         AgentFabricMembership is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.containerservice.models.AgentFabricMembership]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentFabricMembership] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                agent_fabric_membership_name=agent_fabric_membership_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.AgentFabricMembership, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.AgentFabricMembership].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.AgentFabricMembership](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-08-02-preview",
+        params_added_on={
+            "2026-08-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "resource_name",
+                "agent_fabric_membership_name",
+            ]
+        },
+        api_versions_list=["2026-08-02-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, resource_name: str, agent_fabric_membership_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_agent_fabric_memberships_delete_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            agent_fabric_membership_name=agent_fabric_membership_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-02-preview",
+        params_added_on={
+            "2026-08-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "resource_name",
+                "agent_fabric_membership_name",
+            ]
+        },
+        api_versions_list=["2026-08-02-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, resource_name: str, agent_fabric_membership_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes the AgentFabric membership of a managed cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param agent_fabric_membership_name: The name of the AgentFabricMembership. Required.
+        :type agent_fabric_membership_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                agent_fabric_membership_name=agent_fabric_membership_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-02-preview",
+        params_added_on={
+            "2026-08-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+        },
+        api_versions_list=["2026-08-02-preview"],
+    )
+    def list_by_managed_cluster(
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AgentFabricMembership"]:
+        """Lists the AgentFabric memberships of a managed cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :return: An iterator like instance of AgentFabricMembership
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservice.models.AgentFabricMembership]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentFabricMembership]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_agent_fabric_memberships_list_by_managed_cluster_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentFabricMembership],
                 deserialized.get("value", []),
             )
             if cls:
@@ -14047,9 +14714,9 @@ class AlertConfigurationsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14058,7 +14725,7 @@ class AlertConfigurationsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def get(
         self, resource_group_name: str, resource_name: str, configuration_name: str, **kwargs: Any
@@ -14135,9 +14802,9 @@ class AlertConfigurationsOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14147,7 +14814,7 @@ class AlertConfigurationsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -14327,9 +14994,9 @@ class AlertConfigurationsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14339,7 +15006,7 @@ class AlertConfigurationsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -14422,9 +15089,9 @@ class AlertConfigurationsOperations:  # pylint: disable=docstring-missing-param
         )
 
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14432,7 +15099,7 @@ class AlertConfigurationsOperations:  # pylint: disable=docstring-missing-param
                 "configuration_name",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, resource_name: str, configuration_name: str, **kwargs: Any
@@ -14501,9 +15168,9 @@ class AlertConfigurationsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14511,7 +15178,7 @@ class AlertConfigurationsOperations:  # pylint: disable=docstring-missing-param
                 "configuration_name",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, resource_name: str, configuration_name: str, **kwargs: Any
@@ -14576,11 +15243,11 @@ class AlertConfigurationsOperations:  # pylint: disable=docstring-missing-param
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-08-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     def list_by_managed_cluster(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -14685,6 +15352,434 @@ class AlertConfigurationsOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
+class UpgradeInsightsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.containerservice.aio.ContainerServiceClient`'s
+        :attr:`upgrade_insights` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ContainerServiceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-02-preview",
+        params_added_on={
+            "2026-08-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "resource_name",
+                "upgrade_insight_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-02-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, resource_name: str, upgrade_insight_name: str, **kwargs: Any
+    ) -> _models.UpgradeInsight:
+        """Gets a stored upgrade insight for the managed cluster by its server-generated name. This is a
+        read-only operation: it returns the most recently generated readiness evaluation for that scope
+        from the data store, including the detected upgrade-blocking issues and contextual upgrade
+        information. It does not regenerate the evaluation. If no non-expired evaluation exists for the
+        name, it returns 404.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param upgrade_insight_name: The name of the UpgradeInsight. Required.
+        :type upgrade_insight_name: str
+        :return: UpgradeInsight. The UpgradeInsight is compatible with MutableMapping
+        :rtype: ~azure.mgmt.containerservice.models.UpgradeInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.UpgradeInsight] = kwargs.pop("cls", None)
+
+        _request = build_upgrade_insights_get_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            upgrade_insight_name=upgrade_insight_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.UpgradeInsight, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-02-preview",
+        params_added_on={
+            "2026-08-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+        },
+        api_versions_list=["2026-08-02-preview"],
+    )
+    def list(
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.UpgradeInsight"]:
+        """Lists the stored upgrade insights for the specified managed cluster, one entry per scope that
+        has been generated and not yet expired. This is a read-only operation and does not regenerate
+        any evaluation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :return: An iterator like instance of UpgradeInsight
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.containerservice.models.UpgradeInsight]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.UpgradeInsight]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_upgrade_insights_list_request(
+                    resource_group_name=resource_group_name,
+                    resource_name=resource_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.UpgradeInsight],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @overload
+    async def generate(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        body: _models.GenerateUpgradeInsightsContent,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.UpgradeInsight:
+        """Generates (or refreshes) an upgrade readiness evaluation for the managed cluster. The requested
+        scope and target version(s) are supplied in the request body; the server runs the readiness
+        checks — the control plane Kubernetes version upgrade, a single agent pool Kubernetes version
+        upgrade, a single agent pool node OS image upgrade, or the combined control plane and agent
+        pools upgrade — persists the result as an UpgradeInsight resource with a server-generated name,
+        and returns that resource. The response body is identical to a subsequent GET of the resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.containerservice.models.GenerateUpgradeInsightsContent
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: UpgradeInsight. The UpgradeInsight is compatible with MutableMapping
+        :rtype: ~azure.mgmt.containerservice.models.UpgradeInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def generate(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        body: _types.GenerateUpgradeInsightsContent,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.UpgradeInsight:
+        """Generates (or refreshes) an upgrade readiness evaluation for the managed cluster. The requested
+        scope and target version(s) are supplied in the request body; the server runs the readiness
+        checks — the control plane Kubernetes version upgrade, a single agent pool Kubernetes version
+        upgrade, a single agent pool node OS image upgrade, or the combined control plane and agent
+        pools upgrade — persists the result as an UpgradeInsight resource with a server-generated name,
+        and returns that resource. The response body is identical to a subsequent GET of the resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.containerservice.types.GenerateUpgradeInsightsContent
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: UpgradeInsight. The UpgradeInsight is compatible with MutableMapping
+        :rtype: ~azure.mgmt.containerservice.models.UpgradeInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def generate(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.UpgradeInsight:
+        """Generates (or refreshes) an upgrade readiness evaluation for the managed cluster. The requested
+        scope and target version(s) are supplied in the request body; the server runs the readiness
+        checks — the control plane Kubernetes version upgrade, a single agent pool Kubernetes version
+        upgrade, a single agent pool node OS image upgrade, or the combined control plane and agent
+        pools upgrade — persists the result as an UpgradeInsight resource with a server-generated name,
+        and returns that resource. The response body is identical to a subsequent GET of the resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: UpgradeInsight. The UpgradeInsight is compatible with MutableMapping
+        :rtype: ~azure.mgmt.containerservice.models.UpgradeInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-02-preview",
+        params_added_on={
+            "2026-08-02-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "resource_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-02-preview"],
+    )
+    async def generate(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        body: Union[_models.GenerateUpgradeInsightsContent, _types.GenerateUpgradeInsightsContent, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.UpgradeInsight:
+        """Generates (or refreshes) an upgrade readiness evaluation for the managed cluster. The requested
+        scope and target version(s) are supplied in the request body; the server runs the readiness
+        checks — the control plane Kubernetes version upgrade, a single agent pool Kubernetes version
+        upgrade, a single agent pool node OS image upgrade, or the combined control plane and agent
+        pools upgrade — persists the result as an UpgradeInsight resource with a server-generated name,
+        and returns that resource. The response body is identical to a subsequent GET of the resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param body: The content of the action request. Is either a GenerateUpgradeInsightsContent type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.containerservice.models.GenerateUpgradeInsightsContent or
+         ~azure.mgmt.containerservice.types.GenerateUpgradeInsightsContent or IO[bytes]
+        :return: UpgradeInsight. The UpgradeInsight is compatible with MutableMapping
+        :rtype: ~azure.mgmt.containerservice.models.UpgradeInsight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.UpgradeInsight] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_upgrade_insights_generate_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.UpgradeInsight, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
 class OperationStatusResultOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
@@ -14704,9 +15799,9 @@ class OperationStatusResultOperations:  # pylint: disable=docstring-missing-para
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14716,7 +15811,7 @@ class OperationStatusResultOperations:  # pylint: disable=docstring-missing-para
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     def list_by_agent_pool(
         self,
@@ -14835,9 +15930,9 @@ class OperationStatusResultOperations:  # pylint: disable=docstring-missing-para
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -14847,7 +15942,7 @@ class OperationStatusResultOperations:  # pylint: disable=docstring-missing-para
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def get_by_agent_pool(
         self, resource_group_name: str, resource_name: str, agent_pool_name: str, operation_id: str, **kwargs: Any
@@ -14928,11 +16023,11 @@ class OperationStatusResultOperations:  # pylint: disable=docstring-missing-para
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+            "2026-08-02-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     def list(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -15038,9 +16133,9 @@ class OperationStatusResultOperations:  # pylint: disable=docstring-missing-para
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-06-02-preview",
+        method_added_on="2026-08-02-preview",
         params_added_on={
-            "2026-06-02-preview": [
+            "2026-08-02-preview": [
                 "api_version",
                 "subscription_id",
                 "resource_group_name",
@@ -15049,7 +16144,7 @@ class OperationStatusResultOperations:  # pylint: disable=docstring-missing-para
                 "accept",
             ]
         },
-        api_versions_list=["2026-06-02-preview"],
+        api_versions_list=["2026-08-02-preview"],
     )
     async def get(
         self, resource_group_name: str, resource_name: str, operation_id: str, **kwargs: Any

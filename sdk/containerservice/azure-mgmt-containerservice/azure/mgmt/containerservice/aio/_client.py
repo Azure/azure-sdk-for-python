@@ -21,6 +21,7 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ContainerServiceClientConfiguration
 from .operations import (
+    AgentFabricMembershipsOperations,
     AgentPoolsOperations,
     AlertConfigurationsOperations,
     ContainerServiceOperations,
@@ -42,6 +43,7 @@ from .operations import (
     SnapshotsOperations,
     TrustedAccessRoleBindingsOperations,
     TrustedAccessRolesOperations,
+    UpgradeInsightsOperations,
     VmSkusOperations,
 )
 
@@ -94,11 +96,16 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes,do
      azure.mgmt.containerservice.aio.operations.JWTAuthenticatorsOperations
     :ivar mesh_memberships: MeshMembershipsOperations operations
     :vartype mesh_memberships: azure.mgmt.containerservice.aio.operations.MeshMembershipsOperations
+    :ivar agent_fabric_memberships: AgentFabricMembershipsOperations operations
+    :vartype agent_fabric_memberships:
+     azure.mgmt.containerservice.aio.operations.AgentFabricMembershipsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.containerservice.aio.operations.Operations
     :ivar alert_configurations: AlertConfigurationsOperations operations
     :vartype alert_configurations:
      azure.mgmt.containerservice.aio.operations.AlertConfigurationsOperations
+    :ivar upgrade_insights: UpgradeInsightsOperations operations
+    :vartype upgrade_insights: azure.mgmt.containerservice.aio.operations.UpgradeInsightsOperations
     :ivar operation_status_result: OperationStatusResultOperations operations
     :vartype operation_status_result:
      azure.mgmt.containerservice.aio.operations.OperationStatusResultOperations
@@ -126,7 +133,7 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes,do
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-06-02-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-08-02-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -217,8 +224,14 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes,do
         self.mesh_memberships = MeshMembershipsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.agent_fabric_memberships = AgentFabricMembershipsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.alert_configurations = AlertConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.upgrade_insights = UpgradeInsightsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.operation_status_result = OperationStatusResultOperations(

@@ -9,9 +9,10 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .._utils.model_base import Model as _Model, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
+from ._enums import ImpactedResourceKind, UpgradeType
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -347,6 +348,101 @@ class ProxyResource(Resource):
      information.
     :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
     """
+
+
+class AgentFabricMembership(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The AgentFabric membership of a managed cluster. A cluster may belong to at most one
+    AgentFabric, so this resource always has the name 'default'. See
+    `https://aka.ms/aks/agentfabric-membership <https://aka.ms/aks/agentfabric-membership>`_.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.containerservice.models.AgentFabricMembershipProperties
+    :ivar managed_by: Resource ID of the AgentFabric that this cluster is a member of. The
+     AgentFabric must be in the same tenant and subscription as the managed cluster. As the ARM
+     envelope property, it also stops a complete mode deployment from deleting the membership and
+     silently detaching the cluster. Required.
+    :vartype managed_by: str
+    """
+
+    properties: Optional["_models.AgentFabricMembershipProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    managed_by: str = rest_field(name="managedBy", visibility=["read", "create", "update"])
+    """Resource ID of the AgentFabric that this cluster is a member of. The AgentFabric must be in the
+     same tenant and subscription as the managed cluster. As the ARM envelope property, it also
+     stops a complete mode deployment from deleting the membership and silently detaching the
+     cluster. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        managed_by: str,
+        properties: Optional["_models.AgentFabricMembershipProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentFabricMembershipProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of the AgentFabric membership of a managed cluster.
+
+    :ivar provisioning_state: The current provisioning state of the AgentFabric membership. Known
+     values are: "Canceled", "Creating", "Deleting", "Failed", "Succeeded", and "Updating".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.AgentFabricMembershipProvisioningState
+    :ivar sku: The SKU of the AgentFabric membership. Determines which AgentFabric components are
+     deployed to the cluster. Required. Known values are: "Standard" and "Premium".
+    :vartype sku: str or ~azure.mgmt.containerservice.models.AgentFabricMembershipSkuName
+    """
+
+    provisioning_state: Optional[Union[str, "_models.AgentFabricMembershipProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The current provisioning state of the AgentFabric membership. Known values are: \"Canceled\",
+     \"Creating\", \"Deleting\", \"Failed\", \"Succeeded\", and \"Updating\"."""
+    sku: Union[str, "_models.AgentFabricMembershipSkuName"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SKU of the AgentFabric membership. Determines which AgentFabric components are deployed to
+     the cluster. Required. Known values are: \"Standard\" and \"Premium\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sku: Union[str, "_models.AgentFabricMembershipSkuName"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class AgentPool(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -787,6 +883,91 @@ class AgentPoolGatewayProfile(_Model):  # pylint: disable=docstring-keyword-shou
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class GenerateUpgradeInsightsContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The base request body for the generateUpgradeInsights action. The concrete shape is determined
+    by ``upgradeType``, so that each scope declares exactly the inputs it needs: the schema itself
+    enforces which of ``targetKubernetesVersion``, ``targetNodeImageVersion``, and
+    ``agentPoolName`` are required or optional, rather than relying on documented conventions plus
+    server-side validation. The server generates (or refreshes) the corresponding UpgradeInsight
+    and returns it.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AgentPoolGenerateUpgradeInsightsContent, ControlPlaneGenerateUpgradeInsightsContent,
+    ControlPlaneAndAgentPoolsGenerateUpgradeInsightsContent,
+    NodeImageGenerateUpgradeInsightsContent
+
+    :ivar upgrade_type: The type of upgrade to evaluate. Required. Known values are:
+     "ControlPlane", "AgentPool", "NodeImage", and "ControlPlaneAndAgentPools".
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.UpgradeType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    upgrade_type: str = rest_discriminator(
+        name="upgradeType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of upgrade to evaluate. Required. Known values are: \"ControlPlane\", \"AgentPool\",
+     \"NodeImage\", and \"ControlPlaneAndAgentPools\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        upgrade_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentPoolGenerateUpgradeInsightsContent(
+    GenerateUpgradeInsightsContent, discriminator="AgentPool"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request body to evaluate a single agent pool Kubernetes version upgrade.
+
+    :ivar upgrade_type: Required. An agent pool (node pool) Kubernetes version upgrade.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.AGENT_POOL
+    :ivar agent_pool_name: The name of the agent pool to evaluate. Required.
+    :vartype agent_pool_name: str
+    :ivar target_kubernetes_version: The target Kubernetes version to evaluate. Required.
+    :vartype target_kubernetes_version: str
+    """
+
+    upgrade_type: Literal[UpgradeType.AGENT_POOL] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. An agent pool (node pool) Kubernetes version upgrade."""
+    agent_pool_name: str = rest_field(name="agentPoolName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the agent pool to evaluate. Required."""
+    target_kubernetes_version: str = rest_field(
+        name="targetKubernetesVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target Kubernetes version to evaluate. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        agent_pool_name: str,
+        target_kubernetes_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.AGENT_POOL  # type: ignore
 
 
 class AgentPoolManagedClusterAgentPoolProfileProperties(
@@ -1683,6 +1864,63 @@ class AgentPoolRecentlyUsedVersion(_Model):  # pylint: disable=docstring-keyword
         super().__init__(*args, **kwargs)
 
 
+class AgentPoolScopeEvaluation(_Model):
+    """The readiness evaluation for a single agent pool within a combined evaluation.
+
+    :ivar agent_pool_name: The name of the agent pool this evaluation applies to.
+    :vartype agent_pool_name: str
+    :ivar current_kubernetes_version: The Kubernetes version the scope was evaluated from (the
+     upgrade source version the scope is currently running). Lets consumers read the result as "from
+     X to targetKubernetesVersion" and detect a stale cached record by comparing against the live
+     cluster version. Populated for Kubernetes version upgrades.
+    :vartype current_kubernetes_version: str
+    :ivar kubernetes_version_support_status: The support status of the Kubernetes version the scope
+     is currently running (not the target version). Populated for Kubernetes version upgrades. Known
+     values are: "InSupport" and "OutOfSupport".
+    :vartype kubernetes_version_support_status: str or
+     ~azure.mgmt.containerservice.models.KubernetesVersionSupportStatus
+    :ivar kubernetes_version_end_of_support_date: The date on which support ends for the Kubernetes
+     version the scope is currently running (its end-of-support date). Returned as an absolute date
+     so clients can apply their own "approaching end of support" threshold and compute the remaining
+     days against the current time; a precomputed remaining-days value is intentionally not returned
+     so that cached results do not go stale. Populated for Kubernetes version upgrades.
+    :vartype kubernetes_version_end_of_support_date: ~datetime.date
+    :ivar context: Contextual information about how this upgrade is managed, such as the upgrade
+     strategy, next maintenance window, and last successful upgrade time.
+    :vartype context: ~azure.mgmt.containerservice.models.UpgradeContext
+    :ivar evaluation: The evaluation result, including overall status, evaluation time, and any
+     detected issues.
+    :vartype evaluation: ~azure.mgmt.containerservice.models.UpgradeInsightEvaluation
+    """
+
+    agent_pool_name: Optional[str] = rest_field(name="agentPoolName", visibility=["read"])
+    """The name of the agent pool this evaluation applies to."""
+    current_kubernetes_version: Optional[str] = rest_field(name="currentKubernetesVersion", visibility=["read"])
+    """The Kubernetes version the scope was evaluated from (the upgrade source version the scope is
+     currently running). Lets consumers read the result as \"from X to targetKubernetesVersion\" and
+     detect a stale cached record by comparing against the live cluster version. Populated for
+     Kubernetes version upgrades."""
+    kubernetes_version_support_status: Optional[Union[str, "_models.KubernetesVersionSupportStatus"]] = rest_field(
+        name="kubernetesVersionSupportStatus", visibility=["read"]
+    )
+    """The support status of the Kubernetes version the scope is currently running (not the target
+     version). Populated for Kubernetes version upgrades. Known values are: \"InSupport\" and
+     \"OutOfSupport\"."""
+    kubernetes_version_end_of_support_date: Optional[datetime.date] = rest_field(
+        name="kubernetesVersionEndOfSupportDate", visibility=["read"]
+    )
+    """The date on which support ends for the Kubernetes version the scope is currently running (its
+     end-of-support date). Returned as an absolute date so clients can apply their own \"approaching
+     end of support\" threshold and compute the remaining days against the current time; a
+     precomputed remaining-days value is intentionally not returned so that cached results do not go
+     stale. Populated for Kubernetes version upgrades."""
+    context: Optional["_models.UpgradeContext"] = rest_field(visibility=["read"])
+    """Contextual information about how this upgrade is managed, such as the upgrade strategy, next
+     maintenance window, and last successful upgrade time."""
+    evaluation: Optional["_models.UpgradeInsightEvaluation"] = rest_field(visibility=["read"])
+    """The evaluation result, including overall status, evaluation time, and any detected issues."""
+
+
 class AgentPoolSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The security settings of an agent pool.
 
@@ -1911,6 +2149,180 @@ class AgentPoolUpdateVirtualMachinesProfile(_Model):  # pylint: disable=docstrin
         super().__init__(*args, **kwargs)
 
 
+class UpgradeInsightProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The base properties of an upgrade insight. The concrete shape is determined by ``upgradeType``,
+    which is encoded in the resource name: single-scope evaluations (``ControlPlane``,
+    ``AgentPool``, ``NodeImage``) carry a flat per-scope result, while a combined evaluation
+    (``ControlPlaneAndAgentPools``) carries a nested control plane result plus a per-agent-pool
+    array.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AgentPoolUpgradeInsightProperties, ControlPlaneUpgradeInsightProperties,
+    ControlPlaneAndAgentPoolsUpgradeInsightProperties, NodeImageUpgradeInsightProperties
+
+    :ivar provisioning_state: The provisioning state of the upgrade insight evaluation. Known
+     values are: "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.ResourceProvisioningState
+    :ivar upgrade_type: The type of upgrade this insight evaluates. Derived from the resource name.
+     Required. Known values are: "ControlPlane", "AgentPool", "NodeImage", and
+     "ControlPlaneAndAgentPools".
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.UpgradeType
+    :ivar last_evaluated_at: The UTC time at which this upgrade insight was last computed (the last
+     time the compute operation ran for this resource). This is the resource-level "last run" marker
+     and, for a cached record, indicates how stale the stored evaluation is. For a combined
+     evaluation it is the umbrella run time across all scopes, whereas each scope's
+     ``evaluation.evaluatedAt`` records when that specific snapshot was produced.
+    :vartype last_evaluated_at: ~datetime.datetime
+    :ivar expires_at: The UTC time at which this stored upgrade insight expires and is removed from
+     the data store (currently ``lastEvaluatedAt`` plus a 14-day retention window). After this time
+     a GET for the resource returns 404 Not Found and it no longer appears in the list, indicating
+     the caller should call the compute operation to produce a fresh evaluation. Exposing the expiry
+     lets clients decide when to recompute without hardcoding the retention period.
+    :vartype expires_at: ~datetime.datetime
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the upgrade insight evaluation. Known values are: \"Succeeded\",
+     \"Failed\", and \"Canceled\"."""
+    upgrade_type: str = rest_discriminator(name="upgradeType", visibility=["read"])
+    """The type of upgrade this insight evaluates. Derived from the resource name. Required. Known
+     values are: \"ControlPlane\", \"AgentPool\", \"NodeImage\", and \"ControlPlaneAndAgentPools\"."""
+    last_evaluated_at: Optional[datetime.datetime] = rest_field(
+        name="lastEvaluatedAt", visibility=["read"], format="rfc3339"
+    )
+    """The UTC time at which this upgrade insight was last computed (the last time the compute
+     operation ran for this resource). This is the resource-level \"last run\" marker and, for a
+     cached record, indicates how stale the stored evaluation is. For a combined evaluation it is
+     the umbrella run time across all scopes, whereas each scope's ``evaluation.evaluatedAt``
+     records when that specific snapshot was produced."""
+    expires_at: Optional[datetime.datetime] = rest_field(name="expiresAt", visibility=["read"], format="rfc3339")
+    """The UTC time at which this stored upgrade insight expires and is removed from the data store
+     (currently ``lastEvaluatedAt`` plus a 14-day retention window). After this time a GET for the
+     resource returns 404 Not Found and it no longer appears in the list, indicating the caller
+     should call the compute operation to produce a fresh evaluation. Exposing the expiry lets
+     clients decide when to recompute without hardcoding the retention period."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        upgrade_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentPoolUpgradeInsightProperties(UpgradeInsightProperties, discriminator="AgentPool"):
+    """Properties for a single agent pool Kubernetes version upgrade insight.
+
+    :ivar provisioning_state: The provisioning state of the upgrade insight evaluation. Known
+     values are: "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.ResourceProvisioningState
+    :ivar last_evaluated_at: The UTC time at which this upgrade insight was last computed (the last
+     time the compute operation ran for this resource). This is the resource-level "last run" marker
+     and, for a cached record, indicates how stale the stored evaluation is. For a combined
+     evaluation it is the umbrella run time across all scopes, whereas each scope's
+     ``evaluation.evaluatedAt`` records when that specific snapshot was produced.
+    :vartype last_evaluated_at: ~datetime.datetime
+    :ivar expires_at: The UTC time at which this stored upgrade insight expires and is removed from
+     the data store (currently ``lastEvaluatedAt`` plus a 14-day retention window). After this time
+     a GET for the resource returns 404 Not Found and it no longer appears in the list, indicating
+     the caller should call the compute operation to produce a fresh evaluation. Exposing the expiry
+     lets clients decide when to recompute without hardcoding the retention period.
+    :vartype expires_at: ~datetime.datetime
+    :ivar upgrade_type: The type of upgrade this insight evaluates. Required. An agent pool (node
+     pool) Kubernetes version upgrade.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.AGENT_POOL
+    :ivar agent_pool_name: The name of the agent pool this insight applies to.
+    :vartype agent_pool_name: str
+    :ivar target_kubernetes_version: The target Kubernetes version that was evaluated.
+    :vartype target_kubernetes_version: str
+    :ivar current_kubernetes_version: The Kubernetes version the scope was evaluated from (the
+     upgrade source version the scope is currently running). Lets consumers read the result as "from
+     X to targetKubernetesVersion" and detect a stale cached record by comparing against the live
+     cluster version. Populated for Kubernetes version upgrades.
+    :vartype current_kubernetes_version: str
+    :ivar kubernetes_version_support_status: The support status of the Kubernetes version the scope
+     is currently running (not the target version). Populated for Kubernetes version upgrades. Known
+     values are: "InSupport" and "OutOfSupport".
+    :vartype kubernetes_version_support_status: str or
+     ~azure.mgmt.containerservice.models.KubernetesVersionSupportStatus
+    :ivar kubernetes_version_end_of_support_date: The date on which support ends for the Kubernetes
+     version the scope is currently running (its end-of-support date). Returned as an absolute date
+     so clients can apply their own "approaching end of support" threshold and compute the remaining
+     days against the current time; a precomputed remaining-days value is intentionally not returned
+     so that cached results do not go stale. Populated for Kubernetes version upgrades.
+    :vartype kubernetes_version_end_of_support_date: ~datetime.date
+    :ivar context: Contextual information about how this upgrade is managed, such as the upgrade
+     strategy, next maintenance window, and last successful upgrade time.
+    :vartype context: ~azure.mgmt.containerservice.models.UpgradeContext
+    :ivar evaluation: The evaluation result, including overall status, evaluation time, and any
+     detected issues.
+    :vartype evaluation: ~azure.mgmt.containerservice.models.UpgradeInsightEvaluation
+    """
+
+    upgrade_type: Literal[UpgradeType.AGENT_POOL] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of upgrade this insight evaluates. Required. An agent pool (node pool) Kubernetes
+     version upgrade."""
+    agent_pool_name: Optional[str] = rest_field(name="agentPoolName", visibility=["read"])
+    """The name of the agent pool this insight applies to."""
+    target_kubernetes_version: Optional[str] = rest_field(name="targetKubernetesVersion", visibility=["read"])
+    """The target Kubernetes version that was evaluated."""
+    current_kubernetes_version: Optional[str] = rest_field(name="currentKubernetesVersion", visibility=["read"])
+    """The Kubernetes version the scope was evaluated from (the upgrade source version the scope is
+     currently running). Lets consumers read the result as \"from X to targetKubernetesVersion\" and
+     detect a stale cached record by comparing against the live cluster version. Populated for
+     Kubernetes version upgrades."""
+    kubernetes_version_support_status: Optional[Union[str, "_models.KubernetesVersionSupportStatus"]] = rest_field(
+        name="kubernetesVersionSupportStatus", visibility=["read"]
+    )
+    """The support status of the Kubernetes version the scope is currently running (not the target
+     version). Populated for Kubernetes version upgrades. Known values are: \"InSupport\" and
+     \"OutOfSupport\"."""
+    kubernetes_version_end_of_support_date: Optional[datetime.date] = rest_field(
+        name="kubernetesVersionEndOfSupportDate", visibility=["read"]
+    )
+    """The date on which support ends for the Kubernetes version the scope is currently running (its
+     end-of-support date). Returned as an absolute date so clients can apply their own \"approaching
+     end of support\" threshold and compute the remaining days against the current time; a
+     precomputed remaining-days value is intentionally not returned so that cached results do not go
+     stale. Populated for Kubernetes version upgrades."""
+    context: Optional["_models.UpgradeContext"] = rest_field(visibility=["read"])
+    """Contextual information about how this upgrade is managed, such as the upgrade strategy, next
+     maintenance window, and last successful upgrade time."""
+    evaluation: Optional["_models.UpgradeInsightEvaluation"] = rest_field(visibility=["read"])
+    """The evaluation result, including overall status, evaluation time, and any detected issues."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.AGENT_POOL  # type: ignore
+
+
 class AgentPoolUpgradeProfile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of available upgrades for an agent pool.
 
@@ -2137,6 +2549,13 @@ class AgentPoolUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-sho
      and "Schedule".
     :vartype undrainable_node_behavior: str or
      ~azure.mgmt.containerservice.models.UndrainableNodeBehavior
+    :ivar upgrade_gate_settings: Settings for upgrade gating on upgrades of this agent pool. Health
+     signals are ``HealthSignal`` custom resources published by monitoring components running in the
+     cluster. When the cluster-level ``enabled`` is unset or ``false``, this agent pool can opt in
+     independently. When the cluster-level ``enabled`` is ``true``, gating is inherited and setting
+     this agent pool's ``enabled`` to ``false`` is rejected; an omitted value on a newly created
+     agent pool is defaulted to ``true``.
+    :vartype upgrade_gate_settings: ~azure.mgmt.containerservice.models.UpgradeGateSettings
     """
 
     max_surge: Optional[str] = rest_field(name="maxSurge", visibility=["read", "create", "update", "delete", "query"])
@@ -2186,6 +2605,15 @@ class AgentPoolUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-sho
      nodes is Pod Disruption Budgets (PDBs), but other issues, such as pod termination grace period
      is exceeding the remaining per-node drain timeout or pod is still being in a running state, can
      also cause undrainable nodes. Known values are: \"Cordon\" and \"Schedule\"."""
+    upgrade_gate_settings: Optional["_models.UpgradeGateSettings"] = rest_field(
+        name="upgradeGateSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Settings for upgrade gating on upgrades of this agent pool. Health signals are ``HealthSignal``
+     custom resources published by monitoring components running in the cluster. When the
+     cluster-level ``enabled`` is unset or ``false``, this agent pool can opt in independently. When
+     the cluster-level ``enabled`` is ``true``, gating is inherited and setting this agent pool's
+     ``enabled`` to ``false`` is rejected; an omitted value on a newly created agent pool is
+     defaulted to ``true``."""
 
     @overload
     def __init__(
@@ -2197,6 +2625,7 @@ class AgentPoolUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-sho
         drain_timeout_in_minutes: Optional[int] = None,
         node_soak_duration_in_minutes: Optional[int] = None,
         undrainable_node_behavior: Optional[Union[str, "_models.UndrainableNodeBehavior"]] = None,
+        upgrade_gate_settings: Optional["_models.UpgradeGateSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -2411,6 +2840,83 @@ class AllowedSubject(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
+class UpgradeInsightImpactedResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A resource impacted by a detected upgrade issue. The concrete shape is determined by ``kind``:
+    an ARM resource is identified by its ARM resource ID, while a Kubernetes resource is identified
+    by its namespace and name.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ArmImpactedResource, KubernetesImpactedResource
+
+    :ivar kind: The category of the impacted resource. Required. Known values are: "Arm" and
+     "Kubernetes".
+    :vartype kind: str or ~azure.mgmt.containerservice.models.ImpactedResourceKind
+    :ivar resource_type: The type of the impacted resource (for example,
+     Microsoft.Network/virtualNetworks/subnets or PodDisruptionBudget).
+    :vartype resource_type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read"])
+    """The category of the impacted resource. Required. Known values are: \"Arm\" and \"Kubernetes\"."""
+    resource_type: Optional[str] = rest_field(name="resourceType", visibility=["read"])
+    """The type of the impacted resource (for example, Microsoft.Network/virtualNetworks/subnets or
+     PodDisruptionBudget)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArmImpactedResource(UpgradeInsightImpactedResource, discriminator="Arm"):
+    """An Azure Resource Manager (ARM) resource impacted by a detected upgrade issue, identified by
+    its ARM resource ID.
+
+    :ivar resource_type: The type of the impacted resource (for example,
+     Microsoft.Network/virtualNetworks/subnets or PodDisruptionBudget).
+    :vartype resource_type: str
+    :ivar kind: The category of the impacted resource. Required. An Azure Resource Manager (ARM)
+     resource.
+    :vartype kind: str or ~azure.mgmt.containerservice.models.ARM
+    :ivar resource_id: The ARM resource ID of the impacted resource.
+    :vartype resource_id: str
+    """
+
+    kind: Literal[ImpactedResourceKind.ARM] = rest_discriminator(name="kind", visibility=["read"])  # type: ignore
+    """The category of the impacted resource. Required. An Azure Resource Manager (ARM) resource."""
+    resource_id: Optional[str] = rest_field(name="resourceId", visibility=["read"])
+    """The ARM resource ID of the impacted resource."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = ImpactedResourceKind.ARM  # type: ignore
+
+
 class AutoScaleProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifications on auto-scaling.
 
@@ -2456,11 +2962,15 @@ class AzureKeyVaultKms(_Model):  # pylint: disable=docstring-keyword-should-matc
 
     :ivar enabled: Whether to enable Azure Key Vault key management service. The default is false.
     :vartype enabled: bool
-    :ivar key_id: Identifier of Azure Key Vault key. See `key identifier format
-     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_
-     for more details. When Azure Key Vault key management service is enabled, this field is
-     required and must be a valid key identifier. When Azure Key Vault key management service is
-     disabled, leave the field empty.
+    :ivar key_id: The identifier of the Azure Key Vault key. For more information, see `Azure Key
+     Vault key identifiers
+     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_.
+     This property is required when Azure Key Vault key management service is enabled and must be
+     omitted when the service is disabled. Starting with API versions 2026-07-01 and
+     2026-07-02-preview, a versioned key identifier uses the legacy KMS experience, while an
+     unversioned key identifier uses the new KMS experience. For more information, see `KMS data
+     encryption concepts
+     <https://learn.microsoft.com/en-us/azure/aks/kms-data-encryption-concepts>`_.
     :vartype key_id: str
     :ivar key_vault_network_access: Network access of the key vault. Network access of key vault.
      The possible values are ``Public`` and ``Private``. ``Public`` means the key vault allows
@@ -2478,11 +2988,15 @@ class AzureKeyVaultKms(_Model):  # pylint: disable=docstring-keyword-should-matc
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to enable Azure Key Vault key management service. The default is false."""
     key_id: Optional[str] = rest_field(name="keyId", visibility=["read", "create", "update", "delete", "query"])
-    """Identifier of Azure Key Vault key. See `key identifier format
-     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_
-     for more details. When Azure Key Vault key management service is enabled, this field is
-     required and must be a valid key identifier. When Azure Key Vault key management service is
-     disabled, leave the field empty."""
+    """The identifier of the Azure Key Vault key. For more information, see `Azure Key Vault key
+     identifiers
+     <https://docs.microsoft.com/en-us/azure/key-vault/general/about-keys-secrets-certificates#vault-name-and-object-name>`_.
+     This property is required when Azure Key Vault key management service is enabled and must be
+     omitted when the service is disabled. Starting with API versions 2026-07-01 and
+     2026-07-02-preview, a versioned key identifier uses the legacy KMS experience, while an
+     unversioned key identifier uses the new KMS experience. For more information, see `KMS data
+     encryption concepts
+     <https://learn.microsoft.com/en-us/azure/aks/kms-data-encryption-concepts>`_."""
     key_vault_network_access: Optional[Union[str, "_models.KeyVaultNetworkAccessTypes"]] = rest_field(
         name="keyVaultNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2790,23 +3304,261 @@ class CapacityReservationGroup(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
+class CloudShellNetworkProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Network resources used by Cloud Shell. AKS peers the subnet's virtual network with the cluster
+    virtual network. For Custom resources, their address spaces must not overlap. See
+    `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_.
+
+    :ivar subnet_id: Dedicated IPv4 subnet used by Cloud Shell containers. For Custom networking,
+     this subnet must be delegated to Microsoft.ContainerInstance/containerGroups and be /24 or
+     larger. Grant the cluster identity Network Contributor on the containing virtual network and
+     grant the Azure Container Instance service principal Network Contributor on this subnet or its
+     containing virtual network. Required when Cloud Shell mode is Custom.
+    :vartype subnet_id: str
+    :ivar relay_namespace_id: Azure Relay namespace used by Cloud Shell. For Custom networking,
+     this existing namespace is required with subnetId. Grant the cluster identity Reader and the
+     Azure Container Instance service principal Contributor on the namespace. Required when Cloud
+     Shell mode is Custom.
+    :vartype relay_namespace_id: str
+    """
+
+    subnet_id: Optional[str] = rest_field(name="subnetId", visibility=["read", "create", "update", "delete", "query"])
+    """Dedicated IPv4 subnet used by Cloud Shell containers. For Custom networking, this subnet must
+     be delegated to Microsoft.ContainerInstance/containerGroups and be /24 or larger. Grant the
+     cluster identity Network Contributor on the containing virtual network and grant the Azure
+     Container Instance service principal Network Contributor on this subnet or its containing
+     virtual network. Required when Cloud Shell mode is Custom."""
+    relay_namespace_id: Optional[str] = rest_field(
+        name="relayNamespaceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure Relay namespace used by Cloud Shell. For Custom networking, this existing namespace is
+     required with subnetId. Grant the cluster identity Reader and the Azure Container Instance
+     service principal Contributor on the namespace. Required when Cloud Shell mode is Custom."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subnet_id: Optional[str] = None,
+        relay_namespace_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CloudShellProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Cloud Shell connectivity and storage settings for a private managed cluster. For more
+    information, see `https://aka.ms/aks/CloudShellConnect
+    <https://aka.ms/aks/CloudShellConnect>`_.
+
+    :ivar mode: Whether Cloud Shell connectivity is disabled, uses AKS-managed network resources,
+     or uses user-provided network resources. Defaults to Disabled when omitted during create. On
+     update, omission preserves the existing mode. Setting this property to Disabled removes
+     AKS-created resources and connectivity artifacts. For Custom mode, AKS unregisters the
+     user-provided resources but does not delete them. Known values are: "Disabled", "Managed", and
+     "Custom".
+    :vartype mode: str or ~azure.mgmt.containerservice.models.CloudShellProfileMode
+    :ivar network: Network resources used by Cloud Shell. When configuring Custom networking, users
+     must provide both subnetId and relayNamespaceId. When updating an existing Custom
+     configuration, either resource ID can be changed independently; omitted fields preserve their
+     existing values. In Custom mode, AKS returns the user-provided values. In Managed mode, AKS
+     populates the effective values. Users may omit Managed values or resubmit values returned by
+     GET unchanged; different values are rejected. This property must be omitted when mode is
+     Disabled. See `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_
+     for Custom networking requirements.
+    :vartype network: ~azure.mgmt.containerservice.models.CloudShellNetworkProfile
+    :ivar storage: Storage resources used for Cloud Shell file persistence. When configuring Custom
+     storage, users must provide both storageAccountId and fileShareName. When updating an existing
+     Custom configuration, either property can be changed independently; omitted fields preserve
+     their existing values. In Custom mode, AKS returns the user-provided values. In Managed mode,
+     AKS populates the effective values. Users may omit Managed values or resubmit values returned
+     by GET unchanged; different values are rejected. Both properties must be omitted when mode is
+     Disabled. See `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_
+     for Custom storage requirements.
+    :vartype storage: ~azure.mgmt.containerservice.models.CloudShellStorageProfile
+    """
+
+    mode: Optional[Union[str, "_models.CloudShellProfileMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether Cloud Shell connectivity is disabled, uses AKS-managed network resources, or uses
+     user-provided network resources. Defaults to Disabled when omitted during create. On update,
+     omission preserves the existing mode. Setting this property to Disabled removes AKS-created
+     resources and connectivity artifacts. For Custom mode, AKS unregisters the user-provided
+     resources but does not delete them. Known values are: \"Disabled\", \"Managed\", and
+     \"Custom\"."""
+    network: Optional["_models.CloudShellNetworkProfile"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Network resources used by Cloud Shell. When configuring Custom networking, users must provide
+     both subnetId and relayNamespaceId. When updating an existing Custom configuration, either
+     resource ID can be changed independently; omitted fields preserve their existing values. In
+     Custom mode, AKS returns the user-provided values. In Managed mode, AKS populates the effective
+     values. Users may omit Managed values or resubmit values returned by GET unchanged; different
+     values are rejected. This property must be omitted when mode is Disabled. See
+     `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_ for Custom
+     networking requirements."""
+    storage: Optional["_models.CloudShellStorageProfile"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Storage resources used for Cloud Shell file persistence. When configuring Custom storage, users
+     must provide both storageAccountId and fileShareName. When updating an existing Custom
+     configuration, either property can be changed independently; omitted fields preserve their
+     existing values. In Custom mode, AKS returns the user-provided values. In Managed mode, AKS
+     populates the effective values. Users may omit Managed values or resubmit values returned by
+     GET unchanged; different values are rejected. Both properties must be omitted when mode is
+     Disabled. See `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_
+     for Custom storage requirements."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.CloudShellProfileMode"]] = None,
+        network: Optional["_models.CloudShellNetworkProfile"] = None,
+        storage: Optional["_models.CloudShellStorageProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CloudShellStorageProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Storage used for Cloud Shell file persistence.
+
+    :ivar mode: Whether persistent storage is disabled, managed by AKS, or provided by the user.
+     Defaults to Disabled when omitted during initial Cloud Shell enablement. On update, omission
+     preserves the existing mode. Known values are: "Disabled", "Managed", and "Custom".
+    :vartype mode: str or ~azure.mgmt.containerservice.models.CloudShellStorageProfileMode
+    :ivar storage_account_id: Storage account used for Cloud Shell files. For Custom storage, grant
+     the cluster identity Storage File Data SMB Share Contributor on this existing storage account.
+     Required when mode is Custom.
+    :vartype storage_account_id: str
+    :ivar file_share_name: File share used for Cloud Shell files. Required when mode is Custom.
+    :vartype file_share_name: str
+    """
+
+    mode: Optional[Union[str, "_models.CloudShellStorageProfileMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether persistent storage is disabled, managed by AKS, or provided by the user. Defaults to
+     Disabled when omitted during initial Cloud Shell enablement. On update, omission preserves the
+     existing mode. Known values are: \"Disabled\", \"Managed\", and \"Custom\"."""
+    storage_account_id: Optional[str] = rest_field(
+        name="storageAccountId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Storage account used for Cloud Shell files. For Custom storage, grant the cluster identity
+     Storage File Data SMB Share Contributor on this existing storage account. Required when mode is
+     Custom."""
+    file_share_name: Optional[str] = rest_field(
+        name="fileShareName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """File share used for Cloud Shell files. Required when mode is Custom."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.CloudShellStorageProfileMode"]] = None,
+        storage_account_id: Optional[str] = None,
+        file_share_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterAPIConnectivityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration for accessing the managed cluster API through Bastion or Cloud Shell.
+
+    :ivar bastion: Azure Bastion connectivity settings. See `https://aka.ms/aks/BastionConnect
+     <https://aka.ms/aks/BastionConnect>`_ for more details.
+    :vartype bastion: ~azure.mgmt.containerservice.models.BastionProfile
+    :ivar cloud_shell: Cloud Shell connectivity settings. For more information, see
+     `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_.
+    :vartype cloud_shell: ~azure.mgmt.containerservice.models.CloudShellProfile
+    """
+
+    bastion: Optional["_models.BastionProfile"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Azure Bastion connectivity settings. See `https://aka.ms/aks/BastionConnect
+     <https://aka.ms/aks/BastionConnect>`_ for more details."""
+    cloud_shell: Optional["_models.CloudShellProfile"] = rest_field(
+        name="cloudShell", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Cloud Shell connectivity settings. For more information, see
+     `https://aka.ms/aks/CloudShellConnect <https://aka.ms/aks/CloudShellConnect>`_."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        bastion: Optional["_models.BastionProfile"] = None,
+        cloud_shell: Optional["_models.CloudShellProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ClusterUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for upgrading a cluster.
 
     :ivar override_settings: Settings for overrides.
     :vartype override_settings: ~azure.mgmt.containerservice.models.UpgradeOverrideSettings
+    :ivar upgrade_gate_settings: Settings for upgrade gating on upgrades in this managed cluster.
+     Health signals are ``HealthSignal`` custom resources published by monitoring components running
+     in the cluster. Setting ``enabled`` to ``true`` here is a cluster-wide opt-in that applies to
+     all agent pool upgrades in this cluster; an agent pool cannot opt out of it.
+    :vartype upgrade_gate_settings: ~azure.mgmt.containerservice.models.UpgradeGateSettings
     """
 
     override_settings: Optional["_models.UpgradeOverrideSettings"] = rest_field(
         name="overrideSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Settings for overrides."""
+    upgrade_gate_settings: Optional["_models.UpgradeGateSettings"] = rest_field(
+        name="upgradeGateSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Settings for upgrade gating on upgrades in this managed cluster. Health signals are
+     ``HealthSignal`` custom resources published by monitoring components running in the cluster.
+     Setting ``enabled`` to ``true`` here is a cluster-wide opt-in that applies to all agent pool
+     upgrades in this cluster; an agent pool cannot opt out of it."""
 
     @overload
     def __init__(
         self,
         *,
         override_settings: Optional["_models.UpgradeOverrideSettings"] = None,
+        upgrade_gate_settings: Optional["_models.UpgradeGateSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -3043,9 +3795,10 @@ class ContainerServiceNetworkProfile(_Model):  # pylint: disable=docstring-keywo
     :ivar load_balancer_profile: Profile of the cluster load balancer.
     :vartype load_balancer_profile:
      ~azure.mgmt.containerservice.models.ManagedClusterLoadBalancerProfile
-    :ivar bastion_profile: Profile of the Bastion Host associated with the managed cluster. See
-     `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more details.
-    :vartype bastion_profile: ~azure.mgmt.containerservice.models.BastionProfile
+    :ivar cluster_api_connectivity_profile: Configuration for accessing the managed cluster API
+     through Bastion or Cloud Shell.
+    :vartype cluster_api_connectivity_profile:
+     ~azure.mgmt.containerservice.models.ClusterAPIConnectivityProfile
     :ivar nat_gateway_profile: Profile of the cluster NAT gateway.
     :vartype nat_gateway_profile:
      ~azure.mgmt.containerservice.models.ManagedClusterNATGatewayProfile
@@ -3146,11 +3899,10 @@ class ContainerServiceNetworkProfile(_Model):  # pylint: disable=docstring-keywo
         name="loadBalancerProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Profile of the cluster load balancer."""
-    bastion_profile: Optional["_models.BastionProfile"] = rest_field(
-        name="bastionProfile", visibility=["read", "create", "update", "delete", "query"]
+    cluster_api_connectivity_profile: Optional["_models.ClusterAPIConnectivityProfile"] = rest_field(
+        name="clusterAPIConnectivityProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Profile of the Bastion Host associated with the managed cluster. See
-     `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more details."""
+    """Configuration for accessing the managed cluster API through Bastion or Cloud Shell."""
     nat_gateway_profile: Optional["_models.ManagedClusterNATGatewayProfile"] = rest_field(
         name="natGatewayProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3216,7 +3968,7 @@ class ContainerServiceNetworkProfile(_Model):  # pylint: disable=docstring-keywo
         outbound_type: Optional[Union[str, "_models.OutboundType"]] = None,
         load_balancer_sku: Optional[Union[str, "_models.LoadBalancerSku"]] = None,
         load_balancer_profile: Optional["_models.ManagedClusterLoadBalancerProfile"] = None,
-        bastion_profile: Optional["_models.BastionProfile"] = None,
+        cluster_api_connectivity_profile: Optional["_models.ClusterAPIConnectivityProfile"] = None,
         nat_gateway_profile: Optional["_models.ManagedClusterNATGatewayProfile"] = None,
         nat_gateway_id: Optional[str] = None,
         static_egress_gateway_profile: Optional["_models.ManagedClusterStaticEgressGatewayProfile"] = None,
@@ -3415,6 +4167,251 @@ class ContainerServiceSshPublicKey(_Model):  # pylint: disable=docstring-keyword
         super().__init__(*args, **kwargs)
 
 
+class ControlPlaneAndAgentPoolsGenerateUpgradeInsightsContent(
+    GenerateUpgradeInsightsContent, discriminator="ControlPlaneAndAgentPools"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Request body to evaluate the combined control plane and agent pools Kubernetes version upgrade.
+
+    :ivar upgrade_type: Required. A combined evaluation of the control plane plus every agent pool
+     for a single target Kubernetes version. This scope covers Kubernetes version upgrades only;
+     node OS image upgrades are not included and must be evaluated separately using the NodeImage
+     scope.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.CONTROL_PLANE_AND_AGENT_POOLS
+    :ivar target_kubernetes_version: The target Kubernetes version to evaluate for all scopes.
+     Required.
+    :vartype target_kubernetes_version: str
+    """
+
+    upgrade_type: Literal[UpgradeType.CONTROL_PLANE_AND_AGENT_POOLS] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. A combined evaluation of the control plane plus every agent pool for a single target
+     Kubernetes version. This scope covers Kubernetes version upgrades only; node OS image upgrades
+     are not included and must be evaluated separately using the NodeImage scope."""
+    target_kubernetes_version: str = rest_field(
+        name="targetKubernetesVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target Kubernetes version to evaluate for all scopes. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_kubernetes_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.CONTROL_PLANE_AND_AGENT_POOLS  # type: ignore
+
+
+class ControlPlaneAndAgentPoolsUpgradeInsightProperties(
+    UpgradeInsightProperties, discriminator="ControlPlaneAndAgentPools"
+):  # pylint: disable=name-too-long
+    """Properties for a combined control plane and agent pools Kubernetes version upgrade insight: a
+    single evaluation of the control plane plus every agent pool for one target Kubernetes version.
+    This scope is Kubernetes-version-only — node OS image upgrades are never part of a combined
+    evaluation and must be requested separately with a
+    ``nodeImage-<agentPoolName>-<nodeImageVersion>`` insight.
+
+    :ivar provisioning_state: The provisioning state of the upgrade insight evaluation. Known
+     values are: "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.ResourceProvisioningState
+    :ivar last_evaluated_at: The UTC time at which this upgrade insight was last computed (the last
+     time the compute operation ran for this resource). This is the resource-level "last run" marker
+     and, for a cached record, indicates how stale the stored evaluation is. For a combined
+     evaluation it is the umbrella run time across all scopes, whereas each scope's
+     ``evaluation.evaluatedAt`` records when that specific snapshot was produced.
+    :vartype last_evaluated_at: ~datetime.datetime
+    :ivar expires_at: The UTC time at which this stored upgrade insight expires and is removed from
+     the data store (currently ``lastEvaluatedAt`` plus a 14-day retention window). After this time
+     a GET for the resource returns 404 Not Found and it no longer appears in the list, indicating
+     the caller should call the compute operation to produce a fresh evaluation. Exposing the expiry
+     lets clients decide when to recompute without hardcoding the retention period.
+    :vartype expires_at: ~datetime.datetime
+    :ivar upgrade_type: The type of upgrade this insight evaluates. Required. A combined evaluation
+     of the control plane plus every agent pool for a single target Kubernetes version. This scope
+     covers Kubernetes version upgrades only; node OS image upgrades are not included and must be
+     evaluated separately using the NodeImage scope.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.CONTROL_PLANE_AND_AGENT_POOLS
+    :ivar target_kubernetes_version: The target Kubernetes version that was evaluated for all
+     scopes.
+    :vartype target_kubernetes_version: str
+    :ivar control_plane: The readiness evaluation for the control plane Kubernetes version upgrade.
+    :vartype control_plane: ~azure.mgmt.containerservice.models.ScopeEvaluationResult
+    :ivar agent_pools: The readiness evaluation for each agent pool Kubernetes version upgrade, one
+     entry per agent pool.
+    :vartype agent_pools: list[~azure.mgmt.containerservice.models.AgentPoolScopeEvaluation]
+    """
+
+    upgrade_type: Literal[UpgradeType.CONTROL_PLANE_AND_AGENT_POOLS] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of upgrade this insight evaluates. Required. A combined evaluation of the control
+     plane plus every agent pool for a single target Kubernetes version. This scope covers
+     Kubernetes version upgrades only; node OS image upgrades are not included and must be evaluated
+     separately using the NodeImage scope."""
+    target_kubernetes_version: Optional[str] = rest_field(name="targetKubernetesVersion", visibility=["read"])
+    """The target Kubernetes version that was evaluated for all scopes."""
+    control_plane: Optional["_models.ScopeEvaluationResult"] = rest_field(name="controlPlane", visibility=["read"])
+    """The readiness evaluation for the control plane Kubernetes version upgrade."""
+    agent_pools: Optional[list["_models.AgentPoolScopeEvaluation"]] = rest_field(name="agentPools", visibility=["read"])
+    """The readiness evaluation for each agent pool Kubernetes version upgrade, one entry per agent
+     pool."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.CONTROL_PLANE_AND_AGENT_POOLS  # type: ignore
+
+
+class ControlPlaneGenerateUpgradeInsightsContent(
+    GenerateUpgradeInsightsContent, discriminator="ControlPlane"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Request body to evaluate a control plane (managed cluster) Kubernetes version upgrade.
+
+    :ivar upgrade_type: Required. The control plane (managed cluster) Kubernetes version upgrade.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.CONTROL_PLANE
+    :ivar target_kubernetes_version: The target Kubernetes version to evaluate. Required.
+    :vartype target_kubernetes_version: str
+    """
+
+    upgrade_type: Literal[UpgradeType.CONTROL_PLANE] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. The control plane (managed cluster) Kubernetes version upgrade."""
+    target_kubernetes_version: str = rest_field(
+        name="targetKubernetesVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target Kubernetes version to evaluate. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_kubernetes_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.CONTROL_PLANE  # type: ignore
+
+
+class ControlPlaneUpgradeInsightProperties(UpgradeInsightProperties, discriminator="ControlPlane"):
+    """Properties for a control plane (managed cluster) Kubernetes version upgrade insight.
+
+    :ivar provisioning_state: The provisioning state of the upgrade insight evaluation. Known
+     values are: "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.ResourceProvisioningState
+    :ivar last_evaluated_at: The UTC time at which this upgrade insight was last computed (the last
+     time the compute operation ran for this resource). This is the resource-level "last run" marker
+     and, for a cached record, indicates how stale the stored evaluation is. For a combined
+     evaluation it is the umbrella run time across all scopes, whereas each scope's
+     ``evaluation.evaluatedAt`` records when that specific snapshot was produced.
+    :vartype last_evaluated_at: ~datetime.datetime
+    :ivar expires_at: The UTC time at which this stored upgrade insight expires and is removed from
+     the data store (currently ``lastEvaluatedAt`` plus a 14-day retention window). After this time
+     a GET for the resource returns 404 Not Found and it no longer appears in the list, indicating
+     the caller should call the compute operation to produce a fresh evaluation. Exposing the expiry
+     lets clients decide when to recompute without hardcoding the retention period.
+    :vartype expires_at: ~datetime.datetime
+    :ivar upgrade_type: The type of upgrade this insight evaluates. Required. The control plane
+     (managed cluster) Kubernetes version upgrade.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.CONTROL_PLANE
+    :ivar target_kubernetes_version: The target Kubernetes version that was evaluated.
+    :vartype target_kubernetes_version: str
+    :ivar current_kubernetes_version: The Kubernetes version the scope was evaluated from (the
+     upgrade source version the scope is currently running). Lets consumers read the result as "from
+     X to targetKubernetesVersion" and detect a stale cached record by comparing against the live
+     cluster version. Populated for Kubernetes version upgrades.
+    :vartype current_kubernetes_version: str
+    :ivar kubernetes_version_support_status: The support status of the Kubernetes version the scope
+     is currently running (not the target version). Populated for Kubernetes version upgrades. Known
+     values are: "InSupport" and "OutOfSupport".
+    :vartype kubernetes_version_support_status: str or
+     ~azure.mgmt.containerservice.models.KubernetesVersionSupportStatus
+    :ivar kubernetes_version_end_of_support_date: The date on which support ends for the Kubernetes
+     version the scope is currently running (its end-of-support date). Returned as an absolute date
+     so clients can apply their own "approaching end of support" threshold and compute the remaining
+     days against the current time; a precomputed remaining-days value is intentionally not returned
+     so that cached results do not go stale. Populated for Kubernetes version upgrades.
+    :vartype kubernetes_version_end_of_support_date: ~datetime.date
+    :ivar context: Contextual information about how this upgrade is managed, such as the upgrade
+     strategy, next maintenance window, and last successful upgrade time.
+    :vartype context: ~azure.mgmt.containerservice.models.UpgradeContext
+    :ivar evaluation: The evaluation result, including overall status, evaluation time, and any
+     detected issues.
+    :vartype evaluation: ~azure.mgmt.containerservice.models.UpgradeInsightEvaluation
+    """
+
+    upgrade_type: Literal[UpgradeType.CONTROL_PLANE] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of upgrade this insight evaluates. Required. The control plane (managed cluster)
+     Kubernetes version upgrade."""
+    target_kubernetes_version: Optional[str] = rest_field(name="targetKubernetesVersion", visibility=["read"])
+    """The target Kubernetes version that was evaluated."""
+    current_kubernetes_version: Optional[str] = rest_field(name="currentKubernetesVersion", visibility=["read"])
+    """The Kubernetes version the scope was evaluated from (the upgrade source version the scope is
+     currently running). Lets consumers read the result as \"from X to targetKubernetesVersion\" and
+     detect a stale cached record by comparing against the live cluster version. Populated for
+     Kubernetes version upgrades."""
+    kubernetes_version_support_status: Optional[Union[str, "_models.KubernetesVersionSupportStatus"]] = rest_field(
+        name="kubernetesVersionSupportStatus", visibility=["read"]
+    )
+    """The support status of the Kubernetes version the scope is currently running (not the target
+     version). Populated for Kubernetes version upgrades. Known values are: \"InSupport\" and
+     \"OutOfSupport\"."""
+    kubernetes_version_end_of_support_date: Optional[datetime.date] = rest_field(
+        name="kubernetesVersionEndOfSupportDate", visibility=["read"]
+    )
+    """The date on which support ends for the Kubernetes version the scope is currently running (its
+     end-of-support date). Returned as an absolute date so clients can apply their own \"approaching
+     end of support\" threshold and compute the remaining days against the current time; a
+     precomputed remaining-days value is intentionally not returned so that cached results do not go
+     stale. Populated for Kubernetes version upgrades."""
+    context: Optional["_models.UpgradeContext"] = rest_field(visibility=["read"])
+    """Contextual information about how this upgrade is managed, such as the upgrade strategy, next
+     maintenance window, and last successful upgrade time."""
+    evaluation: Optional["_models.UpgradeInsightEvaluation"] = rest_field(visibility=["read"])
+    """The evaluation result, including overall status, evaluation time, and any detected issues."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.CONTROL_PLANE  # type: ignore
+
+
 class CreationData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data used when creating a target resource from a source resource.
 
@@ -3579,6 +4576,53 @@ class DelegatedResource(_Model):  # pylint: disable=docstring-keyword-should-mat
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class DetectedUpgradeIssue(_Model):
+    """A detected upgrade issue for a managed cluster.
+
+    :ivar issue_type: The type of the detected upgrade issue. Known values are: "PDBConstraint",
+     "SubnetIPExhausted", "QuotaExceeded", "APIBreakingChange", "ComponentVersionMismatch",
+     "UnsupportedKubernetesVersion", and "NodeImageOutOfSLA".
+    :vartype issue_type: str or ~azure.mgmt.containerservice.models.UpgradeIssueType
+    :ivar severity: The severity of the detected issue. Known values are: "Blocking" and "Warning".
+    :vartype severity: str or ~azure.mgmt.containerservice.models.UpgradeIssueSeverity
+    :ivar message: A human-readable description of the issue and why it may block or risk the
+     upgrade.
+    :vartype message: str
+    :ivar impacted_resources: The Azure or Kubernetes resources impacted by this issue. A single
+     issue can affect multiple resources (for example, one removed Kubernetes API version affecting
+     several objects).
+    :vartype impacted_resources:
+     list[~azure.mgmt.containerservice.models.UpgradeInsightImpactedResource]
+    :ivar recommended_actions: The recommended actions to resolve this issue. Today this always
+     contains a single action whose documentation link covers all of the options the user could take
+     to remediate the issue; it is modeled as an array so that additional distinct actions can be
+     returned in the future without a breaking change.
+    :vartype recommended_actions:
+     list[~azure.mgmt.containerservice.models.UpgradeInsightRecommendedAction]
+    """
+
+    issue_type: Optional[Union[str, "_models.UpgradeIssueType"]] = rest_field(name="issueType", visibility=["read"])
+    """The type of the detected upgrade issue. Known values are: \"PDBConstraint\",
+     \"SubnetIPExhausted\", \"QuotaExceeded\", \"APIBreakingChange\", \"ComponentVersionMismatch\",
+     \"UnsupportedKubernetesVersion\", and \"NodeImageOutOfSLA\"."""
+    severity: Optional[Union[str, "_models.UpgradeIssueSeverity"]] = rest_field(visibility=["read"])
+    """The severity of the detected issue. Known values are: \"Blocking\" and \"Warning\"."""
+    message: Optional[str] = rest_field(visibility=["read"])
+    """A human-readable description of the issue and why it may block or risk the upgrade."""
+    impacted_resources: Optional[list["_models.UpgradeInsightImpactedResource"]] = rest_field(
+        name="impactedResources", visibility=["read"]
+    )
+    """The Azure or Kubernetes resources impacted by this issue. A single issue can affect multiple
+     resources (for example, one removed Kubernetes API version affecting several objects)."""
+    recommended_actions: Optional[list["_models.UpgradeInsightRecommendedAction"]] = rest_field(
+        name="recommendedActions", visibility=["read"]
+    )
+    """The recommended actions to resolve this issue. Today this always contains a single action whose
+     documentation link covers all of the options the user could take to remediate the issue; it is
+     modeled as an array so that additional distinct actions can be returned in the future without a
+     breaking change."""
 
 
 class DRANETProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -3984,6 +5028,11 @@ class IdentityBinding(ProxyResource):  # pylint: disable=docstring-keyword-shoul
     :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.containerservice.models.IdentityBindingProperties
+    :ivar managed_by: The fully qualified resource ID of the resource that manages this resource.
+     Indicates if this resource is managed by another Azure resource. If this is present, complete
+     mode deployment will not delete the resource if it is removed from the template since it is
+     managed by another resource.
+    :vartype managed_by: str
     :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
      the normal etag convention.  Entity tags are used for comparing two or more entities from the
      same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
@@ -3995,6 +5044,11 @@ class IdentityBinding(ProxyResource):  # pylint: disable=docstring-keyword-shoul
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
+    managed_by: Optional[str] = rest_field(name="managedBy", visibility=["read", "create"])
+    """The fully qualified resource ID of the resource that manages this resource. Indicates if this
+     resource is managed by another Azure resource. If this is present, complete mode deployment
+     will not delete the resource if it is removed from the template since it is managed by another
+     resource."""
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
     """If eTag is provided in the response body, it may also be provided as a header per the normal
      etag convention.  Entity tags are used for comparing two or more entities from the same
@@ -4006,6 +5060,7 @@ class IdentityBinding(ProxyResource):  # pylint: disable=docstring-keyword-shoul
         self,
         *,
         properties: Optional["_models.IdentityBindingProperties"] = None,
+        managed_by: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -5042,6 +6097,45 @@ class KubeReserved(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         super().__init__(*args, **kwargs)
 
 
+class KubernetesImpactedResource(UpgradeInsightImpactedResource, discriminator="Kubernetes"):
+    """A Kubernetes resource impacted by a detected upgrade issue, identified by its namespace and
+    name.
+
+    :ivar resource_type: The type of the impacted resource (for example,
+     Microsoft.Network/virtualNetworks/subnets or PodDisruptionBudget).
+    :vartype resource_type: str
+    :ivar kind: The category of the impacted resource. Required. A Kubernetes resource.
+    :vartype kind: str or ~azure.mgmt.containerservice.models.KUBERNETES
+    :ivar namespace: The Kubernetes namespace of the impacted resource, if applicable.
+    :vartype namespace: str
+    :ivar name: The name of the impacted Kubernetes resource.
+    :vartype name: str
+    """
+
+    kind: Literal[ImpactedResourceKind.KUBERNETES] = rest_discriminator(name="kind", visibility=["read"])  # type: ignore
+    """The category of the impacted resource. Required. A Kubernetes resource."""
+    namespace: Optional[str] = rest_field(visibility=["read"])
+    """The Kubernetes namespace of the impacted resource, if applicable."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the impacted Kubernetes resource."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = ImpactedResourceKind.KUBERNETES  # type: ignore
+
+
 class KubernetesPatchVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Kubernetes patch version profile.
 
@@ -5080,8 +6174,7 @@ class KubernetesResourceObjectEncryptionProfile(
     :ivar infrastructure_encryption: Whether to enable encryption at rest of Kubernetes resource
      objects using service-managed keys. More information on this can be found under
      `https://aka.ms/aks/kubernetesResourceObjectEncryption
-     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. Known values are: "Enabled" and
-     "Disabled".
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. "Enabled"
     :vartype infrastructure_encryption: str or
      ~azure.mgmt.containerservice.models.InfrastructureEncryption
     """
@@ -5092,8 +6185,7 @@ class KubernetesResourceObjectEncryptionProfile(
     """Whether to enable encryption at rest of Kubernetes resource objects using service-managed keys.
      More information on this can be found under
      `https://aka.ms/aks/kubernetesResourceObjectEncryption
-     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. Known values are: \"Enabled\" and
-     \"Disabled\"."""
+     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. \"Enabled\""""
 
     @overload
     def __init__(
@@ -5976,6 +7068,10 @@ class MachineNetworkProperties(_Model):  # pylint: disable=docstring-keyword-sho
      the form:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
     :vartype pod_subnet_id: str
+    :ivar pod_ip_allocation_mode: Pod IP Allocation Mode. The IP allocation mode for pods on the
+     machine. Must be used with podSubnetID. The default is 'DynamicIndividual'. Known values are:
+     "DynamicIndividual" and "StaticBlock".
+    :vartype pod_ip_allocation_mode: str or ~azure.mgmt.containerservice.models.PodIPAllocationMode
     :ivar enable_node_public_ip: Whether the machine is allocated its own public IP. Some scenarios
      may require the machine to receive their own dedicated public IP addresses. A common scenario
      is for gaming workloads, where a console needs to make a direct connection to a cloud virtual
@@ -6004,6 +7100,12 @@ class MachineNetworkProperties(_Model):  # pylint: disable=docstring-keyword-sho
     """The ID of the subnet which pods will join when launched. If omitted, pod IPs are statically
      assigned on the node subnet (see vnetSubnetID for more details). This is of the form:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}."""
+    pod_ip_allocation_mode: Optional[Union[str, "_models.PodIPAllocationMode"]] = rest_field(
+        name="podIPAllocationMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Pod IP Allocation Mode. The IP allocation mode for pods on the machine. Must be used with
+     podSubnetID. The default is 'DynamicIndividual'. Known values are: \"DynamicIndividual\" and
+     \"StaticBlock\"."""
     enable_node_public_ip: Optional[bool] = rest_field(
         name="enableNodePublicIP", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6027,6 +7129,7 @@ class MachineNetworkProperties(_Model):  # pylint: disable=docstring-keyword-sho
         *,
         vnet_subnet_id: Optional[str] = None,
         pod_subnet_id: Optional[str] = None,
+        pod_ip_allocation_mode: Optional[Union[str, "_models.PodIPAllocationMode"]] = None,
         enable_node_public_ip: Optional[bool] = None,
         node_public_ip_prefix_id: Optional[str] = None,
         node_public_ip_tags: Optional[list["_models.IPTag"]] = None,
@@ -6920,6 +8023,8 @@ class ManagedCluster(TrackedResource):  # pylint: disable=docstring-keyword-shou
         "node_provisioning_profile",
         "bootstrap_profile",
         "ai_toolchain_operator_profile",
+        "agent_sandbox_profile",
+        "pod_snapshot_profile",
         "scheduler_profile",
         "hosted_system_profile",
         "health_monitor_profile",
@@ -8159,6 +9264,36 @@ class ManagedClusterAgentPoolProfile(
         status: Optional["_models.AgentPoolStatus"] = None,
         local_dns_profile: Optional["_models.LocalDNSProfile"] = None,
         prepared_image_specification_profile: Optional["_models.PreparedImageSpecificationProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedClusterAgentSandboxProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Settings for the Agent Sandbox core extension managed by Azure Kubernetes Service (AKS).
+
+    :ivar enabled: Whether the Agent Sandbox core extension is enabled for the cluster. On cluster
+     creation, the default is false.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the Agent Sandbox core extension is enabled for the cluster. On cluster creation, the
+     default is false."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -10310,6 +11445,35 @@ class ManagedClusterPodIdentityProvisioningInfo(
         super().__init__(*args, **kwargs)
 
 
+class ManagedClusterPodSnapshotProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Pod Snapshot Restore profile for the managed cluster.
+
+    :ivar enabled: Whether the Pod Snapshot Restore core extension is enabled for the managed
+     cluster.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the Pod Snapshot Restore core extension is enabled for the managed cluster."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ManagedClusterPoolUpgradeProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of available upgrade versions.
 
@@ -10494,7 +11658,10 @@ class ManagedClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
      enforces FIPS compliance for all AKS-managed components, such as the node operating system,
      addons, and `managed containerized components <https://aka.ms/aks/components/docs>`_. See
      `Enable cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is
-     enabled, all node pools in the cluster must also be FIPS-enabled.
+     enabled, all node pools in the cluster must also be FIPS-enabled. Although this property is
+     available in a stable API version, cluster-wide FIPS remains a preview feature. Write requests
+     whose resulting cluster state has this property set to true require the
+     ``Microsoft.ContainerService/EnableFIPSPreview`` subscription feature registration.
     :vartype enable_fips: bool
     :ivar enable_node_hardening: Whether to enable node hardening at the cluster level. When
      enabled, AKS applies hardened defaults for soft eviction thresholds, kube-reserved, and
@@ -10572,6 +11739,12 @@ class ManagedClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
      cluster.
     :vartype ai_toolchain_operator_profile:
      ~azure.mgmt.containerservice.models.ManagedClusterAIToolchainOperatorProfile
+    :ivar agent_sandbox_profile: Agent Sandbox settings that apply to the whole cluster.
+    :vartype agent_sandbox_profile:
+     ~azure.mgmt.containerservice.models.ManagedClusterAgentSandboxProfile
+    :ivar pod_snapshot_profile: The Pod Snapshot Restore profile for the managed cluster.
+    :vartype pod_snapshot_profile:
+     ~azure.mgmt.containerservice.models.ManagedClusterPodSnapshotProfile
     :ivar scheduler_profile: Profile with scheduler-related settings, like the configuration mode
      for each scheduler managed by AKS. See `https://aka.ms/aks/scheduler-profile
      <https://aka.ms/aks/scheduler-profile>`_.
@@ -10696,7 +11869,10 @@ class ManagedClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
      compliance for all AKS-managed components, such as the node operating system, addons, and
      `managed containerized components <https://aka.ms/aks/components/docs>`_. See `Enable
      cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is enabled,
-     all node pools in the cluster must also be FIPS-enabled."""
+     all node pools in the cluster must also be FIPS-enabled. Although this property is available in
+     a stable API version, cluster-wide FIPS remains a preview feature. Write requests whose
+     resulting cluster state has this property set to true require the
+     ``Microsoft.ContainerService/EnableFIPSPreview`` subscription feature registration."""
     enable_node_hardening: Optional[bool] = rest_field(
         name="enableNodeHardening", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10811,6 +11987,14 @@ class ManagedClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
         name="aiToolchainOperatorProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """AI toolchain operator settings that apply to the whole cluster."""
+    agent_sandbox_profile: Optional["_models.ManagedClusterAgentSandboxProfile"] = rest_field(
+        name="agentSandboxProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Agent Sandbox settings that apply to the whole cluster."""
+    pod_snapshot_profile: Optional["_models.ManagedClusterPodSnapshotProfile"] = rest_field(
+        name="podSnapshotProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Pod Snapshot Restore profile for the managed cluster."""
     scheduler_profile: Optional["_models.SchedulerProfile"] = rest_field(
         name="schedulerProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10884,6 +12068,8 @@ class ManagedClusterProperties(_Model):  # pylint: disable=docstring-keyword-sho
         node_provisioning_profile: Optional["_models.ManagedClusterNodeProvisioningProfile"] = None,
         bootstrap_profile: Optional["_models.ManagedClusterBootstrapProfile"] = None,
         ai_toolchain_operator_profile: Optional["_models.ManagedClusterAIToolchainOperatorProfile"] = None,
+        agent_sandbox_profile: Optional["_models.ManagedClusterAgentSandboxProfile"] = None,
+        pod_snapshot_profile: Optional["_models.ManagedClusterPodSnapshotProfile"] = None,
         scheduler_profile: Optional["_models.SchedulerProfile"] = None,
         hosted_system_profile: Optional["_models.ManagedClusterHostedSystemProfile"] = None,
         health_monitor_profile: Optional["_models.ManagedClusterHealthMonitorProfile"] = None,
@@ -11943,10 +13129,70 @@ class ManagedClusterStorageProfileDiskCSIDriver(
 
     :ivar enabled: Whether to enable AzureDisk CSI Driver. The default value is true.
     :vartype enabled: bool
+    :ivar quick_attach_detach: Quick Attach Detach settings for the AzureDisk CSI driver. Quick
+     Attach Detach enables faster, higher-scale Azure Disk attach and detach operations for stateful
+     AKS workloads by bypassing ARM/CRP control-plane bottlenecks. For more information, see
+     `https://aka.ms/aks/qad <https://aka.ms/aks/qad>`_.
+    :vartype quick_attach_detach:
+     ~azure.mgmt.containerservice.models.ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to enable AzureDisk CSI Driver. The default value is true."""
+    quick_attach_detach: Optional["_models.ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach"] = rest_field(
+        name="quickAttachDetach", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Quick Attach Detach settings for the AzureDisk CSI driver. Quick Attach Detach enables faster,
+     higher-scale Azure Disk attach and detach operations for stateful AKS workloads by bypassing
+     ARM/CRP control-plane bottlenecks. For more information, see `https://aka.ms/aks/qad
+     <https://aka.ms/aks/qad>`_."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        quick_attach_detach: Optional["_models.ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Quick Attach Detach settings for the AzureDisk CSI driver.
+
+    :ivar enabled: Whether to enable Quick Attach Detach for the AzureDisk CSI driver. The default
+     value is false.
+    :vartype enabled: bool
+    :ivar identity: Identity used by Quick Attach Detach. This property is returned by GET and
+     cannot be set by clients. The Quick Attach Detach feature uses a managed identity that is
+     automatically created and managed by the AKS resource provider. In most scenarios, no user
+     action is required. An exception applies when using customer-managed disks that are located
+     outside of the AKS node resource group (Bring Your Own Disk scenario). In this case, users must
+     grant the Quick Attach Detach managed identity the required permissions on the resource group
+     containing the disk.
+    :vartype identity: ~azure.mgmt.containerservice.models.UserAssignedIdentity
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether to enable Quick Attach Detach for the AzureDisk CSI driver. The default value is false."""
+    identity: Optional["_models.UserAssignedIdentity"] = rest_field(visibility=["read"])
+    """Identity used by Quick Attach Detach. This property is returned by GET and cannot be set by
+     clients. The Quick Attach Detach feature uses a managed identity that is automatically created
+     and managed by the AKS resource provider. In most scenarios, no user action is required. An
+     exception applies when using customer-managed disks that are located outside of the AKS node
+     resource group (Bring Your Own Disk scenario). In this case, users must grant the Quick Attach
+     Detach managed identity the required permissions on the resource group containing the disk."""
 
     @overload
     def __init__(
@@ -13049,6 +14295,137 @@ class NodeDisruptionProfile(_Model):  # pylint: disable=docstring-keyword-should
         super().__init__(*args, **kwargs)
 
 
+class NodeImageGenerateUpgradeInsightsContent(
+    GenerateUpgradeInsightsContent, discriminator="NodeImage"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request body to evaluate a single agent pool node OS image upgrade.
+
+    :ivar upgrade_type: Required. An agent pool node OS image upgrade. NodeImage upgrade insights
+     are evaluated per agent pool, mirroring the per-pool node-image upgrade API
+     (.../agentPools/{name}), and cover the node OS image only; agent-pool Kubernetes version
+     readiness is evaluated separately via the AgentPool or ControlPlaneAndAgentPools scopes.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.NODE_IMAGE
+    :ivar agent_pool_name: The name of the agent pool to evaluate. Required.
+    :vartype agent_pool_name: str
+    :ivar target_node_image_version: The target node OS image version to evaluate. If omitted, the
+     server resolves and evaluates the latest available node image. The resolved full version is
+     always returned in the generated insight's read-only ``targetNodeImageVersion`` property.
+    :vartype target_node_image_version: str
+    """
+
+    upgrade_type: Literal[UpgradeType.NODE_IMAGE] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. An agent pool node OS image upgrade. NodeImage upgrade insights are evaluated per
+     agent pool, mirroring the per-pool node-image upgrade API (.../agentPools/{name}), and cover
+     the node OS image only; agent-pool Kubernetes version readiness is evaluated separately via the
+     AgentPool or ControlPlaneAndAgentPools scopes."""
+    agent_pool_name: str = rest_field(name="agentPoolName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the agent pool to evaluate. Required."""
+    target_node_image_version: Optional[str] = rest_field(
+        name="targetNodeImageVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target node OS image version to evaluate. If omitted, the server resolves and evaluates the
+     latest available node image. The resolved full version is always returned in the generated
+     insight's read-only ``targetNodeImageVersion`` property."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        agent_pool_name: str,
+        target_node_image_version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.NODE_IMAGE  # type: ignore
+
+
+class NodeImageUpgradeInsightProperties(UpgradeInsightProperties, discriminator="NodeImage"):
+    """Properties for a single agent pool node OS image upgrade insight.
+
+    :ivar provisioning_state: The provisioning state of the upgrade insight evaluation. Known
+     values are: "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.ResourceProvisioningState
+    :ivar last_evaluated_at: The UTC time at which this upgrade insight was last computed (the last
+     time the compute operation ran for this resource). This is the resource-level "last run" marker
+     and, for a cached record, indicates how stale the stored evaluation is. For a combined
+     evaluation it is the umbrella run time across all scopes, whereas each scope's
+     ``evaluation.evaluatedAt`` records when that specific snapshot was produced.
+    :vartype last_evaluated_at: ~datetime.datetime
+    :ivar expires_at: The UTC time at which this stored upgrade insight expires and is removed from
+     the data store (currently ``lastEvaluatedAt`` plus a 14-day retention window). After this time
+     a GET for the resource returns 404 Not Found and it no longer appears in the list, indicating
+     the caller should call the compute operation to produce a fresh evaluation. Exposing the expiry
+     lets clients decide when to recompute without hardcoding the retention period.
+    :vartype expires_at: ~datetime.datetime
+    :ivar upgrade_type: The type of upgrade this insight evaluates. Required. An agent pool node OS
+     image upgrade. NodeImage upgrade insights are evaluated per agent pool, mirroring the per-pool
+     node-image upgrade API (.../agentPools/{name}), and cover the node OS image only; agent-pool
+     Kubernetes version readiness is evaluated separately via the AgentPool or
+     ControlPlaneAndAgentPools scopes.
+    :vartype upgrade_type: str or ~azure.mgmt.containerservice.models.NODE_IMAGE
+    :ivar agent_pool_name: The name of the agent pool this insight applies to.
+    :vartype agent_pool_name: str
+    :ivar current_node_image_version: The node OS image version the agent pool was evaluated from
+     (the upgrade source version it is currently running). Lets consumers read the result as "from X
+     to targetNodeImageVersion" and detect a stale cached record by comparing against the live node
+     image version.
+    :vartype current_node_image_version: str
+    :ivar target_node_image_version: The target node OS image version that was evaluated.
+    :vartype target_node_image_version: str
+    :ivar context: Contextual information about how this upgrade is managed, such as the upgrade
+     strategy, next maintenance window, and last successful upgrade time.
+    :vartype context: ~azure.mgmt.containerservice.models.UpgradeContext
+    :ivar evaluation: The evaluation result, including overall status, evaluation time, and any
+     detected issues.
+    :vartype evaluation: ~azure.mgmt.containerservice.models.UpgradeInsightEvaluation
+    """
+
+    upgrade_type: Literal[UpgradeType.NODE_IMAGE] = rest_discriminator(name="upgradeType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of upgrade this insight evaluates. Required. An agent pool node OS image upgrade.
+     NodeImage upgrade insights are evaluated per agent pool, mirroring the per-pool node-image
+     upgrade API (.../agentPools/{name}), and cover the node OS image only; agent-pool Kubernetes
+     version readiness is evaluated separately via the AgentPool or ControlPlaneAndAgentPools
+     scopes."""
+    agent_pool_name: Optional[str] = rest_field(name="agentPoolName", visibility=["read"])
+    """The name of the agent pool this insight applies to."""
+    current_node_image_version: Optional[str] = rest_field(name="currentNodeImageVersion", visibility=["read"])
+    """The node OS image version the agent pool was evaluated from (the upgrade source version it is
+     currently running). Lets consumers read the result as \"from X to targetNodeImageVersion\" and
+     detect a stale cached record by comparing against the live node image version."""
+    target_node_image_version: Optional[str] = rest_field(name="targetNodeImageVersion", visibility=["read"])
+    """The target node OS image version that was evaluated."""
+    context: Optional["_models.UpgradeContext"] = rest_field(visibility=["read"])
+    """Contextual information about how this upgrade is managed, such as the upgrade strategy, next
+     maintenance window, and last successful upgrade time."""
+    evaluation: Optional["_models.UpgradeInsightEvaluation"] = rest_field(visibility=["read"])
+    """The evaluation result, including overall status, evaluation time, and any detected issues."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.upgrade_type = UpgradeType.NODE_IMAGE  # type: ignore
+
+
 class NodeImageVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """node image version profile for given major.minor.patch release.
 
@@ -13110,6 +14487,14 @@ class NvidiaGPUProfile(_Model):  # pylint: disable=docstring-keyword-should-matc
      MIG support. For more information about the different strategies, visit aka.ms/aks/managed-gpu.
      When not specified, the default is None. Known values are: "None", "Single", and "Mixed".
     :vartype mig_strategy: str or ~azure.mgmt.containerservice.models.MigStrategy
+    :ivar mig_profiles: The ordered list of MIG (Multi-Instance GPU) partition profiles to assign
+     to each supported NVIDIA GPU. When ``migStrategy`` is ``Single``, exactly one profile must be
+     specified. When ``migStrategy`` is ``Mixed``, one or more profiles may be specified and the
+     combination is validated against the supported MIG geometry for the agent pool's GPU VM size.
+     The same value may appear more than once to request multiple partitions of that size. This
+     field is mutually exclusive with the top-level ``gpuInstanceProfile`` property. For more
+     information, see `https://aka.ms/aks/managed-gpu <https://aka.ms/aks/managed-gpu>`_.
+    :vartype mig_profiles: list[str or ~azure.mgmt.containerservice.models.GPUInstanceProfile]
     """
 
     management_mode: Optional[Union[str, "_models.ManagementMode"]] = rest_field(
@@ -13129,6 +14514,16 @@ class NvidiaGPUProfile(_Model):  # pylint: disable=docstring-keyword-should-matc
     """Sets the MIG (Multi-Instance GPU) strategy that will be used for managed MIG support. For more
      information about the different strategies, visit aka.ms/aks/managed-gpu. When not specified,
      the default is None. Known values are: \"None\", \"Single\", and \"Mixed\"."""
+    mig_profiles: Optional[list[Union[str, "_models.GPUInstanceProfile"]]] = rest_field(
+        name="migProfiles", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ordered list of MIG (Multi-Instance GPU) partition profiles to assign to each supported
+     NVIDIA GPU. When ``migStrategy`` is ``Single``, exactly one profile must be specified. When
+     ``migStrategy`` is ``Mixed``, one or more profiles may be specified and the combination is
+     validated against the supported MIG geometry for the agent pool's GPU VM size. The same value
+     may appear more than once to request multiple partitions of that size. This field is mutually
+     exclusive with the top-level ``gpuInstanceProfile`` property. For more information, see
+     `https://aka.ms/aks/managed-gpu <https://aka.ms/aks/managed-gpu>`_."""
 
     @overload
     def __init__(
@@ -13137,6 +14532,7 @@ class NvidiaGPUProfile(_Model):  # pylint: disable=docstring-keyword-should-matc
         management_mode: Optional[Union[str, "_models.ManagementMode"]] = None,
         driver_mode: Optional[Union[str, "_models.NvidiaDriverMode"]] = None,
         mig_strategy: Optional[Union[str, "_models.MigStrategy"]] = None,
+        mig_profiles: Optional[list[Union[str, "_models.GPUInstanceProfile"]]] = None,
     ) -> None: ...
 
     @overload
@@ -14478,6 +15874,61 @@ class SchedulerProfile(_Model):  # pylint: disable=docstring-keyword-should-matc
         super().__init__(*args, **kwargs)
 
 
+class ScopeEvaluationResult(_Model):
+    """The readiness evaluation details shared by a single scope: the support status of the version
+    the scope is currently running, the upgrade context, and the evaluation result. All fields are
+    server-computed and read-only.
+
+    :ivar current_kubernetes_version: The Kubernetes version the scope was evaluated from (the
+     upgrade source version the scope is currently running). Lets consumers read the result as "from
+     X to targetKubernetesVersion" and detect a stale cached record by comparing against the live
+     cluster version. Populated for Kubernetes version upgrades.
+    :vartype current_kubernetes_version: str
+    :ivar kubernetes_version_support_status: The support status of the Kubernetes version the scope
+     is currently running (not the target version). Populated for Kubernetes version upgrades. Known
+     values are: "InSupport" and "OutOfSupport".
+    :vartype kubernetes_version_support_status: str or
+     ~azure.mgmt.containerservice.models.KubernetesVersionSupportStatus
+    :ivar kubernetes_version_end_of_support_date: The date on which support ends for the Kubernetes
+     version the scope is currently running (its end-of-support date). Returned as an absolute date
+     so clients can apply their own "approaching end of support" threshold and compute the remaining
+     days against the current time; a precomputed remaining-days value is intentionally not returned
+     so that cached results do not go stale. Populated for Kubernetes version upgrades.
+    :vartype kubernetes_version_end_of_support_date: ~datetime.date
+    :ivar context: Contextual information about how this upgrade is managed, such as the upgrade
+     strategy, next maintenance window, and last successful upgrade time.
+    :vartype context: ~azure.mgmt.containerservice.models.UpgradeContext
+    :ivar evaluation: The evaluation result, including overall status, evaluation time, and any
+     detected issues.
+    :vartype evaluation: ~azure.mgmt.containerservice.models.UpgradeInsightEvaluation
+    """
+
+    current_kubernetes_version: Optional[str] = rest_field(name="currentKubernetesVersion", visibility=["read"])
+    """The Kubernetes version the scope was evaluated from (the upgrade source version the scope is
+     currently running). Lets consumers read the result as \"from X to targetKubernetesVersion\" and
+     detect a stale cached record by comparing against the live cluster version. Populated for
+     Kubernetes version upgrades."""
+    kubernetes_version_support_status: Optional[Union[str, "_models.KubernetesVersionSupportStatus"]] = rest_field(
+        name="kubernetesVersionSupportStatus", visibility=["read"]
+    )
+    """The support status of the Kubernetes version the scope is currently running (not the target
+     version). Populated for Kubernetes version upgrades. Known values are: \"InSupport\" and
+     \"OutOfSupport\"."""
+    kubernetes_version_end_of_support_date: Optional[datetime.date] = rest_field(
+        name="kubernetesVersionEndOfSupportDate", visibility=["read"]
+    )
+    """The date on which support ends for the Kubernetes version the scope is currently running (its
+     end-of-support date). Returned as an absolute date so clients can apply their own \"approaching
+     end of support\" threshold and compute the remaining days against the current time; a
+     precomputed remaining-days value is intentionally not returned so that cached results do not go
+     stale. Populated for Kubernetes version upgrades."""
+    context: Optional["_models.UpgradeContext"] = rest_field(visibility=["read"])
+    """Contextual information about how this upgrade is managed, such as the upgrade strategy, next
+     maintenance window, and last successful upgrade time."""
+    evaluation: Optional["_models.UpgradeInsightEvaluation"] = rest_field(visibility=["read"])
+    """The evaluation result, including overall status, evaluation time, and any detected issues."""
+
+
 class ServiceAccountImagePullProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for configuring image pull authentication to use service account scoped managed
     identities for authentication instead of node scoped managed identity (kubelet identity) for
@@ -15385,6 +16836,226 @@ class TrustedAccessRoleRule(_Model):
     """List of allowed names."""
     non_resource_ur_ls: Optional[list[str]] = rest_field(name="nonResourceURLs", visibility=["read"])
     """List of allowed nonResourceURLs."""
+
+
+class UpgradeContext(_Model):
+    """Contextual information for a specific upgrade type (Kubernetes version or node OS image).
+    Because the Kubernetes version and node OS image can be managed independently — for example,
+    auto-upgrade for the node image but manual for the Kubernetes version — this context is
+    reported per upgrade type rather than once for the whole cluster.
+
+    :ivar current_upgrade_strategy: The strategy currently used to perform this type of upgrade
+     (manual or auto-upgrade). Known values are: "Manual" and "Auto".
+    :vartype current_upgrade_strategy: str or
+     ~azure.mgmt.containerservice.models.UpgradeInsightStrategy
+    :ivar next_maintenance_window: The next scheduled automatic upgrade maintenance window for this
+     upgrade type, if auto-upgrade is configured.
+    :vartype next_maintenance_window:
+     ~azure.mgmt.containerservice.models.UpgradeInsightMaintenanceWindow
+    :ivar last_successful_upgrade_time: The UTC time of the last successful upgrade of this type
+     for this scope. Clients can compute "days since last successful upgrade" from this value and
+     the current time; the server intentionally does not return a precomputed value so that cached
+     results do not go stale.
+    :vartype last_successful_upgrade_time: ~datetime.datetime
+    """
+
+    current_upgrade_strategy: Optional[Union[str, "_models.UpgradeInsightStrategy"]] = rest_field(
+        name="currentUpgradeStrategy", visibility=["read"]
+    )
+    """The strategy currently used to perform this type of upgrade (manual or auto-upgrade). Known
+     values are: \"Manual\" and \"Auto\"."""
+    next_maintenance_window: Optional["_models.UpgradeInsightMaintenanceWindow"] = rest_field(
+        name="nextMaintenanceWindow", visibility=["read"]
+    )
+    """The next scheduled automatic upgrade maintenance window for this upgrade type, if auto-upgrade
+     is configured."""
+    last_successful_upgrade_time: Optional[datetime.datetime] = rest_field(
+        name="lastSuccessfulUpgradeTime", visibility=["read"], format="rfc3339"
+    )
+    """The UTC time of the last successful upgrade of this type for this scope. Clients can compute
+     \"days since last successful upgrade\" from this value and the current time; the server
+     intentionally does not return a precomputed value so that cached results do not go stale."""
+
+
+class UpgradeGateSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Settings for health-aware upgrade gating.
+
+    :ivar enabled: Whether upgrade gating is enabled. Defaults to ``false`` when unset, except on a
+     newly created agent pool in a cluster where upgrade gating is enabled, which defaults to
+     ``true``. When ``true``, upgrade-gated health checks are enabled for upgrades in the
+     corresponding scope. Setting this to ``true`` at the cluster scope enables gating for the
+     entire cluster, including all agent pool upgrades. When the cluster scope is unset or
+     ``false``, an agent pool can opt in independently by setting this to ``true``. When the cluster
+     scope is ``true``, an agent pool cannot set this to ``false``. Force upgrade
+     (``overrideSettings.forceUpgrade``) overrides the gate: while the override window is active,
+     the upgrade skips health signal validation and proceeds.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether upgrade gating is enabled. Defaults to ``false`` when unset, except on a newly created
+     agent pool in a cluster where upgrade gating is enabled, which defaults to ``true``. When
+     ``true``, upgrade-gated health checks are enabled for upgrades in the corresponding scope.
+     Setting this to ``true`` at the cluster scope enables gating for the entire cluster, including
+     all agent pool upgrades. When the cluster scope is unset or ``false``, an agent pool can opt in
+     independently by setting this to ``true``. When the cluster scope is ``true``, an agent pool
+     cannot set this to ``false``. Force upgrade (``overrideSettings.forceUpgrade``) overrides the
+     gate: while the override window is active, the upgrade skips health signal validation and
+     proceeds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpgradeInsight(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An upgrade insight for a managed cluster: an on-demand readiness evaluation for an upgrade
+    scope, produced by the generateUpgradeInsights action on the managed cluster and addressable by
+    a server-generated name. The name identifies the scope and evaluated target —
+    ``controlPlane-<targetKubernetesVersion>`` (for example ``controlPlane-1.33.5``),
+    ``controlPlaneAndAgentPools-<targetKubernetesVersion>``,
+    ``agentPool-<agentPoolName>-<targetKubernetesVersion>`` (for example
+    ``agentPool-nodepool1-1.33.5``), or ``nodeImage-<agentPoolName>-<nodeImageVersion>`` (for
+    example ``nodeImage-nodepool1-202607.01.0``). The node image segment contains only the numeric
+    image version, while ``properties.targetNodeImageVersion`` returns the full image name. The
+    resource itself is read-only: GET returns the stored evaluation and LIST returns the stored
+    evaluations for the cluster. Evaluations are (re)generated via the managed cluster's
+    generateUpgradeInsights action, whose response body is the same UpgradeInsight representation
+    returned by GET.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.containerservice.models.UpgradeInsightProperties
+    """
+
+    properties: Optional["_models.UpgradeInsightProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.UpgradeInsightProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpgradeInsightEvaluation(_Model):
+    """The evaluation payload shared by all upgrade insight results, containing the overall status,
+    evaluation time, and any detected issues. Whenever this object is present the evaluation has
+    run, so ``status`` and ``evaluatedAt`` are always populated; the "not yet evaluated" state is
+    signaled by the absence of this ``evaluation`` object (and by ``provisioningState``), never by
+    a present evaluation with an absent status.
+
+    :ivar status: The overall upgrade insight status indicating whether issues were detected.
+     Always present when the evaluation has run; absence of the enclosing ``evaluation`` object—not
+     an absent status—represents "not yet evaluated". Required. Known values are: "Passed",
+     "Warning", and "Failed".
+    :vartype status: str or ~azure.mgmt.containerservice.models.UpgradeInsightStatus
+    :ivar evaluated_at: The UTC time at which the upgrade insight evaluation was performed.
+     Required.
+    :vartype evaluated_at: ~datetime.datetime
+    :ivar detected_issues: The list of detected upgrade issues, if any. Empty or absent for a
+     ``Passed`` status.
+    :vartype detected_issues: list[~azure.mgmt.containerservice.models.DetectedUpgradeIssue]
+    """
+
+    status: Union[str, "_models.UpgradeInsightStatus"] = rest_field(visibility=["read"])
+    """The overall upgrade insight status indicating whether issues were detected. Always present when
+     the evaluation has run; absence of the enclosing ``evaluation`` object—not an absent
+     status—represents \"not yet evaluated\". Required. Known values are: \"Passed\", \"Warning\",
+     and \"Failed\"."""
+    evaluated_at: datetime.datetime = rest_field(name="evaluatedAt", visibility=["read"], format="rfc3339")
+    """The UTC time at which the upgrade insight evaluation was performed. Required."""
+    detected_issues: Optional[list["_models.DetectedUpgradeIssue"]] = rest_field(
+        name="detectedIssues", visibility=["read"]
+    )
+    """The list of detected upgrade issues, if any. Empty or absent for a ``Passed`` status."""
+
+
+class UpgradeInsightMaintenanceWindow(_Model):
+    """A scheduled maintenance window during which an automatic upgrade of this type is expected to
+    run. The window is derived from the maintenance configuration that governs this upgrade type —
+    the cluster auto-upgrade schedule for Kubernetes version upgrades or the node OS upgrade
+    schedule for node image upgrades — so the same model describes both without duplicating types.
+
+    :ivar maintenance_configuration_name: The name of the maintenance configuration that governs
+     this window (for example, aksManagedAutoUpgradeSchedule or aksManagedNodeOSUpgradeSchedule).
+    :vartype maintenance_configuration_name: str
+    :ivar source: The auto-upgrade schedule that this window is derived from. Known values are:
+     "ClusterAutoUpgradeSchedule" and "NodeOSUpgradeSchedule".
+    :vartype source: str or ~azure.mgmt.containerservice.models.MaintenanceWindowSource
+    :ivar start_time: The UTC start time of the next scheduled maintenance window.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The UTC end time of the next scheduled maintenance window.
+    :vartype end_time: ~datetime.datetime
+    """
+
+    maintenance_configuration_name: Optional[str] = rest_field(name="maintenanceConfigurationName", visibility=["read"])
+    """The name of the maintenance configuration that governs this window (for example,
+     aksManagedAutoUpgradeSchedule or aksManagedNodeOSUpgradeSchedule)."""
+    source: Optional[Union[str, "_models.MaintenanceWindowSource"]] = rest_field(visibility=["read"])
+    """The auto-upgrade schedule that this window is derived from. Known values are:
+     \"ClusterAutoUpgradeSchedule\" and \"NodeOSUpgradeSchedule\"."""
+    start_time: Optional[datetime.datetime] = rest_field(name="startTime", visibility=["read"], format="rfc3339")
+    """The UTC start time of the next scheduled maintenance window."""
+    end_time: Optional[datetime.datetime] = rest_field(name="endTime", visibility=["read"], format="rfc3339")
+    """The UTC end time of the next scheduled maintenance window."""
+
+
+class UpgradeInsightRecommendedAction(_Model):
+    """A recommended action to resolve a detected upgrade issue.
+
+    :ivar title: A short title describing the recommended action.
+    :vartype title: str
+    :ivar details: A detailed description of the recommended action and how to perform it.
+    :vartype details: str
+    :ivar documentation_link: A link to customer-facing documentation describing the available
+     options for remediating the issue.
+    :vartype documentation_link: str
+    """
+
+    title: Optional[str] = rest_field(visibility=["read"])
+    """A short title describing the recommended action."""
+    details: Optional[str] = rest_field(visibility=["read"])
+    """A detailed description of the recommended action and how to perform it."""
+    documentation_link: Optional[str] = rest_field(name="documentationLink", visibility=["read"])
+    """A link to customer-facing documentation describing the available options for remediating the
+     issue."""
 
 
 class UpgradeOverrideSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only

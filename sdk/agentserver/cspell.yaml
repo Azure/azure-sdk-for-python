@@ -60,6 +60,7 @@ words:
   - hypercorn
   - idless
   - idtoken
+  - idtype
   - impls
   - injectively
   - inmemory

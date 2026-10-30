@@ -18,7 +18,7 @@ Install this package via extras when installing Azure Storage libraries:
 pip install azure-storage-blob[ext-checksums]
 ```
 
-This ensures you get compatible versions of both the SDK and the extensions package.
+Installing through the SDK extra ensures compatible versions of the SDK and extensions package.
 
 > ⚠️ Installing `azure-storage-extensions` directly is not recommended. Use the extras syntax above to ensure compatibility.
 

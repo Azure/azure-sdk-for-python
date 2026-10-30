@@ -2,6 +2,7 @@
 namespace azure.mgmt.containerservice
 
     class azure.mgmt.containerservice.ContainerServiceClient: implements ContextManager 
+        agent_fabric_memberships: AgentFabricMembershipsOperations
         agent_pools: AgentPoolsOperations
         alert_configurations: AlertConfigurationsOperations
         container_service: ContainerServiceOperations
@@ -23,6 +24,7 @@ namespace azure.mgmt.containerservice
         snapshots: SnapshotsOperations
         trusted_access_role_bindings: TrustedAccessRoleBindingsOperations
         trusted_access_roles: TrustedAccessRolesOperations
+        upgrade_insights: UpgradeInsightsOperations
         vm_skus: VmSkusOperations
 
         def __init__(
@@ -51,6 +53,7 @@ namespace azure.mgmt.containerservice
 namespace azure.mgmt.containerservice.aio
 
     class azure.mgmt.containerservice.aio.ContainerServiceClient: implements AsyncContextManager 
+        agent_fabric_memberships: AgentFabricMembershipsOperations
         agent_pools: AgentPoolsOperations
         alert_configurations: AlertConfigurationsOperations
         container_service: ContainerServiceOperations
@@ -72,6 +75,7 @@ namespace azure.mgmt.containerservice.aio
         snapshots: SnapshotsOperations
         trusted_access_role_bindings: TrustedAccessRoleBindingsOperations
         trusted_access_roles: TrustedAccessRolesOperations
+        upgrade_insights: UpgradeInsightsOperations
         vm_skus: VmSkusOperations
 
         def __init__(
@@ -99,6 +103,80 @@ namespace azure.mgmt.containerservice.aio
 
 namespace azure.mgmt.containerservice.aio.operations
 
+    class azure.mgmt.containerservice.aio.operations.AgentFabricMembershipsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                agent_fabric_membership_name: str, 
+                resource: AgentFabricMembership, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AgentFabricMembership]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                agent_fabric_membership_name: str, 
+                resource: AgentFabricMembership, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AgentFabricMembership]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                agent_fabric_membership_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AgentFabricMembership]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_fabric_membership_name']}, api_versions_list=['2026-08-02-preview'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                agent_fabric_membership_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_fabric_membership_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                agent_fabric_membership_name: str, 
+                **kwargs: Any
+            ) -> AgentFabricMembership: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        def list_by_managed_cluster(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AgentFabricMembership]: ...
+
+
     class azure.mgmt.containerservice.aio.operations.AgentPoolsOperations:
 
         def __init__(
@@ -117,7 +195,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name']}, api_versions_list=['2026-08-02-preview'])
         async def begin_complete_upgrade(
                 self, 
                 resource_group_name: str, 
@@ -384,7 +462,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[AlertConfiguration]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name']}, api_versions_list=['2026-08-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -394,7 +472,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -404,7 +482,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AlertConfiguration: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -474,7 +552,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[IdentityBinding]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -484,7 +562,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -494,7 +572,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> IdentityBinding: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -548,7 +626,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[JWTAuthenticator]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name']}, api_versions_list=['2026-08-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -558,7 +636,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -568,7 +646,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> JWTAuthenticator: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -586,7 +664,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name']}, api_versions_list=['2026-08-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -632,7 +710,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> LoadBalancer: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -642,7 +720,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> LoadBalancer: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -837,7 +915,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[MaintenanceWindowResource]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name']}, api_versions_list=['2026-08-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -846,7 +924,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -855,7 +933,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> MaintenanceWindowResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -863,7 +941,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncItemPaged[MaintenanceWindowResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[MaintenanceWindowResource]: ...
 
         @overload
@@ -942,7 +1020,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> ManagedClusterSnapshot: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name']}, api_versions_list=['2026-08-02-preview'])
         async def delete(
                 self, 
                 resource_group_name: str, 
@@ -951,7 +1029,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -960,11 +1038,11 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> ManagedClusterSnapshot: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list(self, **kwargs: Any) -> AsyncItemPaged[ManagedClusterSnapshot]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -1061,7 +1139,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[ManagedCluster]: ...
 
         @distributed_trace_async
-        @api_version_validation(params_added_on={'2026-06-02-preview': ['ignore_pod_disruption_budget']}, api_versions_list=['2025-10-01', '2026-01-01', '2026-02-01', '2026-03-01', '2026-04-01', '2026-05-01', '2026-06-01', '2026-06-02-preview'])
+        @api_version_validation(params_added_on={'2026-08-02-preview': ['ignore_pod_disruption_budget']}, api_versions_list=['2025-10-01', '2026-01-01', '2026-02-01', '2026-03-01', '2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1590,7 +1668,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[MeshMembership]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name']}, api_versions_list=['2026-08-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1600,7 +1678,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1610,7 +1688,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> MeshMembership: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -1628,7 +1706,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'operation_id', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'operation_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1638,7 +1716,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'operation_id', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'operation_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
         async def get_by_agent_pool(
                 self, 
                 resource_group_name: str, 
@@ -1649,7 +1727,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -1658,7 +1736,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncItemPaged[OperationStatusResult]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'active_only', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'active_only', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list_by_agent_pool(
                 self, 
                 resource_group_name: str, 
@@ -2000,6 +2078,67 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncItemPaged[TrustedAccessRole]: ...
 
 
+    class azure.mgmt.containerservice.aio.operations.UpgradeInsightsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def generate(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                body: GenerateUpgradeInsightsContent, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> UpgradeInsight: ...
+
+        @overload
+        async def generate(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                body: GenerateUpgradeInsightsContent, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> UpgradeInsight: ...
+
+        @overload
+        async def generate(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> UpgradeInsight: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'upgrade_insight_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                upgrade_insight_name: str, 
+                **kwargs: Any
+            ) -> UpgradeInsight: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[UpgradeInsight]: ...
+
+
     class azure.mgmt.containerservice.aio.operations.VmSkusOperations:
 
         def __init__(
@@ -2152,6 +2291,55 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.containerservice.models.AgentFabricMembership(ProxyResource):
+        id: str
+        managed_by: str
+        name: str
+        properties: Optional[AgentFabricMembershipProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                managed_by: str, 
+                properties: Optional[AgentFabricMembershipProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.AgentFabricMembershipProperties(_Model):
+        provisioning_state: Optional[Union[str, AgentFabricMembershipProvisioningState]]
+        sku: Union[str, AgentFabricMembershipSkuName]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                sku: Union[str, AgentFabricMembershipSkuName]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.AgentFabricMembershipProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCELED = "Canceled"
+        CREATING = "Creating"
+        DELETING = "Deleting"
+        FAILED = "Failed"
+        SUCCEEDED = "Succeeded"
+        UPDATING = "Updating"
+
+
+    class azure.mgmt.containerservice.models.AgentFabricMembershipSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PREMIUM = "Premium"
+        STANDARD = "Standard"
+
+
     class azure.mgmt.containerservice.models.AgentPool(ProxyResource):
         id: str
         name: str
@@ -2291,6 +2479,23 @@ namespace azure.mgmt.containerservice.models
                 self, 
                 *, 
                 public_ip_prefix_size: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.AgentPoolGenerateUpgradeInsightsContent(GenerateUpgradeInsightsContent, discriminator='AgentPool'):
+        agent_pool_name: str
+        target_kubernetes_version: str
+        upgrade_type: Literal[UpgradeType.AGENT_POOL]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_pool_name: str, 
+                target_kubernetes_version: str
             ) -> None: ...
 
         @overload
@@ -2529,6 +2734,15 @@ namespace azure.mgmt.containerservice.models
         LOCAL_USER = "LocalUser"
 
 
+    class azure.mgmt.containerservice.models.AgentPoolScopeEvaluation(_Model):
+        agent_pool_name: Optional[str]
+        context: Optional[UpgradeContext]
+        current_kubernetes_version: Optional[str]
+        evaluation: Optional[UpgradeInsightEvaluation]
+        kubernetes_version_end_of_support_date: Optional[date]
+        kubernetes_version_support_status: Optional[Union[str, KubernetesVersionSupportStatus]]
+
+
     class azure.mgmt.containerservice.models.AgentPoolSecurityProfile(_Model):
         enable_secure_boot: Optional[bool]
         enable_vtpm: Optional[bool]
@@ -2632,6 +2846,26 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.containerservice.models.AgentPoolUpgradeInsightProperties(UpgradeInsightProperties, discriminator='AgentPool'):
+        agent_pool_name: Optional[str]
+        context: Optional[UpgradeContext]
+        current_kubernetes_version: Optional[str]
+        evaluation: Optional[UpgradeInsightEvaluation]
+        expires_at: datetime
+        kubernetes_version_end_of_support_date: Optional[date]
+        kubernetes_version_support_status: Optional[Union[str, KubernetesVersionSupportStatus]]
+        last_evaluated_at: datetime
+        provisioning_state: Union[str, ResourceProvisioningState]
+        target_kubernetes_version: Optional[str]
+        upgrade_type: Literal[UpgradeType.AGENT_POOL]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerservice.models.AgentPoolUpgradeProfile(ProxyResource):
         id: str
         name: str
@@ -2706,6 +2940,7 @@ namespace azure.mgmt.containerservice.models
         max_unavailable: Optional[str]
         node_soak_duration_in_minutes: Optional[int]
         undrainable_node_behavior: Optional[Union[str, UndrainableNodeBehavior]]
+        upgrade_gate_settings: Optional[UpgradeGateSettings]
 
         @overload
         def __init__(
@@ -2716,7 +2951,8 @@ namespace azure.mgmt.containerservice.models
                 max_surge: Optional[str] = ..., 
                 max_unavailable: Optional[str] = ..., 
                 node_soak_duration_in_minutes: Optional[int] = ..., 
-                undrainable_node_behavior: Optional[Union[str, UndrainableNodeBehavior]] = ...
+                undrainable_node_behavior: Optional[Union[str, UndrainableNodeBehavior]] = ..., 
+                upgrade_gate_settings: Optional[UpgradeGateSettings] = ...
             ) -> None: ...
 
         @overload
@@ -2811,6 +3047,18 @@ namespace azure.mgmt.containerservice.models
                 namespace_selector: LabelSelector, 
                 service_account_selector: Optional[LabelSelector] = ...
             ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.ArmImpactedResource(UpgradeInsightImpactedResource, discriminator='Arm'):
+        kind: Literal[ImpactedResourceKind.ARM]
+        resource_id: Optional[str]
+        resource_type: str
+
+        @overload
+        def __init__(self) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
@@ -2957,6 +3205,86 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.containerservice.models.CloudShellNetworkProfile(_Model):
+        relay_namespace_id: Optional[str]
+        subnet_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                relay_namespace_id: Optional[str] = ..., 
+                subnet_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.CloudShellProfile(_Model):
+        mode: Optional[Union[str, CloudShellProfileMode]]
+        network: Optional[CloudShellNetworkProfile]
+        storage: Optional[CloudShellStorageProfile]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                mode: Optional[Union[str, CloudShellProfileMode]] = ..., 
+                network: Optional[CloudShellNetworkProfile] = ..., 
+                storage: Optional[CloudShellStorageProfile] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.CloudShellProfileMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CUSTOM = "Custom"
+        DISABLED = "Disabled"
+        MANAGED = "Managed"
+
+
+    class azure.mgmt.containerservice.models.CloudShellStorageProfile(_Model):
+        file_share_name: Optional[str]
+        mode: Optional[Union[str, CloudShellStorageProfileMode]]
+        storage_account_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                file_share_name: Optional[str] = ..., 
+                mode: Optional[Union[str, CloudShellStorageProfileMode]] = ..., 
+                storage_account_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.CloudShellStorageProfileMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CUSTOM = "Custom"
+        DISABLED = "Disabled"
+        MANAGED = "Managed"
+
+
+    class azure.mgmt.containerservice.models.ClusterAPIConnectivityProfile(_Model):
+        bastion: Optional[BastionProfile]
+        cloud_shell: Optional[CloudShellProfile]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                bastion: Optional[BastionProfile] = ..., 
+                cloud_shell: Optional[CloudShellProfile] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerservice.models.ClusterServiceLoadBalancerHealthProbeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         SERVICE_NODE_PORT = "ServiceNodePort"
         SHARED = "Shared"
@@ -2964,12 +3292,14 @@ namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.ClusterUpgradeSettings(_Model):
         override_settings: Optional[UpgradeOverrideSettings]
+        upgrade_gate_settings: Optional[UpgradeGateSettings]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                override_settings: Optional[UpgradeOverrideSettings] = ...
+                override_settings: Optional[UpgradeOverrideSettings] = ..., 
+                upgrade_gate_settings: Optional[UpgradeGateSettings] = ...
             ) -> None: ...
 
         @overload
@@ -3070,7 +3400,7 @@ namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.ContainerServiceNetworkProfile(_Model):
         advanced_networking: Optional[AdvancedNetworking]
-        bastion_profile: Optional[BastionProfile]
+        cluster_api_connectivity_profile: Optional[ClusterAPIConnectivityProfile]
         dns_service_ip: Optional[str]
         ip_families: Optional[list[Union[str, IPFamily]]]
         kube_proxy_config: Optional[ContainerServiceNetworkProfileKubeProxyConfig]
@@ -3096,7 +3426,7 @@ namespace azure.mgmt.containerservice.models
                 self, 
                 *, 
                 advanced_networking: Optional[AdvancedNetworking] = ..., 
-                bastion_profile: Optional[BastionProfile] = ..., 
+                cluster_api_connectivity_profile: Optional[ClusterAPIConnectivityProfile] = ..., 
                 dns_service_ip: Optional[str] = ..., 
                 ip_families: Optional[list[Union[str, IPFamily]]] = ..., 
                 kube_proxy_config: Optional[ContainerServiceNetworkProfileKubeProxyConfig] = ..., 
@@ -3188,10 +3518,75 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.containerservice.models.ControlPlaneAndAgentPoolsGenerateUpgradeInsightsContent(GenerateUpgradeInsightsContent, discriminator='ControlPlaneAndAgentPools'):
+        target_kubernetes_version: str
+        upgrade_type: Literal[UpgradeType.CONTROL_PLANE_AND_AGENT_POOLS]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                target_kubernetes_version: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.ControlPlaneAndAgentPoolsUpgradeInsightProperties(UpgradeInsightProperties, discriminator='ControlPlaneAndAgentPools'):
+        agent_pools: Optional[list[AgentPoolScopeEvaluation]]
+        control_plane: Optional[ScopeEvaluationResult]
+        expires_at: datetime
+        last_evaluated_at: datetime
+        provisioning_state: Union[str, ResourceProvisioningState]
+        target_kubernetes_version: Optional[str]
+        upgrade_type: Literal[UpgradeType.CONTROL_PLANE_AND_AGENT_POOLS]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.ControlPlaneGenerateUpgradeInsightsContent(GenerateUpgradeInsightsContent, discriminator='ControlPlane'):
+        target_kubernetes_version: str
+        upgrade_type: Literal[UpgradeType.CONTROL_PLANE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                target_kubernetes_version: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerservice.models.ControlPlaneScalingSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         H2 = "H2"
         H4 = "H4"
         H8 = "H8"
+
+
+    class azure.mgmt.containerservice.models.ControlPlaneUpgradeInsightProperties(UpgradeInsightProperties, discriminator='ControlPlane'):
+        context: Optional[UpgradeContext]
+        current_kubernetes_version: Optional[str]
+        evaluation: Optional[UpgradeInsightEvaluation]
+        expires_at: datetime
+        kubernetes_version_end_of_support_date: Optional[date]
+        kubernetes_version_support_status: Optional[Union[str, KubernetesVersionSupportStatus]]
+        last_evaluated_at: datetime
+        provisioning_state: Union[str, ResourceProvisioningState]
+        target_kubernetes_version: Optional[str]
+        upgrade_type: Literal[UpgradeType.CONTROL_PLANE]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.containerservice.models.CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3296,6 +3691,14 @@ namespace azure.mgmt.containerservice.models
     class azure.mgmt.containerservice.models.DeletePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DELETE = "Delete"
         KEEP = "Keep"
+
+
+    class azure.mgmt.containerservice.models.DetectedUpgradeIssue(_Model):
+        impacted_resources: Optional[list[UpgradeInsightImpactedResource]]
+        issue_type: Optional[Union[str, UpgradeIssueType]]
+        message: Optional[str]
+        recommended_actions: Optional[list[UpgradeInsightRecommendedAction]]
+        severity: Optional[Union[str, UpgradeIssueSeverity]]
 
 
     class azure.mgmt.containerservice.models.DriftAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3439,6 +3842,20 @@ namespace azure.mgmt.containerservice.models
         ENABLED = "Enabled"
 
 
+    class azure.mgmt.containerservice.models.GenerateUpgradeInsightsContent(_Model):
+        upgrade_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                upgrade_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerservice.models.GuardrailsAvailableVersion(ProxyResource):
         id: str
         name: str
@@ -3509,6 +3926,7 @@ namespace azure.mgmt.containerservice.models
     class azure.mgmt.containerservice.models.IdentityBinding(ProxyResource):
         e_tag: Optional[str]
         id: str
+        managed_by: Optional[str]
         name: str
         properties: Optional[IdentityBindingProperties]
         system_data: SystemData
@@ -3518,6 +3936,7 @@ namespace azure.mgmt.containerservice.models
         def __init__(
                 self, 
                 *, 
+                managed_by: Optional[str] = ..., 
                 properties: Optional[IdentityBindingProperties] = ...
             ) -> None: ...
 
@@ -3573,8 +3992,12 @@ namespace azure.mgmt.containerservice.models
         UPDATING = "Updating"
 
 
+    class azure.mgmt.containerservice.models.ImpactedResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ARM = "Arm"
+        KUBERNETES = "Kubernetes"
+
+
     class azure.mgmt.containerservice.models.InfrastructureEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DISABLED = "Disabled"
         ENABLED = "Enabled"
 
 
@@ -3900,6 +4323,19 @@ namespace azure.mgmt.containerservice.models
         TEMPORARY = "Temporary"
 
 
+    class azure.mgmt.containerservice.models.KubernetesImpactedResource(UpgradeInsightImpactedResource, discriminator='Kubernetes'):
+        kind: Literal[ImpactedResourceKind.KUBERNETES]
+        name: Optional[str]
+        namespace: Optional[str]
+        resource_type: str
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerservice.models.KubernetesPatchVersion(_Model):
         upgrades: Optional[list[str]]
 
@@ -3981,6 +4417,11 @@ namespace azure.mgmt.containerservice.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.KubernetesVersionSupportStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        IN_SUPPORT = "InSupport"
+        OUT_OF_SUPPORT = "OutOfSupport"
 
 
     class azure.mgmt.containerservice.models.LabelSelector(_Model):
@@ -4281,6 +4722,7 @@ namespace azure.mgmt.containerservice.models
         ip_addresses: Optional[list[MachineIpAddress]]
         node_public_ip_prefix_id: Optional[str]
         node_public_ip_tags: Optional[list[IPTag]]
+        pod_ip_allocation_mode: Optional[Union[str, PodIPAllocationMode]]
         pod_subnet_id: Optional[str]
         vnet_subnet_id: Optional[str]
 
@@ -4291,6 +4733,7 @@ namespace azure.mgmt.containerservice.models
                 enable_node_public_ip: Optional[bool] = ..., 
                 node_public_ip_prefix_id: Optional[str] = ..., 
                 node_public_ip_tags: Optional[list[IPTag]] = ..., 
+                pod_ip_allocation_mode: Optional[Union[str, PodIPAllocationMode]] = ..., 
                 pod_subnet_id: Optional[str] = ..., 
                 vnet_subnet_id: Optional[str] = ...
             ) -> None: ...
@@ -4525,6 +4968,11 @@ namespace azure.mgmt.containerservice.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.MaintenanceWindowSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CLUSTER_AUTO_UPGRADE_SCHEDULE = "ClusterAutoUpgradeSchedule"
+        NODE_OS_UPGRADE_SCHEDULE = "NodeOSUpgradeSchedule"
 
 
     class azure.mgmt.containerservice.models.ManagedCluster(TrackedResource):
@@ -4951,6 +5399,20 @@ namespace azure.mgmt.containerservice.models
                 vnet_subnet_id: Optional[str] = ..., 
                 windows_profile: Optional[AgentPoolWindowsProfile] = ..., 
                 workload_runtime: Optional[Union[str, WorkloadRuntime]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.ManagedClusterAgentSandboxProfile(_Model):
+        enabled: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                enabled: Optional[bool] = ...
             ) -> None: ...
 
         @overload
@@ -5684,6 +6146,20 @@ namespace azure.mgmt.containerservice.models
         UPDATING = "Updating"
 
 
+    class azure.mgmt.containerservice.models.ManagedClusterPodSnapshotProfile(_Model):
+        enabled: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                enabled: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerservice.models.ManagedClusterPoolUpgradeProfile(_Model):
         components_by_releases: Optional[list[ComponentsByRelease]]
         kubernetes_version: str
@@ -5728,6 +6204,7 @@ namespace azure.mgmt.containerservice.models
         aad_profile: Optional[ManagedClusterAADProfile]
         addon_profiles: Optional[dict[str, ManagedClusterAddonProfile]]
         agent_pool_profiles: Optional[list[ManagedClusterAgentPoolProfile]]
+        agent_sandbox_profile: Optional[ManagedClusterAgentSandboxProfile]
         ai_toolchain_operator_profile: Optional[ManagedClusterAIToolchainOperatorProfile]
         api_server_access_profile: Optional[ManagedClusterAPIServerAccessProfile]
         auto_scaler_profile: Optional[ManagedClusterPropertiesAutoScalerProfile]
@@ -5763,6 +6240,7 @@ namespace azure.mgmt.containerservice.models
         node_resource_group_profile: Optional[ManagedClusterNodeResourceGroupProfile]
         oidc_issuer_profile: Optional[ManagedClusterOIDCIssuerProfile]
         pod_identity_profile: Optional[ManagedClusterPodIdentityProfile]
+        pod_snapshot_profile: Optional[ManagedClusterPodSnapshotProfile]
         power_state: Optional[PowerState]
         private_fqdn: Optional[str]
         private_link_resources: Optional[list[PrivateLinkResource]]
@@ -5787,6 +6265,7 @@ namespace azure.mgmt.containerservice.models
                 aad_profile: Optional[ManagedClusterAADProfile] = ..., 
                 addon_profiles: Optional[dict[str, ManagedClusterAddonProfile]] = ..., 
                 agent_pool_profiles: Optional[list[ManagedClusterAgentPoolProfile]] = ..., 
+                agent_sandbox_profile: Optional[ManagedClusterAgentSandboxProfile] = ..., 
                 ai_toolchain_operator_profile: Optional[ManagedClusterAIToolchainOperatorProfile] = ..., 
                 api_server_access_profile: Optional[ManagedClusterAPIServerAccessProfile] = ..., 
                 auto_scaler_profile: Optional[ManagedClusterPropertiesAutoScalerProfile] = ..., 
@@ -5818,6 +6297,7 @@ namespace azure.mgmt.containerservice.models
                 node_resource_group_profile: Optional[ManagedClusterNodeResourceGroupProfile] = ..., 
                 oidc_issuer_profile: Optional[ManagedClusterOIDCIssuerProfile] = ..., 
                 pod_identity_profile: Optional[ManagedClusterPodIdentityProfile] = ..., 
+                pod_snapshot_profile: Optional[ManagedClusterPodSnapshotProfile] = ..., 
                 private_link_resources: Optional[list[PrivateLinkResource]] = ..., 
                 public_network_access: Optional[Union[str, PublicNetworkAccess]] = ..., 
                 scheduler_profile: Optional[SchedulerProfile] = ..., 
@@ -6193,6 +6673,23 @@ namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.ManagedClusterStorageProfileDiskCSIDriver(_Model):
         enabled: Optional[bool]
+        quick_attach_detach: Optional[ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                enabled: Optional[bool] = ..., 
+                quick_attach_detach: Optional[ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach(_Model):
+        enabled: Optional[bool]
+        identity: Optional[UserAssignedIdentity]
 
         @overload
         def __init__(
@@ -6698,6 +7195,41 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.containerservice.models.NodeImageGenerateUpgradeInsightsContent(GenerateUpgradeInsightsContent, discriminator='NodeImage'):
+        agent_pool_name: str
+        target_node_image_version: Optional[str]
+        upgrade_type: Literal[UpgradeType.NODE_IMAGE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_pool_name: str, 
+                target_node_image_version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.NodeImageUpgradeInsightProperties(UpgradeInsightProperties, discriminator='NodeImage'):
+        agent_pool_name: Optional[str]
+        context: Optional[UpgradeContext]
+        current_node_image_version: Optional[str]
+        evaluation: Optional[UpgradeInsightEvaluation]
+        expires_at: datetime
+        last_evaluated_at: datetime
+        provisioning_state: Union[str, ResourceProvisioningState]
+        target_node_image_version: Optional[str]
+        upgrade_type: Literal[UpgradeType.NODE_IMAGE]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerservice.models.NodeImageVersion(_Model):
         full_name: Optional[str]
         os: Optional[str]
@@ -6743,6 +7275,7 @@ namespace azure.mgmt.containerservice.models
     class azure.mgmt.containerservice.models.NvidiaGPUProfile(_Model):
         driver_mode: Optional[Union[str, NvidiaDriverMode]]
         management_mode: Optional[Union[str, ManagementMode]]
+        mig_profiles: Optional[list[Union[str, GPUInstanceProfile]]]
         mig_strategy: Optional[Union[str, MigStrategy]]
 
         @overload
@@ -6751,6 +7284,7 @@ namespace azure.mgmt.containerservice.models
                 *, 
                 driver_mode: Optional[Union[str, NvidiaDriverMode]] = ..., 
                 management_mode: Optional[Union[str, ManagementMode]] = ..., 
+                mig_profiles: Optional[list[Union[str, GPUInstanceProfile]]] = ..., 
                 mig_strategy: Optional[Union[str, MigStrategy]] = ...
             ) -> None: ...
 
@@ -7420,6 +7954,14 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.containerservice.models.ScopeEvaluationResult(_Model):
+        context: Optional[UpgradeContext]
+        current_kubernetes_version: Optional[str]
+        evaluation: Optional[UpgradeInsightEvaluation]
+        kubernetes_version_end_of_support_date: Optional[date]
+        kubernetes_version_support_status: Optional[Union[str, KubernetesVersionSupportStatus]]
+
+
     class azure.mgmt.containerservice.models.SeccompDefault(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         RUNTIME_DEFAULT = "RuntimeDefault"
         UNCONFINED = "Unconfined"
@@ -7805,6 +8347,121 @@ namespace azure.mgmt.containerservice.models
         STABLE = "stable"
 
 
+    class azure.mgmt.containerservice.models.UpgradeContext(_Model):
+        current_upgrade_strategy: Optional[Union[str, UpgradeInsightStrategy]]
+        last_successful_upgrade_time: Optional[datetime]
+        next_maintenance_window: Optional[UpgradeInsightMaintenanceWindow]
+
+
+    class azure.mgmt.containerservice.models.UpgradeGateSettings(_Model):
+        enabled: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                enabled: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.UpgradeInsight(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[UpgradeInsightProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[UpgradeInsightProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.UpgradeInsightEvaluation(_Model):
+        detected_issues: Optional[list[DetectedUpgradeIssue]]
+        evaluated_at: datetime
+        status: Union[str, UpgradeInsightStatus]
+
+
+    class azure.mgmt.containerservice.models.UpgradeInsightImpactedResource(_Model):
+        kind: str
+        resource_type: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                kind: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.UpgradeInsightMaintenanceWindow(_Model):
+        end_time: Optional[datetime]
+        maintenance_configuration_name: Optional[str]
+        source: Optional[Union[str, MaintenanceWindowSource]]
+        start_time: Optional[datetime]
+
+
+    class azure.mgmt.containerservice.models.UpgradeInsightProperties(_Model):
+        expires_at: Optional[datetime]
+        last_evaluated_at: Optional[datetime]
+        provisioning_state: Optional[Union[str, ResourceProvisioningState]]
+        upgrade_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                upgrade_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservice.models.UpgradeInsightRecommendedAction(_Model):
+        details: Optional[str]
+        documentation_link: Optional[str]
+        title: Optional[str]
+
+
+    class azure.mgmt.containerservice.models.UpgradeInsightStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FAILED = "Failed"
+        PASSED = "Passed"
+        WARNING = "Warning"
+
+
+    class azure.mgmt.containerservice.models.UpgradeInsightStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUTO = "Auto"
+        MANUAL = "Manual"
+
+
+    class azure.mgmt.containerservice.models.UpgradeIssueSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BLOCKING = "Blocking"
+        WARNING = "Warning"
+
+
+    class azure.mgmt.containerservice.models.UpgradeIssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        API_BREAKING_CHANGE = "APIBreakingChange"
+        COMPONENT_VERSION_MISMATCH = "ComponentVersionMismatch"
+        NODE_IMAGE_OUT_OF_SLA = "NodeImageOutOfSLA"
+        PDB_CONSTRAINT = "PDBConstraint"
+        QUOTA_EXCEEDED = "QuotaExceeded"
+        SUBNET_IP_EXHAUSTED = "SubnetIPExhausted"
+        UNSUPPORTED_KUBERNETES_VERSION = "UnsupportedKubernetesVersion"
+
+
     class azure.mgmt.containerservice.models.UpgradeOverrideSettings(_Model):
         force_upgrade: Optional[bool]
         until: Optional[datetime]
@@ -7824,6 +8481,13 @@ namespace azure.mgmt.containerservice.models
     class azure.mgmt.containerservice.models.UpgradeStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         BLUE_GREEN = "BlueGreen"
         ROLLING = "Rolling"
+
+
+    class azure.mgmt.containerservice.models.UpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AGENT_POOL = "AgentPool"
+        CONTROL_PLANE = "ControlPlane"
+        CONTROL_PLANE_AND_AGENT_POOLS = "ControlPlaneAndAgentPools"
+        NODE_IMAGE = "NodeImage"
 
 
     class azure.mgmt.containerservice.models.UserAssignedIdentity(_Model):
@@ -7932,6 +8596,80 @@ namespace azure.mgmt.containerservice.models
 
 namespace azure.mgmt.containerservice.operations
 
+    class azure.mgmt.containerservice.operations.AgentFabricMembershipsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                agent_fabric_membership_name: str, 
+                resource: AgentFabricMembership, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AgentFabricMembership]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                agent_fabric_membership_name: str, 
+                resource: AgentFabricMembership, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AgentFabricMembership]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                agent_fabric_membership_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AgentFabricMembership]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_fabric_membership_name']}, api_versions_list=['2026-08-02-preview'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                agent_fabric_membership_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_fabric_membership_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                agent_fabric_membership_name: str, 
+                **kwargs: Any
+            ) -> AgentFabricMembership: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        def list_by_managed_cluster(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[AgentFabricMembership]: ...
+
+
     class azure.mgmt.containerservice.operations.AgentPoolsOperations:
 
         def __init__(
@@ -7950,7 +8688,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name']}, api_versions_list=['2026-08-02-preview'])
         def begin_complete_upgrade(
                 self, 
                 resource_group_name: str, 
@@ -8217,7 +8955,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[AlertConfiguration]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name']}, api_versions_list=['2026-08-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -8227,7 +8965,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -8237,7 +8975,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> AlertConfiguration: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -8307,7 +9045,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[IdentityBinding]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -8317,7 +9055,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -8327,7 +9065,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> IdentityBinding: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -8381,7 +9119,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[JWTAuthenticator]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name']}, api_versions_list=['2026-08-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -8391,7 +9129,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -8401,7 +9139,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> JWTAuthenticator: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -8419,7 +9157,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name']}, api_versions_list=['2026-08-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -8465,7 +9203,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LoadBalancer: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -8475,7 +9213,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LoadBalancer: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -8670,7 +9408,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[MaintenanceWindowResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name']}, api_versions_list=['2026-08-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -8679,7 +9417,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -8688,7 +9426,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> MaintenanceWindowResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -8696,7 +9434,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> ItemPaged[MaintenanceWindowResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[MaintenanceWindowResource]: ...
 
         @overload
@@ -8775,7 +9513,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> ManagedClusterSnapshot: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name']}, api_versions_list=['2026-08-02-preview'])
         def delete(
                 self, 
                 resource_group_name: str, 
@@ -8784,7 +9522,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -8793,11 +9531,11 @@ namespace azure.mgmt.containerservice.operations
             ) -> ManagedClusterSnapshot: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list(self, **kwargs: Any) -> ItemPaged[ManagedClusterSnapshot]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -8894,7 +9632,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[ManagedCluster]: ...
 
         @distributed_trace
-        @api_version_validation(params_added_on={'2026-06-02-preview': ['ignore_pod_disruption_budget']}, api_versions_list=['2025-10-01', '2026-01-01', '2026-02-01', '2026-03-01', '2026-04-01', '2026-05-01', '2026-06-01', '2026-06-02-preview'])
+        @api_version_validation(params_added_on={'2026-08-02-preview': ['ignore_pod_disruption_budget']}, api_versions_list=['2025-10-01', '2026-01-01', '2026-02-01', '2026-03-01', '2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01', '2026-08-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -9423,7 +10161,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[MeshMembership]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name']}, api_versions_list=['2026-08-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -9433,7 +10171,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -9443,7 +10181,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> MeshMembership: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
@@ -9461,7 +10199,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'operation_id', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'operation_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -9471,7 +10209,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'operation_id', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'operation_id', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def get_by_agent_pool(
                 self, 
                 resource_group_name: str, 
@@ -9482,7 +10220,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -9491,7 +10229,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> ItemPaged[OperationStatusResult]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'active_only', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'active_only', 'accept']}, api_versions_list=['2026-08-02-preview'])
         def list_by_agent_pool(
                 self, 
                 resource_group_name: str, 
@@ -9833,6 +10571,67 @@ namespace azure.mgmt.containerservice.operations
             ) -> ItemPaged[TrustedAccessRole]: ...
 
 
+    class azure.mgmt.containerservice.operations.UpgradeInsightsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def generate(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                body: GenerateUpgradeInsightsContent, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> UpgradeInsight: ...
+
+        @overload
+        def generate(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                body: GenerateUpgradeInsightsContent, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> UpgradeInsight: ...
+
+        @overload
+        def generate(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> UpgradeInsight: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'upgrade_insight_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                upgrade_insight_name: str, 
+                **kwargs: Any
+            ) -> UpgradeInsight: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-08-02-preview', params_added_on={'2026-08-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-08-02-preview'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                resource_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[UpgradeInsight]: ...
+
+
     class azure.mgmt.containerservice.operations.VmSkusOperations:
 
         def __init__(
@@ -9895,6 +10694,28 @@ namespace azure.mgmt.containerservice.types
         type: Union[str, TransitEncryptionType]
 
 
+    class azure.mgmt.containerservice.types.AgentFabricMembership(ProxyResource):
+        key "id": str
+        key "managedBy": Required[str]
+        key "name": str
+        key "properties": ForwardRef('AgentFabricMembershipProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        managedBy: str
+        name: str
+        properties: AgentFabricMembershipProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.containerservice.types.AgentFabricMembershipProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, AgentFabricMembershipProvisioningState]
+        key "sku": Required[Union[str, AgentFabricMembershipSkuName]]
+        provisioningState: Union[str, AgentFabricMembershipProvisioningState]
+        sku: Union[str, AgentFabricMembershipSkuName]
+
+
     class azure.mgmt.containerservice.types.AgentPool(ProxyResource):
         key "id": str
         key "name": str
@@ -9932,6 +10753,15 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.AgentPoolGatewayProfile(TypedDict, total=False):
         key "publicIPPrefixSize": int
         publicIPPrefixSize: int
+
+
+    class azure.mgmt.containerservice.types.AgentPoolGenerateUpgradeInsightsContent(TypedDict, total=False):
+        key "agentPoolName": Required[str]
+        key "targetKubernetesVersion": Required[str]
+        key "upgradeType": Required[Literal[UpgradeType.AGENT_POOL]]
+        agentPoolName: str
+        targetKubernetesVersion: str
+        upgradeType: Literal[UpgradeType.AGENT_POOL]
 
 
     class azure.mgmt.containerservice.types.AgentPoolManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
@@ -10129,12 +10959,14 @@ namespace azure.mgmt.containerservice.types
         key "maxUnavailable": str
         key "nodeSoakDurationInMinutes": int
         key "undrainableNodeBehavior": Union[str, UndrainableNodeBehavior]
+        key "upgradeGateSettings": ForwardRef('UpgradeGateSettings', module='types')
         drainTimeoutInMinutes: int
         maxBlockedNodes: str
         maxSurge: str
         maxUnavailable: str
         nodeSoakDurationInMinutes: int
         undrainableNodeBehavior: Union[str, UndrainableNodeBehavior]
+        upgradeGateSettings: UpgradeGateSettings
 
 
     class azure.mgmt.containerservice.types.AgentPoolWindowsProfile(TypedDict, total=False):
@@ -10219,9 +11051,43 @@ namespace azure.mgmt.containerservice.types
         id: str
 
 
+    class azure.mgmt.containerservice.types.CloudShellNetworkProfile(TypedDict, total=False):
+        key "relayNamespaceId": str
+        key "subnetId": str
+        relayNamespaceId: str
+        subnetId: str
+
+
+    class azure.mgmt.containerservice.types.CloudShellProfile(TypedDict, total=False):
+        key "mode": Union[str, CloudShellProfileMode]
+        key "network": ForwardRef('CloudShellNetworkProfile', module='types')
+        key "storage": ForwardRef('CloudShellStorageProfile', module='types')
+        mode: Union[str, CloudShellProfileMode]
+        network: CloudShellNetworkProfile
+        storage: CloudShellStorageProfile
+
+
+    class azure.mgmt.containerservice.types.CloudShellStorageProfile(TypedDict, total=False):
+        key "fileShareName": str
+        key "mode": Union[str, CloudShellStorageProfileMode]
+        key "storageAccountId": str
+        fileShareName: str
+        mode: Union[str, CloudShellStorageProfileMode]
+        storageAccountId: str
+
+
+    class azure.mgmt.containerservice.types.ClusterAPIConnectivityProfile(TypedDict, total=False):
+        key "bastion": ForwardRef('BastionProfile', module='types')
+        key "cloudShell": ForwardRef('CloudShellProfile', module='types')
+        bastion: BastionProfile
+        cloudShell: CloudShellProfile
+
+
     class azure.mgmt.containerservice.types.ClusterUpgradeSettings(TypedDict, total=False):
         key "overrideSettings": ForwardRef('UpgradeOverrideSettings', module='types')
+        key "upgradeGateSettings": ForwardRef('UpgradeGateSettings', module='types')
         overrideSettings: UpgradeOverrideSettings
+        upgradeGateSettings: UpgradeGateSettings
 
 
     class azure.mgmt.containerservice.types.ContainerServiceLinuxProfile(TypedDict, total=False):
@@ -10233,7 +11099,7 @@ namespace azure.mgmt.containerservice.types
 
     class azure.mgmt.containerservice.types.ContainerServiceNetworkProfile(TypedDict, total=False):
         key "advancedNetworking": ForwardRef('AdvancedNetworking', module='types')
-        key "bastionProfile": ForwardRef('BastionProfile', module='types')
+        key "clusterAPIConnectivityProfile": ForwardRef('ClusterAPIConnectivityProfile', module='types')
         key "dnsServiceIP": str
         key "kubeProxyConfig": ForwardRef('ContainerServiceNetworkProfileKubeProxyConfig', module='types')
         key "loadBalancerProfile": ForwardRef('ManagedClusterLoadBalancerProfile', module='types')
@@ -10251,7 +11117,7 @@ namespace azure.mgmt.containerservice.types
         key "serviceCidr": str
         key "staticEgressGatewayProfile": ForwardRef('ManagedClusterStaticEgressGatewayProfile', module='types')
         advancedNetworking: AdvancedNetworking
-        bastionProfile: BastionProfile
+        clusterAPIConnectivityProfile: ClusterAPIConnectivityProfile
         dnsServiceIP: str
         ipFamilies: list[Union[str, IPFamily]]
         kubeProxyConfig: ContainerServiceNetworkProfileKubeProxyConfig
@@ -10301,6 +11167,20 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.ContainerServiceSshPublicKey(TypedDict, total=False):
         key "keyData": Required[str]
         keyData: str
+
+
+    class azure.mgmt.containerservice.types.ControlPlaneAndAgentPoolsGenerateUpgradeInsightsContent(TypedDict, total=False):
+        key "targetKubernetesVersion": Required[str]
+        key "upgradeType": Required[Literal[UpgradeType.CONTROL_PLANE_AND_AGENT_POOLS]]
+        targetKubernetesVersion: str
+        upgradeType: Literal[UpgradeType.CONTROL_PLANE_AND_AGENT_POOLS]
+
+
+    class azure.mgmt.containerservice.types.ControlPlaneGenerateUpgradeInsightsContent(TypedDict, total=False):
+        key "targetKubernetesVersion": Required[str]
+        key "upgradeType": Required[Literal[UpgradeType.CONTROL_PLANE]]
+        targetKubernetesVersion: str
+        upgradeType: Literal[UpgradeType.CONTROL_PLANE]
 
 
     class azure.mgmt.containerservice.types.CreationData(TypedDict, total=False):
@@ -10389,12 +11269,14 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.IdentityBinding(ProxyResource):
         key "eTag": str
         key "id": str
+        key "managedBy": str
         key "name": str
         key "properties": ForwardRef('IdentityBindingProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         eTag: str
         id: str
+        managedBy: str
         name: str
         properties: IdentityBindingProperties
         systemData: SystemData
@@ -10733,12 +11615,14 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.MachineNetworkProperties(TypedDict, total=False):
         key "enableNodePublicIP": bool
         key "nodePublicIPPrefixID": str
+        key "podIPAllocationMode": Union[str, PodIPAllocationMode]
         key "podSubnetID": str
         key "vnetSubnetID": str
         enableNodePublicIP: bool
         ipAddresses: list[MachineIpAddress]
         nodePublicIPPrefixID: str
         nodePublicIPTags: list[IPTag]
+        podIPAllocationMode: Union[str, PodIPAllocationMode]
         podSubnetID: str
         vnetSubnetID: str
 
@@ -11211,6 +12095,11 @@ namespace azure.mgmt.containerservice.types
         workloadRuntime: Union[str, WorkloadRuntime]
 
 
+    class azure.mgmt.containerservice.types.ManagedClusterAgentSandboxProfile(TypedDict, total=False):
+        key "enabled": bool
+        enabled: bool
+
+
     class azure.mgmt.containerservice.types.ManagedClusterAppRoutingIstio(TypedDict, total=False):
         key "mode": Union[str, GatewayAPIIstioEnabled]
         mode: Union[str, GatewayAPIIstioEnabled]
@@ -11543,8 +12432,14 @@ namespace azure.mgmt.containerservice.types
         error: ManagedClusterPodIdentityProvisioningError
 
 
+    class azure.mgmt.containerservice.types.ManagedClusterPodSnapshotProfile(TypedDict, total=False):
+        key "enabled": bool
+        enabled: bool
+
+
     class azure.mgmt.containerservice.types.ManagedClusterProperties(TypedDict, total=False):
         key "aadProfile": ForwardRef('ManagedClusterAADProfile', module='types')
+        key "agentSandboxProfile": ForwardRef('ManagedClusterAgentSandboxProfile', module='types')
         key "aiToolchainOperatorProfile": ForwardRef('ManagedClusterAIToolchainOperatorProfile', module='types')
         key "apiServerAccessProfile": ForwardRef('ManagedClusterAPIServerAccessProfile', module='types')
         key "autoScalerProfile": ForwardRef('ManagedClusterPropertiesAutoScalerProfile', module='types')
@@ -11579,6 +12474,7 @@ namespace azure.mgmt.containerservice.types
         key "nodeResourceGroupProfile": ForwardRef('ManagedClusterNodeResourceGroupProfile', module='types')
         key "oidcIssuerProfile": ForwardRef('ManagedClusterOIDCIssuerProfile', module='types')
         key "podIdentityProfile": ForwardRef('ManagedClusterPodIdentityProfile', module='types')
+        key "podSnapshotProfile": ForwardRef('ManagedClusterPodSnapshotProfile', module='types')
         key "powerState": ForwardRef('PowerState', module='types')
         key "privateFQDN": str
         key "provisioningState": str
@@ -11597,6 +12493,7 @@ namespace azure.mgmt.containerservice.types
         aadProfile: ManagedClusterAADProfile
         addonProfiles: dict[str, ManagedClusterAddonProfile]
         agentPoolProfiles: list[ManagedClusterAgentPoolProfile]
+        agentSandboxProfile: ManagedClusterAgentSandboxProfile
         aiToolchainOperatorProfile: ManagedClusterAIToolchainOperatorProfile
         apiServerAccessProfile: ManagedClusterAPIServerAccessProfile
         autoScalerProfile: ManagedClusterPropertiesAutoScalerProfile
@@ -11632,6 +12529,7 @@ namespace azure.mgmt.containerservice.types
         nodeResourceGroupProfile: ManagedClusterNodeResourceGroupProfile
         oidcIssuerProfile: ManagedClusterOIDCIssuerProfile
         podIdentityProfile: ManagedClusterPodIdentityProfile
+        podSnapshotProfile: ManagedClusterPodSnapshotProfile
         powerState: PowerState
         privateFQDN: str
         privateLinkResources: list[PrivateLinkResource]
@@ -11842,7 +12740,16 @@ namespace azure.mgmt.containerservice.types
 
     class azure.mgmt.containerservice.types.ManagedClusterStorageProfileDiskCSIDriver(TypedDict, total=False):
         key "enabled": bool
+        key "quickAttachDetach": ForwardRef('ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach', module='types')
         enabled: bool
+        quickAttachDetach: ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach
+
+
+    class azure.mgmt.containerservice.types.ManagedClusterStorageProfileDiskCSIDriverQuickAttachDetach(TypedDict, total=False):
+        key "enabled": bool
+        key "identity": ForwardRef('UserAssignedIdentity', module='types')
+        enabled: bool
+        identity: UserAssignedIdentity
 
 
     class azure.mgmt.containerservice.types.ManagedClusterStorageProfileFileCSIDriver(TypedDict, total=False):
@@ -11999,12 +12906,22 @@ namespace azure.mgmt.containerservice.types
         nodeDisruptionPolicy: Union[str, NodeDisruptionPolicy]
 
 
+    class azure.mgmt.containerservice.types.NodeImageGenerateUpgradeInsightsContent(TypedDict, total=False):
+        key "agentPoolName": Required[str]
+        key "targetNodeImageVersion": str
+        key "upgradeType": Required[Literal[UpgradeType.NODE_IMAGE]]
+        agentPoolName: str
+        targetNodeImageVersion: str
+        upgradeType: Literal[UpgradeType.NODE_IMAGE]
+
+
     class azure.mgmt.containerservice.types.NvidiaGPUProfile(TypedDict, total=False):
         key "driverMode": Union[str, NvidiaDriverMode]
         key "managementMode": Union[str, ManagementMode]
         key "migStrategy": Union[str, MigStrategy]
         driverMode: Union[str, NvidiaDriverMode]
         managementMode: Union[str, ManagementMode]
+        migProfiles: list[Union[str, GPUInstanceProfile]]
         migStrategy: Union[str, MigStrategy]
 
 
@@ -12355,11 +13272,23 @@ namespace azure.mgmt.containerservice.types
         sourceResourceId: str
 
 
+    class azure.mgmt.containerservice.types.UpgradeGateSettings(TypedDict, total=False):
+        key "enabled": bool
+        enabled: bool
+
+
     class azure.mgmt.containerservice.types.UpgradeOverrideSettings(TypedDict, total=False):
         key "forceUpgrade": bool
         key "until": str
         forceUpgrade: bool
         until: str
+
+
+    class azure.mgmt.containerservice.types.UpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AGENT_POOL = "AgentPool"
+        CONTROL_PLANE = "ControlPlane"
+        CONTROL_PLANE_AND_AGENT_POOLS = "ControlPlaneAndAgentPools"
+        NODE_IMAGE = "NodeImage"
 
 
     class azure.mgmt.containerservice.types.UserAssignedIdentity(TypedDict, total=False):

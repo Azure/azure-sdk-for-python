@@ -14,7 +14,9 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import os
 import traceback
-from collections.abc import Awaitable, Callable, Mapping
+from collections.abc import Awaitable, Callable, Iterator, Mapping
+from contextlib import contextmanager
+from contextvars import ContextVar
 from typing import Any, TypeVar
 
 from .._config import AgentConfig
@@ -283,15 +285,38 @@ def _lease_is_dead(
     return True
 
 
+_scoped_task_manager: ContextVar[Callable[[], TaskManager | None] | None] = ContextVar(
+    "agentserver_task_manager", default=None
+)
+
+
+@contextmanager
+def _task_manager_scope(get_manager: Callable[[], TaskManager | None]) -> Iterator[None]:
+    """Bind task access to the current host/protocol, including a disabled runtime.
+
+    :param get_manager: Resolve the current runtime, or None for disabled access.
+    :type get_manager: Callable[[], TaskManager | None]
+    :return: The scoped task access context.
+    :rtype: Iterator[None]
+    """
+    token = _scoped_task_manager.set(get_manager)
+    try:
+        yield
+    finally:
+        _scoped_task_manager.reset(token)
+
+
 def get_task_manager() -> TaskManager:
-    """Return the active TaskManager singleton.
+    """Return the current protocol's manager, or the installed standalone manager.
 
     :raises ~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized: If no
         manager has been initialized.
     :return: The active manager.
     :rtype: TaskManager
     """
-    if _manager is None:
+    scoped = _scoped_task_manager.get()
+    manager = scoped() if scoped is not None else _manager
+    if manager is None:
         from ._exceptions import (  # pylint: disable=import-outside-toplevel
             TaskManagerNotInitialized,
         )
@@ -299,11 +324,11 @@ def get_task_manager() -> TaskManager:
         raise TaskManagerNotInitialized(
             "TaskManager not initialized: the resilient task subsystem is not enabled. "
             "Durable tasks and crash recovery are opt-in - call "
-            "set_resilient_tasks_enabled(True) before host startup (e.g. at import time), "
-            "or, for the responses protocol, construct the host with "
-            "ResponsesServerOptions(resilient_background=True)."  # pylint: disable=implicit-str-concat
+            "set_resilient_tasks_enabled(True) for Invocations before host startup, "
+            "or enable resilient_background or steerable_conversations on "
+            "ResponsesServerOptions, and run the host lifespan."
         )
-    return _manager
+    return manager
 
 
 def set_task_manager(manager: TaskManager | None) -> None:
@@ -316,6 +341,17 @@ def set_task_manager(manager: TaskManager | None) -> None:
     """
     global _manager  # pylint: disable=global-statement
     _manager = manager
+
+
+def _clear_task_manager(manager: TaskManager | None) -> None:
+    """Clear only the compatibility singleton owned by this manager.
+
+    :param manager: The host's task manager.
+    :type manager: TaskManager | None
+    :rtype: None
+    """
+    if _manager is manager:
+        set_task_manager(None)
 
 
 class _ActiveTask:  # pylint: disable=too-many-instance-attributes
@@ -423,11 +459,14 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._active_tasks: dict[str, _ActiveTask] = {}
         self._resume_callbacks: dict[str, Callable[..., Any]] = {}
         self._resume_opts: dict[str, TaskOptions] = {}
+        self._disabled_recovery_names: set[str] = set()
+        self._host_bound_callback_names: set[str] = set()
         self._lease_owner = derive_lease_owner(
             config.agent_name or "unknown-agent",
             config.session_id or "local",
         )
         self._instance_id = generate_instance_id()
+        self._materialization_restore_id: str | None = None
         self._shutdown_event = shutdown_event or asyncio.Event()
         self._shutdown_grace_seconds = shutdown_grace_seconds
         self._active_generation_future: dict[str, asyncio.Future[Any]] = {}
@@ -451,6 +490,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # fresh one bound to the new turn's _turn_started_at. Cleared
         # on terminal exit.
         self._timeout_watchdogs: dict[str, asyncio.Task[None]] = {}
+
+    def _rehydrate_session_state(self, restore_id: str | None = None) -> None:
+        self._lease_owner = derive_lease_owner(
+            self._config.agent_name or "unknown-agent",
+            self._config.session_id or "local",
+        )
+        if restore_id is not None and restore_id != self._materialization_restore_id:
+            self._instance_id = generate_instance_id()
+            self._materialization_restore_id = restore_id
 
     @staticmethod
     def _build_source(fn_name: str) -> dict[str, str]:
@@ -574,6 +622,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._resume_callbacks[fn_name] = fn
         if opts is not None:
             self._resume_opts[fn_name] = opts
+            if opts._requires_host_registration:
+                self._host_bound_callback_names.add(fn_name)
+
+    def _disable_recovery_for(self, *fn_names: str) -> None:
+        """Exclude protocol task functions from this manager's recovery.
+
+        :param fn_names: Persisted task function names disabled by their protocol.
+        :type fn_names: str
+        """
+        self._disabled_recovery_names.update(fn_names)
 
     async def list_tasks(
         self,
@@ -586,7 +644,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         Uses server-side filtering (``agent_name``, ``session_id``,
         ``task_name`` tag, ``status``, ``source_type``) to return only
-        tasks created by this framework for the given function.
+        tasks created by this framework for the given function. Explicitly
+        requests complete enumeration, never a bounded first page.
 
         :keyword fn_name: The task function name (stable identity anchor).
         :paramtype fn_name: str
@@ -608,6 +667,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 status=status,
                 tag={_TAG_TASK_NAME: fn_name},
                 source_type=_SOURCE_TYPE,
+                limit=None,
             )
         except _HostedConflict as exc:
             translated = _translate_hosted_conflict(exc)
@@ -744,9 +804,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             _REGISTERED_DESCRIPTORS,
         )
 
+        registered_callbacks = self._resume_callbacks.copy()
+        registered_opts = self._resume_opts.copy()
         for fn_name, fn, opts in _REGISTERED_DESCRIPTORS:
+            if opts._requires_host_registration:
+                continue
             self._resume_callbacks[fn_name] = fn
             self._resume_opts[fn_name] = opts
+        # Explicit host bindings must win over process-wide import order.
+        self._resume_callbacks.update(registered_callbacks)
+        self._resume_opts.update(registered_opts)
 
         await self._recover_stale_tasks()
 
@@ -883,7 +950,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 active.execution_task.cancel()
 
         self._active_tasks.clear()
-        set_task_manager(None)
+        _clear_task_manager(self)
 
     async def create_and_run(
         self,
@@ -2362,6 +2429,17 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 attachments_patch[_ref_key(next_entry)] = None
             next_input_raw = _read_input_value(next_entry, task_info.attachments)
 
+            # Admission and recovery must see the promoted turn as the current input.
+            input_mode, input_value = _resolve_input_storage(
+                next_input_raw,
+                threshold_bytes=_INPUT_THRESHOLD_BYTES,
+                key_for_attachment=_FUNCTION_INPUT_KEY,
+                task_id=task_id,
+            )
+            payload["input"] = input_value
+            if input_mode == "attachment":
+                attachments_patch[_FUNCTION_INPUT_KEY] = next_input_raw
+
             # Update steering state. (: previous_input is
             # no longer mirrored into _steering; only the active input + queue
             # state need to survive a crash mid-drain.)
@@ -2953,14 +3031,17 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 status="in_progress",
                 lease_owner=self._lease_owner,
                 source_type=_SOURCE_TYPE,
+                limit=None,
             )
         except Exception:  # pylint: disable=broad-exception-caught
             logger.warning("Failed to query stale tasks for recovery", exc_info=True)
             return
 
         for task_info in stale_tasks:
-            # Skip if we're already tracking this task
-            if task_info.id in self._active_tasks:
+            # Check owning-host authorization before any recovery writes.
+            if task_info.id in self._active_tasks or not self._recovery_is_authorized(
+                self._find_resume_callback_name(task_info)
+            ):
                 continue
 
             # (Spec 038) One-time legacy cleanup: delete pre-schema tasks
@@ -3062,28 +3143,60 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
     def _find_resume_callback(self, task_info: TaskInfo) -> Callable[..., Any] | None:
         """Find a registered resume callback for a task.
 
-        Matches by ``source.name`` (auto-stamped function name) first,
-        then falls back to title prefix match or single-callback default.
+        An explicit ``source.name`` must match a registered callback.
+        Title-prefix and single-callback fallback apply only to legacy
+        records without a source identity.
 
         :param task_info: The task record to match.
         :type task_info: TaskInfo
         :return: A matching resume callback, or None.
         :rtype: Callable[..., Any] | None
         """
-        # Preferred: match by source.name (framework auto-stamped fn name)
+        name = self._find_resume_callback_name(task_info)
+        if name is None or not self._recovery_is_authorized(name):
+            return None
+        return self._resume_callbacks.get(name)
+
+    def _recovery_is_authorized(self, name: str | None) -> bool:
+        """Check protocol opt-in and explicit ownership of internal callbacks.
+
+        :param name: Persisted or legacy-resolved callback name.
+        :type name: str | None
+        :return: Whether recovery may touch and dispatch this task.
+        :rtype: bool
+        """
+        from ._decorator import _HOST_BOUND_TASK_NAMES  # pylint: disable=import-outside-toplevel
+
+        return (
+            name in self._resume_callbacks
+            and name not in self._disabled_recovery_names
+            and (name not in _HOST_BOUND_TASK_NAMES or name in self._host_bound_callback_names)
+        )
+
+    def _find_resume_callback_name(self, task_info: TaskInfo) -> str | None:
+        """Read explicit identity or resolve an identity-free legacy record.
+
+        :param task_info: The persisted task record.
+        :type task_info: TaskInfo
+        :return: Persisted function identity or a legacy callback name.
+        :rtype: str | None
+        """
+        # Never substitute another callback for an explicit persisted identity.
         if task_info.source and "name" in task_info.source:
             source_name = task_info.source["name"]
-            if source_name in self._resume_callbacks:
-                return self._resume_callbacks[source_name]
+            if not isinstance(source_name, str):
+                logger.warning("Skipping task %s with invalid source.name", task_info.id)
+                return None
+            return source_name
 
         # Fallback: title prefix match
-        for name, fn in self._resume_callbacks.items():
+        for name in self._resume_callbacks:
             if task_info.title and task_info.title.startswith(name):
-                return fn
+                return name
 
         # Last resort: single registered callback
         if len(self._resume_callbacks) == 1:
-            return next(iter(self._resume_callbacks.values()))
+            return next(iter(self._resume_callbacks))
         return None
 
     # --------------------------------------------------------------- #

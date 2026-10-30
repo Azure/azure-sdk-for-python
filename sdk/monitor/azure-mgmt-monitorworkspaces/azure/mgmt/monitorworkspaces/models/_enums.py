@@ -11,7 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -30,7 +30,7 @@ class AddedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class ArmOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -67,6 +67,15 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """User assigned managed identity."""
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
     """System and user assigned managed identity."""
+
+
+class MetricConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of metric stored in the Azure Monitor Workspace."""
+
+    RAW = "Raw"
+    """A raw metric."""
+    AGGREGATED = "Aggregated"
+    """A metric aggregated from another metric."""
 
 
 class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
@@ -139,6 +148,15 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The issue is closed."""
     CANCELED = "Canceled"
     """The issue is canceled."""
+
+
+class TraceMetricsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of trace-derived metrics for a trace container."""
+
+    ENABLED = "Enabled"
+    """Trace-derived metrics are emitted."""
+    DISABLED = "Disabled"
+    """Trace-derived metrics are not emitted."""
 
 
 class UpdateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

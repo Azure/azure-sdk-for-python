@@ -39,6 +39,7 @@ def main():
         body={
             "location": "eastus",
             "properties": {
+                "asyncDirectoryDelete": {"status": "Enabled", "trashBinName": "trash"},
                 "creationToken": "my-unique-file-path",
                 "serviceLevel": "Premium",
                 "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testvnet3/subnets/testsubnet3",
@@ -49,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-06-15-preview/Volumes_CreateOrUpdate.json
+# x-ms-original-file: 2026-08-15-preview/Volumes_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

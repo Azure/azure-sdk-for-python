@@ -47,12 +47,16 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
                     "agentName": "str",
                     "agentResourceId": "str",
                     "connections": ["str"],
+                    "crossTenantEndpointResourceId": "str",
+                    "crossTenantEndpointTenantId": "str",
                     "dataIntegrityValidation": "str",
                     "description": "str",
+                    "isCrossTenantJob": bool,
                     "jobType": "str",
                     "latestJobRunName": "str",
                     "latestJobRunResourceId": "str",
                     "latestJobRunStatus": "str",
+                    "moverSyncedUntil": "2020-02-20 00:00:00",
                     "preservePermissions": bool,
                     "provisioningState": "str",
                     "schedule": {
@@ -63,6 +67,7 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
                         "executionTime": {"hour": 0, "minute": 0},
                         "frequency": "str",
                         "isActive": bool,
+                        "repeatInterval": "str",
                         "startDate": "2020-02-20 00:00:00",
                     },
                     "sourceResourceId": "str",
@@ -88,6 +93,7 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
                             }
                         ]
                     },
+                    "syncMode": "str",
                     "targetResourceId": "str",
                     "targetSubpath": "str",
                 },
@@ -123,6 +129,7 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
                     "copyMode": "str",
                     "dataIntegrityValidation": "str",
                     "description": "str",
+                    "moverSyncedUntil": "2020-02-20 00:00:00",
                     "schedule": {
                         "cronExpression": "str",
                         "daysOfMonth": [0],
@@ -131,8 +138,10 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
                         "executionTime": {"hour": 0, "minute": 0},
                         "frequency": "str",
                         "isActive": bool,
+                        "repeatInterval": "str",
                         "startDate": "2020-02-20 00:00:00",
                     },
+                    "syncMode": "str",
                 }
             },
         )
@@ -182,6 +191,19 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_job_definitions_stop_job(self, resource_group):
         response = self.client.job_definitions.stop_job(
+            resource_group_name=resource_group.name,
+            storage_mover_name="str",
+            project_name="str",
+            job_definition_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_job_definitions_reconcile_job(self, resource_group):
+        response = self.client.job_definitions.reconcile_job(
             resource_group_name=resource_group.name,
             storage_mover_name="str",
             project_name="str",

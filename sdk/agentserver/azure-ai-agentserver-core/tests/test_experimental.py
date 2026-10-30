@@ -1,17 +1,41 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 
+import asyncio
+import inspect
 import logging
 
-from azure.ai.agentserver.core import experimental
+from azure.ai.agentserver.core import (
+    AgentSessionContext,
+    FoundryAgentRequestContext,
+    FoundryOriginalSubject,
+    experimental,
+)
 from azure.ai.agentserver.core._experimental import (
     DISABLE_EXPERIMENTAL_WARNING_ENV_VAR,
     EXPERIMENTAL_CLASS_MESSAGE,
-    EXPERIMENTAL_LINK_MESSAGE,
     EXPERIMENTAL_METHOD_MESSAGE,
     _warning_cache,
 )
-from azure.ai.agentserver.core.tasks import multi_turn_task, resilient_tasks_enabled, task
+from azure.ai.agentserver.core.tasks import (
+    InputTooLarge,
+    LastInputIdPreconditionFailed,
+    MultiTurnTask,
+    RetryPolicy,
+    SteeringQueueFull,
+    Task,
+    TaskCancelled,
+    TaskConflictError,
+    TaskContext,
+    TaskDeferred,
+    TaskFailed,
+    TaskManagerNotInitialized,
+    TaskRun,
+    multi_turn_task,
+    resilient_tasks_enabled,
+    set_resilient_tasks_enabled,
+    task,
+)
 
 
 @experimental
@@ -25,6 +49,12 @@ class ExperimentalClass:
 @experimental
 def experimental_function() -> bool:
     """A test function."""
+    return True
+
+
+@experimental
+async def experimental_async_function() -> bool:
+    """A test coroutine function."""
     return True
 
 
@@ -61,9 +91,10 @@ def test_experimental_decorator_on_class(caplog) -> None:
 
     assert ExperimentalClass.__doc__.startswith(".. note::")
     assert EXPERIMENTAL_CLASS_MESSAGE in ExperimentalClass.__doc__
-    assert EXPERIMENTAL_LINK_MESSAGE in ExperimentalClass.__doc__
     assert len(caplog.records) == 1
     assert EXPERIMENTAL_CLASS_MESSAGE in caplog.records[0].message
+    assert caplog.records[0].message.endswith("This is an experimental class, and may change at any time.")
+    assert "https://" not in ExperimentalClass.__doc__
 
 
 def test_experimental_decorator_on_function(caplog) -> None:
@@ -74,9 +105,27 @@ def test_experimental_decorator_on_function(caplog) -> None:
 
     assert experimental_function.__doc__.startswith(".. note::")
     assert EXPERIMENTAL_METHOD_MESSAGE in experimental_function.__doc__
-    assert EXPERIMENTAL_LINK_MESSAGE in experimental_function.__doc__
     assert len(caplog.records) == 1
     assert EXPERIMENTAL_METHOD_MESSAGE in caplog.records[0].message
+    assert caplog.records[0].message.endswith("This is an experimental method, and may change at any time.")
+    assert "https://" not in experimental_function.__doc__
+
+
+def test_experimental_decorator_on_async_function_preserves_coroutine_introspection(caplog) -> None:
+    _warning_cache.clear()
+
+    assert inspect.iscoroutinefunction(experimental_async_function)
+    assert asyncio.iscoroutinefunction(experimental_async_function)
+
+    with caplog.at_level(logging.WARNING, logger=experimental.__module__):
+        assert asyncio.run(experimental_async_function()) is True
+
+    assert experimental_async_function.__doc__.startswith(".. note::")
+    assert EXPERIMENTAL_METHOD_MESSAGE in experimental_async_function.__doc__
+    assert len(caplog.records) == 1
+    assert EXPERIMENTAL_METHOD_MESSAGE in caplog.records[0].message
+    assert caplog.records[0].message.endswith("This is an experimental method, and may change at any time.")
+    assert "https://" not in experimental_async_function.__doc__
 
 
 def test_experimental_decorator_no_duplicate_warnings(caplog) -> None:
@@ -122,24 +171,86 @@ def test_experimental_decorator_env_var_suppresses_warning(monkeypatch, caplog) 
     assert len(caplog.records) == 0
 
 
-def test_resilient_task_public_api_is_experimental(caplog) -> None:
+def test_resilient_task_public_api_is_not_experimental(caplog) -> None:
     _warning_cache.clear()
 
     with caplog.at_level(logging.WARNING, logger=experimental.__module__):
         resilient_tasks_enabled()
 
-    assert resilient_tasks_enabled.__doc__.startswith(".. note::")
-    assert EXPERIMENTAL_METHOD_MESSAGE in resilient_tasks_enabled.__doc__
-    assert len(caplog.records) == 1
+    public_apis = (
+        TaskContext,
+        TaskRun,
+        Task,
+        MultiTurnTask,
+        set_resilient_tasks_enabled,
+        resilient_tasks_enabled,
+        TaskFailed,
+        TaskCancelled,
+        TaskConflictError,
+        TaskManagerNotInitialized,
+        SteeringQueueFull,
+        LastInputIdPreconditionFailed,
+        InputTooLarge,
+        TaskDeferred,
+        RetryPolicy,
+    )
+    for public_api in public_apis:
+        assert not (public_api.__doc__ or "").startswith(".. note::")
+        assert not hasattr(public_api, "_azure_agentserver_experimental_cache_key")
+        assert not hasattr(public_api, "_azure_agentserver_experimental_message")
+
+    assert len(caplog.records) == 0
 
 
-def test_resilient_task_decorator_factories_are_experimental(caplog) -> None:
+def test_resilient_task_decorator_factories_are_not_experimental(caplog) -> None:
     _warning_cache.clear()
 
     with caplog.at_level(logging.WARNING, logger=experimental.__module__):
         task(name="test-task")
         multi_turn_task(name="test-multi-turn-task")
 
-    assert task.__doc__.startswith(".. note::")
-    assert multi_turn_task.__doc__.startswith(".. note::")
-    assert len(caplog.records) == 2
+    assert not (task.__doc__ or "").startswith(".. note::")
+    assert not (multi_turn_task.__doc__ or "").startswith(".. note::")
+    assert len(caplog.records) == 0
+
+
+def test_agent_session_context_is_experimental(caplog) -> None:
+    _warning_cache.clear()
+
+    with caplog.at_level(logging.WARNING, logger=experimental.__module__):
+        AgentSessionContext("session", "restore")
+
+    assert AgentSessionContext.__doc__.startswith(".. note::")
+    assert EXPERIMENTAL_CLASS_MESSAGE in AgentSessionContext.__doc__
+    assert len(caplog.records) == 1
+
+
+def test_original_subject_is_experimental(caplog) -> None:
+    _warning_cache.clear()
+
+    with caplog.at_level(logging.WARNING, logger=experimental.__module__):
+        subject = FoundryOriginalSubject(oid="subject", tid="tenant", idtype="user")
+
+    assert (subject.oid, subject.tid, subject.idtype) == ("subject", "tenant", "user")
+    assert FoundryOriginalSubject.__doc__.startswith(".. note::")
+    assert EXPERIMENTAL_CLASS_MESSAGE in FoundryOriginalSubject.__doc__
+    assert "https://" not in FoundryOriginalSubject.__doc__
+    assert len(caplog.records) == 1
+    assert "FoundryOriginalSubject" in caplog.records[0].message
+    assert EXPERIMENTAL_CLASS_MESSAGE in caplog.records[0].message
+
+
+def test_model_attribution_headers_is_experimental(caplog) -> None:
+    _warning_cache.clear()
+
+    with caplog.at_level(logging.WARNING, logger=experimental.__module__):
+        context = FoundryAgentRequestContext()
+        assert context.model_attribution_headers() == {}
+
+    method = FoundryAgentRequestContext.model_attribution_headers
+    assert method.__doc__.startswith(".. note::")
+    assert EXPERIMENTAL_METHOD_MESSAGE in method.__doc__
+    assert "https://" not in method.__doc__
+    assert len(caplog.records) == 1
+    assert "FoundryAgentRequestContext.model_attribution_headers" in caplog.records[0].message
+    assert EXPERIMENTAL_METHOD_MESSAGE in caplog.records[0].message

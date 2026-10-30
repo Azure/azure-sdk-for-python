@@ -82,7 +82,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         async def begin_cancel(
                 self, 
                 resource_group_name: str, 
@@ -128,7 +128,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[LocationBasedBulkCreateCustom]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'delete_instances']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'delete_instances']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -140,7 +140,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -150,7 +150,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> LocationBasedBulkCreateCustom: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         async def get_async_operation_status(
                 self, 
                 location: str, 
@@ -159,7 +159,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -168,7 +168,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncItemPaged[LocationBasedBulkCreateCustom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_by_subscription(
                 self, 
                 location: str, 
@@ -176,7 +176,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncItemPaged[LocationBasedBulkCreateCustom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-06-preview', params_added_on={'2026-08-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-08-06-preview', params_added_on={'2026-08-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def virtual_machines_get_operation_status(
                 self, 
                 resource_group_name: str, 
@@ -195,7 +195,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name']}, api_versions_list=['2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
         async def begin_cancel(
                 self, 
                 resource_group_name: str, 
@@ -241,7 +241,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[LocationBasedBulkCreate]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'delete_instances']}, api_versions_list=['2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'delete_instances']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -253,7 +253,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -263,7 +263,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> LocationBasedBulkCreate: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
         async def get_async_operation_status(
                 self, 
                 location: str, 
@@ -272,7 +272,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -281,7 +281,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncItemPaged[LocationBasedBulkCreate]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
         def list_by_subscription(
                 self, 
                 location: str, 
@@ -289,7 +289,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncItemPaged[LocationBasedBulkCreate]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
         def virtual_machines_get_operation_status(
                 self, 
                 resource_group_name: str, 
@@ -308,7 +308,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_occurrence_by_vms(
                 self, 
                 resource_uri: str, 
@@ -397,7 +397,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[ResourceOperationResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'occurrence_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'occurrence_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -407,7 +407,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> Occurrence: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_by_scheduled_action(
                 self, 
                 resource_group_name: str, 
@@ -416,7 +416,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncItemPaged[Occurrence]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'occurrence_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'occurrence_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_resources(
                 self, 
                 resource_group_name: str, 
@@ -447,7 +447,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_by_vms(
                 self, 
                 resource_uri: str, 
@@ -464,7 +464,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         async def get(
                 self, 
                 location: str, 
@@ -581,7 +581,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[ScheduledAction]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -623,7 +623,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[ResourceOperationResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         async def begin_disable(
                 self, 
                 resource_group_name: str, 
@@ -632,7 +632,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         async def begin_enable(
                 self, 
                 resource_group_name: str, 
@@ -641,7 +641,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         async def begin_trigger_manual_occurrence(
                 self, 
                 resource_group_name: str, 
@@ -683,7 +683,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -692,7 +692,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> ScheduledAction: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -700,11 +700,11 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncItemPaged[ScheduledAction]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[ScheduledAction]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_resources(
                 self, 
                 resource_group_name: str, 
@@ -755,6 +755,39 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> None: ...
 
         @overload
+        async def bulk_acknowledge_operation_errors(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                body: AcknowledgeBulkOperationErrorsRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AcknowledgeBulkOperationErrorsResponse: ...
+
+        @overload
+        async def bulk_acknowledge_operation_errors(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                body: AcknowledgeBulkOperationErrorsRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AcknowledgeBulkOperationErrorsResponse: ...
+
+        @overload
+        async def bulk_acknowledge_operation_errors(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AcknowledgeBulkOperationErrorsResponse: ...
+
+        @overload
         async def bulk_cancel_operations(
                 self, 
                 resource_group_name: str, 
@@ -918,6 +951,17 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> HibernateResourceOperationResponse: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'lookback_in_minutes', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-10-06-preview'])
+        def bulk_list_operation_errors(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                *, 
+                lookback_in_minutes: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[ResourceOperation]: ...
 
         @overload
         async def bulk_reimage_operation(
@@ -988,6 +1032,38 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
 
 namespace azure.mgmt.compute.bulkaction.models
 
+    class azure.mgmt.compute.bulkaction.models.AcknowledgeBulkOperationErrorsRequest(_Model):
+        operation_ids: list[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                operation_ids: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.compute.bulkaction.models.AcknowledgeBulkOperationErrorsResponse(_Model):
+        acknowledged: list[str]
+        not_found: list[str]
+        skipped: list[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                acknowledged: list[str], 
+                not_found: list[str], 
+                skipped: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.compute.bulkaction.models.ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         INTERNAL = "Internal"
 
@@ -1042,12 +1118,6 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.compute.bulkaction.models.AllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CAPACITY_OPTIMIZED = "CapacityOptimized"
-        LOWEST_PRICE = "LowestPrice"
-        PRIORITIZED = "Prioritized"
-
-
     class azure.mgmt.compute.bulkaction.models.ApiEntityReference(_Model):
         id: Optional[str]
 
@@ -1070,6 +1140,20 @@ namespace azure.mgmt.compute.bulkaction.models
                 self, 
                 *, 
                 gallery_applications: Optional[list[VMGalleryApplication]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.compute.bulkaction.models.BillingProfile(_Model):
+        max_price: Optional[float]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_price: Optional[float] = ...
             ) -> None: ...
 
         @overload
@@ -1126,57 +1210,30 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.compute.bulkaction.models.BulkCreateCustomAllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        LOWEST_PRICE = "LowestPrice"
-        PRIORITIZED = "Prioritized"
-
-
-    class azure.mgmt.compute.bulkaction.models.BulkCreateCustomDistributionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        BEST_EFFORT_BALANCED = "BestEffortBalanced"
-        BEST_EFFORT_SINGLE_ZONE = "BestEffortSingleZone"
-        PRIORITIZED = "Prioritized"
-
-
     class azure.mgmt.compute.bulkaction.models.BulkCreateCustomOverride(_Model):
+        extended_location: Optional[ExtendedLocation]
         extensions: Optional[list[BulkactionVMExtension]]
         identity: Optional[VirtualMachineIdentity]
+        placement: Optional[Placement]
         plan: Optional[Plan]
         tags: Optional[dict[str, str]]
         virtual_machine_name: Optional[str]
         virtual_machine_profile: Optional[BulkactionVMProperties]
+        zone: Optional[str]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                extended_location: Optional[ExtendedLocation] = ..., 
                 extensions: Optional[list[BulkactionVMExtension]] = ..., 
                 identity: Optional[VirtualMachineIdentity] = ..., 
+                placement: Optional[Placement] = ..., 
                 plan: Optional[Plan] = ..., 
                 tags: Optional[dict[str, str]] = ..., 
                 virtual_machine_name: Optional[str] = ..., 
-                virtual_machine_profile: Optional[BulkactionVMProperties] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.BulkCreateCustomOverrideBase(_Model):
-        extensions: Optional[list[BulkactionVMExtension]]
-        identity: Optional[VirtualMachineIdentity]
-        plan: Optional[Plan]
-        tags: Optional[dict[str, str]]
-        virtual_machine_profile: Optional[BulkactionVMProperties]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                extensions: Optional[list[BulkactionVMExtension]] = ..., 
-                identity: Optional[VirtualMachineIdentity] = ..., 
-                plan: Optional[Plan] = ..., 
-                tags: Optional[dict[str, str]] = ..., 
-                virtual_machine_profile: Optional[BulkactionVMProperties] = ...
+                virtual_machine_profile: Optional[BulkactionVMProperties] = ..., 
+                zone: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -1199,40 +1256,15 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.compute.bulkaction.models.BulkCreateCustomPriorityProfile(_Model):
-        allocation_strategy: Optional[Union[str, BulkCreateCustomAllocationStrategy]]
-        eviction_policy: Optional[Union[str, EvictionPolicy]]
-        max_price_per_vm: Optional[float]
-        type: Optional[Union[str, PriorityType]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                allocation_strategy: Optional[Union[str, BulkCreateCustomAllocationStrategy]] = ..., 
-                eviction_policy: Optional[Union[str, EvictionPolicy]] = ..., 
-                max_price_per_vm: Optional[float] = ..., 
-                type: Optional[Union[str, PriorityType]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.compute.bulkaction.models.BulkCreateCustomProperties(_Model):
         capacity: int
         capacity_type: Optional[Union[str, CapacityType]]
         compute_profile: ComputeProfile
         created_time: Optional[datetime]
         execution_parameters: Optional[ExecutionParameters]
-        min_capacity: Optional[int]
         overrides_profile: Optional[BulkCreateCustomOverridesProfile]
-        partial_fulfillment_policy: Optional[PartialFulfillmentPolicy]
-        priority_profile: BulkCreateCustomPriorityProfile
         provisioning_state: Optional[Union[str, ProvisioningState]]
         resources: Optional[list[BulkCreateCustomResource]]
-        vm_sizes_profile: Optional[list[BulkCreateCustomVmSizeProfile]]
-        zone_allocation_policy: Optional[BulkCreateCustomZoneAllocationPolicy]
 
         @overload
         def __init__(
@@ -1242,12 +1274,7 @@ namespace azure.mgmt.compute.bulkaction.models
                 capacity_type: Optional[Union[str, CapacityType]] = ..., 
                 compute_profile: ComputeProfile, 
                 execution_parameters: Optional[ExecutionParameters] = ..., 
-                min_capacity: Optional[int] = ..., 
-                overrides_profile: Optional[BulkCreateCustomOverridesProfile] = ..., 
-                partial_fulfillment_policy: Optional[PartialFulfillmentPolicy] = ..., 
-                priority_profile: BulkCreateCustomPriorityProfile, 
-                vm_sizes_profile: Optional[list[BulkCreateCustomVmSizeProfile]] = ..., 
-                zone_allocation_policy: Optional[BulkCreateCustomZoneAllocationPolicy] = ...
+                overrides_profile: Optional[BulkCreateCustomOverridesProfile] = ...
             ) -> None: ...
 
         @overload
@@ -1286,52 +1313,13 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.compute.bulkaction.models.BulkCreateCustomVmSizeProfile(_Model):
-        name: str
-        override: Optional[BulkCreateCustomOverrideBase]
-        rank: int
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                name: str, 
-                override: Optional[BulkCreateCustomOverrideBase] = ..., 
-                rank: int
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.BulkCreateCustomZoneAllocationPolicy(_Model):
-        distribution_strategy: Optional[Union[str, BulkCreateCustomDistributionStrategy]]
-        zone_preferences: Optional[list[ZonePreference]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                distribution_strategy: Optional[Union[str, BulkCreateCustomDistributionStrategy]] = ..., 
-                zone_preferences: Optional[list[ZonePreference]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.compute.bulkaction.models.BulkCreateProperties(_Model):
         capacity: int
         capacity_type: Optional[Union[str, CapacityType]]
         compute_profile: ComputeProfile
         created_time: Optional[datetime]
         execution_parameters: Optional[ExecutionParameters]
-        min_capacity: Optional[int]
-        partial_fulfillment_policy: Optional[PartialFulfillmentPolicy]
-        priority_profile: PriorityProfile
         provisioning_state: Optional[Union[str, ProvisioningState]]
-        vm_sizes_profile: Optional[list[BulkCreateVmSizeProfile]]
-        zone_allocation_policy: Optional[ZoneAllocationPolicy]
 
         @overload
         def __init__(
@@ -1340,28 +1328,7 @@ namespace azure.mgmt.compute.bulkaction.models
                 capacity: int, 
                 capacity_type: Optional[Union[str, CapacityType]] = ..., 
                 compute_profile: ComputeProfile, 
-                execution_parameters: Optional[ExecutionParameters] = ..., 
-                min_capacity: Optional[int] = ..., 
-                partial_fulfillment_policy: Optional[PartialFulfillmentPolicy] = ..., 
-                priority_profile: PriorityProfile, 
-                vm_sizes_profile: Optional[list[BulkCreateVmSizeProfile]] = ..., 
-                zone_allocation_policy: Optional[ZoneAllocationPolicy] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.BulkCreateVmSizeProfile(_Model):
-        name: str
-        rank: Optional[int]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                name: str, 
-                rank: Optional[int] = ...
+                execution_parameters: Optional[ExecutionParameters] = ...
             ) -> None: ...
 
         @overload
@@ -1387,13 +1354,16 @@ namespace azure.mgmt.compute.bulkaction.models
     class azure.mgmt.compute.bulkaction.models.BulkactionVMProperties(_Model):
         additional_capabilities: Optional[AdditionalCapabilities]
         application_profile: Optional[ApplicationProfile]
+        billing_profile: Optional[BillingProfile]
         capacity_reservation: Optional[CapacityReservationProfile]
         diagnostics_profile: Optional[DiagnosticsProfile]
+        eviction_policy: Optional[Union[str, EvictionPolicy]]
         extensions_time_budget: Optional[str]
         hardware_profile: Optional[HardwareProfile]
         license_type: Optional[str]
         network_profile: Optional[NetworkProfile]
         os_profile: Optional[OSProfile]
+        priority: Optional[Union[str, PriorityType]]
         scheduled_events_policy: Optional[ScheduledEventsPolicy]
         scheduled_events_profile: Optional[ScheduledEventsProfile]
         security_profile: Optional[SecurityProfile]
@@ -1407,13 +1377,16 @@ namespace azure.mgmt.compute.bulkaction.models
                 *, 
                 additional_capabilities: Optional[AdditionalCapabilities] = ..., 
                 application_profile: Optional[ApplicationProfile] = ..., 
+                billing_profile: Optional[BillingProfile] = ..., 
                 capacity_reservation: Optional[CapacityReservationProfile] = ..., 
                 diagnostics_profile: Optional[DiagnosticsProfile] = ..., 
+                eviction_policy: Optional[Union[str, EvictionPolicy]] = ..., 
                 extensions_time_budget: Optional[str] = ..., 
                 hardware_profile: Optional[HardwareProfile] = ..., 
                 license_type: Optional[str] = ..., 
                 network_profile: Optional[NetworkProfile] = ..., 
                 os_profile: Optional[OSProfile] = ..., 
+                priority: Optional[Union[str, PriorityType]] = ..., 
                 scheduled_events_policy: Optional[ScheduledEventsPolicy] = ..., 
                 scheduled_events_profile: Optional[ScheduledEventsProfile] = ..., 
                 security_profile: Optional[SecurityProfile] = ..., 
@@ -1819,13 +1792,6 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.compute.bulkaction.models.DistributionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        BEST_EFFORT_BALANCED = "BestEffortBalanced"
-        BEST_EFFORT_SINGLE_ZONE = "BestEffortSingleZone"
-        PRIORITIZED = "Prioritized"
-        STRICT_BALANCED = "StrictBalanced"
-
-
     class azure.mgmt.compute.bulkaction.models.DomainNameLabelScopeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         NO_REUSE = "NoReuse"
         RESOURCE_GROUP_REUSE = "ResourceGroupReuse"
@@ -1990,6 +1956,7 @@ namespace azure.mgmt.compute.bulkaction.models
 
 
     class azure.mgmt.compute.bulkaction.models.ExecutionParameters(_Model):
+        additional_create_parameters: Optional[dict[str, Any]]
         capacity_recommendation_parameters: Optional[CapacityRecommendationParameters]
         retry_policy: Optional[RetryPolicy]
         verify_vm_agent_health: Optional[bool]
@@ -1998,6 +1965,7 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(
                 self, 
                 *, 
+                additional_create_parameters: Optional[dict[str, Any]] = ..., 
                 capacity_recommendation_parameters: Optional[CapacityRecommendationParameters] = ..., 
                 retry_policy: Optional[RetryPolicy] = ..., 
                 verify_vm_agent_health: Optional[bool] = ...
@@ -2005,6 +1973,27 @@ namespace azure.mgmt.compute.bulkaction.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.compute.bulkaction.models.ExtendedLocation(_Model):
+        name: str
+        type: Union[str, ExtendedLocationType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str, 
+                type: Union[str, ExtendedLocationType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.compute.bulkaction.models.ExtendedLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CUSTOM_LOCATION = "CustomLocation"
+        EDGE_ZONE = "EdgeZone"
 
 
     class azure.mgmt.compute.bulkaction.models.ExtensionResource(Resource):
@@ -2253,9 +2242,11 @@ namespace azure.mgmt.compute.bulkaction.models
 
 
     class azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreate(ProxyResource):
+        extended_location: Optional[ExtendedLocation]
         id: str
         identity: Optional[ManagedServiceIdentity]
         name: str
+        placement: Optional[Placement]
         plan: Optional[Plan]
         properties: Optional[BulkCreateProperties]
         system_data: SystemData
@@ -2267,7 +2258,9 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(
                 self, 
                 *, 
+                extended_location: Optional[ExtendedLocation] = ..., 
                 identity: Optional[ManagedServiceIdentity] = ..., 
+                placement: Optional[Placement] = ..., 
                 plan: Optional[Plan] = ..., 
                 properties: Optional[BulkCreateProperties] = ..., 
                 tags: Optional[dict[str, str]] = ..., 
@@ -2279,9 +2272,11 @@ namespace azure.mgmt.compute.bulkaction.models
 
 
     class azure.mgmt.compute.bulkaction.models.LocationBasedBulkCreateCustom(ProxyResource):
+        extended_location: Optional[ExtendedLocation]
         id: str
         identity: Optional[ManagedServiceIdentity]
         name: str
+        placement: Optional[Placement]
         plan: Optional[Plan]
         properties: Optional[BulkCreateCustomProperties]
         system_data: SystemData
@@ -2293,7 +2288,9 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(
                 self, 
                 *, 
+                extended_location: Optional[ExtendedLocation] = ..., 
                 identity: Optional[ManagedServiceIdentity] = ..., 
+                placement: Optional[Placement] = ..., 
                 plan: Optional[Plan] = ..., 
                 properties: Optional[BulkCreateCustomProperties] = ..., 
                 tags: Optional[dict[str, str]] = ..., 
@@ -2763,33 +2760,6 @@ namespace azure.mgmt.compute.bulkaction.models
         USER_SYSTEM = "user,system"
 
 
-    class azure.mgmt.compute.bulkaction.models.PartialFulfillmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DISABLED = "Disabled"
-        ENABLED = "Enabled"
-
-
-    class azure.mgmt.compute.bulkaction.models.PartialFulfillmentPolicy(_Model):
-        fulfilled_capacity: Optional[int]
-        mode: Optional[Union[str, PartialFulfillmentMode]]
-        reason: Optional[Union[str, PartialFulfillmentReason]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                mode: Optional[Union[str, PartialFulfillmentMode]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.PartialFulfillmentReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        INSUFFICIENT_CAPACITY = "InsufficientCapacity"
-        INSUFFICIENT_QUOTA = "InsufficientQuota"
-        NONE = "None"
-
-
     class azure.mgmt.compute.bulkaction.models.PatchSettings(_Model):
         assessment_mode: Optional[Union[str, WindowsPatchAssessmentMode]]
         automatic_by_platform_settings: Optional[WindowsVMGuestPatchAutomaticByPlatformSettings]
@@ -2804,6 +2774,24 @@ namespace azure.mgmt.compute.bulkaction.models
                 automatic_by_platform_settings: Optional[WindowsVMGuestPatchAutomaticByPlatformSettings] = ..., 
                 enable_hotpatching: Optional[bool] = ..., 
                 patch_mode: Optional[Union[str, WindowsVMGuestPatchMode]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.compute.bulkaction.models.Placement(_Model):
+        exclude_zones: Optional[list[str]]
+        include_zones: Optional[list[str]]
+        zone_placement_policy: Optional[Union[str, ZonePlacementPolicyType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                exclude_zones: Optional[list[str]] = ..., 
+                include_zones: Optional[list[str]] = ..., 
+                zone_placement_policy: Optional[Union[str, ZonePlacementPolicyType]] = ...
             ) -> None: ...
 
         @overload
@@ -2826,26 +2814,6 @@ namespace azure.mgmt.compute.bulkaction.models
                 promotion_code: Optional[str] = ..., 
                 publisher: str, 
                 version: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.PriorityProfile(_Model):
-        allocation_strategy: Optional[Union[str, AllocationStrategy]]
-        eviction_policy: Optional[Union[str, EvictionPolicy]]
-        max_price_per_vm: Optional[float]
-        type: Optional[Union[str, PriorityType]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                allocation_strategy: Optional[Union[str, AllocationStrategy]] = ..., 
-                eviction_policy: Optional[Union[str, EvictionPolicy]] = ..., 
-                max_price_per_vm: Optional[float] = ..., 
-                type: Optional[Union[str, PriorityType]] = ...
             ) -> None: ...
 
         @overload
@@ -4286,38 +4254,9 @@ namespace azure.mgmt.compute.bulkaction.models
         MANUAL = "Manual"
 
 
-    class azure.mgmt.compute.bulkaction.models.ZoneAllocationPolicy(_Model):
-        distribution_strategy: Optional[Union[str, DistributionStrategy]]
-        zone_preferences: Optional[list[ZonePreference]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                distribution_strategy: Optional[Union[str, DistributionStrategy]] = ..., 
-                zone_preferences: Optional[list[ZonePreference]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ZonePreference(_Model):
-        rank: int
-        target_max_capacity: Optional[int]
-        zone: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                rank: int, 
-                target_max_capacity: Optional[int] = ..., 
-                zone: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+    class azure.mgmt.compute.bulkaction.models.ZonePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ANY = "Any"
+        AUTO = "Auto"
 
 
 namespace azure.mgmt.compute.bulkaction.operations
@@ -4331,7 +4270,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def begin_cancel(
                 self, 
                 resource_group_name: str, 
@@ -4377,7 +4316,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[LocationBasedBulkCreateCustom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'delete_instances']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'delete_instances']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4389,7 +4328,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4399,7 +4338,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LocationBasedBulkCreateCustom: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def get_async_operation_status(
                 self, 
                 location: str, 
@@ -4408,7 +4347,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -4417,7 +4356,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> ItemPaged[LocationBasedBulkCreateCustom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_by_subscription(
                 self, 
                 location: str, 
@@ -4425,7 +4364,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> ItemPaged[LocationBasedBulkCreateCustom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-06-preview', params_added_on={'2026-08-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-08-06-preview', params_added_on={'2026-08-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def virtual_machines_get_operation_status(
                 self, 
                 resource_group_name: str, 
@@ -4444,7 +4383,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name']}, api_versions_list=['2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
         def begin_cancel(
                 self, 
                 resource_group_name: str, 
@@ -4490,7 +4429,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[LocationBasedBulkCreate]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'delete_instances']}, api_versions_list=['2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'delete_instances']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4502,7 +4441,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4512,7 +4451,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LocationBasedBulkCreate: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
         def get_async_operation_status(
                 self, 
                 location: str, 
@@ -4521,7 +4460,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -4530,7 +4469,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> ItemPaged[LocationBasedBulkCreate]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
         def list_by_subscription(
                 self, 
                 location: str, 
@@ -4538,7 +4477,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> ItemPaged[LocationBasedBulkCreate]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
         def virtual_machines_get_operation_status(
                 self, 
                 resource_group_name: str, 
@@ -4557,7 +4496,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_occurrence_by_vms(
                 self, 
                 resource_uri: str, 
@@ -4646,7 +4585,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[ResourceOperationResponse]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'occurrence_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'occurrence_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4656,7 +4595,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> Occurrence: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_by_scheduled_action(
                 self, 
                 resource_group_name: str, 
@@ -4665,7 +4604,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> ItemPaged[Occurrence]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'occurrence_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'occurrence_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_resources(
                 self, 
                 resource_group_name: str, 
@@ -4696,7 +4635,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_by_vms(
                 self, 
                 resource_uri: str, 
@@ -4713,7 +4652,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def get(
                 self, 
                 location: str, 
@@ -4830,7 +4769,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[ScheduledAction]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4872,7 +4811,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[ResourceOperationResponse]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def begin_disable(
                 self, 
                 resource_group_name: str, 
@@ -4881,7 +4820,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def begin_enable(
                 self, 
                 resource_group_name: str, 
@@ -4890,7 +4829,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def begin_trigger_manual_occurrence(
                 self, 
                 resource_group_name: str, 
@@ -4932,7 +4871,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4941,7 +4880,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> ScheduledAction: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -4949,11 +4888,11 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> ItemPaged[ScheduledAction]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[ScheduledAction]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
         def list_resources(
                 self, 
                 resource_group_name: str, 
@@ -5004,6 +4943,39 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> None: ...
 
         @overload
+        def bulk_acknowledge_operation_errors(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                body: AcknowledgeBulkOperationErrorsRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AcknowledgeBulkOperationErrorsResponse: ...
+
+        @overload
+        def bulk_acknowledge_operation_errors(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                body: AcknowledgeBulkOperationErrorsRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AcknowledgeBulkOperationErrorsResponse: ...
+
+        @overload
+        def bulk_acknowledge_operation_errors(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AcknowledgeBulkOperationErrorsResponse: ...
+
+        @overload
         def bulk_cancel_operations(
                 self, 
                 resource_group_name: str, 
@@ -5167,6 +5139,17 @@ namespace azure.mgmt.compute.bulkaction.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> HibernateResourceOperationResponse: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'lookback_in_minutes', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-10-06-preview'])
+        def bulk_list_operation_errors(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                *, 
+                lookback_in_minutes: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[ResourceOperation]: ...
 
         @overload
         def bulk_reimage_operation(
@@ -5237,6 +5220,11 @@ namespace azure.mgmt.compute.bulkaction.operations
 
 namespace azure.mgmt.compute.bulkaction.types
 
+    class azure.mgmt.compute.bulkaction.types.AcknowledgeBulkOperationErrorsRequest(TypedDict, total=False):
+        key "operationIds": Required[list[str]]
+        operationIds: list[str]
+
+
     class azure.mgmt.compute.bulkaction.types.AdditionalCapabilities(TypedDict, total=False):
         key "hibernationEnabled": bool
         key "ultraSSDEnabled": bool
@@ -5269,6 +5257,11 @@ namespace azure.mgmt.compute.bulkaction.types
         galleryApplications: list[VMGalleryApplication]
 
 
+    class azure.mgmt.compute.bulkaction.types.BillingProfile(TypedDict, total=False):
+        key "maxPrice": float
+        maxPrice: float
+
+
     class azure.mgmt.compute.bulkaction.types.BootDiagnostics(TypedDict, total=False):
         key "enabled": bool
         key "storageUri": str
@@ -5299,27 +5292,22 @@ namespace azure.mgmt.compute.bulkaction.types
 
 
     class azure.mgmt.compute.bulkaction.types.BulkCreateCustomOverride(TypedDict, total=False):
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
         key "identity": ForwardRef('VirtualMachineIdentity', module='types')
+        key "placement": ForwardRef('Placement', module='types')
         key "plan": ForwardRef('Plan', module='types')
         key "virtualMachineName": str
         key "virtualMachineProfile": ForwardRef('BulkactionVMProperties', module='types')
+        key "zone": str
+        extendedLocation: ExtendedLocation
         extensions: list[BulkactionVMExtension]
         identity: VirtualMachineIdentity
+        placement: Placement
         plan: Plan
         tags: dict[str, str]
         virtualMachineName: str
         virtualMachineProfile: BulkactionVMProperties
-
-
-    class azure.mgmt.compute.bulkaction.types.BulkCreateCustomOverrideBase(TypedDict, total=False):
-        key "identity": ForwardRef('VirtualMachineIdentity', module='types')
-        key "plan": ForwardRef('Plan', module='types')
-        key "virtualMachineProfile": ForwardRef('BulkactionVMProperties', module='types')
-        extensions: list[BulkactionVMExtension]
-        identity: VirtualMachineIdentity
-        plan: Plan
-        tags: dict[str, str]
-        virtualMachineProfile: BulkactionVMProperties
+        zone: str
 
 
     class azure.mgmt.compute.bulkaction.types.BulkCreateCustomOverridesProfile(TypedDict, total=False):
@@ -5328,42 +5316,22 @@ namespace azure.mgmt.compute.bulkaction.types
         virtualMachineNamePrefix: str
 
 
-    class azure.mgmt.compute.bulkaction.types.BulkCreateCustomPriorityProfile(TypedDict, total=False):
-        key "allocationStrategy": Union[str, BulkCreateCustomAllocationStrategy]
-        key "evictionPolicy": Union[str, EvictionPolicy]
-        key "maxPricePerVM": float
-        key "type": Union[str, PriorityType]
-        allocationStrategy: Union[str, BulkCreateCustomAllocationStrategy]
-        evictionPolicy: Union[str, EvictionPolicy]
-        maxPricePerVM: float
-        type: Union[str, PriorityType]
-
-
     class azure.mgmt.compute.bulkaction.types.BulkCreateCustomProperties(TypedDict, total=False):
         key "capacity": Required[int]
         key "capacityType": Union[str, CapacityType]
         key "computeProfile": Required[ComputeProfile]
         key "createdTime": str
         key "executionParameters": ForwardRef('ExecutionParameters', module='types')
-        key "minCapacity": int
         key "overridesProfile": ForwardRef('BulkCreateCustomOverridesProfile', module='types')
-        key "partialFulfillmentPolicy": ForwardRef('PartialFulfillmentPolicy', module='types')
-        key "priorityProfile": Required[BulkCreateCustomPriorityProfile]
         key "provisioningState": Union[str, ProvisioningState]
-        key "zoneAllocationPolicy": ForwardRef('BulkCreateCustomZoneAllocationPolicy', module='types')
         capacity: int
         capacityType: Union[str, CapacityType]
         computeProfile: ComputeProfile
         createdTime: str
         executionParameters: ExecutionParameters
-        minCapacity: int
         overridesProfile: BulkCreateCustomOverridesProfile
-        partialFulfillmentPolicy: PartialFulfillmentPolicy
-        priorityProfile: BulkCreateCustomPriorityProfile
         provisioningState: Union[str, ProvisioningState]
         resources: list[BulkCreateCustomResource]
-        vmSizesProfile: list[BulkCreateCustomVmSizeProfile]
-        zoneAllocationPolicy: BulkCreateCustomZoneAllocationPolicy
 
 
     class azure.mgmt.compute.bulkaction.types.BulkCreateCustomResource(TypedDict, total=False):
@@ -5380,50 +5348,19 @@ namespace azure.mgmt.compute.bulkaction.types
         zone: str
 
 
-    class azure.mgmt.compute.bulkaction.types.BulkCreateCustomVmSizeProfile(TypedDict, total=False):
-        key "name": Required[str]
-        key "override": ForwardRef('BulkCreateCustomOverrideBase', module='types')
-        key "rank": Required[int]
-        name: str
-        override: BulkCreateCustomOverrideBase
-        rank: int
-
-
-    class azure.mgmt.compute.bulkaction.types.BulkCreateCustomZoneAllocationPolicy(TypedDict, total=False):
-        key "distributionStrategy": Union[str, BulkCreateCustomDistributionStrategy]
-        distributionStrategy: Union[str, BulkCreateCustomDistributionStrategy]
-        zonePreferences: list[ZonePreference]
-
-
     class azure.mgmt.compute.bulkaction.types.BulkCreateProperties(TypedDict, total=False):
         key "capacity": Required[int]
         key "capacityType": Union[str, CapacityType]
         key "computeProfile": Required[ComputeProfile]
         key "createdTime": str
         key "executionParameters": ForwardRef('ExecutionParameters', module='types')
-        key "minCapacity": int
-        key "partialFulfillmentPolicy": ForwardRef('PartialFulfillmentPolicy', module='types')
-        key "priorityProfile": Required[PriorityProfile]
         key "provisioningState": Union[str, ProvisioningState]
-        key "zoneAllocationPolicy": ForwardRef('ZoneAllocationPolicy', module='types')
         capacity: int
         capacityType: Union[str, CapacityType]
         computeProfile: ComputeProfile
         createdTime: str
         executionParameters: ExecutionParameters
-        minCapacity: int
-        partialFulfillmentPolicy: PartialFulfillmentPolicy
-        priorityProfile: PriorityProfile
         provisioningState: Union[str, ProvisioningState]
-        vmSizesProfile: list[BulkCreateVmSizeProfile]
-        zoneAllocationPolicy: ZoneAllocationPolicy
-
-
-    class azure.mgmt.compute.bulkaction.types.BulkCreateVmSizeProfile(TypedDict, total=False):
-        key "name": Required[str]
-        key "rank": int
-        name: str
-        rank: int
 
 
     class azure.mgmt.compute.bulkaction.types.BulkactionVMExtension(TypedDict, total=False):
@@ -5436,13 +5373,16 @@ namespace azure.mgmt.compute.bulkaction.types
     class azure.mgmt.compute.bulkaction.types.BulkactionVMProperties(TypedDict, total=False):
         key "additionalCapabilities": ForwardRef('AdditionalCapabilities', module='types')
         key "applicationProfile": ForwardRef('ApplicationProfile', module='types')
+        key "billingProfile": ForwardRef('BillingProfile', module='types')
         key "capacityReservation": ForwardRef('CapacityReservationProfile', module='types')
         key "diagnosticsProfile": ForwardRef('DiagnosticsProfile', module='types')
+        key "evictionPolicy": Union[str, EvictionPolicy]
         key "extensionsTimeBudget": str
         key "hardwareProfile": ForwardRef('HardwareProfile', module='types')
         key "licenseType": str
         key "networkProfile": ForwardRef('NetworkProfile', module='types')
         key "osProfile": ForwardRef('OSProfile', module='types')
+        key "priority": Union[str, PriorityType]
         key "scheduledEventsPolicy": ForwardRef('ScheduledEventsPolicy', module='types')
         key "scheduledEventsProfile": ForwardRef('ScheduledEventsProfile', module='types')
         key "securityProfile": ForwardRef('SecurityProfile', module='types')
@@ -5450,13 +5390,16 @@ namespace azure.mgmt.compute.bulkaction.types
         key "userData": str
         additionalCapabilities: AdditionalCapabilities
         applicationProfile: ApplicationProfile
+        billingProfile: BillingProfile
         capacityReservation: CapacityReservationProfile
         diagnosticsProfile: DiagnosticsProfile
+        evictionPolicy: Union[str, EvictionPolicy]
         extensionsTimeBudget: str
         hardwareProfile: HardwareProfile
         licenseType: str
         networkProfile: NetworkProfile
         osProfile: OSProfile
+        priority: Union[str, PriorityType]
         scheduledEventsPolicy: ScheduledEventsPolicy
         scheduledEventsProfile: ScheduledEventsProfile
         securityProfile: SecurityProfile
@@ -5622,9 +5565,17 @@ namespace azure.mgmt.compute.bulkaction.types
         key "capacityRecommendationParameters": ForwardRef('CapacityRecommendationParameters', module='types')
         key "retryPolicy": ForwardRef('RetryPolicy', module='types')
         key "verifyVmAgentHealth": bool
+        additionalCreateParameters: dict[str, Any]
         capacityRecommendationParameters: CapacityRecommendationParameters
         retryPolicy: RetryPolicy
         verifyVmAgentHealth: bool
+
+
+    class azure.mgmt.compute.bulkaction.types.ExtendedLocation(TypedDict, total=False):
+        key "name": Required[str]
+        key "type": Required[Union[str, ExtendedLocationType]]
+        name: str
+        type: Union[str, ExtendedLocationType]
 
 
     class azure.mgmt.compute.bulkaction.types.GetOperationStatusContent(TypedDict, total=False):
@@ -5707,16 +5658,20 @@ namespace azure.mgmt.compute.bulkaction.types
 
 
     class azure.mgmt.compute.bulkaction.types.LocationBasedBulkCreate(ProxyResource):
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
         key "id": str
         key "identity": ForwardRef('ManagedServiceIdentity', module='types')
         key "name": str
+        key "placement": ForwardRef('Placement', module='types')
         key "plan": ForwardRef('Plan', module='types')
         key "properties": ForwardRef('BulkCreateProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
+        extendedLocation: ExtendedLocation
         id: str
         identity: ManagedServiceIdentity
         name: str
+        placement: Placement
         plan: Plan
         properties: BulkCreateProperties
         systemData: SystemData
@@ -5726,16 +5681,20 @@ namespace azure.mgmt.compute.bulkaction.types
 
 
     class azure.mgmt.compute.bulkaction.types.LocationBasedBulkCreateCustom(ProxyResource):
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
         key "id": str
         key "identity": ForwardRef('ManagedServiceIdentity', module='types')
         key "name": str
+        key "placement": ForwardRef('Placement', module='types')
         key "plan": ForwardRef('Plan', module='types')
         key "properties": ForwardRef('BulkCreateCustomProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
+        extendedLocation: ExtendedLocation
         id: str
         identity: ManagedServiceIdentity
         name: str
+        placement: Placement
         plan: Plan
         properties: BulkCreateCustomProperties
         systemData: SystemData
@@ -5858,15 +5817,6 @@ namespace azure.mgmt.compute.bulkaction.types
         customData: str
 
 
-    class azure.mgmt.compute.bulkaction.types.PartialFulfillmentPolicy(TypedDict, total=False):
-        key "fulfilledCapacity": int
-        key "mode": Union[str, PartialFulfillmentMode]
-        key "reason": Union[str, PartialFulfillmentReason]
-        fulfilledCapacity: int
-        mode: Union[str, PartialFulfillmentMode]
-        reason: Union[str, PartialFulfillmentReason]
-
-
     class azure.mgmt.compute.bulkaction.types.PatchSettings(TypedDict, total=False):
         key "assessmentMode": Union[str, WindowsPatchAssessmentMode]
         key "automaticByPlatformSettings": ForwardRef('WindowsVMGuestPatchAutomaticByPlatformSettings', module='types')
@@ -5876,6 +5826,13 @@ namespace azure.mgmt.compute.bulkaction.types
         automaticByPlatformSettings: WindowsVMGuestPatchAutomaticByPlatformSettings
         enableHotpatching: bool
         patchMode: Union[str, WindowsVMGuestPatchMode]
+
+
+    class azure.mgmt.compute.bulkaction.types.Placement(TypedDict, total=False):
+        key "zonePlacementPolicy": Union[str, ZonePlacementPolicyType]
+        excludeZones: list[str]
+        includeZones: list[str]
+        zonePlacementPolicy: Union[str, ZonePlacementPolicyType]
 
 
     class azure.mgmt.compute.bulkaction.types.Plan(TypedDict, total=False):
@@ -5889,17 +5846,6 @@ namespace azure.mgmt.compute.bulkaction.types
         promotionCode: str
         publisher: str
         version: str
-
-
-    class azure.mgmt.compute.bulkaction.types.PriorityProfile(TypedDict, total=False):
-        key "allocationStrategy": Union[str, AllocationStrategy]
-        key "evictionPolicy": Union[str, EvictionPolicy]
-        key "maxPricePerVM": float
-        key "type": Union[str, PriorityType]
-        allocationStrategy: Union[str, AllocationStrategy]
-        evictionPolicy: Union[str, EvictionPolicy]
-        maxPricePerVM: float
-        type: Union[str, PriorityType]
 
 
     class azure.mgmt.compute.bulkaction.types.ProxyAgentSettings(TypedDict, total=False):
@@ -6430,21 +6376,6 @@ namespace azure.mgmt.compute.bulkaction.types
         key "rebootSetting": Union[str, WindowsVMGuestPatchAutomaticByPlatformRebootSetting]
         bypassPlatformSafetyChecksOnUserSchedule: bool
         rebootSetting: Union[str, WindowsVMGuestPatchAutomaticByPlatformRebootSetting]
-
-
-    class azure.mgmt.compute.bulkaction.types.ZoneAllocationPolicy(TypedDict, total=False):
-        key "distributionStrategy": Union[str, DistributionStrategy]
-        distributionStrategy: Union[str, DistributionStrategy]
-        zonePreferences: list[ZonePreference]
-
-
-    class azure.mgmt.compute.bulkaction.types.ZonePreference(TypedDict, total=False):
-        key "rank": Required[int]
-        key "targetMaxCapacity": int
-        key "zone": Required[str]
-        rank: int
-        targetMaxCapacity: int
-        zone: str
 
 
 ```

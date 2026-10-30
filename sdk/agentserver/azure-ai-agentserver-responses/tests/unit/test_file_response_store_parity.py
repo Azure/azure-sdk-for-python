@@ -272,7 +272,7 @@ async def test_history_via_conversation_id(tmp_path: Path) -> None:
 
 @pytest.mark.asyncio
 async def test_history_combined_previous_and_conversation(tmp_path: Path) -> None:
-    """Both previous_response_id and conversation_id contribute (concatenated)."""
+    """Both previous_response_id and conversation_id contribute in order."""
     for _label, factory in _make_provider_factories(tmp_path):
         provider = factory()
         await provider.create_response(
@@ -288,6 +288,27 @@ async def test_history_combined_previous_and_conversation(tmp_path: Path) -> Non
         ids = await provider.get_history_item_ids("r_prev", "conv-1", limit=100)
         # previous_response_id contributions first, then conversation members.
         assert ids == ["prev_in", "prev_out", "a_in", "a_out"]
+
+
+@pytest.mark.asyncio
+async def test_history_combined_deduplicates_overlapping_items(tmp_path: Path) -> None:
+    """Overlapping previous-response and conversation history is returned once."""
+    for _label, factory in _make_provider_factories(tmp_path):
+        provider = factory()
+        await provider.create_response(
+            _response("r_prev", output=[_output_item("prev_out")], conversation_id="conv-1"),
+            [_input_item("prev_in")],
+            None,
+        )
+        await provider.create_response(
+            _response("r_next", output=[_output_item("next_out")], conversation_id="conv-1"),
+            [_input_item("next_in")],
+            history_item_ids=["prev_in", "prev_out"],
+        )
+
+        expected = ["prev_in", "prev_out", "next_in", "next_out"]
+        assert await provider.get_history_item_ids("r_prev", "conv-1", limit=-1) == expected
+        assert await provider.get_history_item_ids("r_prev", "conv-1", limit=3) == expected[-3:]
 
 
 @pytest.mark.asyncio
@@ -329,9 +350,30 @@ async def test_history_respects_limit(tmp_path: Path) -> None:
         ids = await provider.get_history_item_ids("r_prev", None, limit=3)
         # Chronological order is oldest-first; truncation must keep the newest IDs.
         assert ids == ["out1", "out2", "out3"]
-        # Non-positive limit returns empty.
+        ids_all = await provider.get_history_item_ids("r_prev", None, limit=-1)
+        assert ids_all == ["hist1", "hist2", "in1", "in2", "out1", "out2", "out3"]
+        # Zero still returns empty.
         ids_zero = await provider.get_history_item_ids("r_prev", None, limit=0)
         assert ids_zero == []
+
+
+@pytest.mark.asyncio
+async def test_history_unlimited_preserves_all_conversation_items(tmp_path: Path) -> None:
+    for _label, factory in _make_provider_factories(tmp_path):
+        provider = factory()
+        expected = []
+        for turn in range(3):
+            items = [_input_item(f"in_{turn}_{index}") for index in range(50)]
+            output = _output_item(f"out_{turn}")
+            await provider.create_response(
+                _response(f"r_{turn}", conversation_id="conv-1", output=[output]),
+                items,
+                history_item_ids=None,
+            )
+            expected.extend(item["id"] for item in items)
+            expected.append(output["id"])
+        assert await provider.get_history_item_ids(None, "conv-1", limit=-1) == expected
+        assert await provider.get_history_item_ids(None, "conv-1", limit=10) == expected[-10:]
 
 
 @pytest.mark.asyncio

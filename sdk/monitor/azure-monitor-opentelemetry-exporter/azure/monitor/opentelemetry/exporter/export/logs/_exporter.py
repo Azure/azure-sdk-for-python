@@ -23,9 +23,11 @@ except ImportError:
 try:
     from opentelemetry.semconv._incubating.attributes import (
         enduser_attributes as _enduser_attributes,
+        session_attributes as _session_attributes,
     )
 except ImportError:
     _enduser_attributes = None  # type: ignore
+    _session_attributes = None  # type: ignore
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -77,6 +79,7 @@ _ENDUSER_PSEUDO_ID_ATTRIBUTE = (
     or getattr(_enduser_attributes, "ENDUSER_PSEUDO_ID", None)
     or "enduser.pseudo.id"
 )
+_SESSION_ID_ATTRIBUTE = getattr(_session_attributes, "SESSION_ID", None) or "session.id"
 
 _logger = logging.getLogger(__name__)
 
@@ -121,7 +124,10 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
             self.storage.close()
 
     def _log_to_envelope(self, readable_log_record: ReadableLogRecord) -> TelemetryItem:
-        envelope = _convert_log_to_envelope(readable_log_record)
+        envelope = _convert_log_to_envelope(
+            readable_log_record,
+            increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+        )
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
@@ -158,7 +164,9 @@ def _log_data_is_event(readable_log_record: ReadableLogRecord) -> bool:
 # pylint: disable=protected-access
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
-def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> TelemetryItem:
+def _convert_log_to_envelope(
+    readable_log_record: ReadableLogRecord, *, increase_truncation_limit: bool = False
+) -> TelemetryItem:
     log_record = readable_log_record.log_record
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
@@ -181,6 +189,9 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
         tags[ContextTagKeys.AI_OPERATION_NAME] = log_record.attributes.get(  # type: ignore
             ContextTagKeys.AI_OPERATION_NAME
         )
+    session_id = log_record.attributes.get(_SESSION_ID_ATTRIBUTE) if log_record.attributes else None
+    if isinstance(session_id, str):
+        tags[ContextTagKeys.AI_SESSION_ID] = session_id
     if _utils._is_any_synthetic_source(log_record.attributes):
         tags[ContextTagKeys.AI_OPERATION_SYNTHETIC_SOURCE] = "True"  # type: ignore
     # Special use case: Customers want to be able to set location ip on log records
@@ -188,7 +199,9 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
     if location_ip:
         tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
     properties = _utils._filter_custom_properties(
-        log_record.attributes, lambda key, val: not _is_ignored_attribute(key)  # type: ignore
+        log_record.attributes,
+        lambda key, val: not _is_ignored_attribute(key),  # type: ignore
+        increase_truncation_limit=increase_truncation_limit,
     )
     measurements = _utils._filter_custom_measurements(log_record.attributes)
     availability_data = _get_availability_data(log_record)
@@ -360,6 +373,7 @@ _IGNORED_ATTRS = frozenset(
         _MICROSOFT_AVAILABILITY_MESSAGE,
         _ENDUSER_ID_ATTRIBUTE,
         _ENDUSER_PSEUDO_ID_ATTRIBUTE,
+        _SESSION_ID_ATTRIBUTE,
     )
 )
 

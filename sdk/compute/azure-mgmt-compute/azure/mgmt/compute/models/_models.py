@@ -2665,6 +2665,8 @@ class CommunityGalleryImageVersion(
         "storage_profile",
         "disclaimer",
         "artifact_tags",
+        "consumption_end_time",
+        "image_state",
     ]
 
     @overload
@@ -2722,6 +2724,14 @@ class CommunityGalleryImageVersionProperties(_Model):  # pylint: disable=docstri
     :vartype disclaimer: str
     :ivar artifact_tags: The artifact tags of a community gallery resource.
     :vartype artifact_tags: dict[str, str]
+    :ivar consumption_end_time: The timestamp after which a soft-deleted gallery image version is
+     no longer consumable for VM/VMSS creation or VMSS scale out. It is calculated from the
+     soft-deleted time plus the retention period, and is not present for active gallery image
+     versions. In dateTime offset format.
+    :vartype consumption_end_time: ~datetime.datetime
+    :ivar image_state: The state of the gallery image version, derived from its soft-delete status.
+     Known values are: "Active" and "SoftDeleted".
+    :vartype image_state: str or ~azure.mgmt.compute.models.GalleryImageVersionState
     """
 
     published_date: Optional[datetime.datetime] = rest_field(
@@ -2749,6 +2759,18 @@ class CommunityGalleryImageVersionProperties(_Model):  # pylint: disable=docstri
         name="artifactTags", visibility=["read", "create", "update", "delete", "query"]
     )
     """The artifact tags of a community gallery resource."""
+    consumption_end_time: Optional[datetime.datetime] = rest_field(
+        name="consumptionEndTime", visibility=["read"], format="rfc3339"
+    )
+    """The timestamp after which a soft-deleted gallery image version is no longer consumable for
+     VM/VMSS creation or VMSS scale out. It is calculated from the soft-deleted time plus the
+     retention period, and is not present for active gallery image versions. In dateTime offset
+     format."""
+    image_state: Optional[Union[str, "_models.GalleryImageVersionState"]] = rest_field(
+        name="imageState", visibility=["read"]
+    )
+    """The state of the gallery image version, derived from its soft-delete status. Known values are:
+     \"Active\" and \"SoftDeleted\"."""
 
     @overload
     def __init__(
@@ -3400,12 +3422,18 @@ class DataDiskImageEncryption(DiskImageEncryption):  # pylint: disable=docstring
     :ivar disk_encryption_set_id: A relative URI containing the resource ID of the disk encryption
      set.
     :vartype disk_encryption_set_id: str
+    :ivar security_profile: This property specifies the security profile of a data disk image.
+    :vartype security_profile: ~azure.mgmt.compute.models.DataDiskImageSecurityProfile
     :ivar lun: This property specifies the logical unit number of the data disk. This value is used
      to identify data disks within the Virtual Machine and therefore must be unique for each data
      disk attached to the Virtual Machine. Required.
     :vartype lun: int
     """
 
+    security_profile: Optional["_models.DataDiskImageSecurityProfile"] = rest_field(
+        name="securityProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """This property specifies the security profile of a data disk image."""
     lun: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """This property specifies the logical unit number of the data disk. This value is used to
      identify data disks within the Virtual Machine and therefore must be unique for each data disk
@@ -3417,6 +3445,49 @@ class DataDiskImageEncryption(DiskImageEncryption):  # pylint: disable=docstring
         *,
         lun: int,
         disk_encryption_set_id: Optional[str] = None,
+        security_profile: Optional["_models.DataDiskImageSecurityProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataDiskImageSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Contains security profile for a DataDisk image.
+
+    :ivar confidential_vm_encryption_type: confidential VM encryption types. Known values are:
+     "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", "EncryptedWithCmk", "NonPersistedTPM",
+     and "DataDiskEncryptedWithCmk".
+    :vartype confidential_vm_encryption_type: str or
+     ~azure.mgmt.compute.models.ConfidentialVMEncryptionType
+    :ivar secure_vm_disk_encryption_set_id: secure VM disk encryption set id.
+    :vartype secure_vm_disk_encryption_set_id: str
+    """
+
+    confidential_vm_encryption_type: Optional[Union[str, "_models.ConfidentialVMEncryptionType"]] = rest_field(
+        name="confidentialVMEncryptionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """confidential VM encryption types. Known values are: \"EncryptedVMGuestStateOnlyWithPmk\",
+     \"EncryptedWithPmk\", \"EncryptedWithCmk\", \"NonPersistedTPM\", and
+     \"DataDiskEncryptedWithCmk\"."""
+    secure_vm_disk_encryption_set_id: Optional[str] = rest_field(
+        name="secureVMDiskEncryptionSetId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """secure VM disk encryption set id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        confidential_vm_encryption_type: Optional[Union[str, "_models.ConfidentialVMEncryptionType"]] = None,
+        secure_vm_disk_encryption_set_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -6831,6 +6902,51 @@ class ExternalHealthPolicy(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
+class FlexProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies the FlexProfile for a virtual machine. When set, Azure may deploy a compatible
+    alternative VM size based on capacity and placement considerations, and the deployed size is
+    returned in hardwareProfile.vmSize. See the properties.flexProfile description for the full
+    usage rules, including how it interacts with hardwareProfile.vmSize.
+
+    :ivar preferred_vm_size: Specifies the preferred VM size, for example Standard_D4s_v5. Azure
+     may deploy a compatible alternative size based on capacity and placement considerations.
+     Supported VM families for FlexProfile may vary by region. The recommended way to get the list
+     of available sizes is using these APIs: `List all available virtual machine sizes in a region
+     <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_, `List all available virtual
+     machine sizes for resizing
+     <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. Required.
+    :vartype preferred_vm_size: str
+    """
+
+    preferred_vm_size: str = rest_field(
+        name="preferredVMSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the preferred VM size, for example Standard_D4s_v5. Azure may deploy a compatible
+     alternative size based on capacity and placement considerations. Supported VM families for
+     FlexProfile may vary by region. The recommended way to get the list of available sizes is using
+     these APIs: `List all available virtual machine sizes in a region
+     <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_, `List all available virtual
+     machine sizes for resizing
+     <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        preferred_vm_size: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Gallery(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the Shared Image Gallery that you want to create or update.
 
@@ -8465,6 +8581,7 @@ class GalleryImageVersion(TrackedResource):  # pylint: disable=docstring-keyword
         "security_profile",
         "restore",
         "validations_profile",
+        "image_metadata_profiles",
     ]
 
     @overload
@@ -8525,6 +8642,9 @@ class GalleryImageVersionProperties(_Model):  # pylint: disable=docstring-keywor
     :vartype restore: bool
     :ivar validations_profile: This is the validations profile of a Gallery Image Version.
     :vartype validations_profile: ~azure.mgmt.compute.models.ValidationsProfile
+    :ivar image_metadata_profiles: The image metadata profiles associated with the gallery image
+     version.
+    :vartype image_metadata_profiles: list[~azure.mgmt.compute.models.ImageMetadataProfile]
     """
 
     publishing_profile: Optional["_models.GalleryImageVersionPublishingProfile"] = rest_field(
@@ -8558,6 +8678,10 @@ class GalleryImageVersionProperties(_Model):  # pylint: disable=docstring-keywor
         name="validationsProfile", visibility=["read"]
     )
     """This is the validations profile of a Gallery Image Version."""
+    image_metadata_profiles: Optional[list["_models.ImageMetadataProfile"]] = rest_field(
+        name="imageMetadataProfiles", visibility=["read"]
+    )
+    """The image metadata profiles associated with the gallery image version."""
 
     @overload
     def __init__(
@@ -8811,6 +8935,7 @@ class GalleryImageVersionUpdate(
         "security_profile",
         "restore",
         "validations_profile",
+        "image_metadata_profiles",
     ]
 
     @overload
@@ -9970,7 +10095,13 @@ class GallerySoftDeletedResource(TrackedResource):  # pylint: disable=docstring-
     )
     """Describes the properties of a soft-deleted resource."""
 
-    __flattened_items = ["resource_arm_id", "soft_deleted_artifact_type", "soft_deleted_time"]
+    __flattened_items = [
+        "resource_arm_id",
+        "soft_deleted_artifact_type",
+        "soft_deleted_time",
+        "consumption_end_time",
+        "hard_deletion_target_time",
+    ]
 
     @overload
     def __init__(
@@ -10020,6 +10151,13 @@ class GallerySoftDeletedResourceProperties(_Model):  # pylint: disable=docstring
     :ivar soft_deleted_time: The timestamp for when the resource is soft-deleted. In dateTime
      offset format.
     :vartype soft_deleted_time: str
+    :ivar consumption_end_time: The timestamp after which a soft-deleted gallery image version is
+     no longer consumable for VM/VMSS creation or VMSS scale out. It is calculated from the
+     soft-deleted time plus the retention period. In dateTime offset format.
+    :vartype consumption_end_time: ~datetime.datetime
+    :ivar hard_deletion_target_time: The timestamp at which a soft-deleted gallery image version is
+     permanently (hard) deleted and can no longer be recovered. In dateTime offset format.
+    :vartype hard_deletion_target_time: ~datetime.datetime
     """
 
     resource_arm_id: Optional[str] = rest_field(
@@ -10034,6 +10172,17 @@ class GallerySoftDeletedResourceProperties(_Model):  # pylint: disable=docstring
         name="softDeletedTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """The timestamp for when the resource is soft-deleted. In dateTime offset format."""
+    consumption_end_time: Optional[datetime.datetime] = rest_field(
+        name="consumptionEndTime", visibility=["read"], format="rfc3339"
+    )
+    """The timestamp after which a soft-deleted gallery image version is no longer consumable for
+     VM/VMSS creation or VMSS scale out. It is calculated from the soft-deleted time plus the
+     retention period. In dateTime offset format."""
+    hard_deletion_target_time: Optional[datetime.datetime] = rest_field(
+        name="hardDeletionTargetTime", visibility=["read"], format="rfc3339"
+    )
+    """The timestamp at which a soft-deleted gallery image version is permanently (hard) deleted and
+     can no longer be recovered. In dateTime offset format."""
 
     @overload
     def __init__(
@@ -10771,6 +10920,57 @@ class ImageDiskReference(_Model):  # pylint: disable=docstring-keyword-should-ma
         super().__init__(*args, **kwargs)
 
 
+class ImageMetadataProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Describes the metadata profile of an image.
+
+    :ivar type: The type of metadata. Required. Known values are:
+     "SecretsProvisioningImageMetadata" and "UserProvidedSecretsProvisioningMetadata".
+    :vartype type: str or ~azure.mgmt.compute.models.MetadataType
+    :ivar public_metadata_list: The list of public metadata key-value pairs. Contains non-sensitive
+     image capability metadata such as supported OS, component names, and versions. No secret
+     material is emitted in this list.
+    :vartype public_metadata_list: list[~azure.mgmt.compute.models.MetadataKeyValue]
+    :ivar internal_metadata_list: The list of internal metadata key-value pairs. Contains
+     non-sensitive service-internal metadata for diagnostics and tracking. No secret material is
+     emitted in this list.
+    :vartype internal_metadata_list: list[~azure.mgmt.compute.models.MetadataKeyValue]
+    """
+
+    type: Union[str, "_models.MetadataType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of metadata. Required. Known values are: \"SecretsProvisioningImageMetadata\" and
+     \"UserProvidedSecretsProvisioningMetadata\"."""
+    public_metadata_list: Optional[list["_models.MetadataKeyValue"]] = rest_field(
+        name="publicMetadataList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of public metadata key-value pairs. Contains non-sensitive image capability metadata
+     such as supported OS, component names, and versions. No secret material is emitted in this
+     list."""
+    internal_metadata_list: Optional[list["_models.MetadataKeyValue"]] = rest_field(
+        name="internalMetadataList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of internal metadata key-value pairs. Contains non-sensitive service-internal metadata
+     for diagnostics and tracking. No secret material is emitted in this list."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.MetadataType"],
+        public_metadata_list: Optional[list["_models.MetadataKeyValue"]] = None,
+        internal_metadata_list: Optional[list["_models.MetadataKeyValue"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ImageOSDisk(ImageDisk):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an Operating System disk.
 
@@ -11143,18 +11343,27 @@ class ImageVersionSecurityProfile(_Model):  # pylint: disable=docstring-keyword-
 
     :ivar uefi_settings: Contains UEFI settings for the image version.
     :vartype uefi_settings: ~azure.mgmt.compute.models.GalleryImageVersionUefiSettings
+    :ivar secrets_provisioning_settings: Specifies the secrets provisioning settings for the
+     gallery image version. Used on create or update to configure secrets provisioning.
+    :vartype secrets_provisioning_settings: ~azure.mgmt.compute.models.SecretsProvisioningSettings
     """
 
     uefi_settings: Optional["_models.GalleryImageVersionUefiSettings"] = rest_field(
         name="uefiSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Contains UEFI settings for the image version."""
+    secrets_provisioning_settings: Optional["_models.SecretsProvisioningSettings"] = rest_field(
+        name="secretsProvisioningSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the secrets provisioning settings for the gallery image version. Used on create or
+     update to configure secrets provisioning."""
 
     @overload
     def __init__(
         self,
         *,
         uefi_settings: Optional["_models.GalleryImageVersionUefiSettings"] = None,
+        secrets_provisioning_settings: Optional["_models.SecretsProvisioningSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -12487,6 +12696,50 @@ class MaxInstancePercentPerZonePolicy(_Model):  # pylint: disable=docstring-keyw
         super().__init__(*args, **kwargs)
 
 
+class MetadataKeyValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Describes a key-value pair for image metadata.
+
+    :ivar metadata_key: The metadata key. Known keys emitted by the service include
+     'Linux.AzureSecretsProvisioning.Enabled', 'OS.Name', and '{componentName}.Version' (e.g.,
+     'AzureGuestAgent.Version'). All values are non-sensitive configuration; no secrets,
+     credentials, or cryptographic material transit this field. Required.
+    :vartype metadata_key: str
+    :ivar metadata_value: The metadata value. Contains non-sensitive configuration such as
+     capability flags ('true'/'false'), OS names ('Linux', 'Windows'), and version strings (e.g.,
+     '1.0.0').
+    :vartype metadata_value: str
+    """
+
+    metadata_key: str = rest_field(name="metadataKey", visibility=["read", "create", "update", "delete", "query"])
+    """The metadata key. Known keys emitted by the service include
+     'Linux.AzureSecretsProvisioning.Enabled', 'OS.Name', and '{componentName}.Version' (e.g.,
+     'AzureGuestAgent.Version'). All values are non-sensitive configuration; no secrets,
+     credentials, or cryptographic material transit this field. Required."""
+    metadata_value: Optional[str] = rest_field(
+        name="metadataValue", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The metadata value. Contains non-sensitive configuration such as capability flags
+     ('true'/'false'), OS names ('Linux', 'Windows'), and version strings (e.g., '1.0.0')."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        metadata_key: str,
+        metadata_value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class MigrateToVirtualMachineScaleSetInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the Virtual Machine Scale Set to migrate from Availability Set.
 
@@ -13193,8 +13446,8 @@ class OSDiskImageSecurityProfile(_Model):  # pylint: disable=docstring-keyword-s
     """Contains security profile for an OS disk image.
 
     :ivar confidential_vm_encryption_type: confidential VM encryption types. Known values are:
-     "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", "EncryptedWithCmk", and
-     "NonPersistedTPM".
+     "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", "EncryptedWithCmk", "NonPersistedTPM",
+     and "DataDiskEncryptedWithCmk".
     :vartype confidential_vm_encryption_type: str or
      ~azure.mgmt.compute.models.ConfidentialVMEncryptionType
     :ivar secure_vm_disk_encryption_set_id: secure VM disk encryption set id.
@@ -13205,7 +13458,8 @@ class OSDiskImageSecurityProfile(_Model):  # pylint: disable=docstring-keyword-s
         name="confidentialVMEncryptionType", visibility=["read", "create", "update", "delete", "query"]
     )
     """confidential VM encryption types. Known values are: \"EncryptedVMGuestStateOnlyWithPmk\",
-     \"EncryptedWithPmk\", \"EncryptedWithCmk\", and \"NonPersistedTPM\"."""
+     \"EncryptedWithPmk\", \"EncryptedWithCmk\", \"NonPersistedTPM\", and
+     \"DataDiskEncryptedWithCmk\"."""
     secure_vm_disk_encryption_set_id: Optional[str] = rest_field(
         name="secureVMDiskEncryptionSetId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -15253,7 +15507,7 @@ class ResourceSkuZoneDetails(_Model):
     :vartype capabilities: list[~azure.mgmt.compute.models.ResourceSkuCapabilities]
     """
 
-    name: Optional[list[str]] = rest_field(visibility=["read"])
+    name: Optional[list[str]] = rest_field(name="Name", visibility=["read"])
     """The set of zones that the SKU is available in with the specified capabilities."""
     capabilities: Optional[list["_models.ResourceSkuCapabilities"]] = rest_field(visibility=["read"])
     """A list of capabilities that are available for the SKU in the specified list of zones."""
@@ -15632,7 +15886,10 @@ class RestorePointInstanceView(_Model):  # pylint: disable=docstring-keyword-sho
 
     :ivar disk_restore_points: The disk restore points information.
     :vartype disk_restore_points: list[~azure.mgmt.compute.models.DiskRestorePointInstanceView]
-    :ivar statuses: The resource status information.
+    :ivar statuses: The aggregate status information for the restore point. The list may include
+     separate aggregate entries for replication and, in supported API versions, Instant Access, as
+     applicable. For more information about Instant Access, see `Use virtual machine restore points
+     <https://learn.microsoft.com/azure/virtual-machines/virtual-machines-create-restore-points#instant-access>`_.
     :vartype statuses: list[~azure.mgmt.compute.models.InstanceViewStatus]
     """
 
@@ -15643,7 +15900,10 @@ class RestorePointInstanceView(_Model):  # pylint: disable=docstring-keyword-sho
     statuses: Optional[list["_models.InstanceViewStatus"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The resource status information."""
+    """The aggregate status information for the restore point. The list may include separate aggregate
+     entries for replication and, in supported API versions, Instant Access, as applicable. For more
+     information about Instant Access, see `Use virtual machine restore points
+     <https://learn.microsoft.com/azure/virtual-machines/virtual-machines-create-restore-points#instant-access>`_."""
 
     @overload
     def __init__(
@@ -16915,6 +17175,85 @@ class ScriptSource(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         super().__init__(*args, **kwargs)
 
 
+class SecretsProvisioningComponent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Describes a component involved in secrets provisioning.
+
+    :ivar name: The name of the component. Known values are: "OS", "CloudInit", "AzureGuestAgent",
+     and "SecretsProvisioningLibrary".
+    :vartype name: str or ~azure.mgmt.compute.models.SecretsProvisioningComponentName
+    :ivar version: The version of the component.
+    :vartype version: str
+    """
+
+    name: Optional[Union[str, "_models.SecretsProvisioningComponentName"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the component. Known values are: \"OS\", \"CloudInit\", \"AzureGuestAgent\", and
+     \"SecretsProvisioningLibrary\"."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The version of the component."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[Union[str, "_models.SecretsProvisioningComponentName"]] = None,
+        version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SecretsProvisioningSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Describes the secrets provisioning settings for a gallery image version.
+
+    :ivar is_supported: Specifies whether the image version supports secrets provisioning.
+    :vartype is_supported: bool
+    :ivar os_name: The name of the operating system (e.g., "mariner").
+    :vartype os_name: str
+    :ivar components: The list of component versions involved in secrets provisioning.
+    :vartype components: list[~azure.mgmt.compute.models.SecretsProvisioningComponent]
+    """
+
+    is_supported: Optional[bool] = rest_field(
+        name="isSupported", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether the image version supports secrets provisioning."""
+    os_name: Optional[str] = rest_field(name="osName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the operating system (e.g., \"mariner\")."""
+    components: Optional[list["_models.SecretsProvisioningComponent"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of component versions involved in secrets provisioning."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_supported: Optional[bool] = None,
+        os_name: Optional[str] = None,
+        components: Optional[list["_models.SecretsProvisioningComponent"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SecurityPostureReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the security posture to be used in the scale set. Minimum api-version: 2023-03-01.
 
@@ -17500,6 +17839,8 @@ class SharedGalleryImageVersion(
         "exclude_from_latest",
         "storage_profile",
         "artifact_tags",
+        "consumption_end_time",
+        "image_state",
     ]
 
     @overload
@@ -17555,6 +17896,14 @@ class SharedGalleryImageVersionProperties(_Model):  # pylint: disable=docstring-
     :vartype storage_profile: ~azure.mgmt.compute.models.SharedGalleryImageVersionStorageProfile
     :ivar artifact_tags: The artifact tags of a shared gallery resource.
     :vartype artifact_tags: dict[str, str]
+    :ivar consumption_end_time: The timestamp after which a soft-deleted gallery image version is
+     no longer consumable for VM/VMSS creation or VMSS scale out. It is calculated from the
+     soft-deleted time plus the retention period, and is not present for active gallery image
+     versions. In dateTime offset format.
+    :vartype consumption_end_time: ~datetime.datetime
+    :ivar image_state: The state of the gallery image version, derived from its soft-delete status.
+     Known values are: "Active" and "SoftDeleted".
+    :vartype image_state: str or ~azure.mgmt.compute.models.GalleryImageVersionState
     """
 
     published_date: Optional[datetime.datetime] = rest_field(
@@ -17580,6 +17929,18 @@ class SharedGalleryImageVersionProperties(_Model):  # pylint: disable=docstring-
         name="artifactTags", visibility=["read", "create", "update", "delete", "query"]
     )
     """The artifact tags of a shared gallery resource."""
+    consumption_end_time: Optional[datetime.datetime] = rest_field(
+        name="consumptionEndTime", visibility=["read"], format="rfc3339"
+    )
+    """The timestamp after which a soft-deleted gallery image version is no longer consumable for
+     VM/VMSS creation or VMSS scale out. It is calculated from the soft-deleted time plus the
+     retention period, and is not present for active gallery image versions. In dateTime offset
+     format."""
+    image_state: Optional[Union[str, "_models.GalleryImageVersionState"]] = rest_field(
+        name="imageState", visibility=["read"]
+    )
+    """The state of the gallery image version, derived from its soft-delete status. Known values are:
+     \"Active\" and \"SoftDeleted\"."""
 
     @overload
     def __init__(
@@ -18544,6 +18905,14 @@ class SoftDeletePolicy(_Model):  # pylint: disable=docstring-keyword-should-matc
     :ivar is_soft_delete_enabled: Enables soft-deletion for resources in this gallery, allowing
      them to be recovered within retention time.
     :vartype is_soft_delete_enabled: bool
+    :ivar retention_period_in_days: The retention period in days for a soft-deleted resource. After
+     this period elapses, the soft-deleted gallery image version transitions to a simulated
+     hard-deleted state.
+    :vartype retention_period_in_days: int
+    :ivar grace_period_in_days: The grace period in days for a simulated hard-deleted resource.
+     During this period the gallery image version is unusable but can still be recovered if
+     required. After this period elapses, the gallery image version is permanently (hard) deleted.
+    :vartype grace_period_in_days: int
     """
 
     is_soft_delete_enabled: Optional[bool] = rest_field(
@@ -18551,12 +18920,25 @@ class SoftDeletePolicy(_Model):  # pylint: disable=docstring-keyword-should-matc
     )
     """Enables soft-deletion for resources in this gallery, allowing them to be recovered within
      retention time."""
+    retention_period_in_days: Optional[int] = rest_field(
+        name="retentionPeriodInDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The retention period in days for a soft-deleted resource. After this period elapses, the
+     soft-deleted gallery image version transitions to a simulated hard-deleted state."""
+    grace_period_in_days: Optional[int] = rest_field(
+        name="gracePeriodInDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The grace period in days for a simulated hard-deleted resource. During this period the gallery
+     image version is unusable but can still be recovered if required. After this period elapses,
+     the gallery image version is permanently (hard) deleted."""
 
     @overload
     def __init__(
         self,
         *,
         is_soft_delete_enabled: Optional[bool] = None,
+        retention_period_in_days: Optional[int] = None,
+        grace_period_in_days: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -20205,6 +20587,7 @@ class VirtualMachine(TrackedResource):  # pylint: disable=docstring-keyword-shou
 
     __flattened_items = [
         "hardware_profile",
+        "flex_profile",
         "scheduled_events_policy",
         "storage_profile",
         "additional_capabilities",
@@ -22240,6 +22623,7 @@ class VirtualMachineNetworkInterfaceIPConfiguration(
         "primary",
         "public_ip_address_configuration",
         "private_ip_address_version",
+        "private_ip_address_prefix_length",
         "application_security_groups",
         "application_gateway_backend_address_pools",
         "load_balancer_backend_address_pools",
@@ -22299,6 +22683,10 @@ class VirtualMachineNetworkInterfaceIPConfigurationProperties(
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype private_ip_address_version: str or ~azure.mgmt.compute.models.IPVersions
+    :ivar private_ip_address_prefix_length: The private IP address prefix length. If specified and
+     the allocation method is dynamic, the service will allocate a CIDR block instead of a single IP
+     address.
+    :vartype private_ip_address_prefix_length: int
     :ivar application_security_groups: Specifies an array of references to application security
      group.
     :vartype application_security_groups: list[~azure.mgmt.compute.models.SubResource]
@@ -22330,6 +22718,11 @@ class VirtualMachineNetworkInterfaceIPConfigurationProperties(
     """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
      ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
      'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
+    private_ip_address_prefix_length: Optional[int] = rest_field(
+        name="privateIPAddressPrefixLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The private IP address prefix length. If specified and the allocation method is dynamic, the
+     service will allocate a CIDR block instead of a single IP address."""
     application_security_groups: Optional[list["_models.SubResource"]] = rest_field(
         name="applicationSecurityGroups", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -22355,6 +22748,7 @@ class VirtualMachineNetworkInterfaceIPConfigurationProperties(
         primary: Optional[bool] = None,
         public_ip_address_configuration: Optional["_models.VirtualMachinePublicIPAddressConfiguration"] = None,
         private_ip_address_version: Optional[Union[str, "_models.IPVersions"]] = None,
+        private_ip_address_prefix_length: Optional[int] = None,
         application_security_groups: Optional[list["_models.SubResource"]] = None,
         application_gateway_backend_address_pools: Optional[list["_models.SubResource"]] = None,
         load_balancer_backend_address_pools: Optional[list["_models.SubResource"]] = None,
@@ -22422,6 +22816,16 @@ class VirtualMachineProperties(_Model):  # pylint: disable=docstring-keyword-sho
 
     :ivar hardware_profile: Specifies the hardware settings for the virtual machine.
     :vartype hardware_profile: ~azure.mgmt.compute.models.HardwareProfile
+    :ivar flex_profile: [Preview Feature] Specifies a FlexProfile for VM size. Azure may deploy a
+     compatible alternative VM size based on capacity and placement considerations, and returns the
+     deployed size in hardwareProfile.vmSize. A request that adds flexProfile must omit
+     hardwareProfile.vmSize. For a virtual machine that uses FlexProfile, a hardwareProfile.vmSize
+     equal to the deployed size is ignored, so a GET response can be sent back unchanged. A PATCH
+     request that omits flexProfile keeps it. A PUT request that omits flexProfile and sets
+     hardwareProfile.vmSize clears it. This property cannot exist along with a non-null
+     properties.availabilitySet, properties.capacityReservation, properties.host,
+     properties.hostGroup, properties.proximityPlacementGroup or properties.virtualMachineScaleSet.
+    :vartype flex_profile: ~azure.mgmt.compute.models.FlexProfile
     :ivar scheduled_events_policy: Specifies Redeploy, Reboot and
      ScheduledEventsAdditionalPublishingTargets Scheduled Event related configurations for the
      virtual machine.
@@ -22537,6 +22941,18 @@ class VirtualMachineProperties(_Model):  # pylint: disable=docstring-keyword-sho
         name="hardwareProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the hardware settings for the virtual machine."""
+    flex_profile: Optional["_models.FlexProfile"] = rest_field(
+        name="flexProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """[Preview Feature] Specifies a FlexProfile for VM size. Azure may deploy a compatible
+     alternative VM size based on capacity and placement considerations, and returns the deployed
+     size in hardwareProfile.vmSize. A request that adds flexProfile must omit
+     hardwareProfile.vmSize. For a virtual machine that uses FlexProfile, a hardwareProfile.vmSize
+     equal to the deployed size is ignored, so a GET response can be sent back unchanged. A PATCH
+     request that omits flexProfile keeps it. A PUT request that omits flexProfile and sets
+     hardwareProfile.vmSize clears it. This property cannot exist along with a non-null
+     properties.availabilitySet, properties.capacityReservation, properties.host,
+     properties.hostGroup, properties.proximityPlacementGroup or properties.virtualMachineScaleSet."""
     scheduled_events_policy: Optional["_models.ScheduledEventsPolicy"] = rest_field(
         name="scheduledEventsPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -22691,6 +23107,7 @@ class VirtualMachineProperties(_Model):  # pylint: disable=docstring-keyword-sho
         self,
         *,
         hardware_profile: Optional["_models.HardwareProfile"] = None,
+        flex_profile: Optional["_models.FlexProfile"] = None,
         scheduled_events_policy: Optional["_models.ScheduledEventsPolicy"] = None,
         storage_profile: Optional["_models.StorageProfile"] = None,
         additional_capabilities: Optional["_models.AdditionalCapabilities"] = None,
@@ -24255,6 +24672,7 @@ class VirtualMachineScaleSetIPConfiguration(_Model):  # pylint: disable=docstrin
         "primary",
         "public_ip_address_configuration",
         "private_ip_address_version",
+        "private_ip_address_prefix_length",
         "application_gateway_backend_address_pools",
         "application_security_groups",
         "load_balancer_backend_address_pools",
@@ -24315,6 +24733,10 @@ class VirtualMachineScaleSetIPConfigurationProperties(
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype private_ip_address_version: str or ~azure.mgmt.compute.models.IPVersion
+    :ivar private_ip_address_prefix_length: The private IP address prefix length. If specified and
+     the allocation method is dynamic, the service will allocate a CIDR block instead of a single IP
+     address.
+    :vartype private_ip_address_prefix_length: int
     :ivar application_gateway_backend_address_pools: Specifies an array of references to backend
      address pools of application gateways. A scale set can reference backend address pools of
      multiple application gateways. Multiple scale sets cannot use the same application gateway.
@@ -24350,6 +24772,11 @@ class VirtualMachineScaleSetIPConfigurationProperties(
     """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
      ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
      'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
+    private_ip_address_prefix_length: Optional[int] = rest_field(
+        name="privateIPAddressPrefixLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The private IP address prefix length. If specified and the allocation method is dynamic, the
+     service will allocate a CIDR block instead of a single IP address."""
     application_gateway_backend_address_pools: Optional[list["_models.SubResource"]] = rest_field(
         name="applicationGatewayBackendAddressPools", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -24381,6 +24808,7 @@ class VirtualMachineScaleSetIPConfigurationProperties(
         primary: Optional[bool] = None,
         public_ip_address_configuration: Optional["_models.VirtualMachineScaleSetPublicIPAddressConfiguration"] = None,
         private_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
+        private_ip_address_prefix_length: Optional[int] = None,
         application_gateway_backend_address_pools: Optional[list["_models.SubResource"]] = None,
         application_security_groups: Optional[list["_models.SubResource"]] = None,
         load_balancer_backend_address_pools: Optional[list["_models.SubResource"]] = None,
@@ -25892,6 +26320,7 @@ class VirtualMachineScaleSetUpdateIPConfiguration(
         "primary",
         "public_ip_address_configuration",
         "private_ip_address_version",
+        "private_ip_address_prefix_length",
         "application_gateway_backend_address_pools",
         "application_security_groups",
         "load_balancer_backend_address_pools",
@@ -25952,6 +26381,10 @@ class VirtualMachineScaleSetUpdateIPConfigurationProperties(
      whether the specific ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible
      values are: 'IPv4' and 'IPv6'. Known values are: "IPv4" and "IPv6".
     :vartype private_ip_address_version: str or ~azure.mgmt.compute.models.IPVersion
+    :ivar private_ip_address_prefix_length: The private IP address prefix length. If specified and
+     the allocation method is dynamic, the service will allocate a CIDR block instead of a single IP
+     address.
+    :vartype private_ip_address_prefix_length: int
     :ivar application_gateway_backend_address_pools: The application gateway backend address pools.
     :vartype application_gateway_backend_address_pools:
      list[~azure.mgmt.compute.models.SubResource]
@@ -25981,6 +26414,11 @@ class VirtualMachineScaleSetUpdateIPConfigurationProperties(
     """Available from Api-Version 2017-03-30 onwards, it represents whether the specific
      ipconfiguration is IPv4 or IPv6. Default is taken as IPv4.  Possible values are: 'IPv4' and
      'IPv6'. Known values are: \"IPv4\" and \"IPv6\"."""
+    private_ip_address_prefix_length: Optional[int] = rest_field(
+        name="privateIPAddressPrefixLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The private IP address prefix length. If specified and the allocation method is dynamic, the
+     service will allocate a CIDR block instead of a single IP address."""
     application_gateway_backend_address_pools: Optional[list["_models.SubResource"]] = rest_field(
         name="applicationGatewayBackendAddressPools", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -26008,6 +26446,7 @@ class VirtualMachineScaleSetUpdateIPConfigurationProperties(
             "_models.VirtualMachineScaleSetUpdatePublicIPAddressConfiguration"
         ] = None,
         private_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
+        private_ip_address_prefix_length: Optional[int] = None,
         application_gateway_backend_address_pools: Optional[list["_models.SubResource"]] = None,
         application_security_groups: Optional[list["_models.SubResource"]] = None,
         load_balancer_backend_address_pools: Optional[list["_models.SubResource"]] = None,
@@ -28161,6 +28600,7 @@ class VirtualMachineUpdate(UpdateResource):  # pylint: disable=docstring-keyword
 
     __flattened_items = [
         "hardware_profile",
+        "flex_profile",
         "scheduled_events_policy",
         "storage_profile",
         "additional_capabilities",
