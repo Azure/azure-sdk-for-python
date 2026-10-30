@@ -37,14 +37,12 @@ from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
-from ..._validation import api_version_validation
 from ...operations._operations import (
     build_admin_keys_get_request,
     build_admin_keys_regenerate_request,
     build_network_security_perimeter_configurations_get_request,
     build_network_security_perimeter_configurations_list_by_service_request,
     build_network_security_perimeter_configurations_reconcile_request,
-    build_offerings_fetch_request,
     build_operations_list_request,
     build_private_endpoint_connections_delete_request,
     build_private_endpoint_connections_get_request,
@@ -74,92 +72,6 @@ from .._configuration import SearchManagementClientConfiguration
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
-
-
-class OfferingsOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.search.aio.SearchManagementClient`'s
-        :attr:`offerings` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SearchManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-09-01-preview",
-        params_added_on={"2026-09-01-preview": ["api_version", "accept"]},
-        api_versions_list=["2026-09-01-preview"],
-    )
-    async def fetch(self, **kwargs: Any) -> _models.OfferingsResult:
-        """Fetches the features and SKUs offered by the Azure AI Search service in each region, along with
-        the recommended default region for creating new services.
-
-        :return: OfferingsResult. The OfferingsResult is compatible with MutableMapping
-        :rtype: ~azure.mgmt.search.models.OfferingsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.OfferingsResult] = kwargs.pop("cls", None)
-
-        _request = build_offerings_fetch_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.CloudError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.OfferingsResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
 
 
 class Operations:  # pylint: disable=docstring-missing-param
