@@ -14,6 +14,7 @@
 - Fixed `refresh_on` handling so that a single-string watched setting is treated as a key with the default (no) label instead of being incorrectly unpacked character-by-character.
 - Fixed a `KeyError` when loading with an endpoint and credential (no connection string).
 - Fixed feature flag processing so that an empty feature flag list clears previously loaded feature flags.
+- Fixed feature flag refresh so that the `on_refresh_success` callback is invoked when the refreshed feature flag list is empty.
 
 ### Other Changes
 
