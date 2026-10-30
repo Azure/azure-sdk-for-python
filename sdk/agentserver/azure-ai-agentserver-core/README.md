@@ -239,9 +239,14 @@ async def on_shutdown():
 
 ### Memory snapshot lifecycle handlers
 
-The host always registers the private platform routes
+The host registers the private platform routes
 `POST /_agent/before-snapshot` and `POST /_agent/after-restore`, with equivalent
-aliases at `POST /_before_snapshot` and `POST /_after_restore`. All four routes
+aliases at `POST /_before_snapshot` and `POST /_after_restore`, when it runs in a
+Foundry-hosted environment or when `FOUNDRY_LIFECYCLE_TOKEN` is set. When the
+token is set, every lifecycle request must carry it in the
+`x-foundry-lifecycle-token` header; requests without a matching token are
+rejected with `401`. Outside a hosted environment the routes are not registered
+unless the token is configured. All four routes
 are processed by the framework, including restore validation and environment
 and configuration hydration. Registering application handlers is optional;
 when absent, only the application callbacks are skipped. Use the hooks to
@@ -267,6 +272,10 @@ Lifecycle calls are serialized and idempotent. A repeated `after-restore`
 request with the same `restore_id` does not invoke the handler again, while a
 new `restore_id` for the same session starts a new restore cycle. The server
 rejects attempts to reuse a restored process for a different session.
+`session_env_overrides` are validated as a whole before anything is applied:
+keys must be valid environment variable names, entry count and sizes are
+bounded, and names that control the loader, interpreter, proxy, TLS trust,
+telemetry, platform identity, or credentials are rejected.
 
 Protocol-specific hosts can override the protected `_before_snapshot` and
 `_after_restore` methods to extend the lifecycle before application callbacks
