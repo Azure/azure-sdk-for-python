@@ -57,7 +57,7 @@ in_bundle = false
 
 [tool.cibuildwheel]
 build = ["cp310*", "cp311*", "cp312*", "cp313*", "cp314*"]
-test-command = "cargo test --manifest-path {project}/Cargo.toml"
+test-command = 'python -I "{project}/tests/test_wheel.py"'
 
 [tool.cibuildwheel.linux]
 archs = "x86_64 aarch64"
