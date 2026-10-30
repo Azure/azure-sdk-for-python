@@ -39,7 +39,7 @@ from dotenv import load_dotenv
 from azure.ai.projects.models._models import AutoCodeInterpreterToolParam
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, StructuredInputDefinition
+from azure.ai.projects.models import PromptAgentDefinition, ToolCodeInterpreterTool, StructuredInputDefinition
 
 load_dotenv()
 
@@ -58,7 +58,7 @@ with (
     uploaded = openai_client.files.create(purpose="assistants", file=csv_file)
     print(f"File uploaded (id: {uploaded.id})")
 
-    tool = CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=["{{analysis_file_id}}"]))
+    tool = ToolCodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=["{{analysis_file_id}}"]))
 
     agent_definition = PromptAgentDefinition(
         model=os.environ["FOUNDRY_MODEL_NAME"],

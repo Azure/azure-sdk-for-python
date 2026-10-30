@@ -33,7 +33,7 @@ from openai.types.responses.response_input_param import McpApprovalResponse, Res
 from util import create_version_with_endpoint_async
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
+from azure.ai.projects.models import PromptAgentDefinition, ToolMcpTool, Tool
 
 load_dotenv()
 
@@ -42,7 +42,7 @@ agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 
 async def main():
-    mcp_tool = MCPTool(
+    mcp_tool = ToolMcpTool(
         server_label="api-specs",
         server_url="https://api.githubcopilot.com/mcp",
         require_approval="always",

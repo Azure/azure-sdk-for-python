@@ -16,10 +16,10 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    FileSearchTool,
-    CodeInterpreterTool,
+    ToolFileSearchTool,
+    ToolCodeInterpreterTool,
     AutoCodeInterpreterToolParam,
-    FunctionTool,
+    ToolFunctionTool,
 )
 
 
@@ -76,7 +76,7 @@ Please analyze this data for the quarterly review.
         print(f"File uploaded (id: {file.id})")
 
         # Define function tool for saving analysis results
-        func_tool = FunctionTool(
+        func_tool = ToolFunctionTool(
             name="save_analysis",
             description="Save the statistical analysis results. Must be called to persist the analysis.",
             parameters={
@@ -100,8 +100,8 @@ Please analyze this data for the quarterly review.
                 model=model,
                 instructions="You are a data analyst. Use file search to find data files, code interpreter to calculate statistics, and ALWAYS save your analysis using the save_analysis function.",
                 tools=[
-                    FileSearchTool(vector_store_ids=[vector_store.id]),
-                    CodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
+                    ToolFileSearchTool(vector_store_ids=[vector_store.id]),
+                    ToolCodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
                     func_tool,
                 ],
             ),

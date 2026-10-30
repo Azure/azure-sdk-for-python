@@ -26,7 +26,7 @@ from azure.ai.projects.telemetry._utils import (
 )
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    CodeInterpreterTool,
+    ToolCodeInterpreterTool,
     AutoCodeInterpreterToolParam,
 )
 from azure.core.settings import settings
@@ -96,7 +96,7 @@ TRANSPORTATION,Contoso air,1100000
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can execute Python code to analyze data.",
-                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
+                    tools=[ToolCodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
                 ),
             )
 
@@ -285,7 +285,7 @@ TRANSPORTATION,Contoso air,1100000
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can execute Python code to analyze data.",
-                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
+                    tools=[ToolCodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
                 ),
             )
 
@@ -478,7 +478,7 @@ TRANSPORTATION,Contoso air,1100000
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can execute Python code to analyze data.",
-                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
+                    tools=[ToolCodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
                 ),
             )
 
@@ -671,7 +671,7 @@ TRANSPORTATION,Contoso air,1100000
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can execute Python code to analyze data.",
-                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
+                    tools=[ToolCodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))],
                 ),
             )
 

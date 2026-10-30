@@ -8,7 +8,7 @@
 import os
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolFileSearchTool
 
 
 class TestAgentFileSearchStream(TestBase):
@@ -21,7 +21,7 @@ class TestAgentFileSearchStream(TestBase):
 
         This test verifies that an agent can:
         1. Upload and index documents into a vector store
-        2. Use FileSearchTool with streaming enabled
+        2. Use ToolFileSearchTool with streaming enabled
         3. Stream back responses based on document content
 
         Routes used in this test:
@@ -34,7 +34,7 @@ class TestAgentFileSearchStream(TestBase):
         POST   /agents/{agent_name}/versions                 project_client.agents.create_version()
 
         # Test focus:
-        POST   /openai/responses                             openai_client.responses.create() (stream=True, with FileSearchTool)
+        POST   /openai/responses                             openai_client.responses.create() (stream=True, with ToolFileSearchTool)
 
         # Teardown:
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
@@ -78,7 +78,7 @@ class TestAgentFileSearchStream(TestBase):
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant that can search through uploaded documents to answer questions.",
-                    tools=[FileSearchTool(vector_store_ids=[vector_store.id])],
+                    tools=[ToolFileSearchTool(vector_store_ids=[vector_store.id])],
                 ),
                 description="Agent for testing file search with streaming.",
             )

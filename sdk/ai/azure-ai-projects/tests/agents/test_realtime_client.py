@@ -15,6 +15,7 @@ can all be verified without a live service or a recorded transport.
 import json
 import inspect
 import logging
+from typing import Literal, Optional
 from unittest.mock import MagicMock, patch
 from urllib.parse import parse_qs, urlparse
 
@@ -22,6 +23,7 @@ import pytest
 from azure.core.credentials import AccessToken
 from websockets.typing import Subprotocol
 
+from azure.ai.projects import models
 from azure.ai.projects._realtime import (
     BetaRealtime,
     BetaRealtimeConnectionManager,
@@ -36,6 +38,28 @@ from azure.ai.projects.models import (
 )
 
 _ENDPOINT = "https://my-account.services.ai.azure.com/api/projects/my-project"
+
+
+@pytest.mark.parametrize(
+    "definition_type,expected_annotation,expected_payload",
+    [
+        (
+            models.VoiceAgentDefinition,
+            Optional[Literal["realtime"]],
+            {"model": "deployment-test", "kind": "voice"},
+        ),
+        (
+            models.VoiceAgentLiveDefinition,
+            Literal["live"],
+            {"model": "deployment-test", "kind": "voice", "sub_protocol": "live", "model_type": "self_deployed"},
+        ),
+    ],
+)
+def test_voice_protocol_typing_fix_preserves_annotations_and_constructor_defaults(
+    definition_type, expected_annotation, expected_payload
+):
+    assert definition_type.__annotations__["sub_protocol"] == expected_annotation
+    assert definition_type(model="deployment-test").as_dict() == expected_payload
 
 
 class _FakeCredential:

@@ -16,9 +16,9 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    CodeInterpreterTool,
+    ToolCodeInterpreterTool,
     AutoCodeInterpreterToolParam,
-    FunctionTool,
+    ToolFunctionTool,
 )
 
 
@@ -43,7 +43,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         openai_client = project_client.get_openai_client()
 
         # Define function tool
-        func_tool = FunctionTool(
+        func_tool = ToolFunctionTool(
             name="save_result",
             description="Save the calculation result. Must be called to persist the result.",
             parameters={
@@ -65,7 +65,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
                 model=model,
                 instructions="You are a calculator assistant. Use code interpreter to perform calculations, then ALWAYS save the result using the save_result function.",
                 tools=[
-                    CodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
+                    ToolCodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
                     func_tool,
                 ],
             ),
@@ -103,7 +103,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         openai_client = project_client.get_openai_client()
 
         # Define function tool
-        report_function = FunctionTool(
+        report_function = ToolFunctionTool(
             name="generate_report",
             description="Generate and save a report with the analysis results. Must be called to create the report.",
             parameters={
@@ -127,7 +127,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
                 model=model,
                 instructions="You are a data analyst. Use code interpreter to generate and analyze data, then ALWAYS create a report using the generate_report function with the exact statistics you computed.",
                 tools=[
-                    CodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
+                    ToolCodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
                     report_function,
                 ],
             ),

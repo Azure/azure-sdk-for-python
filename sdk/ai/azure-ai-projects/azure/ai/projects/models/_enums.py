@@ -399,6 +399,19 @@ class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The agent version has been deleted."""
 
 
+class AnswerResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AnswerResourceType."""
+
+    PREDICATE = "predicate"
+    """PREDICATE."""
+    CHOICE = "choice"
+    """CHOICE."""
+    SCORE = "score"
+    """SCORE."""
+    REFUSAL = "refusal"
+    """REFUSAL."""
+
+
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Strategies for attacks."""
 
@@ -701,6 +714,15 @@ class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Saturday."""
 
 
+class DelegationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of DelegationType."""
+
+    CLIENT = "client"
+    """CLIENT."""
+    RESPONSES = "responses"
+    """RESPONSES."""
+
+
 class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of DeploymentType."""
 
@@ -964,9 +986,9 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Control how much effort the model will exert to match the style and features, especially facial
-    features, of input images. This parameter is only supported for ``gpt-image-1`` and
-    ``gpt-image-1.5`` and later models, unsupported for ``gpt-image-1-mini``. Supports ``high`` and
-    ``low``. Defaults to ``low``.
+    features, of input images. Supports ``high`` and ``low`` on ``gpt-image-1`` and
+    ``gpt-image-1.5``; ``gpt-image-1-mini`` supports only ``low``. For ``gpt-image-2``, omit this
+    parameter. Defaults to ``low`` on supported models.
     """
 
     HIGH = "high"
@@ -999,6 +1021,235 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Job failed."""
     CANCELLED = "cancelled"
     """Job was cancelled by the caller."""
+
+
+class LiveAudioFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveAudioFormatType."""
+
+    AUDIO_PCM = "audio/pcm"
+    """AUDIO_PCM."""
+    AUDIO_PCMU = "audio/pcmu"
+    """AUDIO_PCMU."""
+    AUDIO_PCMA = "audio/pcma"
+    """AUDIO_PCMA."""
+
+
+class LiveClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveClientEventType."""
+
+    SESSION_START = "session.start"
+    """SESSION_START."""
+    SESSION_UPDATE = "session.update"
+    """SESSION_UPDATE."""
+    SESSION_INPUT_AUDIO_APPEND = "session.input_audio.append"
+    """SESSION_INPUT_AUDIO_APPEND."""
+    SESSION_INPUT_AUDIO_MUTE = "session.input_audio.mute"
+    """SESSION_INPUT_AUDIO_MUTE."""
+    SESSION_INPUT_AUDIO_UNMUTE = "session.input_audio.unmute"
+    """SESSION_INPUT_AUDIO_UNMUTE."""
+    SESSION_OUTPUT_AUDIO_FIXTURE_PLAY = "session.output_audio.fixture.play"
+    """SESSION_OUTPUT_AUDIO_FIXTURE_PLAY."""
+    SESSION_INSTRUCTIONS_APPEND = "session.instructions.append"
+    """SESSION_INSTRUCTIONS_APPEND."""
+    SESSION_THINKING_APPEND = "session.thinking.append"
+    """SESSION_THINKING_APPEND."""
+    SESSION_COMMENTARY_APPEND = "session.commentary.append"
+    """SESSION_COMMENTARY_APPEND."""
+    DECISION_CREATE = "decision.create"
+    """DECISION_CREATE."""
+    DECISION_ITEM_CREATE = "decision.item.create"
+    """DECISION_ITEM_CREATE."""
+    DECISION_ITEM_DELETE = "decision.item.delete"
+    """DECISION_ITEM_DELETE."""
+    RESPONSE_ITEM_CREATE = "response.item.create"
+    """RESPONSE_ITEM_CREATE."""
+    RESPONSE_CREATE = "response.create"
+    """RESPONSE_CREATE."""
+    SESSION_CLOSE = "session.close"
+    """SESSION_CLOSE."""
+
+
+class LiveContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveContainerMemoryLimit."""
+
+    ENUM_1_G = "1g"
+    """1_G."""
+    ENUM_4_G = "4g"
+    """4_G."""
+    ENUM_16_G = "16g"
+    """16_G."""
+    ENUM_64_G = "64g"
+    """64_G."""
+
+
+class LiveDetailEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveDetailEnum."""
+
+    LOW = "low"
+    """LOW."""
+    HIGH = "high"
+    """HIGH."""
+    AUTO = "auto"
+    """AUTO."""
+    ORIGINAL = "original"
+    """ORIGINAL."""
+
+
+class LiveInitialItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveInitialItemType."""
+
+    DEVELOPER = "developer"
+    """DEVELOPER."""
+    USER = "user"
+    """USER."""
+    ASSISTANT = "assistant"
+    """ASSISTANT."""
+
+
+class LiveInitialMessageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveInitialMessageStatus."""
+
+    INCOMPLETE = "incomplete"
+    """INCOMPLETE."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+
+
+class LiveReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveReasoningEffort."""
+
+    NONE = "none"
+    """NONE."""
+    MINIMAL = "minimal"
+    """MINIMAL."""
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
+    XHIGH = "xhigh"
+    """XHIGH."""
+
+
+class LiveReasoningSummary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveReasoningSummary."""
+
+    CONCISE = "concise"
+    """CONCISE."""
+    DETAILED = "detailed"
+    """DETAILED."""
+    AUTO = "auto"
+    """AUTO."""
+
+
+class LiveResponsesServiceTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveResponsesServiceTier."""
+
+    AUTO = "auto"
+    """AUTO."""
+    DEFAULT = "default"
+    """DEFAULT."""
+    FAST_TIER_TEMP_PILOT = "fast_tier_temp_pilot"
+    """FAST_TIER_TEMP_PILOT."""
+    FLEX = "flex"
+    """FLEX."""
+    PRIORITY = "priority"
+    """PRIORITY."""
+    ULTRAFAST = "ultrafast"
+    """ULTRAFAST."""
+
+
+class LiveServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveServerEventType."""
+
+    SESSION_STARTED = "session.started"
+    """SESSION_STARTED."""
+    SESSION_UPDATED = "session.updated"
+    """SESSION_UPDATED."""
+    SESSION_INPUT_AUDIO_MUTED = "session.input_audio.muted"
+    """SESSION_INPUT_AUDIO_MUTED."""
+    SESSION_INPUT_AUDIO_UNMUTED = "session.input_audio.unmuted"
+    """SESSION_INPUT_AUDIO_UNMUTED."""
+    SESSION_OUTPUT_AUDIO_FIXTURE_PLAYING = "session.output_audio.fixture.playing"
+    """SESSION_OUTPUT_AUDIO_FIXTURE_PLAYING."""
+    SESSION_OUTPUT_AUDIO_FIXTURE_PLAYED = "session.output_audio.fixture.played"
+    """SESSION_OUTPUT_AUDIO_FIXTURE_PLAYED."""
+    SESSION_INSTRUCTIONS_APPENDED = "session.instructions.appended"
+    """SESSION_INSTRUCTIONS_APPENDED."""
+    SESSION_THINKING_APPENDED = "session.thinking.appended"
+    """SESSION_THINKING_APPENDED."""
+    SESSION_COMMENTARY_APPENDED = "session.commentary.appended"
+    """SESSION_COMMENTARY_APPENDED."""
+    SESSION_INPUT_AUDIO_APPEND = "session.input_audio.append"
+    """SESSION_INPUT_AUDIO_APPEND."""
+    SESSION_OUTPUT_AUDIO_DELTA = "session.output_audio.delta"
+    """SESSION_OUTPUT_AUDIO_DELTA."""
+    SESSION_INPUT_TRANSCRIPT_DELTA = "session.input_transcript.delta"
+    """SESSION_INPUT_TRANSCRIPT_DELTA."""
+    SESSION_OUTPUT_TRANSCRIPT_DELTA = "session.output_transcript.delta"
+    """SESSION_OUTPUT_TRANSCRIPT_DELTA."""
+    SESSION_DELEGATION_CREATED = "session.delegation.created"
+    """SESSION_DELEGATION_CREATED."""
+    DECISION_EVENT = "decision.event"
+    """DECISION_EVENT."""
+    DECISION_ITEM_CREATED = "decision.item.created"
+    """DECISION_ITEM_CREATED."""
+    DECISION_ITEM_DELETED = "decision.item.deleted"
+    """DECISION_ITEM_DELETED."""
+    RESPONSE_EVENT = "response.event"
+    """RESPONSE_EVENT."""
+    SESSION_USAGE_UPDATED = "session.usage.updated"
+    """SESSION_USAGE_UPDATED."""
+    SESSION_CLOSED = "session.closed"
+    """SESSION_CLOSED."""
+    ERROR = "error"
+    """ERROR."""
+    INFO = "info"
+    """INFO."""
+    TRANSPORT_DTMF_RECEIVED = "transport.dtmf.received"
+    """TRANSPORT_DTMF_RECEIVED."""
+    TRANSPORT_DTMF_SEND = "transport.dtmf.send"
+    """TRANSPORT_DTMF_SEND."""
+    TRANSPORT_RINGING = "transport.ringing"
+    """TRANSPORT_RINGING."""
+    TRANSPORT_ANSWERED = "transport.answered"
+    """TRANSPORT_ANSWERED."""
+    TRANSPORT_FAILED = "transport.failed"
+    """TRANSPORT_FAILED."""
+
+
+class LiveTextVerbosity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveTextVerbosity."""
+
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
+
+
+class LiveToolChoiceEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveToolChoiceEnum."""
+
+    AUTO = "auto"
+    """AUTO."""
+    NONE = "none"
+    """NONE."""
+    REQUIRED = "required"
+    """REQUIRED."""
+
+
+class LiveToolChoiceValueEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveToolChoiceValueEnum."""
+
+    NONE = "none"
+    """NONE."""
+    AUTO = "auto"
+    """AUTO."""
+    REQUIRED = "required"
+    """REQUIRED."""
 
 
 class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1097,6 +1348,15 @@ class MisalignmentErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OTHER."""
 
 
+class ModelIdsLive(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Live model. Required in the session configuration for every transport; do not pass it as a
+    URL query parameter.
+    """
+
+    GPT_LIVE1 = "gpt-live-1"
+    """GPT_LIVE1."""
+
+
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authentication type for OpenApi endpoint. Allowed types are:
 
@@ -1172,6 +1432,17 @@ class PublishApprovalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NO_APPROVAL_NEEDED = "no_approval_needed"
     """The agent is published at a scope that does not go through Microsoft Agent Certification. Only
     tenant-scoped titles are reviewed."""
+
+
+class QuestionParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of QuestionParamType."""
+
+    PREDICATE = "predicate"
+    """PREDICATE."""
+    CHOICE = "choice"
+    """CHOICE."""
+    SCORE = "score"
+    """SCORE."""
 
 
 class RaiInvocationContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1439,7 +1710,7 @@ class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ``minimal``, ``low``, ``medium``, ``high``, ``xhigh``, and ``max``. Reducing reasoning effort
     can result in faster responses and fewer tokens used on reasoning in a response. Not all
     reasoning models support every value. See the `reasoning guide
-    <https://platform.openai.com/docs/guides/reasoning>`_ for model-specific support.
+    <https://developers.openai.com/api/docs/guides/reasoning>`_ for model-specific support.
     """
 
     NONE = "none"
@@ -2510,6 +2781,43 @@ class VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumM
     """TOOL."""
 
 
+class VoiceAgentLiveConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of a persisted Live conversation item."""
+
+    INPUT = "input"
+    """INPUT."""
+    OUTPUT = "output"
+    """OUTPUT."""
+    DELEGATION = "delegation"
+    """DELEGATION."""
+
+
+class VoiceAgentLiveDelegationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Persisted delegation outcome, not speech or playback status."""
+
+    IN_PROGRESS = "in_progress"
+    """IN_PROGRESS."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+    FAILED = "failed"
+    """FAILED."""
+    INCOMPLETE = "incomplete"
+    """INCOMPLETE."""
+    CANCELLED = "cancelled"
+    """CANCELLED."""
+
+
+class VoiceAgentLiveDelegationTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Delegation owner. Foundry agent targets use native client delegation upstream."""
+
+    RESPONSES = "responses"
+    """RESPONSES."""
+    CLIENT = "client"
+    """CLIENT."""
+    FOUNDRY_MANAGED_AGENT = "foundry_managed_agent"
+    """FOUNDRY_MANAGED_AGENT."""
+
+
 class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The input audio noise reduction mode.
 
@@ -2593,6 +2901,15 @@ class VoiceAgentSubagentAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """The consultation was replaced by a newer request."""
     FAILED = "failed"
     """The consultation failed."""
+
+
+class VoiceAgentSubProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Voice protocol; realtime includes cascaded models."""
+
+    REALTIME = "realtime"
+    """REALTIME."""
+    LIVE = "live"
+    """LIVE."""
 
 
 class VoiceAgentSystemToolName(str, Enum, metaclass=CaseInsensitiveEnumMeta):

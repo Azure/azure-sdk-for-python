@@ -26,6 +26,39 @@ git restore pyproject.toml
 #   recursive-include samples *.py *.md
 git restore MANIFEST.in
 
+# The optional OpenAPI-only voice selector cannot use a required TypeSpec discriminator.
+# Mirror the emitter's per-member override exceptions without widening the public Literal types.
+# Upstream follow-up: report optional-selector handling in http-client-python; remove after regeneration passes unpatched.
+$f = 'azure\ai\projects\models\_models.py'
+$c = Get-Content $f -Raw
+$newline = if ($c.Contains("`r`n")) { "`r`n" } else { "`n" }
+$voiceSelectorFixes = @(
+    @{
+        Class = 'VoiceAgentDefinition'
+        Pattern = '(?m)^(    sub_protocol: Optional\[Literal\["realtime"\]\] = rest_field\()([^\r\n]+)\)(\r?)$'
+        Patched = '(?m)^    sub_protocol: Optional\[Literal\["realtime"\]\] = rest_field\(  # pyright: ignore\[reportIncompatibleVariableOverride\]\r?$'
+        Replacement = '$1  # pyright: ignore[reportIncompatibleVariableOverride]' + $newline + '        $2' + $newline + '    )$3'
+    },
+    @{
+        Class = 'VoiceAgentLiveDefinition'
+        Pattern = '(?m)^(        self\.sub_protocol: Literal\["live"\] = "live")(\r?)$'
+        Patched = '(?m)^        self\.sub_protocol: Literal\["live"\] = "live"  # pyright: ignore\[reportIncompatibleVariableOverride\]\r?$'
+        Replacement = '$1  # pyright: ignore[reportIncompatibleVariableOverride]$2'
+    }
+)
+foreach ($fix in $voiceSelectorFixes) {
+    $classes = [regex]::Matches($c, '(?ms)^class ' + $fix.Class + '\b.*?(?=^class |\z)')
+    if ($classes.Count -ne 1) { throw "Expected one generated $($fix.Class) class." }
+    $class = $classes[0]
+    if ([regex]::IsMatch($class.Value, $fix.Patched)) { continue }
+    if ([regex]::Matches($class.Value, $fix.Pattern).Count -ne 1) {
+        throw "Generated $($fix.Class).sub_protocol changed; review the optional-selector typing fix."
+    }
+    $updated = [regex]::Replace($class.Value, $fix.Pattern, $fix.Replacement)
+    $c = $c.Remove($class.Index, $class.Length).Insert($class.Index, $updated)
+}
+Set-Content $f $c -NoNewline
+
 # Force streaming in get_session_log_stream for both sync and async operations.
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
 foreach ($f in $files) {

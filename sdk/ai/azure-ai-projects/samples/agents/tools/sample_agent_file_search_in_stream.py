@@ -28,7 +28,7 @@ import os
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolFileSearchTool
 
 load_dotenv()
 
@@ -63,7 +63,7 @@ with (
         definition=PromptAgentDefinition(
             model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant that can search through product information and provide detailed responses. Use the file search tool to find relevant information before answering.",
-            tools=[FileSearchTool(vector_store_ids=[vector_store.id])],
+            tools=[ToolFileSearchTool(vector_store_ids=[vector_store.id])],
         ),
         description="File search agent with streaming response capabilities.",
     )

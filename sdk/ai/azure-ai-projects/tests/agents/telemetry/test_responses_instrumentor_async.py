@@ -25,7 +25,7 @@ from azure.ai.projects.telemetry._utils import (
     _set_use_simple_tool_format,
     RESPONSES_PROVIDER,
 )
-from azure.ai.projects.models import FunctionTool, PromptAgentDefinition
+from azure.ai.projects.models import ToolFunctionTool, PromptAgentDefinition
 from azure.core.settings import settings
 
 BINARY_DATA_TRACING_ENV_VARIABLE = "AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA"
@@ -419,7 +419,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
-            func_tool = FunctionTool(
+            func_tool = ToolFunctionTool(
                 name="get_weather",
                 parameters={
                     "type": "object",
@@ -680,7 +680,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
-            func_tool = FunctionTool(
+            func_tool = ToolFunctionTool(
                 name="get_weather",
                 parameters={
                     "type": "object",
@@ -2752,7 +2752,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
-            function_tool = FunctionTool(
+            function_tool = ToolFunctionTool(
                 name="get_weather",
                 description="Get the current weather for a location.",
                 parameters={
@@ -3001,7 +3001,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
-            function_tool = FunctionTool(
+            function_tool = ToolFunctionTool(
                 name="get_weather",
                 description="Get the current weather for a location.",
                 parameters={

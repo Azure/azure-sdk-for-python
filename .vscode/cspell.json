@@ -470,6 +470,8 @@
     "uninstrument",
     "uninstrumented",
     "uninstrumenting",
+    "unmute",
+    "unmuted",
     "unpad",
     "unpadder",
     "unpartial",
@@ -2174,6 +2176,28 @@
         "Hundredkm",
         "TPEG",
         "Hundredkm"
+      ]
+    },
+    {
+      "filename": "sdk/ai/azure-ai-projects/**",
+      "words": [
+        "azcopy",
+        "brise",
+        "csdl",
+        "dedup",
+        "flitz",
+        "genai",
+        "harema",
+        "inpainting",
+        "juni",
+        "nira",
+        "noeul",
+        "nuri",
+        "shida",
+        "simpleqna",
+        "upia",
+        "webrtc",
+        "xhigh"
       ]
     },
     {

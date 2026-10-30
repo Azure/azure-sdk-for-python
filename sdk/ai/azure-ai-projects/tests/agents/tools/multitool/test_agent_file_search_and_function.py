@@ -17,7 +17,7 @@ from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
-from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool, FunctionTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolFileSearchTool, ToolFunctionTool
 
 
 class TestAgentFileSearchAndFunction(TestBase):
@@ -69,7 +69,7 @@ Overall Total Revenue: $129,000
         assert file.status == "completed"
 
         # Define function tool
-        save_results_function = FunctionTool(
+        save_results_function = ToolFunctionTool(
             name="save_analysis_results",
             description="Save the analysis results",
             parameters={
@@ -93,7 +93,7 @@ Overall Total Revenue: $129,000
                 model=model,
                 instructions="You are a data analyst. Use file search to find data and save_analysis_results function to save your findings.",
                 tools=[
-                    FileSearchTool(vector_store_ids=[vector_store.id]),
+                    ToolFileSearchTool(vector_store_ids=[vector_store.id]),
                     save_results_function,
                 ],
             ),
@@ -172,7 +172,7 @@ Overall Total Revenue: $129,000
         print(f"Empty vector store created (id: {vector_store.id})")
 
         # Define function tool
-        error_function = FunctionTool(
+        error_function = ToolFunctionTool(
             name="report_error",
             description="Report when data is not available",
             parameters={
@@ -196,7 +196,7 @@ Overall Total Revenue: $129,000
                 model=model,
                 instructions="Search for data. If you can't find it, use report_error function to explain what happened.",
                 tools=[
-                    FileSearchTool(vector_store_ids=[vector_store.id]),
+                    ToolFileSearchTool(vector_store_ids=[vector_store.id]),
                     error_function,
                 ],
             ),
@@ -270,7 +270,7 @@ print(f"Sum: {result}")
         print(f"Python file uploaded (id: {file.id})")
 
         # Define function tool
-        save_function = FunctionTool(
+        save_function = ToolFunctionTool(
             name="save_code_review",
             description="Save code review findings. Must be called to persist the review.",
             parameters={
@@ -294,7 +294,7 @@ print(f"Sum: {result}")
                 model=model,
                 instructions="You are a code reviewer. Search for code files, analyze them, and ALWAYS save your findings using the save_code_review function.",
                 tools=[
-                    FileSearchTool(vector_store_ids=[vector_store.id]),
+                    ToolFileSearchTool(vector_store_ids=[vector_store.id]),
                     save_function,
                 ],
             ),
@@ -419,7 +419,7 @@ Responsible AI development requires multistakeholder collaboration and transpare
         print(f"Documents uploaded: {uploaded1.id}, {uploaded2.id}")
 
         # Define save function
-        save_finding = FunctionTool(
+        save_finding = ToolFunctionTool(
             name="save_finding",
             description="Save research finding",
             parameters={
@@ -441,7 +441,7 @@ Responsible AI development requires multistakeholder collaboration and transpare
                 model=model,
                 instructions="You are a research assistant. Search documents and save important findings.",
                 tools=[
-                    FileSearchTool(vector_store_ids=[vector_store.id]),
+                    ToolFileSearchTool(vector_store_ids=[vector_store.id]),
                     save_finding,
                 ],
             ),
