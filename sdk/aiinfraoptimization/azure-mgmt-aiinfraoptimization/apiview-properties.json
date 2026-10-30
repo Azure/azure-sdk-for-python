@@ -51,5 +51,5 @@
         "azure.mgmt.aiinfraoptimization.operations.RecommendationsOperations.recommend_vm_sku": "Microsoft.AIInfraOptimization.Recommendations.recommendVmSku",
         "azure.mgmt.aiinfraoptimization.aio.operations.RecommendationsOperations.recommend_vm_sku": "Microsoft.AIInfraOptimization.Recommendations.recommendVmSku"
     },
-    "CrossLanguageVersion": "b8fff52ea330"
+    "CrossLanguageVersion": "f11b2b219c57"
 }

@@ -34,7 +34,7 @@ from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import build_operations_list_request, build_recommendations_recommend_vm_sku_request
-from .._configuration import AIInfraOptimizationClientConfiguration
+from .._configuration import AIInfraOptimizationMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -47,14 +47,16 @@ class Operations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.aiinfraoptimization.aio.AIInfraOptimizationClient`'s
+        :class:`~azure.mgmt.aiinfraoptimization.aio.AIInfraOptimizationMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIInfraOptimizationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AIInfraOptimizationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -158,14 +160,16 @@ class RecommendationsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.aiinfraoptimization.aio.AIInfraOptimizationClient`'s
+        :class:`~azure.mgmt.aiinfraoptimization.aio.AIInfraOptimizationMgmtClient`'s
         :attr:`recommendations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIInfraOptimizationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AIInfraOptimizationMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

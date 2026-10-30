@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.aiinfraoptimization import AIInfraOptimizationClient
+from azure.mgmt.aiinfraoptimization import AIInfraOptimizationMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.aiinfraoptimization import AIInfraOptimizationClient
 
 
 def main():
-    client = AIInfraOptimizationClient(
+    client = AIInfraOptimizationMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

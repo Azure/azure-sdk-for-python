@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import AIInfraOptimizationClientConfiguration
+from ._configuration import AIInfraOptimizationMgmtClientConfiguration
 from .operations import Operations, RecommendationsOperations
 
 if sys.version_info >= (3, 11):
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AIInfraOptimizationClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AIInfraOptimizationMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft.AIInfraOptimization Resource Provider management API.
 
     :ivar operations: Operations operations
@@ -70,7 +70,7 @@ class AIInfraOptimizationClient:  # pylint: disable=docstring-keyword-should-mat
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = AIInfraOptimizationClientConfiguration(
+        self._config = AIInfraOptimizationMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

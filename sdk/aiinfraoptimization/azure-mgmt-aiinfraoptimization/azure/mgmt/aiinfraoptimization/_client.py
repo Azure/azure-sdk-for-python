@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import AIInfraOptimizationClientConfiguration
+from ._configuration import AIInfraOptimizationMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import Operations, RecommendationsOperations
 
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AIInfraOptimizationClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AIInfraOptimizationMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft.AIInfraOptimization Resource Provider management API.
 
     :ivar operations: Operations operations
@@ -69,7 +69,7 @@ class AIInfraOptimizationClient:  # pylint: disable=docstring-keyword-should-mat
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = AIInfraOptimizationClientConfiguration(
+        self._config = AIInfraOptimizationMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

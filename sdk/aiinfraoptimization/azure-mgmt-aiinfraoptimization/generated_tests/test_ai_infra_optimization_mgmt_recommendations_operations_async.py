@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.aiinfraoptimization import AIInfraOptimizationClient
+from azure.mgmt.aiinfraoptimization.aio import AIInfraOptimizationMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestAIInfraOptimizationRecommendationsOperations(AzureMgmtRecordedTestCase):
+class TestAIInfraOptimizationMgmtRecommendationsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(AIInfraOptimizationClient)
+        self.client = self.create_mgmt_client(AIInfraOptimizationMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_recommendations_recommend_vm_sku(self, resource_group):
-        response = self.client.recommendations.recommend_vm_sku(
+    @recorded_by_proxy_async
+    async def test_recommendations_recommend_vm_sku(self, resource_group):
+        response = await self.client.recommendations.recommend_vm_sku(
             location="str",
             body={
                 "deployment": {"procurementOption": "str", "replicaCount": 0},

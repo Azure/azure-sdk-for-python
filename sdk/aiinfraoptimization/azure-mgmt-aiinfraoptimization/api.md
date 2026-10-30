@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.aiinfraoptimization
 
-    class azure.mgmt.aiinfraoptimization.AIInfraOptimizationClient: implements ContextManager 
+    class azure.mgmt.aiinfraoptimization.AIInfraOptimizationMgmtClient: implements ContextManager 
         operations: Operations
         recommendations: RecommendationsOperations
 
@@ -29,7 +29,7 @@ namespace azure.mgmt.aiinfraoptimization
 
 namespace azure.mgmt.aiinfraoptimization.aio
 
-    class azure.mgmt.aiinfraoptimization.aio.AIInfraOptimizationClient: implements AsyncContextManager 
+    class azure.mgmt.aiinfraoptimization.aio.AIInfraOptimizationMgmtClient: implements AsyncContextManager 
         operations: Operations
         recommendations: RecommendationsOperations
 
