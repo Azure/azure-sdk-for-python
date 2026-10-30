@@ -26,6 +26,7 @@ USAGE:
 
 import os
 import random
+import uuid
 
 from azure.storage.filedatalake import (
     DataLakeServiceClient,
@@ -112,7 +113,7 @@ def run():
     )
 
     # generate a random name for testing purpose
-    fs_name = "testfs{}download".format(random.randint(1, 1000))
+    fs_name = "testfs{}download".format(uuid.uuid4().hex[:12])
     print("Generating a test filesystem named '{}'.".format(fs_name))
 
     # create the filesystem
