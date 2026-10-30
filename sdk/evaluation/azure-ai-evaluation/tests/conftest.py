@@ -5,6 +5,7 @@ import os
 import json
 import hashlib
 import ssl
+import stat
 import multiprocessing
 import time
 from datetime import datetime, timedelta
@@ -110,6 +111,17 @@ def _prepare_nltk_test_data(data_dir: Path) -> None:
                         raise RuntimeError(f"Unexpected member in NLTK test data '{resource}': {member.filename!r}.")
                 if any(not (archive_path.parent / member.filename).exists() for member in members):
                     archive.extractall(archive_path.parent)
+
+    _make_private_to_owner(data_dir)
+
+
+def _make_private_to_owner(data_dir: Path) -> None:
+    # On POSIX, NLTK 3.10.4 and later refuse data that another account can write to.
+    if os.name != "posix" or not data_dir.is_dir():
+        return
+    for path in (data_dir, *data_dir.rglob("*")):
+        if not path.is_symlink():
+            path.chmod(stat.S_IMODE(path.stat().st_mode) & ~(stat.S_IWGRP | stat.S_IWOTH))
 
 
 def pytest_configure(config: pytest.Config) -> None:
