@@ -445,8 +445,9 @@ The framework persists:
   optional caller-provided chain head — see §11).
 - A per-turn `turn_started_at` ISO-8601 UTC timestamp used by the
   watchdog (§14) to compute remaining budget across crashes.
-- Steering state (`pending_inputs` queue, `cancel_requested`,
-  `drain_in_progress`, `active_input`, `next_input_seq`) for
+- Steering state (`pending_inputs` queue, `pending_input_ids`,
+  `cancel_requested`, `drain_in_progress`, `active_input`,
+  `active_input_id`, `handoff_id`, `next_input_seq`) for
   steerable tasks (§12).
 - The handler's terminal outcome: a structured `error` dict on
   failure (when persisted by the layer above the primitive),
@@ -1042,10 +1043,27 @@ chain record itself does not carry the per-turn diagnostic.
 | Sub-key | Type | Meaning |
 |---|---|---|
 | `pending_inputs` | array of input values OR refs (§23) | FIFO of queued steering inputs. |
+| `pending_input_ids` | array of strings or nulls, optional | Internal identities aligned with `pending_inputs`; null identifies an entry written by a legacy implementation. Queue mutations MUST update both arrays atomically. |
 | `next_input_seq` | integer | Monotonic counter for promoted-attachment key allocation (NEVER reused). |
 | `cancel_requested` | boolean | Resilient cancel signal; set on steering append; cleared after drain when pending is empty. |
-| `drain_in_progress` | boolean | True between the start of a drain PATCH and the next turn-start; protects against partial drain on crash. |
+| `drain_in_progress` | boolean | True from a queued-input claim until that turn's terminal suspend; preserves recovery provenance across a crash. |
 | `active_input` | any JSON value OR ref | The single input being drained (mirror copy used by the race-recovery contract). Cleared at suspend / terminal. |
+| `active_input_id` | string or null, optional | Identity of the promoted queued turn, used to bind a local caller after a lost claim response. Cleared at suspend. |
+| `handoff_id` | string, optional | Identity of the last completed turn's suspension. A live drain may claim only its own handoff, even after another manager completes a later turn. |
+
+Older records without `pending_input_ids` treat all persisted entries as
+anonymous; new appends extend that array with nulls for the existing entries.
+If an older writer changes the queue without maintaining the new array and
+the lengths diverge, the reader logs the mismatch, processes the entries
+anonymously, and rejects displaced local callers with `TaskConflictError`
+instead of delivering a different turn's result. Writers that cannot maintain
+these fields must not concurrently mutate a queue already containing
+identities: an equal-length replacement of identical values cannot be
+distinguished from an unchanged queue.
+When a claim response is lost, the single atomic status/lease/input/queue
+PATCH leaves `drain_in_progress=true` for ordinary in-progress recovery.
+Local result futures cannot survive process death; the persisted identities
+only protect same-process caller binding and cancellation.
 
 Implementers in other languages MUST use these exact key names. A
 process built in language X must be able to recover a task created
@@ -1616,6 +1634,17 @@ internally by the periodic recovery scanner described in §55:
 the scanner detects abandoned leases and re-invokes the handler
 with the persisted `payload["input"]` and
 `entry_mode="recovered"`.
+The same startup and periodic scan also selects framework-owned,
+registered steerable multi-turn tasks suspended for `run_completion`
+with a nonempty admitted queue. It atomically claims the lease,
+promotes exactly the FIFO head into the canonical input, and dispatches
+that turn with `entry_mode="resumed"` without replaying the completed
+turn. A competing claim abandons its stale ETag; ordinary in-progress
+recovery handles a claim whose write committed but reply was lost.
+If the preceding terminal suspension write did not commit, or its
+reply was lost, the live drain retains admitted caller bindings and
+defers the claim to recovery instead of rejecting inputs that remain
+persisted.
 
 ---
 
