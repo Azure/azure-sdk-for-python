@@ -32,7 +32,7 @@ class ConnectionStringParser:
     :rtype: None
     """
 
-    def __init__(self, connection_string: typing.Optional[str] = None) -> None:
+    def __init__(self, connection_string: typing.Optional[str] = None, *, _allow_missing: bool = False) -> None:
         self.instrumentation_key = None
         self.endpoint = ""
         self.live_endpoint = ""
@@ -41,7 +41,8 @@ class ConnectionStringParser:
         self.region = ""
         self.application_id = ""
         self._initialize()
-        self._validate_instrumentation_key()
+        if not _allow_missing or self._connection_string is not None or self.instrumentation_key is not None:
+            self._validate_instrumentation_key()
 
     def _initialize(self) -> None:
         # connection string and ikey

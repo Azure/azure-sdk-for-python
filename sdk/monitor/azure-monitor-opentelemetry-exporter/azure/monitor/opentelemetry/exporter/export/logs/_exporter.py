@@ -30,6 +30,13 @@ except ImportError:
     _session_attributes = None  # type: ignore
 
 from azure.monitor.opentelemetry.exporter import _utils
+from azure.monitor.opentelemetry.exporter._routing import (
+    _get_cloud_role,
+    _get_ingestion_endpoint,
+    _get_instrumentation_key,
+    _is_aad_route,
+    _is_valid_route,
+)
 from azure.monitor.opentelemetry.exporter._constants import (
     _AVAILABILITY_ENVELOPE_NAME,
     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
@@ -45,6 +52,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _MICROSOFT_AVAILABILITY_SUCCESS,
     _MICROSOFT_CUSTOM_EVENT_NAME,
     _MICROSOFT_CUSTOM_MEASUREMENTS,
+    _MULTI_ENDPOINT_ROUTING_ATTRIBUTES,
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     AvailabilityData,
@@ -101,6 +109,8 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
         :return: The result of the export.
         :rtype: ~opentelemetry.sdk._logs.export.LogRecordExportResult
         """
+        if self._enable_multi_endpoint_routing:
+            return self._export_routed_logs(batch)
         envelopes = [self._log_to_envelope(log) for log in batch]
         try:
             result = self._transmit(envelopes)
@@ -109,6 +119,20 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
         except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
             return _get_log_export_result(ExportResult.FAILED_NOT_RETRYABLE)
+
+    def _export_routed_logs(self, batch: Sequence[ReadableLogRecord]) -> LogRecordExportResult:
+        try:
+            groups: Dict[tuple[str, bool], list[TelemetryItem]] = {}
+            for log in batch:
+                attributes = log.log_record.attributes
+                if not _is_valid_route(attributes):
+                    continue
+                key = _get_ingestion_endpoint(attributes), _is_aad_route(attributes)
+                groups.setdefault(key, []).append(self._log_to_envelope(log))
+            return _get_log_export_result(self._transmit_routed(groups))
+        except Exception:  # pylint: disable=broad-except
+            _logger.exception("Exception occurred while exporting routed logs.")
+            return LogRecordExportResult.FAILURE
 
     def force_flush(self, timeout_millis: float = 10_000) -> bool:
         # Ensure that export of any received log records completes as soon as possible.
@@ -120,15 +144,27 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
 
         Called when the SDK is shut down.
         """
-        if self.storage:
-            self.storage.close()
+        try:
+            if self._enable_multi_endpoint_routing:
+                self._shutdown_route_exporters()
+        finally:
+            if self.storage:
+                self.storage.close()
 
     def _log_to_envelope(self, readable_log_record: ReadableLogRecord) -> TelemetryItem:
         envelope = _convert_log_to_envelope(
             readable_log_record,
             increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+            exclude_routing_attributes=self._enable_multi_endpoint_routing,
         )
-        envelope.instrumentation_key = self._instrumentation_key
+        envelope.instrumentation_key = (
+            _get_instrumentation_key(readable_log_record.log_record.attributes)
+            if self._enable_multi_endpoint_routing
+            else self._instrumentation_key
+        )
+        if self._enable_multi_endpoint_routing:
+            assert envelope.tags is not None
+            envelope.tags[ContextTagKeys.AI_CLOUD_ROLE] = _get_cloud_role(readable_log_record.log_record.attributes)
         return envelope
 
     # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -165,7 +201,10 @@ def _log_data_is_event(readable_log_record: ReadableLogRecord) -> bool:
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
 def _convert_log_to_envelope(
-    readable_log_record: ReadableLogRecord, *, increase_truncation_limit: bool = False
+    readable_log_record: ReadableLogRecord,
+    *,
+    increase_truncation_limit: bool = False,
+    exclude_routing_attributes: bool = False,
 ) -> TelemetryItem:
     log_record = readable_log_record.log_record
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
@@ -199,8 +238,8 @@ def _convert_log_to_envelope(
     if location_ip:
         tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
     properties = _utils._filter_custom_properties(
-        log_record.attributes,
-        lambda key, val: not _is_ignored_attribute(key),  # type: ignore
+        log_record.attributes,  # type: ignore[arg-type]
+        lambda key, val: not _is_ignored_attribute(key, exclude_routing_attributes=exclude_routing_attributes),
         increase_truncation_limit=increase_truncation_limit,
     )
     measurements = _utils._filter_custom_measurements(log_record.attributes)
@@ -352,8 +391,8 @@ def _get_availability_data(log_record) -> Optional[Dict[str, str]]:
     return {key: str(value) for key, value in availability_data.items() if value is not None}
 
 
-def _is_ignored_attribute(key: str) -> bool:
-    return key in _IGNORED_ATTRS
+def _is_ignored_attribute(key: str, *, exclude_routing_attributes: bool = False) -> bool:
+    return key in _IGNORED_ATTRS or (exclude_routing_attributes and key in _MULTI_ENDPOINT_ROUTING_ATTRIBUTES)
 
 
 _IGNORED_ATTRS = frozenset(

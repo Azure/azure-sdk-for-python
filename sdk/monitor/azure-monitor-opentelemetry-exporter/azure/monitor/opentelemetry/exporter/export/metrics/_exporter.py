@@ -3,7 +3,7 @@
 import logging
 import os
 
-from typing import Dict, Optional, Union, Any
+from typing import Dict, List, Optional, Union, Any
 
 from opentelemetry.environment_variables import OTEL_METRICS_EXPORTER
 from opentelemetry.util.types import Attributes
@@ -42,9 +42,17 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _EXPORTER_DOMAIN_SCHEMA_VERSION,
     _CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS,
     _METRIC_ENVELOPE_NAME,
+    _MULTI_ENDPOINT_ROUTING_ATTRIBUTES,
     _STATSBEAT_METRIC_NAME_MAPPINGS,
 )
 from azure.monitor.opentelemetry.exporter import _utils
+from azure.monitor.opentelemetry.exporter._routing import (
+    _get_cloud_role,
+    _get_ingestion_endpoint,
+    _get_instrumentation_key,
+    _is_aad_route,
+    _is_valid_route,
+)
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     ContextTagKeys,
     MetricDataPoint,
@@ -107,6 +115,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         :rtype: ~opentelemetry.sdk.metrics.export.MetricExportResult
         """
         envelopes = []
+        groups: Dict[tuple[str, bool], List[TelemetryItem]] = {}
         if metrics_data is None:
             return MetricExportResult.SUCCESS
         for resource_metric in metrics_data.resource_metrics:
@@ -114,6 +123,8 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
                 for metric in scope_metric.metrics:
                     for point in metric.data.data_points:
                         if point is not None:
+                            if self._enable_multi_endpoint_routing and not _is_valid_route(point.attributes):
+                                continue
                             envelope = self._point_to_envelope(
                                 point,
                                 metric.name,
@@ -121,10 +132,17 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
                                 scope_metric.scope,
                             )
                             if envelope is not None:
-                                envelopes.append(envelope)
+                                if self._enable_multi_endpoint_routing:
+                                    key = _get_ingestion_endpoint(point.attributes), _is_aad_route(point.attributes)
+                                    groups.setdefault(key, []).append(envelope)
+                                else:
+                                    envelopes.append(envelope)
         try:
-            result = self._transmit(envelopes)
-            self._handle_transmit_from_storage(envelopes, result)
+            if self._enable_multi_endpoint_routing:
+                result = self._transmit_routed(groups)
+            else:
+                result = self._transmit(envelopes)
+                self._handle_transmit_from_storage(envelopes, result)
             return _get_metric_export_result(result)
         except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while exporting the data.")  # pylint: disable=C4769
@@ -150,8 +168,12 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         :param timeout_millis: The maximum amount of time to wait for shutdown. Not currently used.
         :type timeout_millis: float
         """
-        if self.storage:
-            self.storage.close()
+        try:
+            if self._enable_multi_endpoint_routing:
+                self._shutdown_route_exporters()
+        finally:
+            if self.storage:
+                self.storage.close()
 
     # pylint: disable=protected-access
     def _point_to_envelope(
@@ -179,12 +201,20 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             resource,
             scope,
             increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+            exclude_routing_attributes=self._enable_multi_endpoint_routing,
         )
+        if self._enable_multi_endpoint_routing:
+            assert envelope.tags is not None
+            envelope.tags[ContextTagKeys.AI_CLOUD_ROLE] = _get_cloud_role(point.attributes)
         # Note that Performance Counters are not counted as "Autocollected standard metrics"
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
             envelope = _handle_std_metric_envelope(envelope, name, point.attributes)  # type: ignore
         if envelope is not None:
-            envelope.instrumentation_key = self._instrumentation_key
+            envelope.instrumentation_key = (
+                _get_instrumentation_key(point.attributes)
+                if self._enable_multi_endpoint_routing
+                else self._instrumentation_key
+            )
             # Only set SentToAMW on AKS Attach
             if _utils._is_on_aks() and _utils._is_attach_enabled() and not self._is_stats_exporter():
                 if OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ and "otlp" in os.environ.get(
@@ -243,6 +273,7 @@ def _convert_point_to_envelope(
     scope: Optional[InstrumentationScope] = None,
     *,
     increase_truncation_limit: bool = False,
+    exclude_routing_attributes: bool = False,
 ) -> TelemetryItem:
     envelope = _utils._create_telemetry_item(point.time_unix_nano)
     envelope.name = _METRIC_ENVELOPE_NAME
@@ -267,7 +298,11 @@ def _convert_point_to_envelope(
         max_ = point.max
 
     # truncation logic
-    properties = _utils._filter_custom_properties(point.attributes, increase_truncation_limit=increase_truncation_limit)
+    properties = _utils._filter_custom_properties(
+        point.attributes,
+        lambda key, val: not (exclude_routing_attributes and key in _MULTI_ENDPOINT_ROUTING_ATTRIBUTES),
+        increase_truncation_limit=increase_truncation_limit,
+    )
 
     # Map OTel-friendly name to Breeze Performance Counter name
     # Note that Performance Counters are not counted as "Autocollected standard metrics"

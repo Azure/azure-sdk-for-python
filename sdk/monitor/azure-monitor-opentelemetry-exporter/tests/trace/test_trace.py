@@ -1,17 +1,23 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import datetime as datetime_module
 import json
 import os
 import platform
 import shutil
+import tempfile
+import time as time_module
 import unittest
 from datetime import datetime
+from pathlib import Path
 from unittest import mock
 
 # pylint: disable=import-error
 from opentelemetry.trace import set_tracer_provider
 from opentelemetry.sdk import trace, resources
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import Event, ReadableSpan
 
 from opentelemetry.sdk.trace.export import SpanExportResult
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
@@ -26,6 +32,8 @@ from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCode
 
 from azure.core.settings import settings
+from azure.core.credentials import AccessToken
+from azure.core.pipeline.transport import HttpResponse, HttpTransport
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 
 try:
@@ -33,7 +41,7 @@ try:
 except ImportError:
     # azure.core.instrumentation is not available in older versions of azure-core
     get_azure_sdk_tracer = None
-from azure.monitor.opentelemetry.exporter.export._base import ExportResult
+from azure.monitor.opentelemetry.exporter.export._base import BaseExporter, ExportResult
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
     AzureMonitorTraceExporter,
     _check_instrumentation_span,
@@ -43,6 +51,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _AZURE_SDK_NAMESPACE_NAME,
     _AZURE_SDK_OPENTELEMETRY_NAME,
     _AZURE_AI_SDK_NAME,
+    _MULTI_ENDPOINT_ROUTING_ATTRIBUTES,
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._generated.exporter._utils.model_base import SdkJSONEncoder
@@ -167,6 +176,108 @@ class TestAzureTraceExporter(unittest.TestCase):
             result = exporter.export([test_span])
             self.assertEqual(result, SpanExportResult.SUCCESS)
             self.assertEqual(storage_mock.call_count, 1)
+
+    @mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED": "true"})
+    def test_export_routing_attributes(self):
+        attributes = {
+            "microsoft.instrumentation_key": "customer-key",
+            "microsoft.ingestion_endpoint": "https://example.com/",
+            "microsoft.multi_endpoint_cloud_role": "customer-service",
+            "microsoft.ingestion_auth": "ikey",
+            "custom": "value",
+            "microsoft.custom": "preserved",
+        }
+        span = trace.ReadableSpan(
+            name="test",
+            context=SpanContext(trace_id=1, span_id=2, is_remote=False),
+            start_time=1,
+            end_time=2,
+            attributes=attributes.copy(),
+            events=(
+                trace.Event("event", attributes=attributes.copy()),
+                trace.Event("exception", attributes=attributes.copy()),
+            ),
+        )
+        for routing in (False, True):
+            with self.subTest(routing=routing):
+                with mock.patch.dict(
+                    os.environ,
+                    {"APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES": "multi_endpoint_routing" if routing else ""},
+                ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+                    exporter = AzureMonitorTraceExporter(disable_offline_storage=True)
+                self.addCleanup(exporter.client.close)
+                self.addCleanup(exporter.shutdown)
+                with mock.patch.object(BaseExporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                    self.assertEqual(exporter.export([span]), SpanExportResult.SUCCESS)
+                transmit.assert_called_once()
+                envelopes = transmit.call_args.args[0]
+                self.assertEqual(
+                    [envelope.data.base_type for envelope in envelopes],
+                    ["RemoteDependencyData", "MessageData", "ExceptionData"],
+                )
+                for envelope in envelopes:
+                    properties = envelope.data.base_data.properties
+                    self.assertEqual(properties["custom"], "value")
+                    self.assertEqual(properties["microsoft.custom"], "preserved")
+                    if routing:
+                        self.assertNotIn("microsoft.instrumentation_key", properties)
+                        self.assertNotIn("microsoft.ingestion_endpoint", properties)
+                        self.assertNotIn("microsoft.multi_endpoint_cloud_role", properties)
+                        self.assertNotIn("microsoft.ingestion_auth", properties)
+                    else:
+                        self.assertEqual(properties, attributes)
+                self.assertEqual(span.attributes, attributes)
+                for event in span.events:
+                    self.assertEqual(event.attributes, attributes)
+
+    @mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED": "true"})
+    def test_export_invalid_routing_attributes(self):
+        valid = {
+            "microsoft.instrumentation_key": "customer-key",
+            "microsoft.ingestion_endpoint": "https://example.com/",
+        }
+        invalid = (
+            {},
+            {"microsoft.instrumentation_key": "customer-key"},
+            {"microsoft.ingestion_endpoint": "https://example.com/"},
+            {**valid, "microsoft.instrumentation_key": " "},
+            {**valid, "microsoft.instrumentation_key": 42},
+            {**valid, "microsoft.ingestion_endpoint": "http://example.com/"},
+            {**valid, "microsoft.ingestion_endpoint": ("https://example.com/",)},
+        )
+        for routing in (False, True):
+            with mock.patch.dict(
+                os.environ, {"APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES": "multi_endpoint_routing" if routing else ""}
+            ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+                exporter = AzureMonitorTraceExporter(disable_offline_storage=True)
+            self.addCleanup(exporter.client.close)
+            self.addCleanup(exporter.shutdown)
+            for attributes in ([valid, *invalid, valid], invalid):
+                with self.subTest(routing=routing, attributes=attributes):
+                    spans = [
+                        trace.ReadableSpan(
+                            name=str(index),
+                            context=SpanContext(trace_id=1, span_id=2, is_remote=False),
+                            start_time=1,
+                            end_time=2,
+                            attributes=item,
+                            events=(trace.Event("event", attributes=valid), trace.Event("exception", attributes=valid)),
+                        )
+                        for index, item in enumerate(attributes)
+                    ]
+                    with mock.patch.object(BaseExporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                        self.assertEqual(exporter.export(spans), SpanExportResult.SUCCESS)
+                    if routing and not any(item == valid for item in attributes):
+                        transmit.assert_not_called()
+                        continue
+                    transmit.assert_called_once()
+                    envelopes = transmit.call_args.args[0]
+                    expected = sum(item == valid for item in attributes) if routing else len(attributes)
+                    self.assertEqual(len(envelopes), expected * 3)
+                    self.assertEqual(
+                        [envelope.data.base_data.name for envelope in envelopes[::3]],
+                        [str(index) for index, item in enumerate(attributes) if not routing or item == valid],
+                    )
 
     def test_export_with_tracer_provider(self):
         mock_resource = mock.Mock()
@@ -2038,6 +2149,44 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.message, "test event")
         self.assertEqual(envelope.data.base_type, "MessageData")
 
+    def test_export_otel_resource_metric_routing(self):
+        span = trace.ReadableSpan(
+            name="test",
+            context=SpanContext(trace_id=1, span_id=2, is_remote=False),
+            start_time=1,
+            end_time=2,
+            attributes={
+                "microsoft.instrumentation_key": "customer-key",
+                "microsoft.ingestion_endpoint": "https://example.com/",
+            },
+        )
+        variable = "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
+        for routing in (False, True):
+            with mock.patch.dict(
+                os.environ, {"APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES": "multi_endpoint_routing" if routing else ""}
+            ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+                exporter = AzureMonitorTraceExporter(
+                    disable_offline_storage=True,
+                    tracer_provider=trace.TracerProvider(),
+                )
+            self.addCleanup(exporter.client.close)
+            self.addCleanup(exporter.shutdown)
+            for disabled in (None, "false", "true", "TRUE"):
+                with self.subTest(routing=routing, disabled=disabled), mock.patch.dict(os.environ):
+                    if disabled is None:
+                        os.environ.pop(variable, None)
+                    else:
+                        os.environ[variable] = disabled
+                    with mock.patch.object(BaseExporter, "_transmit", return_value=ExportResult.SUCCESS) as transmit:
+                        self.assertEqual(exporter.export([span]), SpanExportResult.SUCCESS)
+                    transmit.assert_called_once()
+                    envelopes = transmit.call_args.args[0]
+                    collect_resource = not routing and disabled not in ("true", "TRUE")
+                    self.assertEqual(len(envelopes), 2 if collect_resource else 1)
+                    self.assertEqual(envelopes[-1].data.base_type, "RemoteDependencyData")
+                    if collect_resource:
+                        self.assertEqual(envelopes[0].data.base_data.metrics[0].name, "_OTELRESOURCE_")
+
     @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._exporter.get_tracer_provider")
     def test_export_otel_resource_metric(self, mock_get_tracer_provider):
         del os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"]
@@ -2251,3 +2400,285 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
 
     def get_tracer_provider(self):
         return trace.TracerProvider()
+
+
+class _Response(HttpResponse):
+    def __init__(self, request, status_code=200, headers=None):
+        super().__init__(request, None)
+        self.status_code = status_code
+        self.headers = {"Content-Type": "application/json", **(headers or {})}
+        self.content_type = "application/json"
+        count = len(json.loads(request.body))
+        self._body = json.dumps({"itemsReceived": count, "itemsAccepted": count, "errors": []}).encode()
+
+    def body(self):
+        return self._body
+
+    def json(self):
+        return json.loads(self._body)
+
+
+class TestMultiEndpointRouting(unittest.TestCase):
+    def setUp(self):
+        environment = mock.patch.dict(
+            os.environ,
+            {
+                "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+                "APPLICATIONINSIGHTS_SDKSTATS_DISABLED": "true",
+                "APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED": "true",
+                "APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES": "multi_endpoint_routing",
+                "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED": "true",
+            },
+        )
+        environment.start()
+        self.addCleanup(environment.stop)
+        features = mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None)
+        features.start()
+        self.addCleanup(features.stop)
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        self.transport = mock.MagicMock(spec=HttpTransport)
+        self.transport.close.return_value = None
+        self.transport.__exit__.side_effect = lambda *args: self.transport.close()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+
+    def _exporter(self, *, routing=True, **kwargs):
+        options = {
+            "connection_string": "InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab;"
+            "IngestionEndpoint=https://host.example/",
+            "disable_offline_storage": True,
+            "storage_directory": str(Path(self.directory.name) / "host"),
+            "transport": self.transport,
+            "retry_total": 0,
+        }
+        options.update(kwargs)
+        with mock.patch.dict(
+            os.environ, {"APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES": "multi_endpoint_routing" if routing else ""}
+        ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+            exporter = AzureMonitorTraceExporter(**options)
+        self.addCleanup(exporter.client.close)
+        self.addCleanup(exporter.shutdown)
+        return exporter
+
+    def _span(
+        self,
+        endpoint="https://one.example/proxy/",
+        key="customer-key",
+        auth="ikey",
+        kind=SpanKind.CLIENT,
+        cloud_role="not-the-resource-role",
+    ):
+        return ReadableSpan(
+            name="operation",
+            context=SpanContext(trace_id=1, span_id=2, is_remote=False),
+            kind=kind,
+            start_time=1,
+            end_time=2,
+            attributes={
+                "microsoft.instrumentation_key": key,
+                "microsoft.ingestion_endpoint": endpoint,
+                "microsoft.ingestion_auth": auth,
+                "microsoft.multi_endpoint_cloud_role": cloud_role,
+                "custom": "span-value",
+            },
+            resource=Resource({"service.name": "resource-role", "service.instance.id": "resource-instance"}),
+            events=(
+                Event("message", attributes={"custom": "event-value"}),
+                Event(
+                    "exception",
+                    attributes={
+                        "microsoft.instrumentation_key": "event-key",
+                        "microsoft.ingestion_endpoint": "https://event.example/",
+                        "microsoft.ingestion_auth": "aad",
+                        "microsoft.multi_endpoint_cloud_role": "event-role",
+                        "custom": "exception-value",
+                    },
+                ),
+            ),
+        )
+
+    def test_grouping_and_events_follow_parent_route(self):
+        exporter = self._exporter()
+        spans = [
+            self._span(key=" key-one ", kind=SpanKind.SERVER),
+            self._span(endpoint="https://two.example/", key="key-two"),
+            self._span(endpoint="HTTPS://ONE.EXAMPLE:443/proxy", key="key-three"),
+        ]
+        self.assertEqual(exporter.export(spans), SpanExportResult.SUCCESS)
+        requests = [call.args[0] for call in self.transport.send.call_args_list]
+        self.assertEqual(len(requests), 2)
+        self.assertTrue(requests[0].url.startswith("https://one.example/proxy/"))
+        self.assertTrue(requests[1].url.startswith("https://two.example/"))
+        first = json.loads(requests[0].body)
+        self.assertEqual([item["iKey"] for item in first], ["key-one"] * 3 + ["key-three"] * 3)
+        self.assertEqual(
+            [item["data"]["baseType"] for item in first],
+            ["RequestData", "MessageData", "ExceptionData", "RemoteDependencyData", "MessageData", "ExceptionData"],
+        )
+        self.assertEqual([item["iKey"] for item in json.loads(requests[1].body)], ["key-two"] * 3)
+        for request in requests:
+            for item in json.loads(request.body):
+                self.assertEqual(item["tags"]["ai.cloud.role"], "not-the-resource-role")
+                self.assertEqual(item["tags"]["ai.cloud.roleInstance"], "resource-instance")
+                self.assertEqual(item["tags"]["ai.operation.id"], "{:032x}".format(1))
+                properties = item["data"]["baseData"]["properties"]
+                for attribute in _MULTI_ENDPOINT_ROUTING_ATTRIBUTES:
+                    self.assertNotIn(attribute, properties)
+                self.assertIn(properties["custom"], ("span-value", "event-value", "exception-value"))
+        self.assertEqual(spans[0].attributes["microsoft.instrumentation_key"], " key-one ")
+        self.assertEqual(spans[0].events[1].attributes["microsoft.instrumentation_key"], "event-key")
+
+    def test_single_connection_string_is_unchanged(self):
+        exporter = self._exporter(routing=False)
+        self.assertEqual(
+            exporter.export([self._span(), self._span(endpoint="https://two.example/")]), SpanExportResult.SUCCESS
+        )
+        self.transport.send.assert_called_once()
+        request = self.transport.send.call_args.args[0]
+        self.assertTrue(request.url.startswith("https://host.example/"))
+        items = json.loads(request.body)
+        self.assertEqual([item["iKey"] for item in items], ["1234abcd-5678-4efa-8abc-1234567890ab"] * 6)
+        self.assertEqual([item["tags"]["ai.cloud.role"] for item in items], ["resource-role"] * 6)
+        self.assertEqual(items[0]["data"]["baseData"]["properties"]["microsoft.instrumentation_key"], "customer-key")
+        self.assertEqual(items[2]["data"]["baseData"]["properties"]["microsoft.instrumentation_key"], "event-key")
+
+    def test_missing_and_invalid_cloud_roles_use_unknown_service(self):
+        exporter = self._exporter()
+        spans = [self._span(cloud_role=value) for value in (None, " \t\n", 42)]
+        self.assertEqual(exporter.export(spans), SpanExportResult.SUCCESS)
+        items = json.loads(self.transport.send.call_args.args[0].body)
+        self.assertEqual([item["tags"]["ai.cloud.role"] for item in items], ["unknown_service"] * 9)
+        self.assertEqual([item["tags"]["ai.cloud.roleInstance"] for item in items], ["resource-instance"] * 9)
+
+    def test_empty_and_invalid_batches_do_not_transmit(self):
+        exporter = self._exporter()
+        for spans in ([], [self._span(key=" ")], [self._span(endpoint="http://invalid.example/")]):
+            with self.subTest(spans=spans):
+                self.assertEqual(exporter.export(spans), SpanExportResult.SUCCESS)
+        self.transport.send.assert_not_called()
+
+    @mock.patch.dict(os.environ)
+    def test_routing_without_host_connection_string(self):
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
+        exporter = self._exporter(connection_string=None)
+        self.assertIsNone(exporter.application_id)
+        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"] = "invalid"
+        self.assertEqual(exporter.export([self._span()]), SpanExportResult.SUCCESS)
+        request = self.transport.send.call_args.args[0]
+        self.assertTrue(request.url.startswith("https://one.example/proxy/"))
+        self.assertEqual([item["iKey"] for item in json.loads(request.body)], ["customer-key"] * 3)
+
+    def test_configured_application_id_is_preserved(self):
+        exporter = self._exporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab;ApplicationId=host-app"
+        )
+        self.assertEqual(exporter.application_id, "host-app")
+
+    def test_authentication_groups_include_parent_events(self):
+        credential = mock.Mock(spec=["get_token"])
+        credential.get_token.return_value = AccessToken("test-token", int(time_module.time()) + 3600)
+        exporter = self._exporter(credential=credential)
+        spans = [self._span(), self._span(auth=" AAD ")]
+        for _ in range(2):
+            self.assertEqual(exporter.export(spans), SpanExportResult.SUCCESS)
+        requests = [call.args[0] for call in self.transport.send.call_args_list]
+        self.assertEqual(len(requests), 4)
+        for request in requests[::2]:
+            self.assertNotIn("Authorization", request.headers)
+        for request in requests[1::2]:
+            self.assertEqual(request.headers["Authorization"], f"Bearer {credential.get_token.return_value.token}")
+        self.assertTrue(all(len(json.loads(request.body)) == 3 for request in requests))
+        credential.get_token.assert_called_once()
+
+    def test_missing_aad_credential_does_not_block_other_routes(self):
+        exporter = self._exporter(credential=None)
+        with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR"):
+            result = exporter.export([self._span(auth="aad"), self._span(endpoint="https://two.example/")])
+        self.assertEqual(result, SpanExportResult.FAILURE)
+        self.transport.send.assert_called_once()
+        self.assertTrue(self.transport.send.call_args.args[0].url.startswith("https://two.example/"))
+
+    def test_retry_storage_preserves_parent_route_and_event_keys(self):
+        now = datetime_module.datetime(2026, 10, 20, tzinfo=datetime_module.timezone.utc)
+        exporter = self._exporter(disable_offline_storage=False)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(
+            request, 429 if request.url.startswith("https://one.example/") else 200, {"Retry-After": "60"}
+        )
+        with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+            result = exporter.export([self._span(key="old-key"), self._span(endpoint="https://two.example/")])
+        self.assertEqual(result, SpanExportResult.FAILURE)
+        self.assertEqual(self.transport.send.call_count, 2)
+        exporter.shutdown()
+        restarted = self._exporter(disable_offline_storage=False)
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._storage._now",
+            return_value=now + datetime_module.timedelta(seconds=61),
+        ):
+            self.assertEqual(restarted.export([self._span(key="new-key")]), SpanExportResult.SUCCESS)
+        requests = [call.args[0] for call in self.transport.send.call_args_list]
+        self.assertEqual(len(requests), 2)
+        self.assertEqual(
+            [[item["iKey"] for item in json.loads(request.body)] for request in requests],
+            [["new-key"] * 3, ["old-key"] * 3],
+        )
+        self.assertTrue(all(request.url.startswith("https://one.example/proxy/") for request in requests))
+        self.assertFalse(list((Path(self.directory.name) / "host").iterdir()))
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_backoff_defers_spans_and_events(self, clock):
+        exporter = self._exporter(disable_offline_storage=False)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429, {"Retry-After": "60"})
+        self.assertEqual(exporter.export([self._span()]), SpanExportResult.FAILURE)
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        self.assertEqual(exporter.export([self._span(key="deferred")]), SpanExportResult.FAILURE)
+        self.transport.send.assert_not_called()
+        clock.return_value = 160
+        self.assertEqual(exporter.export([self._span(key="new")]), SpanExportResult.SUCCESS)
+        self.transport.send.assert_called_once()
+        self.assertEqual([item["iKey"] for item in json.loads(self.transport.send.call_args.args[0].body)], ["new"] * 3)
+
+    def test_shutdown_closes_routes_and_rejects_later_exports(self):
+        exporter = self._exporter(disable_offline_storage=False)
+        self.assertEqual(exporter.export([self._span()]), SpanExportResult.SUCCESS)
+        exporter.shutdown()
+        closes = self.transport.close.call_count
+        self.assertEqual(closes, 2)
+        exporter.shutdown()
+        self.assertEqual(self.transport.close.call_count, closes)
+        self.transport.send.reset_mock()
+        with self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR"):
+            self.assertEqual(exporter.export([self._span()]), SpanExportResult.FAILURE)
+        self.transport.send.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
+    def test_background_retry_sends_span_and_events_without_new_exports(self, clock):
+        now = datetime_module.datetime(2026, 10, 20, tzinfo=datetime_module.timezone.utc)
+        exporter = self._exporter(disable_offline_storage=False)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429, {"Retry-After": "60"})
+        with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+            self.assertEqual(exporter.export([self._span(key="original")]), SpanExportResult.FAILURE)
+        self.transport.send.reset_mock()
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        clock.return_value = 161
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._storage._now",
+            return_value=now + datetime_module.timedelta(seconds=61),
+        ):
+            exporter._route_retry_task.function()
+        self.transport.send.assert_called_once()
+        items = json.loads(self.transport.send.call_args.args[0].body)
+        self.assertEqual([item["iKey"] for item in items], ["original"] * 3)
+        self.assertEqual(
+            [item["data"]["baseType"] for item in items], ["RemoteDependencyData", "MessageData", "ExceptionData"]
+        )
+
+    def test_routed_export_exception_is_reported(self):
+        exporter = self._exporter()
+        with mock.patch.object(exporter, "_transmit_routed", side_effect=RuntimeError("test failure")):
+            with self.assertLogs("azure.monitor.opentelemetry.exporter.export.trace._exporter", level="ERROR") as logs:
+                self.assertEqual(exporter.export([self._span()]), SpanExportResult.FAILURE)
+        self.assertIn("test failure", logs.output[0])

@@ -10,6 +10,24 @@
   `gen_ai_input_output_limit_increase` experimental feature is enabled; otherwise the
   existing limits apply (256kb for GenAI attributes and 8kb for all other custom properties)
   ([#49648](https://github.com/Azure/azure-sdk-for-python/pull/49648))
+- Add opt-in multi-endpoint log, trace, and metric routing with per-item instrumentation keys,
+  explicit per-route authentication, and destination-isolated retry storage.
+  Enable it with `multi_endpoint_routing` through `APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES`.
+  Span events follow their parent span's route; metrics use each data point's route.
+  Routed cloud role names come from `microsoft.multi_endpoint_cloud_role`; missing
+  or invalid values use `unknown_service`, while role instances remain resource-derived.
+  Routing-enabled exporters can be created without a host connection string.
+  Custom transports and scalar retry settings remain supported, but complete custom
+  pipelines and mutable custom HTTP policies in named, per-call, or per-retry options
+  are rejected because routed destinations require independent exporter-managed policy
+  chains. Sans-I/O policies remain supported.
+  Cached routes and routed offline storage are limited to 64 endpoint/authentication
+  pairs per exporter; additional destinations use short-lived clients without persistence.
+  Routed destinations with available offline storage defer new transmissions
+  during retry backoff, using the existing retry delay or minimum retry interval.
+  Opened storage-backed routes also retry pending telemetry through one shared
+  background worker per exporter, without requiring new telemetry.
+  ([#49706](https://github.com/Azure/azure-sdk-for-python/pull/49706))
 
 ### Breaking Changes
 

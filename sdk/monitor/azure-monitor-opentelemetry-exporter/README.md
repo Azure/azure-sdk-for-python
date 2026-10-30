@@ -153,6 +153,66 @@ ignored. Unset or empty values enable no experimental features. Unknown names ar
 The selection is shared across exporters in the same Python interpreter and cannot be changed after
 the first exporter is constructed. Experimental features may change or be removed in future releases.
 
+### Multi-endpoint routing (preview)
+
+Add `multi_endpoint_routing` to `APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES` before
+constructing any exporter to route logs, spans, or metric data points using their
+`microsoft.instrumentation_key` and `microsoft.ingestion_endpoint`
+attributes. Both attributes are required; the endpoint must be HTTPS. Obtain
+destinations from trusted, server-owned configuration, not request headers or baggage.
+Invalid or missing destinations are dropped without falling back to the exporter's
+connection string. With routing enabled, a host connection string is optional.
+If supplied explicitly or through the environment, it is still parsed and validated
+normally. Without host configuration, host retry storage, Statsbeat, and customer
+SDK statistics are not initialized; destination-specific retry storage still works.
+
+```powershell
+$env:APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES = "multi_endpoint_routing"
+# To enable another experimental feature as well:
+$env:APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES = "multi_endpoint_routing,gen_ai_input_output_limit_increase"
+```
+
+Routing is disabled unless explicitly selected in this list. The selection is
+shared across log, trace, and metric exporters and is fixed at the first exporter
+construction, as described under [Experimental features](#experimental-features).
+Caller-supplied transports and scalar retry settings remain supported. Complete
+custom pipelines and `HTTPPolicy` instances supplied through named, per-call, or
+per-retry policy options are rejected because routing must construct an independent
+policy chain for each destination. `SansIOHTTPPolicy` entries remain supported.
+
+Items are grouped by normalized endpoint and authentication mode. Set
+`microsoft.ingestion_auth` to `"aad"` to use the exporter's configured credential;
+other values use key-only authentication. AAD groups without a credential fail.
+Span events follow their parent span's destination, instrumentation key, and
+authentication mode, not routing attributes on the events themselves.
+Metrics use routing attributes on each data point, not the resource or
+instrumentation scope. Points without valid routing attributes are dropped.
+Cloud-role names come from the item's `microsoft.multi_endpoint_cloud_role` attribute;
+missing, blank, or non-string values use `unknown_service`. Span events inherit their
+parent span's role name. Cloud-role instances remain resource-derived.
+
+Retry storage is separate from the host storage, partitioned by endpoint and
+authentication mode, and shares the configured storage capacity across routed
+partitions. Pending items preserve their original instrumentation keys and are
+retried after a subsequent successful send to the same endpoint/authentication
+group or by a shared background worker. The worker starts when the first
+storage-backed route opens and checks opened routes every `storage_maintenance_period`
+seconds (60 by default). It respects retry backoff, storage toggles, and rate limits,
+and stops when the exporter shuts down. Stored destinations are not discovered at
+startup; their route must be opened by new telemetry before background retries begin.
+For destinations with enabled, available offline storage, retryable failures also
+pause new transmissions to that endpoint/authentication group. New items are stored
+until the retry window expires. The window uses the existing `Retry-After` handling,
+or `storage_min_retry_interval` (60 seconds by default) when no valid delay is available.
+Other destinations continue transmitting. This does not add .NET's exponential
+backoff; export results retain the existing failure semantics.
+Each exporter caches up to 64 endpoint/authentication routes. When storage is
+enabled, those cached routes also receive offline-storage partitions. Different
+keys using the same normalized endpoint and authentication mode share a route.
+Additional destinations still transmit through short-lived clients without
+offline persistence.
+Routing is disabled by default.
+
 ## Examples
 
 ### Logging (experimental)

@@ -5,6 +5,7 @@ import errno
 import os
 import shutil
 import tempfile
+import threading
 import unittest
 from unittest import mock
 
@@ -12,6 +13,7 @@ from azure.monitor.opentelemetry.exporter._storage import (
     LocalFileBlob,
     LocalFileStorage,
     StorageExportResult,
+    _fmt,
     _now,
     _seconds,
 )
@@ -485,6 +487,105 @@ class TestLocalFileStorage(unittest.TestCase):
             with mock.patch.object(stor, "_check_storage_size", return_value=False):
                 result = stor.put(test_input)
                 self.assertEqual(result, StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED)
+
+    def test_shared_capacity_removes_expired_unopened_partition_files(self):
+        now = _now()
+        capacity_path = os.path.join(TEST_FOLDER, "shared")
+        current_path = os.path.join(capacity_path, "current")
+        abandoned_path = os.path.join(capacity_path, "abandoned")
+        os.makedirs(abandoned_path)
+        expired_prefix = "{}-deadbeef.blob".format(_fmt(now - _seconds(20)))
+        expired_blob = os.path.join(abandoned_path, expired_prefix)
+        expired_lock = os.path.join(
+            abandoned_path,
+            "{}@{}.lock".format(expired_prefix, _fmt(now - _seconds(1))),
+        )
+        active_lock = os.path.join(
+            abandoned_path,
+            "{}@{}.lock".format(expired_prefix, _fmt(now + _seconds(30))),
+        )
+        stale_tmp = os.path.join(
+            abandoned_path,
+            "{}-stale.blob.tmp".format(_fmt(now - _seconds(20))),
+        )
+        fresh_tmp = os.path.join(
+            abandoned_path,
+            "{}-fresh.blob.tmp".format(_fmt(now)),
+        )
+        for path in (expired_blob, expired_lock, active_lock, stale_tmp, fresh_tmp):
+            with open(path, "w", encoding="utf-8") as file:
+                file.write("x" * 100)
+
+        with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+            with LocalFileStorage(
+                current_path,
+                max_size=300,
+                retention_period=10,
+                write_timeout=10,
+                capacity_path=capacity_path,
+            ) as stor:
+                result = stor.put([{"value": 1}], lease_period=0)
+
+        self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
+        self.assertFalse(os.path.exists(expired_blob))
+        self.assertFalse(os.path.exists(expired_lock))
+        self.assertFalse(os.path.exists(stale_tmp))
+        self.assertTrue(os.path.exists(active_lock))
+        self.assertTrue(os.path.exists(fresh_tmp))
+
+    def test_shared_capacity_serializes_quota_check_and_write(self):
+        capacity_path = os.path.join(TEST_FOLDER, "shared")
+        first_entered = threading.Event()
+        second_entered = threading.Event()
+        release_first = threading.Event()
+        start = threading.Barrier(3)
+        call_lock = threading.Lock()
+        results = []
+        calls = 0
+        original_put = LocalFileBlob.put
+
+        def delayed_put(blob, data, lease_period=0):
+            nonlocal calls
+            with call_lock:
+                calls += 1
+                call = calls
+            if call == 1:
+                first_entered.set()
+                release_first.wait(2)
+            else:
+                second_entered.set()
+            return original_put(blob, data, lease_period)
+
+        def write(storage):
+            start.wait()
+            results.append(storage.put([{"value": 1}], lease_period=0))
+
+        with LocalFileStorage(
+            os.path.join(capacity_path, "one"), max_size=1, capacity_path=capacity_path
+        ) as first, LocalFileStorage(
+            os.path.join(capacity_path, "two"), max_size=1, capacity_path=capacity_path
+        ) as second, mock.patch.object(
+            LocalFileBlob, "put", new=delayed_put
+        ):
+            threads = [threading.Thread(target=write, args=(storage,)) for storage in (first, second)]
+            try:
+                for thread in threads:
+                    thread.start()
+                start.wait()
+                self.assertTrue(first_entered.wait(2))
+                self.assertFalse(second_entered.wait(0.1))
+            finally:
+                release_first.set()
+                for thread in threads:
+                    thread.join(timeout=2)
+
+        self.assertCountEqual(
+            results,
+            [
+                StorageExportResult.LOCAL_FILE_BLOB_SUCCESS,
+                StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED,
+            ],
+        )
 
     def test_put_success_returns_localfileblob(self):
         test_input = (1, 2, 3)
