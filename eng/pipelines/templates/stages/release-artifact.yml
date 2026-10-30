@@ -27,6 +27,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: 'not-specified'
+  - name: ReleasePlanId
+    type: string
+    default: '0'
   - name: TestPipeline
     type: boolean
     default: false
@@ -266,6 +269,7 @@ stages:
             parameters:
               ConfigFileDir: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo'
               PackageArtifactName: ${{parameters.Artifact.name}}
+              ReleasePlanId: ${{ parameters.ReleasePlanId }}
 
           # Management-plane-only workaround: skip marking packages that do not generate an APIView revision.
           - pwsh: |
