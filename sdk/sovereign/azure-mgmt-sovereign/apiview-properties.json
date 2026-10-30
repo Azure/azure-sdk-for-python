@@ -115,5 +115,5 @@
         "azure.mgmt.sovereign.operations.SovereignViewOperationsOperations.remediation_result": "Microsoft.Sovereign.SovereignViewOperations.remediationResult",
         "azure.mgmt.sovereign.aio.operations.SovereignViewOperationsOperations.remediation_result": "Microsoft.Sovereign.SovereignViewOperations.remediationResult"
     },
-    "CrossLanguageVersion": "6a9ba3aa7e51"
+    "CrossLanguageVersion": "8c331859e129"
 }

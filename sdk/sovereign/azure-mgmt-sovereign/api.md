@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.sovereign
 
-    class azure.mgmt.sovereign.SovereignClient: implements ContextManager 
+    class azure.mgmt.sovereign.SovereignMgmtClient: implements ContextManager 
         operations: Operations
         sovereign_view_operations: SovereignViewOperationsOperations
 
@@ -30,7 +30,7 @@ namespace azure.mgmt.sovereign
 
 namespace azure.mgmt.sovereign.aio
 
-    class azure.mgmt.sovereign.aio.SovereignClient: implements AsyncContextManager 
+    class azure.mgmt.sovereign.aio.SovereignMgmtClient: implements AsyncContextManager 
         operations: Operations
         sovereign_view_operations: SovereignViewOperationsOperations
 

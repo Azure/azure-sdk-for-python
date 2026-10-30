@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.sovereign import SovereignClient
+from azure.mgmt.sovereign import SovereignMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.sovereign import SovereignClient
 
 
 def main():
-    client = SovereignClient(
+    client = SovereignMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import SovereignClientConfiguration
+from ._configuration import SovereignMgmtClientConfiguration
 from .operations import Operations, SovereignViewOperationsOperations
 
 if sys.version_info >= (3, 11):
@@ -31,8 +31,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SovereignClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """SovereignClient.
+class SovereignMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """SovereignMgmtClient.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.sovereign.aio.operations.Operations
@@ -72,7 +72,7 @@ class SovereignClient:  # pylint: disable=docstring-keyword-should-match-keyword
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = SovereignClientConfiguration(
+        self._config = SovereignMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

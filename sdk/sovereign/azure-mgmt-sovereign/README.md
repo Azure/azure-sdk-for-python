@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.sovereign import SovereignClient
+from azure.mgmt.sovereign import SovereignMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = SovereignClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = SovereignMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples
