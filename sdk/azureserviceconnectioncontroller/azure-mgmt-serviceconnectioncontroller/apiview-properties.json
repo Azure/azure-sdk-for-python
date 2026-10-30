@@ -36,5 +36,5 @@
         "azure.mgmt.serviceconnectioncontroller.operations.AzureServiceConnectionControllersOperations.list_by_subscription": "Microsoft.Network.AzureServiceConnectionControllers.listBySubscription",
         "azure.mgmt.serviceconnectioncontroller.aio.operations.AzureServiceConnectionControllersOperations.list_by_subscription": "Microsoft.Network.AzureServiceConnectionControllers.listBySubscription"
     },
-    "CrossLanguageVersion": "86965a6ad76d"
+    "CrossLanguageVersion": "637cdd32d8fa"
 }

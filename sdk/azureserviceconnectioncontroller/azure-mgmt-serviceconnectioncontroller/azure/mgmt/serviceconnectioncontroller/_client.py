@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import NetworkClientConfiguration
+from ._configuration import ServiceConnectionControllerMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import AzureServiceConnectionControllersOperations, Operations
 
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class NetworkClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ServiceConnectionControllerMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft.Network Resource Provider management API.
 
     :ivar operations: Operations operations
@@ -73,7 +73,7 @@ class NetworkClient:  # pylint: disable=docstring-keyword-should-match-keyword-o
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = NetworkClientConfiguration(
+        self._config = ServiceConnectionControllerMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

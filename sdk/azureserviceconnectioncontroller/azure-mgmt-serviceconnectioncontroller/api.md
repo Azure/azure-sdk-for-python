@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.serviceconnectioncontroller
 
-    class azure.mgmt.serviceconnectioncontroller.NetworkClient: implements ContextManager 
+    class azure.mgmt.serviceconnectioncontroller.ServiceConnectionControllerMgmtClient: implements ContextManager 
         azure_service_connection_controllers: AzureServiceConnectionControllersOperations
         operations: Operations
 
@@ -30,7 +30,7 @@ namespace azure.mgmt.serviceconnectioncontroller
 
 namespace azure.mgmt.serviceconnectioncontroller.aio
 
-    class azure.mgmt.serviceconnectioncontroller.aio.NetworkClient: implements AsyncContextManager 
+    class azure.mgmt.serviceconnectioncontroller.aio.ServiceConnectionControllerMgmtClient: implements AsyncContextManager 
         azure_service_connection_controllers: AzureServiceConnectionControllersOperations
         operations: Operations
 

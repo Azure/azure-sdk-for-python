@@ -45,7 +45,7 @@ from ...operations._operations import (
     build_azure_service_connection_controllers_update_request,
     build_operations_list_request,
 )
-from .._configuration import NetworkClientConfiguration
+from .._configuration import ServiceConnectionControllerMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -58,14 +58,16 @@ class Operations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.serviceconnectioncontroller.aio.NetworkClient`'s
+        :class:`~azure.mgmt.serviceconnectioncontroller.aio.ServiceConnectionControllerMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ServiceConnectionControllerMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -169,14 +171,16 @@ class AzureServiceConnectionControllersOperations:  # pylint: disable=docstring-
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.serviceconnectioncontroller.aio.NetworkClient`'s
+        :class:`~azure.mgmt.serviceconnectioncontroller.aio.ServiceConnectionControllerMgmtClient`'s
         :attr:`azure_service_connection_controllers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ServiceConnectionControllerMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.serviceconnectioncontroller import NetworkClient
+from azure.mgmt.serviceconnectioncontroller import ServiceConnectionControllerMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.serviceconnectioncontroller import NetworkClient
 
 
 def main():
-    client = NetworkClient(
+    client = ServiceConnectionControllerMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
