@@ -4,7 +4,7 @@
 
 import asyncio
 import math
-from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, TypeVar, Union
 
 from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
@@ -15,6 +15,7 @@ from ._model_runners import (
     PromptyModelRunner,
     _is_finite_number,
     is_decision_model_config,
+    usage_details,
 )
 
 T = TypeVar("T")
@@ -202,10 +203,11 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
     def _aggregate_results(self, per_turn_results: List[Dict[str, T]]) -> Dict[str, Any]:
         """Aggregate scores normally, but sum independently known Decision usage across turns.
 
-        A single shared model is promoted for attribution. Mixed or missing model identities remain per-turn
-        rather than attributing all usage to the last model. Root properties use the same usage and model,
-        without a single-request execution summary; other diagnostics retain their final-turn semantics.
-        Prompty aggregation is unchanged.
+        Token totals are each summed over the turns that reported them, and cache or reasoning counters over the
+        turns whose token usage is counted. A single shared model is promoted for attribution. Mixed or missing
+        model identities remain per-turn rather than attributing all usage to the last model. When the final turn
+        has properties, root properties use the same usage and model, without a single-request execution summary;
+        other diagnostics retain their final-turn semantics. Prompty aggregation is unchanged.
         """
         aggregated: Dict[str, Any] = super()._aggregate_results(per_turn_results)
         if not self._uses_decision_model:
@@ -235,11 +237,16 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         properties_key = f"{self._result_key}_properties"
         properties = aggregated.get(properties_key)
         if len(per_turn_results) > 1 and isinstance(properties, dict):
-            usage = self._known_turn_usage(
-                aggregated, ("prompt_tokens", "completion_tokens", "total_tokens"), prefix=f"{self._result_key}_"
+            prefix = f"{self._result_key}_"
+            fields = ("prompt_tokens", "completion_tokens", "total_tokens")
+            usage = self._known_turn_usage(aggregated, fields, prefix=prefix)
+            details = self._summed_usage_details(
+                turn.get(properties_key)
+                for turn in per_turn_results
+                if self._known_turn_usage(turn, fields, prefix=prefix)
             )
             aggregated[properties_key] = self._reconcile_decision_properties(
-                properties, usage, aggregated.get(f"{self._result_key}_model")
+                properties, usage, aggregated.get(f"{self._result_key}_model"), details
             )
         return aggregated
 
@@ -248,17 +255,22 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
     ) -> None:
         """Preserve known Decision turn usage without changing the failure or Prompty behavior.
 
-        Only the request-owning result's usage is accumulated. A failed turn's execution summary cannot
-        describe all these turns, so it is omitted and the wider usage scope is explicit.
+        Only the request-owning result's usage is accumulated, and cache or reasoning counters only from the turns
+        whose token usage is counted. A failed turn's execution summary cannot describe all these turns, so it is
+        omitted and the wider usage scope is explicit. When no earlier turn counted usage, the failure's own
+        properties already describe every counted request and are left unchanged.
         """
         if not self._uses_decision_model or not per_turn_results:
             return
         fields = ("prompt_tokens", "completion_tokens", "total_tokens")
+        properties_key = f"{self._result_key}_properties"
         contributions = []
+        reported = []
         for result in per_turn_results:
             usage = self._known_turn_usage(result, fields, prefix=f"{self._result_key}_")
             if usage:
                 contributions.append((usage, result.get(f"{self._result_key}_model")))
+                reported.append(result.get(properties_key))
         if not contributions:
             return
         error_properties = getattr(error, "properties", None)
@@ -266,6 +278,7 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         failing_usage = self._known_turn_usage(properties, fields)
         if failing_usage:
             contributions.append((failing_usage, properties.get("model")))
+            reported.append(properties)
         usage = {}
         for field in fields:
             known = [item[field] for item, _ in contributions if field in item]
@@ -275,11 +288,34 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         common_model = models[0] if isinstance(models[0], str) and models[0].strip() else None
         if not all(model == common_model for model in models):
             common_model = None
-        setattr(error, "properties", self._reconcile_decision_properties(properties, usage, common_model))
+        details = self._summed_usage_details(reported)
+        setattr(error, "properties", self._reconcile_decision_properties(properties, usage, common_model, details))
+
+    @staticmethod
+    def _summed_usage_details(turn_properties: Iterable[Any]) -> Dict[str, Dict[str, int]]:
+        """Sum each known cache or reasoning counter over the turns that reported it, like the token totals.
+
+        :param turn_properties: The properties of each turn whose Decision response is accounted for.
+        :type turn_properties: Iterable[Any]
+        :return: The summed counters grouped like the provider's usage object; empty when no turn reported any.
+        :rtype: Dict[str, Dict[str, int]]
+        """
+        totals: Dict[str, Dict[str, int]] = {}
+        for properties in turn_properties:
+            native = properties.get("decision_model") if isinstance(properties, dict) else None
+            details = usage_details(native.get("usage_details")) if isinstance(native, dict) else {}
+            for group, counters in details.items():
+                summed = totals.setdefault(group, {})
+                for counter, value in counters.items():
+                    summed[counter] = summed.get(counter, 0) + value
+        return totals
 
     @staticmethod
     def _reconcile_decision_properties(
-        properties: Dict[str, Any], usage: Dict[str, int], model: Optional[str]
+        properties: Dict[str, Any],
+        usage: Dict[str, int],
+        model: Optional[str],
+        details: Optional[Dict[str, Dict[str, int]]] = None,
     ) -> Dict[str, Any]:
         reconciled = dict(properties)
         for field in ("prompt_tokens", "completion_tokens", "total_tokens"):
@@ -294,6 +330,10 @@ class ModelEvaluatorBase(EvaluatorBase[T]):
         native = reconciled.get("decision_model")
         native = dict(native) if isinstance(native, dict) else {}
         native.pop("execution", None)
+        if details:
+            native["usage_details"] = details
+        else:
+            native.pop("usage_details", None)
         if "model" in reconciled:
             native["model"] = reconciled["model"]
         else:

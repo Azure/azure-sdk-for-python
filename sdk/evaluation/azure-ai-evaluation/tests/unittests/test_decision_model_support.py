@@ -14,7 +14,7 @@ import threading
 from copy import deepcopy
 from logging.handlers import BufferingHandler
 from concurrent.futures import ThreadPoolExecutor
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
 from unittest.mock import AsyncMock, Mock, call, patch
 
 import pytest
@@ -29,6 +29,7 @@ from azure.ai.evaluation._evaluators._common import _model_runners
 from azure.ai.evaluation._evaluators._common._decision_strategy import (
     BinaryScoring,
     DecisionEvaluationStrategy,
+    DecisionRefusalError,
     LikertScoring,
 )
 from azure.ai.evaluation._evaluators._common._model_runners import (
@@ -441,14 +442,14 @@ class TestDecisionModelRunnerRequests:
         assert execution["outcome"] == "error"
         assert raised.value.properties == (
             {
-                "decision_model": {"deployment": "Decision-1"},
+                "decision_model": {"deployment": "Decision-1", "protocol": "microsoft"},
                 "prompt_tokens": 120,
                 "completion_tokens": 3,
                 "total_tokens": 123,
                 "model": "microsoft-decision-1",
             }
             if response_limit == 1024
-            else {"decision_model": {"deployment": "Decision-1"}}
+            else {"decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}}
         )
 
     @pytest.mark.parametrize(
@@ -832,6 +833,7 @@ def completion_payload(probability, status=0.95):
 def strategy_with(payload, scoring, key="tool_call_accuracy", extra_properties=None):
     runner = AsyncMock(return_value=payload)
     runner.deployment = "Decision-1"
+    runner.decision_protocol = "microsoft"
     return DecisionEvaluationStrategy(
         runner,
         result_key=key,
@@ -1182,6 +1184,7 @@ class TestDecisionConversationUsage:
         }
         assert properties["model"] == "microsoft-decision-1"
         assert properties["decision_model"]["result_usage_scope"] == "reported_turns_only"
+        assert properties["decision_model"]["protocol"] == "microsoft"
         assert "execution" not in properties["decision_model"]
         assert persisted["properties"] == properties
         turns = result["evaluation_per_turn"]["tool_call_accuracy_properties"]
@@ -1339,6 +1342,248 @@ class TestDecisionConversationUsage:
         ]
         assert evaluator._aggregate_results(turns) == EvaluatorBase._aggregate_results(evaluator, turns)
 
+    def test_usage_details_are_summed_over_the_turns_that_reported_them(self):
+        evaluator = ProbeModelEvaluator(result_key="probe", model_config=DECISION_CONFIG)
+        first = {"input_tokens_details": {"cached_tokens": 4}, "output_tokens_details": {"reasoning_tokens": 2}}
+        second = {"input_tokens_details": {"cached_tokens": 6, "cache_write_tokens": 1}}
+        turns = [
+            {"probe": 1, "probe_prompt_tokens": 12, "probe_properties": {"decision_model": {"usage_details": first}}},
+            {"probe": 5, "probe_prompt_tokens": 34, "probe_properties": {"decision_model": {"usage_details": second}}},
+            {"probe": 3, "probe_prompt_tokens": 7, "probe_properties": {"decision_model": {}}},
+        ]
+        result = evaluator._aggregate_results(turns)
+        native = result["probe_properties"]["decision_model"]
+        assert native["usage_details"] == {
+            "input_tokens_details": {"cached_tokens": 10, "cache_write_tokens": 1},
+            "output_tokens_details": {"reasoning_tokens": 2},
+        }
+        assert native["result_usage_scope"] == "reported_turns_only"
+        assert result["probe_prompt_tokens"] == 53
+        per_turn = result["evaluation_per_turn"]["probe_properties"]
+        assert [turn["decision_model"].get("usage_details") for turn in per_turn] == [first, second, None]
+
+    def test_last_turn_usage_details_are_not_reported_as_conversation_totals(self):
+        evaluator = ProbeModelEvaluator(result_key="probe", model_config=DECISION_CONFIG)
+        invalid = {"input_tokens_details": {"cached_tokens": -1}, "output_tokens_details": {"reasoning_tokens": True}}
+        turns = [
+            {"probe": 1, "probe_prompt_tokens": 12, "probe_properties": {"decision_model": {}}},
+            {"probe": 5, "probe_prompt_tokens": 34, "probe_properties": {"decision_model": {"usage_details": invalid}}},
+        ]
+        native = evaluator._aggregate_results(turns)["probe_properties"]["decision_model"]
+        assert "usage_details" not in native
+
+    def test_usage_details_of_turns_without_counted_usage_are_not_summed(self):
+        evaluator = ProbeModelEvaluator(result_key="probe", model_config=DECISION_CONFIG)
+        counted = {"input_tokens_details": {"cached_tokens": 4}}
+        uncounted = {"input_tokens_details": {"cached_tokens": 90}, "output_tokens_details": {"reasoning_tokens": 9}}
+        turns = [
+            {"probe": 1, "probe_prompt_tokens": 12, "probe_properties": {"decision_model": {"usage_details": counted}}},
+            {"probe": 5, "probe_properties": {"decision_model": {"usage_details": uncounted}}},
+            {"probe": 3, "probe_prompt_tokens": 7, "probe_properties": {"decision_model": {}}},
+        ]
+        result = evaluator._aggregate_results(turns)
+        assert result["probe_prompt_tokens"] == 19
+        assert result["probe_properties"]["decision_model"]["usage_details"] == counted
+
+
+class TestDecisionEvaluationMetrics:
+    """Every Decision evaluation records one outcome count and one duration with the same bounded attributes."""
+
+    EVALUATIONS = "azure.ai.evaluation.decision.evaluations"
+    DURATION = "azure.ai.evaluation.decision.evaluation.duration"
+
+    @pytest.fixture
+    def recorded(self):
+        records = []
+
+        class Instrument:
+            def __init__(self, name, **_):
+                self.name = name
+
+            def add(self, value, attributes):
+                records.append((self.name, value, dict(attributes)))
+
+            record = add
+
+        meter = SimpleNamespace(create_counter=Instrument, create_histogram=Instrument)
+        with patch.dict(sys.modules, {"opentelemetry.metrics": SimpleNamespace(get_meter=lambda _: meter)}):
+            yield records
+
+    def evaluation_attributes(self, records):
+        evaluations = [record for record in records if record[0] in (self.EVALUATIONS, self.DURATION)]
+        assert [name for name, _, _ in evaluations] == [self.EVALUATIONS, self.DURATION]
+        (_, count, attributes), (_, duration, duration_attributes) = evaluations
+        assert count == 1 and duration >= 0 and attributes == duration_attributes
+        assert set(attributes) == {"backend", "protocol", "metric", "outcome", "blame", "error_kind"}
+        return attributes
+
+    def test_completed_evaluation(self, recorded):
+        result = asyncio.run(strategy_with(level_payload(4), LikertScoring(5)).evaluate({}))
+        assert result["tool_call_accuracy_status"] != "skipped"
+        assert self.evaluation_attributes(recorded) == {
+            "backend": "decision",
+            "protocol": "microsoft",
+            "metric": "tool_call_accuracy",
+            "outcome": "completed",
+            "blame": "none",
+            "error_kind": "none",
+        }
+
+    def test_not_applicable_evaluation_is_skipped(self, recorded):
+        result = asyncio.run(strategy_with(level_payload(4, status=0.1), LikertScoring(5)).evaluate({}))
+        assert result["tool_call_accuracy_status"] == "skipped"
+        assert self.evaluation_attributes(recorded)["outcome"] == "skipped"
+
+    def test_invalid_response_is_a_system_error(self, recorded):
+        response = level_payload(4)
+        response["answers"]["status"]["diagnostic"] = math.inf
+        with pytest.raises(EvaluationException):
+            asyncio.run(strategy_with(response, LikertScoring(5)).evaluate({}))
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["blame"], attributes["error_kind"]) == ("error", "system", "none")
+
+    @pytest.mark.parametrize("protocol", ["microsoft", "openai"])
+    def test_request_error_keeps_its_blame_and_protocol(self, recorded, protocol):
+        configured = strategy_with(level_payload(4), LikertScoring(5))
+        configured.runner.side_effect = EvaluationException(
+            message="rejected",
+            blame=ErrorBlame.USER_ERROR,
+            category=ErrorCategory.INVALID_VALUE,
+            target=ErrorTarget.EVALUATE,
+        )
+        configured.runner.decision_protocol = protocol
+        with pytest.raises(EvaluationException):
+            asyncio.run(configured.evaluate({}))
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["blame"], attributes["protocol"]) == ("error", "user", protocol)
+
+    def test_refusal_is_a_user_error_with_its_kind(self, recorded):
+        response = level_payload(4)
+        response["answers"]["tool_call_accuracy"] = {"type": "refusal"}
+        with pytest.raises(DecisionRefusalError):
+            asyncio.run(strategy_with(response, LikertScoring(5)).evaluate({}))
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["blame"], attributes["error_kind"]) == (
+            "error",
+            "user",
+            "model_refusal",
+        )
+
+    def test_content_filter_rejection_keeps_its_kind(self, recorded):
+        error = EvaluationException(
+            message="The decision model returned HTTP 400 (content_filter).",
+            blame=ErrorBlame.USER_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )
+        error.properties = {"decision_model": {"error_kind": "content_filter"}}
+        configured = strategy_with(level_payload(4), LikertScoring(5))
+        configured.runner.side_effect = error
+        with pytest.raises(EvaluationException):
+            asyncio.run(configured.evaluate({}))
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["blame"], attributes["error_kind"]) == (
+            "error",
+            "user",
+            "content_filter",
+        )
+
+    def test_cancellation_is_not_counted_as_an_error(self, recorded):
+        configured = strategy_with(level_payload(4), LikertScoring(5))
+        configured.runner.side_effect = asyncio.CancelledError()
+        with pytest.raises(asyncio.CancelledError):
+            asyncio.run(configured.evaluate({}))
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["blame"]) == ("cancelled", "none")
+
+    @staticmethod
+    def runner_strategy(runner):
+        return DecisionEvaluationStrategy(
+            runner,
+            result_key="tool_call_accuracy",
+            error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+            questions=QUESTIONS,
+            scoring=LikertScoring(5),
+            threshold=3,
+            timeout=5,
+        )
+
+    @pytest.mark.parametrize("summary_kept", [True, False], ids=["summary", "summary_over_bounds"])
+    def test_callback_cancellation_is_not_counted_as_an_error(self, client, recorded, monkeypatch, summary_kept):
+        if not summary_kept:
+            # A summary beyond the hosted bounds, such as one after more than 20 retries, is omitted.
+            monkeypatch.setattr(_model_runners, "validated_execution", lambda _: None)
+        runner = DecisionModelRunner(DECISION_CONFIG, cancellation_requested=lambda: True)
+        with pytest.raises(EvaluationException, match="cancelled") as raised:
+            asyncio.run(self.runner_strategy(runner).evaluate({}))
+        # The exception is unchanged; only the evaluation metric reads the runner's cancellation marker.
+        assert raised.value.blame == ErrorBlame.USER_ERROR and not client.calls
+        execution = (raised.value.properties.get("decision_model") or {}).get("execution") or {}
+        assert execution.get("outcome") == ("cancelled" if summary_kept else None)
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["blame"], attributes["error_kind"]) == ("cancelled", "none", "none")
+
+    def test_cancellation_callback_failure_stays_a_user_error(self, client, recorded):
+        def broken():
+            raise RuntimeError("callback down")
+
+        runner = DecisionModelRunner(DECISION_CONFIG, cancellation_requested=broken)
+        with pytest.raises(EvaluationException, match="cancellation callback failed"):
+            asyncio.run(self.runner_strategy(runner).evaluate({}))
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["blame"], attributes["error_kind"]) == ("error", "user", "none")
+
+    def test_metric_sink_failure_does_not_change_the_result(self):
+        broken = SimpleNamespace(get_meter=Mock(side_effect=RuntimeError("sink down")))
+        with patch.dict(sys.modules, {"opentelemetry.metrics": broken}):
+            result = asyncio.run(strategy_with(level_payload(4), LikertScoring(5)).evaluate({}))
+        assert result["tool_call_accuracy_status"] != "skipped"
+        broken.get_meter.assert_called()
+
+    def test_broken_opentelemetry_import_does_not_change_the_result_or_error(self):
+        broken = ModuleType("opentelemetry.metrics")
+
+        def unavailable(name):
+            raise RuntimeError(f"broken opentelemetry installation: {name}")
+
+        broken.__getattr__ = unavailable
+        refused = level_payload(4)
+        refused["answers"]["tool_call_accuracy"] = {"type": "refusal"}
+        with patch.dict(sys.modules, {"opentelemetry.metrics": broken}):
+            result = asyncio.run(strategy_with(level_payload(4), LikertScoring(5)).evaluate({}))
+            with pytest.raises(DecisionRefusalError):
+                asyncio.run(strategy_with(refused, LikertScoring(5)).evaluate({}))
+        assert result["tool_call_accuracy_status"] != "skipped"
+
+    def test_missing_opentelemetry_is_ignored(self):
+        with patch.dict(sys.modules, {"opentelemetry.metrics": None}):
+            result = asyncio.run(strategy_with(level_payload(4), LikertScoring(5)).evaluate({}))
+        assert result["tool_call_accuracy_status"] != "skipped"
+
+    def test_public_evaluator_records_request_and_evaluation_metrics(self, client, recorded):
+        class Judge(ModelEvaluatorBase):
+            _supports_decision_models = True
+
+            def _derive_singleton_inputs(self):
+                return [["query", "response"]]
+
+            async def _do_eval(self, eval_input):
+                return await DecisionEvaluationStrategy(
+                    self._decision_model_runner,
+                    result_key="tool_call_accuracy",
+                    error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                    questions=QUESTIONS,
+                    scoring=LikertScoring(5),
+                    threshold=3,
+                    timeout=self._LLM_CALL_TIMEOUT,
+                ).evaluate(eval_input)
+
+        client.post = AsyncMock(return_value=FakeResponse(body=json.dumps(level_payload(4)).encode()))
+        Judge(result_key="tool_call_accuracy", model_config=DECISION_CONFIG)(query="q", response="r")
+        assert "azure.ai.evaluation.decision.operations" in [name for name, _, _ in recorded]
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["protocol"]) == ("completed", "microsoft")
+
 
 class TestDecisionExecutionControls:
     @pytest.mark.parametrize(
@@ -1429,7 +1674,7 @@ class TestDecisionExecutionControls:
         assert validated_execution(execution) == execution
         assert execution["outcome"] == "error"
         if response_limit == 1:
-            assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+            assert raised.value.properties == {"decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}}
         else:
             assert raised.value.properties["total_tokens"] == 123
             assert raised.value.properties["model"] == "microsoft-decision-1"
@@ -1540,7 +1785,10 @@ class TestDecisionExecutionControls:
             run(DecisionModelRunner(DECISION_CONFIG))
         execution = raised.value.properties["decision_model"].pop("execution")
         assert execution["usage_state"] == "unknown"
-        assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}, "completion_tokens": 3}
+        assert raised.value.properties == {
+            "decision_model": {"deployment": "Decision-1", "protocol": "microsoft"},
+            "completion_tokens": 3,
+        }
 
     def test_default_pipeline_owns_an_execution_observer(self, client):
         client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
@@ -1627,7 +1875,7 @@ class TestDecisionExecutionControls:
         execution = raised.value.properties["decision_model"].pop("execution")
         assert execution["attempt_count"] == 0
         assert execution["usage_state"] == "unknown"
-        assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+        assert raised.value.properties == {"decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}}
         assert "secret" not in str(raised.value)
         assert not client.calls
 
@@ -1764,7 +2012,9 @@ class TestDecisionExecutionControls:
                 execution = raised.value.properties["decision_model"].pop("execution")
                 assert execution["attempt_count"] == 1
                 assert execution["outcome"] == ("deadline" if termination == "timeout" else "cancelled")
-                assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+                assert raised.value.properties == {
+                    "decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}
+                }
             finally:
                 handle.cancel()
 
@@ -1803,7 +2053,7 @@ class TestDecisionExecutionControls:
         assert execution["attempt_count"] == expected
         assert execution["retry_count"] == max_retries
         assert execution["outcome"] == "error"
-        assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+        assert raised.value.properties == {"decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}}
         assert "secret" not in str(raised.value)
 
     def test_real_pipeline_success_has_no_hook_failure_or_billed_replay(self, monkeypatch):
@@ -1964,6 +2214,7 @@ class TestDecisionExecutionObservations:
                     assert set(attributes) == {
                         "backend",
                         "route",
+                        "protocol",
                         "phase",
                         "outcome",
                         "usage_state",

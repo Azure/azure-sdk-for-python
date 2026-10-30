@@ -8,18 +8,90 @@ An evaluator supplies its questions, scoring policy and error target; this strat
 status gating, score mapping, provenance and result shape.
 """
 
+import asyncio
 import hashlib
 import json
+import time
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar, Union
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from ._base_model_eval import not_applicable_result
-from ._model_runners import DecisionModelRunner, validate_noul_answer, validate_score_answer, validated_execution
-from ._openai_decisions import usage_details
+from ._decision_protocols import REFUSAL
+from ._model_runners import (
+    CANCELLED_BY_CALLBACK,
+    CONTENT_FILTER,
+    DecisionModelRunner,
+    _diagnostic,
+    validate_noul_answer,
+    validate_score_answer,
+    validated_execution,
+)
 
 STATUS_CUTOFF = 0.5
+_METRIC_PREFIX = "azure.ai.evaluation.decision."
 T = TypeVar("T")
+
+
+class DecisionRefusalError(EvaluationException):
+    """The decision model declined to answer a question that the evaluation reads.
+
+    A refusal is not a low probability, a zero score or a skip: the evaluation fails without a score. The model's
+    content policy decided about the evaluated content, so the error is classified like a chat judge's
+    content-filter refusal.
+    """
+
+    ERROR_KIND = "model_refusal"
+
+    def __init__(self, question_id: str, error_target: ErrorTarget) -> None:
+        self.question_id = question_id
+        message = f"The decision model refused to answer question '{question_id}'; no score is available."
+        super().__init__(
+            message=message,
+            internal_message="The decision model refused to answer an evaluation question.",
+            blame=ErrorBlame.USER_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=error_target,
+        )
+
+    def __reduce__(self):
+        # Copies and pickles rebuild from the constructor's arguments, then restore attached metadata.
+        return type(self), (self.question_id, self.target), self.__dict__
+
+
+def _error_kind(error: EvaluationException) -> str:
+    """Return the bounded error kind of a failed evaluation: a refusal, a content filter rejection, or none."""
+    if isinstance(error, DecisionRefusalError):
+        return DecisionRefusalError.ERROR_KIND
+    properties = getattr(error, "properties", None)
+    native = properties.get("decision_model") if isinstance(properties, dict) else None
+    return CONTENT_FILTER if isinstance(native, dict) and native.get("error_kind") == CONTENT_FILTER else "none"
+
+
+def _cancelled_by_callback(error: EvaluationException) -> bool:
+    """Return whether the runner marked the error as a cancellation by the cancellation callback."""
+    return getattr(error, CANCELLED_BY_CALLBACK, False) is True
+
+
+def _record_evaluation(attributes: Dict[str, str], elapsed_ms: float) -> None:
+    """Count one Decision evaluation and record its duration when OpenTelemetry is installed.
+
+    Instruments are looked up per call, like the request metrics, so strategies stay picklable. A metric sink
+    failure, including a broken OpenTelemetry installation, is logged and never changes the evaluation result or
+    exception.
+    """
+    try:
+        from opentelemetry.metrics import get_meter  # pylint: disable=import-outside-toplevel
+
+        meter = get_meter("azure.ai.evaluation.decision")
+        meter.create_counter(_METRIC_PREFIX + "evaluations").add(1, attributes=attributes)
+        meter.create_histogram(_METRIC_PREFIX + "evaluation.duration", unit="ms").record(
+            elapsed_ms, attributes=attributes
+        )
+    except ImportError:
+        return
+    except Exception:  # pylint: disable=broad-except
+        _diagnostic("Decision evaluation metric sink failed; the evaluation result is unchanged.")
 
 
 def _checked_value(validate: Callable[..., T], error_target: ErrorTarget, *args: Any) -> T:
@@ -36,18 +108,26 @@ def _checked_value(validate: Callable[..., T], error_target: ErrorTarget, *args:
         ) from None
 
 
+def _read_answer(response: Dict[str, Any], question_id: str, error_target: ErrorTarget) -> Dict[str, Any]:
+    answer = response["answers"][question_id]
+    if isinstance(answer, dict) and answer.get("type") == REFUSAL:
+        raise DecisionRefusalError(question_id, error_target)
+    return answer
+
+
 def decision_probability(
     response: Dict[str, Any], question_id: str, error_target: ErrorTarget = ErrorTarget.EVALUATE
 ) -> float:
     """Read and validate the probability of a binary decision answer."""
-    return _checked_value(validate_noul_answer, error_target, response["answers"][question_id])
+    return _checked_value(validate_noul_answer, error_target, _read_answer(response, question_id, error_target))
 
 
 def decision_distribution(
     response: Dict[str, Any], question_id: str, levels: int, error_target: ErrorTarget = ErrorTarget.EVALUATE
 ) -> List[float]:
     """Read and validate the distribution of a scored decision answer."""
-    return _checked_value(validate_score_answer, error_target, response["answers"][question_id], levels)
+    answer = _read_answer(response, question_id, error_target)
+    return _checked_value(validate_score_answer, error_target, answer, levels)
 
 
 def decision_skip_reason(
@@ -82,9 +162,7 @@ def _digest(question: Dict[str, Any]) -> str:
     return hashlib.sha256(json.dumps(question, sort_keys=True).encode("utf-8")).hexdigest()
 
 
-def _native_answer_provenance(answer: Dict[str, Any], protocol: str = "microsoft") -> Dict[str, Any]:
-    if protocol == "openai":
-        answer = answer["_native_answer"]
+def _native_answer_provenance(answer: Dict[str, Any]) -> Dict[str, Any]:
     try:
         json.dumps(answer, allow_nan=False)
     except (TypeError, ValueError, OverflowError, RecursionError):
@@ -176,18 +254,51 @@ class DecisionEvaluationStrategy:
         self.extra_properties = extra_properties
 
     async def evaluate(self, eval_input: Dict[str, Any]) -> Dict[str, Any]:
-        response = await self.runner(state=dict(eval_input), questions=self.questions, timeout=self.timeout)
-        result = self.parse(response, eval_input)
-        tokens = decision_token_counts(response)
-        result.update(
-            {
-                f"{self.result_key}_prompt_tokens": tokens["input_token_count"],
-                f"{self.result_key}_completion_tokens": tokens["output_token_count"],
-                f"{self.result_key}_total_tokens": tokens["total_token_count"],
-                f"{self.result_key}_model": tokens["model_id"],
-            }
-        )
-        return result
+        """Request and interpret one Decision evaluation, recording its outcome and duration as metrics.
+
+        Outcomes are ``completed``, ``skipped`` (not applicable), ``error`` with the error's blame, or
+        ``cancelled`` by ``asyncio`` or the cancellation callback. A refusal or a content filter rejection is an
+        error with ``error_kind`` ``model_refusal`` or ``content_filter``.
+        """
+        started = time.monotonic()
+        outcome, blame, error_kind = "error", "system", "none"
+        try:
+            response = await self.runner(state=dict(eval_input), questions=self.questions, timeout=self.timeout)
+            result = self.parse(response, eval_input)
+            tokens = decision_token_counts(response)
+            result.update(
+                {
+                    f"{self.result_key}_prompt_tokens": tokens["input_token_count"],
+                    f"{self.result_key}_completion_tokens": tokens["output_token_count"],
+                    f"{self.result_key}_total_tokens": tokens["total_token_count"],
+                    f"{self.result_key}_model": tokens["model_id"],
+                }
+            )
+            outcome = "skipped" if result.get(f"{self.result_key}_status") == "skipped" else "completed"
+            blame = "none"
+            return result
+        except asyncio.CancelledError:
+            outcome, blame = "cancelled", "none"
+            raise
+        except EvaluationException as exc:
+            if _cancelled_by_callback(exc):
+                outcome, blame = "cancelled", "none"
+            else:
+                blame = "user" if exc.blame == ErrorBlame.USER_ERROR else "system"
+                error_kind = _error_kind(exc)
+            raise
+        finally:
+            _record_evaluation(
+                {
+                    "backend": "decision",
+                    "protocol": str(getattr(self.runner, "decision_protocol", "microsoft")),
+                    "metric": self.result_key,
+                    "outcome": outcome,
+                    "blame": blame,
+                    "error_kind": error_kind,
+                },
+                (time.monotonic() - started) * 1000,
+            )
 
     def parse(self, response: Dict[str, Any], eval_input: Dict[str, Any]) -> Dict[str, Any]:
         """Interpret a validated response without making a request.
@@ -199,6 +310,7 @@ class DecisionEvaluationStrategy:
         properties = self.extra_properties(eval_input) if self.extra_properties else {}
         properties["decision_model"] = {
             "deployment": self.runner.deployment,
+            "protocol": self.runner.decision_protocol,
             "model": response["model"],
             "rubric_hash": _digest(self.questions[key]),
             "status_rubric_hash": _digest(self.questions["status"]),
@@ -206,11 +318,8 @@ class DecisionEvaluationStrategy:
             "reason_type": "templated",
         }
         execution = validated_execution(response.get("_decision_execution"))
-        if getattr(self.runner, "decision_protocol", "microsoft") == "openai":
-            properties["decision_model"]["protocol"] = "openai"
-            details = usage_details(response.get("usage"))
-            if details:
-                properties["decision_model"]["usage_details"] = details
+        if response.get("usage_details"):
+            properties["decision_model"]["usage_details"] = response["usage_details"]
         if execution is not None:
             properties["decision_model"]["execution"] = execution
         tokens = decision_token_counts(response)
@@ -226,10 +335,7 @@ class DecisionEvaluationStrategy:
                 response, "status", self.error_target
             )
             properties["decision_model"]["native_status_answer"] = _checked_value(
-                _native_answer_provenance,
-                self.error_target,
-                response["answers"]["status"],
-                getattr(self.runner, "decision_protocol", "microsoft"),
+                _native_answer_provenance, self.error_target, response["answers"]["status"]
             )
             if skip_reason:
                 result = not_applicable_result(key, skip_reason, self.threshold)
@@ -240,9 +346,10 @@ class DecisionEvaluationStrategy:
                 _native_answer_provenance,
                 self.error_target,
                 {name: value for name, value in response["answers"][key].items() if name != "legend"},
-                getattr(self.runner, "decision_protocol", "microsoft"),
             )
         except EvaluationException as exc:
+            if isinstance(exc, DecisionRefusalError):
+                properties["decision_model"]["error_kind"] = DecisionRefusalError.ERROR_KIND
             exc.properties = properties
             raise
         properties["decision_model"].update(details)
