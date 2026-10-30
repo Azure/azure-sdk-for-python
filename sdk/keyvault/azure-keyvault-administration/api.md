@@ -3,7 +3,7 @@ namespace azure.keyvault.administration
 
     class azure.keyvault.administration.ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         V2025_07_01 = "2025-07-01"
-        V2026_01_01_PREVIEW = "2026-01-01-preview"
+        V2026_04_01 = "2026-04-01"
         V7_2 = "7.2"
         V7_3 = "7.3"
         V7_4 = "7.4"
