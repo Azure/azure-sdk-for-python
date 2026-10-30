@@ -26,7 +26,7 @@ def normalize(value: str) -> str:
     while value.startswith("./"):
         value = value[2:]
     prefix = "sdk/ai/azure-ai-projects/"
-    if value.startswith(prefix):
+    if value.lower().startswith(prefix):
         value = value[len(prefix) :]
     return value
 
