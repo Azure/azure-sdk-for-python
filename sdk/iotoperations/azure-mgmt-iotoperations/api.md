@@ -131,7 +131,7 @@ namespace azure.mgmt.iotoperations.aio.operations
             ) -> AsyncLROPoller[AkriConnectorResource]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'connector_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'connector_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -142,7 +142,7 @@ namespace azure.mgmt.iotoperations.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'connector_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'connector_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -153,7 +153,7 @@ namespace azure.mgmt.iotoperations.aio.operations
             ) -> AkriConnectorResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def list_by_template(
                 self, 
                 resource_group_name: str, 
@@ -208,7 +208,7 @@ namespace azure.mgmt.iotoperations.aio.operations
             ) -> AsyncLROPoller[AkriConnectorTemplateResource]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -218,7 +218,7 @@ namespace azure.mgmt.iotoperations.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -228,7 +228,7 @@ namespace azure.mgmt.iotoperations.aio.operations
             ) -> AkriConnectorTemplateResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def list_by_instance_resource(
                 self, 
                 resource_group_name: str, 
@@ -282,7 +282,7 @@ namespace azure.mgmt.iotoperations.aio.operations
             ) -> AsyncLROPoller[AkriServiceResource]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_service_name']}, api_versions_list=['2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_service_name']}, api_versions_list=['2026-03-01', '2026-07-01', '2026-10-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -292,7 +292,7 @@ namespace azure.mgmt.iotoperations.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_service_name', 'accept']}, api_versions_list=['2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_service_name', 'accept']}, api_versions_list=['2026-03-01', '2026-07-01', '2026-10-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -302,7 +302,7 @@ namespace azure.mgmt.iotoperations.aio.operations
             ) -> AkriServiceResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'accept']}, api_versions_list=['2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'accept']}, api_versions_list=['2026-03-01', '2026-07-01', '2026-10-01'])
         def list_by_instance_resource(
                 self, 
                 resource_group_name: str, 
@@ -732,7 +732,7 @@ namespace azure.mgmt.iotoperations.aio.operations
             ) -> AsyncLROPoller[DataflowGraphResource]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'dataflow_profile_name', 'dataflow_graph_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'dataflow_profile_name', 'dataflow_graph_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -743,7 +743,7 @@ namespace azure.mgmt.iotoperations.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'dataflow_profile_name', 'dataflow_graph_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'dataflow_profile_name', 'dataflow_graph_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -754,7 +754,7 @@ namespace azure.mgmt.iotoperations.aio.operations
             ) -> DataflowGraphResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'dataflow_profile_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'dataflow_profile_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def list_by_dataflow_profile(
                 self, 
                 resource_group_name: str, 
@@ -1070,7 +1070,7 @@ namespace azure.mgmt.iotoperations.aio.operations
             ) -> AsyncLROPoller[RegistryEndpointResource]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'registry_endpoint_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'registry_endpoint_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1080,7 +1080,7 @@ namespace azure.mgmt.iotoperations.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'registry_endpoint_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'registry_endpoint_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1090,7 +1090,7 @@ namespace azure.mgmt.iotoperations.aio.operations
             ) -> RegistryEndpointResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def list_by_instance_resource(
                 self, 
                 resource_group_name: str, 
@@ -2493,7 +2493,7 @@ namespace azure.mgmt.iotoperations.models
 
 
     class azure.mgmt.iotoperations.models.CertManagerIssuerRef(_Model):
-        group: str
+        group: Optional[str]
         kind: Union[str, CertManagerIssuerKind]
         name: str
 
@@ -2501,7 +2501,7 @@ namespace azure.mgmt.iotoperations.models
         def __init__(
                 self, 
                 *, 
-                group: str, 
+                group: Optional[str] = ..., 
                 kind: Union[str, CertManagerIssuerKind], 
                 name: str
             ) -> None: ...
@@ -3349,6 +3349,7 @@ namespace azure.mgmt.iotoperations.models
         data_destination: str
         endpoint_ref: str
         headers: Optional[list[DataflowGraphDestinationHeaderAction]]
+        output_schema_settings: Optional[DataflowGraphDestinationSchemaSettings]
 
         @overload
         def __init__(
@@ -3356,7 +3357,8 @@ namespace azure.mgmt.iotoperations.models
                 *, 
                 data_destination: str, 
                 endpoint_ref: str, 
-                headers: Optional[list[DataflowGraphDestinationHeaderAction]] = ...
+                headers: Optional[list[DataflowGraphDestinationHeaderAction]] = ..., 
+                output_schema_settings: Optional[DataflowGraphDestinationSchemaSettings] = ...
             ) -> None: ...
 
         @overload
@@ -3372,6 +3374,27 @@ namespace azure.mgmt.iotoperations.models
                 self, 
                 *, 
                 key: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.iotoperations.models.DataflowGraphDestinationSchemaSerializationFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DELTA = "Delta"
+        PARQUET = "Parquet"
+
+
+    class azure.mgmt.iotoperations.models.DataflowGraphDestinationSchemaSettings(_Model):
+        schema_ref: Optional[str]
+        serialization_format: Union[str, DataflowGraphDestinationSchemaSerializationFormat]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                schema_ref: Optional[str] = ..., 
+                serialization_format: Union[str, DataflowGraphDestinationSchemaSerializationFormat]
             ) -> None: ...
 
         @overload
@@ -3963,6 +3986,7 @@ namespace azure.mgmt.iotoperations.models
         location: str
         name: str
         properties: Optional[InstanceProperties]
+        sku: Optional[InstanceSku]
         system_data: SystemData
         tags: dict[str, str]
         type: str
@@ -3975,11 +3999,31 @@ namespace azure.mgmt.iotoperations.models
                 identity: Optional[ManagedServiceIdentity] = ..., 
                 location: str, 
                 properties: Optional[InstanceProperties] = ..., 
+                sku: Optional[InstanceSku] = ..., 
                 tags: Optional[dict[str, str]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.iotoperations.models.InstanceSku(_Model):
+        name: Union[str, InstanceSkuName]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Union[str, InstanceSkuName]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.iotoperations.models.InstanceSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ESSENTIALS = "Essentials"
+        STANDARD = "Standard"
 
 
     class azure.mgmt.iotoperations.models.KafkaAuthMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4871,7 +4915,7 @@ namespace azure.mgmt.iotoperations.operations
             ) -> LROPoller[AkriConnectorResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'connector_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'connector_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4882,7 +4926,7 @@ namespace azure.mgmt.iotoperations.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'connector_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'connector_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4893,7 +4937,7 @@ namespace azure.mgmt.iotoperations.operations
             ) -> AkriConnectorResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def list_by_template(
                 self, 
                 resource_group_name: str, 
@@ -4948,7 +4992,7 @@ namespace azure.mgmt.iotoperations.operations
             ) -> LROPoller[AkriConnectorTemplateResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4958,7 +5002,7 @@ namespace azure.mgmt.iotoperations.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_connector_template_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4968,7 +5012,7 @@ namespace azure.mgmt.iotoperations.operations
             ) -> AkriConnectorTemplateResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def list_by_instance_resource(
                 self, 
                 resource_group_name: str, 
@@ -5022,7 +5066,7 @@ namespace azure.mgmt.iotoperations.operations
             ) -> LROPoller[AkriServiceResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_service_name']}, api_versions_list=['2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_service_name']}, api_versions_list=['2026-03-01', '2026-07-01', '2026-10-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5032,7 +5076,7 @@ namespace azure.mgmt.iotoperations.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_service_name', 'accept']}, api_versions_list=['2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'akri_service_name', 'accept']}, api_versions_list=['2026-03-01', '2026-07-01', '2026-10-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5042,7 +5086,7 @@ namespace azure.mgmt.iotoperations.operations
             ) -> AkriServiceResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'accept']}, api_versions_list=['2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2026-03-01', params_added_on={'2026-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'accept']}, api_versions_list=['2026-03-01', '2026-07-01', '2026-10-01'])
         def list_by_instance_resource(
                 self, 
                 resource_group_name: str, 
@@ -5472,7 +5516,7 @@ namespace azure.mgmt.iotoperations.operations
             ) -> LROPoller[DataflowGraphResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'dataflow_profile_name', 'dataflow_graph_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'dataflow_profile_name', 'dataflow_graph_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5483,7 +5527,7 @@ namespace azure.mgmt.iotoperations.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'dataflow_profile_name', 'dataflow_graph_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'dataflow_profile_name', 'dataflow_graph_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5494,7 +5538,7 @@ namespace azure.mgmt.iotoperations.operations
             ) -> DataflowGraphResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'dataflow_profile_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'dataflow_profile_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def list_by_dataflow_profile(
                 self, 
                 resource_group_name: str, 
@@ -5810,7 +5854,7 @@ namespace azure.mgmt.iotoperations.operations
             ) -> LROPoller[RegistryEndpointResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'registry_endpoint_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'registry_endpoint_name']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5820,7 +5864,7 @@ namespace azure.mgmt.iotoperations.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'registry_endpoint_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'registry_endpoint_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5830,7 +5874,7 @@ namespace azure.mgmt.iotoperations.operations
             ) -> RegistryEndpointResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01'])
+        @api_version_validation(method_added_on='2025-07-01-preview', params_added_on={'2025-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'instance_name', 'accept']}, api_versions_list=['2025-07-01-preview', '2025-10-01', '2026-03-01', '2026-07-01', '2026-10-01'])
         def list_by_instance_resource(
                 self, 
                 resource_group_name: str, 
@@ -5846,15 +5890,15 @@ namespace azure.mgmt.iotoperations.types
         key "encryptInternalTraffic": Union[str, OperationalMode]
         key "internalCerts": ForwardRef('CertManagerCertOptions', module='types')
         clients: ClientConfig
-        encrypt_internal_traffic: Union[str, OperationalMode]
-        internal_certs: CertManagerCertOptions
+        encryptInternalTraffic: Union[str, OperationalMode]
+        internalCerts: CertManagerCertOptions
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorAllocatedDevice(TypedDict, total=False):
         key "deviceInboundEndpointName": Required[str]
         key "deviceName": Required[str]
-        device_inbound_endpoint_name: str
-        device_name: str
+        deviceInboundEndpointName: str
+        deviceName: str
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorProperties(TypedDict, total=False):
@@ -5862,9 +5906,8 @@ namespace azure.mgmt.iotoperations.types
         key "provisioningState": Union[str, ProvisioningState]
         key "status": ForwardRef('AkriConnectorStatus', module='types')
         allocatedDevices: list[AkriConnectorAllocatedDevice]
-        allocated_devices: list[AkriConnectorAllocatedDevice]
-        health_state: Union[str, ResourceHealthState]
-        provisioning_state: Union[str, ProvisioningState]
+        healthState: Union[str, ResourceHealthState]
+        provisioningState: Union[str, ProvisioningState]
         status: AkriConnectorStatus
 
 
@@ -5875,30 +5918,30 @@ namespace azure.mgmt.iotoperations.types
         key "properties": ForwardRef('AkriConnectorProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         name: str
         properties: AkriConnectorProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorStatus(TypedDict, total=False):
         key "healthState": ForwardRef('ResourceHealthStatus', module='types')
-        health_state: ResourceHealthStatus
+        healthState: ResourceHealthStatus
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorTemplateAioMetadata(TypedDict, total=False):
         key "aioMaxVersion": str
         key "aioMinVersion": str
-        aio_max_version: str
-        aio_min_version: str
+        aioMaxVersion: str
+        aioMinVersion: str
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorTemplateAllocation(TypedDict, total=False):
         key "bucketSize": Required[int]
         key "policy": Required[Literal[AkriConnectorTemplateAllocationPolicy.BUCKETIZED]]
-        bucket_size: int
+        bucketSize: int
         policy: Literal[AkriConnectorTemplateAllocationPolicy.BUCKETIZED]
 
 
@@ -5909,7 +5952,7 @@ namespace azure.mgmt.iotoperations.types
     class azure.mgmt.iotoperations.types.AkriConnectorTemplateBucketizedAllocation(TypedDict, total=False):
         key "bucketSize": Required[int]
         key "policy": Required[Literal[AkriConnectorTemplateAllocationPolicy.BUCKETIZED]]
-        bucket_size: int
+        bucketSize: int
         policy: Literal[AkriConnectorTemplateAllocationPolicy.BUCKETIZED]
 
 
@@ -5917,8 +5960,8 @@ namespace azure.mgmt.iotoperations.types
         key "displayName": str
         key "endpointType": Required[str]
         key "version": str
-        display_name: str
-        endpoint_type: str
+        displayName: str
+        endpointType: str
         version: str
 
 
@@ -5935,8 +5978,8 @@ namespace azure.mgmt.iotoperations.types
     class azure.mgmt.iotoperations.types.AkriConnectorTemplateManagedConfiguration(TypedDict, total=False):
         key "managedConfigurationSettings": Required[AkriConnectorTemplateManagedConfigurationSettings]
         key "runtimeConfigurationType": Required[Literal[AkriConnectorTemplateRuntimeConfigurationType.MANAGED_CONFIGURATION]]
-        managed_configuration_settings: AkriConnectorTemplateManagedConfigurationSettings
-        runtime_configuration_type: Literal[AkriConnectorTemplateRuntimeConfigurationType.MANAGED_CONFIGURATION]
+        managedConfigurationSettings: AkriConnectorTemplateManagedConfigurationSettings
+        runtimeConfigurationType: Literal[AkriConnectorTemplateRuntimeConfigurationType.MANAGED_CONFIGURATION]
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorTemplateManagedConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -5947,8 +5990,8 @@ namespace azure.mgmt.iotoperations.types
     class azure.mgmt.iotoperations.types.AkriConnectorTemplatePersistentVolumeClaim(TypedDict, total=False):
         key "claimName": Required[str]
         key "mountPath": Required[str]
-        claim_name: str
-        mount_path: str
+        claimName: str
+        mountPath: str
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorTemplateProperties(TypedDict, total=False):
@@ -5960,14 +6003,14 @@ namespace azure.mgmt.iotoperations.types
         key "mqttConnectionConfiguration": ForwardRef('AkriConnectorsMqttConnectionConfiguration', module='types')
         key "provisioningState": Union[str, ProvisioningState]
         key "runtimeConfiguration": Required[AkriConnectorTemplateRuntimeConfiguration]
-        aio_metadata: AkriConnectorTemplateAioMetadata
-        connector_metadata_ref: str
-        device_inbound_endpoint_types: list[AkriConnectorTemplateDeviceInboundEndpointType]
+        aioMetadata: AkriConnectorTemplateAioMetadata
+        connectorMetadataRef: str
+        deviceInboundEndpointTypes: list[AkriConnectorTemplateDeviceInboundEndpointType]
         diagnostics: AkriConnectorTemplateDiagnostics
-        health_state: Union[str, ResourceHealthState]
-        mqtt_connection_configuration: AkriConnectorsMqttConnectionConfiguration
-        provisioning_state: Union[str, ProvisioningState]
-        runtime_configuration: AkriConnectorTemplateRuntimeConfiguration
+        healthState: Union[str, ResourceHealthState]
+        mqttConnectionConfiguration: AkriConnectorsMqttConnectionConfiguration
+        provisioningState: Union[str, ProvisioningState]
+        runtimeConfiguration: AkriConnectorTemplateRuntimeConfiguration
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorTemplateReadinessProbe(TypedDict, total=False):
@@ -5977,12 +6020,12 @@ namespace azure.mgmt.iotoperations.types
         key "periodSeconds": int
         key "successThreshold": int
         key "timeoutSeconds": int
-        exec_property: AkriConnectorTemplateExecAction
-        failure_threshold: int
-        initial_delay_seconds: int
-        period_seconds: int
-        success_threshold: int
-        timeout_seconds: int
+        exec: AkriConnectorTemplateExecAction
+        failureThreshold: int
+        initialDelaySeconds: int
+        periodSeconds: int
+        successThreshold: int
+        timeoutSeconds: int
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorTemplateResource(ProxyResource):
@@ -5992,19 +6035,19 @@ namespace azure.mgmt.iotoperations.types
         key "properties": ForwardRef('AkriConnectorTemplateProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         name: str
         properties: AkriConnectorTemplateProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorTemplateRuntimeConfiguration(TypedDict, total=False):
         key "managedConfigurationSettings": Required[AkriConnectorTemplateManagedConfigurationSettings]
         key "runtimeConfigurationType": Required[Literal[AkriConnectorTemplateRuntimeConfigurationType.MANAGED_CONFIGURATION]]
-        managed_configuration_settings: AkriConnectorTemplateManagedConfigurationSettings
-        runtime_configuration_type: Literal[AkriConnectorTemplateRuntimeConfigurationType.MANAGED_CONFIGURATION]
+        managedConfigurationSettings: AkriConnectorTemplateManagedConfigurationSettings
+        runtimeConfigurationType: Literal[AkriConnectorTemplateRuntimeConfigurationType.MANAGED_CONFIGURATION]
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorTemplateRuntimeConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -6017,16 +6060,13 @@ namespace azure.mgmt.iotoperations.types
         key "managedConfigurationType": Required[Literal[AkriConnectorTemplateManagedConfigurationType.IMAGE_CONFIGURATION]]
         key "trustSettings": ForwardRef('AkriConnectorTemplateTrustList', module='types')
         additionalConfiguration: dict[str, str]
-        additional_configuration: dict[str, str]
         allocation: AkriConnectorTemplateAllocation
-        image_configuration_settings: AkriConnectorTemplateRuntimeImageConfigurationSettings
-        managed_configuration_type: Literal[AkriConnectorTemplateManagedConfigurationType.IMAGE_CONFIGURATION]
+        imageConfigurationSettings: AkriConnectorTemplateRuntimeImageConfigurationSettings
+        managedConfigurationType: Literal[AkriConnectorTemplateManagedConfigurationType.IMAGE_CONFIGURATION]
         persistentVolumeClaimTemplates: list[dict[str, Any]]
         persistentVolumeClaims: list[AkriConnectorTemplatePersistentVolumeClaim]
-        persistent_volume_claim_templates: list[dict[str, Any]]
-        persistent_volume_claims: list[AkriConnectorTemplatePersistentVolumeClaim]
         secrets: list[AkriConnectorsSecret]
-        trust_settings: AkriConnectorTemplateTrustList
+        trustSettings: AkriConnectorTemplateTrustList
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorTemplateRuntimeImageConfigurationSettings(TypedDict, total=False):
@@ -6036,12 +6076,12 @@ namespace azure.mgmt.iotoperations.types
         key "registrySettings": ForwardRef('AkriConnectorsRegistrySettings', module='types')
         key "replicas": int
         key "tagDigestSettings": ForwardRef('AkriConnectorsTagDigestSettings', module='types')
-        image_name: str
-        image_pull_policy: Union[str, AkriConnectorsImagePullPolicy]
-        readiness_probe: AkriConnectorTemplateReadinessProbe
-        registry_settings: AkriConnectorsRegistrySettings
+        imageName: str
+        imagePullPolicy: Union[str, AkriConnectorsImagePullPolicy]
+        readinessProbe: AkriConnectorTemplateReadinessProbe
+        registrySettings: AkriConnectorsRegistrySettings
         replicas: int
-        tag_digest_settings: AkriConnectorsTagDigestSettings
+        tagDigestSettings: AkriConnectorsTagDigestSettings
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorTemplateRuntimeStatefulSetConfiguration(TypedDict, total=False):
@@ -6050,34 +6090,30 @@ namespace azure.mgmt.iotoperations.types
         key "statefulSetConfigurationSettings": Required[dict[str, Any]]
         key "trustSettings": ForwardRef('AkriConnectorTemplateTrustList', module='types')
         additionalConfiguration: dict[str, str]
-        additional_configuration: dict[str, str]
         allocation: AkriConnectorTemplateAllocation
-        managed_configuration_type: Literal[AkriConnectorTemplateManagedConfigurationType.STATEFUL_SET_CONFIGURATION]
+        managedConfigurationType: Literal[AkriConnectorTemplateManagedConfigurationType.STATEFUL_SET_CONFIGURATION]
         persistentVolumeClaimTemplates: list[dict[str, Any]]
         persistentVolumeClaims: list[AkriConnectorTemplatePersistentVolumeClaim]
-        persistent_volume_claim_templates: list[dict[str, Any]]
-        persistent_volume_claims: list[AkriConnectorTemplatePersistentVolumeClaim]
         secrets: list[AkriConnectorsSecret]
-        stateful_set_configuration_settings: dict[str, Any]
-        trust_settings: AkriConnectorTemplateTrustList
+        statefulSetConfigurationSettings: dict[str, Any]
+        trustSettings: AkriConnectorTemplateTrustList
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorTemplateTrustList(TypedDict, total=False):
         key "trustListSecretRef": Required[str]
-        trust_list_secret_ref: str
+        trustListSecretRef: str
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorsContainerRegistry(TypedDict, total=False):
         key "containerRegistrySettings": Required[AkriConnectorsContainerRegistrySettings]
         key "registrySettingsType": Required[Literal[AkriConnectorsRegistrySettingsType.CONTAINER_REGISTRY]]
-        container_registry_settings: AkriConnectorsContainerRegistrySettings
-        registry_settings_type: Literal[AkriConnectorsRegistrySettingsType.CONTAINER_REGISTRY]
+        containerRegistrySettings: AkriConnectorsContainerRegistrySettings
+        registrySettingsType: Literal[AkriConnectorsRegistrySettingsType.CONTAINER_REGISTRY]
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorsContainerRegistrySettings(TypedDict, total=False):
         key "registry": Required[str]
         imagePullSecrets: list[AkriConnectorsImagePullSecret]
-        image_pull_secrets: list[AkriConnectorsImagePullSecret]
         registry: str
 
 
@@ -6090,19 +6126,19 @@ namespace azure.mgmt.iotoperations.types
         key "digest": Required[str]
         key "tagDigestType": Required[Literal[AkriConnectorsTagDigestType.DIGEST]]
         digest: str
-        tag_digest_type: Literal[AkriConnectorsTagDigestType.DIGEST]
+        tagDigestType: Literal[AkriConnectorsTagDigestType.DIGEST]
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorsImagePullSecret(TypedDict, total=False):
         key "secretRef": Required[str]
-        secret_ref: str
+        secretRef: str
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorsMqttAuthentication(TypedDict, total=False):
         key "method": Required[Literal[AkriConnectorsMqttAuthenticationMethod.SERVICE_ACCOUNT_TOKEN]]
         key "serviceAccountTokenSettings": Required[AkriConnectorsServiceAccountTokenSettings]
         method: Literal[AkriConnectorsMqttAuthenticationMethod.SERVICE_ACCOUNT_TOKEN]
-        service_account_token_settings: AkriConnectorsServiceAccountTokenSettings
+        serviceAccountTokenSettings: AkriConnectorsServiceAccountTokenSettings
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorsMqttAuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -6119,18 +6155,18 @@ namespace azure.mgmt.iotoperations.types
         key "tls": ForwardRef('TlsProperties', module='types')
         authentication: AkriConnectorsMqttAuthentication
         host: str
-        keep_alive_seconds: int
-        max_inflight_messages: int
+        keepAliveSeconds: int
+        maxInflightMessages: int
         protocol: Union[str, AkriConnectorsMqttProtocolType]
-        session_expiry_seconds: int
+        sessionExpirySeconds: int
         tls: TlsProperties
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorsRegistryEndpointRef(TypedDict, total=False):
         key "registryEndpointRef": Required[str]
         key "registrySettingsType": Required[Literal[AkriConnectorsRegistrySettingsType.REGISTRY_ENDPOINT_REF]]
-        registry_endpoint_ref: str
-        registry_settings_type: Literal[AkriConnectorsRegistrySettingsType.REGISTRY_ENDPOINT_REF]
+        registryEndpointRef: str
+        registrySettingsType: Literal[AkriConnectorsRegistrySettingsType.REGISTRY_ENDPOINT_REF]
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorsRegistrySettingsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -6142,16 +6178,16 @@ namespace azure.mgmt.iotoperations.types
         key "secretAlias": Required[str]
         key "secretKey": Required[str]
         key "secretRef": Required[str]
-        secret_alias: str
-        secret_key: str
-        secret_ref: str
+        secretAlias: str
+        secretKey: str
+        secretRef: str
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorsServiceAccountAuthentication(TypedDict, total=False):
         key "method": Required[Literal[AkriConnectorsMqttAuthenticationMethod.SERVICE_ACCOUNT_TOKEN]]
         key "serviceAccountTokenSettings": Required[AkriConnectorsServiceAccountTokenSettings]
         method: Literal[AkriConnectorsMqttAuthenticationMethod.SERVICE_ACCOUNT_TOKEN]
-        service_account_token_settings: AkriConnectorsServiceAccountTokenSettings
+        serviceAccountTokenSettings: AkriConnectorsServiceAccountTokenSettings
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorsServiceAccountTokenSettings(TypedDict, total=False):
@@ -6163,7 +6199,7 @@ namespace azure.mgmt.iotoperations.types
         key "tag": Required[str]
         key "tagDigestType": Required[Literal[AkriConnectorsTagDigestType.TAG]]
         tag: str
-        tag_digest_type: Literal[AkriConnectorsTagDigestType.TAG]
+        tagDigestType: Literal[AkriConnectorsTagDigestType.TAG]
 
 
     class azure.mgmt.iotoperations.types.AkriConnectorsTagDigestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -6174,7 +6210,7 @@ namespace azure.mgmt.iotoperations.types
     class azure.mgmt.iotoperations.types.AkriServiceProperties(TypedDict, total=False):
         key "provisioningState": Union[str, ProvisioningState]
         key "status": ForwardRef('AkriServiceStatus', module='types')
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
         status: AkriServiceStatus
 
 
@@ -6185,17 +6221,17 @@ namespace azure.mgmt.iotoperations.types
         key "properties": ForwardRef('AkriServiceProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         name: str
         properties: AkriServiceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.iotoperations.types.AkriServiceStatus(TypedDict, total=False):
         key "healthState": ForwardRef('ResourceHealthStatus', module='types')
-        health_state: ResourceHealthStatus
+        healthState: ResourceHealthStatus
 
 
     class azure.mgmt.iotoperations.types.AuthorizationConfig(TypedDict, total=False):
@@ -6207,15 +6243,14 @@ namespace azure.mgmt.iotoperations.types
     class azure.mgmt.iotoperations.types.AuthorizationRule(TypedDict, total=False):
         key "brokerResources": Required[list[BrokerResourceRule]]
         key "principals": Required[PrincipalDefinition]
-        broker_resources: list[BrokerResourceRule]
+        brokerResources: list[BrokerResourceRule]
         principals: PrincipalDefinition
         stateStoreResources: list[StateStoreResourceRule]
-        state_store_resources: list[StateStoreResourceRule]
 
 
     class azure.mgmt.iotoperations.types.AzureDeviceRegistryNamespaceRef(TypedDict, total=False):
         key "resourceId": Required[str]
-        resource_id: str
+        resourceId: str
 
 
     class azure.mgmt.iotoperations.types.BackendChain(TypedDict, total=False):
@@ -6223,24 +6258,24 @@ namespace azure.mgmt.iotoperations.types
         key "redundancyFactor": Required[int]
         key "workers": int
         partitions: int
-        redundancy_factor: int
+        redundancyFactor: int
         workers: int
 
 
     class azure.mgmt.iotoperations.types.BatchingConfiguration(TypedDict, total=False):
         key "latencySeconds": int
         key "maxMessages": int
-        latency_seconds: int
-        max_messages: int
+        latencySeconds: int
+        maxMessages: int
 
 
     class azure.mgmt.iotoperations.types.BrokerAuthenticationProperties(TypedDict, total=False):
         key "authenticationMethods": Required[list[BrokerAuthenticatorMethods]]
         key "healthState": Union[str, ResourceHealthState]
         key "provisioningState": Union[str, ProvisioningState]
-        authentication_methods: list[BrokerAuthenticatorMethods]
-        health_state: Union[str, ResourceHealthState]
-        provisioning_state: Union[str, ProvisioningState]
+        authenticationMethods: list[BrokerAuthenticatorMethods]
+        healthState: Union[str, ResourceHealthState]
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.iotoperations.types.BrokerAuthenticationResource(ProxyResource):
@@ -6250,11 +6285,11 @@ namespace azure.mgmt.iotoperations.types
         key "properties": ForwardRef('BrokerAuthenticationProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         name: str
         properties: BrokerAuthenticationProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6268,7 +6303,7 @@ namespace azure.mgmt.iotoperations.types
         key "caCertConfigMap": str
         key "endpoint": Required[str]
         auth: BrokerAuthenticatorCustomAuth
-        ca_cert_config_map: str
+        caCertConfigMap: str
         endpoint: str
         headers: dict[str, str]
 
@@ -6281,10 +6316,9 @@ namespace azure.mgmt.iotoperations.types
     class azure.mgmt.iotoperations.types.BrokerAuthenticatorMethodX509(TypedDict, total=False):
         key "additionalValidation": Union[str, BrokerAuthenticatorValidationMethods]
         key "trustedClientCaCert": str
-        additional_validation: Union[str, BrokerAuthenticatorValidationMethods]
+        additionalValidation: Union[str, BrokerAuthenticatorValidationMethods]
         authorizationAttributes: dict[str, BrokerAuthenticatorMethodX509Attributes]
-        authorization_attributes: dict[str, BrokerAuthenticatorMethodX509Attributes]
-        trusted_client_ca_cert: str
+        trustedClientCaCert: str
 
 
     class azure.mgmt.iotoperations.types.BrokerAuthenticatorMethodX509Attributes(TypedDict, total=False):
@@ -6299,19 +6333,19 @@ namespace azure.mgmt.iotoperations.types
         key "method": Required[Union[str, BrokerAuthenticationMethod]]
         key "serviceAccountTokenSettings": ForwardRef('BrokerAuthenticatorMethodSat', module='types')
         key "x509Settings": ForwardRef('BrokerAuthenticatorMethodX509', module='types')
-        custom_settings: BrokerAuthenticatorMethodCustom
+        customSettings: BrokerAuthenticatorMethodCustom
         method: Union[str, BrokerAuthenticationMethod]
-        service_account_token_settings: BrokerAuthenticatorMethodSat
-        x509_settings: BrokerAuthenticatorMethodX509
+        serviceAccountTokenSettings: BrokerAuthenticatorMethodSat
+        x509Settings: BrokerAuthenticatorMethodX509
 
 
     class azure.mgmt.iotoperations.types.BrokerAuthorizationProperties(TypedDict, total=False):
         key "authorizationPolicies": Required[AuthorizationConfig]
         key "healthState": Union[str, ResourceHealthState]
         key "provisioningState": Union[str, ProvisioningState]
-        authorization_policies: AuthorizationConfig
-        health_state: Union[str, ResourceHealthState]
-        provisioning_state: Union[str, ProvisioningState]
+        authorizationPolicies: AuthorizationConfig
+        healthState: Union[str, ResourceHealthState]
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.iotoperations.types.BrokerAuthorizationResource(ProxyResource):
@@ -6321,11 +6355,11 @@ namespace azure.mgmt.iotoperations.types
         key "properties": ForwardRef('BrokerAuthorizationProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         name: str
         properties: BrokerAuthorizationProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6336,7 +6370,7 @@ namespace azure.mgmt.iotoperations.types
         key "traces": ForwardRef('Traces', module='types')
         logs: DiagnosticsLogs
         metrics: Metrics
-        self_check: SelfCheck
+        selfCheck: SelfCheck
         traces: Traces
 
 
@@ -6346,11 +6380,11 @@ namespace azure.mgmt.iotoperations.types
         key "provisioningState": Union[str, ProvisioningState]
         key "serviceName": str
         key "serviceType": Union[str, ServiceType]
-        health_state: Union[str, ResourceHealthState]
+        healthState: Union[str, ResourceHealthState]
         ports: list[ListenerPort]
-        provisioning_state: Union[str, ProvisioningState]
-        service_name: str
-        service_type: Union[str, ServiceType]
+        provisioningState: Union[str, ProvisioningState]
+        serviceName: str
+        serviceType: Union[str, ServiceType]
 
 
     class azure.mgmt.iotoperations.types.BrokerListenerResource(ProxyResource):
@@ -6360,11 +6394,11 @@ namespace azure.mgmt.iotoperations.types
         key "properties": ForwardRef('BrokerListenerProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         name: str
         properties: BrokerListenerProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6376,11 +6410,11 @@ namespace azure.mgmt.iotoperations.types
         key "stateStore": ForwardRef('BrokerStateStorePolicy', module='types')
         key "subscriberQueue": ForwardRef('BrokerSubscriberQueuePolicy', module='types')
         encryption: BrokerPersistenceEncryption
-        max_size: str
-        persistent_volume_claim_spec: VolumeClaimSpec
+        maxSize: str
+        persistentVolumeClaimSpec: VolumeClaimSpec
         retain: BrokerRetainMessagesPolicy
-        state_store: BrokerStateStorePolicy
-        subscriber_queue: BrokerSubscriberQueuePolicy
+        stateStore: BrokerStateStorePolicy
+        subscriberQueue: BrokerSubscriberQueuePolicy
 
 
     class azure.mgmt.iotoperations.types.BrokerPersistenceEncryption(TypedDict, total=False):
@@ -6409,13 +6443,13 @@ namespace azure.mgmt.iotoperations.types
         advanced: AdvancedSettings
         cardinality: Cardinality
         diagnostics: BrokerDiagnostics
-        disk_backed_message_buffer: DiskBackedMessageBuffer
-        generate_resource_limits: GenerateResourceLimits
-        health_state: Union[str, ResourceHealthState]
-        high_priority_messages_backpressure_handling: Union[str, HighPriorityMessagesBackpressureHandling]
-        memory_profile: Union[str, BrokerMemoryProfile]
+        diskBackedMessageBuffer: DiskBackedMessageBuffer
+        generateResourceLimits: GenerateResourceLimits
+        healthState: Union[str, ResourceHealthState]
+        highPriorityMessagesBackpressureHandling: Union[str, HighPriorityMessagesBackpressureHandling]
+        memoryProfile: Union[str, BrokerMemoryProfile]
         persistence: BrokerPersistence
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
         status: BrokerStatus
 
 
@@ -6426,18 +6460,17 @@ namespace azure.mgmt.iotoperations.types
         key "properties": ForwardRef('BrokerProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         name: str
         properties: BrokerProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.iotoperations.types.BrokerResourceRule(TypedDict, total=False):
         key "method": Required[Union[str, BrokerResourceDefinitionMethods]]
         clientIds: list[str]
-        client_ids: list[str]
         method: Union[str, BrokerResourceDefinitionMethods]
         topics: list[str]
 
@@ -6446,7 +6479,7 @@ namespace azure.mgmt.iotoperations.types
         key "mode": Required[Literal[BrokerPersistencePolicyMode.CUSTOM]]
         key "retainSettings": Required[BrokerRetainMessagesSettings]
         mode: Literal[BrokerPersistencePolicyMode.CUSTOM]
-        retain_settings: BrokerRetainMessagesSettings
+        retainSettings: BrokerRetainMessagesSettings
 
 
     class azure.mgmt.iotoperations.types.BrokerRetainMessagesDynamic(TypedDict, total=False):
@@ -6458,7 +6491,7 @@ namespace azure.mgmt.iotoperations.types
         key "mode": Required[Literal[BrokerPersistencePolicyMode.CUSTOM]]
         key "retainSettings": Required[BrokerRetainMessagesSettings]
         mode: Literal[BrokerPersistencePolicyMode.CUSTOM]
-        retain_settings: BrokerRetainMessagesSettings
+        retainSettings: BrokerRetainMessagesSettings
 
 
     class azure.mgmt.iotoperations.types.BrokerRetainMessagesSettings(TypedDict, total=False):
@@ -6471,7 +6504,7 @@ namespace azure.mgmt.iotoperations.types
         key "mode": Required[Literal[BrokerPersistencePolicyMode.CUSTOM]]
         key "stateStoreSettings": Required[BrokerStateStorePolicySettings]
         mode: Literal[BrokerPersistencePolicyMode.CUSTOM]
-        state_store_settings: BrokerStateStorePolicySettings
+        stateStoreSettings: BrokerStateStorePolicySettings
 
 
     class azure.mgmt.iotoperations.types.BrokerStateStoreDynamic(TypedDict, total=False):
@@ -6483,40 +6516,38 @@ namespace azure.mgmt.iotoperations.types
         key "mode": Required[Literal[BrokerPersistencePolicyMode.CUSTOM]]
         key "stateStoreSettings": Required[BrokerStateStorePolicySettings]
         mode: Literal[BrokerPersistencePolicyMode.CUSTOM]
-        state_store_settings: BrokerStateStorePolicySettings
+        stateStoreSettings: BrokerStateStorePolicySettings
 
 
     class azure.mgmt.iotoperations.types.BrokerStateStorePolicyResources(TypedDict, total=False):
         key "keyType": Required[Union[str, BrokerStateStoreKeyType]]
         key "keys": Required[list[str]]
-        key_type: Union[str, BrokerStateStoreKeyType]
-        keys_property: list[str]
+        keyType: Union[str, BrokerStateStoreKeyType]
+        keys: list[str]
 
 
     class azure.mgmt.iotoperations.types.BrokerStateStorePolicySettings(TypedDict, total=False):
         key "dynamic": ForwardRef('BrokerStateStoreDynamic', module='types')
         dynamic: BrokerStateStoreDynamic
         stateStoreResources: list[BrokerStateStorePolicyResources]
-        state_store_resources: list[BrokerStateStorePolicyResources]
 
 
     class azure.mgmt.iotoperations.types.BrokerStatus(TypedDict, total=False):
         key "healthState": ForwardRef('ResourceHealthStatus', module='types')
-        health_state: ResourceHealthStatus
+        healthState: ResourceHealthStatus
 
 
     class azure.mgmt.iotoperations.types.BrokerSubscriberQueueCustomPolicy(TypedDict, total=False):
         key "mode": Required[Literal[BrokerPersistencePolicyMode.CUSTOM]]
         key "subscriberQueueSettings": Required[BrokerSubscriberQueueCustomPolicySettings]
         mode: Literal[BrokerPersistencePolicyMode.CUSTOM]
-        subscriber_queue_settings: BrokerSubscriberQueueCustomPolicySettings
+        subscriberQueueSettings: BrokerSubscriberQueueCustomPolicySettings
 
 
     class azure.mgmt.iotoperations.types.BrokerSubscriberQueueCustomPolicySettings(TypedDict, total=False):
         key "dynamic": ForwardRef('BrokerSubscriberQueueDynamic', module='types')
         dynamic: BrokerSubscriberQueueDynamic
         subscriberClientIds: list[str]
-        subscriber_client_ids: list[str]
 
 
     class azure.mgmt.iotoperations.types.BrokerSubscriberQueueDynamic(TypedDict, total=False):
@@ -6528,13 +6559,13 @@ namespace azure.mgmt.iotoperations.types
         key "mode": Required[Literal[BrokerPersistencePolicyMode.CUSTOM]]
         key "subscriberQueueSettings": Required[BrokerSubscriberQueueCustomPolicySettings]
         mode: Literal[BrokerPersistencePolicyMode.CUSTOM]
-        subscriber_queue_settings: BrokerSubscriberQueueCustomPolicySettings
+        subscriberQueueSettings: BrokerSubscriberQueueCustomPolicySettings
 
 
     class azure.mgmt.iotoperations.types.Cardinality(TypedDict, total=False):
         key "backendChain": Required[BackendChain]
         key "frontend": Required[Frontend]
-        backend_chain: BackendChain
+        backendChain: BackendChain
         frontend: Frontend
 
 
@@ -6543,8 +6574,8 @@ namespace azure.mgmt.iotoperations.types
         key "privateKey": Required[CertManagerPrivateKey]
         key "renewBefore": Required[str]
         duration: str
-        private_key: CertManagerPrivateKey
-        renew_before: str
+        privateKey: CertManagerPrivateKey
+        renewBefore: str
 
 
     class azure.mgmt.iotoperations.types.CertManagerCertificateSpec(TypedDict, total=False):
@@ -6555,15 +6586,15 @@ namespace azure.mgmt.iotoperations.types
         key "san": ForwardRef('SanForCert', module='types')
         key "secretName": str
         duration: str
-        issuer_ref: CertManagerIssuerRef
-        private_key: CertManagerPrivateKey
-        renew_before: str
+        issuerRef: CertManagerIssuerRef
+        privateKey: CertManagerPrivateKey
+        renewBefore: str
         san: SanForCert
-        secret_name: str
+        secretName: str
 
 
     class azure.mgmt.iotoperations.types.CertManagerIssuerRef(TypedDict, total=False):
-        key "group": Required[str]
+        key "group": str
         key "kind": Required[Union[str, CertManagerIssuerKind]]
         key "name": Required[str]
         group: str
@@ -6575,7 +6606,7 @@ namespace azure.mgmt.iotoperations.types
         key "algorithm": Required[Union[str, PrivateKeyAlgorithm]]
         key "rotationPolicy": Required[Union[str, PrivateKeyRotationPolicy]]
         algorithm: Union[str, PrivateKeyAlgorithm]
-        rotation_policy: Union[str, PrivateKeyRotationPolicy]
+        rotationPolicy: Union[str, PrivateKeyRotationPolicy]
 
 
     class azure.mgmt.iotoperations.types.ClientConfig(TypedDict, total=False):
@@ -6585,12 +6616,12 @@ namespace azure.mgmt.iotoperations.types
         key "maxReceiveMaximum": int
         key "maxSessionExpirySeconds": int
         key "subscriberQueueLimit": ForwardRef('SubscriberQueueLimit', module='types')
-        max_keep_alive_seconds: int
-        max_message_expiry_seconds: int
-        max_packet_size_bytes: int
-        max_receive_maximum: int
-        max_session_expiry_seconds: int
-        subscriber_queue_limit: SubscriberQueueLimit
+        maxKeepAliveSeconds: int
+        maxMessageExpirySeconds: int
+        maxPacketSizeBytes: int
+        maxReceiveMaximum: int
+        maxSessionExpirySeconds: int
+        subscriberQueueLimit: SubscriberQueueLimit
 
 
     class azure.mgmt.iotoperations.types.DataflowBuiltInTransformationDataset(TypedDict, total=False):
@@ -6603,7 +6634,7 @@ namespace azure.mgmt.iotoperations.types
         expression: str
         inputs: list[str]
         key: str
-        schema_ref: str
+        schemaRef: str
 
 
     class azure.mgmt.iotoperations.types.DataflowBuiltInTransformationFilter(TypedDict, total=False):
@@ -6636,15 +6667,15 @@ namespace azure.mgmt.iotoperations.types
         datasets: list[DataflowBuiltInTransformationDataset]
         filter: list[DataflowBuiltInTransformationFilter]
         map: list[DataflowBuiltInTransformationMap]
-        schema_ref: str
-        serialization_format: Union[str, TransformationSerializationFormat]
+        schemaRef: str
+        serializationFormat: Union[str, TransformationSerializationFormat]
 
 
     class azure.mgmt.iotoperations.types.DataflowDestinationAddIfNotPresentHeaderAction(TypedDict, total=False):
         key "actionType": Required[Literal[DataflowHeaderActionType.ADD_IF_NOT_PRESENT]]
         key "key": Required[str]
         key "value": Required[str]
-        action_type: Literal[DataflowHeaderActionType.ADD_IF_NOT_PRESENT]
+        actionType: Literal[DataflowHeaderActionType.ADD_IF_NOT_PRESENT]
         key: str
         value: str
 
@@ -6653,7 +6684,7 @@ namespace azure.mgmt.iotoperations.types
         key "actionType": Required[Literal[DataflowHeaderActionType.ADD_OR_REPLACE]]
         key "key": Required[str]
         key "value": Required[str]
-        action_type: Literal[DataflowHeaderActionType.ADD_OR_REPLACE]
+        actionType: Literal[DataflowHeaderActionType.ADD_OR_REPLACE]
         key: str
         value: str
 
@@ -6661,21 +6692,21 @@ namespace azure.mgmt.iotoperations.types
     class azure.mgmt.iotoperations.types.DataflowDestinationOperationSettings(TypedDict, total=False):
         key "dataDestination": Required[str]
         key "endpointRef": Required[str]
-        data_destination: str
-        endpoint_ref: str
+        dataDestination: str
+        endpointRef: str
         headers: list[DataflowDestinationHeaderAction]
 
 
     class azure.mgmt.iotoperations.types.DataflowDestinationRemoveHeaderAction(TypedDict, total=False):
         key "actionType": Required[Literal[DataflowHeaderActionType.REMOVE]]
         key "key": Required[str]
-        action_type: Literal[DataflowHeaderActionType.REMOVE]
+        actionType: Literal[DataflowHeaderActionType.REMOVE]
         key: str
 
 
     class azure.mgmt.iotoperations.types.DataflowEndpointAuthenticationAccessToken(TypedDict, total=False):
         key "secretRef": Required[str]
-        secret_ref: str
+        secretRef: str
 
 
     class azure.mgmt.iotoperations.types.DataflowEndpointAuthenticationAnonymous(TypedDict, total=False):
@@ -6684,8 +6715,8 @@ namespace azure.mgmt.iotoperations.types
     class azure.mgmt.iotoperations.types.DataflowEndpointAuthenticationSasl(TypedDict, total=False):
         key "saslType": Required[Union[str, DataflowEndpointAuthenticationSaslType]]
         key "secretRef": Required[str]
-        sasl_type: Union[str, DataflowEndpointAuthenticationSaslType]
-        secret_ref: str
+        saslType: Union[str, DataflowEndpointAuthenticationSaslType]
+        secretRef: str
 
 
     class azure.mgmt.iotoperations.types.DataflowEndpointAuthenticationServiceAccountToken(TypedDict, total=False):
@@ -6702,14 +6733,14 @@ namespace azure.mgmt.iotoperations.types
         key "clientId": Required[str]
         key "scope": str
         key "tenantId": Required[str]
-        client_id: str
+        clientId: str
         scope: str
-        tenant_id: str
+        tenantId: str
 
 
     class azure.mgmt.iotoperations.types.DataflowEndpointAuthenticationX509(TypedDict, total=False):
         key "secretRef": Required[str]
-        secret_ref: str
+        secretRef: str
 
 
     class azure.mgmt.iotoperations.types.DataflowEndpointDataExplorer(TypedDict, total=False):
@@ -6728,8 +6759,8 @@ namespace azure.mgmt.iotoperations.types
         key "systemAssignedManagedIdentitySettings": ForwardRef('DataflowEndpointAuthenticationSystemAssignedManagedIdentity', module='types')
         key "userAssignedManagedIdentitySettings": ForwardRef('DataflowEndpointAuthenticationUserAssignedManagedIdentity', module='types')
         method: Union[str, DataExplorerAuthMethod]
-        system_assigned_managed_identity_settings: DataflowEndpointAuthenticationSystemAssignedManagedIdentity
-        user_assigned_managed_identity_settings: DataflowEndpointAuthenticationUserAssignedManagedIdentity
+        systemAssignedManagedIdentitySettings: DataflowEndpointAuthenticationSystemAssignedManagedIdentity
+        userAssignedManagedIdentitySettings: DataflowEndpointAuthenticationUserAssignedManagedIdentity
 
 
     class azure.mgmt.iotoperations.types.DataflowEndpointDataLakeStorage(TypedDict, total=False):
@@ -6746,10 +6777,10 @@ namespace azure.mgmt.iotoperations.types
         key "method": Required[Union[str, DataLakeStorageAuthMethod]]
         key "systemAssignedManagedIdentitySettings": ForwardRef('DataflowEndpointAuthenticationSystemAssignedManagedIdentity', module='types')
         key "userAssignedManagedIdentitySettings": ForwardRef('DataflowEndpointAuthenticationUserAssignedManagedIdentity', module='types')
-        access_token_settings: DataflowEndpointAuthenticationAccessToken
+        accessTokenSettings: DataflowEndpointAuthenticationAccessToken
         method: Union[str, DataLakeStorageAuthMethod]
-        system_assigned_managed_identity_settings: DataflowEndpointAuthenticationSystemAssignedManagedIdentity
-        user_assigned_managed_identity_settings: DataflowEndpointAuthenticationUserAssignedManagedIdentity
+        systemAssignedManagedIdentitySettings: DataflowEndpointAuthenticationSystemAssignedManagedIdentity
+        userAssignedManagedIdentitySettings: DataflowEndpointAuthenticationUserAssignedManagedIdentity
 
 
     class azure.mgmt.iotoperations.types.DataflowEndpointFabricOneLake(TypedDict, total=False):
@@ -6762,7 +6793,7 @@ namespace azure.mgmt.iotoperations.types
         batching: BatchingConfiguration
         host: str
         names: DataflowEndpointFabricOneLakeNames
-        one_lake_path_type: Union[str, DataflowEndpointFabricPathType]
+        oneLakePathType: Union[str, DataflowEndpointFabricPathType]
 
 
     class azure.mgmt.iotoperations.types.DataflowEndpointFabricOneLakeAuthentication(TypedDict, total=False):
@@ -6770,15 +6801,15 @@ namespace azure.mgmt.iotoperations.types
         key "systemAssignedManagedIdentitySettings": ForwardRef('DataflowEndpointAuthenticationSystemAssignedManagedIdentity', module='types')
         key "userAssignedManagedIdentitySettings": ForwardRef('DataflowEndpointAuthenticationUserAssignedManagedIdentity', module='types')
         method: Union[str, FabricOneLakeAuthMethod]
-        system_assigned_managed_identity_settings: DataflowEndpointAuthenticationSystemAssignedManagedIdentity
-        user_assigned_managed_identity_settings: DataflowEndpointAuthenticationUserAssignedManagedIdentity
+        systemAssignedManagedIdentitySettings: DataflowEndpointAuthenticationSystemAssignedManagedIdentity
+        userAssignedManagedIdentitySettings: DataflowEndpointAuthenticationUserAssignedManagedIdentity
 
 
     class azure.mgmt.iotoperations.types.DataflowEndpointFabricOneLakeNames(TypedDict, total=False):
         key "lakehouseName": Required[str]
         key "workspaceName": Required[str]
-        lakehouse_name: str
-        workspace_name: str
+        lakehouseName: str
+        workspaceName: str
 
 
     class azure.mgmt.iotoperations.types.DataflowEndpointKafka(TypedDict, total=False):
@@ -6794,13 +6825,13 @@ namespace azure.mgmt.iotoperations.types
         key "tls": ForwardRef('TlsProperties', module='types')
         authentication: DataflowEndpointKafkaAuthentication
         batching: DataflowEndpointKafkaBatching
-        cloud_event_attributes: Union[str, CloudEventAttributeType]
+        cloudEventAttributes: Union[str, CloudEventAttributeType]
         compression: Union[str, DataflowEndpointKafkaCompression]
-        consumer_group_id: str
-        copy_mqtt_properties: Union[str, OperationalMode]
+        consumerGroupId: str
+        copyMqttProperties: Union[str, OperationalMode]
         host: str
-        kafka_acks: Union[str, DataflowEndpointKafkaAcks]
-        partition_strategy: Union[str, DataflowEndpointKafkaPartitionStrategy]
+        kafkaAcks: Union[str, DataflowEndpointKafkaAcks]
+        partitionStrategy: Union[str, DataflowEndpointKafkaPartitionStrategy]
         tls: TlsProperties
 
 
@@ -6811,10 +6842,10 @@ namespace azure.mgmt.iotoperations.types
         key "userAssignedManagedIdentitySettings": ForwardRef('DataflowEndpointAuthenticationUserAssignedManagedIdentity', module='types')
         key "x509CertificateSettings": ForwardRef('DataflowEndpointAuthenticationX509', module='types')
         method: Union[str, KafkaAuthMethod]
-        sasl_settings: DataflowEndpointAuthenticationSasl
-        system_assigned_managed_identity_settings: DataflowEndpointAuthenticationSystemAssignedManagedIdentity
-        user_assigned_managed_identity_settings: DataflowEndpointAuthenticationUserAssignedManagedIdentity
-        x509_certificate_settings: DataflowEndpointAuthenticationX509
+        saslSettings: DataflowEndpointAuthenticationSasl
+        systemAssignedManagedIdentitySettings: DataflowEndpointAuthenticationSystemAssignedManagedIdentity
+        userAssignedManagedIdentitySettings: DataflowEndpointAuthenticationUserAssignedManagedIdentity
+        x509CertificateSettings: DataflowEndpointAuthenticationX509
 
 
     class azure.mgmt.iotoperations.types.DataflowEndpointKafkaBatching(TypedDict, total=False):
@@ -6822,15 +6853,15 @@ namespace azure.mgmt.iotoperations.types
         key "maxBytes": int
         key "maxMessages": int
         key "mode": Union[str, OperationalMode]
-        latency_ms: int
-        max_bytes: int
-        max_messages: int
+        latencyMs: int
+        maxBytes: int
+        maxMessages: int
         mode: Union[str, OperationalMode]
 
 
     class azure.mgmt.iotoperations.types.DataflowEndpointLocalStorage(TypedDict, total=False):
         key "persistentVolumeClaimRef": Required[str]
-        persistent_volume_claim_ref: str
+        persistentVolumeClaimRef: str
 
 
     class azure.mgmt.iotoperations.types.DataflowEndpointMqtt(TypedDict, total=False):
@@ -6846,15 +6877,15 @@ namespace azure.mgmt.iotoperations.types
         key "sessionExpirySeconds": int
         key "tls": ForwardRef('TlsProperties', module='types')
         authentication: DataflowEndpointMqttAuthentication
-        client_id_prefix: str
-        cloud_event_attributes: Union[str, CloudEventAttributeType]
+        clientIdPrefix: str
+        cloudEventAttributes: Union[str, CloudEventAttributeType]
         host: str
-        keep_alive_seconds: int
-        max_inflight_messages: int
+        keepAliveSeconds: int
+        maxInflightMessages: int
         protocol: Union[str, BrokerProtocolType]
         qos: int
         retain: Union[str, MqttRetainType]
-        session_expiry_seconds: int
+        sessionExpirySeconds: int
         tls: TlsProperties
 
 
@@ -6865,10 +6896,10 @@ namespace azure.mgmt.iotoperations.types
         key "userAssignedManagedIdentitySettings": ForwardRef('DataflowEndpointAuthenticationUserAssignedManagedIdentity', module='types')
         key "x509CertificateSettings": ForwardRef('DataflowEndpointAuthenticationX509', module='types')
         method: Union[str, MqttAuthMethod]
-        service_account_token_settings: DataflowEndpointAuthenticationServiceAccountToken
-        system_assigned_managed_identity_settings: DataflowEndpointAuthenticationSystemAssignedManagedIdentity
-        user_assigned_managed_identity_settings: DataflowEndpointAuthenticationUserAssignedManagedIdentity
-        x509_certificate_settings: DataflowEndpointAuthenticationX509
+        serviceAccountTokenSettings: DataflowEndpointAuthenticationServiceAccountToken
+        systemAssignedManagedIdentitySettings: DataflowEndpointAuthenticationSystemAssignedManagedIdentity
+        userAssignedManagedIdentitySettings: DataflowEndpointAuthenticationUserAssignedManagedIdentity
+        x509CertificateSettings: DataflowEndpointAuthenticationX509
 
 
     class azure.mgmt.iotoperations.types.DataflowEndpointOpenTelemetry(TypedDict, total=False):
@@ -6894,17 +6925,17 @@ namespace azure.mgmt.iotoperations.types
         key "mqttSettings": ForwardRef('DataflowEndpointMqtt', module='types')
         key "openTelemetrySettings": ForwardRef('DataflowEndpointOpenTelemetry', module='types')
         key "provisioningState": Union[str, ProvisioningState]
-        data_explorer_settings: DataflowEndpointDataExplorer
-        data_lake_storage_settings: DataflowEndpointDataLakeStorage
-        endpoint_type: Union[str, EndpointType]
-        fabric_one_lake_settings: DataflowEndpointFabricOneLake
-        health_state: Union[str, ResourceHealthState]
-        host_type: Union[str, DataflowEndpointHostType]
-        kafka_settings: DataflowEndpointKafka
-        local_storage_settings: DataflowEndpointLocalStorage
-        mqtt_settings: DataflowEndpointMqtt
-        open_telemetry_settings: DataflowEndpointOpenTelemetry
-        provisioning_state: Union[str, ProvisioningState]
+        dataExplorerSettings: DataflowEndpointDataExplorer
+        dataLakeStorageSettings: DataflowEndpointDataLakeStorage
+        endpointType: Union[str, EndpointType]
+        fabricOneLakeSettings: DataflowEndpointFabricOneLake
+        healthState: Union[str, ResourceHealthState]
+        hostType: Union[str, DataflowEndpointHostType]
+        kafkaSettings: DataflowEndpointKafka
+        localStorageSettings: DataflowEndpointLocalStorage
+        mqttSettings: DataflowEndpointMqtt
+        openTelemetrySettings: DataflowEndpointOpenTelemetry
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.iotoperations.types.DataflowEndpointResource(ProxyResource):
@@ -6914,11 +6945,11 @@ namespace azure.mgmt.iotoperations.types
         key "properties": ForwardRef('DataflowEndpointProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         name: str
         properties: DataflowEndpointProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6937,15 +6968,15 @@ namespace azure.mgmt.iotoperations.types
     class azure.mgmt.iotoperations.types.DataflowGraphConnectionSchemaSettings(TypedDict, total=False):
         key "schemaRef": str
         key "serializationFormat": Union[str, DataflowGraphConnectionSchemaSerializationFormat]
-        schema_ref: str
-        serialization_format: Union[str, DataflowGraphConnectionSchemaSerializationFormat]
+        schemaRef: str
+        serializationFormat: Union[str, DataflowGraphConnectionSchemaSerializationFormat]
 
 
     class azure.mgmt.iotoperations.types.DataflowGraphDestinationAddIfNotPresentHeaderAction(TypedDict, total=False):
         key "actionType": Required[Literal[DataflowGraphDestinationHeaderActionType.ADD_IF_NOT_PRESENT]]
         key "key": Required[str]
         key "value": Required[str]
-        action_type: Literal[DataflowGraphDestinationHeaderActionType.ADD_IF_NOT_PRESENT]
+        actionType: Literal[DataflowGraphDestinationHeaderActionType.ADD_IF_NOT_PRESENT]
         key: str
         value: str
 
@@ -6954,7 +6985,7 @@ namespace azure.mgmt.iotoperations.types
         key "actionType": Required[Literal[DataflowGraphDestinationHeaderActionType.ADD_OR_REPLACE]]
         key "key": Required[str]
         key "value": Required[str]
-        action_type: Literal[DataflowGraphDestinationHeaderActionType.ADD_OR_REPLACE]
+        actionType: Literal[DataflowGraphDestinationHeaderActionType.ADD_OR_REPLACE]
         key: str
         value: str
 
@@ -6969,33 +7000,42 @@ namespace azure.mgmt.iotoperations.types
         key "destinationSettings": Required[DataflowGraphDestinationNodeSettings]
         key "name": Required[str]
         key "nodeType": Required[Literal[DataflowGraphNodeType.DESTINATION]]
-        destination_settings: DataflowGraphDestinationNodeSettings
+        destinationSettings: DataflowGraphDestinationNodeSettings
         name: str
-        node_type: Literal[DataflowGraphNodeType.DESTINATION]
+        nodeType: Literal[DataflowGraphNodeType.DESTINATION]
 
 
     class azure.mgmt.iotoperations.types.DataflowGraphDestinationNodeSettings(TypedDict, total=False):
         key "dataDestination": Required[str]
         key "endpointRef": Required[str]
-        data_destination: str
-        endpoint_ref: str
+        key "outputSchemaSettings": ForwardRef('DataflowGraphDestinationSchemaSettings', module='types')
+        dataDestination: str
+        endpointRef: str
         headers: list[DataflowGraphDestinationHeaderAction]
+        outputSchemaSettings: DataflowGraphDestinationSchemaSettings
 
 
     class azure.mgmt.iotoperations.types.DataflowGraphDestinationRemoveHeaderAction(TypedDict, total=False):
         key "actionType": Required[Literal[DataflowGraphDestinationHeaderActionType.REMOVE]]
         key "key": Required[str]
-        action_type: Literal[DataflowGraphDestinationHeaderActionType.REMOVE]
+        actionType: Literal[DataflowGraphDestinationHeaderActionType.REMOVE]
         key: str
+
+
+    class azure.mgmt.iotoperations.types.DataflowGraphDestinationSchemaSettings(TypedDict, total=False):
+        key "schemaRef": str
+        key "serializationFormat": Required[Union[str, DataflowGraphDestinationSchemaSerializationFormat]]
+        schemaRef: str
+        serializationFormat: Union[str, DataflowGraphDestinationSchemaSerializationFormat]
 
 
     class azure.mgmt.iotoperations.types.DataflowGraphGraphNode(TypedDict, total=False):
         key "graphSettings": Required[DataflowGraphNodeGraphSettings]
         key "name": Required[str]
         key "nodeType": Required[Literal[DataflowGraphNodeType.GRAPH]]
-        graph_settings: DataflowGraphNodeGraphSettings
+        graphSettings: DataflowGraphNodeGraphSettings
         name: str
-        node_type: Literal[DataflowGraphNodeType.GRAPH]
+        nodeType: Literal[DataflowGraphNodeType.GRAPH]
 
 
     class azure.mgmt.iotoperations.types.DataflowGraphGraphNodeConfiguration(TypedDict, total=False):
@@ -7008,7 +7048,7 @@ namespace azure.mgmt.iotoperations.types
     class azure.mgmt.iotoperations.types.DataflowGraphNodeConnection(TypedDict):
         key "from": Required[DataflowGraphConnectionInput]
         key "to": Required[DataflowGraphConnectionOutput]
-        from_property: DataflowGraphConnectionInput
+        from: DataflowGraphConnectionInput
         to: DataflowGraphConnectionOutput
 
 
@@ -7017,7 +7057,7 @@ namespace azure.mgmt.iotoperations.types
         key "registryEndpointRef": Required[str]
         artifact: str
         configuration: list[DataflowGraphGraphNodeConfiguration]
-        registry_endpoint_ref: str
+        registryEndpointRef: str
 
 
     class azure.mgmt.iotoperations.types.DataflowGraphNodeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -7034,12 +7074,12 @@ namespace azure.mgmt.iotoperations.types
         key "provisioningState": Union[str, ProvisioningState]
         key "requestDiskPersistence": Union[str, OperationalMode]
         key "status": ForwardRef('DataflowGraphStatus', module='types')
-        health_state: Union[str, ResourceHealthState]
+        healthState: Union[str, ResourceHealthState]
         mode: Union[str, OperationalMode]
-        node_connections: list[DataflowGraphNodeConnection]
+        nodeConnections: list[DataflowGraphNodeConnection]
         nodes: list[DataflowGraphNode]
-        provisioning_state: Union[str, ProvisioningState]
-        request_disk_persistence: Union[str, OperationalMode]
+        provisioningState: Union[str, ProvisioningState]
+        requestDiskPersistence: Union[str, OperationalMode]
         status: DataflowGraphStatus
 
 
@@ -7050,11 +7090,11 @@ namespace azure.mgmt.iotoperations.types
         key "properties": ForwardRef('DataflowGraphProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         name: str
         properties: DataflowGraphProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7063,22 +7103,22 @@ namespace azure.mgmt.iotoperations.types
         key "nodeType": Required[Literal[DataflowGraphNodeType.SOURCE]]
         key "sourceSettings": Required[DataflowGraphSourceSettings]
         name: str
-        node_type: Literal[DataflowGraphNodeType.SOURCE]
-        source_settings: DataflowGraphSourceSettings
+        nodeType: Literal[DataflowGraphNodeType.SOURCE]
+        sourceSettings: DataflowGraphSourceSettings
 
 
     class azure.mgmt.iotoperations.types.DataflowGraphSourceSettings(TypedDict, total=False):
         key "assetRef": str
         key "dataSources": Required[list[str]]
         key "endpointRef": Required[str]
-        asset_ref: str
-        data_sources: list[str]
-        endpoint_ref: str
+        assetRef: str
+        dataSources: list[str]
+        endpointRef: str
 
 
     class azure.mgmt.iotoperations.types.DataflowGraphStatus(TypedDict, total=False):
         key "healthState": ForwardRef('ResourceHealthStatus', module='types')
-        health_state: ResourceHealthStatus
+        healthState: ResourceHealthStatus
 
 
     class azure.mgmt.iotoperations.types.DataflowHeaderActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -7090,7 +7130,7 @@ namespace azure.mgmt.iotoperations.types
     class azure.mgmt.iotoperations.types.DataflowOpenTelemetryAnonymousAuthentication(TypedDict, total=False):
         key "anonymousSettings": Required[DataflowEndpointAuthenticationAnonymous]
         key "method": Required[Literal[DataflowOpenTelemetryAuthenticationMethod.ANONYMOUS]]
-        anonymous_settings: DataflowEndpointAuthenticationAnonymous
+        anonymousSettings: DataflowEndpointAuthenticationAnonymous
         method: Literal[DataflowOpenTelemetryAuthenticationMethod.ANONYMOUS]
 
 
@@ -7104,14 +7144,14 @@ namespace azure.mgmt.iotoperations.types
         key "method": Required[Literal[DataflowOpenTelemetryAuthenticationMethod.SERVICE_ACCOUNT_TOKEN]]
         key "serviceAccountTokenSettings": Required[DataflowEndpointAuthenticationServiceAccountToken]
         method: Literal[DataflowOpenTelemetryAuthenticationMethod.SERVICE_ACCOUNT_TOKEN]
-        service_account_token_settings: DataflowEndpointAuthenticationServiceAccountToken
+        serviceAccountTokenSettings: DataflowEndpointAuthenticationServiceAccountToken
 
 
     class azure.mgmt.iotoperations.types.DataflowOpenTelemetryX509CertificateAuthentication(TypedDict, total=False):
         key "method": Required[Literal[DataflowOpenTelemetryAuthenticationMethod.X509_CERTIFICATE]]
         key "x509CertificateSettings": Required[DataflowEndpointAuthenticationX509]
         method: Literal[DataflowOpenTelemetryAuthenticationMethod.X509_CERTIFICATE]
-        x509_certificate_settings: DataflowEndpointAuthenticationX509
+        x509CertificateSettings: DataflowEndpointAuthenticationX509
 
 
     class azure.mgmt.iotoperations.types.DataflowOperation(TypedDict, total=False):
@@ -7120,11 +7160,11 @@ namespace azure.mgmt.iotoperations.types
         key "name": str
         key "operationType": Required[Union[str, OperationType]]
         key "sourceSettings": ForwardRef('DataflowSourceOperationSettings', module='types')
-        built_in_transformation_settings: DataflowBuiltInTransformationSettings
-        destination_settings: DataflowDestinationOperationSettings
+        builtInTransformationSettings: DataflowBuiltInTransformationSettings
+        destinationSettings: DataflowDestinationOperationSettings
         name: str
-        operation_type: Union[str, OperationType]
-        source_settings: DataflowSourceOperationSettings
+        operationType: Union[str, OperationType]
+        sourceSettings: DataflowSourceOperationSettings
 
 
     class azure.mgmt.iotoperations.types.DataflowProfileProperties(TypedDict, total=False):
@@ -7134,9 +7174,9 @@ namespace azure.mgmt.iotoperations.types
         key "provisioningState": Union[str, ProvisioningState]
         key "status": ForwardRef('DataflowProfileStatus', module='types')
         diagnostics: ProfileDiagnostics
-        health_state: Union[str, ResourceHealthState]
-        instance_count: int
-        provisioning_state: Union[str, ProvisioningState]
+        healthState: Union[str, ResourceHealthState]
+        instanceCount: int
+        provisioningState: Union[str, ProvisioningState]
         status: DataflowProfileStatus
 
 
@@ -7147,17 +7187,17 @@ namespace azure.mgmt.iotoperations.types
         key "properties": ForwardRef('DataflowProfileProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         name: str
         properties: DataflowProfileProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.iotoperations.types.DataflowProfileStatus(TypedDict, total=False):
         key "healthState": ForwardRef('ResourceHealthStatus', module='types')
-        health_state: ResourceHealthStatus
+        healthState: ResourceHealthStatus
 
 
     class azure.mgmt.iotoperations.types.DataflowProperties(TypedDict, total=False):
@@ -7167,11 +7207,11 @@ namespace azure.mgmt.iotoperations.types
         key "provisioningState": Union[str, ProvisioningState]
         key "requestDiskPersistence": Union[str, OperationalMode]
         key "status": ForwardRef('DataflowStatus', module='types')
-        health_state: Union[str, ResourceHealthState]
+        healthState: Union[str, ResourceHealthState]
         mode: Union[str, OperationalMode]
         operations: list[DataflowOperation]
-        provisioning_state: Union[str, ProvisioningState]
-        request_disk_persistence: Union[str, OperationalMode]
+        provisioningState: Union[str, ProvisioningState]
+        requestDiskPersistence: Union[str, OperationalMode]
         status: DataflowStatus
 
 
@@ -7182,11 +7222,11 @@ namespace azure.mgmt.iotoperations.types
         key "properties": ForwardRef('DataflowProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         name: str
         properties: DataflowProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7196,16 +7236,16 @@ namespace azure.mgmt.iotoperations.types
         key "endpointRef": Required[str]
         key "schemaRef": str
         key "serializationFormat": Union[str, SourceSerializationFormat]
-        asset_ref: str
-        data_sources: list[str]
-        endpoint_ref: str
-        schema_ref: str
-        serialization_format: Union[str, SourceSerializationFormat]
+        assetRef: str
+        dataSources: list[str]
+        endpointRef: str
+        schemaRef: str
+        serializationFormat: Union[str, SourceSerializationFormat]
 
 
     class azure.mgmt.iotoperations.types.DataflowStatus(TypedDict, total=False):
         key "healthState": ForwardRef('ResourceHealthStatus', module='types')
-        health_state: ResourceHealthStatus
+        healthState: ResourceHealthStatus
 
 
     class azure.mgmt.iotoperations.types.DiagnosticsLogs(TypedDict, total=False):
@@ -7217,9 +7257,9 @@ namespace azure.mgmt.iotoperations.types
         key "ephemeralVolumeClaimSpec": ForwardRef('VolumeClaimSpec', module='types')
         key "maxSize": Required[str]
         key "persistentVolumeClaimSpec": ForwardRef('VolumeClaimSpec', module='types')
-        ephemeral_volume_claim_spec: VolumeClaimSpec
-        max_size: str
-        persistent_volume_claim_spec: VolumeClaimSpec
+        ephemeralVolumeClaimSpec: VolumeClaimSpec
+        maxSize: str
+        persistentVolumeClaimSpec: VolumeClaimSpec
 
 
     class azure.mgmt.iotoperations.types.ExtendedLocation(TypedDict, total=False):
@@ -7261,13 +7301,13 @@ namespace azure.mgmt.iotoperations.types
         key "provisioningState": Union[str, ProvisioningState]
         key "schemaRegistryRef": Required[SchemaRegistryRef]
         key "version": str
-        adr_namespace_ref: AzureDeviceRegistryNamespaceRef
-        default_secret_provider_class_ref: SecretProviderClassRef
+        adrNamespaceRef: AzureDeviceRegistryNamespaceRef
+        defaultSecretProviderClassRef: SecretProviderClassRef
         description: str
         features: dict[str, InstanceFeature]
-        health_state: Union[str, ResourceHealthState]
-        provisioning_state: Union[str, ProvisioningState]
-        schema_registry_ref: SchemaRegistryRef
+        healthState: Union[str, ResourceHealthState]
+        provisioningState: Union[str, ProvisioningState]
+        schemaRegistryRef: SchemaRegistryRef
         version: str
 
 
@@ -7278,17 +7318,24 @@ namespace azure.mgmt.iotoperations.types
         key "location": Required[str]
         key "name": str
         key "properties": ForwardRef('InstanceProperties', module='types')
+        key "sku": ForwardRef('InstanceSku', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         identity: ManagedServiceIdentity
         location: str
         name: str
         properties: InstanceProperties
-        system_data: SystemData
+        sku: InstanceSku
+        systemData: SystemData
         tags: dict[str, str]
         type: str
+
+
+    class azure.mgmt.iotoperations.types.InstanceSku(TypedDict, total=False):
+        key "name": Required[Union[str, InstanceSkuName]]
+        name: Union[str, InstanceSkuName]
 
 
     class azure.mgmt.iotoperations.types.KubernetesReference(TypedDict, total=False):
@@ -7296,7 +7343,7 @@ namespace azure.mgmt.iotoperations.types
         key "kind": Required[str]
         key "name": Required[str]
         key "namespace": str
-        api_group: str
+        apiGroup: str
         kind: str
         name: str
         namespace: str
@@ -7309,9 +7356,9 @@ namespace azure.mgmt.iotoperations.types
         key "port": Required[int]
         key "protocol": Union[str, BrokerProtocolType]
         key "tls": ForwardRef('TlsCertMethod', module='types')
-        authentication_ref: str
-        authorization_ref: str
-        node_port: int
+        authenticationRef: str
+        authorizationRef: str
+        nodePort: int
         port: int
         protocol: Union[str, BrokerProtocolType]
         tls: TlsCertMethod
@@ -7321,7 +7368,7 @@ namespace azure.mgmt.iotoperations.types
         key "apiGroup": str
         key "kind": Required[str]
         key "name": Required[str]
-        api_group: str
+        apiGroup: str
         kind: str
         name: str
 
@@ -7330,22 +7377,20 @@ namespace azure.mgmt.iotoperations.types
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.iotoperations.types.Metrics(TypedDict, total=False):
         key "prometheusPort": int
-        prometheus_port: int
+        prometheusPort: int
 
 
     class azure.mgmt.iotoperations.types.PrincipalDefinition(TypedDict, total=False):
         attributes: list[dict[str, str]]
         clientIds: list[str]
-        client_ids: list[str]
         usernames: list[str]
 
 
@@ -7363,14 +7408,14 @@ namespace azure.mgmt.iotoperations.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.iotoperations.types.RegistryEndpointAnonymousAuthentication(TypedDict, total=False):
         key "anonymousSettings": Required[RegistryEndpointAnonymousSettings]
         key "method": Required[Literal[RegistryEndpointAuthenticationMethod.ANONYMOUS]]
-        anonymous_settings: RegistryEndpointAnonymousSettings
+        anonymousSettings: RegistryEndpointAnonymousSettings
         method: Literal[RegistryEndpointAuthenticationMethod.ANONYMOUS]
 
 
@@ -7380,13 +7425,13 @@ namespace azure.mgmt.iotoperations.types
     class azure.mgmt.iotoperations.types.RegistryEndpointArtifactPullSecretAuthentication(TypedDict, total=False):
         key "artifactPullSecretSettings": Required[RegistryEndpointArtifactPullSecretSettings]
         key "method": Required[Literal[RegistryEndpointAuthenticationMethod.ARTIFACT_PULL_SECRET]]
-        artifact_pull_secret_settings: RegistryEndpointArtifactPullSecretSettings
+        artifactPullSecretSettings: RegistryEndpointArtifactPullSecretSettings
         method: Literal[RegistryEndpointAuthenticationMethod.ARTIFACT_PULL_SECRET]
 
 
     class azure.mgmt.iotoperations.types.RegistryEndpointArtifactPullSecretSettings(TypedDict, total=False):
         key "secretRef": Required[str]
-        secret_ref: str
+        secretRef: str
 
 
     class azure.mgmt.iotoperations.types.RegistryEndpointAuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -7403,10 +7448,9 @@ namespace azure.mgmt.iotoperations.types
         key "provisioningState": Union[str, ProvisioningState]
         authentication: RegistryEndpointAuthentication
         codeSigningCas: list[RegistryEndpointTrustedSigningKey]
-        code_signing_cas: list[RegistryEndpointTrustedSigningKey]
-        health_state: Union[str, ResourceHealthState]
+        healthState: Union[str, ResourceHealthState]
         host: str
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.iotoperations.types.RegistryEndpointResource(ProxyResource):
@@ -7416,11 +7460,11 @@ namespace azure.mgmt.iotoperations.types
         key "properties": ForwardRef('RegistryEndpointProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        extended_location: ExtendedLocation
+        extendedLocation: ExtendedLocation
         id: str
         name: str
         properties: RegistryEndpointProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7428,7 +7472,7 @@ namespace azure.mgmt.iotoperations.types
         key "method": Required[Literal[RegistryEndpointAuthenticationMethod.SYSTEM_ASSIGNED_MANAGED_IDENTITY]]
         key "systemAssignedManagedIdentitySettings": Required[RegistryEndpointSystemAssignedManagedIdentitySettings]
         method: Literal[RegistryEndpointAuthenticationMethod.SYSTEM_ASSIGNED_MANAGED_IDENTITY]
-        system_assigned_managed_identity_settings: RegistryEndpointSystemAssignedManagedIdentitySettings
+        systemAssignedManagedIdentitySettings: RegistryEndpointSystemAssignedManagedIdentitySettings
 
 
     class azure.mgmt.iotoperations.types.RegistryEndpointSystemAssignedManagedIdentitySettings(TypedDict, total=False):
@@ -7439,14 +7483,14 @@ namespace azure.mgmt.iotoperations.types
     class azure.mgmt.iotoperations.types.RegistryEndpointTrustedSigningKeyConfigMap(TypedDict, total=False):
         key "configMapRef": Required[str]
         key "type": Required[Literal[RegistryEndpointTrustedSigningKeyType.CONFIG_MAP]]
-        config_map_ref: str
+        configMapRef: str
         type: Literal[RegistryEndpointTrustedSigningKeyType.CONFIG_MAP]
 
 
     class azure.mgmt.iotoperations.types.RegistryEndpointTrustedSigningKeySecret(TypedDict, total=False):
         key "secretRef": Required[str]
         key "type": Required[Literal[RegistryEndpointTrustedSigningKeyType.SECRET]]
-        secret_ref: str
+        secretRef: str
         type: Literal[RegistryEndpointTrustedSigningKeyType.SECRET]
 
 
@@ -7459,16 +7503,16 @@ namespace azure.mgmt.iotoperations.types
         key "method": Required[Literal[RegistryEndpointAuthenticationMethod.USER_ASSIGNED_MANAGED_IDENTITY]]
         key "userAssignedManagedIdentitySettings": Required[RegistryEndpointUserAssignedManagedIdentitySettings]
         method: Literal[RegistryEndpointAuthenticationMethod.USER_ASSIGNED_MANAGED_IDENTITY]
-        user_assigned_managed_identity_settings: RegistryEndpointUserAssignedManagedIdentitySettings
+        userAssignedManagedIdentitySettings: RegistryEndpointUserAssignedManagedIdentitySettings
 
 
     class azure.mgmt.iotoperations.types.RegistryEndpointUserAssignedManagedIdentitySettings(TypedDict, total=False):
         key "clientId": Required[str]
         key "scope": str
         key "tenantId": Required[str]
-        client_id: str
+        clientId: str
         scope: str
-        tenant_id: str
+        tenantId: str
 
 
     class azure.mgmt.iotoperations.types.Resource(TypedDict, total=False):
@@ -7478,7 +7522,7 @@ namespace azure.mgmt.iotoperations.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7488,10 +7532,10 @@ namespace azure.mgmt.iotoperations.types
         key "message": str
         key "reasonCode": str
         key "status": Union[str, ResourceHealthState]
-        last_transition_time: str
-        last_update_time: str
+        lastTransitionTime: str
+        lastUpdateTime: str
         message: str
-        reason_code: str
+        reasonCode: str
         status: Union[str, ResourceHealthState]
 
 
@@ -7504,27 +7548,27 @@ namespace azure.mgmt.iotoperations.types
 
     class azure.mgmt.iotoperations.types.SchemaRegistryRef(TypedDict, total=False):
         key "resourceId": Required[str]
-        resource_id: str
+        resourceId: str
 
 
     class azure.mgmt.iotoperations.types.SecretProviderClassRef(TypedDict, total=False):
         key "resourceId": Required[str]
-        resource_id: str
+        resourceId: str
 
 
     class azure.mgmt.iotoperations.types.SelfCheck(TypedDict, total=False):
         key "intervalSeconds": int
         key "mode": Union[str, OperationalMode]
         key "timeoutSeconds": int
-        interval_seconds: int
+        intervalSeconds: int
         mode: Union[str, OperationalMode]
-        timeout_seconds: int
+        timeoutSeconds: int
 
 
     class azure.mgmt.iotoperations.types.SelfTracing(TypedDict, total=False):
         key "intervalSeconds": int
         key "mode": Union[str, OperationalMode]
-        interval_seconds: int
+        intervalSeconds: int
         mode: Union[str, OperationalMode]
 
 
@@ -7532,8 +7576,8 @@ namespace azure.mgmt.iotoperations.types
         key "keyType": Required[Union[str, StateStoreResourceKeyTypes]]
         key "keys": Required[list[str]]
         key "method": Required[Union[str, StateStoreResourceDefinitionMethods]]
-        key_type: Union[str, StateStoreResourceKeyTypes]
-        keys_property: list[str]
+        keyType: Union[str, StateStoreResourceKeyTypes]
+        keys: list[str]
         method: Union[str, StateStoreResourceDefinitionMethods]
 
 
@@ -7551,19 +7595,19 @@ namespace azure.mgmt.iotoperations.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.iotoperations.types.TlsCertMethod(TypedDict, total=False):
         key "certManagerCertificateSpec": ForwardRef('CertManagerCertificateSpec', module='types')
         key "manual": ForwardRef('X509ManualCertificate', module='types')
         key "mode": Required[Union[str, TlsCertMethodMode]]
-        cert_manager_certificate_spec: CertManagerCertificateSpec
+        certManagerCertificateSpec: CertManagerCertificateSpec
         manual: X509ManualCertificate
         mode: Union[str, TlsCertMethodMode]
 
@@ -7572,7 +7616,7 @@ namespace azure.mgmt.iotoperations.types
         key "mode": Union[str, OperationalMode]
         key "trustedCaCertificateConfigMapRef": str
         mode: Union[str, OperationalMode]
-        trusted_ca_certificate_config_map_ref: str
+        trustedCaCertificateConfigMapRef: str
 
 
     class azure.mgmt.iotoperations.types.Traces(TypedDict, total=False):
@@ -7580,10 +7624,10 @@ namespace azure.mgmt.iotoperations.types
         key "mode": Union[str, OperationalMode]
         key "selfTracing": ForwardRef('SelfTracing', module='types')
         key "spanChannelCapacity": int
-        cache_size_megabytes: int
+        cacheSizeMegabytes: int
         mode: Union[str, OperationalMode]
-        self_tracing: SelfTracing
-        span_channel_capacity: int
+        selfTracing: SelfTracing
+        spanChannelCapacity: int
 
 
     class azure.mgmt.iotoperations.types.TrackedResource(Resource):
@@ -7595,7 +7639,7 @@ namespace azure.mgmt.iotoperations.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -7603,8 +7647,8 @@ namespace azure.mgmt.iotoperations.types
     class azure.mgmt.iotoperations.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.iotoperations.types.VolumeClaimResourceRequirements(TypedDict, total=False):
@@ -7627,21 +7671,18 @@ namespace azure.mgmt.iotoperations.types
         key "volumeMode": str
         key "volumeName": str
         accessModes: list[str]
-        access_modes: list[str]
-        data_source: LocalKubernetesReference
-        data_source_ref: KubernetesReference
+        dataSource: LocalKubernetesReference
+        dataSourceRef: KubernetesReference
         resources: VolumeClaimResourceRequirements
         selector: VolumeClaimSpecSelector
-        storage_class_name: str
-        volume_mode: str
-        volume_name: str
+        storageClassName: str
+        volumeMode: str
+        volumeName: str
 
 
     class azure.mgmt.iotoperations.types.VolumeClaimSpecSelector(TypedDict, total=False):
         matchExpressions: list[VolumeClaimSpecSelectorMatchExpressions]
         matchLabels: dict[str, str]
-        match_expressions: list[VolumeClaimSpecSelectorMatchExpressions]
-        match_labels: dict[str, str]
 
 
     class azure.mgmt.iotoperations.types.VolumeClaimSpecSelectorMatchExpressions(TypedDict, total=False):
@@ -7650,12 +7691,11 @@ namespace azure.mgmt.iotoperations.types
         key: str
         operator: Union[str, OperatorValues]
         values: list[str]
-        values_property: list[str]
 
 
     class azure.mgmt.iotoperations.types.X509ManualCertificate(TypedDict, total=False):
         key "secretRef": Required[str]
-        secret_ref: str
+        secretRef: str
 
 
 ```

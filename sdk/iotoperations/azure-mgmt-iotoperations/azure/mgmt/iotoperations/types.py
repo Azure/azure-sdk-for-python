@@ -48,6 +48,7 @@ if TYPE_CHECKING:
         DataflowEndpointKafkaCompression,
         DataflowEndpointKafkaPartitionStrategy,
         DataflowGraphConnectionSchemaSerializationFormat,
+        DataflowGraphDestinationSchemaSerializationFormat,
         DataflowMappingType,
         EndpointType,
         ExtendedLocationType,
@@ -55,6 +56,7 @@ if TYPE_CHECKING:
         FilterType,
         HighPriorityMessagesBackpressureHandling,
         InstanceFeatureMode,
+        InstanceSkuName,
         KafkaAuthMethod,
         ManagedServiceIdentityType,
         MqttAuthMethod,
@@ -81,11 +83,11 @@ class AdvancedSettings(TypedDict, total=False):
 
     :ivar clients: Configurations related to All Clients.
     :vartype clients: "ClientConfig"
-    :ivar encrypt_internal_traffic: The setting to enable or disable encryption of internal
-     Traffic. Known values are: "Enabled" and "Disabled".
-    :vartype encrypt_internal_traffic: Union[str, "OperationalMode"]
-    :ivar internal_certs: Certificate rotation and private key configuration.
-    :vartype internal_certs: "CertManagerCertOptions"
+    :ivar encryptInternalTraffic: The setting to enable or disable encryption of internal Traffic.
+     Known values are: "Enabled" and "Disabled".
+    :vartype encryptInternalTraffic: Union[str, "OperationalMode"]
+    :ivar internalCerts: Certificate rotation and private key configuration.
+    :vartype internalCerts: "CertManagerCertOptions"
     """
 
     clients: "ClientConfig"
@@ -100,10 +102,10 @@ class AdvancedSettings(TypedDict, total=False):
 class AkriConnectorAllocatedDevice(TypedDict, total=False):
     """AkriConnector allocated device.
 
-    :ivar device_inbound_endpoint_name: The name of the inbound endpoint for the device. Required.
-    :vartype device_inbound_endpoint_name: str
-    :ivar device_name: The name of the device. Required.
-    :vartype device_name: str
+    :ivar deviceInboundEndpointName: The name of the inbound endpoint for the device. Required.
+    :vartype deviceInboundEndpointName: str
+    :ivar deviceName: The name of the device. Required.
+    :vartype deviceName: str
     """
 
     deviceInboundEndpointName: Required[str]
@@ -115,16 +117,16 @@ class AkriConnectorAllocatedDevice(TypedDict, total=False):
 class AkriConnectorProperties(TypedDict, total=False):
     """AkriConnector properties.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar allocated_devices: The allocated devices for the connector.
-    :vartype allocated_devices: list["AkriConnectorAllocatedDevice"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar allocatedDevices: The allocated devices for the connector.
+    :vartype allocatedDevices: list["AkriConnectorAllocatedDevice"]
     :ivar status: The status for the connector.
     :vartype status: "AkriConnectorStatus"
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: Union[str, "ResourceHealthState"]
+    :ivar healthState: The health state of the resource. Known values are: "Available", "Degraded",
+     "Unavailable", and "Unknown".
+    :vartype healthState: Union[str, "ResourceHealthState"]
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -150,9 +152,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -178,9 +180,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -195,13 +197,13 @@ class AkriConnectorResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "AkriConnectorProperties"
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Edge location of the resource.
+    :vartype extendedLocation: "ExtendedLocation"
     """
 
     properties: "AkriConnectorProperties"
@@ -213,11 +215,11 @@ class AkriConnectorResource(ProxyResource):
 class AkriConnectorsContainerRegistry(TypedDict, total=False):
     """AkriConnectorsContainerRegistry properties.
 
-    :ivar registry_settings_type: The registry settings type. Required. A Container Registry
+    :ivar registrySettingsType: The registry settings type. Required. A Container Registry
      reference.
-    :vartype registry_settings_type: Literal[AkriConnectorsRegistrySettingsType.CONTAINER_REGISTRY]
-    :ivar container_registry_settings: The registry settings for the container registry. Required.
-    :vartype container_registry_settings: "AkriConnectorsContainerRegistrySettings"
+    :vartype registrySettingsType: Literal[AkriConnectorsRegistrySettingsType.CONTAINER_REGISTRY]
+    :ivar containerRegistrySettings: The registry settings for the container registry. Required.
+    :vartype containerRegistrySettings: "AkriConnectorsContainerRegistrySettings"
     """
 
     registrySettingsType: Required[Literal[AkriConnectorsRegistrySettingsType.CONTAINER_REGISTRY]]
@@ -231,9 +233,9 @@ class AkriConnectorsContainerRegistrySettings(TypedDict, total=False):
 
     :ivar registry: The container registry to use for the artifact. Required.
     :vartype registry: str
-    :ivar image_pull_secrets: Optional list of references to secrets in the same namespace to use
-     for pulling the connector image.
-    :vartype image_pull_secrets: list["AkriConnectorsImagePullSecret"]
+    :ivar imagePullSecrets: Optional list of references to secrets in the same namespace to use for
+     pulling the connector image.
+    :vartype imagePullSecrets: list["AkriConnectorsImagePullSecret"]
     """
 
     registry: Required[str]
@@ -257,9 +259,9 @@ class AkriConnectorsDiagnosticsLogs(TypedDict, total=False):
 class AkriConnectorsDigest(TypedDict, total=False):
     """AkriConnectorsDigest properties.
 
-    :ivar tag_digest_type: The tag or digest type. Required. Indicates that a digest should be
+    :ivar tagDigestType: The tag or digest type. Required. Indicates that a digest should be
      specified.
-    :vartype tag_digest_type: Literal[AkriConnectorsTagDigestType.DIGEST]
+    :vartype tagDigestType: Literal[AkriConnectorsTagDigestType.DIGEST]
     :ivar digest: The digest of the image. Required.
     :vartype digest: str
     """
@@ -273,8 +275,8 @@ class AkriConnectorsDigest(TypedDict, total=False):
 class AkriConnectorsImagePullSecret(TypedDict, total=False):
     """AkriConnectorsImagePullSecret properties.
 
-    :ivar secret_ref: The name of the image pull secret. Required.
-    :vartype secret_ref: str
+    :ivar secretRef: The name of the image pull secret. Required.
+    :vartype secretRef: str
     """
 
     secretRef: Required[str]
@@ -291,14 +293,14 @@ class AkriConnectorsMqttConnectionConfiguration(TypedDict, total=False):  # pyli
     :ivar protocol: The protocol to use for the connection. Currently only ``mqtt`` is supported.
      "Mqtt"
     :vartype protocol: Union[str, "AkriConnectorsMqttProtocolType"]
-    :ivar keep_alive_seconds: KeepAlive for connection in seconds.
-    :vartype keep_alive_seconds: int
-    :ivar max_inflight_messages: The max number of messages to keep in flight. For subscribe, this
-     is the receive maximum. For publish, this is the maximum number of messages to send before
-     waiting for an ack.
-    :vartype max_inflight_messages: int
-    :ivar session_expiry_seconds: Session expiry in seconds.
-    :vartype session_expiry_seconds: int
+    :ivar keepAliveSeconds: KeepAlive for connection in seconds.
+    :vartype keepAliveSeconds: int
+    :ivar maxInflightMessages: The max number of messages to keep in flight. For subscribe, this is
+     the receive maximum. For publish, this is the maximum number of messages to send before waiting
+     for an ack.
+    :vartype maxInflightMessages: int
+    :ivar sessionExpirySeconds: Session expiry in seconds.
+    :vartype sessionExpirySeconds: int
     :ivar tls: TLS configuration.
     :vartype tls: "TlsProperties"
     """
@@ -323,12 +325,12 @@ class AkriConnectorsMqttConnectionConfiguration(TypedDict, total=False):  # pyli
 class AkriConnectorsRegistryEndpointRef(TypedDict, total=False):
     """AkriConnectorsRegistryEndpointRef properties.
 
-    :ivar registry_settings_type: The registry endpoint reference. Required. A Registry Endpoint
+    :ivar registrySettingsType: The registry endpoint reference. Required. A Registry Endpoint
      reference.
-    :vartype registry_settings_type:
+    :vartype registrySettingsType:
      Literal[AkriConnectorsRegistrySettingsType.REGISTRY_ENDPOINT_REF]
-    :ivar registry_endpoint_ref: The name of the registry endpoint. Required.
-    :vartype registry_endpoint_ref: str
+    :ivar registryEndpointRef: The name of the registry endpoint. Required.
+    :vartype registryEndpointRef: str
     """
 
     registrySettingsType: Required[Literal[AkriConnectorsRegistrySettingsType.REGISTRY_ENDPOINT_REF]]
@@ -340,12 +342,12 @@ class AkriConnectorsRegistryEndpointRef(TypedDict, total=False):
 class AkriConnectorsSecret(TypedDict, total=False):
     """AkriConnectorsSecret properties.
 
-    :ivar secret_key: The key in the secret to be mounted. Required.
-    :vartype secret_key: str
-    :ivar secret_alias: The application-defined alias for the secret. Required.
-    :vartype secret_alias: str
-    :ivar secret_ref: The name of the secret to be mounted. Required.
-    :vartype secret_ref: str
+    :ivar secretKey: The key in the secret to be mounted. Required.
+    :vartype secretKey: str
+    :ivar secretAlias: The application-defined alias for the secret. Required.
+    :vartype secretAlias: str
+    :ivar secretRef: The name of the secret to be mounted. Required.
+    :vartype secretRef: str
     """
 
     secretKey: Required[str]
@@ -362,9 +364,8 @@ class AkriConnectorsServiceAccountAuthentication(TypedDict, total=False):  # pyl
     :ivar method: The authentication method for the MQTT connection. Required. Service Account
      Token authentication.
     :vartype method: Literal[AkriConnectorsMqttAuthenticationMethod.SERVICE_ACCOUNT_TOKEN]
-    :ivar service_account_token_settings: The service account token for the MQTT connection.
-     Required.
-    :vartype service_account_token_settings: "AkriConnectorsServiceAccountTokenSettings"
+    :ivar serviceAccountTokenSettings: The service account token for the MQTT connection. Required.
+    :vartype serviceAccountTokenSettings: "AkriConnectorsServiceAccountTokenSettings"
     """
 
     method: Required[Literal[AkriConnectorsMqttAuthenticationMethod.SERVICE_ACCOUNT_TOKEN]]
@@ -388,9 +389,9 @@ class AkriConnectorsServiceAccountTokenSettings(TypedDict, total=False):  # pyli
 class AkriConnectorsTag(TypedDict, total=False):
     """AkriConnectorsTag properties.
 
-    :ivar tag_digest_type: The tag or digest type. Required. Indicates that a tag should be
+    :ivar tagDigestType: The tag or digest type. Required. Indicates that a tag should be
      specified.
-    :vartype tag_digest_type: Literal[AkriConnectorsTagDigestType.TAG]
+    :vartype tagDigestType: Literal[AkriConnectorsTagDigestType.TAG]
     :ivar tag: The tag of the image. Required.
     :vartype tag: str
     """
@@ -404,8 +405,8 @@ class AkriConnectorsTag(TypedDict, total=False):
 class AkriConnectorStatus(TypedDict, total=False):
     """AkriConnector status.
 
-    :ivar health_state: The health state of the AkriConnector.
-    :vartype health_state: "ResourceHealthStatus"
+    :ivar healthState: The health state of the AkriConnector.
+    :vartype healthState: "ResourceHealthStatus"
     """
 
     healthState: "ResourceHealthStatus"
@@ -415,10 +416,10 @@ class AkriConnectorStatus(TypedDict, total=False):
 class AkriConnectorTemplateAioMetadata(TypedDict, total=False):
     """AkriConnectorTemplateAioMetadata properties.
 
-    :ivar aio_min_version: The minimum version of AIO required for the connector.
-    :vartype aio_min_version: str
-    :ivar aio_max_version: The maximum version of AIO required for the connector.
-    :vartype aio_max_version: str
+    :ivar aioMinVersion: The minimum version of AIO required for the connector.
+    :vartype aioMinVersion: str
+    :ivar aioMaxVersion: The maximum version of AIO required for the connector.
+    :vartype aioMaxVersion: str
     """
 
     aioMinVersion: str
@@ -432,8 +433,8 @@ class AkriConnectorTemplateBucketizedAllocation(TypedDict, total=False):  # pyli
 
     :ivar policy: The allocation policy type. Required. Bucketized allocation policy.
     :vartype policy: Literal[AkriConnectorTemplateAllocationPolicy.BUCKETIZED]
-    :ivar bucket_size: The bucketized allocation of AEPs for connectors. Required.
-    :vartype bucket_size: int
+    :ivar bucketSize: The bucketized allocation of AEPs for connectors. Required.
+    :vartype bucketSize: int
     """
 
     policy: Required[Literal[AkriConnectorTemplateAllocationPolicy.BUCKETIZED]]
@@ -445,10 +446,10 @@ class AkriConnectorTemplateBucketizedAllocation(TypedDict, total=False):  # pyli
 class AkriConnectorTemplateDeviceInboundEndpointType(TypedDict, total=False):  # pylint: disable=name-too-long
     """AkriConnectorTemplateDeviceInboundEndpointType properties.
 
-    :ivar display_name: The display name of the device inbound endpoint.
-    :vartype display_name: str
-    :ivar endpoint_type: The type of the device inbound endpoint. Required.
-    :vartype endpoint_type: str
+    :ivar displayName: The display name of the device inbound endpoint.
+    :vartype displayName: str
+    :ivar endpointType: The type of the device inbound endpoint. Required.
+    :vartype endpointType: str
     :ivar version: The version of the device inbound endpoint.
     :vartype version: str
     """
@@ -488,12 +489,12 @@ class AkriConnectorTemplateExecAction(TypedDict, total=False):
 class AkriConnectorTemplateManagedConfiguration(TypedDict, total=False):  # pylint: disable=name-too-long
     """AkriConnectorTemplateManagedConfiguration properties.
 
-    :ivar runtime_configuration_type: The runtime configuration type for the Connector template.
+    :ivar runtimeConfigurationType: The runtime configuration type for the Connector template.
      Required. Managed Configuration Type.
-    :vartype runtime_configuration_type:
+    :vartype runtimeConfigurationType:
      Literal[AkriConnectorTemplateRuntimeConfigurationType.MANAGED_CONFIGURATION]
-    :ivar managed_configuration_settings: The managed configuration settings. Required.
-    :vartype managed_configuration_settings: "AkriConnectorTemplateManagedConfigurationSettings"
+    :ivar managedConfigurationSettings: The managed configuration settings. Required.
+    :vartype managedConfigurationSettings: "AkriConnectorTemplateManagedConfigurationSettings"
     """
 
     runtimeConfigurationType: Required[Literal[AkriConnectorTemplateRuntimeConfigurationType.MANAGED_CONFIGURATION]]
@@ -506,10 +507,10 @@ class AkriConnectorTemplateManagedConfiguration(TypedDict, total=False):  # pyli
 class AkriConnectorTemplatePersistentVolumeClaim(TypedDict, total=False):  # pylint: disable=name-too-long
     """AkriConnectorTemplatePersistentVolumeClaim properties.
 
-    :ivar claim_name: The name of the persistent volume claim. Required.
-    :vartype claim_name: str
-    :ivar mount_path: The mount path for the persistent volume claim. Required.
-    :vartype mount_path: str
+    :ivar claimName: The name of the persistent volume claim. Required.
+    :vartype claimName: str
+    :ivar mountPath: The mount path for the persistent volume claim. Required.
+    :vartype mountPath: str
     """
 
     claimName: Required[str]
@@ -521,25 +522,25 @@ class AkriConnectorTemplatePersistentVolumeClaim(TypedDict, total=False):  # pyl
 class AkriConnectorTemplateProperties(TypedDict, total=False):
     """AkriConnectorTemplate properties.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar aio_metadata: Metadata about AIO.
-    :vartype aio_metadata: "AkriConnectorTemplateAioMetadata"
-    :ivar runtime_configuration: The runtime configuration for the Connector template. Required.
-    :vartype runtime_configuration: "AkriConnectorTemplateRuntimeConfiguration"
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar aioMetadata: Metadata about AIO.
+    :vartype aioMetadata: "AkriConnectorTemplateAioMetadata"
+    :ivar runtimeConfiguration: The runtime configuration for the Connector template. Required.
+    :vartype runtimeConfiguration: "AkriConnectorTemplateRuntimeConfiguration"
     :ivar diagnostics: Diagnostics settings for the Connector template.
     :vartype diagnostics: "AkriConnectorTemplateDiagnostics"
-    :ivar device_inbound_endpoint_types: Device inbound endpoint types. Required.
-    :vartype device_inbound_endpoint_types: list["AkriConnectorTemplateDeviceInboundEndpointType"]
-    :ivar mqtt_connection_configuration: Mqtt connection configuration settings.
-    :vartype mqtt_connection_configuration: "AkriConnectorsMqttConnectionConfiguration"
-    :ivar connector_metadata_ref: A reference to a connector metadata document reference in a
+    :ivar deviceInboundEndpointTypes: Device inbound endpoint types. Required.
+    :vartype deviceInboundEndpointTypes: list["AkriConnectorTemplateDeviceInboundEndpointType"]
+    :ivar mqttConnectionConfiguration: Mqtt connection configuration settings.
+    :vartype mqttConnectionConfiguration: "AkriConnectorsMqttConnectionConfiguration"
+    :ivar connectorMetadataRef: A reference to a connector metadata document reference in a
      container registry.
-    :vartype connector_metadata_ref: str
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: Union[str, "ResourceHealthState"]
+    :vartype connectorMetadataRef: str
+    :ivar healthState: The health state of the resource. Known values are: "Available", "Degraded",
+     "Unavailable", and "Unknown".
+    :vartype healthState: Union[str, "ResourceHealthState"]
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -566,21 +567,21 @@ class AkriConnectorTemplateReadinessProbe(TypedDict, total=False):
     """AkriConnectorTemplateReadinessProbe properties. Defines a readiness probe for the connector
     container.
 
-    :ivar exec_property: Exec specifies a command to execute in the container.
-    :vartype exec_property: "AkriConnectorTemplateExecAction"
-    :ivar failure_threshold: Minimum consecutive failures for the probe to be considered failed
+    :ivar exec: Exec specifies a command to execute in the container.
+    :vartype exec: "AkriConnectorTemplateExecAction"
+    :ivar failureThreshold: Minimum consecutive failures for the probe to be considered failed
      after having succeeded.
-    :vartype failure_threshold: int
-    :ivar initial_delay_seconds: Number of seconds after the container has started before the probe
+    :vartype failureThreshold: int
+    :ivar initialDelaySeconds: Number of seconds after the container has started before the probe
      is initiated.
-    :vartype initial_delay_seconds: int
-    :ivar period_seconds: How often (in seconds) to perform the probe.
-    :vartype period_seconds: int
-    :ivar success_threshold: Minimum consecutive successes for the probe to be considered
-     successful after having failed.
-    :vartype success_threshold: int
-    :ivar timeout_seconds: Number of seconds after which the probe times out.
-    :vartype timeout_seconds: int
+    :vartype initialDelaySeconds: int
+    :ivar periodSeconds: How often (in seconds) to perform the probe.
+    :vartype periodSeconds: int
+    :ivar successThreshold: Minimum consecutive successes for the probe to be considered successful
+     after having failed.
+    :vartype successThreshold: int
+    :ivar timeoutSeconds: Number of seconds after which the probe times out.
+    :vartype timeoutSeconds: int
     """
 
     exec: "AkriConnectorTemplateExecAction"
@@ -608,13 +609,13 @@ class AkriConnectorTemplateResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "AkriConnectorTemplateProperties"
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Edge location of the resource.
+    :vartype extendedLocation: "ExtendedLocation"
     """
 
     properties: "AkriConnectorTemplateProperties"
@@ -628,27 +629,27 @@ class AkriConnectorTemplateRuntimeImageConfiguration(TypedDict, total=False):  #
 
     :ivar allocation: Allocation settings for the managed configuration.
     :vartype allocation: "AkriConnectorTemplateAllocation"
-    :ivar persistent_volume_claims: The persistent volume claims for the managed configuration.
-    :vartype persistent_volume_claims: list["AkriConnectorTemplatePersistentVolumeClaim"]
-    :ivar additional_configuration: Additional configuration for the image of the managed
+    :ivar persistentVolumeClaims: The persistent volume claims for the managed configuration.
+    :vartype persistentVolumeClaims: list["AkriConnectorTemplatePersistentVolumeClaim"]
+    :ivar additionalConfiguration: Additional configuration for the image of the managed
      configuration.
-    :vartype additional_configuration: dict[str, str]
-    :ivar persistent_volume_claim_templates: The persistent volume claim templates for the managed
+    :vartype additionalConfiguration: dict[str, str]
+    :ivar persistentVolumeClaimTemplates: The persistent volume claim templates for the managed
      configuration. See
      `https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json
      <https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json>`_.
-    :vartype persistent_volume_claim_templates: list[dict[str, Any]]
+    :vartype persistentVolumeClaimTemplates: list[dict[str, Any]]
     :ivar secrets: Connector secrets that will be mounted onto all connector instances.
     :vartype secrets: list["AkriConnectorsSecret"]
-    :ivar trust_settings: Trust list for the connector. This is used to specify the certificates
+    :ivar trustSettings: Trust list for the connector. This is used to specify the certificates
      that all connector instances should trust.
-    :vartype trust_settings: "AkriConnectorTemplateTrustList"
-    :ivar managed_configuration_type: The managed configuration type for the Connector template.
+    :vartype trustSettings: "AkriConnectorTemplateTrustList"
+    :ivar managedConfigurationType: The managed configuration type for the Connector template.
      Required. Image Configuration Type.
-    :vartype managed_configuration_type:
+    :vartype managedConfigurationType:
      Literal[AkriConnectorTemplateManagedConfigurationType.IMAGE_CONFIGURATION]
-    :ivar image_configuration_settings: The image configuration settings. Required.
-    :vartype image_configuration_settings: "AkriConnectorTemplateRuntimeImageConfigurationSettings"
+    :ivar imageConfigurationSettings: The image configuration settings. Required.
+    :vartype imageConfigurationSettings: "AkriConnectorTemplateRuntimeImageConfigurationSettings"
     """
 
     allocation: "AkriConnectorTemplateAllocation"
@@ -675,23 +676,23 @@ class AkriConnectorTemplateRuntimeImageConfiguration(TypedDict, total=False):  #
 class AkriConnectorTemplateRuntimeImageConfigurationSettings(TypedDict, total=False):  # pylint: disable=name-too-long
     """AkriConnectorTemplateRuntimeImageConfiguration properties.
 
-    :ivar image_name: The image name without any registry reference, tag or digest. Required.
-    :vartype image_name: str
-    :ivar image_pull_policy: The pull policy of the image. Known values are: "Always",
+    :ivar imageName: The image name without any registry reference, tag or digest. Required.
+    :vartype imageName: str
+    :ivar imagePullPolicy: The pull policy of the image. Known values are: "Always",
      "IfNotPresent", and "Never".
-    :vartype image_pull_policy: Union[str, "AkriConnectorsImagePullPolicy"]
-    :ivar readiness_probe: Optional readiness probe for the connector container. When set, the
+    :vartype imagePullPolicy: Union[str, "AkriConnectorsImagePullPolicy"]
+    :ivar readinessProbe: Optional readiness probe for the connector container. When set, the
      operator injects this into the pod spec and uses the pod's ``Ready`` condition for health
      reporting instead of crash-based detection.
-    :vartype readiness_probe: "AkriConnectorTemplateReadinessProbe"
+    :vartype readinessProbe: "AkriConnectorTemplateReadinessProbe"
     :ivar replicas: The number of replicas to be set up.
     :vartype replicas: int
-    :ivar registry_settings: The registry settings for the image. You can omit this field if using
+    :ivar registrySettings: The registry settings for the image. You can omit this field if using
      the default docker hub repository or using a local image.
-    :vartype registry_settings: "AkriConnectorsRegistrySettings"
-    :ivar tag_digest_settings: Optional image tag or digest. If not specified, the default tag is
+    :vartype registrySettings: "AkriConnectorsRegistrySettings"
+    :ivar tagDigestSettings: Optional image tag or digest. If not specified, the default tag is
      ``latest``.
-    :vartype tag_digest_settings: "AkriConnectorsTagDigestSettings"
+    :vartype tagDigestSettings: "AkriConnectorsTagDigestSettings"
     """
 
     imageName: Required[str]
@@ -716,31 +717,31 @@ class AkriConnectorTemplateRuntimeStatefulSetConfiguration(TypedDict, total=Fals
 
     :ivar allocation: Allocation settings for the managed configuration.
     :vartype allocation: "AkriConnectorTemplateAllocation"
-    :ivar persistent_volume_claims: The persistent volume claims for the managed configuration.
-    :vartype persistent_volume_claims: list["AkriConnectorTemplatePersistentVolumeClaim"]
-    :ivar additional_configuration: Additional configuration for the image of the managed
+    :ivar persistentVolumeClaims: The persistent volume claims for the managed configuration.
+    :vartype persistentVolumeClaims: list["AkriConnectorTemplatePersistentVolumeClaim"]
+    :ivar additionalConfiguration: Additional configuration for the image of the managed
      configuration.
-    :vartype additional_configuration: dict[str, str]
-    :ivar persistent_volume_claim_templates: The persistent volume claim templates for the managed
+    :vartype additionalConfiguration: dict[str, str]
+    :ivar persistentVolumeClaimTemplates: The persistent volume claim templates for the managed
      configuration. See
      `https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json
      <https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json>`_.
-    :vartype persistent_volume_claim_templates: list[dict[str, Any]]
+    :vartype persistentVolumeClaimTemplates: list[dict[str, Any]]
     :ivar secrets: Connector secrets that will be mounted onto all connector instances.
     :vartype secrets: list["AkriConnectorsSecret"]
-    :ivar trust_settings: Trust list for the connector. This is used to specify the certificates
+    :ivar trustSettings: Trust list for the connector. This is used to specify the certificates
      that all connector instances should trust.
-    :vartype trust_settings: "AkriConnectorTemplateTrustList"
-    :ivar managed_configuration_type: The managed configuration type for the Connector template.
+    :vartype trustSettings: "AkriConnectorTemplateTrustList"
+    :ivar managedConfigurationType: The managed configuration type for the Connector template.
      Required. StatefulSet Configuration Type.
-    :vartype managed_configuration_type:
+    :vartype managedConfigurationType:
      Literal[AkriConnectorTemplateManagedConfigurationType.STATEFUL_SET_CONFIGURATION]
-    :ivar stateful_set_configuration_settings: The stateful set configuration settings. This
+    :ivar statefulSetConfigurationSettings: The stateful set configuration settings. This
      corresponds to the Kubernetes StatefulSet resource. See
      `https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json#/components/schemas/io.k8s.api.apps.v1.StatefulSetSpec
      <https://raw.githubusercontent.com/kubernetes/kubernetes/refs/heads/master/api/openapi-spec/v3/apis__apps__v1_openapi.json#/components/schemas/io.k8s.api.apps.v1.StatefulSetSpec>`_.
      Required.
-    :vartype stateful_set_configuration_settings: dict[str, Any]
+    :vartype statefulSetConfigurationSettings: dict[str, Any]
     """
 
     allocation: "AkriConnectorTemplateAllocation"
@@ -774,8 +775,8 @@ class AkriConnectorTemplateRuntimeStatefulSetConfiguration(TypedDict, total=Fals
 class AkriConnectorTemplateTrustList(TypedDict, total=False):
     """AkriConnectorTemplateTrustList properties.
 
-    :ivar trust_list_secret_ref: The secret reference for certificates to trust. Required.
-    :vartype trust_list_secret_ref: str
+    :ivar trustListSecretRef: The secret reference for certificates to trust. Required.
+    :vartype trustListSecretRef: str
     """
 
     trustListSecretRef: Required[str]
@@ -785,9 +786,9 @@ class AkriConnectorTemplateTrustList(TypedDict, total=False):
 class AkriServiceProperties(TypedDict, total=False):
     """AkriService properties.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar status: The status for the service.
     :vartype status: "AkriServiceStatus"
     """
@@ -810,13 +811,13 @@ class AkriServiceResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "AkriServiceProperties"
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Edge location of the resource.
+    :vartype extendedLocation: "ExtendedLocation"
     """
 
     properties: "AkriServiceProperties"
@@ -828,8 +829,8 @@ class AkriServiceResource(ProxyResource):
 class AkriServiceStatus(TypedDict, total=False):
     """AkriService status.
 
-    :ivar health_state: The health state of the AkriService.
-    :vartype health_state: "ResourceHealthStatus"
+    :ivar healthState: The health state of the AkriService.
+    :vartype healthState: "ResourceHealthStatus"
     """
 
     healthState: "ResourceHealthStatus"
@@ -857,12 +858,12 @@ class AuthorizationConfig(TypedDict, total=False):
 class AuthorizationRule(TypedDict, total=False):
     """AuthorizationConfig Rule Properties.
 
-    :ivar broker_resources: Give access to Broker methods and topics. Required.
-    :vartype broker_resources: list["BrokerResourceRule"]
+    :ivar brokerResources: Give access to Broker methods and topics. Required.
+    :vartype brokerResources: list["BrokerResourceRule"]
     :ivar principals: Give access to clients based on the following properties. Required.
     :vartype principals: "PrincipalDefinition"
-    :ivar state_store_resources: Give access to state store resources.
-    :vartype state_store_resources: list["StateStoreResourceRule"]
+    :ivar stateStoreResources: Give access to state store resources.
+    :vartype stateStoreResources: list["StateStoreResourceRule"]
     """
 
     brokerResources: Required[list["BrokerResourceRule"]]
@@ -876,8 +877,8 @@ class AuthorizationRule(TypedDict, total=False):
 class AzureDeviceRegistryNamespaceRef(TypedDict, total=False):
     """Azure Device Registry Namespace reference.
 
-    :ivar resource_id: The resource ID of the Azure Device Registry Namespace. Required.
-    :vartype resource_id: str
+    :ivar resourceId: The resource ID of the Azure Device Registry Namespace. Required.
+    :vartype resourceId: str
     """
 
     resourceId: Required[str]
@@ -889,9 +890,9 @@ class BackendChain(TypedDict, total=False):
 
     :ivar partitions: The desired number of physical backend partitions. Required.
     :vartype partitions: int
-    :ivar redundancy_factor: The desired numbers of backend replicas (pods) in a physical
-     partition. Required.
-    :vartype redundancy_factor: int
+    :ivar redundancyFactor: The desired numbers of backend replicas (pods) in a physical partition.
+     Required.
+    :vartype redundancyFactor: int
     :ivar workers: Number of logical backend workers per replica (pod).
     :vartype workers: int
     """
@@ -907,10 +908,10 @@ class BackendChain(TypedDict, total=False):
 class BatchingConfiguration(TypedDict, total=False):
     """Batching configuration.
 
-    :ivar latency_seconds: Batching latency in seconds.
-    :vartype latency_seconds: int
-    :ivar max_messages: Maximum number of messages in a batch.
-    :vartype max_messages: int
+    :ivar latencySeconds: Batching latency in seconds.
+    :vartype latencySeconds: int
+    :ivar maxMessages: Maximum number of messages in a batch.
+    :vartype maxMessages: int
     """
 
     latencySeconds: int
@@ -922,15 +923,15 @@ class BatchingConfiguration(TypedDict, total=False):
 class BrokerAuthenticationProperties(TypedDict, total=False):
     """BrokerAuthentication Resource properties.
 
-    :ivar authentication_methods: Defines a set of Broker authentication methods to be used on
+    :ivar authenticationMethods: Defines a set of Broker authentication methods to be used on
      ``BrokerListeners``. For each array element one authenticator type supported. Required.
-    :vartype authentication_methods: list["BrokerAuthenticatorMethods"]
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :vartype authenticationMethods: list["BrokerAuthenticatorMethods"]
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: Union[str, "ResourceHealthState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar healthState: The health state of the resource. Known values are: "Available", "Degraded",
+     "Unavailable", and "Unknown".
+    :vartype healthState: Union[str, "ResourceHealthState"]
     """
 
     authenticationMethods: Required[list["BrokerAuthenticatorMethods"]]
@@ -955,13 +956,13 @@ class BrokerAuthenticationResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "BrokerAuthenticationProperties"
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Edge location of the resource.
+    :vartype extendedLocation: "ExtendedLocation"
     """
 
     properties: "BrokerAuthenticationProperties"
@@ -987,9 +988,9 @@ class BrokerAuthenticatorMethodCustom(TypedDict, total=False):
     :ivar auth: Optional authentication needed for authenticating with the custom authentication
      server.
     :vartype auth: "BrokerAuthenticatorCustomAuth"
-    :ivar ca_cert_config_map: Optional CA certificate for validating the custom authentication
+    :ivar caCertConfigMap: Optional CA certificate for validating the custom authentication
      server's certificate.
-    :vartype ca_cert_config_map: str
+    :vartype caCertConfigMap: str
     :ivar endpoint: Endpoint of the custom authentication server. Must be an HTTPS endpoint.
      Required.
     :vartype endpoint: str
@@ -1013,12 +1014,12 @@ class BrokerAuthenticatorMethods(TypedDict, total=False):
     :ivar method: Custom authentication configuration. Required. Known values are: "Custom",
      "ServiceAccountToken", and "X509".
     :vartype method: Union[str, "BrokerAuthenticationMethod"]
-    :ivar custom_settings: Custom authentication configuration.
-    :vartype custom_settings: "BrokerAuthenticatorMethodCustom"
-    :ivar service_account_token_settings: ServiceAccountToken authentication configuration.
-    :vartype service_account_token_settings: "BrokerAuthenticatorMethodSat"
-    :ivar x509_settings: X.509 authentication configuration.
-    :vartype x509_settings: "BrokerAuthenticatorMethodX509"
+    :ivar customSettings: Custom authentication configuration.
+    :vartype customSettings: "BrokerAuthenticatorMethodCustom"
+    :ivar serviceAccountTokenSettings: ServiceAccountToken authentication configuration.
+    :vartype serviceAccountTokenSettings: "BrokerAuthenticatorMethodSat"
+    :ivar x509Settings: X.509 authentication configuration.
+    :vartype x509Settings: "BrokerAuthenticatorMethodX509"
     """
 
     method: Required[Union[str, "BrokerAuthenticationMethod"]]
@@ -1046,13 +1047,13 @@ class BrokerAuthenticatorMethodSat(TypedDict, total=False):
 class BrokerAuthenticatorMethodX509(TypedDict, total=False):
     """X509 for BrokerAuthentication.
 
-    :ivar authorization_attributes: X509 authorization attributes properties.
-    :vartype authorization_attributes: dict[str, "BrokerAuthenticatorMethodX509Attributes"]
-    :ivar trusted_client_ca_cert: Name of the trusted client ca cert resource.
-    :vartype trusted_client_ca_cert: str
-    :ivar additional_validation: X509 authentication attributes properties. Known values are:
-     "None" and "AzureDeviceRegistry".
-    :vartype additional_validation: Union[str, "BrokerAuthenticatorValidationMethods"]
+    :ivar authorizationAttributes: X509 authorization attributes properties.
+    :vartype authorizationAttributes: dict[str, "BrokerAuthenticatorMethodX509Attributes"]
+    :ivar trustedClientCaCert: Name of the trusted client ca cert resource.
+    :vartype trustedClientCaCert: str
+    :ivar additionalValidation: X509 authentication attributes properties. Known values are: "None"
+     and "AzureDeviceRegistry".
+    :vartype additionalValidation: Union[str, "BrokerAuthenticatorValidationMethods"]
     """
 
     authorizationAttributes: dict[str, "BrokerAuthenticatorMethodX509Attributes"]
@@ -1082,15 +1083,15 @@ class BrokerAuthenticatorMethodX509Attributes(TypedDict, total=False):
 class BrokerAuthorizationProperties(TypedDict, total=False):
     """BrokerAuthorization Resource properties.
 
-    :ivar authorization_policies: The list of authorization policies supported by the Authorization
+    :ivar authorizationPolicies: The list of authorization policies supported by the Authorization
      Resource. Required.
-    :vartype authorization_policies: "AuthorizationConfig"
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :vartype authorizationPolicies: "AuthorizationConfig"
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: Union[str, "ResourceHealthState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar healthState: The health state of the resource. Known values are: "Available", "Degraded",
+     "Unavailable", and "Unknown".
+    :vartype healthState: Union[str, "ResourceHealthState"]
     """
 
     authorizationPolicies: Required["AuthorizationConfig"]
@@ -1114,13 +1115,13 @@ class BrokerAuthorizationResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "BrokerAuthorizationProperties"
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Edge location of the resource.
+    :vartype extendedLocation: "ExtendedLocation"
     """
 
     properties: "BrokerAuthorizationProperties"
@@ -1136,8 +1137,8 @@ class BrokerDiagnostics(TypedDict, total=False):
     :vartype logs: "DiagnosticsLogs"
     :ivar metrics: The metrics settings for the resource.
     :vartype metrics: "Metrics"
-    :ivar self_check: The self check properties.
-    :vartype self_check: "SelfCheck"
+    :ivar selfCheck: The self check properties.
+    :vartype selfCheck: "SelfCheck"
     :ivar traces: The trace properties.
     :vartype traces: "Traces"
     """
@@ -1156,19 +1157,19 @@ class BrokerListenerProperties(TypedDict, total=False):
     """Defines a Broker listener. A listener is a collection of ports on which the broker accepts
     connections from clients.
 
-    :ivar service_name: Kubernetes Service name of this listener.
-    :vartype service_name: str
+    :ivar serviceName: Kubernetes Service name of this listener.
+    :vartype serviceName: str
     :ivar ports: Ports on which this listener accepts client connections. Required.
     :vartype ports: list["ListenerPort"]
-    :ivar service_type: Kubernetes Service type of this listener. Known values are: "ClusterIp",
+    :ivar serviceType: Kubernetes Service type of this listener. Known values are: "ClusterIp",
      "LoadBalancer", and "NodePort".
-    :vartype service_type: Union[str, "ServiceType"]
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :vartype serviceType: Union[str, "ServiceType"]
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: Union[str, "ResourceHealthState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar healthState: The health state of the resource. Known values are: "Available", "Degraded",
+     "Unavailable", and "Unknown".
+    :vartype healthState: Union[str, "ResourceHealthState"]
     """
 
     serviceName: str
@@ -1197,13 +1198,13 @@ class BrokerListenerResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "BrokerListenerProperties"
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Edge location of the resource.
+    :vartype extendedLocation: "ExtendedLocation"
     """
 
     properties: "BrokerListenerProperties"
@@ -1228,28 +1229,28 @@ class BrokerPersistence(TypedDict, total=False):
     Optional. Everything is in-memory if not set.
     Note: if configured, all MQTT session states are written to disk.
 
-    :ivar max_size: The max size of the message buffer on disk. If a PVC template is specified
-     using persistentVolumeClaimSpec Then this size is used as the request and limit sizes of that
+    :ivar maxSize: The max size of the message buffer on disk. If a PVC template is specified using
+     persistentVolumeClaimSpec Then this size is used as the request and limit sizes of that
      template. If a PVC template isn't specified Then local-path provisioner is requested with this
      size limit. Required. Required.
-    :vartype max_size: str
-    :ivar persistent_volume_claim_spec: Use the specified persistent volume claim template to mount
-     a persistent volume. Same object as in diskBackedMessageBuffer, but with a limitation that
-     access modes field must be set to ``ReadWriteOncePod``.
+    :vartype maxSize: str
+    :ivar persistentVolumeClaimSpec: Use the specified persistent volume claim template to mount a
+     persistent volume. Same object as in diskBackedMessageBuffer, but with a limitation that access
+     modes field must be set to ``ReadWriteOncePod``.
 
      If unset, a default PVC with default properties will be used. Among other things this PVC will
      use the cluster default storage class, which may or may not be using a local path provisioner.
      User is opting in to sub-optimal behavior if they leave this unset or set it without the
      storage class field, and their cluster default is not a local path class.
-    :vartype persistent_volume_claim_spec: "VolumeClaimSpec"
+    :vartype persistentVolumeClaimSpec: "VolumeClaimSpec"
     :ivar retain: Controls which topic's retained messages should be persisted to disk.
     :vartype retain: "BrokerRetainMessagesPolicy"
-    :ivar state_store: Controls which keys should be persisted to disk for the state store.
-    :vartype state_store: "BrokerStateStorePolicy"
-    :ivar subscriber_queue: Controls which subscriber message queues should be persisted to disk.
+    :ivar stateStore: Controls which keys should be persisted to disk for the state store.
+    :vartype stateStore: "BrokerStateStorePolicy"
+    :ivar subscriberQueue: Controls which subscriber message queues should be persisted to disk.
      Important: to facilitate reconnection, session state metadata are ALWAYS written to disk if any
      persistence setting is specified, even if this section isn't set.
-    :vartype subscriber_queue: "BrokerSubscriberQueuePolicy"
+    :vartype subscriberQueue: "BrokerSubscriberQueuePolicy"
     :ivar encryption: Controls settings related to encryption of the persistence database.
      Optional, defaults to enabling encryption.
     :vartype encryption: "BrokerPersistenceEncryption"
@@ -1303,14 +1304,14 @@ class BrokerProperties(TypedDict, total=False):
     :vartype cardinality: "Cardinality"
     :ivar diagnostics: Spec defines the desired identities of Broker diagnostics settings.
     :vartype diagnostics: "BrokerDiagnostics"
-    :ivar disk_backed_message_buffer: Settings of Disk Backed Message Buffer.
-    :vartype disk_backed_message_buffer: "DiskBackedMessageBuffer"
-    :ivar generate_resource_limits: This setting controls whether Kubernetes CPU resource limits
-     are requested. Increasing the number of replicas or workers proportionally increases the amount
-     of CPU resources requested. If this setting is enabled and there are insufficient CPU
-     resources, an error will be emitted.
-    :vartype generate_resource_limits: "GenerateResourceLimits"
-    :ivar high_priority_messages_backpressure_handling:   Handling of high-priority messages in the
+    :ivar diskBackedMessageBuffer: Settings of Disk Backed Message Buffer.
+    :vartype diskBackedMessageBuffer: "DiskBackedMessageBuffer"
+    :ivar generateResourceLimits: This setting controls whether Kubernetes CPU resource limits are
+     requested. Increasing the number of replicas or workers proportionally increases the amount of
+     CPU resources requested. If this setting is enabled and there are insufficient CPU resources,
+     an error will be emitted.
+    :vartype generateResourceLimits: "GenerateResourceLimits"
+    :ivar highPriorityMessagesBackpressureHandling:   Handling of high-priority messages in the
      event that regular-priority messages are being backpressured.
 
        When set to "Accept", the broker continues to accept high-priority messages even while
@@ -1319,21 +1320,21 @@ class BrokerProperties(TypedDict, total=False):
        When set to "Reject", backpressure also affects high-priority messages.
 
        Defaults to "Accept". Known values are: "Accept" and "Reject".
-    :vartype high_priority_messages_backpressure_handling: Union[str,
+    :vartype highPriorityMessagesBackpressureHandling: Union[str,
      "HighPriorityMessagesBackpressureHandling"]
-    :ivar memory_profile: Memory profile of Broker. Known values are: "Tiny", "Low", "Medium", and
+    :ivar memoryProfile: Memory profile of Broker. Known values are: "Tiny", "Low", "Medium", and
      "High".
-    :vartype memory_profile: Union[str, "BrokerMemoryProfile"]
+    :vartype memoryProfile: Union[str, "BrokerMemoryProfile"]
     :ivar persistence: The persistence settings of the Broker.
     :vartype persistence: "BrokerPersistence"
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar status: The status for the broker.
     :vartype status: "BrokerStatus"
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: Union[str, "ResourceHealthState"]
+    :ivar healthState: The health state of the resource. Known values are: "Available", "Degraded",
+     "Unavailable", and "Unknown".
+    :vartype healthState: Union[str, "ResourceHealthState"]
     """
 
     advanced: "AdvancedSettings"
@@ -1383,13 +1384,13 @@ class BrokerResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "BrokerProperties"
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Edge location of the resource.
+    :vartype extendedLocation: "ExtendedLocation"
     """
 
     properties: "BrokerProperties"
@@ -1405,10 +1406,10 @@ class BrokerResourceRule(TypedDict, total=False):
     :ivar method: Give access for a Broker method (i.e., Connect, Subscribe, or Publish). Required.
      Known values are: "Connect", "Publish", and "Subscribe".
     :vartype method: Union[str, "BrokerResourceDefinitionMethods"]
-    :ivar client_ids: A list of client IDs that match the clients. The client IDs are
-     case-sensitive and must match the client IDs provided by the clients during connection. This
-     subfield may be set if the method is Connect.
-    :vartype client_ids: list[str]
+    :ivar clientIds: A list of client IDs that match the clients. The client IDs are case-sensitive
+     and must match the client IDs provided by the clients during connection. This subfield may be
+     set if the method is Connect.
+    :vartype clientIds: list[str]
     :ivar topics: A list of topics or topic patterns that match the topics that the clients can
      publish or subscribe to. This subfield is required if the method is Publish or Subscribe.
     :vartype topics: list[str]
@@ -1431,8 +1432,8 @@ class BrokerRetainMessagesCustomPolicy(TypedDict, total=False):
 
     :ivar mode: The mode of the policy. Required. Indicates that the policy is a custom policy.
     :vartype mode: Literal[BrokerPersistencePolicyMode.CUSTOM]
-    :ivar retain_settings: Settings for the policy. Required.
-    :vartype retain_settings: "BrokerRetainMessagesSettings"
+    :ivar retainSettings: Settings for the policy. Required.
+    :vartype retainSettings: "BrokerRetainMessagesSettings"
     """
 
     mode: Required[Literal[BrokerPersistencePolicyMode.CUSTOM]]
@@ -1478,8 +1479,8 @@ class BrokerStateStoreCustomPolicy(TypedDict, total=False):
 
     :ivar mode: The mode of the policy. Required. Indicates that the policy is a custom policy.
     :vartype mode: Literal[BrokerPersistencePolicyMode.CUSTOM]
-    :ivar state_store_settings: Settings for the policy. Required.
-    :vartype state_store_settings: "BrokerStateStorePolicySettings"
+    :ivar stateStoreSettings: Settings for the policy. Required.
+    :vartype stateStoreSettings: "BrokerStateStorePolicySettings"
     """
 
     mode: Required[Literal[BrokerPersistencePolicyMode.CUSTOM]]
@@ -1504,11 +1505,11 @@ class BrokerStateStoreDynamic(TypedDict, total=False):
 class BrokerStateStorePolicyResources(TypedDict, total=False):
     """Broker State Store Policy Resources properties.
 
-    :ivar key_type: The key to persist to disk. Required. Known values are: "Pattern", "String",
-     and "Binary".
-    :vartype key_type: Union[str, "BrokerStateStoreKeyType"]
-    :ivar keys_property: List of keys to persist to disk, required. Required.
-    :vartype keys_property: list[str]
+    :ivar keyType: The key to persist to disk. Required. Known values are: "Pattern", "String", and
+     "Binary".
+    :vartype keyType: Union[str, "BrokerStateStoreKeyType"]
+    :ivar keys: List of keys to persist to disk, required. Required.
+    :vartype keys: list[str]
     """
 
     keyType: Required[Union[str, "BrokerStateStoreKeyType"]]
@@ -1521,8 +1522,8 @@ class BrokerStateStorePolicyResources(TypedDict, total=False):
 class BrokerStateStorePolicySettings(TypedDict, total=False):
     """Broker State Store Custom Policy Settings.
 
-    :ivar state_store_resources: List of key and key type to persist to disk.
-    :vartype state_store_resources: list["BrokerStateStorePolicyResources"]
+    :ivar stateStoreResources: List of key and key type to persist to disk.
+    :vartype stateStoreResources: list["BrokerStateStorePolicyResources"]
     :ivar dynamic: Controls if MQTT clients can request for disk persistence via ``MQTTv5`` user
      property. Works in addition to other groups (logical OR).
     :vartype dynamic: "BrokerStateStoreDynamic"
@@ -1538,8 +1539,8 @@ class BrokerStateStorePolicySettings(TypedDict, total=False):
 class BrokerStatus(TypedDict, total=False):
     """BrokerStatus status.
 
-    :ivar health_state: The health state of the Broker.
-    :vartype health_state: "ResourceHealthStatus"
+    :ivar healthState: The health state of the Broker.
+    :vartype healthState: "ResourceHealthStatus"
     """
 
     healthState: "ResourceHealthStatus"
@@ -1551,9 +1552,9 @@ class BrokerSubscriberQueueCustomPolicy(TypedDict, total=False):
 
     :ivar mode: The mode of the policy. Required. Indicates that the policy is a custom policy.
     :vartype mode: Literal[BrokerPersistencePolicyMode.CUSTOM]
-    :ivar subscriber_queue_settings: Custom policy, required if mode is Custom. Subscriber queues
+    :ivar subscriberQueueSettings: Custom policy, required if mode is Custom. Subscriber queues
      from all groups are persisted to disk (logical OR). Required.
-    :vartype subscriber_queue_settings: "BrokerSubscriberQueueCustomPolicySettings"
+    :vartype subscriberQueueSettings: "BrokerSubscriberQueueCustomPolicySettings"
     """
 
     mode: Required[Literal[BrokerPersistencePolicyMode.CUSTOM]]
@@ -1566,8 +1567,8 @@ class BrokerSubscriberQueueCustomPolicy(TypedDict, total=False):
 class BrokerSubscriberQueueCustomPolicySettings(TypedDict, total=False):  # pylint: disable=name-too-long
     """Broker Subscriber Queue Custom Policy properties.
 
-    :ivar subscriber_client_ids: List of client IDs of the subscribers, wildcard * supported.
-    :vartype subscriber_client_ids: list[str]
+    :ivar subscriberClientIds: List of client IDs of the subscribers, wildcard * supported.
+    :vartype subscriberClientIds: list[str]
     :ivar dynamic: Controls if MQTT clients can request for disk persistence via ``MQTTv5`` user
      property. Works in addition to other groups (logical OR).
     :vartype dynamic: "BrokerSubscriberQueueDynamic"
@@ -1596,8 +1597,8 @@ class BrokerSubscriberQueueDynamic(TypedDict, total=False):
 class Cardinality(TypedDict, total=False):
     """Cardinality properties.
 
-    :ivar backend_chain: The backend broker desired properties. Required.
-    :vartype backend_chain: "BackendChain"
+    :ivar backendChain: The backend broker desired properties. Required.
+    :vartype backendChain: "BackendChain"
     :ivar frontend: The frontend desired properties. Required.
     :vartype frontend: "Frontend"
     """
@@ -1614,17 +1615,16 @@ class CertManagerCertificateSpec(TypedDict, total=False):
     :ivar duration: Lifetime of certificate. Must be specified using a Go time.Duration format
      (h|m|s). E.g. 240h for 240 hours and 45m for 45 minutes.
     :vartype duration: str
-    :ivar secret_name: Secret for storing server certificate. Any existing data will be
-     overwritten. This is a reference to the secret through an identifying name, not the secret
-     itself.
-    :vartype secret_name: str
-    :ivar renew_before: When to begin renewing certificate. Must be specified using a Go
+    :ivar secretName: Secret for storing server certificate. Any existing data will be overwritten.
+     This is a reference to the secret through an identifying name, not the secret itself.
+    :vartype secretName: str
+    :ivar renewBefore: When to begin renewing certificate. Must be specified using a Go
      time.Duration format (h|m|s). E.g. 240h for 240 hours and 45m for 45 minutes.
-    :vartype renew_before: str
-    :ivar issuer_ref: cert-manager issuerRef. Required.
-    :vartype issuer_ref: "CertManagerIssuerRef"
-    :ivar private_key: Type of certificate private key.
-    :vartype private_key: "CertManagerPrivateKey"
+    :vartype renewBefore: str
+    :ivar issuerRef: cert-manager issuerRef. Required.
+    :vartype issuerRef: "CertManagerIssuerRef"
+    :ivar privateKey: Type of certificate private key.
+    :vartype privateKey: "CertManagerPrivateKey"
     :ivar san: Additional Subject Alternative Names (SANs) to include in the certificate.
     :vartype san: "SanForCert"
     """
@@ -1652,11 +1652,11 @@ class CertManagerCertOptions(TypedDict, total=False):
     :ivar duration: Lifetime of certificate. Must be specified using a Go time.Duration format
      (h|m|s). E.g. 240h for 240 hours and 45m for 45 minutes. Required.
     :vartype duration: str
-    :ivar renew_before: When to begin renewing certificate. Must be specified using a Go
+    :ivar renewBefore: When to begin renewing certificate. Must be specified using a Go
      time.Duration format (h|m|s). E.g. 240h for 240 hours and 45m for 45 minutes. Required.
-    :vartype renew_before: str
-    :ivar private_key: Configuration of certificate private key. Required.
-    :vartype private_key: "CertManagerPrivateKey"
+    :vartype renewBefore: str
+    :ivar privateKey: Configuration of certificate private key. Required.
+    :vartype privateKey: "CertManagerPrivateKey"
     """
 
     duration: Required[str]
@@ -1672,7 +1672,7 @@ class CertManagerCertOptions(TypedDict, total=False):
 class CertManagerIssuerRef(TypedDict, total=False):
     """Cert-Manager issuerRef properties.
 
-    :ivar group: group of issuer. Required.
+    :ivar group: group of issuer.
     :vartype group: str
     :ivar kind: kind of issuer (Issuer or ClusterIssuer). Required. Known values are: "Issuer" and
      "ClusterIssuer".
@@ -1681,8 +1681,8 @@ class CertManagerIssuerRef(TypedDict, total=False):
     :vartype name: str
     """
 
-    group: Required[str]
-    """group of issuer. Required."""
+    group: str
+    """group of issuer."""
     kind: Required[Union[str, "CertManagerIssuerKind"]]
     """kind of issuer (Issuer or ClusterIssuer). Required. Known values are: \"Issuer\" and
      \"ClusterIssuer\"."""
@@ -1696,9 +1696,9 @@ class CertManagerPrivateKey(TypedDict, total=False):
     :ivar algorithm: algorithm for private key. Required. Known values are: "Ec256", "Ec384",
      "Ec521", "Ed25519", "Rsa2048", "Rsa4096", and "Rsa8192".
     :vartype algorithm: Union[str, "PrivateKeyAlgorithm"]
-    :ivar rotation_policy: cert-manager private key rotationPolicy. Required. Known values are:
+    :ivar rotationPolicy: cert-manager private key rotationPolicy. Required. Known values are:
      "Always" and "Never".
-    :vartype rotation_policy: Union[str, "PrivateKeyRotationPolicy"]
+    :vartype rotationPolicy: Union[str, "PrivateKeyRotationPolicy"]
     """
 
     algorithm: Required[Union[str, "PrivateKeyAlgorithm"]]
@@ -1711,19 +1711,19 @@ class CertManagerPrivateKey(TypedDict, total=False):
 class ClientConfig(TypedDict, total=False):
     """The settings of Client Config.
 
-    :ivar max_session_expiry_seconds: Upper bound of Session Expiry Interval, in seconds.
-    :vartype max_session_expiry_seconds: int
-    :ivar max_message_expiry_seconds: Upper bound of Message Expiry Interval, in seconds.
-    :vartype max_message_expiry_seconds: int
-    :ivar max_packet_size_bytes: Max message size for a packet in Bytes.
-    :vartype max_packet_size_bytes: int
-    :ivar subscriber_queue_limit: The limit on the number of queued messages for a subscriber.
-    :vartype subscriber_queue_limit: "SubscriberQueueLimit"
-    :ivar max_receive_maximum: Upper bound of Receive Maximum that a client can request in the
+    :ivar maxSessionExpirySeconds: Upper bound of Session Expiry Interval, in seconds.
+    :vartype maxSessionExpirySeconds: int
+    :ivar maxMessageExpirySeconds: Upper bound of Message Expiry Interval, in seconds.
+    :vartype maxMessageExpirySeconds: int
+    :ivar maxPacketSizeBytes: Max message size for a packet in Bytes.
+    :vartype maxPacketSizeBytes: int
+    :ivar subscriberQueueLimit: The limit on the number of queued messages for a subscriber.
+    :vartype subscriberQueueLimit: "SubscriberQueueLimit"
+    :ivar maxReceiveMaximum: Upper bound of Receive Maximum that a client can request in the
      CONNECT packet.
-    :vartype max_receive_maximum: int
-    :ivar max_keep_alive_seconds: Upper bound of a client's Keep Alive, in seconds.
-    :vartype max_keep_alive_seconds: int
+    :vartype maxReceiveMaximum: int
+    :ivar maxKeepAliveSeconds: Upper bound of a client's Keep Alive, in seconds.
+    :vartype maxKeepAliveSeconds: int
     """
 
     maxSessionExpirySeconds: int
@@ -1747,9 +1747,9 @@ class DataflowBuiltInTransformationDataset(TypedDict, total=False):
     :vartype key: str
     :ivar description: A user provided optional description of the dataset.
     :vartype description: str
-    :ivar schema_ref: The reference to the schema that describes the dataset. Allowed: JSON
+    :ivar schemaRef: The reference to the schema that describes the dataset. Allowed: JSON
      Schema/draft-7.
-    :vartype schema_ref: str
+    :vartype schemaRef: str
     :ivar inputs: List of fields for enriching from the Broker State Store. Required.
     :vartype inputs: list[str]
     :ivar expression: Condition to enrich data from Broker State Store. Example: $1 < 0 || $1 > $2
@@ -1831,11 +1831,11 @@ class DataflowBuiltInTransformationMap(TypedDict, total=False):
 class DataflowBuiltInTransformationSettings(TypedDict, total=False):
     """Dataflow BuiltIn Transformation properties.
 
-    :ivar serialization_format: Serialization format. Optional; defaults to JSON. Allowed value
-     JSON Schema/draft-7, Parquet. Default: Json. Known values are: "Delta", "Json", and "Parquet".
-    :vartype serialization_format: Union[str, "TransformationSerializationFormat"]
-    :ivar schema_ref: Reference to the schema that describes the output of the transformation.
-    :vartype schema_ref: str
+    :ivar serializationFormat: Serialization format. Optional; defaults to JSON. Allowed value JSON
+     Schema/draft-7, Parquet. Default: Json. Known values are: "Delta", "Json", and "Parquet".
+    :vartype serializationFormat: Union[str, "TransformationSerializationFormat"]
+    :ivar schemaRef: Reference to the schema that describes the output of the transformation.
+    :vartype schemaRef: str
     :ivar datasets: Enrich data from Broker State Store. Dataset references a key in Broker State
      Store.
     :vartype datasets: list["DataflowBuiltInTransformationDataset"]
@@ -1861,8 +1861,8 @@ class DataflowBuiltInTransformationSettings(TypedDict, total=False):
 class DataflowDestinationAddIfNotPresentHeaderAction(TypedDict, total=False):  # pylint: disable=name-too-long
     """Dataflow Destination Add if not present HeaderAction properties.
 
-    :ivar action_type: The type of header operation to perform. Required. Add if not present type.
-    :vartype action_type: Literal[DataflowHeaderActionType.ADD_IF_NOT_PRESENT]
+    :ivar actionType: The type of header operation to perform. Required. Add if not present type.
+    :vartype actionType: Literal[DataflowHeaderActionType.ADD_IF_NOT_PRESENT]
     :ivar key: The name of the header to add. Required.
     :vartype key: str
     :ivar value: The value of the header to add. Required.
@@ -1880,8 +1880,8 @@ class DataflowDestinationAddIfNotPresentHeaderAction(TypedDict, total=False):  #
 class DataflowDestinationAddOrReplaceHeaderAction(TypedDict, total=False):  # pylint: disable=name-too-long
     """Dataflow Destination Add or Replace HeaderAction properties.
 
-    :ivar action_type: The type of header operation to perform. Required. Add or Replace type.
-    :vartype action_type: Literal[DataflowHeaderActionType.ADD_OR_REPLACE]
+    :ivar actionType: The type of header operation to perform. Required. Add or Replace type.
+    :vartype actionType: Literal[DataflowHeaderActionType.ADD_OR_REPLACE]
     :ivar key: The name of the header to add or replace. Required.
     :vartype key: str
     :ivar value: The value of the header to add or replace. Required.
@@ -1899,13 +1899,13 @@ class DataflowDestinationAddOrReplaceHeaderAction(TypedDict, total=False):  # py
 class DataflowDestinationOperationSettings(TypedDict, total=False):
     """Dataflow Destination Operation properties.
 
-    :ivar endpoint_ref: Reference to the Endpoint CR. Can be of Broker, Kafka, Fabric, ADLS, ADX
+    :ivar endpointRef: Reference to the Endpoint CR. Can be of Broker, Kafka, Fabric, ADLS, ADX
      type. Required.
-    :vartype endpoint_ref: str
-    :ivar data_destination: Destination location, can be a topic or table name. Supports dynamic
+    :vartype endpointRef: str
+    :ivar dataDestination: Destination location, can be a topic or table name. Supports dynamic
      values with $topic, $systemProperties, $userProperties, $payload, $context, and $subscription.
      Required.
-    :vartype data_destination: str
+    :vartype dataDestination: str
     :ivar headers: Headers for the output data.
     :vartype headers: list["DataflowDestinationHeaderAction"]
     """
@@ -1922,8 +1922,8 @@ class DataflowDestinationOperationSettings(TypedDict, total=False):
 class DataflowDestinationRemoveHeaderAction(TypedDict, total=False):
     """Dataflow Destination Remove HeaderAction properties.
 
-    :ivar action_type: The type of header operation to perform. Required. Remove type.
-    :vartype action_type: Literal[DataflowHeaderActionType.REMOVE]
+    :ivar actionType: The type of header operation to perform. Required. Remove type.
+    :vartype actionType: Literal[DataflowHeaderActionType.REMOVE]
     :ivar key: The name of the header to remove. Required.
     :vartype key: str
     """
@@ -1937,8 +1937,8 @@ class DataflowDestinationRemoveHeaderAction(TypedDict, total=False):
 class DataflowEndpointAuthenticationAccessToken(TypedDict, total=False):  # pylint: disable=name-too-long
     """DataflowEndpoint Authentication Access Token properties.
 
-    :ivar secret_ref: Token secret name. Required.
-    :vartype secret_ref: str
+    :ivar secretRef: Token secret name. Required.
+    :vartype secretRef: str
     """
 
     secretRef: Required[str]
@@ -1952,11 +1952,11 @@ class DataflowEndpointAuthenticationAnonymous(TypedDict, total=False):
 class DataflowEndpointAuthenticationSasl(TypedDict, total=False):
     """DataflowEndpoint Authentication Sasl properties.
 
-    :ivar sasl_type: Type of SASL authentication. Can be PLAIN, SCRAM-SHA-256, or SCRAM-SHA-512.
+    :ivar saslType: Type of SASL authentication. Can be PLAIN, SCRAM-SHA-256, or SCRAM-SHA-512.
      Required. Known values are: "Plain", "ScramSha256", and "ScramSha512".
-    :vartype sasl_type: Union[str, "DataflowEndpointAuthenticationSaslType"]
-    :ivar secret_ref: Token secret name. Required.
-    :vartype secret_ref: str
+    :vartype saslType: Union[str, "DataflowEndpointAuthenticationSaslType"]
+    :ivar secretRef: Token secret name. Required.
+    :vartype secretRef: str
     """
 
     saslType: Required[Union[str, "DataflowEndpointAuthenticationSaslType"]]
@@ -1999,13 +1999,13 @@ class DataflowEndpointAuthenticationUserAssignedManagedIdentity(
 ):  # pylint: disable=name-too-long
     """DataflowEndpoint Authentication UserAssignedManagedIdentity properties.
 
-    :ivar client_id: Client ID for the user-assigned managed identity. Required.
-    :vartype client_id: str
+    :ivar clientId: Client ID for the user-assigned managed identity. Required.
+    :vartype clientId: str
     :ivar scope: Resource identifier (application ID URI) of the resource, affixed with the
      .default suffix.
     :vartype scope: str
-    :ivar tenant_id: Tenant ID. Required.
-    :vartype tenant_id: str
+    :ivar tenantId: Tenant ID. Required.
+    :vartype tenantId: str
     """
 
     clientId: Required[str]
@@ -2019,8 +2019,8 @@ class DataflowEndpointAuthenticationUserAssignedManagedIdentity(
 class DataflowEndpointAuthenticationX509(TypedDict, total=False):
     """DataflowEndpoint Authentication X509 properties.
 
-    :ivar secret_ref: Secret reference of the X.509 certificate. Required.
-    :vartype secret_ref: str
+    :ivar secretRef: Secret reference of the X.509 certificate. Required.
+    :vartype secretRef: str
     """
 
     secretRef: Required[str]
@@ -2036,7 +2036,8 @@ class DataflowEndpointDataExplorer(TypedDict, total=False):
     :ivar database: Database name. Required.
     :vartype database: str
     :ivar host: Host of the Azure Data Explorer in the form of <cluster>.<region>.kusto.windows.net
-     . Required.
+     (Azure Public) or <cluster>.<region>.kusto.usgovcloudapi.net (Azure US Government). This will
+     be validated by the regex ``.*\\.*\\.kusto\\.(windows\\.net|usgovcloudapi\\.net)``. Required.
     :vartype host: str
     :ivar batching: Azure Data Explorer endpoint batching configuration.
     :vartype batching: "BatchingConfiguration"
@@ -2048,7 +2049,9 @@ class DataflowEndpointDataExplorer(TypedDict, total=False):
     database: Required[str]
     """Database name. Required."""
     host: Required[str]
-    """Host of the Azure Data Explorer in the form of <cluster>.<region>.kusto.windows.net . Required."""
+    """Host of the Azure Data Explorer in the form of <cluster>.<region>.kusto.windows.net (Azure
+     Public) or <cluster>.<region>.kusto.usgovcloudapi.net (Azure US Government). This will be
+     validated by the regex ``.*\\.*\\.kusto\\.(windows\\.net|usgovcloudapi\\.net)``. Required."""
     batching: "BatchingConfiguration"
     """Azure Data Explorer endpoint batching configuration."""
 
@@ -2060,12 +2063,11 @@ class DataflowEndpointDataExplorerAuthentication(TypedDict, total=False):  # pyl
     :ivar method: Mode of Authentication. Required. Known values are:
      "SystemAssignedManagedIdentity" and "UserAssignedManagedIdentity".
     :vartype method: Union[str, "DataExplorerAuthMethod"]
-    :ivar system_assigned_managed_identity_settings: System-assigned managed identity
-     authentication.
-    :vartype system_assigned_managed_identity_settings:
+    :ivar systemAssignedManagedIdentitySettings: System-assigned managed identity authentication.
+    :vartype systemAssignedManagedIdentitySettings:
      "DataflowEndpointAuthenticationSystemAssignedManagedIdentity"
-    :ivar user_assigned_managed_identity_settings: User-assigned managed identity authentication.
-    :vartype user_assigned_managed_identity_settings:
+    :ivar userAssignedManagedIdentitySettings: User-assigned managed identity authentication.
+    :vartype userAssignedManagedIdentitySettings:
      "DataflowEndpointAuthenticationUserAssignedManagedIdentity"
     """
 
@@ -2084,8 +2086,9 @@ class DataflowEndpointDataLakeStorage(TypedDict, total=False):
     :ivar authentication: Authentication configuration. NOTE - only authentication property is
      allowed per entry. Required.
     :vartype authentication: "DataflowEndpointDataLakeStorageAuthentication"
-    :ivar host: Host of the Azure Data Lake in the form of <account>.blob.core.windows.net .
-     Required.
+    :ivar host: Host of the Azure Data Lake in the form of <account>.blob.core.windows.net (Azure
+     Public) or <account>.blob.core.usgovcloudapi.net (Azure US Government). This will be validated
+     by the regex ``.*\\.blob\\.core\\.(windows\\.net|usgovcloudapi\\.net)``. Required.
     :vartype host: str
     :ivar batching: Azure Data Lake endpoint batching configuration.
     :vartype batching: "BatchingConfiguration"
@@ -2095,7 +2098,9 @@ class DataflowEndpointDataLakeStorage(TypedDict, total=False):
     """Authentication configuration. NOTE - only authentication property is allowed per entry.
      Required."""
     host: Required[str]
-    """Host of the Azure Data Lake in the form of <account>.blob.core.windows.net . Required."""
+    """Host of the Azure Data Lake in the form of <account>.blob.core.windows.net (Azure Public) or
+     <account>.blob.core.usgovcloudapi.net (Azure US Government). This will be validated by the
+     regex ``.*\\.blob\\.core\\.(windows\\.net|usgovcloudapi\\.net)``. Required."""
     batching: "BatchingConfiguration"
     """Azure Data Lake endpoint batching configuration."""
 
@@ -2107,14 +2112,13 @@ class DataflowEndpointDataLakeStorageAuthentication(TypedDict, total=False):  # 
     :ivar method: Mode of Authentication. Required. Known values are:
      "SystemAssignedManagedIdentity", "UserAssignedManagedIdentity", and "AccessToken".
     :vartype method: Union[str, "DataLakeStorageAuthMethod"]
-    :ivar access_token_settings: SAS token authentication.
-    :vartype access_token_settings: "DataflowEndpointAuthenticationAccessToken"
-    :ivar system_assigned_managed_identity_settings: System-assigned managed identity
-     authentication.
-    :vartype system_assigned_managed_identity_settings:
+    :ivar accessTokenSettings: SAS token authentication.
+    :vartype accessTokenSettings: "DataflowEndpointAuthenticationAccessToken"
+    :ivar systemAssignedManagedIdentitySettings: System-assigned managed identity authentication.
+    :vartype systemAssignedManagedIdentitySettings:
      "DataflowEndpointAuthenticationSystemAssignedManagedIdentity"
-    :ivar user_assigned_managed_identity_settings: User-assigned managed identity authentication.
-    :vartype user_assigned_managed_identity_settings:
+    :ivar userAssignedManagedIdentitySettings: User-assigned managed identity authentication.
+    :vartype userAssignedManagedIdentitySettings:
      "DataflowEndpointAuthenticationUserAssignedManagedIdentity"
     """
 
@@ -2137,11 +2141,12 @@ class DataflowEndpointFabricOneLake(TypedDict, total=False):
     :vartype authentication: "DataflowEndpointFabricOneLakeAuthentication"
     :ivar names: Names of the workspace and lakehouse. Required.
     :vartype names: "DataflowEndpointFabricOneLakeNames"
-    :ivar one_lake_path_type: Type of location of the data in the workspace. Can be either tables
-     or files. Required. Known values are: "Files" and "Tables".
-    :vartype one_lake_path_type: Union[str, "DataflowEndpointFabricPathType"]
-    :ivar host: Host of the Microsoft Fabric in the form of https://<host>.fabric.microsoft.com.
-     Required.
+    :ivar oneLakePathType: Type of location of the data in the workspace. Can be either tables or
+     files. Required. Known values are: "Files" and "Tables".
+    :vartype oneLakePathType: Union[str, "DataflowEndpointFabricPathType"]
+    :ivar host: Host of the Microsoft Fabric in the form of https://<host>.fabric.microsoft.com
+     (Azure Public) or https://<host>.fabric.microsoft.us (Azure US Government). This will be
+     validated by the regex ``.*\\.fabric\\.microsoft\\.(com|us)``. Required.
     :vartype host: str
     :ivar batching: Batching configuration.
     :vartype batching: "BatchingConfiguration"
@@ -2156,7 +2161,9 @@ class DataflowEndpointFabricOneLake(TypedDict, total=False):
     """Type of location of the data in the workspace. Can be either tables or files. Required. Known
      values are: \"Files\" and \"Tables\"."""
     host: Required[str]
-    """Host of the Microsoft Fabric in the form of https://<host>.fabric.microsoft.com. Required."""
+    """Host of the Microsoft Fabric in the form of https://<host>.fabric.microsoft.com (Azure Public)
+     or https://<host>.fabric.microsoft.us (Azure US Government). This will be validated by the
+     regex ``.*\\.fabric\\.microsoft\\.(com|us)``. Required."""
     batching: "BatchingConfiguration"
     """Batching configuration."""
 
@@ -2168,12 +2175,11 @@ class DataflowEndpointFabricOneLakeAuthentication(TypedDict, total=False):  # py
     :ivar method: Mode of Authentication. Required. Known values are:
      "SystemAssignedManagedIdentity" and "UserAssignedManagedIdentity".
     :vartype method: Union[str, "FabricOneLakeAuthMethod"]
-    :ivar system_assigned_managed_identity_settings: System-assigned managed identity
-     authentication.
-    :vartype system_assigned_managed_identity_settings:
+    :ivar systemAssignedManagedIdentitySettings: System-assigned managed identity authentication.
+    :vartype systemAssignedManagedIdentitySettings:
      "DataflowEndpointAuthenticationSystemAssignedManagedIdentity"
-    :ivar user_assigned_managed_identity_settings: User-assigned managed identity authentication.
-    :vartype user_assigned_managed_identity_settings:
+    :ivar userAssignedManagedIdentitySettings: User-assigned managed identity authentication.
+    :vartype userAssignedManagedIdentitySettings:
      "DataflowEndpointAuthenticationUserAssignedManagedIdentity"
     """
 
@@ -2189,10 +2195,10 @@ class DataflowEndpointFabricOneLakeAuthentication(TypedDict, total=False):  # py
 class DataflowEndpointFabricOneLakeNames(TypedDict, total=False):
     """Microsoft Fabric endpoint Names properties.
 
-    :ivar lakehouse_name: Lakehouse name. Required.
-    :vartype lakehouse_name: str
-    :ivar workspace_name: Workspace name. Required.
-    :vartype workspace_name: str
+    :ivar lakehouseName: Lakehouse name. Required.
+    :vartype lakehouseName: str
+    :ivar workspaceName: Workspace name. Required.
+    :vartype workspaceName: str
     """
 
     lakehouseName: Required[str]
@@ -2207,31 +2213,30 @@ class DataflowEndpointKafka(TypedDict, total=False):
     :ivar authentication: Authentication configuration. NOTE - only authentication property is
      allowed per entry. Required.
     :vartype authentication: "DataflowEndpointKafkaAuthentication"
-    :ivar consumer_group_id: Consumer group ID.
-    :vartype consumer_group_id: str
+    :ivar consumerGroupId: Consumer group ID.
+    :vartype consumerGroupId: str
     :ivar host: Kafka endpoint host. Required.
     :vartype host: str
     :ivar batching: Batching configuration.
     :vartype batching: "DataflowEndpointKafkaBatching"
-    :ivar copy_mqtt_properties: Copy Broker properties. No effect if the endpoint is used as a
-     source or if the dataflow doesn't have an Broker source. Known values are: "Enabled" and
-     "Disabled".
-    :vartype copy_mqtt_properties: Union[str, "OperationalMode"]
+    :ivar copyMqttProperties: Copy Broker properties. No effect if the endpoint is used as a source
+     or if the dataflow doesn't have an Broker source. Known values are: "Enabled" and "Disabled".
+    :vartype copyMqttProperties: Union[str, "OperationalMode"]
     :ivar compression: Compression. Can be none, gzip, lz4, or snappy. No effect if the endpoint is
      used as a source. Known values are: "None", "Gzip", "Snappy", and "Lz4".
     :vartype compression: Union[str, "DataflowEndpointKafkaCompression"]
-    :ivar kafka_acks: Kafka acks. Can be all, one, or zero. No effect if the endpoint is used as a
+    :ivar kafkaAcks: Kafka acks. Can be all, one, or zero. No effect if the endpoint is used as a
      source. Known values are: "Zero", "One", and "All".
-    :vartype kafka_acks: Union[str, "DataflowEndpointKafkaAcks"]
-    :ivar partition_strategy: Partition handling strategy. Can be default or static. No effect if
+    :vartype kafkaAcks: Union[str, "DataflowEndpointKafkaAcks"]
+    :ivar partitionStrategy: Partition handling strategy. Can be default or static. No effect if
      the endpoint is used as a source. Known values are: "Default", "Static", "Topic", and
      "Property".
-    :vartype partition_strategy: Union[str, "DataflowEndpointKafkaPartitionStrategy"]
+    :vartype partitionStrategy: Union[str, "DataflowEndpointKafkaPartitionStrategy"]
     :ivar tls: TLS configuration.
     :vartype tls: "TlsProperties"
-    :ivar cloud_event_attributes: Cloud event mapping config. Known values are: "Propagate" and
+    :ivar cloudEventAttributes: Cloud event mapping config. Known values are: "Propagate" and
      "CreateOrRemap".
-    :vartype cloud_event_attributes: Union[str, "CloudEventAttributeType"]
+    :vartype cloudEventAttributes: Union[str, "CloudEventAttributeType"]
     """
 
     authentication: Required["DataflowEndpointKafkaAuthentication"]
@@ -2269,17 +2274,16 @@ class DataflowEndpointKafkaAuthentication(TypedDict, total=False):
      "SystemAssignedManagedIdentity", "UserAssignedManagedIdentity", "Sasl", "X509Certificate", and
      "Anonymous".
     :vartype method: Union[str, "KafkaAuthMethod"]
-    :ivar system_assigned_managed_identity_settings: System-assigned managed identity
-     authentication.
-    :vartype system_assigned_managed_identity_settings:
+    :ivar systemAssignedManagedIdentitySettings: System-assigned managed identity authentication.
+    :vartype systemAssignedManagedIdentitySettings:
      "DataflowEndpointAuthenticationSystemAssignedManagedIdentity"
-    :ivar user_assigned_managed_identity_settings: User-assigned managed identity authentication.
-    :vartype user_assigned_managed_identity_settings:
+    :ivar userAssignedManagedIdentitySettings: User-assigned managed identity authentication.
+    :vartype userAssignedManagedIdentitySettings:
      "DataflowEndpointAuthenticationUserAssignedManagedIdentity"
-    :ivar sasl_settings: SASL authentication.
-    :vartype sasl_settings: "DataflowEndpointAuthenticationSasl"
-    :ivar x509_certificate_settings: X.509 certificate authentication.
-    :vartype x509_certificate_settings: "DataflowEndpointAuthenticationX509"
+    :ivar saslSettings: SASL authentication.
+    :vartype saslSettings: "DataflowEndpointAuthenticationSasl"
+    :ivar x509CertificateSettings: X.509 certificate authentication.
+    :vartype x509CertificateSettings: "DataflowEndpointAuthenticationX509"
     """
 
     method: Required[Union[str, "KafkaAuthMethod"]]
@@ -2300,12 +2304,12 @@ class DataflowEndpointKafkaBatching(TypedDict, total=False):
 
     :ivar mode: Mode for batching. Known values are: "Enabled" and "Disabled".
     :vartype mode: Union[str, "OperationalMode"]
-    :ivar latency_ms: Batching latency in milliseconds.
-    :vartype latency_ms: int
-    :ivar max_bytes: Maximum number of bytes in a batch.
-    :vartype max_bytes: int
-    :ivar max_messages: Maximum number of messages in a batch.
-    :vartype max_messages: int
+    :ivar latencyMs: Batching latency in milliseconds.
+    :vartype latencyMs: int
+    :ivar maxBytes: Maximum number of bytes in a batch.
+    :vartype maxBytes: int
+    :ivar maxMessages: Maximum number of messages in a batch.
+    :vartype maxMessages: int
     """
 
     mode: Union[str, "OperationalMode"]
@@ -2321,8 +2325,8 @@ class DataflowEndpointKafkaBatching(TypedDict, total=False):
 class DataflowEndpointLocalStorage(TypedDict, total=False):
     """Local persistent volume endpoint properties.
 
-    :ivar persistent_volume_claim_ref: Persistent volume claim name. Required.
-    :vartype persistent_volume_claim_ref: str
+    :ivar persistentVolumeClaimRef: Persistent volume claim name. Required.
+    :vartype persistentVolumeClaimRef: str
     """
 
     persistentVolumeClaimRef: Required[str]
@@ -2335,31 +2339,31 @@ class DataflowEndpointMqtt(TypedDict, total=False):
     :ivar authentication: authentication properties. DEFAULT: kubernetes.audience=aio-internal.
      NOTE - Enum field only property is allowed. Required.
     :vartype authentication: "DataflowEndpointMqttAuthentication"
-    :ivar client_id_prefix: Client ID prefix. Client ID generated by the dataflow is <prefix>-TBD.
+    :ivar clientIdPrefix: Client ID prefix. Client ID generated by the dataflow is <prefix>-TBD.
      Optional; no prefix if omitted.
-    :vartype client_id_prefix: str
+    :vartype clientIdPrefix: str
     :ivar host: Host of the Broker in the form of <hostname>:<port>. Optional; connects to Broker
      if omitted.
     :vartype host: str
     :ivar protocol: Enable or disable websockets. Known values are: "Mqtt" and "WebSockets".
     :vartype protocol: Union[str, "BrokerProtocolType"]
-    :ivar keep_alive_seconds: Broker KeepAlive for connection in seconds.
-    :vartype keep_alive_seconds: int
+    :ivar keepAliveSeconds: Broker KeepAlive for connection in seconds.
+    :vartype keepAliveSeconds: int
     :ivar retain: Whether or not to keep the retain setting. Known values are: "Keep" and "Never".
     :vartype retain: Union[str, "MqttRetainType"]
-    :ivar max_inflight_messages: The max number of messages to keep in flight. For subscribe, this
-     is the receive maximum. For publish, this is the maximum number of messages to send before
-     waiting for an ack.
-    :vartype max_inflight_messages: int
+    :ivar maxInflightMessages: The max number of messages to keep in flight. For subscribe, this is
+     the receive maximum. For publish, this is the maximum number of messages to send before waiting
+     for an ack.
+    :vartype maxInflightMessages: int
     :ivar qos: Qos for Broker connection.
     :vartype qos: int
-    :ivar session_expiry_seconds: Session expiry in seconds.
-    :vartype session_expiry_seconds: int
+    :ivar sessionExpirySeconds: Session expiry in seconds.
+    :vartype sessionExpirySeconds: int
     :ivar tls: TLS configuration.
     :vartype tls: "TlsProperties"
-    :ivar cloud_event_attributes: Cloud event mapping config. Known values are: "Propagate" and
+    :ivar cloudEventAttributes: Cloud event mapping config. Known values are: "Propagate" and
      "CreateOrRemap".
-    :vartype cloud_event_attributes: Union[str, "CloudEventAttributeType"]
+    :vartype cloudEventAttributes: Union[str, "CloudEventAttributeType"]
     """
 
     authentication: Required["DataflowEndpointMqttAuthentication"]
@@ -2397,18 +2401,17 @@ class DataflowEndpointMqttAuthentication(TypedDict, total=False):
      "SystemAssignedManagedIdentity", "UserAssignedManagedIdentity", "ServiceAccountToken",
      "X509Certificate", and "Anonymous".
     :vartype method: Union[str, "MqttAuthMethod"]
-    :ivar system_assigned_managed_identity_settings: System-assigned managed identity
-     authentication.
-    :vartype system_assigned_managed_identity_settings:
+    :ivar systemAssignedManagedIdentitySettings: System-assigned managed identity authentication.
+    :vartype systemAssignedManagedIdentitySettings:
      "DataflowEndpointAuthenticationSystemAssignedManagedIdentity"
-    :ivar user_assigned_managed_identity_settings: User-assigned managed identity authentication.
-    :vartype user_assigned_managed_identity_settings:
+    :ivar userAssignedManagedIdentitySettings: User-assigned managed identity authentication.
+    :vartype userAssignedManagedIdentitySettings:
      "DataflowEndpointAuthenticationUserAssignedManagedIdentity"
-    :ivar service_account_token_settings: Kubernetes service account token authentication. Default
+    :ivar serviceAccountTokenSettings: Kubernetes service account token authentication. Default
      audience if not set is aio-internal.
-    :vartype service_account_token_settings: "DataflowEndpointAuthenticationServiceAccountToken"
-    :ivar x509_certificate_settings: X.509 certificate authentication.
-    :vartype x509_certificate_settings: "DataflowEndpointAuthenticationX509"
+    :vartype serviceAccountTokenSettings: "DataflowEndpointAuthenticationServiceAccountToken"
+    :ivar x509CertificateSettings: X.509 certificate authentication.
+    :vartype x509CertificateSettings: "DataflowEndpointAuthenticationX509"
     """
 
     method: Required[Union[str, "MqttAuthMethod"]]
@@ -2452,32 +2455,32 @@ class DataflowEndpointProperties(TypedDict, total=False):
     """DataflowEndpoint Resource properties. NOTE - Only one type of endpoint is supported for one
     Resource.
 
-    :ivar endpoint_type: Endpoint Type. Required. Known values are: "DataExplorer",
+    :ivar endpointType: Endpoint Type. Required. Known values are: "DataExplorer",
      "DataLakeStorage", "FabricOneLake", "Kafka", "LocalStorage", "Mqtt", and "OpenTelemetry".
-    :vartype endpoint_type: Union[str, "EndpointType"]
-    :ivar host_type: The type of the Kafka host. E.g FabricRT, EventGrid. Known values are:
+    :vartype endpointType: Union[str, "EndpointType"]
+    :ivar hostType: The type of the Kafka host. E.g FabricRT, EventGrid. Known values are:
      "FabricRT", "EventGrid", "LocalBroker", "Eventhub", "CustomMqtt", and "CustomKafka".
-    :vartype host_type: Union[str, "DataflowEndpointHostType"]
-    :ivar data_explorer_settings: Azure Data Explorer endpoint.
-    :vartype data_explorer_settings: "DataflowEndpointDataExplorer"
-    :ivar data_lake_storage_settings: Azure Data Lake endpoint.
-    :vartype data_lake_storage_settings: "DataflowEndpointDataLakeStorage"
-    :ivar fabric_one_lake_settings: Microsoft Fabric endpoint.
-    :vartype fabric_one_lake_settings: "DataflowEndpointFabricOneLake"
-    :ivar kafka_settings: Kafka endpoint.
-    :vartype kafka_settings: "DataflowEndpointKafka"
-    :ivar local_storage_settings: Local persistent volume endpoint.
-    :vartype local_storage_settings: "DataflowEndpointLocalStorage"
-    :ivar mqtt_settings: Broker endpoint.
-    :vartype mqtt_settings: "DataflowEndpointMqtt"
-    :ivar open_telemetry_settings: OpenTelemetry endpoint.
-    :vartype open_telemetry_settings: "DataflowEndpointOpenTelemetry"
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :vartype hostType: Union[str, "DataflowEndpointHostType"]
+    :ivar dataExplorerSettings: Azure Data Explorer endpoint.
+    :vartype dataExplorerSettings: "DataflowEndpointDataExplorer"
+    :ivar dataLakeStorageSettings: Azure Data Lake endpoint.
+    :vartype dataLakeStorageSettings: "DataflowEndpointDataLakeStorage"
+    :ivar fabricOneLakeSettings: Microsoft Fabric endpoint.
+    :vartype fabricOneLakeSettings: "DataflowEndpointFabricOneLake"
+    :ivar kafkaSettings: Kafka endpoint.
+    :vartype kafkaSettings: "DataflowEndpointKafka"
+    :ivar localStorageSettings: Local persistent volume endpoint.
+    :vartype localStorageSettings: "DataflowEndpointLocalStorage"
+    :ivar mqttSettings: Broker endpoint.
+    :vartype mqttSettings: "DataflowEndpointMqtt"
+    :ivar openTelemetrySettings: OpenTelemetry endpoint.
+    :vartype openTelemetrySettings: "DataflowEndpointOpenTelemetry"
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: Union[str, "ResourceHealthState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar healthState: The health state of the resource. Known values are: "Available", "Degraded",
+     "Unavailable", and "Unknown".
+    :vartype healthState: Union[str, "ResourceHealthState"]
     """
 
     endpointType: Required[Union[str, "EndpointType"]]
@@ -2519,13 +2522,13 @@ class DataflowEndpointResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "DataflowEndpointProperties"
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Edge location of the resource.
+    :vartype extendedLocation: "ExtendedLocation"
     """
 
     properties: "DataflowEndpointProperties"
@@ -2563,11 +2566,11 @@ class DataflowGraphConnectionOutput(TypedDict, total=False):
 class DataflowGraphConnectionSchemaSettings(TypedDict, total=False):
     """DataflowGraph connection node output schema settings.
 
-    :ivar serialization_format: Output serialization format. Known values are: "Delta", "Json",
+    :ivar serializationFormat: Output serialization format. Known values are: "Delta", "Json",
      "Parquet", and "Avro".
-    :vartype serialization_format: Union[str, "DataflowGraphConnectionSchemaSerializationFormat"]
-    :ivar schema_ref: Reference to the schema that describes the output of the transformation.
-    :vartype schema_ref: str
+    :vartype serializationFormat: Union[str, "DataflowGraphConnectionSchemaSerializationFormat"]
+    :ivar schemaRef: Reference to the schema that describes the output of the transformation.
+    :vartype schemaRef: str
     """
 
     serializationFormat: Union[str, "DataflowGraphConnectionSchemaSerializationFormat"]
@@ -2579,8 +2582,8 @@ class DataflowGraphConnectionSchemaSettings(TypedDict, total=False):
 class DataflowGraphDestinationAddIfNotPresentHeaderAction(TypedDict, total=False):  # pylint: disable=name-too-long
     """DataflowGraph Destination Add if not present HeaderAction properties.
 
-    :ivar action_type: Required. Add if not present type.
-    :vartype action_type: Literal[DataflowGraphDestinationHeaderActionType.ADD_IF_NOT_PRESENT]
+    :ivar actionType: Required. Add if not present type.
+    :vartype actionType: Literal[DataflowGraphDestinationHeaderActionType.ADD_IF_NOT_PRESENT]
     :ivar key: The name of the header to add. Required.
     :vartype key: str
     :ivar value: The value of the header to add. Required.
@@ -2598,8 +2601,8 @@ class DataflowGraphDestinationAddIfNotPresentHeaderAction(TypedDict, total=False
 class DataflowGraphDestinationAddOrReplaceHeaderAction(TypedDict, total=False):  # pylint: disable=name-too-long
     """DataflowGraph Destination Add or Replace HeaderAction properties.
 
-    :ivar action_type: Required. Add or Replace type.
-    :vartype action_type: Literal[DataflowGraphDestinationHeaderActionType.ADD_OR_REPLACE]
+    :ivar actionType: Required. Add or Replace type.
+    :vartype actionType: Literal[DataflowGraphDestinationHeaderActionType.ADD_OR_REPLACE]
     :ivar key: The name of the header to add or replace. Required.
     :vartype key: str
     :ivar value: The value of the header to add or replace. Required.
@@ -2619,10 +2622,10 @@ class DataflowGraphDestinationNode(TypedDict, total=False):
 
     :ivar name: Name of the node. Required.
     :vartype name: str
-    :ivar node_type: Type of the destination node. Required. Dataflow destination node.
-    :vartype node_type: Literal[DataflowGraphNodeType.DESTINATION]
-    :ivar destination_settings: Destination configuration. Required.
-    :vartype destination_settings: "DataflowGraphDestinationNodeSettings"
+    :ivar nodeType: Type of the destination node. Required. Dataflow destination node.
+    :vartype nodeType: Literal[DataflowGraphNodeType.DESTINATION]
+    :ivar destinationSettings: Destination configuration. Required.
+    :vartype destinationSettings: "DataflowGraphDestinationNodeSettings"
     """
 
     name: Required[str]
@@ -2636,12 +2639,14 @@ class DataflowGraphDestinationNode(TypedDict, total=False):
 class DataflowGraphDestinationNodeSettings(TypedDict, total=False):
     """DataflowGraph destination node settings.
 
-    :ivar endpoint_ref: The name of the DataflowEndpoint resource . Required.
-    :vartype endpoint_ref: str
-    :ivar data_destination: Data destination at the endpoint. Required.
-    :vartype data_destination: str
+    :ivar endpointRef: The name of the DataflowEndpoint resource . Required.
+    :vartype endpointRef: str
+    :ivar dataDestination: Data destination at the endpoint. Required.
+    :vartype dataDestination: str
     :ivar headers: Headers for the output data.
     :vartype headers: list["DataflowGraphDestinationHeaderAction"]
+    :ivar outputSchemaSettings: Output schema settings.
+    :vartype outputSchemaSettings: "DataflowGraphDestinationSchemaSettings"
     """
 
     endpointRef: Required[str]
@@ -2650,13 +2655,15 @@ class DataflowGraphDestinationNodeSettings(TypedDict, total=False):
     """Data destination at the endpoint. Required."""
     headers: list["DataflowGraphDestinationHeaderAction"]
     """Headers for the output data."""
+    outputSchemaSettings: "DataflowGraphDestinationSchemaSettings"
+    """Output schema settings."""
 
 
 class DataflowGraphDestinationRemoveHeaderAction(TypedDict, total=False):  # pylint: disable=name-too-long
     """DataflowGraph Destination Remove HeaderAction properties.
 
-    :ivar action_type: Required. Remove type.
-    :vartype action_type: Literal[DataflowGraphDestinationHeaderActionType.REMOVE]
+    :ivar actionType: Required. Remove type.
+    :vartype actionType: Literal[DataflowGraphDestinationHeaderActionType.REMOVE]
     :ivar key: The name of the header to remove. Required.
     :vartype key: str
     """
@@ -2667,15 +2674,31 @@ class DataflowGraphDestinationRemoveHeaderAction(TypedDict, total=False):  # pyl
     """The name of the header to remove. Required."""
 
 
+class DataflowGraphDestinationSchemaSettings(TypedDict, total=False):
+    """DataflowGraph destination node output schema settings.
+
+    :ivar serializationFormat: The format of the output data. Required. Known values are: "Parquet"
+     and "Delta".
+    :vartype serializationFormat: Union[str, "DataflowGraphDestinationSchemaSerializationFormat"]
+    :ivar schemaRef: Reference to the schema that describes the output of the transformation.
+    :vartype schemaRef: str
+    """
+
+    serializationFormat: Required[Union[str, "DataflowGraphDestinationSchemaSerializationFormat"]]
+    """The format of the output data. Required. Known values are: \"Parquet\" and \"Delta\"."""
+    schemaRef: str
+    """Reference to the schema that describes the output of the transformation."""
+
+
 class DataflowGraphGraphNode(TypedDict, total=False):
     """DataflowGraph graph node properties.
 
     :ivar name: Name of the node. Required.
     :vartype name: str
-    :ivar node_type: Type of the graph node. Required. Dataflow graph node.
-    :vartype node_type: Literal[DataflowGraphNodeType.GRAPH]
-    :ivar graph_settings: Graph configuration. Required.
-    :vartype graph_settings: "DataflowGraphNodeGraphSettings"
+    :ivar nodeType: Type of the graph node. Required. Dataflow graph node.
+    :vartype nodeType: Literal[DataflowGraphNodeType.GRAPH]
+    :ivar graphSettings: Graph configuration. Required.
+    :vartype graphSettings: "DataflowGraphNodeGraphSettings"
     """
 
     name: Required[str]
@@ -2711,8 +2734,8 @@ DataflowGraphNodeConnection = TypedDict(
 )
 DataflowGraphNodeConnection.__doc__ = """DataflowGraph DataflowGraphNode Connection.
 
-:ivar from_property: Information about the source node. Required.
-:vartype from_property: "DataflowGraphConnectionInput"
+:ivar from: Information about the source node. Required.
+:vartype from: "DataflowGraphConnectionInput"
 :ivar to: Information about the destination node. Required.
 :vartype to: "DataflowGraphConnectionOutput"
 """
@@ -2721,9 +2744,9 @@ DataflowGraphNodeConnection.__doc__ = """DataflowGraph DataflowGraphNode Connect
 class DataflowGraphNodeGraphSettings(TypedDict, total=False):
     """DataflowGraph graph node settings.
 
-    :ivar registry_endpoint_ref: Reference to the registry endpoint for pulling the artifact.
+    :ivar registryEndpointRef: Reference to the registry endpoint for pulling the artifact.
      Required.
-    :vartype registry_endpoint_ref: str
+    :vartype registryEndpointRef: str
     :ivar artifact: The artifact name and version to pull. This should be in the format
      ``<artifact-name>:<version>``. Required.
     :vartype artifact: str
@@ -2745,21 +2768,21 @@ class DataflowGraphProperties(TypedDict, total=False):
 
     :ivar mode: The mode of the dataflow graph. Known values are: "Enabled" and "Disabled".
     :vartype mode: Union[str, "OperationalMode"]
-    :ivar request_disk_persistence: Disk persistence mode. Known values are: "Enabled" and
+    :ivar requestDiskPersistence: Disk persistence mode. Known values are: "Enabled" and
      "Disabled".
-    :vartype request_disk_persistence: Union[str, "OperationalMode"]
+    :vartype requestDiskPersistence: Union[str, "OperationalMode"]
     :ivar nodes: List of nodes in the dataflow graph. Required.
     :vartype nodes: list["DataflowGraphNode"]
-    :ivar node_connections: List of connections between nodes in the dataflow graph. Required.
-    :vartype node_connections: list["DataflowGraphNodeConnection"]
-    :ivar provisioning_state: The provisioning state of the dataflow graph. Known values are:
+    :ivar nodeConnections: List of connections between nodes in the dataflow graph. Required.
+    :vartype nodeConnections: list["DataflowGraphNodeConnection"]
+    :ivar provisioningState: The provisioning state of the dataflow graph. Known values are:
      "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar status: The status for the dataflow graph.
     :vartype status: "DataflowGraphStatus"
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: Union[str, "ResourceHealthState"]
+    :ivar healthState: The health state of the resource. Known values are: "Available", "Degraded",
+     "Unavailable", and "Unknown".
+    :vartype healthState: Union[str, "ResourceHealthState"]
     """
 
     mode: Union[str, "OperationalMode"]
@@ -2791,13 +2814,13 @@ class DataflowGraphResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "DataflowGraphProperties"
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Edge location of the resource.
+    :vartype extendedLocation: "ExtendedLocation"
     """
 
     properties: "DataflowGraphProperties"
@@ -2811,10 +2834,10 @@ class DataflowGraphSourceNode(TypedDict, total=False):
 
     :ivar name: Name of the node. Required.
     :vartype name: str
-    :ivar node_type: Type of the source node. Required. Dataflow source node.
-    :vartype node_type: Literal[DataflowGraphNodeType.SOURCE]
-    :ivar source_settings: Source configuration. Required.
-    :vartype source_settings: "DataflowGraphSourceSettings"
+    :ivar nodeType: Type of the source node. Required. Dataflow source node.
+    :vartype nodeType: Literal[DataflowGraphNodeType.SOURCE]
+    :ivar sourceSettings: Source configuration. Required.
+    :vartype sourceSettings: "DataflowGraphSourceSettings"
     """
 
     name: Required[str]
@@ -2828,13 +2851,13 @@ class DataflowGraphSourceNode(TypedDict, total=False):
 class DataflowGraphSourceSettings(TypedDict, total=False):
     """DataflowGraph source node settings.
 
-    :ivar endpoint_ref: The endpoint reference for the source. Required.
-    :vartype endpoint_ref: str
-    :ivar data_sources: List of data sources. Required.
-    :vartype data_sources: list[str]
-    :ivar asset_ref: Reference to the resource in Azure Device Registry where the data in the
+    :ivar endpointRef: The endpoint reference for the source. Required.
+    :vartype endpointRef: str
+    :ivar dataSources: List of data sources. Required.
+    :vartype dataSources: list[str]
+    :ivar assetRef: Reference to the resource in Azure Device Registry where the data in the
      endpoint originates from.
-    :vartype asset_ref: str
+    :vartype assetRef: str
     """
 
     endpointRef: Required[str]
@@ -2849,8 +2872,8 @@ class DataflowGraphSourceSettings(TypedDict, total=False):
 class DataflowGraphStatus(TypedDict, total=False):
     """DataflowGraph status.
 
-    :ivar health_state: The health state of the DataflowGraph.
-    :vartype health_state: "ResourceHealthStatus"
+    :ivar healthState: The health state of the DataflowGraph.
+    :vartype healthState: "ResourceHealthStatus"
     """
 
     healthState: "ResourceHealthStatus"
@@ -2862,8 +2885,8 @@ class DataflowOpenTelemetryAnonymousAuthentication(TypedDict, total=False):  # p
 
     :ivar method: The authentication method. Required. Connects anonymously.
     :vartype method: Literal[DataflowOpenTelemetryAuthenticationMethod.ANONYMOUS]
-    :ivar anonymous_settings: Settings for the anonymous connection. Required.
-    :vartype anonymous_settings: "DataflowEndpointAuthenticationAnonymous"
+    :ivar anonymousSettings: Settings for the anonymous connection. Required.
+    :vartype anonymousSettings: "DataflowEndpointAuthenticationAnonymous"
     """
 
     method: Required[Literal[DataflowOpenTelemetryAuthenticationMethod.ANONYMOUS]]
@@ -2877,9 +2900,8 @@ class DataflowOpenTelemetryServiceAccountAuthentication(TypedDict, total=False):
 
     :ivar method: The authentication method. Required. Uses serviceaccount token.
     :vartype method: Literal[DataflowOpenTelemetryAuthenticationMethod.SERVICE_ACCOUNT_TOKEN]
-    :ivar service_account_token_settings: Kubernetes service account token authentication.
-     Required.
-    :vartype service_account_token_settings: "DataflowEndpointAuthenticationServiceAccountToken"
+    :ivar serviceAccountTokenSettings: Kubernetes service account token authentication. Required.
+    :vartype serviceAccountTokenSettings: "DataflowEndpointAuthenticationServiceAccountToken"
     """
 
     method: Required[Literal[DataflowOpenTelemetryAuthenticationMethod.SERVICE_ACCOUNT_TOKEN]]
@@ -2893,8 +2915,8 @@ class DataflowOpenTelemetryX509CertificateAuthentication(TypedDict, total=False)
 
     :ivar method: The authentication method. Required. Uses x509 certificate.
     :vartype method: Literal[DataflowOpenTelemetryAuthenticationMethod.X509_CERTIFICATE]
-    :ivar x509_certificate_settings: X.509 certificate authentication settings. Required.
-    :vartype x509_certificate_settings: "DataflowEndpointAuthenticationX509"
+    :ivar x509CertificateSettings: X.509 certificate authentication settings. Required.
+    :vartype x509CertificateSettings: "DataflowEndpointAuthenticationX509"
     """
 
     method: Required[Literal[DataflowOpenTelemetryAuthenticationMethod.X509_CERTIFICATE]]
@@ -2906,17 +2928,17 @@ class DataflowOpenTelemetryX509CertificateAuthentication(TypedDict, total=False)
 class DataflowOperation(TypedDict, total=False):
     """Dataflow Operation properties. NOTE - One only method is allowed to be used for one entry.
 
-    :ivar operation_type: Type of operation. Required. Known values are: "Source", "Destination",
+    :ivar operationType: Type of operation. Required. Known values are: "Source", "Destination",
      and "BuiltInTransformation".
-    :vartype operation_type: Union[str, "OperationType"]
+    :vartype operationType: Union[str, "OperationType"]
     :ivar name: Optional user provided name of the transformation.
     :vartype name: str
-    :ivar source_settings: Source configuration.
-    :vartype source_settings: "DataflowSourceOperationSettings"
-    :ivar built_in_transformation_settings: Built In Transformation configuration.
-    :vartype built_in_transformation_settings: "DataflowBuiltInTransformationSettings"
-    :ivar destination_settings: Destination configuration.
-    :vartype destination_settings: "DataflowDestinationOperationSettings"
+    :ivar sourceSettings: Source configuration.
+    :vartype sourceSettings: "DataflowSourceOperationSettings"
+    :ivar builtInTransformationSettings: Built In Transformation configuration.
+    :vartype builtInTransformationSettings: "DataflowBuiltInTransformationSettings"
+    :ivar destinationSettings: Destination configuration.
+    :vartype destinationSettings: "DataflowDestinationOperationSettings"
     """
 
     operationType: Required[Union[str, "OperationType"]]
@@ -2937,17 +2959,17 @@ class DataflowProfileProperties(TypedDict, total=False):
 
     :ivar diagnostics: Spec defines the desired identities of NBC diagnostics settings.
     :vartype diagnostics: "ProfileDiagnostics"
-    :ivar instance_count: To manually scale the dataflow profile, specify the maximum number of
+    :ivar instanceCount: To manually scale the dataflow profile, specify the maximum number of
      instances you want to run.
-    :vartype instance_count: int
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :vartype instanceCount: int
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar status: The status for the dataflow profile.
     :vartype status: "DataflowProfileStatus"
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: Union[str, "ResourceHealthState"]
+    :ivar healthState: The health state of the resource. Known values are: "Available", "Degraded",
+     "Unavailable", and "Unknown".
+    :vartype healthState: Union[str, "ResourceHealthState"]
     """
 
     diagnostics: "ProfileDiagnostics"
@@ -2976,13 +2998,13 @@ class DataflowProfileResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "DataflowProfileProperties"
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Edge location of the resource.
+    :vartype extendedLocation: "ExtendedLocation"
     """
 
     properties: "DataflowProfileProperties"
@@ -2994,8 +3016,8 @@ class DataflowProfileResource(ProxyResource):
 class DataflowProfileStatus(TypedDict, total=False):
     """DataflowProfile status.
 
-    :ivar health_state: The health state of the DataflowProfile.
-    :vartype health_state: "ResourceHealthStatus"
+    :ivar healthState: The health state of the DataflowProfile.
+    :vartype healthState: "ResourceHealthStatus"
     """
 
     healthState: "ResourceHealthStatus"
@@ -3008,20 +3030,20 @@ class DataflowProperties(TypedDict, total=False):
     :ivar mode: Mode for Dataflow. Optional; defaults to Enabled. Known values are: "Enabled" and
      "Disabled".
     :vartype mode: Union[str, "OperationalMode"]
-    :ivar request_disk_persistence: Disk persistence mode. Known values are: "Enabled" and
+    :ivar requestDiskPersistence: Disk persistence mode. Known values are: "Enabled" and
      "Disabled".
-    :vartype request_disk_persistence: Union[str, "OperationalMode"]
+    :vartype requestDiskPersistence: Union[str, "OperationalMode"]
     :ivar operations: List of operations including source and destination references as well as
      transformation. Required.
     :vartype operations: list["DataflowOperation"]
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar status: The status for the dataflow.
     :vartype status: "DataflowStatus"
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: Union[str, "ResourceHealthState"]
+    :ivar healthState: The health state of the resource. Known values are: "Available", "Degraded",
+     "Unavailable", and "Unknown".
+    :vartype healthState: Union[str, "ResourceHealthState"]
     """
 
     mode: Union[str, "OperationalMode"]
@@ -3053,13 +3075,13 @@ class DataflowResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "DataflowProperties"
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Edge location of the resource.
+    :vartype extendedLocation: "ExtendedLocation"
     """
 
     properties: "DataflowProperties"
@@ -3071,20 +3093,20 @@ class DataflowResource(ProxyResource):
 class DataflowSourceOperationSettings(TypedDict, total=False):
     """Dataflow Source Operation properties.
 
-    :ivar endpoint_ref: Reference to the Dataflow Endpoint resource. Can only be of Broker and
-     Kafka type. Required.
-    :vartype endpoint_ref: str
-    :ivar asset_ref: Reference to the resource in Azure Device Registry where the data in the
+    :ivar endpointRef: Reference to the Dataflow Endpoint resource. Can only be of Broker and Kafka
+     type. Required.
+    :vartype endpointRef: str
+    :ivar assetRef: Reference to the resource in Azure Device Registry where the data in the
      endpoint originates from.
-    :vartype asset_ref: str
-    :ivar serialization_format: Content is a JSON Schema. Allowed: JSON Schema/draft-7. "Json"
-    :vartype serialization_format: Union[str, "SourceSerializationFormat"]
-    :ivar schema_ref: Schema CR reference. Data will be deserialized according to the schema, and
+    :vartype assetRef: str
+    :ivar serializationFormat: Content is a JSON Schema. Allowed: JSON Schema/draft-7. "Json"
+    :vartype serializationFormat: Union[str, "SourceSerializationFormat"]
+    :ivar schemaRef: Schema CR reference. Data will be deserialized according to the schema, and
      dropped if it doesn't match.
-    :vartype schema_ref: str
-    :ivar data_sources: List of source locations. Can be Broker or Kafka topics. Supports wildcards
+    :vartype schemaRef: str
+    :ivar dataSources: List of source locations. Can be Broker or Kafka topics. Supports wildcards
      # and +. Required.
-    :vartype data_sources: list[str]
+    :vartype dataSources: list[str]
     """
 
     endpointRef: Required[str]
@@ -3104,8 +3126,8 @@ class DataflowSourceOperationSettings(TypedDict, total=False):
 class DataflowStatus(TypedDict, total=False):
     """DataflowStatus status.
 
-    :ivar health_state: The health state of the Dataflow.
-    :vartype health_state: "ResourceHealthStatus"
+    :ivar healthState: The health state of the Dataflow.
+    :vartype healthState: "ResourceHealthStatus"
     """
 
     healthState: "ResourceHealthStatus"
@@ -3126,22 +3148,22 @@ class DiagnosticsLogs(TypedDict, total=False):
 class DiskBackedMessageBuffer(TypedDict, total=False):
     """DiskBackedMessageBuffer properties.
 
-    :ivar max_size: The max size of the message buffer on disk. If a PVC template is specified
-     using one of ephemeralVolumeClaimSpec or persistentVolumeClaimSpec, then this size is used as
-     the request and limit sizes of that template. If neither ephemeralVolumeClaimSpec nor
+    :ivar maxSize: The max size of the message buffer on disk. If a PVC template is specified using
+     one of ephemeralVolumeClaimSpec or persistentVolumeClaimSpec, then this size is used as the
+     request and limit sizes of that template. If neither ephemeralVolumeClaimSpec nor
      persistentVolumeClaimSpec are specified, then an emptyDir volume is mounted with this size as
      its limit. See `https://kubernetes.io/docs/concepts/storage/volumes/#emptydir
      <https://kubernetes.io/docs/concepts/storage/volumes/#emptydir>`_ for details. Required.
-    :vartype max_size: str
-    :ivar ephemeral_volume_claim_spec: Use the specified persistent volume claim template to mount
-     a "generic ephemeral volume" for the message buffer. See
+    :vartype maxSize: str
+    :ivar ephemeralVolumeClaimSpec: Use the specified persistent volume claim template to mount a
+     "generic ephemeral volume" for the message buffer. See
      `https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes
      <https://kubernetes.io/docs/concepts/storage/ephemeral-volumes/#generic-ephemeral-volumes>`_
      for details.
-    :vartype ephemeral_volume_claim_spec: "VolumeClaimSpec"
-    :ivar persistent_volume_claim_spec: Use the specified persistent volume claim template to mount
-     a persistent volume for the message buffer.
-    :vartype persistent_volume_claim_spec: "VolumeClaimSpec"
+    :vartype ephemeralVolumeClaimSpec: "VolumeClaimSpec"
+    :ivar persistentVolumeClaimSpec: Use the specified persistent volume claim template to mount a
+     persistent volume for the message buffer.
+    :vartype persistentVolumeClaimSpec: "VolumeClaimSpec"
     """
 
     maxSize: Required[str]
@@ -3241,24 +3263,23 @@ class InstanceProperties(TypedDict, total=False):
 
     :ivar description: Detailed description of the Instance.
     :vartype description: str
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar version: The Azure IoT Operations version.
     :vartype version: str
-    :ivar schema_registry_ref: The reference to the Schema Registry for this AIO Instance.
-     Required.
-    :vartype schema_registry_ref: "SchemaRegistryRef"
-    :ivar default_secret_provider_class_ref: The reference to the AIO Secret provider class.
-    :vartype default_secret_provider_class_ref: "SecretProviderClassRef"
+    :ivar schemaRegistryRef: The reference to the Schema Registry for this AIO Instance. Required.
+    :vartype schemaRegistryRef: "SchemaRegistryRef"
+    :ivar defaultSecretProviderClassRef: The reference to the AIO Secret provider class.
+    :vartype defaultSecretProviderClassRef: "SecretProviderClassRef"
     :ivar features: The features of the AIO Instance.
     :vartype features: dict[str, "InstanceFeature"]
-    :ivar adr_namespace_ref: The Azure Device Registry Namespace used by Assets, Discovered Assets
+    :ivar adrNamespaceRef: The Azure Device Registry Namespace used by Assets, Discovered Assets
      and devices.
-    :vartype adr_namespace_ref: "AzureDeviceRegistryNamespaceRef"
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: Union[str, "ResourceHealthState"]
+    :vartype adrNamespaceRef: "AzureDeviceRegistryNamespaceRef"
+    :ivar healthState: The health state of the resource. Known values are: "Available", "Degraded",
+     "Unavailable", and "Unknown".
+    :vartype healthState: Union[str, "ResourceHealthState"]
     """
 
     description: str
@@ -3292,9 +3313,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -3318,19 +3339,21 @@ class InstanceResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "InstanceProperties"
-    :ivar extended_location: Edge location of the resource. Required.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Edge location of the resource. Required.
+    :vartype extendedLocation: "ExtendedLocation"
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: "ManagedServiceIdentity"
+    :ivar sku: The billing SKU for the AIO Instance. Defaults to Standard.
+    :vartype sku: "InstanceSku"
     """
 
     properties: "InstanceProperties"
@@ -3339,15 +3362,30 @@ class InstanceResource(TrackedResource):
     """Edge location of the resource. Required."""
     identity: "ManagedServiceIdentity"
     """The managed service identities assigned to this resource."""
+    sku: "InstanceSku"
+    """The billing SKU for the AIO Instance. Defaults to Standard."""
+
+
+class InstanceSku(TypedDict, total=False):
+    """The billing SKU for an AIO Instance.
+
+    :ivar name: The name of the SKU. Determines the billing meter applied to this instance.
+     Required. Known values are: "Essentials" and "Standard".
+    :vartype name: Union[str, "InstanceSkuName"]
+    """
+
+    name: Required[Union[str, "InstanceSkuName"]]
+    """The name of the SKU. Determines the billing meter applied to this instance. Required. Known
+     values are: \"Essentials\" and \"Standard\"."""
 
 
 class KubernetesReference(TypedDict, total=False):
     """Kubernetes reference.
 
-    :ivar api_group: APIGroup is the group for the resource being referenced. If APIGroup is not
+    :ivar apiGroup: APIGroup is the group for the resource being referenced. If APIGroup is not
      specified, the specified Kind must be in the core API group. For any other third-party types,
      APIGroup is required.
-    :vartype api_group: str
+    :vartype apiGroup: str
     :ivar kind: Kind is the type of resource being referenced. Required.
     :vartype kind: str
     :ivar name: Name is the name of resource being referenced. Required.
@@ -3373,15 +3411,15 @@ class KubernetesReference(TypedDict, total=False):
 class ListenerPort(TypedDict, total=False):
     """Defines a TCP port on which a ``BrokerListener`` listens.
 
-    :ivar authentication_ref: Reference to client authentication settings. Omit to disable
+    :ivar authenticationRef: Reference to client authentication settings. Omit to disable
      authentication.
-    :vartype authentication_ref: str
-    :ivar authorization_ref: Reference to client authorization settings. Omit to disable
+    :vartype authenticationRef: str
+    :ivar authorizationRef: Reference to client authorization settings. Omit to disable
      authorization.
-    :vartype authorization_ref: str
-    :ivar node_port: Kubernetes node port. Only relevant when this port is associated with a
+    :vartype authorizationRef: str
+    :ivar nodePort: Kubernetes node port. Only relevant when this port is associated with a
      ``NodePort`` listener.
-    :vartype node_port: int
+    :vartype nodePort: int
     :ivar port: TCP port for accepting client connections. Required.
     :vartype port: int
     :ivar protocol: Protocol to use for client connections. Known values are: "Mqtt" and
@@ -3408,10 +3446,10 @@ class ListenerPort(TypedDict, total=False):
 class LocalKubernetesReference(TypedDict, total=False):
     """Kubernetes reference.
 
-    :ivar api_group: APIGroup is the group for the resource being referenced. If APIGroup is not
+    :ivar apiGroup: APIGroup is the group for the resource being referenced. If APIGroup is not
      specified, the specified Kind must be in the core API group. For any other third-party types,
      APIGroup is required.
-    :vartype api_group: str
+    :vartype apiGroup: str
     :ivar kind: Kind is the type of resource being referenced. Required.
     :vartype kind: str
     :ivar name: Name is the name of resource being referenced. Required.
@@ -3431,17 +3469,17 @@ class LocalKubernetesReference(TypedDict, total=False):
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -3460,8 +3498,8 @@ class ManagedServiceIdentity(TypedDict, total=False):
 class Metrics(TypedDict, total=False):
     """Diagnostic Metrics properties.
 
-    :ivar prometheus_port: The prometheus port to expose the metrics.
-    :vartype prometheus_port: int
+    :ivar prometheusPort: The prometheus port to expose the metrics.
+    :vartype prometheusPort: int
     """
 
     prometheusPort: int
@@ -3475,9 +3513,9 @@ class PrincipalDefinition(TypedDict, total=False):
      attributes are case-sensitive and must match the attributes provided by the clients during
      authentication.
     :vartype attributes: list[dict[str, str]]
-    :ivar client_ids: A list of client IDs that match the clients. The client IDs are
-     case-sensitive and must match the client IDs provided by the clients during connection.
-    :vartype client_ids: list[str]
+    :ivar clientIds: A list of client IDs that match the clients. The client IDs are case-sensitive
+     and must match the client IDs provided by the clients during connection.
+    :vartype clientIds: list[str]
     :ivar usernames: A list of usernames that match the clients. The usernames are case-sensitive
      and must match the usernames provided by the clients during authentication.
     :vartype usernames: list[str]
@@ -3514,8 +3552,8 @@ class RegistryEndpointAnonymousAuthentication(TypedDict, total=False):
 
     :ivar method: The authentication method. Required. Anonymous Option.
     :vartype method: Literal[RegistryEndpointAuthenticationMethod.ANONYMOUS]
-    :ivar anonymous_settings: Anonymous authentication properties. Required.
-    :vartype anonymous_settings: "RegistryEndpointAnonymousSettings"
+    :ivar anonymousSettings: Anonymous authentication properties. Required.
+    :vartype anonymousSettings: "RegistryEndpointAnonymousSettings"
     """
 
     method: Required[Literal[RegistryEndpointAuthenticationMethod.ANONYMOUS]]
@@ -3533,8 +3571,8 @@ class RegistryEndpointArtifactPullSecretAuthentication(TypedDict, total=False): 
 
     :ivar method: The authentication method. Required. Artifact Pull Secret authentication.
     :vartype method: Literal[RegistryEndpointAuthenticationMethod.ARTIFACT_PULL_SECRET]
-    :ivar artifact_pull_secret_settings: Artifact Pull Secret authentication properties. Required.
-    :vartype artifact_pull_secret_settings: "RegistryEndpointArtifactPullSecretSettings"
+    :ivar artifactPullSecretSettings: Artifact Pull Secret authentication properties. Required.
+    :vartype artifactPullSecretSettings: "RegistryEndpointArtifactPullSecretSettings"
     """
 
     method: Required[Literal[RegistryEndpointAuthenticationMethod.ARTIFACT_PULL_SECRET]]
@@ -3546,9 +3584,9 @@ class RegistryEndpointArtifactPullSecretAuthentication(TypedDict, total=False): 
 class RegistryEndpointArtifactPullSecretSettings(TypedDict, total=False):  # pylint: disable=name-too-long
     """RegistryEndpoint Artifact Pull Secret authentication properties.
 
-    :ivar secret_ref: The name of the kubernetes secret that contains the artifact pull secret.
+    :ivar secretRef: The name of the kubernetes secret that contains the artifact pull secret.
      Required.
-    :vartype secret_ref: str
+    :vartype secretRef: str
     """
 
     secretRef: Required[str]
@@ -3562,15 +3600,15 @@ class RegistryEndpointProperties(TypedDict, total=False):
     :vartype host: str
     :ivar authentication: The authentication settings for the Azure Container Registry. Required.
     :vartype authentication: "RegistryEndpointAuthentication"
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar health_state: The health state of the resource. Known values are: "Available",
-     "Degraded", "Unavailable", and "Unknown".
-    :vartype health_state: Union[str, "ResourceHealthState"]
-    :ivar code_signing_cas: The signing certificate authorities used by artifacts in the registry
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar healthState: The health state of the resource. Known values are: "Available", "Degraded",
+     "Unavailable", and "Unknown".
+    :vartype healthState: Union[str, "ResourceHealthState"]
+    :ivar codeSigningCas: The signing certificate authorities used by artifacts in the registry
      endpoint.
-    :vartype code_signing_cas: list["RegistryEndpointTrustedSigningKey"]
+    :vartype codeSigningCas: list["RegistryEndpointTrustedSigningKey"]
     """
 
     host: Required[str]
@@ -3598,13 +3636,13 @@ class RegistryEndpointResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "RegistryEndpointProperties"
-    :ivar extended_location: Edge location of the resource.
-    :vartype extended_location: "ExtendedLocation"
+    :ivar extendedLocation: Edge location of the resource.
+    :vartype extendedLocation: "ExtendedLocation"
     """
 
     properties: "RegistryEndpointProperties"
@@ -3618,9 +3656,9 @@ class RegistryEndpointSystemAssignedIdentityAuthentication(TypedDict, total=Fals
 
     :ivar method: The authentication method. Required. SystemAssignedManagedIdentity type.
     :vartype method: Literal[RegistryEndpointAuthenticationMethod.SYSTEM_ASSIGNED_MANAGED_IDENTITY]
-    :ivar system_assigned_managed_identity_settings: System assigned managed identity properties.
+    :ivar systemAssignedManagedIdentitySettings: System assigned managed identity properties.
      Required.
-    :vartype system_assigned_managed_identity_settings:
+    :vartype systemAssignedManagedIdentitySettings:
      "RegistryEndpointSystemAssignedManagedIdentitySettings"
     """
 
@@ -3649,8 +3687,8 @@ class RegistryEndpointTrustedSigningKeyConfigMap(TypedDict, total=False):  # pyl
     :ivar type: The trust type for the registry endpoint. Required. Trust settings stored in a
      Kubernetes ConfigMap.
     :vartype type: Literal[RegistryEndpointTrustedSigningKeyType.CONFIG_MAP]
-    :ivar config_map_ref: The name of the configmap. Required.
-    :vartype config_map_ref: str
+    :ivar configMapRef: The name of the configmap. Required.
+    :vartype configMapRef: str
     """
 
     type: Required[Literal[RegistryEndpointTrustedSigningKeyType.CONFIG_MAP]]
@@ -3666,8 +3704,8 @@ class RegistryEndpointTrustedSigningKeySecret(TypedDict, total=False):
     :ivar type: The trust type for the registry endpoint. Required. Trust settings stored in a
      Kubernetes Secret.
     :vartype type: Literal[RegistryEndpointTrustedSigningKeyType.SECRET]
-    :ivar secret_ref: The name of the secret. Required.
-    :vartype secret_ref: str
+    :ivar secretRef: The name of the secret. Required.
+    :vartype secretRef: str
     """
 
     type: Required[Literal[RegistryEndpointTrustedSigningKeyType.SECRET]]
@@ -3682,9 +3720,8 @@ class RegistryEndpointUserAssignedIdentityAuthentication(TypedDict, total=False)
 
     :ivar method: The authentication method. Required. UserAssignedManagedIdentity type.
     :vartype method: Literal[RegistryEndpointAuthenticationMethod.USER_ASSIGNED_MANAGED_IDENTITY]
-    :ivar user_assigned_managed_identity_settings: User assigned managed identity properties.
-     Required.
-    :vartype user_assigned_managed_identity_settings:
+    :ivar userAssignedManagedIdentitySettings: User assigned managed identity properties. Required.
+    :vartype userAssignedManagedIdentitySettings:
      "RegistryEndpointUserAssignedManagedIdentitySettings"
     """
 
@@ -3697,13 +3734,13 @@ class RegistryEndpointUserAssignedIdentityAuthentication(TypedDict, total=False)
 class RegistryEndpointUserAssignedManagedIdentitySettings(TypedDict, total=False):  # pylint: disable=name-too-long
     """User assigned managed identity properties.
 
-    :ivar client_id: Client ID for the user-assigned managed identity. Required.
-    :vartype client_id: str
+    :ivar clientId: Client ID for the user-assigned managed identity. Required.
+    :vartype clientId: str
     :ivar scope: Resource identifier (application ID URI) of the resource, affixed with the
      .default suffix.
     :vartype scope: str
-    :ivar tenant_id: Tenant ID. Required.
-    :vartype tenant_id: str
+    :ivar tenantId: Tenant ID. Required.
+    :vartype tenantId: str
     """
 
     clientId: Required[str]
@@ -3720,16 +3757,16 @@ class ResourceHealthStatus(TypedDict, total=False):
     :ivar status: The high-level health status of the resource. Known values are: "Available",
      "Degraded", "Unavailable", and "Unknown".
     :vartype status: Union[str, "ResourceHealthState"]
-    :ivar last_transition_time: The timestamp (RFC3339) when the health status last changed.
-    :vartype last_transition_time: str
-    :ivar last_update_time: The timestamp (RFC3339) when the health status was last updated, even
-     if the status did not change.
-    :vartype last_update_time: str
+    :ivar lastTransitionTime: The timestamp (RFC3339) when the health status last changed.
+    :vartype lastTransitionTime: str
+    :ivar lastUpdateTime: The timestamp (RFC3339) when the health status was last updated, even if
+     the status did not change.
+    :vartype lastUpdateTime: str
     :ivar message: A human-readable message describing the last transition.
     :vartype message: str
-    :ivar reason_code: Unique, CamelCase reason code describing the cause of the last health state
+    :ivar reasonCode: Unique, CamelCase reason code describing the cause of the last health state
      transition.
-    :vartype reason_code: str
+    :vartype reasonCode: str
     """
 
     status: Union[str, "ResourceHealthState"]
@@ -3764,8 +3801,8 @@ class SanForCert(TypedDict, total=False):
 class SchemaRegistryRef(TypedDict, total=False):
     """The reference to the Schema Registry for this AIO Instance.
 
-    :ivar resource_id: The resource ID of the Schema Registry. Required.
-    :vartype resource_id: str
+    :ivar resourceId: The resource ID of the Schema Registry. Required.
+    :vartype resourceId: str
     """
 
     resourceId: Required[str]
@@ -3775,8 +3812,8 @@ class SchemaRegistryRef(TypedDict, total=False):
 class SecretProviderClassRef(TypedDict, total=False):
     """The reference to the AIO Secret provider class.
 
-    :ivar resource_id: The resource ID of the AIO Secret provider class. Required.
-    :vartype resource_id: str
+    :ivar resourceId: The resource ID of the AIO Secret provider class. Required.
+    :vartype resourceId: str
     """
 
     resourceId: Required[str]
@@ -3789,10 +3826,10 @@ class SelfCheck(TypedDict, total=False):
     :ivar mode: The toggle to enable/disable self check. Known values are: "Enabled" and
      "Disabled".
     :vartype mode: Union[str, "OperationalMode"]
-    :ivar interval_seconds: The self check interval.
-    :vartype interval_seconds: int
-    :ivar timeout_seconds: The timeout for self check.
-    :vartype timeout_seconds: int
+    :ivar intervalSeconds: The self check interval.
+    :vartype intervalSeconds: int
+    :ivar timeoutSeconds: The timeout for self check.
+    :vartype timeoutSeconds: int
     """
 
     mode: Union[str, "OperationalMode"]
@@ -3809,8 +3846,8 @@ class SelfTracing(TypedDict, total=False):
     :ivar mode: The toggle to enable/disable self tracing. Known values are: "Enabled" and
      "Disabled".
     :vartype mode: Union[str, "OperationalMode"]
-    :ivar interval_seconds: The self tracing interval.
-    :vartype interval_seconds: int
+    :ivar intervalSeconds: The self tracing interval.
+    :vartype intervalSeconds: int
     """
 
     mode: Union[str, "OperationalMode"]
@@ -3822,13 +3859,13 @@ class SelfTracing(TypedDict, total=False):
 class StateStoreResourceRule(TypedDict, total=False):
     """State Store Resource Rule properties.
 
-    :ivar key_type: Allowed keyTypes pattern, string, binary. The key type used for matching, for
+    :ivar keyType: Allowed keyTypes pattern, string, binary. The key type used for matching, for
      example pattern tries to match the key to a glob-style pattern and string checks key is equal
      to value provided in keys. Required. Known values are: "Pattern", "String", and "Binary".
-    :vartype key_type: Union[str, "StateStoreResourceKeyTypes"]
-    :ivar keys_property: Give access to state store keys for the corresponding principals defined.
-     When key type is pattern set glob-style pattern (e.g., '*', 'clients/*'). Required.
-    :vartype keys_property: list[str]
+    :vartype keyType: Union[str, "StateStoreResourceKeyTypes"]
+    :ivar keys: Give access to state store keys for the corresponding principals defined. When key
+     type is pattern set glob-style pattern (e.g., '*', 'clients/*'). Required.
+    :vartype keys: list[str]
     :ivar method: Give access for ``Read``, ``Write`` and ``ReadWrite`` access level. Required.
      Known values are: "Read", "Write", and "ReadWrite".
     :vartype method: Union[str, "StateStoreResourceDefinitionMethods"]
@@ -3866,20 +3903,20 @@ class SubscriberQueueLimit(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -3904,9 +3941,9 @@ class TlsCertMethod(TypedDict, total=False):
     :ivar mode: Mode of TLS server certificate management. Required. Known values are: "Automatic"
      and "Manual".
     :vartype mode: Union[str, "TlsCertMethodMode"]
-    :ivar cert_manager_certificate_spec: Option 1 - Automatic TLS server certificate management
-     with cert-manager.
-    :vartype cert_manager_certificate_spec: "CertManagerCertificateSpec"
+    :ivar certManagerCertificateSpec: Option 1 - Automatic TLS server certificate management with
+     cert-manager.
+    :vartype certManagerCertificateSpec: "CertManagerCertificateSpec"
     :ivar manual: Option 2 - Manual TLS server certificate management through a defined secret.
     :vartype manual: "X509ManualCertificate"
     """
@@ -3925,8 +3962,8 @@ class TlsProperties(TypedDict, total=False):
 
     :ivar mode: Mode for TLS. Known values are: "Enabled" and "Disabled".
     :vartype mode: Union[str, "OperationalMode"]
-    :ivar trusted_ca_certificate_config_map_ref: Trusted CA certificate config map.
-    :vartype trusted_ca_certificate_config_map_ref: str
+    :ivar trustedCaCertificateConfigMapRef: Trusted CA certificate config map.
+    :vartype trustedCaCertificateConfigMapRef: str
     """
 
     mode: Union[str, "OperationalMode"]
@@ -3940,12 +3977,12 @@ class Traces(TypedDict, total=False):
 
     :ivar mode: The toggle to enable/disable traces. Known values are: "Enabled" and "Disabled".
     :vartype mode: Union[str, "OperationalMode"]
-    :ivar cache_size_megabytes: The cache size in megabytes.
-    :vartype cache_size_megabytes: int
-    :ivar self_tracing: The self tracing properties.
-    :vartype self_tracing: "SelfTracing"
-    :ivar span_channel_capacity: The span channel capacity.
-    :vartype span_channel_capacity: int
+    :ivar cacheSizeMegabytes: The cache size in megabytes.
+    :vartype cacheSizeMegabytes: int
+    :ivar selfTracing: The self tracing properties.
+    :vartype selfTracing: "SelfTracing"
+    :ivar spanChannelCapacity: The span channel capacity.
+    :vartype spanChannelCapacity: int
     """
 
     mode: Union[str, "OperationalMode"]
@@ -3961,10 +3998,10 @@ class Traces(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -4029,28 +4066,28 @@ class VolumeClaimResourceRequirementsClaims(TypedDict, total=False):
 class VolumeClaimSpec(TypedDict, total=False):
     """VolumeClaimSpec properties.
 
-    :ivar volume_name: VolumeName is the binding reference to the PersistentVolume backing this
+    :ivar volumeName: VolumeName is the binding reference to the PersistentVolume backing this
      claim.
-    :vartype volume_name: str
-    :ivar volume_mode: volumeMode defines what type of volume is required by the claim. Value of
+    :vartype volumeName: str
+    :ivar volumeMode: volumeMode defines what type of volume is required by the claim. Value of
      Filesystem is implied when not included in claim spec. This is a beta feature.
-    :vartype volume_mode: str
-    :ivar storage_class_name: Name of the StorageClass required by the claim. More info:
+    :vartype volumeMode: str
+    :ivar storageClassName: Name of the StorageClass required by the claim. More info:
      `https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1
      <https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1>`_.
-    :vartype storage_class_name: str
-    :ivar access_modes: AccessModes contains the desired access modes the volume should have. More
+    :vartype storageClassName: str
+    :ivar accessModes: AccessModes contains the desired access modes the volume should have. More
      info: `https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1
      <https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1>`_.
-    :vartype access_modes: list[str]
-    :ivar data_source: This field can be used to specify either: * An existing VolumeSnapshot
-     object (snapshot.storage.k8s.io/VolumeSnapshot) * An existing PVC (PersistentVolumeClaim) If
-     the provisioner or an external controller can support the specified data source, it will create
-     a new volume based on the contents of the specified data source. If the AnyVolumeDataSource
+    :vartype accessModes: list[str]
+    :ivar dataSource: This field can be used to specify either: * An existing VolumeSnapshot object
+     (snapshot.storage.k8s.io/VolumeSnapshot) * An existing PVC (PersistentVolumeClaim) If the
+     provisioner or an external controller can support the specified data source, it will create a
+     new volume based on the contents of the specified data source. If the AnyVolumeDataSource
      feature gate is enabled, this field will always have the same contents as the DataSourceRef
      field.
-    :vartype data_source: "LocalKubernetesReference"
-    :ivar data_source_ref: Specifies the object from which to populate the volume with data, if a
+    :vartype dataSource: "LocalKubernetesReference"
+    :ivar dataSourceRef: Specifies the object from which to populate the volume with data, if a
      non-empty volume is desired. This may be any local object from a non-empty API group (non core
      object) or a PersistentVolumeClaim object. When this field is specified, volume binding will
      only succeed if the type of the specified object matches some installed volume populator or
@@ -4063,7 +4100,7 @@ class VolumeClaimSpec(TypedDict, total=False):
      DataSource ignores disallowed values (dropping them), DataSourceRef preserves all values, and
      generates an error if a disallowed value is specified. (Beta) Using this field requires the
      AnyVolumeDataSource feature gate to be enabled.
-    :vartype data_source_ref: "KubernetesReference"
+    :vartype dataSourceRef: "KubernetesReference"
     :ivar resources: Resources represents the minimum resources the volume should have. If
      RecoverVolumeExpansionFailure feature is enabled users are allowed to specify resource
      requirements that are lower than previous value but must still be higher than capacity recorded
@@ -4123,13 +4160,13 @@ class VolumeClaimSpec(TypedDict, total=False):
 class VolumeClaimSpecSelector(TypedDict, total=False):
     """VolumeClaimSpecSelector properties.
 
-    :ivar match_expressions: MatchExpressions is a list of label selector requirements. The
+    :ivar matchExpressions: MatchExpressions is a list of label selector requirements. The
      requirements are ANDed.
-    :vartype match_expressions: list["VolumeClaimSpecSelectorMatchExpressions"]
-    :ivar match_labels: MatchLabels is a map of {key,value} pairs. A single {key,value} in the
+    :vartype matchExpressions: list["VolumeClaimSpecSelectorMatchExpressions"]
+    :ivar matchLabels: MatchLabels is a map of {key,value} pairs. A single {key,value} in the
      matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the
      operator is "In", and the values array contains only "value". The requirements are ANDed.
-    :vartype match_labels: dict[str, str]
+    :vartype matchLabels: dict[str, str]
     """
 
     matchExpressions: list["VolumeClaimSpecSelectorMatchExpressions"]
@@ -4149,10 +4186,10 @@ class VolumeClaimSpecSelectorMatchExpressions(TypedDict, total=False):
      are In, NotIn, Exists and DoesNotExist. Required. Known values are: "In", "NotIn", "Exists",
      and "DoesNotExist".
     :vartype operator: Union[str, "OperatorValues"]
-    :ivar values_property: values is an array of string values. If the operator is In or NotIn, the
-     values array must be non-empty. If the operator is Exists or DoesNotExist, the values array
-     must be empty. This array is replaced during a strategic merge patch.
-    :vartype values_property: list[str]
+    :ivar values: values is an array of string values. If the operator is In or NotIn, the values
+     array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be
+     empty. This array is replaced during a strategic merge patch.
+    :vartype values: list[str]
     """
 
     key: Required[str]
@@ -4170,9 +4207,9 @@ class VolumeClaimSpecSelectorMatchExpressions(TypedDict, total=False):
 class X509ManualCertificate(TypedDict, total=False):
     """X509 Certificate Authentication properties.
 
-    :ivar secret_ref: Kubernetes secret containing an X.509 client certificate. This is a reference
+    :ivar secretRef: Kubernetes secret containing an X.509 client certificate. This is a reference
      to the secret through an identifying name, not the secret itself. Required.
-    :vartype secret_ref: str
+    :vartype secretRef: str
     """
 
     secretRef: Required[str]
