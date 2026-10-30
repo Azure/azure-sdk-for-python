@@ -58,6 +58,6 @@ def test_canonical_members_remain_string_backed_and_case_insensitive(name, value
 def test_request_builder_preserves_explicit_header_without_enum_coercion(value):
     request = generated.build_sessions_get_request(session_id="session_test", foundry_features=value, api_version="v1")
     assert request.method == "GET"
-    assert request.url == "/fine_tuning/sessions/session_test?api-version=v1"
+    assert request.url == "/fine_tuning_sessions/session_test?api-version=v1"
     assert request.headers["Foundry-Features"] == value
     assert request.headers["Accept"] == "application/json"

@@ -23,6 +23,7 @@ from azure.ai.finetuningsessions._exceptions import (
     OperationResultUnavailableError,
     RequestRetryableError,
     RequestValidationError,
+    SubscriptionNotAuthorizedError,
     TrainingEngineError,
     _classify_http_error,
     _classify_poll_failure,
@@ -47,6 +48,7 @@ class TestHierarchy:
             RequestRetryableError,
             ContentionError,
             RequestValidationError,
+            SubscriptionNotAuthorizedError,
         ],
     )
     def test_all_typed_inherit_from_base(self, cls: type) -> None:
@@ -54,7 +56,14 @@ class TestHierarchy:
 
     @pytest.mark.parametrize(
         "cls",
-        [BatchTooLargeError, NoCapacityError, TrainingEngineError, ContentionError, RequestValidationError],
+        [
+            BatchTooLargeError,
+            NoCapacityError,
+            TrainingEngineError,
+            ContentionError,
+            RequestValidationError,
+            SubscriptionNotAuthorizedError,
+        ],
     )
     def test_all_typed_catchable_as_http_response_error(self, cls: type) -> None:
         """Existing ``except HttpResponseError`` handlers still catch these."""
@@ -65,6 +74,32 @@ class TestHierarchy:
 # _classify_http_error
 # ---------------------------------------------------------------------------
 class TestClassifyHttpError:
+    def test_403_subscription_not_authorized(self) -> None:
+        body = {
+            "detail": {
+                "type": "authorization_error",
+                "field": "azure_subscription_id",
+                "message": "Azure subscription is not authorized to use this service",
+            }
+        }
+
+        exc = _classify_http_error(403, body)
+
+        assert isinstance(exc, SubscriptionNotAuthorizedError)
+        assert exc.field == "azure_subscription_id"
+        assert exc.error_code == "subscription_not_authorized"
+
+    def test_403_other_authorization_error_falls_through(self) -> None:
+        body = {
+            "detail": {
+                "type": "authorization_error",
+                "field": "base_model",
+                "message": "Model is not authorized",
+            }
+        }
+
+        assert _classify_http_error(403, body) is None
+
     def test_413_batch_too_large_structured(self) -> None:
         body = {
             "detail": {
@@ -431,6 +466,30 @@ class TestClassifyPollFailure:
         assert exc.operation_completed is False
         assert exc.error_code == "operation_failed_result_unavailable"
         assert exc.debug_ref == "payload-ref"
+
+    @pytest.mark.parametrize(
+        "code,reason,expected",
+        [
+            ("operation_completed_result_unavailable", "invalid_model_output", "invalid_model_output"),
+            ("operation_completed_result_unavailable", None, None),
+            ("operation_completed_result_unavailable", "redis_payload_missing", None),
+            ("operation_completed_result_unavailable", True, None),
+            ("operation_failed_result_unavailable", "invalid_model_output", None),
+        ],
+    )
+    def test_only_explicit_completed_model_failure_is_classified(self, code, reason, expected):
+        exc = _classify_poll_failure(
+            {
+                "status": "failed",
+                "error": "Result unavailable",
+                "error_code": code,
+                "result_unavailable_reason": reason,
+                "should_retry": True,
+            }
+        )
+        assert isinstance(exc, OperationResultUnavailableError)
+        assert exc.result_unavailable_reason == expected
+        assert exc.error_code == code
 
     def test_unknown_code_returns_none(self) -> None:
         envelope = {"status": "failed", "error": "something", "error_code": "new_code_2027"}

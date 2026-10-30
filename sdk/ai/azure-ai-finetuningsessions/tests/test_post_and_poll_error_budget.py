@@ -347,7 +347,8 @@ def test_non_retryable_failure_is_not_resubmitted(clock):
     assert sess._client.post_count == 1
 
 
-def test_engine_dead_surfaces_as_a_typed_error_not_runtime_error(clock):
+@pytest.mark.parametrize("retry_flag", [None, False, True])
+def test_engine_dead_surfaces_as_a_typed_error_not_runtime_error(clock, retry_flag):
     """End-to-end through the poller, not just the classifier.
 
     The orphan sweep fails requests for a lease-expired model with
@@ -366,6 +367,8 @@ def test_engine_dead_surfaces_as_a_typed_error_not_runtime_error(clock):
                 "error": "Model 'model_x' failed because its engine died.",
                 "error_code": "engine_dead",
                 "debug_ref": "cafebabe9876",
+                "should_retry": retry_flag,
+                "retry_after_sec": 1,
             },
         )
     ]
@@ -376,8 +379,9 @@ def test_engine_dead_surfaces_as_a_typed_error_not_runtime_error(clock):
 
     assert exc_info.value.error_code == "engine_dead"
     assert exc_info.value.debug_ref == "cafebabe9876"
-    # The weights are gone — resubmitting cannot succeed, so the poller must
-    # not treat this as the retryable contract and re-POST.
+    assert "continual fine-tuning (CFT)" in str(exc_info.value)
+    # Recovery initializes a new session from a checkpoint, not a re-POST on
+    # the interrupted session, even when the retry hint is malformed.
     assert sess._client.post_count == 1
 
 

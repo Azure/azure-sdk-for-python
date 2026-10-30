@@ -25,7 +25,8 @@ Customers should branch on exception type rather than grepping message strings:
         # Wait e.retry_after_sec, or switch project
         ...
     except TrainingEngineError as e:
-        # Stop the run — model weights are lost
+        # For engine_dead/worker_crashed, resume from a completed checkpoint (CFT).
+        # For HTTP engine_oom, follow the smaller-batch guidance instead.
         ...
 
 Each exception carries structured metadata extracted from the server's response
@@ -55,6 +56,46 @@ class FineTuningSessionsError(HttpResponseError):
 
     def __init__(self, message: str, *, response: Any = None, **kwargs: Any) -> None:
         super().__init__(message=message, response=response, **kwargs)
+
+
+class MalformedResponseError(FineTuningSessionsError):
+    """The service returned a successful response without required fields.
+
+    :keyword request_id: A known accepted protected training request, if available.
+        Reconcile this request rather than replaying the submission.
+    :paramtype request_id: str or None
+    """
+
+    def __init__(self, message: str, *, request_id: Optional[str] = None, **kwargs: Any) -> None:
+        super().__init__(message, **kwargs)
+        self.request_id = request_id
+
+
+class TextOnlyTrainingChunkError(FineTuningSessionsError):
+    """Protected multi-chunk training failed without replaying any chunk.
+
+    ``request_ids`` contains known accepted requests, including completed ones.
+    A failed submission may have committed without returning its ID. Reconcile
+    these outcomes before an optimizer step; never replay the logical batch.
+
+    :param request_ids: Known accepted request IDs in submission order.
+    :type request_ids: list[str]
+    :param chunk_index: Zero-based index of the failed chunk.
+    :type chunk_index: int
+    :param phase: Whether submission or polling failed.
+    :type phase: str
+    """
+
+    def __init__(self, request_ids: list[str], chunk_index: int, phase: str) -> None:
+        super().__init__(
+            f"Protected training chunk {chunk_index + 1} failed during {phase}. "
+            "Some chunks may have accumulated gradients; the failed submission "
+            "may have committed without returning an ID. Reconcile request_ids "
+            "before an optimizer step. Do not replay the logical batch."
+        )
+        self.request_ids = list(request_ids)
+        self.chunk_index = chunk_index
+        self.phase = phase
 
 
 class BatchTooLargeError(FineTuningSessionsError):
@@ -137,12 +178,52 @@ class RateLimitedError(NoCapacityError):
     """
 
 
-class TrainingEngineError(FineTuningSessionsError):
-    """The engine serving this session has died.
+_TRAINING_RECOVERY_MESSAGE = (
+    "The training engine stopped, interrupting this run. You can resume the run "
+    "using continual fine-tuning (CFT): create a new session from your latest "
+    "completed training checkpoint. If no training checkpoint is available, "
+    "restart the run from the base model. Progress after the checkpoint is not "
+    "restored. Do not retry training operations on the interrupted session."
+)
 
-    Action: stop the training run, alert on-call. LoRA weights in VRAM are
-    lost. Do NOT retry on the same session — create a new one (optionally
-    from the last checkpoint).
+
+def _training_recovery_message(message: str, error_code: Optional[str]) -> str:
+    """Add CFT guidance only when the response establishes trainer loss.
+
+    :param str message: Original service error message.
+    :param str error_code: Optional service error classification.
+    :return: Original message or actionable trainer-interruption guidance.
+    :rtype: str
+    """
+    normalized = " ".join(message.lower().split())
+    if any(phrase in normalized for phrase in ("weights are lost", "weights lost", "weights are gone")):
+        return _TRAINING_RECOVERY_MESSAGE
+    legacy_engine_death = error_code is None and any(
+        phrase in normalized for phrase in ("engine died", "engine has died", "engine is dead", "engine crashed")
+    )
+    if error_code not in ("engine_dead", "worker_crashed") and not legacy_engine_death:
+        return message
+    if "continual fine-tuning (CFT)" in message:
+        return message
+    return f"{message.rstrip()} {_TRAINING_RECOVERY_MESSAGE}"
+
+
+class TrainingEngineError(FineTuningSessionsError):
+    """An engine error affecting training on this session.
+
+    For terminal ``engine_dead``/``worker_crashed`` errors or legacy trainer-loss
+    messages, resume with continual fine-tuning (CFT) in a new session created
+    from a completed training checkpoint. The sync SDK provides
+    ``FineTuningSession.create_from_checkpoint``; the async SDK accepts
+    ``from_checkpoint`` in ``create_session``. Restore the recipe's dataset
+    cursor separately. Progress after the checkpoint is not restored. Without
+    a training checkpoint, restart from the base model. Do not retry training
+    operations on the interrupted session.
+
+    HTTP compatibility also uses this exception for ``engine_oom`` and
+    ``engine_timeout``. These codes do not by themselves establish a terminal
+    interruption. Follow the service's message; for OOM, reduce the batch size
+    or sequence length as advised.
 
     Attributes:
         session_id: The session that was being served.
@@ -172,9 +253,21 @@ class TrainingEngineError(FineTuningSessionsError):
         **kwargs: Any,
     ) -> None:
         super().__init__(message, response=response, **kwargs)
+        # Azure Core can replace the supplied message with an OData error.
+        # Normalize after initialization so legacy HTTP responses are covered.
+        self.message = _training_recovery_message(self.message, error_code)
+        self.args = (self.message,)
         self.session_id = session_id
         self.error_code = error_code
         self.debug_ref = debug_ref
+
+    def __str__(self) -> str:
+        """Return the message without appending the legacy response body.
+
+        :return: Actionable training failure description.
+        :rtype: str
+        """
+        return self.message
 
 
 class OperationResultUnavailableError(FineTuningSessionsError):
@@ -190,6 +283,10 @@ class OperationResultUnavailableError(FineTuningSessionsError):
             as completed before its result payload became unavailable.
         error_code: Server error code identifying the payload-loss outcome.
         debug_ref: Opaque reference for support tickets.
+        result_unavailable_reason: ``"invalid_model_output"`` only when the server
+            confirms intact protected sampling evidence contains an invalid
+            completion. Missing evidence, provenance and service failures are
+            not model-output failures.
 
     Additional keyword arguments are forwarded to the base exception.
 
@@ -200,6 +297,8 @@ class OperationResultUnavailableError(FineTuningSessionsError):
     :type error_code: str or None
     :keyword debug_ref: Opaque reference for support tickets, if provided.
     :type debug_ref: str or None
+    :keyword result_unavailable_reason: Safe protected sampling failure classification, if provided.
+    :type result_unavailable_reason: str or None
     :keyword ~typing.Any response: HTTP response associated with the error, if available.
     """
 
@@ -210,6 +309,7 @@ class OperationResultUnavailableError(FineTuningSessionsError):
         operation_completed: bool,
         error_code: Optional[str] = None,
         debug_ref: Optional[str] = None,
+        result_unavailable_reason: Optional[str] = None,
         response: Any = None,
         **kwargs: Any,
     ) -> None:
@@ -217,6 +317,7 @@ class OperationResultUnavailableError(FineTuningSessionsError):
         self.operation_completed = operation_completed
         self.error_code = error_code
         self.debug_ref = debug_ref
+        self.result_unavailable_reason = result_unavailable_reason
 
 
 class ContentionError(FineTuningSessionsError):
@@ -265,8 +366,9 @@ class RequestRetryableError(FineTuningSessionsError):
     flag; the SDK does not gate on specific error codes.
 
     The SDK's ``_post_and_poll`` catches this and resubmits automatically
-    (bounded retries). It is only surfaced to the caller once retries are
-    exhausted.
+    (bounded retries) for token-native operations. Reference-based text-only
+    training surfaces it immediately without automatically re-POSTing gradients.
+    Other operations surface it once retries are exhausted.
 
     Attributes:
         error_code: Server error code, if provided (e.g. ``"request_orphaned"``,
@@ -341,6 +443,34 @@ class RequestValidationError(FineTuningSessionsError):
         self.debug_ref = debug_ref
 
 
+class SubscriptionNotAuthorizedError(FineTuningSessionsError):
+    """The Azure subscription is not authorized to create a training session.
+
+    Action: ask the service administrator to enable the subscription, then
+    create a new session.
+
+    :param str message: Error message.
+    :keyword field: Field that failed authorization.
+    :type field: str or None
+    :keyword error_code: Stable SDK error code.
+    :type error_code: str or None
+    :keyword ~typing.Any response: HTTP response associated with the error, if available.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        field: Optional[str] = None,
+        error_code: Optional[str] = None,
+        response: Any = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(message, response=response, **kwargs)
+        self.field = field
+        self.error_code = error_code
+
+
 def _classify_http_error(
     status_code: int,
     body: Any,
@@ -367,6 +497,19 @@ def _classify_http_error(
     # pylint: disable=too-many-return-statements,too-many-branches,too-many-statements
     if not isinstance(body, dict):
         body = {}
+
+    # --- HTTP 403: Subscription is not enabled for training ---
+    if status_code == 403:
+        detail = body.get("detail") if isinstance(body.get("detail"), dict) else None
+        effective = detail or body
+        if effective.get("type") == "authorization_error" and effective.get("field") == "azure_subscription_id":
+            return SubscriptionNotAuthorizedError(
+                effective.get("message") or "Azure subscription is not authorized to use this service",
+                field="azure_subscription_id",
+                error_code="subscription_not_authorized",
+                response=response,
+            )
+        return None
 
     # --- HTTP 413: Batch too large ---
     if status_code == 413:
@@ -456,7 +599,7 @@ def _classify_http_error(
                 response=response,
             )
 
-        if error_code in ("worker_crashed", "engine_oom", "engine_timeout"):
+        if error_code in ("worker_crashed", "engine_oom", "engine_timeout", "engine_dead"):
             return TrainingEngineError(
                 msg,
                 session_id=session_id,
@@ -603,6 +746,22 @@ def _classify_poll_failure(
             operation_completed=(error_code == "operation_completed_result_unavailable"),
             error_code=error_code,
             debug_ref=debug_ref,
+            result_unavailable_reason=(
+                "invalid_model_output"
+                if error_code == "operation_completed_result_unavailable"
+                and envelope.get("result_unavailable_reason") == "invalid_model_output"
+                else None
+            ),
+        )
+
+    # Terminal engine state wins over a malformed retry hint. CFT restores a
+    # checkpoint into a new session, not a replay on the interrupted session.
+    if error_code == "engine_dead":
+        return TrainingEngineError(
+            error_msg,
+            session_id=session_id,
+            error_code=error_code,
+            debug_ref=debug_ref,
         )
 
     # Retryable-by-design failures. A generic, code-agnostic mechanism: when
@@ -632,7 +791,7 @@ def _classify_poll_failure(
             response=None,
         )
 
-    if error_code in ("worker_crashed", "engine_timeout", "engine_dead"):
+    if error_code in ("worker_crashed", "engine_timeout"):
         return TrainingEngineError(
             error_msg,
             session_id=session_id,
@@ -664,6 +823,7 @@ MalformedDatumError = RequestValidationError
 
 __all__ = [
     "FineTuningSessionsError",
+    "MalformedResponseError",
     "BatchTooLargeError",
     "NoCapacityError",
     "RateLimitedError",
@@ -672,5 +832,6 @@ __all__ = [
     "OperationResultUnavailableError",
     "ContentionError",
     "RequestValidationError",
+    "SubscriptionNotAuthorizedError",
     "MalformedDatumError",
 ]

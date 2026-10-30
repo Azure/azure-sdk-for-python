@@ -30,7 +30,16 @@ PACKAGE = Path(__file__).resolve().parent.parent
 GENERATION = PACKAGE / "eng/generation"
 MODULE = Path("azure/ai/finetuningsessions")
 PROJECT = Path("specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions")
-HANDWRITTEN_MODULES = {"_client_options.py", "_exceptions.py", "_logging_setup.py", "_operation_compat.py"}
+HANDWRITTEN_MODULES = {
+    "_checkpoint_download.py",
+    "_client_options.py",
+    "_exceptions.py",
+    "_logging_setup.py",
+    "_operation_compat.py",
+    "_scalar_serialization.py",
+    "_text_only.py",
+    "models/_text_only.py",
+}
 MAINTAINED_MODULES = HANDWRITTEN_MODULES | {
     "_patch.py",
     "aio/_patch.py",

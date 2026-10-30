@@ -1,5 +1,21 @@
 # Release History
 
+## 1.0.0b2 (Unreleased)
+
+### Features Added
+
+- Add opt-in text-only sampling and opaque-reference training, including public function-call messages, safely classified invalid completions, and scalar-only training results. Availability remains controlled by the service.
+- Add synchronous and asynchronous checkpoint preparation methods that validate the local destination, poll server-side preparation, and validate the returned file inventory. These methods do not create local directories, transfer weights, or enable download access.
+- Add async `FineTuningSessionClient.attach_session(session_id)` to start the existing per-client heartbeat for an externally created session, without creation or initialization polling. Repeated attach is idempotent; existing client/session shutdown and heartbeat policies are unchanged.
+
+### Bugs Fixed
+
+- Replace trainer-loss messages with actionable continual fine-tuning (CFT) and checkpoint-resume guidance, including legacy HTTP and polling responses. Keep `engine_dead` terminal even when a malformed response advertises automatic retry; preserve exception aliases and diagnostic metadata.
+- Limit CFT guidance to terminal trainer interruptions; preserve HTTP `engine_oom` smaller-batch guidance and other nonterminal engine messages without changing exception types or retry behavior.
+- Retry successful sampling submissions missing `request_id` within the existing bounded fault budget, then raise `MalformedResponseError` after exhaustion. Preserve separate throttle/JWT recovery and the default no-POST transport retry policy.
+- Preserve the latest Loom polling, sampling-limit, heartbeat shutdown, and scalar/tensor serialization behavior. Protected training is not blindly resubmitted after ambiguous submission or completion failures.
+- Generate raw operations against canonical `/fine_tuning_sessions` routes while retaining existing Python token-native constructors and convenience compatibility hooks.
+
 ## 1.0.0b1 (2026-09-24)
 
 ### Features Added

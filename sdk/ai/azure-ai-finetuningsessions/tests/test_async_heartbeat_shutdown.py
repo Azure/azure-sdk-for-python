@@ -3,11 +3,17 @@
 """Deterministic heartbeat shutdown ordering for async session lifecycle calls."""
 
 import asyncio
+import logging
 from typing import Any
 from urllib.parse import urlsplit
 
 import pytest
+from azure.core.credentials import AzureKeyCredential
+from azure.core.exceptions import ServiceRequestError
+from azure.core.pipeline.transport import AsyncHttpResponse, AsyncHttpTransport
+from azure.core.utils import case_insensitive_dict
 
+from azure.ai.finetuningsessions.aio import FineTuningSessionClient
 from azure.ai.finetuningsessions.aio import _patch as aio_patch
 
 
@@ -284,3 +290,231 @@ async def test_shutdown_does_not_stop_other_sessions(active_heartbeat) -> None:
         client.release_cleanup.set()
         other.cancel()
         await asyncio.gather(lifecycle, other, return_exceptions=True)
+
+
+class _TransportResponse(AsyncHttpResponse):
+    def __init__(self, request) -> None:
+        super().__init__(request, None)
+        self.status_code = 200
+        self.headers = case_insensitive_dict({"Content-Type": "application/json"})
+        self.content_type = "application/json"
+        self.reason = "OK"
+
+    def body(self):
+        return b"{}"
+
+
+class _HeartbeatTransport(AsyncHttpTransport):
+    def __init__(self) -> None:
+        self.requests = []
+        self.received = asyncio.Queue()
+        self.closed = False
+        self.release_response = asyncio.Event()
+        self.release_response.set()
+        self.status_code = 200
+        self.error = None
+
+    async def send(self, request, **kwargs):
+        self.requests.append(request)
+        self.received.put_nowait(request)
+        await self.release_response.wait()
+        if self.error is not None:
+            raise self.error
+        response = _TransportResponse(request)
+        response.status_code = self.status_code
+        return response
+
+    async def open(self):
+        pass
+
+    async def close(self):
+        self.closed = True
+
+    async def __aexit__(self, *args):
+        await self.close()
+
+
+@pytest.fixture
+def heartbeat_waits():
+    return asyncio.Queue()
+
+
+@pytest.fixture
+def heartbeat_ticks(monkeypatch, heartbeat_waits):
+    ticks = asyncio.Queue()
+
+    async def sleep(interval):
+        assert interval == 30.0
+        heartbeat_waits.put_nowait(None)
+        await ticks.get()
+
+    monkeypatch.setattr(aio_patch.asyncio, "sleep", sleep)
+    return ticks
+
+
+@pytest.mark.parametrize(
+    ("session_id", "resource_id"),
+    [("session_test", "session_test"), ("model_test", "model_test"), ("test", "model_test")],
+)
+@pytest.mark.parametrize("shutdown", ["close", "context_exit", "close_session"])
+async def test_attach_sends_heartbeat_and_shutdown_stops_it(
+    heartbeat_ticks, session_id, resource_id, shutdown, caplog
+) -> None:
+    caplog.set_level(logging.INFO, logger=aio_patch.__name__)
+    transport = _HeartbeatTransport()
+    client = FineTuningSessionClient("https://unit.invalid", AzureKeyCredential("test-key"), transport=transport)
+    try:
+        await client.__aenter__()
+        assert await client.attach_session(session_id) is None
+        heartbeat = client._heartbeat_tasks["session_test"]
+        await client.attach_session(session_id)
+        await client.attach_session("session_test")
+        assert client._heartbeat_tasks == {"session_test": heartbeat}
+        assert not heartbeat.done()
+        assert transport.requests == []
+        assert "first HTTP success" not in caplog.text
+
+        heartbeat_ticks.put_nowait(None)
+        request = await asyncio.wait_for(transport.received.get(), timeout=5)
+        assert request.method == "POST"
+        assert urlsplit(request.url).path == f"/fine_tuning/sessions/{resource_id}/heartbeat"
+        assert not heartbeat.done()
+
+        if shutdown == "context_exit":
+            await client.__aexit__(None, None, None)
+        else:
+            await getattr(client, shutdown)(*([session_id] if shutdown == "close_session" else []))
+        assert heartbeat.done()
+        assert client._heartbeat_tasks == {}
+        assert client._heartbeat_shutdowns == {}
+        heartbeat_ticks.put_nowait(None)
+        # Draining the task proves no subsequent timer tick can send another heartbeat.
+        await asyncio.gather(heartbeat, return_exceptions=True)
+        expected_paths = [f"/fine_tuning/sessions/{resource_id}/heartbeat"]
+        if shutdown == "close_session":
+            expected_paths.append(f"/fine_tuning/sessions/{resource_id}/complete")
+        else:
+            assert transport.closed
+        assert [urlsplit(req.url).path for req in transport.requests] == expected_paths
+        assert all(req.method == "POST" for req in transport.requests)
+        messages = [
+            record.getMessage()
+            for record in caplog.records
+            if record.name == aio_patch.__name__ and "[heartbeat]" in record.getMessage()
+        ]
+        assert messages == [
+            "[heartbeat] task registered; not HTTP confirmation. "
+            f"SessionId=session_test ResourceSessionId={resource_id} interval=30s",
+            "[heartbeat] first HTTP success. " f"SessionId=session_test ResourceSessionId={resource_id} status=200",
+            "[heartbeat] task stopped. SessionId=session_test",
+        ]
+    finally:
+        await client.close()
+
+
+@pytest.mark.parametrize("failure", [401, 500, ServiceRequestError("sensitive-transport-details")])
+async def test_heartbeat_first_http_success_is_once_and_only_after_completion(
+    heartbeat_ticks, heartbeat_waits, caplog, failure
+) -> None:
+    caplog.set_level(logging.INFO, logger=aio_patch.__name__)
+    transport = _HeartbeatTransport()
+    transport.release_response.clear()
+    if isinstance(failure, int):
+        transport.status_code = failure
+    else:
+        transport.error = failure
+    async with FineTuningSessionClient(
+        "https://unit.invalid",
+        AzureKeyCredential("test-key"),
+        transport=transport,
+        retry_total=0,
+    ) as client:
+        await client.attach_session("model_test")
+        await asyncio.wait_for(heartbeat_waits.get(), timeout=5)
+        heartbeat_ticks.put_nowait(None)
+        await asyncio.wait_for(transport.received.get(), timeout=5)
+        assert "first HTTP success" not in caplog.text
+        transport.release_response.set()
+        await asyncio.wait_for(heartbeat_waits.get(), timeout=5)
+        assert "first HTTP success" not in caplog.text
+        warnings = [r for r in caplog.records if r.name == aio_patch.__name__ and r.levelno == logging.WARNING]
+        assert len(warnings) == 1
+        assert "SessionId=session_test" in warnings[0].getMessage()
+        assert "sensitive-transport-details" not in caplog.text
+
+        transport.error = None
+        transport.status_code = 200
+        transport.release_response.clear()
+        heartbeat_ticks.put_nowait(None)
+        await asyncio.wait_for(transport.received.get(), timeout=5)
+        assert "first HTTP success" not in caplog.text
+        transport.release_response.set()
+        await asyncio.wait_for(heartbeat_waits.get(), timeout=5)
+        assert caplog.text.count("first HTTP success") == 1
+        await client.attach_session("model_test")
+        heartbeat_ticks.put_nowait(None)
+        await asyncio.wait_for(transport.received.get(), timeout=5)
+        await asyncio.wait_for(heartbeat_waits.get(), timeout=5)
+        assert caplog.text.count("first HTTP success") == 1
+        assert caplog.text.count("task registered;") == 1
+        assert not client._heartbeat_tasks["session_test"].done()
+        assert len(transport.requests) == 3
+        assert all(urlsplit(r.url).path.endswith("/model_test/heartbeat") for r in transport.requests)
+    assert caplog.text.count("task stopped.") == 1
+    assert client._heartbeat_tasks == {}
+
+
+async def test_close_before_heartbeat_http_completion_never_confirms(heartbeat_ticks, heartbeat_waits, caplog) -> None:
+    caplog.set_level(logging.INFO, logger=aio_patch.__name__)
+    transport = _HeartbeatTransport()
+    transport.release_response.clear()
+    client = FineTuningSessionClient("https://unit.invalid", AzureKeyCredential("test-key"), transport=transport)
+    try:
+        await client.attach_session("session_test")
+        await asyncio.wait_for(heartbeat_waits.get(), timeout=5)
+        task = client._heartbeat_tasks["session_test"]
+        heartbeat_ticks.put_nowait(None)
+        await asyncio.wait_for(transport.received.get(), timeout=5)
+        await client.close()
+        heartbeat_ticks.put_nowait(None)
+        transport.release_response.set()
+        await asyncio.gather(task, return_exceptions=True)
+        assert task.done() and transport.closed
+        assert client._heartbeat_tasks == client._heartbeat_shutdowns == {}
+        assert len(transport.requests) == 1
+        assert "first HTTP success" not in caplog.text
+        assert caplog.text.count("task stopped.") == 1
+    finally:
+        await client.close()
+
+
+async def test_attach_reuses_created_heartbeat_and_preserves_other_client(heartbeat_ticks) -> None:
+    first_transport, second_transport = _HeartbeatTransport(), _HeartbeatTransport()
+    async with (
+        FineTuningSessionClient(
+            "https://unit.invalid", AzureKeyCredential("test-key"), transport=first_transport
+        ) as first,
+        FineTuningSessionClient(
+            "https://unit.invalid", AzureKeyCredential("test-key"), transport=second_transport
+        ) as second,
+    ):
+        aio_patch._ensure_async_state(first)
+        first._session_resource_ids["session_test"] = "model_test"
+        aio_patch._start_heartbeat(first, "session_test")
+        created_heartbeat = first._heartbeat_tasks["session_test"]
+        await first.attach_session("session_test")
+        assert first._heartbeat_tasks["session_test"] is created_heartbeat
+        assert first._session_resource_ids["session_test"] == "model_test"
+        await second.attach_session("session_test")
+        second_heartbeat = second._heartbeat_tasks["session_test"]
+
+        await first.close()
+        assert created_heartbeat.done()
+        assert first._heartbeat_tasks == {}
+        assert not second_heartbeat.done()
+        heartbeat_ticks.put_nowait(None)
+        request = await asyncio.wait_for(second_transport.received.get(), timeout=5)
+        assert urlsplit(request.url).path == "/fine_tuning/sessions/session_test/heartbeat"
+        assert first_transport.requests == []
+    assert second_heartbeat.done()
+    assert second._heartbeat_tasks == {}

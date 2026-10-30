@@ -39,6 +39,7 @@ from azure.core.utils import case_insensitive_dict
 
 from . import models as _models
 from ._exceptions import _classify_http_error, _classify_poll_failure
+from ._text_only import _operation_result
 from ._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ._utils.serialization import Serializer
 
@@ -710,7 +711,7 @@ def _poller_options(
         response_headers = {
             "Operation-Location": operation._deserialize("str", response.headers.get("Operation-Location"))
         }
-        value = _deserialize(_models.OperationResult, response.json().get("result", {}))
+        value = _operation_result(response.json().get("result", {}))
         return cls(result, value, response_headers) if cls else value
 
     return initial_options, polling, delay, token, deserialize

@@ -37,23 +37,69 @@ import json as _json
 import logging as _logging
 import random as _random
 import time as _time
-from typing import Awaitable, Callable, Any, Dict, List, NamedTuple, Optional, Union, cast
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    Dict,
+    List,
+    NamedTuple,
+    Optional,
+    Union,
+    cast,
+)
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.exceptions import DecodeError as _DecodeError
 from azure.core.exceptions import HttpResponseError as _HttpResponseError
 from azure.core.exceptions import ServiceRequestError as _ServiceRequestError
 from azure.core.exceptions import ServiceResponseError as _ServiceResponseError
 from azure.core.rest import HttpRequest as _HttpRequest
 
-from ._client import FineTuningSessionClient as _GeneratedClient
 from .._client_options import _prepare_client_options
 from .._exceptions import (
+    MalformedResponseError,
+    TextOnlyTrainingChunkError,
     _classify_http_error,
     _classify_poll_failure,
+)
+from .._exceptions import (
     RequestRetryableError as _RequestRetryableError,
 )
-
+from .._patch import (
+    _API_VERSION,
+    _DEFAULT_OPERATION_TIMEOUT_SEC,
+    _LOOM_SUBPATH_TO_OP_TYPE,
+    _MAX_CONCURRENT_SAMPLES,
+    _MAX_REQUEST_RETRIES,
+    _RETRIEVE_POLL_MAX,
+    _RETRIEVE_POLL_MIN,
+    _SAMPLE_THROTTLE_TIMEOUT_SEC,
+    _TEXT_ONLY_CHUNK_ERRORS,
+    _base_headers,
+    _BoundedRetryState,
+    _chunk_data,
+    _chunk_text_training_data,
+    _clear_poll_log_state,
+    _combine_fwd_bwd_results,
+    _combine_text_training_results,
+    _creation_wait,
+    _ErrorBudget,
+    _log_http,
+    _maybe_log_poll_progress,
+    _normalize_loom_result,
+    _parse_checkpoint_path,
+    _ProxyJwtRetryState,
+    _retryable_resubmit_wait,
+)
+from .._text_only import (
+    _is_protected_mutation,
+    _operation_result,
+    _text_sample_body,
+    _text_training_response,
+)
+from .._utils.model_base import SdkJSONEncoder as _SdkJSONEncoder
 from ..models import (
     AdamParams,
     CreateSessionRequest,
@@ -63,6 +109,7 @@ from ..models import (
     ForwardBackwardRequest,
     ForwardInput,
     ForwardRequest,
+    FoundryFeaturesOptInKeys,
     FromCheckpoint,
     LoRAConfig,
     LossFn,
@@ -75,33 +122,11 @@ from ..models import (
     SamplingParams,
     SaveCheckpointRequest,
     SaveSamplerWeightsRequest,
+    TextOnlySampleInput,
+    TextOnlyTrainingInput,
     TrainingType,
-    FoundryFeaturesOptInKeys,
 )
-from .._utils.model_base import SdkJSONEncoder as _SdkJSONEncoder, _deserialize as _deserialize_model
-from .._patch import (
-    _chunk_data,
-    _combine_fwd_bwd_results,
-    _normalize_loom_result,
-    _parse_checkpoint_path,
-    _base_headers,
-    _log_http,
-    _LOOM_SUBPATH_TO_OP_TYPE,
-    _API_VERSION,
-    _DEFAULT_OPERATION_TIMEOUT_SEC,
-    _ErrorBudget,
-    _RETRIEVE_POLL_MIN,
-    _RETRIEVE_POLL_MAX,
-    _maybe_log_poll_progress,
-    _clear_poll_log_state,
-    _MAX_REQUEST_RETRIES,
-    _retryable_resubmit_wait,
-    _MAX_CONCURRENT_SAMPLES,
-    _SAMPLE_THROTTLE_TIMEOUT_SEC,
-    _BoundedRetryState,
-    _ProxyJwtRetryState,
-    _creation_wait,
-)
+from ._client import FineTuningSessionClient as _GeneratedClient
 
 
 class _ClientBase(_GeneratedClient):
@@ -128,6 +153,7 @@ class _ClientBase(_GeneratedClient):
         )
         super().__init__(endpoint=endpoint, credential=cast(AsyncTokenCredential, credential), **options)
         cast(Any, self._config).allow_insecure_http = allow_insecure_http
+        cast(Any, self._config).api_version = kwargs.get("api_version", "v1")
 
     async def close(self) -> None:
         """Drain all heartbeat tasks before closing the HTTP pipeline."""
@@ -243,6 +269,22 @@ async def _chunk_data_async(batch: List[Datum]) -> List[List[Datum]]:
     )
 
 
+async def _chunk_text_training_data_async(
+    text_only_input: TextOnlyTrainingInput,
+    batch: Optional[List[Datum]],
+    loss_fn: Union[str, LossFn],
+    loss_fn_config: Optional[LossFnConfig],
+) -> List[dict]:
+    return await _to_thread_and_drain_on_cancel(
+        _chunk_text_training_data,
+        text_only_input,
+        batch,
+        loss_fn,
+        loss_fn_config,
+        task_name="chunk_text_training_data",
+    )
+
+
 async def _completed_result_task(result: OperationResult, name: str) -> "asyncio.Task[OperationResult]":
     """Return the promised Task interface for an already-completed wave.
 
@@ -335,6 +377,7 @@ def _start_heartbeat(
     resource_session_id = _client_resource_session_id(self, session_id)
 
     async def _heartbeat_loop() -> None:
+        first_success_logged = False
         while True:
             await asyncio.sleep(interval_sec)
             try:
@@ -347,27 +390,35 @@ def _start_heartbeat(
                 resp = await self.send_request(hb_req)
                 if resp.status_code != 200:
                     _logger.warning(
-                        "[heartbeat] status=%d for %s",
+                        "[heartbeat] HTTP failure. status=%d SessionId=%s",
                         resp.status_code,
                         session_id,
                     )
+                elif not first_success_logged:
+                    _logger.info(
+                        "[heartbeat] first HTTP success. SessionId=%s ResourceSessionId=%s status=200",
+                        session_id,
+                        resource_session_id,
+                    )
+                    first_success_logged = True
             except asyncio.CancelledError:
                 return
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 # Keep best-effort heartbeats running after custom transport failures.
                 _logger.warning(
-                    "[heartbeat] failed for %s: %s",
+                    "[heartbeat] failed. SessionId=%s ErrorType=%s",
                     session_id,
-                    exc,
+                    type(exc).__name__,
                 )
 
     task = asyncio.create_task(_heartbeat_loop(), name=f"fts-heartbeat-{session_id}")
     # The client lifecycle helpers in this module own this private task registry.
     self._heartbeat_tasks[session_id] = task  # pylint: disable=protected-access
     _logger.info(
-        "[heartbeat] started (interval=%.0fs, session=%s)",
-        interval_sec,
+        "[heartbeat] task registered; not HTTP confirmation. SessionId=%s ResourceSessionId=%s interval=%.0fs",
         session_id,
+        resource_session_id,
+        interval_sec,
     )
 
 
@@ -399,10 +450,11 @@ async def _stop_heartbeat(self: "FineTuningSessionClient", session_id: str) -> N
                 pass
             except Exception:  # pylint: disable=broad-exception-caught
                 # Log any task failure so registry cleanup and lifecycle shutdown can finish.
-                _logger.exception("[heartbeat] failed during shutdown for %s", session_id)
+                _logger.exception("[heartbeat] failed during shutdown. SessionId=%s", session_id)
             finally:
                 if self._heartbeat_tasks.get(session_id) is task:
                     self._heartbeat_tasks.pop(session_id, None)
+                    _logger.info("[heartbeat] task stopped. SessionId=%s", session_id)
                 self._heartbeat_shutdowns.pop(session_id, None)
 
         shutdown = asyncio.create_task(drain(), name=f"fts-heartbeat-shutdown-{session_id}")
@@ -437,11 +489,13 @@ def _classify_and_raise(resp: Any, sc: int) -> None:
         raise typed
 
 
-async def _post(
+async def _post(  # pylint: disable=too-many-locals
     self: "FineTuningSessionClient",
     subpath: str,
     body_model: Any,
     extra_params: Optional[dict] = None,
+    *,
+    on_submit: Optional[Callable[[str], None]] = None,
 ) -> tuple[str, str]:
     """POST to enqueue a job.  Returns ``(request_id, op_type)``.
 
@@ -457,6 +511,9 @@ async def _post(
     :param extra_params: Additional query parameters merged with the default API version.
         Defaults to ``None``.
     :type extra_params: dict[str, ~typing.Any] or None
+    :keyword on_submit: Capture a protected training acknowledgement before
+        validating the remaining submission fields.
+    :paramtype on_submit: typing.Callable[[str], None] or None
     :return: The server-assigned request ID and the operation type used to interpret its result.
     :rtype: tuple[str, str]
     """
@@ -481,7 +538,10 @@ async def _post(
     )
     _log_http("request", "POST", subpath, body=_json.loads(body_json))
 
-    max_retries = 2
+    # Reference-based training POSTs can commit before their response is lost.
+    # Poll retries remain safe, but submission must not be replayed.
+    max_retries = 0 if _is_protected_mutation(subpath, body_model) else 2
+    protected_training = _is_protected_mutation(subpath, body_model)
     _BASE_TIMEOUT_SEC = 100  # per-request timeout; escalated on each retry
     _TIMEOUT_MULTIPLIER = 1.5
     # Non-retryable status codes: deterministic rejections that will
@@ -571,15 +631,21 @@ async def _post(
                     # Exhausted retries — classify before raising generic error.
                     _classify_and_raise(resp, sc)
 
+                data = (
+                    _text_training_response(resp.json, submission=True, on_submit=on_submit)
+                    if protected_training and sc < 400
+                    else None
+                )
                 _log_http(
                     "response",
                     "POST",
                     subpath,
                     status=sc,
-                    body=resp.json() if sc < 400 else None,
+                    body=data if data is not None else resp.json() if sc < 400 else None,
                 )
                 resp.raise_for_status()
-                data = resp.json()
+                if data is None:
+                    data = resp.json()
                 _logger.info(
                     "[operation_timeline] submit_completed session_id=%s request_id=%s op=%s elapsed_ms=%.1f%s",
                     data.get("session_id", timeline_session_id),
@@ -593,6 +659,10 @@ async def _post(
                     op_type,
                 )
 
+            except _DecodeError as exc:
+                if protected_training:
+                    raise MalformedResponseError("Protected training returned invalid JSON") from exc
+                raise
             except (_ServiceRequestError, _ServiceResponseError) as exc:
                 if attempt < max_retries:
                     # Back off longer for network errors (timeout/connection
@@ -650,8 +720,8 @@ async def _post_sample(
     :rtype: tuple[str, str]
     """
     # Preserve the preview ordering of JWT recovery, terminal classification,
-    # throttle/fault budgets, and semaphore release before backoff.
-    # pylint: disable=too-many-statements
+    # throttle/fault budgets (including malformed success), and semaphore release before backoff.
+    # pylint: disable=too-many-statements,too-many-locals
     _ensure_async_state(self)
     subpath = _client_resource_subpath(self, subpath)
     body_json = _json.dumps(body_model, cls=_SdkJSONEncoder, exclude_readonly=True)
@@ -786,10 +856,30 @@ async def _post_sample(
             # Exhausted retries — classify before raising generic error.
             _classify_and_raise(resp, sc)
 
-        _log_http("response", "POST", subpath, status=sc, body=resp.json() if sc < 400 else None)
         resp.raise_for_status()
         data = resp.json()
-        return data["request_id"], op_type
+        try:
+            request_id = data["request_id"]
+        except KeyError as exc:
+            malformed_error = MalformedResponseError(
+                "Successful sampling response is missing request_id",
+                response=resp,
+            )
+            if fault_attempt >= max_retries:
+                raise malformed_error from exc
+            wait = min(0.5 * (2**fault_attempt), 10.0) * (1 - 0.25 * _random.random())
+            fault_attempt += 1
+            _logger.warning(
+                "POST %s returned a malformed success response, retry %d/%d in %.1fs",
+                subpath,
+                fault_attempt,
+                max_retries,
+                wait,
+            )
+            await asyncio.sleep(wait)
+            continue
+        _log_http("response", "POST", subpath, status=sc, body=data)
+        return request_id, op_type
 
 
 async def _poll(
@@ -803,6 +893,7 @@ async def _poll(
     poll_started_at: Optional[float] = None,
     poll_min_sec: Optional[float] = None,
     poll_max_sec: Optional[float] = None,
+    protected_training: bool = False,
 ) -> OperationResult:
     """Short-poll the envelope endpoint until the request resolves.
 
@@ -840,6 +931,8 @@ async def _poll(
     :param poll_max_sec: Maximum pending-result poll interval in seconds.
         ``None`` uses the default maximum interval.
     :type poll_max_sec: float or None
+    :param protected_training: Validate reference-training envelopes without changing native polling.
+    :type protected_training: bool
     :return: The normalized and deserialized result of the completed operation.
     :rtype: ~azure.ai.finetuningsessions.models.OperationResult
     """
@@ -884,7 +977,7 @@ async def _poll(
                 continue
 
             if resp.status_code == 200:
-                envelope = resp.json()
+                envelope = _text_training_response(resp.json, submission=False) if protected_training else resp.json()
                 _log_http("response", "GET", poll_path, status=200, body=envelope)
                 conn_backoff = 1.0
 
@@ -939,7 +1032,7 @@ async def _poll(
                     for k, v in extra_result_fields.items():
                         if not normalized.get(k):
                             normalized[k] = v
-                return _deserialize_model(OperationResult, normalized)
+                return _operation_result(normalized)
 
             if resp.status_code == 404:
                 wait = request_not_found_retry.next_delay()
@@ -1013,6 +1106,10 @@ async def _poll(
                 raise typed
             resp.raise_for_status()
 
+        except _DecodeError as exc:
+            if protected_training:
+                raise MalformedResponseError("Protected training returned invalid JSON") from exc
+            raise
         except (_ServiceRequestError, _ServiceResponseError) as exc:
             elapsed = _time.monotonic() - poll_start
             _logger.warning(
@@ -1056,9 +1153,9 @@ async def _poll_with_resubmit(
     ``post_fn`` preserves specialized submit behavior, such as sample 429
     throttling, on every resubmit.
 
-    Retry is driven purely by the flag; the SDK never resubmits an operation
-    the server has not marked retryable, so ordering-sensitive training ops
-    (which the server never flags) are unaffected.
+    Token-native retry remains driven by the flag. Reference-based text-only
+    training is never resubmitted, even when the server flags a failure safe
+    to retry; polling GETs remain retryable.
 
     :param session_id: Identifier of the session that owns the queued request.
     :type session_id: str
@@ -1102,6 +1199,8 @@ async def _poll_with_resubmit(
                 poll_kwargs["poll_min_sec"] = poll_min_sec
             if poll_max_sec is not None:
                 poll_kwargs["poll_max_sec"] = poll_max_sec
+            if _is_protected_mutation(subpath, body_model):
+                poll_kwargs["protected_training"] = True
             return await _poll(
                 self,
                 session_id,
@@ -1111,7 +1210,7 @@ async def _poll_with_resubmit(
                 **poll_kwargs,
             )
         except _RequestRetryableError as exc:
-            if attempt >= _MAX_REQUEST_RETRIES:
+            if _is_protected_mutation(subpath, body_model) or attempt >= _MAX_REQUEST_RETRIES:
                 # Exhausted resubmits — surface the typed terminal error.
                 raise
             attempt += 1
@@ -1145,8 +1244,8 @@ async def _post_and_poll(
     reclaim, or an upstream read timeout) are resubmitted with a **fresh
     request id**, up to ``_MAX_REQUEST_RETRIES`` times, honoring the server's
     ``retry_after_sec`` hint with jitter. Retry is driven purely by the
-    server's ``should_retry`` signal — the SDK does not gate on operation type
-    or error code — so the server only sets the flag on recoverable failures.
+    server's ``should_retry`` signal for token-native operations. Reference-based
+    text-only training is never automatically re-POSTed.
 
     :param session_id: Identifier of the session that owns the operation.
     :type session_id: str
@@ -1191,6 +1290,7 @@ async def create_session(
     timeout_sec: float = 600.0,
     user_metadata: Optional[dict[str, Any]] = None,
     training_type: Optional[Union[str, TrainingType]] = None,
+    text_only: bool = False,
 ) -> str:
     """Create a fine-tuning session and wait until the model is loaded.
 
@@ -1213,6 +1313,9 @@ async def create_session(
         any worker; datazone jobs require a worker in the same datazone as the
         API's region; Developer Tier jobs use eligible development capacity.
     :paramtype training_type: str or ~azure.ai.finetuningsessions.models.TrainingType or None
+    :keyword text_only: Opt in to immutable public text/function-tool mode.
+        Omission preserves token-native behavior.
+    :paramtype text_only: bool
     :return: The ``session_id`` string (e.g. ``"session_abc12345"``).
     :rtype: str
     """
@@ -1234,6 +1337,10 @@ async def create_session(
             exclude_readonly=True,
         )
     )
+    if not isinstance(text_only, bool):
+        raise ValueError("text_only must be a bool")
+    if text_only:
+        body["text_only"] = True
     if from_checkpoint is not None:
         body["from_checkpoint"] = _json.loads(_json.dumps(from_checkpoint, cls=_SdkJSONEncoder, exclude_readonly=True))
         body["from_checkpoint"]["source_session_id"] = _canonical_session_id(
@@ -1457,10 +1564,11 @@ async def create_session_from_checkpoint(
 async def forward_backward(
     self: "FineTuningSessionClient",
     session_id: str,
-    batch: List[Datum],
+    batch: Optional[List[Datum]] = None,
     *,
     loss_fn: Union[str, LossFn] = LossFn.CROSS_ENTROPY,
     loss_fn_config: Optional[LossFnConfig] = None,
+    text_only_input: Optional[TextOnlyTrainingInput] = None,
 ) -> OperationResult:
     """Submit a mini-batch for a forward + backward pass.
 
@@ -1475,9 +1583,25 @@ async def forward_backward(
     :paramtype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
     :keyword loss_fn_config: Optional per-loss hyper-parameters.
     :paramtype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig or None
+    :keyword text_only_input: Reference samples and scalar advantages instead of
+        a token-native batch. Loss settings belong inside this object.
+        Reference training is never automatically re-POSTed.
+    :paramtype text_only_input: ~azure.ai.finetuningsessions.models.TextOnlyTrainingInput or None
     :return: OperationResult.
     :rtype: ~azure.ai.finetuningsessions.models.OperationResult
     """
+    if text_only_input is not None:
+        pending = await forward_backward_post(
+            self,
+            session_id,
+            batch,
+            loss_fn=loss_fn,
+            loss_fn_config=loss_fn_config,
+            text_only_input=text_only_input,
+        )
+        return await pending.poll_result()
+    if batch is None:
+        raise ValueError("Supply exactly one of batch or text_only_input")
     chunks = await _chunk_data_async(batch)
     if len(chunks) <= 1:
         return await _post_and_poll(
@@ -1887,13 +2011,123 @@ class PendingRequests:
         return list(await asyncio.gather(*(_poll_one(spec) for spec in self._posted)))
 
 
+class _TextOnlyPendingRequests(PendingRequests):
+    """Protected polling keeps accepted identities and never replays gradients."""
+
+    def __init__(
+        self,
+        client: "FineTuningSessionClient",
+        session_id: str,
+        posted: List[_PostSpec],
+        chunk_sizes: List[int],
+        request_ids: List[str],
+        chunk_offset: int,
+        multi_chunk: bool,
+    ):
+        super().__init__(client, session_id, posted)
+        self._text_chunk_sizes = chunk_sizes
+        self._text_request_ids = request_ids
+        self._text_chunk_offset = chunk_offset
+        self._text_multi_chunk = multi_chunk
+
+    async def _poll_chunk_results(
+        self,
+        *,
+        poll_min_sec: Optional[float] = None,
+        poll_max_sec: Optional[float] = None,
+    ) -> List[OperationResult]:
+        results: List[OperationResult] = []
+        for index, spec in enumerate(self._posted):
+            try:
+                result = await _poll_with_resubmit(
+                    self._client,
+                    self._session_id,
+                    spec.request_id,
+                    spec.op_type,
+                    spec.subpath,
+                    spec.body_model,
+                    spec.extra_params,
+                    operation_started_at=spec.operation_started_at,
+                    poll_min_sec=poll_min_sec,
+                    poll_max_sec=poll_max_sec,
+                )
+            except asyncio.CancelledError:
+                _logger.warning(
+                    "Protected training polling cancelled; reconcile request IDs %s without replay",
+                    self._text_request_ids,
+                )
+                raise
+            except _TEXT_ONLY_CHUNK_ERRORS as exc:
+                if not self._text_multi_chunk:
+                    raise
+                raise TextOnlyTrainingChunkError(
+                    self._text_request_ids,
+                    self._text_chunk_offset + index,
+                    "poll",
+                ) from exc
+            results.append(result)
+        return results
+
+    async def poll_result(
+        self,
+        *,
+        poll_min_sec: Optional[float] = None,
+        poll_max_sec: Optional[float] = None,
+    ) -> OperationResult:
+        results = await self._poll_chunk_results(poll_min_sec=poll_min_sec, poll_max_sec=poll_max_sec)
+        if len(results) == 1:
+            return results[0]
+        return _combine_text_training_results(results, self._text_chunk_sizes)
+
+
+async def _forward_backward_text_chunks_post(
+    self: "FineTuningSessionClient",
+    session_id: str,
+    chunks: List[dict],
+    *,
+    request_ids: Optional[List[str]] = None,
+    chunk_offset: int = 0,
+    multi_chunk: bool = False,
+) -> _TextOnlyPendingRequests:
+    subpath = f"/fine_tuning/sessions/{session_id}/forward_backward"
+    known_ids = request_ids if request_ids is not None else []
+    multi_chunk = multi_chunk or len(chunks) > 1
+    posted: List[_PostSpec] = []
+    for index, body in enumerate(chunks):
+        operation_started_at = _time.monotonic()
+        try:
+            request_id, op_type = await _post(self, subpath, body, on_submit=known_ids.append)
+        except asyncio.CancelledError:
+            _logger.warning(
+                "Protected training submission cancelled; reconcile known request IDs %s; "
+                "the current submission may also have committed. Do not replay",
+                known_ids,
+            )
+            raise
+        except _TEXT_ONLY_CHUNK_ERRORS as exc:
+            if not multi_chunk:
+                raise
+            raise TextOnlyTrainingChunkError(known_ids, chunk_offset + index, "submit") from exc
+        posted.append(_PostSpec(request_id, op_type, subpath, body, None, operation_started_at))
+    return _TextOnlyPendingRequests(
+        self,
+        session_id,
+        posted,
+        [len(body["text_only_input"]["samples"]) for body in chunks],
+        known_ids,
+        chunk_offset,
+        multi_chunk,
+    )
+
+
 async def forward_backward_post(
     self: "FineTuningSessionClient",
     session_id: str,
-    batch: List[Datum],
+    batch: Optional[List[Datum]] = None,
     *,
     loss_fn: Union[str, LossFn] = LossFn.CROSS_ENTROPY,
     loss_fn_config: Optional[LossFnConfig] = None,
+    text_only_input: Optional[TextOnlyTrainingInput] = None,
 ) -> PendingRequests:
     """POST a forward+backward pass without polling for completion.
 
@@ -1914,9 +2148,17 @@ async def forward_backward_post(
     :paramtype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
     :keyword loss_fn_config: Optional per-loss hyper-parameters.
     :paramtype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig or None
+    :keyword text_only_input: Reference samples instead of a token-native batch.
+        The returned handle polls without automatically re-POSTing reference training.
+    :paramtype text_only_input: ~azure.ai.finetuningsessions.models.TextOnlyTrainingInput or None
     :return: PendingRequests handle.
     :rtype: ~azure.ai.finetuningsessions.aio._patch.PendingRequests
     """
+    if text_only_input is not None:
+        text_chunks = await _chunk_text_training_data_async(text_only_input, batch, loss_fn, loss_fn_config)
+        return await _forward_backward_text_chunks_post(self, session_id, text_chunks)
+    if batch is None:
+        raise ValueError("Supply exactly one of batch or text_only_input")
     chunks = await _chunk_data_async(batch)
     if len(chunks) > 1:
         _logger.info(
@@ -1988,10 +2230,11 @@ async def _forward_backward_chunks_post(
 async def forward_backward_async(
     self: "FineTuningSessionClient",
     session_id: str,
-    batch: List[Datum],
+    batch: Optional[List[Datum]] = None,
     *,
     loss_fn: Union[str, LossFn] = LossFn.CROSS_ENTROPY,
     loss_fn_config: Optional[LossFnConfig] = None,
+    text_only_input: Optional[TextOnlyTrainingInput] = None,
     poll_min_sec: Optional[float] = None,
     poll_max_sec: Optional[float] = None,
     max_chunks_per_wave: Optional[int] = None,
@@ -2024,6 +2267,11 @@ async def forward_backward_async(
     :paramtype loss_fn: str or ~azure.ai.finetuningsessions.models.LossFn
     :keyword loss_fn_config: Optional per-loss hyper-parameters.
     :paramtype loss_fn_config: ~azure.ai.finetuningsessions.models.LossFnConfig or None
+    :keyword text_only_input: Reference samples instead of a token-native batch.
+        Whole reference entries are chunked by serialized size and count,
+        without automatic gradient replay. Multi-chunk calls complete before
+        returning; max_chunks_per_wave also bounds reference submissions.
+    :paramtype text_only_input: ~azure.ai.finetuningsessions.models.TextOnlyTrainingInput or None
     :keyword poll_min_sec: Optional minimum pending-result poll interval.
     :paramtype poll_min_sec: float or None
     :keyword poll_max_sec: Optional maximum pending-result poll interval.
@@ -2047,6 +2295,31 @@ async def forward_backward_async(
     if poll_max_sec is not None:
         poll_kwargs["poll_max_sec"] = poll_max_sec
 
+    if text_only_input is not None:
+        text_chunks = await _chunk_text_training_data_async(text_only_input, batch, loss_fn, loss_fn_config)
+        if len(text_chunks) == 1:
+            pending_text = await _forward_backward_text_chunks_post(self, session_id, text_chunks)
+            return asyncio.create_task(pending_text.poll_result(**poll_kwargs), name="fts-text-only-forward-backward")
+        text_results: List[OperationResult] = []
+        request_ids: List[str] = []
+        wave_size = max_chunks_per_wave or len(text_chunks)
+        for start in range(0, len(text_chunks), wave_size):
+            pending_text = await _forward_backward_text_chunks_post(
+                self,
+                session_id,
+                text_chunks[start : start + wave_size],
+                request_ids=request_ids,
+                chunk_offset=start,
+                multi_chunk=True,
+            )
+            text_results.extend(await pending_text._poll_chunk_results(**poll_kwargs))
+        combined_text = _combine_text_training_results(
+            text_results,
+            [len(body["text_only_input"]["samples"]) for body in text_chunks],
+        )
+        return await _completed_result_task(combined_text, "fts-text-only-forward-backward-completed")
+    if batch is None:
+        raise ValueError("Supply exactly one of batch or text_only_input")
     chunks = await _chunk_data_async(batch)
     if max_chunks_per_wave is not None and len(chunks) > max_chunks_per_wave:
         _logger.info(
@@ -2386,10 +2659,11 @@ async def save_weights_and_get_sampling_client_async(
 async def sample(
     self: "FineTuningSessionClient",
     session_id: str,
-    prompt_tokens: List[int] | ModelInput,
-    sampling_params: SamplingParams,
+    prompt_tokens: Optional[List[int] | ModelInput] = None,
+    sampling_params: Optional[SamplingParams] = None,
     *,
     checkpoint_id: str,
+    text_only_input: Optional[TextOnlySampleInput] = None,
     num_samples: int = 1,
     sampling_session_id: Optional[str] = None,
     seq_id: Optional[int] = None,
@@ -2407,6 +2681,9 @@ async def sample(
     :type sampling_params: ~azure.ai.finetuningsessions.models.SamplingParams
     :keyword checkpoint_id: Sampler checkpoint ID from ``save_weights_for_sampler``.
     :paramtype checkpoint_id: str
+    :keyword text_only_input: Complete editable public message/tool history,
+        instead of prompt_tokens. Results contain choices, not token sequences.
+    :paramtype text_only_input: ~azure.ai.finetuningsessions.models.TextOnlySampleInput or None
     :keyword num_samples: Number of completions. Default 1.
     :paramtype num_samples: int
     :keyword sampling_session_id: Optional sampling session ID sent with the request.
@@ -2428,19 +2705,36 @@ async def sample(
     ``_SAMPLE_THROTTLE_TIMEOUT_SEC``, then a typed ``RateLimitedError`` is raised.
     """
     _ensure_async_state(self)
-    body = SampleRequest(
-        num_samples=num_samples,
-        prompt=(
-            prompt_tokens
-            if isinstance(prompt_tokens, ModelInput)
-            else ModelInput(chunks=[ModelInputChunk(tokens=prompt_tokens)])
-        ),
-        sampling_params=sampling_params,
-        topk_prompt_logprobs=topk_prompt_logprobs,
-        sampling_session_id=sampling_session_id,
-        seq_id=seq_id,
-        prompt_logprobs=prompt_logprobs,
-    )
+    if sampling_params is None:
+        raise ValueError("sampling_params is required")
+    body: Any
+    if text_only_input is not None:
+        body = _text_sample_body(
+            text_only_input,
+            prompt_tokens,
+            sampling_params,
+            num_samples=num_samples,
+            sampling_session_id=sampling_session_id,
+            seq_id=seq_id,
+            prompt_logprobs=prompt_logprobs,
+            topk_prompt_logprobs=topk_prompt_logprobs,
+        )
+    else:
+        if prompt_tokens is None:
+            raise ValueError("Supply exactly one of prompt_tokens or text_only_input")
+        body = SampleRequest(
+            num_samples=num_samples,
+            prompt=(
+                prompt_tokens
+                if isinstance(prompt_tokens, ModelInput)
+                else ModelInput(chunks=[ModelInputChunk(tokens=prompt_tokens)])
+            ),
+            sampling_params=sampling_params,
+            topk_prompt_logprobs=topk_prompt_logprobs,
+            sampling_session_id=sampling_session_id,
+            seq_id=seq_id,
+            prompt_logprobs=prompt_logprobs,
+        )
     subpath = f"/fine_tuning/sessions/{session_id}/sample"
     operation_started_at = _time.monotonic()
     # Hold the lifecycle-scoped permit across BOTH submit and poll: releasing it
@@ -2470,6 +2764,34 @@ async def sample(
 
 
 # -- Session lifecycle ---------------------------------------------------------
+
+
+async def attach_session(
+    self: "FineTuningSessionClient",
+    session_id: str,
+) -> None:
+    """Keep an existing session alive using this client's background heartbeat.
+
+    Starts the existing 30-second, best-effort heartbeat without creating,
+    loading, polling, or validating the session. Repeated attachment on this
+    client is a no-op while the session's heartbeat remains registered.
+    Client close/context exit stops heartbeats without unloading the session;
+    ``close_session`` and ``delete_session`` retain their existing behavior.
+
+    :param session_id: Existing session ID, using the same canonical or legacy
+        ID forms as other session lifecycle methods.
+    :type session_id: str
+    :return: None.
+    :rtype: None
+    """
+    # The same per-client registries are owned by creation and shutdown.
+    # pylint: disable=protected-access
+    _ensure_async_state(self)
+    canonical_id = _canonical_session_id(session_id)
+    if canonical_id in self._heartbeat_tasks:
+        return
+    self._session_resource_ids.setdefault(canonical_id, _resource_session_id(session_id))
+    _start_heartbeat(self, canonical_id)
 
 
 async def close_session(
@@ -2561,6 +2883,7 @@ class FineTuningSessionClient(_ClientBase):
     # pylint: disable=client-incorrect-naming-convention
     create_session = create_session
     create_session_from_checkpoint = create_session_from_checkpoint
+    attach_session = attach_session
     forward_backward = forward_backward
     forward_backward_post = forward_backward_post
     forward_backward_async = forward_backward_async
@@ -2588,8 +2911,8 @@ __all__: list[str] = ["FineTuningSessionClient"]
 
 def patch_sdk():
     """Patch async convenience methods onto FineTuningSessionClient."""
-    from . import _configuration
     from .._client_options import _patch_configuration
+    from . import _configuration
 
     _patch_configuration(_configuration, asynchronous=True)
 
@@ -2598,6 +2921,7 @@ def patch_sdk():
     for name in (
         "create_session",
         "create_session_from_checkpoint",
+        "attach_session",
         "forward_backward",
         "forward_backward_post",
         "forward_backward_async",

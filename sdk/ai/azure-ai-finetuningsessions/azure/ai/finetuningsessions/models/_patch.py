@@ -12,9 +12,26 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, Dict, Literal, Mapping, Optional, Union, overload
 
 from .. import _unions
+from .._scalar_serialization import install_scalar_serialization as _install_scalar_serialization
 from .._utils.model_base import Model as _Model, rest_field
 from . import _models
 from ._enums import SessionType, TrainingType
+from ._text_only import (
+    TextOnlyFunctionCall,
+    TextOnlyToolCall,
+    TextOnlyContextMessage,
+    TextOnlyAssistantMessage,
+    TextOnlyToolMessage,
+    TextOnlyMessage,
+    TextOnlyFunctionDefinition,
+    TextOnlyTool,
+    TextOnlySampleInput,
+    TextOnlyTrainingSample,
+    TextOnlyTrainingInput,
+    TextOnlySampleChoice,
+    TextOnlyInvalidSampleChoice,
+    TextOnlySampleOperationResult,
+)
 
 MAX_IMAGE_BYTES = 10_000_000
 MAX_IMAGES_PER_EXAMPLE = 64
@@ -312,13 +329,28 @@ __all__: list[str] = [
     "SampleOperationResult",
     "SamplingOperationResult",
     "SaveCheckpointRequest",
+    "TextOnlyFunctionCall",
+    "TextOnlyToolCall",
+    "TextOnlyContextMessage",
+    "TextOnlyAssistantMessage",
+    "TextOnlyToolMessage",
+    "TextOnlyMessage",
+    "TextOnlyFunctionDefinition",
+    "TextOnlyTool",
+    "TextOnlySampleInput",
+    "TextOnlyTrainingSample",
+    "TextOnlyTrainingInput",
+    "TextOnlySampleChoice",
+    "TextOnlyInvalidSampleChoice",
+    "TextOnlySampleOperationResult",
 ]
 
 
-def patch_sdk():
+def patch_sdk() -> None:
     """Do not remove from this file.
 
     `patch_sdk` is a last resort escape hatch that allows you to do customizations
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    _install_scalar_serialization()
