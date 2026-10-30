@@ -10,6 +10,7 @@ from pathlib import Path
 from unittest.mock import AsyncMock
 
 import pytest
+import httpx
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.core.tasks import (
@@ -145,6 +146,7 @@ def test_disabled_responses_does_not_use_another_hosts_manager() -> None:
 @pytest.mark.parametrize("multi_turn", [False, True])
 @pytest.mark.parametrize("other_enabled", [False, True])
 @pytest.mark.parametrize("construct_after_startup", [False, True])
+@pytest.mark.parametrize("snapshot_mode", [False, True])
 @pytest.mark.asyncio
 async def test_recovery_uses_owning_hosts_handler_provider_and_options(
     monkeypatch: pytest.MonkeyPatch,
@@ -152,6 +154,7 @@ async def test_recovery_uses_owning_hosts_handler_provider_and_options(
     multi_turn: bool,
     other_enabled: bool,
     construct_after_startup: bool,
+    snapshot_mode: bool,
 ) -> None:
     from azure.ai.agentserver.core.tasks._lease import derive_lease_owner
     from azure.ai.agentserver.core.tasks._local_provider import LocalFileTaskProvider
@@ -164,6 +167,10 @@ async def test_recovery_uses_owning_hosts_handler_provider_and_options(
     from azure.ai.agentserver.responses.store._file import FileResponseStore
 
     monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
+    monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "true" if snapshot_mode else "false")
+    if snapshot_mode:
+        monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "snapshot-owner-session")
+        monkeypatch.setenv("FOUNDRY_AGENT_SESSION_GUID", "a" * 32)
     task_store = LocalFileTaskProvider(tmp_path / "tasks")
     monkeypatch.setattr(TaskManager, "_create_provider", staticmethod(lambda _: task_store))
     set_resilient_tasks_enabled(False)
@@ -265,6 +272,20 @@ async def test_recovery_uses_owning_hosts_handler_provider_and_options(
         construct_other_host()
         await persist_interrupted_task()
     async with first.router.lifespan_context(first):
+        if snapshot_mode:
+            assert first._task_manager is None
+            async with httpx.AsyncClient(transport=httpx.ASGITransport(app=first), base_url="http://test") as client:
+                restored = await client.post(
+                    "/_agent/after-restore",
+                    json={
+                        "session_context": {
+                            "session_id": "snapshot-owner-session",
+                            "restore_id": "snapshot-owner-restore",
+                            "session_env_overrides": {"FOUNDRY_AGENT_SESSION_GUID": "a" * 32},
+                        }
+                    },
+                )
+                assert restored.status_code == 200, restored.text
         if construct_after_startup:
             construct_other_host()
             await persist_interrupted_task()

@@ -1,5 +1,26 @@
 # Release History
 
+## 2.5.0b1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Remove the exact caller-scoped runtime record when deferred resilient-task
+  activation fails, rather than retaining an execution that never started.
+
+### Other Changes
+
+- Require Core `2.4.0b1` or later for snapshot task deferral/rollback handling.
+  Publish that Core version before this package.
+- Require Core's snapshot lifecycle integration. While task startup is deferred
+  (`FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true`), enabled-but-uninitialized
+  task errors are propagated instead of running non-durably; intentional opt-out
+  and absent/`false` keep the existing in-process fallback. No new HTTP 503 mapping or
+  author startup-task replay is introduced.
+
 ## 2.4.0 (2026-10-29)
 
 ### Bugs Fixed

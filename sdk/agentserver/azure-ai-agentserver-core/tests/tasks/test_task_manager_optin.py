@@ -37,7 +37,7 @@ from azure.ai.agentserver.core.tasks._manager import set_task_manager
 
 
 @pytest.fixture
-def _clean_state():
+def _clean_state(monkeypatch: pytest.MonkeyPatch):
     """Snapshot/clear/restore the global registry, manager, and enable switch.
 
     ``_REGISTERED_DESCRIPTORS`` and the enable switch are process-global and
@@ -46,6 +46,7 @@ def _clean_state():
     """
     saved_desc = list(_decorator_mod._REGISTERED_DESCRIPTORS)
     saved_enabled = resilient_tasks_enabled()
+    monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "false")
     _decorator_mod._REGISTERED_DESCRIPTORS.clear()
     set_resilient_tasks_enabled(False)
     set_task_manager(None)
@@ -67,10 +68,14 @@ class _FakeTaskManager:
         self.kwargs = kwargs
         self.startup_called = False
         self.shutdown_called = False
+        self.shutdown_signalled = False
         _FakeTaskManager.instances.append(self)
 
     async def startup(self) -> None:
         self.startup_called = True
+
+    def _signal_shutdown(self) -> None:
+        self.shutdown_signalled = True
 
     async def shutdown(self) -> None:
         self.shutdown_called = True

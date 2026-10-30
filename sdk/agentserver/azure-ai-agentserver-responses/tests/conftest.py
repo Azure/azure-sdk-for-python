@@ -31,13 +31,18 @@ def pytest_configure(config):
 
 
 @pytest.fixture(autouse=True)
+def _cold_start_snapshot_mode(monkeypatch):
+    """Keep ordinary tests independent of inherited capture-mode configuration."""
+    monkeypatch.setenv("FOUNDRY_MEMORY_SNAPSHOT_ENABLED", "false")
+
+
+@pytest.fixture(autouse=True)
 def _reset_resilient_tasks_global_state():
     """Contain process-global resilient-tasks state per test.
 
     The resilient-tasks enable switch and the ``TaskManager`` singleton are
-    process-global. A test that enables resilient tasks — e.g. constructs a
-    ``resilient_background=True`` host, which auto-enables the switch, or calls
-    ``set_resilient_tasks_enabled(True)`` — would otherwise leak that state into
+    process-global compatibility state. A test that installs a task manager or
+    calls ``set_resilient_tasks_enabled(True)`` would otherwise leak state into
     subsequent tests in the same pytest process (a plain host would then build a
     manager and behave durably). Snapshot both at test start and restore at the
     end so each test is isolated.

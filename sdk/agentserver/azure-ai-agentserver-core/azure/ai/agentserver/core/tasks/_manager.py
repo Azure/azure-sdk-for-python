@@ -14,12 +14,15 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import os
 import traceback
-from collections.abc import Awaitable, Callable, Iterator, Mapping
+from collections.abc import Awaitable, Callable, Coroutine, Iterator, Mapping
 from contextlib import contextmanager
 from contextvars import ContextVar
-from typing import Any, TypeVar
+from dataclasses import dataclass
+from functools import wraps
+from itertools import takewhile
+from typing import Any, Concatenate, ParamSpec, TypeVar
 
-from .._config import AgentConfig
+from .._config import AgentConfig, resolve_state_subdir
 from .._request_context import (
     FoundryAgentRequestContext,
     get_request_context,
@@ -322,11 +325,11 @@ def get_task_manager() -> TaskManager:
         )
 
         raise TaskManagerNotInitialized(
-            "TaskManager not initialized: the resilient task subsystem is not enabled. "
+            "TaskManager not initialized: resilient tasks are disabled or session initialization is incomplete. "
             "Durable tasks and crash recovery are opt-in - call "
             "set_resilient_tasks_enabled(True) for Invocations before host startup, "
             "or enable resilient_background or steerable_conversations on "
-            "ResponsesServerOptions, and run the host lifespan."
+            "ResponsesServerOptions, run the host lifespan, and wait for session activation."
         )
     return manager
 
@@ -429,6 +432,45 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         self._pending_input_count: int = 0
 
 
+class _TaskAdmissionClosed(RuntimeError):
+    """A stopped runtime cannot accept new task mutations."""
+
+
+_AdmissionP = ParamSpec("_AdmissionP")
+_AdmissionR = TypeVar("_AdmissionR")
+
+
+def _with_task_admission(
+    method: Callable[Concatenate[TaskManager, _AdmissionP], Awaitable[_AdmissionR]],
+) -> Callable[Concatenate[TaskManager, _AdmissionP], Awaitable[_AdmissionR]]:
+    @wraps(method)
+    async def admitted(manager: TaskManager, *args: _AdmissionP.args, **kwargs: _AdmissionP.kwargs) -> _AdmissionR:
+        task_id = kwargs.get("task_id")
+        if task_id is None and args and isinstance(args[0], str):
+            task_id = args[0]
+        if task_id is None:
+            task_info = kwargs.get("task_info")
+            if task_info is None and args:
+                task_info = args[0]
+            task_id = getattr(task_info, "id", None)
+        with _task_manager_scope(lambda: manager), manager._task_admission(  # pylint: disable=protected-access
+            task_id=task_id if isinstance(task_id, str) else None
+        ):
+            return await method(manager, *args, **kwargs)
+
+    return admitted
+
+
+@dataclass
+class _TaskInitializationPhase:
+    completed: bool = False
+    completed_restore_id: str | None = None
+
+    def complete(self, restore_id: str | None) -> None:
+        self.completed_restore_id = restore_id
+        self.completed = True
+
+
 class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-access,broad-exception-caught
     """Lifecycle orchestrator for resilient tasks.
 
@@ -456,7 +498,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
     ) -> None:
         self._config = config
         self._provider = provider or self._create_provider(config)
+        self._provider_binding = self._provider_configuration()
         self._active_tasks: dict[str, _ActiveTask] = {}
+        self._owned_workers: set[asyncio.Task[None]] = set()
         self._resume_callbacks: dict[str, Callable[..., Any]] = {}
         self._resume_opts: dict[str, TaskOptions] = {}
         self._disabled_recovery_names: set[str] = set()
@@ -468,12 +512,22 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._instance_id = generate_instance_id()
         self._materialization_restore_id: str | None = None
         self._shutdown_event = shutdown_event or asyncio.Event()
+        self._active_admissions: dict[asyncio.Task[Any], int] = {}
+        self._admitted_task_ids: dict[str, int] = {}
+        self._admissions_drained = asyncio.Event()
+        self._admissions_drained.set()
+        self._preserve_recoverable_tasks_on_shutdown = False
+        self._pending_shutdown_tasks: dict[int, _ActiveTask] = {}
         self._shutdown_grace_seconds = shutdown_grace_seconds
         self._active_generation_future: dict[str, asyncio.Future[Any]] = {}
         self._pending_steering_futures: dict[str, list[asyncio.Future[Any]]] = {}
         #   Layer 2: periodic recovery scan task. Created
         # at startup() time; cancelled at shutdown().
         self._periodic_recovery_task: asyncio.Task[None] | None = None
+        self._startup_lock = asyncio.Lock()
+        self._startup_phases = {
+            name: _TaskInitializationPhase() for name in ("construct", "register", "recovery", "periodic", "ready")
+        }
         #   / C-WQ-1..3 — per-task write-queue
         # registry. A single asyncio.Lock per task_id serializes all
         # in-process PATCHes against that task so etag conflicts become
@@ -497,8 +551,56 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             self._config.session_id or "local",
         )
         if restore_id is not None and restore_id != self._materialization_restore_id:
-            self._instance_id = generate_instance_id()
+            if not self._has_live_task_work:
+                self._instance_id = generate_instance_id()
             self._materialization_restore_id = restore_id
+
+    @staticmethod
+    def _provider_configuration_for(config: AgentConfig) -> tuple[str, str | None]:
+        backend = os.environ.get("AGENTSERVER_TASKS_BACKEND", "").strip().lower()
+        backend = backend or ("hosted" if config.is_hosted else "local")
+        return backend, (config.project_endpoint if backend == "hosted" else str(resolve_state_subdir("tasks")))
+
+    def _provider_configuration(self) -> tuple[str, str | None]:
+        return self._provider_configuration_for(self._config)
+
+    def _provider_configuration_matches(self, configuration: tuple[str, str | None] | None = None) -> bool:
+        return self._provider_binding == (self._provider_configuration() if configuration is None else configuration)
+
+    @contextmanager
+    def _task_admission(self, *, task_id: str | None = None) -> Iterator[None]:
+        """Track producers without granting admission to inherited child tasks.
+
+        :keyword task_id: Task whose registration must not be reclaimed by recovery.
+        :paramtype task_id: str or None
+        :return: Scope for one accepted submission.
+        :rtype: Iterator[None]
+        """
+        caller = asyncio.current_task()
+        if caller is None:
+            raise RuntimeError("Task admission requires a running asyncio task")
+        depth = self._active_admissions.get(caller, 0)
+        if depth == 0 and self._shutdown_event.is_set():
+            raise _TaskAdmissionClosed("Cannot submit tasks while the TaskManager is shutting down")
+        self._active_admissions[caller] = depth + 1
+        if task_id is not None:
+            self._admitted_task_ids[task_id] = self._admitted_task_ids.get(task_id, 0) + 1
+        self._admissions_drained.clear()
+        try:
+            yield
+        finally:
+            if task_id is not None:
+                remaining = self._admitted_task_ids[task_id] - 1
+                if remaining:
+                    self._admitted_task_ids[task_id] = remaining
+                else:
+                    del self._admitted_task_ids[task_id]
+            if depth:
+                self._active_admissions[caller] = depth
+            else:
+                del self._active_admissions[caller]
+            if not self._active_admissions:
+                self._admissions_drained.set()
 
     @staticmethod
     def _build_source(fn_name: str) -> dict[str, str]:
@@ -582,9 +684,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         from ._local_provider import (  # pylint: disable=import-outside-toplevel
             LocalFileTaskProvider,
-        )
-        from .._config import (  # pylint: disable=import-outside-toplevel
-            resolve_state_subdir,
         )
 
         if backend_override == "local" and config.is_hosted:
@@ -788,47 +887,83 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         if not future.done():
             future.set_exception(TaskCancelled())
 
-    async def startup(self) -> None:
+    @property
+    def _has_live_task_work(self) -> bool:
+        return (
+            bool(self._active_admissions)
+            or bool(self._active_tasks)
+            or any(worker is not self._periodic_recovery_task and not worker.done() for worker in self._owned_workers)
+            or any(not worker.done() for worker in self._timeout_watchdogs.values())
+        )
+
+    @property
+    def _has_live_workers(self) -> bool:
+        return self._has_live_task_work or (
+            self._periodic_recovery_task is not None and not self._periodic_recovery_task.done()
+        )
+
+    def _create_worker_task(self, coroutine: Coroutine[Any, Any, None]) -> asyncio.Task[None]:
+        worker = asyncio.create_task(coroutine)
+        self._owned_workers.add(worker)
+        worker.add_done_callback(self._owned_workers.discard)
+        return worker
+
+    def _prepare(self, restore_id: str | None = None) -> None:
+        if self._shutdown_event.is_set():
+            raise RuntimeError("Cannot initialize a stopped TaskManager")
+        self._startup_phases["construct"].complete(restore_id)
+        register = self._startup_phases["register"]
+        if not register.completed:
+            from ._decorator import (  # pylint: disable=import-outside-toplevel
+                _REGISTERED_DESCRIPTORS,
+            )
+
+            registered_callbacks = self._resume_callbacks.copy()
+            registered_opts = self._resume_opts.copy()
+            for fn_name, fn, opts in _REGISTERED_DESCRIPTORS:
+                if opts._requires_host_registration:
+                    continue
+                self._resume_callbacks[fn_name] = fn
+                self._resume_opts[fn_name] = opts
+            self._resume_callbacks.update(registered_callbacks)
+            self._resume_opts.update(registered_opts)
+        register.complete(restore_id)
+
+    @_with_task_admission
+    async def startup(self, *, restore_id: str | None = None) -> None:
         """Initialize the manager and recover stale tasks.
 
-        Called by ``AgentServerHost`` during lifespan startup.
+        Called during ordinary session startup or after memory restoration.
+
+        :keyword restore_id: Platform restore identity, or None for cold startup.
+        :paramtype restore_id: str or None
         """
-        logger.info(
-            "TaskManager starting (owner=%s, instance=%s, hosted=%s)",
-            self._lease_owner,
-            self._instance_id,
-            self._config.is_hosted,
-        )
-        # Pick up descriptors registered at import time (for recovery)
-        from ._decorator import (  # pylint: disable=import-outside-toplevel
-            _REGISTERED_DESCRIPTORS,
-        )
+        async with self._startup_lock:
+            self._prepare(restore_id)
+            logger.info(
+                "TaskManager starting (owner=%s, instance=%s, hosted=%s, restore_id=%s)",
+                self._lease_owner,
+                self._instance_id,
+                self._config.is_hosted,
+                restore_id,
+            )
+            recovery = self._startup_phases["recovery"]
+            if not recovery.completed or recovery.completed_restore_id != restore_id:
+                await self._recover_stale_tasks()
+                recovery.complete(restore_id)
 
-        registered_callbacks = self._resume_callbacks.copy()
-        registered_opts = self._resume_opts.copy()
-        for fn_name, fn, opts in _REGISTERED_DESCRIPTORS:
-            if opts._requires_host_registration:
-                continue
-            self._resume_callbacks[fn_name] = fn
-            self._resume_opts[fn_name] = opts
-        # Explicit host bindings must win over process-wide import order.
-        self._resume_callbacks.update(registered_callbacks)
-        self._resume_opts.update(registered_opts)
-
-        await self._recover_stale_tasks()
-
-        #   Layer 2: start the periodic recovery task.
-        # Reads _PERIODIC_RECOVERY_INTERVAL_SECONDS at spawn time;
-        # tests monkey-patch the constant to drive the scan
-        # deterministically.
-        try:
-            loop = asyncio.get_running_loop()
-            self._periodic_recovery_task = loop.create_task(self._periodic_recovery_loop())
-        except RuntimeError:
-            # No running loop (called from outside async context); skip
-            # — the layer-1 startup scan above still covered the
-            # initial reclaim pass.
-            pass
+            scanner = self._periodic_recovery_task
+            if scanner is not None and scanner.done():
+                self._startup_phases["periodic"].completed = False
+                self._startup_phases["ready"].completed = False
+                self._periodic_recovery_task = None
+                if not scanner.cancelled():
+                    scanner.result()
+                logger.warning("Restarting stopped periodic task recovery scanner")
+            if self._periodic_recovery_task is None:
+                self._periodic_recovery_task = self._create_worker_task(self._periodic_recovery_loop())
+            self._startup_phases["periodic"].complete(restore_id)
+            self._startup_phases["ready"].complete(restore_id)
 
     async def _periodic_recovery_loop(self) -> None:
         """Layer 2: periodic background recovery scan.
@@ -857,13 +992,110 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning("Periodic recovery scan iteration failed", exc_info=True)
 
-    async def shutdown(self) -> None:
+    async def _cancel_workers(self, *, wait: bool, retained_workers: set[asyncio.Task[Any]] | None = None) -> None:
+        """Cancel owned execution, renewal, and watchdog tasks.
+
+        :keyword wait: Whether to wait for the cancelled tasks to finish.
+        :paramtype wait: bool
+        :keyword retained_workers: Workers retained before shutdown was signalled.
+        :paramtype retained_workers: set[asyncio.Task[Any]] | None
+        """
+        workers = set(retained_workers or ())
+        workers.update(self._owned_workers)
+        for active in list(self._active_tasks.values()):
+            active.renewal_cancel.set()
+            if active.renewal_task and not active.renewal_task.done():
+                workers.add(active.renewal_task)
+            if not active.execution_task.done():
+                workers.add(active.execution_task)
+        for watchdog in self._timeout_watchdogs.values():
+            if not watchdog.done():
+                workers.add(watchdog)
+        for worker in workers:
+            if not worker.done():
+                worker.cancel()
+        if not (wait and workers):
+            return
+        results = await asyncio.gather(*workers, return_exceptions=True)
+        for result in results:
+            if isinstance(result, Exception):
+                logger.warning(
+                    "Task worker failed during shutdown",
+                    exc_info=(type(result), result, result.__traceback__),
+                )
+
+    async def _reconcile_steering_for_rollback(self, active_tasks: list[_ActiveTask]) -> None:
+        for active in active_tasks:
+            if active.opts is None or not active.opts.steerable:
+                continue
+            stored = await self._provider_get_tracked(active.task_id)
+            if stored is None or stored.status != "suspended":
+                continue
+            await self._try_drain_steering(
+                task_id=active.task_id,
+                ctx=active.context,
+                opts=active.opts,
+                result_future=active.result_future,
+            )
+
+    def _retain_shutdown_workers(self) -> set[asyncio.Task[Any]]:
+        self._pending_shutdown_tasks.update((id(active), active) for active in self._active_tasks.values())
+        workers = {*self._owned_workers, *self._timeout_watchdogs.values()}
+        for active in self._pending_shutdown_tasks.values():
+            workers.add(active.execution_task)
+            if active.renewal_task is not None:
+                workers.add(active.renewal_task)
+        return workers
+
+    async def _begin_shutdown(self, preserve_recoverable_tasks: bool) -> set[asyncio.Task[Any]]:
+        if asyncio.current_task() in self._active_admissions:
+            raise RuntimeError("Cannot shut down a TaskManager from an in-flight submission")
+        self._preserve_recoverable_tasks_on_shutdown |= preserve_recoverable_tasks
+        retained = self._retain_shutdown_workers() if self._preserve_recoverable_tasks_on_shutdown else set()
+        self._shutdown_event.set()
+        await self._admissions_drained.wait()
+        if self._preserve_recoverable_tasks_on_shutdown:
+            retained.update(self._retain_shutdown_workers())
+        return retained
+
+    def _defer_shutdown_futures(self, active_tasks: list[_ActiveTask]) -> None:
+        """Release old-lifetime waiters without removing their durable inputs.
+
+        :param active_tasks: Retained accepted tasks whose workers have been joined.
+        :type active_tasks: list[_ActiveTask]
+        """
+        from ._exceptions import TaskDeferred  # pylint: disable=import-outside-toplevel
+
+        futures = set(self._active_generation_future.values())
+        futures.update(future for pending in self._pending_steering_futures.values() for future in pending)
+        futures.update(active.result_future for active in active_tasks)
+        for future in futures:
+            if not future.done():
+                future.set_exception(TaskDeferred())
+        self._pending_steering_futures.clear()
+        self._active_generation_future.clear()
+
+    def _signal_shutdown(self) -> None:
+        """Interrupt blocked recovery reads without waiting for serialized cleanup."""
+        self._shutdown_event.set()
+
+    async def shutdown(self, *, wait_for_workers: bool = False, preserve_recoverable_tasks: bool = False) -> None:
         """Signal shutdown on all active tasks and force-expire leases.
 
         Called by ``AgentServerHost`` during lifespan shutdown.
+
+        :keyword wait_for_workers: Also wait for the cancelled execution, renewal,
+            and watchdog tasks to finish. Used before session configuration is
+            rolled back so handlers cannot observe the later binding.
+        :paramtype wait_for_workers: bool
+        :keyword preserve_recoverable_tasks: Stop workers before expiring leases
+            without treating rollback interruption as terminal cancellation.
+            Always waits for workers; used only for failed restore rollback.
+        :paramtype preserve_recoverable_tasks: bool
         """
         logger.info("TaskManager shutting down")
-        self._shutdown_event.set()
+        retained_workers = await self._begin_shutdown(preserve_recoverable_tasks)
+        preserve_recoverable_tasks = self._preserve_recoverable_tasks_on_shutdown
 
         #   Layer 2: stop the periodic recovery scan task.
         # Cancel cleanly so the shutdown event in its sleep wakes
@@ -919,9 +1151,17 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             except asyncio.CancelledError:
                 logger.info("TaskManager shutdown grace period interrupted")
 
+        remaining = list(self._active_tasks.values())
+        if preserve_recoverable_tasks:
+            retained_workers.update(self._retain_shutdown_workers())
+            remaining = list(self._pending_shutdown_tasks.values())
+            # Finish old-binding writes before making the records reclaimable.
+            await self._cancel_workers(wait=True, retained_workers=retained_workers)
+            await self._reconcile_steering_for_rollback(remaining)
+
         # Force-expire all leases. Tolerate cancellation here too.
         try:
-            for active in list(self._active_tasks.values()):
+            for active in remaining:
                 try:
                     await self._provider.update(
                         active.task_id,
@@ -942,14 +1182,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         # Cancel all renewal and execution tasks. Always do this so handlers
         # listening on the cancellation signal wake up and exit cleanly.
-        for active in self._active_tasks.values():
-            active.renewal_cancel.set()
-            if active.renewal_task and not active.renewal_task.done():
-                active.renewal_task.cancel()
-            if not active.execution_task.done():
-                active.execution_task.cancel()
+        if not preserve_recoverable_tasks:
+            await self._cancel_workers(wait=wait_for_workers)
 
+        self._defer_shutdown_futures(remaining if preserve_recoverable_tasks else [])
         self._active_tasks.clear()
+        self._timeout_watchdogs.clear()
+        self._pending_shutdown_tasks.clear()
+        for phase in self._startup_phases.values():
+            phase.completed = False
+            phase.completed_restore_id = None
         _clear_task_manager(self)
 
     async def create_and_run(
@@ -1010,6 +1252,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         )
         return await handle.result()
 
+    @_with_task_admission
     async def create_and_start(  # pylint: disable=too-many-locals,too-many-statements
         self,
         *,
@@ -1198,7 +1441,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
             steering_poll_cb_cs = _steering_poll_cs
 
-        renewal_task = asyncio.create_task(
+        renewal_task = self._create_worker_task(
             lease_renewal_loop(
                 self._provider,
                 task_id,
@@ -1221,7 +1464,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # Start execution
         terminate_event = asyncio.Event()
         terminate_reason_ref: list[str | None] = [None]
-        execution_task = asyncio.create_task(
+        execution_task = self._create_worker_task(
             self._execute_task(
                 fn=fn,
                 ctx=ctx,
@@ -1251,6 +1494,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             retry=retry,
         )
         self._active_tasks[task_id] = active
+        if self._preserve_recoverable_tasks_on_shutdown:
+            self._pending_shutdown_tasks[id(active)] = active
 
         return TaskRun(
             task_id=task_id,
@@ -1267,6 +1512,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
     # Resume happens via .start()/.run() against a suspended task; the lifecycle
     # state machine in _lifecycle_start_inner handles the resume transition.
 
+    @_with_task_admission
     async def get_active_run(self, task_id: str) -> TaskRun[Any] | None:  # pylint: disable=too-many-return-statements
         """Return a TaskRun handle for an active (in-progress) task.
 
@@ -1374,6 +1620,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 )
         return None
 
+    @_with_task_admission
     async def _reclaim_one(self, task_info: TaskInfo) -> "TaskInfo | None":
         """: CAS-protected lease reclaim helper.
 
@@ -1410,6 +1657,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             ),
         )
 
+    @_with_task_admission
     async def _start_existing_task(  # pylint: disable=too-many-locals,too-many-statements
         self,
         *,
@@ -1606,7 +1854,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
             steering_poll_cb = _steering_poll
 
-        renewal_task = asyncio.create_task(
+        renewal_task = self._create_worker_task(
             lease_renewal_loop(
                 self._provider,
                 task_id,
@@ -1626,7 +1874,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         terminate_event = asyncio.Event()
         terminate_reason_ref: list[str | None] = [None]
-        execution_task = asyncio.create_task(
+        execution_task = self._create_worker_task(
             self._execute_task(
                 fn=fn,
                 ctx=ctx,
@@ -1655,6 +1903,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             retry=retry,
         )
         self._active_tasks[task_id] = active
+        if self._preserve_recoverable_tasks_on_shutdown:
+            self._pending_shutdown_tasks[id(active)] = active
 
         return TaskRun(
             task_id=task_id,
@@ -1804,13 +2054,17 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :paramtype ctx: TaskContext[Any]
         """
         await self._cancel_watchdog_for_turn(task_id)
+        if self._shutdown_event.is_set():
+            return
         # Spec 037 #8 — an unset timeout defaults to a 1-day per-turn budget
         # (was previously "no watchdog"). The value is validated + capped at
         # registration; here we only resolve the default.
         effective_timeout = _resolve_effective_timeout(opts.timeout)
         timeout_seconds = effective_timeout.total_seconds()
         remaining = await self._compute_remaining_for_watchdog(task_id, timeout_seconds, ctx)
-        self._timeout_watchdogs[task_id] = asyncio.create_task(
+        if self._shutdown_event.is_set():
+            return
+        self._timeout_watchdogs[task_id] = self._create_worker_task(
             self._timeout_watchdog(
                 timeout_seconds=timeout_seconds,
                 cancel_event=ctx.cancel,
@@ -1933,6 +2187,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         while True:
             ctx.retry_attempt = attempt
             try:
+                if self._shutdown_event.is_set():
+                    raise asyncio.CancelledError
                 ambient_request_context = get_request_context()
                 request_context_token = set_request_context(
                     FoundryAgentRequestContext(
@@ -2140,8 +2396,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
                 break  # exit retry loop on success or suspend
 
-            except asyncio.CancelledError:
+            except (asyncio.CancelledError, _TaskAdmissionClosed):
                 renewal_cancel.set()
+                if self._preserve_recoverable_tasks_on_shutdown:
+                    from ._exceptions import (  # pylint: disable=import-outside-toplevel
+                        TaskDeferred,
+                    )
+
+                    if not current_result_future.done():
+                        current_result_future.set_exception(TaskDeferred())
+                    break
                 # asyncio.CancelledError is the cooperative-cancel path —
                 # the handler chose to raise it (or the framework signalled
                 # cancel via ctx.cancel and the handler did not catch).
@@ -2477,7 +2741,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                         payload=payload,
                         attachments=attachments_patch,
                         if_match=etag,
-                        **self._lease_ext_kwargs(task_id),
+                        **self._lease_ext_kwargs(task_id, allow_inactive=self._preserve_recoverable_tasks_on_shutdown),
                     ),
                 )
                 # Spec 031 / FR-002 — the drain consumed the head; the steered
@@ -2519,6 +2783,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 partial_output=partial_output,
                 _conflict_attempt=_conflict_attempt + 1,
             )
+
+        if self._shutdown_event.is_set():
+            # Persist the next input as recoverable without dispatching during shutdown.
+            return None
 
         # Pop and bind the next pending steering future (if any)
         new_future: asyncio.Future[Any] | None = None
@@ -2598,6 +2866,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             )
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Failed to clear drain_in_progress for %s", task_id)
+
+        if self._shutdown_event.is_set():
+            return None
 
         logger.info(
             "Steering drain: task %s drained next input",
@@ -3014,18 +3285,18 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             logger.warning("Legacy task cleanup delete failed for %s", task_info.id, exc_info=True)
         return True
 
-    async def _recover_stale_tasks(self) -> None:
-        """Recover stale in-progress tasks from previous instances."""
-        agent_name = self._config.agent_name or "default"
-        session_id = self._config.session_id or "local"
+    async def _list_tasks_for_recovery(self, agent_name: str, session_id: str) -> list[TaskInfo]:
+        """Stop a recovery read when shutdown needs its admission to drain.
 
-        try:
-            #   / C-FLT-1 — scope the recovery scan to
-            # framework-owned tasks via source_type. Tasks created by
-            # other systems sharing the same (agent, session,
-            # lease_owner) triple MUST NOT be enumerated by the
-            # framework's reclaim path.
-            stale_tasks = await self._provider.list(
+        :param agent_name: Agent whose framework-owned tasks are queried.
+        :type agent_name: str
+        :param session_id: Native session scope.
+        :type session_id: str
+        :return: Recovery candidates, or no candidates when shutdown interrupts the read.
+        :rtype: list[~azure.ai.agentserver.core.tasks._models.TaskInfo]
+        """
+        query = asyncio.create_task(
+            self._provider.list(
                 agent_name=agent_name,
                 session_id=session_id,
                 status="in_progress",
@@ -3033,14 +3304,38 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 source_type=_SOURCE_TYPE,
                 limit=None,
             )
+        )
+        stopping = asyncio.create_task(self._shutdown_event.wait())
+        try:
+            done, _ = await asyncio.wait((query, stopping), return_when=asyncio.FIRST_COMPLETED)
+            if query not in done:
+                logger.info("Stopping a recovery query before draining task admission")
+                return []
+            return await query
+        finally:
+            for pending in (query, stopping):
+                if not pending.done():
+                    pending.cancel()
+            await asyncio.gather(query, stopping, return_exceptions=True)
+
+    @_with_task_admission
+    async def _recover_stale_tasks(self) -> None:
+        """Recover stale in-progress tasks from previous instances."""
+        agent_name = self._config.agent_name or "default"
+        session_id = self._config.session_id or "local"
+
+        try:
+            stale_tasks = await self._list_tasks_for_recovery(agent_name, session_id)
         except Exception:  # pylint: disable=broad-exception-caught
             logger.warning("Failed to query stale tasks for recovery", exc_info=True)
             return
 
-        for task_info in stale_tasks:
+        for task_info in takewhile(lambda _: not self._shutdown_event.is_set(), stale_tasks):
             # Check owning-host authorization before any recovery writes.
-            if task_info.id in self._active_tasks or not self._recovery_is_authorized(
-                self._find_resume_callback_name(task_info)
+            if (
+                task_info.id in self._active_tasks
+                or task_info.id in self._admitted_task_ids
+                or not self._recovery_is_authorized(self._find_resume_callback_name(task_info))
             ):
                 continue
 
@@ -3578,7 +3873,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # Branch (c): retry.
         return "retry"
 
-    def _lease_ext_kwargs(self, task_id: str) -> dict[str, Any]:
+    def _lease_ext_kwargs(self, task_id: str, *, allow_inactive: bool = False) -> dict[str, Any]:
         """Return lease-ownership kwargs for piggyback on a payload PATCH.
 
         Every framework-issued PATCH that mutates payload (metadata
@@ -3599,11 +3894,14 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         :param task_id: The task identifier.
         :type task_id: str
+        :keyword allow_inactive: Include the manager's lease identity for fenced
+            rollback reconciliation after the execution has stopped.
+        :paramtype allow_inactive: bool
         :return: kwargs for ``TaskPatchRequest`` carrying lease params,
-            or ``{}`` if this task is not active locally.
+            or ``{}`` if inactive tasks were not requested and this task is not active locally.
         :rtype: dict[str, Any]
         """
-        if self._active_tasks.get(task_id) is None:
+        if self._active_tasks.get(task_id) is None and not allow_inactive:
             return {}
         return {
             "lease_owner": self._lease_owner,

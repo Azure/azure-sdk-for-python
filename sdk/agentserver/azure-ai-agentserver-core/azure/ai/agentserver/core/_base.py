@@ -24,7 +24,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 from . import _config, _tracing
 from ._errors import create_error_response
-from ._lifecycle import AgentSessionContext, _LifecycleState
+from ._lifecycle import AgentSessionContext, _LifecycleRollback, _LifecycleState
 from ._middleware import InboundRequestLoggingMiddleware, _TaskManagerMiddleware
 from ._request_context import (
     FoundryAgentRequestContext,
@@ -51,8 +51,20 @@ _AFTER_RESTORE_PATH = "/_agent/after-restore"
 _BEFORE_SNAPSHOT_ALIAS_PATH = "/_before_snapshot"
 _AFTER_RESTORE_ALIAS_PATH = "/_after_restore"
 _SESSION_ID_ENV = "FOUNDRY_AGENT_SESSION_ID"
+_AGENT_NAME_ENV = "FOUNDRY_AGENT_NAME"
 _SESSION_GUID_ENV = "FOUNDRY_AGENT_SESSION_GUID"
+_MEMORY_SNAPSHOT_ENV = "FOUNDRY_MEMORY_SNAPSHOT_ENABLED"
 _MISSING_ENV = object()
+
+
+def _read_memory_snapshot_enabled() -> bool:
+    raw = os.environ.get(_MEMORY_SNAPSHOT_ENV)
+    if raw is None:
+        return False
+    value = raw.strip().lower()
+    if value not in ("true", "false"):
+        raise ValueError(f"{_MEMORY_SNAPSHOT_ENV} must be 'true' or 'false' when set")
+    return value == "true"
 
 
 def _read_task_manager_shutdown_grace() -> float:
@@ -196,7 +208,7 @@ class _PlatformHeaderMiddleware:
 _SENTINEL_ACCESS_LOG = object()
 
 
-class AgentServerHost(Starlette):
+class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attributes
     """Agent server host framework for Azure AI Hosted Agent containers.
 
     A :class:`~starlette.applications.Starlette` subclass providing the
@@ -276,11 +288,13 @@ class AgentServerHost(Starlette):
         self._shutdown_fn: Optional[Callable[[], Awaitable[None]]] = None
         self._readiness_fn: Optional[Callable[[Request], Awaitable[Response]]] = None
         self._lifecycle = _LifecycleState()
-        # Protocol mixins contribute independent startup requirements via cooperative init.
-        task_manager_requirements: list[Callable[[], bool]] = kwargs.pop(
+        self._task_manager_requirements: list[Callable[[], bool]] = kwargs.pop(
             "_task_manager_requirements", [_resilient_tasks_enabled]
         )
-        self._task_manager: Any = None
+        self._task_manager: Optional["TaskManager"] = None
+        self._task_manager_binding: tuple[str, str, str] | None = None
+        self._task_manager_lock = asyncio.Lock()
+        self._task_manager_stopping = False
         #  Pre-shutdown callbacks invoked SYNCHRONOUSLY from the
         # SIGTERM signal handler — before Hypercorn's graceful drain
         # begins. Used by responses to set ``_shutdown_requested`` early so
@@ -325,6 +339,7 @@ class AgentServerHost(Starlette):
         # Build lifespan context manager
         @contextlib.asynccontextmanager
         async def _run_lifespan(_app: Starlette) -> AsyncGenerator[None, None]:  # noqa: RUF029
+            self._task_manager_stopping = False
             logger.info("AgentServerHost started")
 
             # --- Startup configuration logging ---
@@ -353,49 +368,21 @@ class AgentServerHost(Starlette):
                 protocols,
             )
 
-            # Invocations uses the core switch; Responses contributes its own
-            # feature flags. Merely registering task callbacks is not an opt-in.
-            task_manager: Any = None
-            if any(required() for required in task_manager_requirements):
-                # Resilient tasks were explicitly enabled. Construct the manager
-                # and run startup recovery. If EITHER fails, durability was
-                # explicitly requested, so fail the lifespan (fail-fast at boot)
-                # rather than start a server that would silently run store=true
-                # work non-durably. This guarantees that in a running deployment
-                # "enabled" always implies a live manager.
-                from .tasks._manager import (  # pylint: disable=import-outside-toplevel
-                    TaskManager,
-                    set_task_manager,
-                )
-
-                task_manager = TaskManager(
-                    config=cfg,
-                    shutdown_event=asyncio.Event(),
-                    shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
-                )
-                self._task_manager = task_manager
-                set_task_manager(task_manager)
+            snapshot_mode = _read_memory_snapshot_enabled()
+            if self._task_manager_required() and not snapshot_mode:
                 try:
-                    self._register_task_callbacks(task_manager)
-                    await task_manager.startup()
+                    await self._activate_task_manager()
                 except BaseException:
-                    # ``set_task_manager`` above already installed the manager
-                    # globally, but startup failed and the lifespan will now
-                    # abort before the shutdown block runs. Best-effort tear the
-                    # partially-started manager down and clear the singleton so a
-                    # failed/half-initialized manager is not left visible through
-                    # ``get_task_manager()``; then re-raise to fail the lifespan.
                     try:
-                        await task_manager.shutdown()
+                        await self._shutdown_task_manager()
                     except Exception:  # pylint: disable=broad-exception-caught
                         logger.warning("Error shutting down TaskManager after startup failure", exc_info=True)
-                    from .tasks._manager import _clear_task_manager  # pylint: disable=import-outside-toplevel
-
-                    _clear_task_manager(task_manager)
-                    self._task_manager = None
-                    task_manager = None
                     raise
-                logger.info("TaskManager initialized with startup recovery")
+            elif self._task_manager_required():
+                logger.info(
+                    "TaskManager deferred until after-restore (memory_snapshot_enabled=%s)",
+                    snapshot_mode,
+                )
             else:
                 logger.info(
                     "TaskManager NOT initialized (no protocol requested task execution). "
@@ -405,44 +392,37 @@ class AgentServerHost(Starlette):
                     _has_registered_tasks(),
                 )
 
-            yield
-
-            # --- SHUTDOWN: runs once when the server is stopping ---
-            logger.info(
-                "AgentServerHost shutting down (graceful timeout=%ss)",
-                self._graceful_shutdown_timeout,
-            )
-
-            #  Run on_shutdown FIRST so the responses layer's
-            # ``handle_shutdown`` can set ``_shutdown_requested`` and signal
-            # cancellation BEFORE the TaskManager waits its grace period.
-            # Without this, Row 3 (foreground) handlers can race against
-            # Hypercorn's client-connection close — the disconnect-poll loop
-            # stamps ``CLIENT_CANCELLED`` instead of ``SHUTTING_DOWN`` and
-            # B11 emits a cancelled terminal instead of failed.
-            if self._graceful_shutdown_timeout == 0:
-                logger.info("Graceful shutdown drain period disabled (timeout=0)")
-            else:
+            try:
+                yield
+            finally:
+                self._task_manager_stopping = True
+                logger.info(
+                    "AgentServerHost shutting down (graceful timeout=%ss)",
+                    self._graceful_shutdown_timeout,
+                )
+                # Protocol shutdown must signal handlers before manager draining.
+                if self._graceful_shutdown_timeout == 0:
+                    logger.info("Graceful shutdown drain period disabled (timeout=0)")
+                else:
+                    try:
+                        await asyncio.wait_for(
+                            self._dispatch_shutdown(),
+                            timeout=self._graceful_shutdown_timeout,
+                        )
+                    except asyncio.TimeoutError:
+                        logger.warning(
+                            "on_shutdown did not complete within %ss timeout",
+                            self._graceful_shutdown_timeout,
+                        )
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        logger.warning("Error in on_shutdown", exc_info=True)
+                # Activation holds the manager lock across its recovery read, so signal the
+                # already-created manager before waiting for serialized cleanup.
+                manager = self._task_manager
+                if manager is not None:
+                    manager._signal_shutdown()  # pylint: disable=protected-access
                 try:
-                    await asyncio.wait_for(
-                        self._dispatch_shutdown(),
-                        timeout=self._graceful_shutdown_timeout,
-                    )
-                except asyncio.TimeoutError:
-                    logger.warning(
-                        "on_shutdown did not complete within %ss timeout",
-                        self._graceful_shutdown_timeout,
-                    )
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning("Error in on_shutdown", exc_info=True)
-
-            # Shutdown task manager AFTER on_shutdown so resilient handlers
-            # have had time to checkpoint via the responses layer's
-            # ``handle_shutdown``.
-            if task_manager is not None:
-                try:
-                    await task_manager.shutdown()
-                    logger.info("TaskManager shut down")
+                    await self._shutdown_task_manager()
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Error shutting down TaskManager", exc_info=True)
 
@@ -458,7 +438,6 @@ class AgentServerHost(Starlette):
                     from .tasks._manager import _clear_task_manager  # pylint: disable=import-outside-toplevel
 
                     _clear_task_manager(self._task_manager)
-                    self._task_manager = None
 
         async def _before_snapshot_route(request: Request) -> Response:
             return await AgentServerHost._before_snapshot_endpoint(self, request)
@@ -530,6 +509,9 @@ class AgentServerHost(Starlette):
         :type manager: ~azure.ai.agentserver.core.tasks._manager.TaskManager
         """
 
+    def _task_manager_required(self) -> bool:
+        return any(required() for required in self._task_manager_requirements)
+
     def add_middleware(
         self,
         middleware_class: MiddlewareFactory[P],
@@ -547,6 +529,118 @@ class AgentServerHost(Starlette):
         :type args: Any
         """
         super().add_middleware(middleware_class, *args, **kwargs)
+
+    async def _activate_task_manager(self, restore_id: str | None = None, *, prepare_only: bool = False) -> None:
+        if not self._task_manager_required():
+            return
+        from .tasks._exceptions import (
+            TaskManagerNotInitialized,
+        )  # pylint: disable=import-outside-toplevel
+        from .tasks._manager import (  # pylint: disable=import-outside-toplevel
+            TaskManager,
+            get_task_manager,
+            set_task_manager,
+        )
+
+        async with self._task_manager_lock:
+            if self._task_manager_stopping:
+                raise RuntimeError("Cannot activate tasks while the host is shutting down")
+            binding = (self.config.session_id, self.config.session_guid, self.config.agent_name)
+            try:
+                installed = get_task_manager()
+            except TaskManagerNotInitialized:
+                installed = None
+            if installed is not None and installed is not self._task_manager:
+                raise RuntimeError("TaskManager is already owned by another host")
+            if self._task_manager is not None and (
+                self._task_manager_binding != binding
+                or not self._task_manager._provider_configuration_matches()  # pylint: disable=protected-access
+            ):
+                if self._task_manager._has_live_workers:  # pylint: disable=protected-access
+                    raise RuntimeError("Cannot change task runtime binding while workers are running")
+                await self._task_manager.shutdown(wait_for_workers=True)
+                self._task_manager = None
+                self._task_manager_binding = None
+            if self._task_manager is None:
+                self._task_manager = TaskManager(
+                    config=self.config,
+                    shutdown_event=asyncio.Event(),
+                    shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
+                )
+                if restore_id is not None:
+                    self._task_manager._rehydrate_session_state(restore_id)  # pylint: disable=protected-access
+                self._task_manager_binding = binding
+                set_task_manager(self._task_manager)
+            elif self._task_manager_binding != binding:
+                raise RuntimeError("TaskManager is bound to a different session")
+            self._register_task_callbacks(self._task_manager)
+            if prepare_only:
+                self._task_manager._prepare(restore_id)  # pylint: disable=protected-access
+                return
+            if restore_id is None:
+                await self._task_manager.startup()
+                logger.info("TaskManager initialized with startup recovery")
+            else:
+                await self._task_manager.startup(restore_id=restore_id)
+                logger.info(
+                    "TaskManager initialized for session activation (restore_id=%s)",
+                    restore_id,
+                )
+
+    async def _shutdown_task_manager(self, *, preserve_recoverable_tasks: bool = False) -> None:
+        async with self._task_manager_lock:
+            if self._task_manager is not None:
+                from .tasks._manager import (
+                    _clear_task_manager,
+                )  # pylint: disable=import-outside-toplevel
+
+                manager = self._task_manager
+                if preserve_recoverable_tasks:
+                    await manager.shutdown(wait_for_workers=True, preserve_recoverable_tasks=True)
+                else:
+                    await manager.shutdown()
+                _clear_task_manager(manager)
+                self._task_manager = None
+                self._task_manager_binding = None
+                logger.info("TaskManager shut down")
+
+    async def _quiesce_tasks_before_rollback(self, previous_session_id: str, previous_session_guid: str) -> bool:
+        async with self._task_manager_lock:
+            if self._task_manager is None:
+                return False
+            manager = self._task_manager
+            rollback = self._lifecycle.pending_rollback
+            previous_agent_name = self.config.agent_name if rollback is None else rollback.config.get("agent_name")
+            compatible_binding = self._task_manager_binding == (
+                previous_session_id,
+                previous_session_guid,
+                previous_agent_name,
+            )
+            if rollback is not None:
+                compatible_binding = (
+                    compatible_binding
+                    and manager._provider_configuration_matches(  # pylint: disable=protected-access
+                        rollback.provider_configuration
+                    )
+                )
+            if not manager._preserve_recoverable_tasks_on_shutdown and (  # pylint: disable=protected-access
+                compatible_binding or not manager._has_live_workers  # pylint: disable=protected-access
+            ):
+                return False
+        logger.warning("Stopping task runtime before restoring its previous session binding")
+        cleanup = asyncio.create_task(self._shutdown_task_manager(preserve_recoverable_tasks=True))
+        interrupted = False
+        while True:
+            try:
+                await asyncio.shield(cleanup)
+                return interrupted
+            except asyncio.CancelledError:
+                if cleanup.cancelled():
+                    raise RuntimeError("Task runtime cleanup was cancelled before binding rollback") from None
+                interrupted = True
+            except Exception:
+                logger.exception("Task runtime cleanup failed; retaining its restored session binding")
+                raise
 
     # ------------------------------------------------------------------
     # Server version (x-platform-server header)
@@ -638,6 +732,9 @@ class AgentServerHost(Starlette):
         """Register a function to rebuild process state after snapshot restore.
 
         Environment overrides are applied before the function is called.
+        Enabled resilient tasks are prepared for submission inside the handler.
+        Automatic initial recovery follows the handler so application dependencies
+        can be rebuilt before recovered tasks execute.
 
         :param fn: Async function called with the restored session context.
         :type fn: Callable[[AgentSessionContext], Awaitable[None]]
@@ -797,6 +894,20 @@ class AgentServerHost(Starlette):
 
     async def _after_restore_endpoint(self, request: Request) -> Response:
         try:
+            return await AgentServerHost._run_after_restore(self, request)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.error("The after-restore hook failed; unfinished rollback state is retained")
+            logger.debug("After-restore failure details", exc_info=True)
+            return create_error_response(
+                "after_restore_failed",
+                "The after-restore hook failed.",
+                status_code=500,
+            )
+
+    async def _run_after_restore(self, request: Request) -> Response:  # pylint: disable=too-many-statements
+        from .tasks._manager import TaskManager  # pylint: disable=import-outside-toplevel
+
+        try:
             payload = await AgentServerHost._read_json_object(request)
             context = AgentServerHost._parse_session_context(payload)
             session_guid = context.session_env_overrides.get(_SESSION_GUID_ENV)
@@ -811,16 +922,29 @@ class AgentServerHost(Starlette):
 
         async with self._lifecycle.lock:
             assigned_session_id = self._lifecycle.assigned_session_id
-            if assigned_session_id is not None and assigned_session_id != context.session_id:
+            if (self._task_manager_binding is not None and self._task_manager_binding[0] != context.session_id) or (
+                assigned_session_id is not None and assigned_session_id != context.session_id
+            ):
                 return create_error_response(
                     "session_mismatch",
                     "The restored process is already assigned to another session.",
                     status_code=409,
                 )
-            if context.restore_id in self._lifecycle.completed_restore_ids:
-                return JSONResponse({"status": "ok"})
             if assigned_session_id is None:
                 self._lifecycle.assigned_session_id = context.session_id
+
+            # Finish interrupted cleanup under its original binding before rehydration.
+            interrupted = await self._quiesce_tasks_before_rollback(self.config.session_id, self.config.session_guid)
+            AgentServerHost._restore_lifecycle_environment(self)
+            if interrupted:
+                raise asyncio.CancelledError
+
+            if context.restore_id in self._lifecycle.completed_restore_ids:
+                restored = self._lifecycle.restored_session_context
+                if restored is None:
+                    raise RuntimeError("Completed restore is missing its session context")
+                await self._activate_task_manager(restored.restore_id)
+                return JSONResponse({"status": "ok"})
 
             effective_environment = dict(context.session_env_overrides)
             effective_environment.setdefault(_SESSION_ID_ENV, context.session_id)
@@ -830,8 +954,46 @@ class AgentServerHost(Starlette):
             for key, value in previous_environment.items():
                 if key not in captured_environment:
                     captured_environment[key] = None if value is _MISSING_ENV else str(value)
+            agent_name = (
+                effective_environment.get(
+                    _AGENT_NAME_ENV, captured_environment.get(_AGENT_NAME_ENV, os.environ.get(_AGENT_NAME_ENV))
+                )
+                or ""
+            )
+            session_guid = (
+                effective_environment.get(
+                    _SESSION_GUID_ENV, captured_environment.get(_SESSION_GUID_ENV, os.environ.get(_SESSION_GUID_ENV))
+                )
+                or ""
+            )
+            if (
+                self._task_manager is not None
+                and self._task_manager_binding is not None
+                and (self._task_manager_binding[1] != session_guid or self._task_manager_binding[2] != agent_name)
+                and self._task_manager._has_live_workers  # pylint: disable=protected-access
+            ):
+                guid_changed = self._task_manager_binding[1] != session_guid
+                return create_error_response(
+                    "session_guid_mismatch" if guid_changed else "agent_mismatch",
+                    (
+                        "Cannot change session incarnation while task workers are running."
+                        if guid_changed
+                        else "Cannot change agent identity while task workers are running."
+                    ),
+                    status_code=409,
+                )
+            previous_session_id, previous_session_guid = (
+                self.config.session_id,
+                self.config.session_guid,
+            )
             previous_config = vars(self.config).copy()
             task_manager = _get_active_task_manager()
+            self._lifecycle.pending_rollback = _LifecycleRollback(
+                previous_environment,
+                previous_config,
+                task_manager,
+                TaskManager._provider_configuration_for(self.config),  # pylint: disable=protected-access
+            )
 
             try:
                 for key in environment_variables:
@@ -841,6 +1003,14 @@ class AgentServerHost(Starlette):
                     else:
                         os.environ[key] = value
                 restored_config = _config.AgentConfig.from_env()
+                if (
+                    task_manager is not None
+                    and task_manager._has_live_workers  # pylint: disable=protected-access
+                    and not task_manager._provider_configuration_matches(  # pylint: disable=protected-access
+                        TaskManager._provider_configuration_for(restored_config)  # pylint: disable=protected-access
+                    )
+                ):
+                    raise RuntimeError("Cannot change task provider while workers are running")
                 vars(self.config).update(vars(restored_config))
                 if task_manager is not None:
                     task_manager._rehydrate_session_state(context.restore_id)  # pylint: disable=protected-access
@@ -855,25 +1025,21 @@ class AgentServerHost(Starlette):
                 )
                 try:
                     await self._after_restore(context)
+                    await self._activate_task_manager(context.restore_id, prepare_only=True)
                     if self._lifecycle.after_restore_fn is not None:
                         await self._lifecycle.after_restore_fn(context)
+                    await self._activate_task_manager(context.restore_id)
                 finally:
                     reset_request_context(request_context_token)
             except asyncio.CancelledError:
-                AgentServerHost._restore_lifecycle_environment(
-                    self,
-                    previous_environment,
-                    previous_config,
-                    task_manager,
-                )
+                await self._quiesce_tasks_before_rollback(previous_session_id, previous_session_guid)
+                AgentServerHost._restore_lifecycle_environment(self)
                 raise
-            except Exception:  # pylint: disable=broad-exception-caught
-                AgentServerHost._restore_lifecycle_environment(
-                    self,
-                    previous_environment,
-                    previous_config,
-                    task_manager,
-                )
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                interrupted = await self._quiesce_tasks_before_rollback(previous_session_id, previous_session_guid)
+                AgentServerHost._restore_lifecycle_environment(self)
+                if interrupted:
+                    raise asyncio.CancelledError from exc
                 logger.exception("The after-restore lifecycle hook failed")
                 return create_error_response(
                     "after_restore_failed",
@@ -900,21 +1066,21 @@ class AgentServerHost(Starlette):
         self._lifecycle.captured_environment_values = captured_environment
         self._lifecycle.applied_environment_variables.update(effective_environment)
         self._lifecycle.before_snapshot_completed = False
+        self._lifecycle.pending_rollback = None
 
-    def _restore_lifecycle_environment(
-        self,
-        previous_environment: dict[str, object],
-        previous_config: dict[str, Any],
-        task_manager: Any,
-    ) -> None:
-        for key, value in previous_environment.items():
+    def _restore_lifecycle_environment(self) -> None:
+        rollback = self._lifecycle.pending_rollback
+        if rollback is None:
+            return
+        for key, value in rollback.environment.items():
             if value is _MISSING_ENV:
                 os.environ.pop(key, None)
             else:
                 os.environ[key] = str(value)
-        vars(self.config).update(previous_config)
-        if task_manager is not None:
-            task_manager._rehydrate_session_state()  # pylint: disable=protected-access
+        vars(self.config).update(rollback.config)
+        if rollback.task_manager is not None:
+            rollback.task_manager._rehydrate_session_state()  # pylint: disable=protected-access
+        self._lifecycle.pending_rollback = None
 
     # ------------------------------------------------------------------
     # Run helpers
