@@ -40,10 +40,21 @@ def main():
                     "canary": {"regions": ["brazilus"]},
                     "manifestCheckinSpecification": {
                         "manifestCheckinOption": "AttemptAutomaticManifestCheckin",
-                        "manifestCheckinParams": {"baselineArmManifestLocation": "EastUS2EUAP", "environment": "Prod"},
+                        "manifestCheckinParams": {
+                            "baselineArmManifestLocation": "EastUS2EUAP",
+                            "environment": "Prod",
+                            "swaggerUri": "https://github.com/Azure/azure-rest-api-specs/pull/123456",
+                        },
                     },
                     "refreshSubscriptionRegistration": True,
-                    "rolloutId": "Ev2RolloutIdGuid",
+                    "rolloutId": "rollout-0001",
+                    "rolloutOrchestrationMetadata": {
+                        "deploymentType": "RegionAgnosticRollout",
+                        "isForManifestBuildout": True,
+                        "serviceGroup": "Microsoft.Contoso.ManifestRollout",
+                        "serviceIdentifier": "00000000-0000-0000-0000-000000000000",
+                        "trafficRing": "Canary",
+                    },
                 }
             }
         },
@@ -51,6 +62,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-10-01/CustomRollouts_CreateOrUpdate.json
+# x-ms-original-file: 2026-10-01/CustomRollouts_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

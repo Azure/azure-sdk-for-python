@@ -44,20 +44,14 @@ def main():
                         "requiredFeatures": ["<feature flag>"],
                     }
                 ],
+                "lifecycleInfo": {"lifecycleStage": "InDevelopment"},
                 "management": {
                     "authorizationOwners": ["RPAAS-PlatformServiceAdministrator"],
                     "incidentContactEmail": "helpme@contoso.com",
                     "incidentRoutingService": "",
                     "incidentRoutingTeam": "",
-                    "manifestOwners": ["SPARTA-PlatformServiceAdministrator"],
+                    "manifestOwners": ["Contoso-PlatformServiceAdministrator"],
                     "resourceAccessPolicy": "NotSpecified",
-                    "serviceTreeInfos": [
-                        {
-                            "componentId": "d1b7d8ba-05e2-48e6-90d6-d781b99c6e69",
-                            "readiness": "InDevelopment",
-                            "serviceId": "d1b7d8ba-05e2-48e6-90d6-d781b99c6e69",
-                        }
-                    ],
                 },
                 "marketplaceType": "ProviderHub",
                 "metadata": {},
@@ -98,6 +92,7 @@ def main():
                 "swaggerSpecifications": [
                     {
                         "apiVersions": ["2020-06-01-preview"],
+                        "lifecycleInfo": {"lifecycleStage": "InDevelopment"},
                         "swaggerSpecFolderUri": "https://github.com/Azure/azure-rest-api-specs/blob/feature/azure/contoso/specification/contoso/resource-manager/Microsoft.SampleRP/",
                     }
                 ],
@@ -114,6 +109,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-10-01/ResourceTypeRegistrations_CreateOrUpdate.json
+# x-ms-original-file: 2026-10-01/ResourceTypeRegistrations_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
