@@ -13,7 +13,7 @@ evaluation does not use cannot fail it.
 
 import json
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Mapping
+from typing import Any, Dict, Mapping, Optional
 from urllib.parse import urlsplit
 
 REFUSAL = "refusal"
@@ -24,6 +24,9 @@ class DecisionProtocol(ABC):
 
     name: str
     supports_refusals = False
+    # The provider error code for a deployment that exists but serves another protocol, and how to fix that.
+    mismatch_code: Optional[str] = None
+    mismatch_hint = ""
 
     @abstractmethod
     def operation_url(self, endpoint: str) -> str:
@@ -69,6 +72,11 @@ class MicrosoftDecisionProtocol(DecisionProtocol):
     """The Microsoft Decision contract, which is also the canonical shape. A supplied endpoint path is kept."""
 
     name = "microsoft"
+    mismatch_code = "unknown_model"
+    mismatch_hint = (
+        "The deployment is not a Microsoft Decision model; for an Azure OpenAI Decisions deployment, "
+        "set decision_protocol to 'openai'."
+    )
     _PATH = "/providers/microsoft/v1/systemone"
 
     def operation_url(self, endpoint: str) -> str:
@@ -97,6 +105,11 @@ class OpenAIDecisionProtocol(DecisionProtocol):
 
     name = "openai"
     supports_refusals = True
+    mismatch_code = "model_not_found"
+    mismatch_hint = (
+        "The deployment is not an Azure OpenAI Decisions model; for a Microsoft Decision deployment, "
+        "set decision_protocol to 'microsoft' or remove it."
+    )
     MAX_QUESTIONS = 400
     _BASE_PATHS = ("", "/openai", "/openai/v1")
 

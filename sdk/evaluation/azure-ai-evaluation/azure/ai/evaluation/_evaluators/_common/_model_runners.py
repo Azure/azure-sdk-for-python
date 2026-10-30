@@ -790,7 +790,10 @@ class DecisionModelRunner:
                 if isinstance(code, str) and re.fullmatch(r"[A-Za-z][A-Za-z0-9_.-]{0,127}", code) is not None
                 else ""
             )
-            error = _failed(f"The decision model returned HTTP {status}{diagnostic}.", blame)
+            message = f"The decision model returned HTTP {status}{diagnostic}."
+            if diagnostic and code == self._protocol.mismatch_code:
+                message = f"{message} {self._protocol.mismatch_hint}"
+            error = _failed(message, blame)
             error.properties = self._response_properties(payload)
             if code == CONTENT_FILTER:
                 # The provider's content filter rejected the evaluated content, not how the request was built.
