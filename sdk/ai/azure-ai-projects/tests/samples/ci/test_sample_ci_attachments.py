@@ -287,7 +287,7 @@ def test_sample_output(sample_path):
     assert len(parents) == 2
 
 
-def test_junit_hook_only_adds_trusted_attachment_markers():
+def test_junit_hook_only_adds_trusted_attachment_markers(shared_logs):
     item = SimpleNamespace(
         config=SimpleNamespace(getoption=lambda _name: "attachments"),
         stash={attachments._ATTACHMENTS: [Path("/safe/log.txt")]},
