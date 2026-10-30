@@ -418,7 +418,9 @@ async def _do_checkpoint_persist(
         return last_snapshot  # idempotent — nothing changed since the last checkpoint
     result = last_snapshot
     try:
-        await provider.update_response(checkpoint_response, context=context)
+        await provider.update_response(
+            cast("generated_models.ResponseObject", checkpoint_response), context=context
+        )
         result = snapshot_bytes
     except Exception as exc:  # pylint: disable=broad-exception-caught
         setattr(exc, PLATFORM_ERROR_TAG, True)
