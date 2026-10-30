@@ -5,7 +5,8 @@
     "prefill", "isodate", "rtype", "vartype", "paramtype", "deserialized",
     "AICLIENT", "TCGC", "pygen", "skyrl", "falsey", "ungated", "rhno",
     "sess", "coro", "dedups", "unconfigured", "chunker", "aabbccdd", "localns", "kwonlyargs",
-    "xffjpeg", "xffoffline", "xfftest", "xffvalid", "nopolling", "undoc", "gethostbyaddr", "WRONLY", "RDWR", "CREAT"
+    "xffjpeg", "xffoffline", "xfftest", "xffvalid", "nopolling", "undoc", "gethostbyaddr", "WRONLY", "RDWR", "CREAT",
+    "CONIN", "ffiles"
   ],
   "overrides": [
     {

@@ -4,9 +4,9 @@
 
 This refresh ports the maintained SDK behavior and offline regressions from
 Loom master `26869a447bd03527712ac1c390a96d13e8ad235d`. The exact public
-specification pin is in [tsp-location.yaml](tsp-location.yaml); current source,
+specification pin is in [tsp-location.yaml](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/tsp-location.yaml); current source,
 toolchain, generated-output, runtime fingerprints, and validation evidence are
-in [eng/generation/provenance.json](eng/generation/provenance.json).
+in [eng/generation/provenance.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/eng/generation/provenance.json).
 
 The shared SDK toolchain uses Python emitter 0.63.10, Python generator 0.39.0,
 and TypeSpec compiler 1.17.0. The central SDK manifest/lock remain authoritative;
@@ -27,10 +27,10 @@ confirm that plain JSON values otherwise incur temporal-protocol probing.
 The maintained wrapper preserves enum, temporal, collection, and primitive
 subclass behavior and is idempotent across helper reloads. Report/port this
 optimization upstream and remove the wrapper once unmodified shared generation
-passes [tests/test_model_primitive_serialization.py](tests/test_model_primitive_serialization.py).
+passes [tests/test_model_primitive_serialization.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/tests/test_model_primitive_serialization.py).
 
 Fresh emission seeds only the explicitly maintained modules. Use
-[scripts/verify_generation.py](scripts/verify_generation.py) for two independent
+[scripts/verify_generation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-finetuningsessions/scripts/verify_generation.py) for two independent
 emissions and complete runtime equality; no generated-source rewriting is
 performed. The immutable earlier Loom compatibility reference remains a
 separate historical baseline, not the source of this refresh.
