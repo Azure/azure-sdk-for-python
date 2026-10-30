@@ -186,7 +186,9 @@ class TestNltkDataSetup:
 
         writable = [path for path in (data_dir, *data_dir.rglob("*")) if path.stat().st_mode & 0o022]
         assert writable == []
-        assert nltk.find("tokenizers/punkt_tab.zip", paths=[str(data_dir)])
+        # NLTK reads only under nltk.data.path and a private temp directory, which Linux's shared /tmp is not.
+        monkeypatch.setattr(nltk.data, "path", [str(data_dir)])
+        assert nltk.data.find("tokenizers/punkt_tab/english/")
 
     def test_fixture_preserves_and_restores_existing_data_paths(self, tmp_path, monkeypatch):
         original_path = str(tmp_path / "existing_data")
