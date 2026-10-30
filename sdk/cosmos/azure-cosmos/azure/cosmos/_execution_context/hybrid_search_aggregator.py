@@ -3,6 +3,8 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
+import base64
+import os
 from typing import Union
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context import document_producer
@@ -24,11 +26,9 @@ class _Placeholders:
     formattable_order_by = "{documentdb-formattableorderbyquery-filter}"
 
 
-def _retrieve_component_scores(drained_results):
-    component_scores_list = []
-    for _ in drained_results[0]['payload']['componentScores']:
-        component_scores_list.append([])
-    undefined_components = [-999999] * len(component_scores_list)
+def _retrieve_component_scores(drained_results, component_count):
+    component_scores_list = [[] for _ in range(component_count)]
+    undefined_components = [-999999] * component_count
     for index, result in enumerate(drained_results):
         component_scores = result['payload']['componentScores']
         # Another small fix while backend changes are released to deal with empty component score scenarios
@@ -51,19 +51,64 @@ def _compute_rrf_scores(ranks: list[list[int]], component_weights: list[Union[in
         result['Score'] = rrf_score
 
 
-def _compute_ranks(component_scores):
+def _compute_ranks(component_scores, use_competition_ranking=False):
     # initialize ranks as an N-D list with zeros
     ranks = [[0] * len(component_scores[0]) for _ in range(len(component_scores))]
 
     for component_index, scores in enumerate(component_scores):
         rank = 1  # ranks are 1-based
         for index, score_tuple in enumerate(scores):
-            # Identical scores should have the same rank
-            if index > 0 and score_tuple[0] != scores[index - 1][0]:
-                rank += 1
+            if not use_competition_ranking or index == 0 or score_tuple[0] != scores[index - 1][0]:
+                rank = index + 1
             ranks[component_index][score_tuple[1]] = rank
 
     return ranks
+
+
+def _use_competition_ranking():
+    return os.environ.get(
+        Constants.HS_USE_COMPETITION_RANKING_CONFIG,
+        Constants.HS_USE_COMPETITION_RANKING_CONFIG_DEFAULT,
+    ).strip().lower() == "true"
+
+
+def _get_document_rid(rid):
+    # Cosmos RID base64 uses '-' for '/', not the base64url alphabet.
+    decoded = base64.b64decode(rid.replace("-", "/"), validate=True)
+    if len(decoded) != 16:
+        raise ValueError("Hybrid search requires a 16-byte document resource ID.")
+    return int.from_bytes(decoded[8:16], byteorder="little", signed=False)
+
+
+def _rank_results(drained_results, hybrid_search_query_info, use_competition_ranking=False):
+    # Use the query-plan weights, defaulting to equal contributions from all components.
+    component_query_infos = hybrid_search_query_info['componentQueryInfos']
+    component_weights = hybrid_search_query_info.get('componentWeights') or [1.0] * len(component_query_infos)
+
+    # Parse once per result, retaining the full RID for identity and deduplication.
+    document_rids = {result['_rid']: _get_document_rid(result['_rid']) for result in drained_results}
+
+    # Size components from the plan because the first result may have no scores.
+    # Build (score, result index) lists so component ranks map back to the original results.
+    component_scores = _retrieve_component_scores(drained_results, len(component_query_infos))
+
+    # Sort each component by score, breaking ties by numeric RID in the same direction.
+    for index, score_tuples in enumerate(component_scores):
+        # Query-plan directions already account for normalized negative weights.
+        ordering = component_query_infos[index].get('orderBy') or ['Descending']
+        score_tuples.sort(
+            key=lambda score: (score[0], document_rids[drained_results[score[1]]['_rid']]),
+            reverse=ordering[0].lower() != 'ascending',
+        )
+
+    # Assign ordinal ranks by default, or competition ranks that share ranks for tied scores.
+    ranks = _compute_ranks(component_scores, use_competition_ranking)
+
+    # Combine weighted component contributions into each result's RRF score.
+    _compute_rrf_scores(ranks, component_weights, drained_results)
+
+    # Return highest fused scores first, breaking final ties by numeric RID descending.
+    drained_results.sort(key=lambda result: (result['Score'], document_rids[result['_rid']]), reverse=True)
 
 
 def _coalesce_duplicate_rids(query_results):
@@ -201,6 +246,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                 else getattr(query_execution_info, "parameters", None)
             )
         self._hybrid_search_query_info = hybrid_search_query_info
+        self._use_competition_ranking = _use_competition_ranking()
         self._final_results = []
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None
@@ -305,36 +351,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
             self._format_final_results(drained_results)
             return
 
-        # Get the Components weight if any
-        if self._hybrid_search_query_info.get('componentWeights'):
-            component_weights = self._hybrid_search_query_info['componentWeights']
-        else:
-            # If no weights are provided, we assume all components have equal weight
-            component_weights = [1.0] * len(self._hybrid_search_query_info['componentQueryInfos'])
-
-        # Sort drained results by _rid
-        drained_results.sort(key=lambda x: x['_rid'])
-
-        # Compose component scores matrix, where each tuple is (score, index)
-        component_scores = _retrieve_component_scores(drained_results)
-
-        # Sort by scores using component weights
-        for index, score_tuples in enumerate(component_scores):
-            # Ordering of the component query is based on if the weight is negative or positive
-            # A positive weight ordering means descending order, a negative weight ordering means ascending order
-            ordering = self._hybrid_search_query_info['componentQueryInfos'][index]['orderBy'][0]
-            comparison_factor = not ordering.lower() == 'ascending'
-            #  pylint: disable=cell-var-from-loop
-            score_tuples.sort(key=lambda x: x[0], reverse=comparison_factor)
-
-        # Compute the ranks
-        ranks = _compute_ranks(component_scores)
-
-        # Compute the RRF scores and add them to output
-        _compute_rrf_scores(ranks, component_weights, drained_results)
-
-        # Finally, sort on the RRF scores to build the final result to return
-        drained_results.sort(key=lambda x: x['Score'], reverse=True)
+        _rank_results(drained_results, self._hybrid_search_query_info, self._use_competition_ranking)
         self._format_final_results(drained_results)
 
     def _attach_parameters(self, query):

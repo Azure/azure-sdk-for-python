@@ -5,8 +5,8 @@
 """
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer
-from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_component_scores, _rewrite_query_infos, \
-    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids, _attach_parameters, \
+from azure.cosmos._execution_context.hybrid_search_aggregator import _rewrite_query_infos, \
+    _rank_results, _use_competition_ranking, _coalesce_duplicate_rids, _attach_parameters, \
     _FULL_TEXT_SCORE_SCOPE_KEY, _FULL_TEXT_SCORE_SCOPE_LOCAL, _FULL_TEXT_SCORE_SCOPE_DEFAULT
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
@@ -63,6 +63,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                 else getattr(query_execution_info, "parameters", None)
             )
         self._hybrid_search_query_info = hybrid_search_query_info
+        self._use_competition_ranking = _use_competition_ranking()
         self._final_results = []
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None
@@ -169,35 +170,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
             self._format_final_results(drained_results)
             return
 
-        # Get the Components weights if any
-        if self._hybrid_search_query_info.get('componentWeights'):
-            component_weights = self._hybrid_search_query_info['componentWeights']
-        else:
-            # If no weights are provided, we default to 1.0 for all components
-            component_weights = [1.0] * len(self._hybrid_search_query_info['componentQueryInfos'])
-
-        # Sort drained results by _rid
-        drained_results.sort(key=lambda x: x['_rid'])
-
-        # Compose component scores matrix, where each tuple is (score, index)
-        component_scores = _retrieve_component_scores(drained_results)
-
-        # Sort by scores using component weights
-        for index, score_tuples in enumerate(component_scores):
-            # Negative Weights will change sorting from Descending to Ascending
-            ordering = self._hybrid_search_query_info['componentQueryInfos'][index]['orderBy'][0]
-            comparison_factor = not ordering.lower() == 'ascending'
-            #  pylint: disable=cell-var-from-loop
-            score_tuples.sort(key=lambda x: x[0], reverse=comparison_factor)
-
-        # Compute the ranks
-        ranks = _compute_ranks(component_scores)
-
-        # Compute the RRF scores and add them to output
-        _compute_rrf_scores(ranks, component_weights, drained_results)
-
-        # Finally, sort on the RRF scores to build the final result to return
-        drained_results.sort(key=lambda x: x['Score'], reverse=True)
+        _rank_results(drained_results, self._hybrid_search_query_info, self._use_competition_ranking)
         self._format_final_results(drained_results)
 
     def _attach_parameters(self, query):
