@@ -1075,6 +1075,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._pending_steering_futures.clear()
         self._active_generation_future.clear()
 
+    def _signal_shutdown(self) -> None:
+        """Interrupt blocked recovery reads without waiting for serialized cleanup."""
+        self._shutdown_event.set()
+
     async def shutdown(self, *, wait_for_workers: bool = False, preserve_recoverable_tasks: bool = False) -> None:
         """Signal shutdown on all active tasks and force-expire leases.
 

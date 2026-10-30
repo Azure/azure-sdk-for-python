@@ -68,10 +68,14 @@ class _FakeTaskManager:
         self.kwargs = kwargs
         self.startup_called = False
         self.shutdown_called = False
+        self.shutdown_signalled = False
         _FakeTaskManager.instances.append(self)
 
     async def startup(self) -> None:
         self.startup_called = True
+
+    def _signal_shutdown(self) -> None:
+        self.shutdown_signalled = True
 
     async def shutdown(self) -> None:
         self.shutdown_called = True

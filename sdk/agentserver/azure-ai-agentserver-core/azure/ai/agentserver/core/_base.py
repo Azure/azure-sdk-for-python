@@ -416,6 +416,11 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                         )
                     except Exception:  # pylint: disable=broad-exception-caught
                         logger.warning("Error in on_shutdown", exc_info=True)
+                # Activation holds the manager lock across its recovery read, so signal the
+                # already-created manager before waiting for serialized cleanup.
+                manager = self._task_manager
+                if manager is not None:
+                    manager._signal_shutdown()  # pylint: disable=protected-access
                 try:
                     await self._shutdown_task_manager()
                 except Exception:  # pylint: disable=broad-exception-caught

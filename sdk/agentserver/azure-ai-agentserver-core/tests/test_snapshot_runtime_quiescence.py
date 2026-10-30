@@ -399,6 +399,48 @@ async def test_shutdown_interrupts_blocked_periodic_recovery_list(provider_facto
 
 
 @pytest.mark.asyncio
+async def test_host_shutdown_interrupts_blocked_initial_recovery_list(provider_factory):
+    provider, _ = provider_factory
+    app = host()
+    blocked, release, cancelled, started, stop = (asyncio.Event() for _ in range(5))
+    original_list = provider.list
+
+    async def list_tasks(**kwargs):
+        blocked.set()
+        try:
+            await release.wait()
+        except asyncio.CancelledError:
+            cancelled.set()
+            raise
+        return await original_list(**kwargs)
+
+    provider.list = list_tasks
+
+    # Enter and leave the lifespan in one task, as an ASGI server does.
+    async def run_host():
+        async with app.router.lifespan_context(app):
+            started.set()
+            await stop.wait()
+
+    host_task = asyncio.create_task(run_host())
+    restore = None
+    try:
+        await asyncio.wait_for(started.wait(), 2)
+        async with client(app) as http:
+            restore = asyncio.create_task(http.post("/_agent/after-restore", json=payload()))
+            await asyncio.wait_for(blocked.wait(), 2)
+            stop.set()
+            await asyncio.wait_for(asyncio.shield(host_task), 2)
+            assert cancelled.is_set()
+            assert app._task_manager is None
+    finally:
+        release.set()
+        stop.set()
+        pending = [task for task in (host_task, restore) if task is not None]
+        await asyncio.wait_for(asyncio.gather(*pending, return_exceptions=True), 2)
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("inner_id", ["outer", "inner"])
 async def test_task_registration_admission_cleans_up_nested_failure(provider_factory, inner_id):
     provider, _ = provider_factory
