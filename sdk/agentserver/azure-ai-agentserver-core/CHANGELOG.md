@@ -27,6 +27,8 @@
   characters rather than forwarding oversized model-attribution baggage.
 - Place the subject before unrelated baggage so bounded transport normalization
   cannot displace the attribution member.
+- Fixed Windows file-backed replay streams remaining locked after abrupt
+  process termination by using an OS-managed lock.
 
 ### Other Changes
 

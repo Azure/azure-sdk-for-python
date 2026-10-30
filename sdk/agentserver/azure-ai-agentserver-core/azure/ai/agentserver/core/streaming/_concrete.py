@@ -15,11 +15,13 @@ this private path.
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import errno
 import hashlib
 import json
 import logging
 import os
 import re
+import sys
 import time
 from collections.abc import AsyncIterator, Callable
 from pathlib import Path
@@ -32,8 +34,8 @@ from ._protocol import (
 
 logger = logging.getLogger("azure.ai.agentserver.streaming")
 
-# Try POSIX fcntl; fall back to a lock-file scheme on platforms
-# without it (Windows). Per streaming.md rule 32.
+# Use OS-managed locks so abrupt process death releases ownership: POSIX
+# locks the stream itself, Windows locks a sidecar (rule 32).
 try:
     import fcntl  # type: ignore[import-not-found]
 
@@ -531,7 +533,7 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
     See ``streaming.md`` §5.3 +  + rules 26-32. Persists every
     emit to ``path`` before fan-out (persist-before-publish).
     Rehydrates from disk on construction. Single-writer-per-path
-    enforced via ``fcntl.flock``.
+    enforced via ``fcntl.flock`` on POSIX or ``msvcrt.locking`` on Windows.
     """
 
     def __init__(
@@ -620,6 +622,32 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
     def _acquire_lock_file(self) -> None:
         """Own the Windows sidecar before opening or creating the replay."""
         lock_path = self._path.with_suffix(self._path.suffix + ".lock")
+        if sys.platform == "win32":
+            import msvcrt  # pylint: disable=import-outside-toplevel,import-error
+
+            # The sidecar's existence is not ownership: Windows releases the byte
+            # lock when the descriptor closes, including on abrupt process death,
+            # so a sidecar left behind by a crashed writer does not block recovery.
+            try:
+                lock_fd = os.open(lock_path, os.O_CREAT | os.O_RDWR)
+                try:
+                    # A new descriptor starts at offset zero, and Windows permits a
+                    # byte-range lock beyond EOF, so even an empty sidecar works.
+                    msvcrt.locking(lock_fd, msvcrt.LK_NBLCK, 1)
+                except OSError:
+                    os.close(lock_fd)
+                    raise
+            except OSError as exc:
+                if exc.errno not in (errno.EACCES, errno.EAGAIN, errno.EDEADLK):
+                    raise
+                logger.warning("FileBackedReplayEventStream: lock-file contention on %s", self._path)
+                raise RuntimeError(
+                    f"FileBackedReplayEventStream: another process holds the lock-file on {self._path}"
+                ) from exc
+            self._lock_fd = lock_fd
+            self._lock_path = lock_path
+            return
+        # Without fcntl or msvcrt, only an exclusive create can signal ownership.
         try:
             self._lock_fd = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_RDWR)
             self._lock_path = lock_path
