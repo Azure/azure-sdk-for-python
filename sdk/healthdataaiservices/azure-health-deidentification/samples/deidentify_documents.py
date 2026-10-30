@@ -26,6 +26,7 @@ USAGE:
 
 def deidentify_documents():
     # [START sample]
+    from azure.core.exceptions import HttpResponseError
     from azure.health.deidentification import DeidentificationClient
     from azure.health.deidentification.models import (
         DeidentificationJob,
@@ -57,7 +58,17 @@ def deidentify_documents():
         target_location=TargetStorageLocation(location=storage_location, prefix=outputPrefix, overwrite=True),
     )
 
-    finished_job: DeidentificationJob = client.begin_deidentify_documents(jobname, job).result(timeout=120)
+    try:
+        finished_job: DeidentificationJob = client.begin_deidentify_documents(jobname, job).result(timeout=120)
+    except HttpResponseError:
+        # A failed or canceled job surfaces as a generic polling error; the job's own error explains why.
+        # The lookup is best-effort so the original error is always re-raised.
+        try:
+            failed_job = client.get_job(jobname)
+            print(f"Job {jobname} ended with status {failed_job.status}: {failed_job.error}")
+        except Exception as lookup_error:
+            print(f"Could not retrieve job {jobname} for diagnostics: {lookup_error}")
+        raise
 
     print(f"Job Name:   {finished_job.job_name}")
     print(f"Job Status: {finished_job.status}")

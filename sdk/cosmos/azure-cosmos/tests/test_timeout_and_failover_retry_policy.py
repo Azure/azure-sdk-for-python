@@ -9,11 +9,13 @@ import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
+from _retry_test_utils import configure_retry_regions, retry_endpoint, retry_test_client
 from azure.cosmos import _retry_utility, PartitionKey
-from azure.cosmos._location_cache import RegionalRoutingContext, EndpointOperationType
 from azure.cosmos._request_object import RequestObject
 
 COLLECTION = "created_collection"
+
+
 @pytest.fixture(scope="class")
 def setup():
     if (TestTimeoutRetryPolicy.masterKey == '[YOUR_KEY_HERE]' or
@@ -35,10 +37,14 @@ def setup():
     created_database.delete_container(TestTimeoutRetryPolicy.TEST_CONTAINER_SINGLE_PARTITION_ID)
 
 
-
-
 def error_codes():
     return [408, 500, 502, 503]
+
+
+@pytest.fixture
+def retry_client():
+    with retry_test_client(test_config.TestConfig.host, test_config.TestConfig.masterKey) as client:
+        yield client
 
 
 @pytest.mark.cosmosEmulator
@@ -115,8 +121,8 @@ class TestTimeoutRetryPolicy:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
     @pytest.mark.parametrize("error_code", error_codes())
-    def test_cross_region_retry(self, setup, error_code):
-        mock_client = cosmos_client.CosmosClient(self.host, self.masterKey)
+    def test_cross_region_retry(self, setup, error_code, retry_client):
+        mock_client = retry_client
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
         document_definition = {'id': 'failoverDoc' + str(uuid.uuid4()),
@@ -127,16 +133,11 @@ class TestTimeoutRetryPolicy:
         created_document = container.create_item(body=document_definition)
         self.original_execute_function = _retry_utility.ExecuteFunction
         original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
-        fake_endpoint = "other-region"
+        fake_endpoint = retry_endpoint("West US")
         region_1 = "East US"
         region_2 = "West US"
-        regional_routing_context = RegionalRoutingContext(self.host)
-        regional_routing_context_2 = RegionalRoutingContext(fake_endpoint)
-        original_location_cache.account_read_locations = [region_1, region_2]
-        original_location_cache.account_read_regional_routing_contexts_by_location = {region_1: regional_routing_context,
-                                                                                  region_2: regional_routing_context_2
-                                                                                  }
-        original_location_cache.read_regional_routing_contexts = [regional_routing_context, regional_routing_context_2]
+        configure_retry_regions(original_location_cache, [region_1, region_2])
+        assert len(original_location_cache.read_regional_routing_contexts) == 2
         try:
             # should retry once and then succeed
             mf = self.MockExecuteFunctionCrossRegion(self.original_execute_function, error_code, fake_endpoint)
@@ -195,7 +196,6 @@ class TestTimeoutRetryPolicy:
                         message="Some Exception",
                         response=test_config.FakeResponse({}))
             return self.org_func(func, *args, **kwargs)
-
 
 
 if __name__ == '__main__':

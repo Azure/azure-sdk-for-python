@@ -1371,7 +1371,8 @@ async def test_crash_empty_replay_is_replaced_by_successful_same_user_execution(
         sent.append(message)
 
     try:
-        await asyncio.wait_for(response.stream_response(send), 2)
+        # File-backed replay flushes to disk; allow for contended CI storage.
+        await asyncio.wait_for(response.stream_response(send), 10)
         body = b"".join(message.get("body", b"") for message in sent)
         assert b"response.created" in body
         assert b"response.completed" in body

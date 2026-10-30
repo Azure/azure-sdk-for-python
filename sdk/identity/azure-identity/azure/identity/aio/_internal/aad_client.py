@@ -92,6 +92,9 @@ class AadClient(AadClientBase):
         kwargs.pop("claims", None)
         kwargs.pop("client_secret", None)
         enable_cae = kwargs.pop("enable_cae", False)
+        token_endpoint = request.url
         now = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
-        return self._process_response(response, now, enable_cae=enable_cae, tenant_id=tenant_id, **kwargs)
+        return self._process_response(
+            response, now, token_endpoint=token_endpoint, enable_cae=enable_cae, tenant_id=tenant_id, **kwargs
+        )
