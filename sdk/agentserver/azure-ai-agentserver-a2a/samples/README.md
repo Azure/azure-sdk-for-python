@@ -26,7 +26,7 @@ python -m venv .venv
 The requirements install A2A, core, and Invocations from sibling source
 directories. Invocations is needed only for the multi-protocol example; it is
 not a runtime dependency of the A2A package. Keep the current source checkouts
-together, since the preview requires the core tracing fix in 2.3.0b3.
+together, since the preview requires the core tracing fix in 2.3.1b1.
 The updated A2A package requires native `a2a-sdk>=1.2.3` for caller authorization
 on active-task cache lookups.
 

@@ -34,7 +34,7 @@
   context IDs or task states.
 - Consolidated tracing into one response wrapper and one span cleanup path for
   endpoint execution and response transmission, with shared JSON decoding.
-- Requires `azure-ai-agentserver-core>=2.3.0b3,<3.0.0` for preservation of Agent
+- Requires `azure-ai-agentserver-core>=2.3.1b1,<3.0.0` for preservation of Agent
   Card metadata and the non-blocking span flush helper used by A2A tracing.
 - Added an opt-in internal manual pipeline mode to publish A2A and core alpha
   packages together to the Azure SDK dev feed.

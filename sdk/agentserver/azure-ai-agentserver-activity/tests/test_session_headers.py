@@ -20,7 +20,7 @@ def test_original_subject_core_dependency_floor():
     core = next(value for value in requirements if value.name == "azure-ai-agentserver-core")
     package_version = Version(version("azure-ai-agentserver-activity"))
     if package_version.pre and package_version.pre[0] == "a":
-        assert Version(version("azure-ai-agentserver-core")) in core.specifier
+        assert core.specifier.contains(Version(version("azure-ai-agentserver-core")), prereleases=True)
     else:
         assert "2.3.0b2" in core.specifier
     assert "2.3.0b1" not in core.specifier

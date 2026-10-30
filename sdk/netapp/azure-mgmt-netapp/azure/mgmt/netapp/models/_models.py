@@ -122,6 +122,8 @@ class AccountProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
     :vartype provisioning_state: str
     :ivar active_directories: Active Directories.
     :vartype active_directories: list[~azure.mgmt.netapp.models.ActiveDirectory]
+    :ivar entra_id_config: Entra ID configuration for the account.
+    :vartype entra_id_config: ~azure.mgmt.netapp.models.EntraIdConfig
     :ivar encryption: Encryption settings.
     :vartype encryption: ~azure.mgmt.netapp.models.AccountEncryption
     :ivar disable_showmount: Shows the status of disableShowmount for all volumes under the
@@ -143,6 +145,10 @@ class AccountProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
         name="activeDirectories", visibility=["read", "create", "update", "delete", "query"]
     )
     """Active Directories."""
+    entra_id_config: Optional["_models.EntraIdConfig"] = rest_field(
+        name="entraIdConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Entra ID configuration for the account."""
     encryption: Optional["_models.AccountEncryption"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -168,6 +174,7 @@ class AccountProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
         self,
         *,
         active_directories: Optional[list["_models.ActiveDirectory"]] = None,
+        entra_id_config: Optional["_models.EntraIdConfig"] = None,
         encryption: Optional["_models.AccountEncryption"] = None,
         nfs_v4_id_domain: Optional[str] = None,
         ldap_configuration: Optional["_models.LdapConfiguration"] = None,
@@ -194,6 +201,8 @@ class AccountPropertiesPatch(_Model):  # pylint: disable=docstring-keyword-shoul
     :ivar nfs_v4_id_domain: Domain for NFSv4 user ID mapping. This property will be set for all
      NetApp accounts in the subscription and region and only affect non ldap NFSv4 volumes.
     :vartype nfs_v4_id_domain: str
+    :ivar entra_id_config: Entra ID configuration for the account.
+    :vartype entra_id_config: ~azure.mgmt.netapp.models.EntraIdConfigPatch
     :ivar ldap_configuration: LDAP Configuration for the account.
     :vartype ldap_configuration: ~azure.mgmt.netapp.models.LdapConfigurationPatch
     """
@@ -211,6 +220,10 @@ class AccountPropertiesPatch(_Model):  # pylint: disable=docstring-keyword-shoul
     )
     """Domain for NFSv4 user ID mapping. This property will be set for all NetApp accounts in the
      subscription and region and only affect non ldap NFSv4 volumes."""
+    entra_id_config: Optional["_models.EntraIdConfigPatch"] = rest_field(
+        name="entraIdConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Entra ID configuration for the account."""
     ldap_configuration: Optional["_models.LdapConfigurationPatch"] = rest_field(
         name="ldapConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -223,6 +236,7 @@ class AccountPropertiesPatch(_Model):  # pylint: disable=docstring-keyword-shoul
         active_directories: Optional[list["_models.ActiveDirectoryPatch"]] = None,
         encryption: Optional["_models.AccountEncryptionPatch"] = None,
         nfs_v4_id_domain: Optional[str] = None,
+        entra_id_config: Optional["_models.EntraIdConfigPatch"] = None,
         ldap_configuration: Optional["_models.LdapConfigurationPatch"] = None,
     ) -> None: ...
 
@@ -425,6 +439,386 @@ class ActiveDirectory(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
+class Resource(_Model):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Tracked Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    location: str = rest_field(visibility=["read", "create"])
+    """The geo-location where the resource lives. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ActiveDirectoryConfig(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Active Directory Configuration resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ActiveDirectoryConfigProperties
+    :ivar etag: "If etag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.").
+    :vartype etag: str
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
+    """
+
+    properties: Optional["_models.ActiveDirectoryConfigProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """\"If etag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.\")."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ActiveDirectoryConfigProperties"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ActiveDirectoryConfigProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Active Directory Configuration properties.
+
+    :ivar user_name: A domain user account with permission to create machine accounts.
+    :vartype user_name: str
+    :ivar dns: An array of DNS server IP addresses(IPv4 only) for the Active Directory.
+    :vartype dns: list[str]
+    :ivar smb_server_name: NetBIOS name of the SMB server. This name will be registered as a
+     computer account in the AD and used to mount volumes.
+    :vartype smb_server_name: str
+    :ivar organizational_unit: The Organizational Unit (OU) within the Windows Active Directory.
+    :vartype organizational_unit: str
+    :ivar site: The Active Directory site the service will limit Domain Controller discovery to.
+     Required.
+    :vartype site: str
+    :ivar backup_operators: Users to be added to the Built-in Backup Operator active directory
+     group. A list of unique usernames without domain specifier.
+    :vartype backup_operators: list[str]
+    :ivar administrators: Users to be added to the Built-in Administrators active directory group.
+     A list of unique usernames without domain specifier.
+    :vartype administrators: list[str]
+    :ivar security_operators: Domain Users in the Active directory to be given SecurityPrivilege
+     privilege (Needed for SMB Continuously available shares for SQL). A list of unique usernames
+     without domain specifier.
+    :vartype security_operators: list[str]
+    :ivar active_directory_status: Status of the Active Directory. Known values are: "Created",
+     "InUse", "Deleted", "Error", and "Updating".
+    :vartype active_directory_status: str or ~azure.mgmt.netapp.models.ActiveDirectoryStatus
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar domain: Name of the Active Directory domain. Required.
+    :vartype domain: str
+    :ivar secret_password: Access password from Azure KeyVault Secrets to connect Active Directory.
+     Required.
+    :vartype secret_password: ~azure.mgmt.netapp.models.SecretPassword
+    """
+
+    user_name: Optional[str] = rest_field(name="userName", visibility=["read", "create", "update", "delete", "query"])
+    """A domain user account with permission to create machine accounts."""
+    dns: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An array of DNS server IP addresses(IPv4 only) for the Active Directory."""
+    smb_server_name: Optional[str] = rest_field(
+        name="smbServerName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """NetBIOS name of the SMB server. This name will be registered as a computer account in the AD
+     and used to mount volumes."""
+    organizational_unit: Optional[str] = rest_field(
+        name="organizationalUnit", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Organizational Unit (OU) within the Windows Active Directory."""
+    site: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Active Directory site the service will limit Domain Controller discovery to. Required."""
+    backup_operators: Optional[list[str]] = rest_field(
+        name="backupOperators", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Users to be added to the Built-in Backup Operator active directory group. A list of unique
+     usernames without domain specifier."""
+    administrators: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Users to be added to the Built-in Administrators active directory group. A list of unique
+     usernames without domain specifier."""
+    security_operators: Optional[list[str]] = rest_field(
+        name="securityOperators", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Domain Users in the Active directory to be given SecurityPrivilege privilege (Needed for SMB
+     Continuously available shares for SQL). A list of unique usernames without domain specifier."""
+    active_directory_status: Optional[Union[str, "_models.ActiveDirectoryStatus"]] = rest_field(
+        name="activeDirectoryStatus", visibility=["read"]
+    )
+    """Status of the Active Directory. Known values are: \"Created\", \"InUse\", \"Deleted\",
+     \"Error\", and \"Updating\"."""
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+    domain: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the Active Directory domain. Required."""
+    secret_password: "_models.SecretPassword" = rest_field(
+        name="secretPassword", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Access password from Azure KeyVault Secrets to connect Active Directory. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        site: str,
+        domain: str,
+        secret_password: "_models.SecretPassword",
+        user_name: Optional[str] = None,
+        dns: Optional[list[str]] = None,
+        smb_server_name: Optional[str] = None,
+        organizational_unit: Optional[str] = None,
+        backup_operators: Optional[list[str]] = None,
+        administrators: Optional[list[str]] = None,
+        security_operators: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ActiveDirectoryConfigUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the ActiveDirectoryConfig.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ActiveDirectoryConfigUpdateProperties
+    """
+
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ActiveDirectoryConfigUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ActiveDirectoryConfigUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ActiveDirectoryConfigUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the ActiveDirectoryConfig.
+
+    :ivar user_name: A domain user account with permission to create machine accounts.
+    :vartype user_name: str
+    :ivar dns: An array of DNS server IP addresses(IPv4 only) for the Active Directory.
+    :vartype dns: list[str]
+    :ivar smb_server_name: NetBIOS name of the SMB server. This name will be registered as a
+     computer account in the AD and used to mount volumes.
+    :vartype smb_server_name: str
+    :ivar organizational_unit: The Organizational Unit (OU) within the Windows Active Directory.
+    :vartype organizational_unit: str
+    :ivar site: The Active Directory site the service will limit Domain Controller discovery to.
+    :vartype site: str
+    :ivar backup_operators: Users to be added to the Built-in Backup Operator active directory
+     group. A list of unique usernames without domain specifier.
+    :vartype backup_operators: list[str]
+    :ivar administrators: Users to be added to the Built-in Administrators active directory group.
+     A list of unique usernames without domain specifier.
+    :vartype administrators: list[str]
+    :ivar security_operators: Domain Users in the Active directory to be given SecurityPrivilege
+     privilege (Needed for SMB Continuously available shares for SQL). A list of unique usernames
+     without domain specifier.
+    :vartype security_operators: list[str]
+    :ivar domain: Name of the Active Directory domain.
+    :vartype domain: str
+    :ivar secret_password: Access password from Azure KeyVault Secrets to connect Active Directory.
+    :vartype secret_password: ~azure.mgmt.netapp.models.SecretPassword
+    """
+
+    user_name: Optional[str] = rest_field(name="userName", visibility=["read", "create", "update", "delete", "query"])
+    """A domain user account with permission to create machine accounts."""
+    dns: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An array of DNS server IP addresses(IPv4 only) for the Active Directory."""
+    smb_server_name: Optional[str] = rest_field(
+        name="smbServerName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """NetBIOS name of the SMB server. This name will be registered as a computer account in the AD
+     and used to mount volumes."""
+    organizational_unit: Optional[str] = rest_field(
+        name="organizationalUnit", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Organizational Unit (OU) within the Windows Active Directory."""
+    site: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Active Directory site the service will limit Domain Controller discovery to."""
+    backup_operators: Optional[list[str]] = rest_field(
+        name="backupOperators", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Users to be added to the Built-in Backup Operator active directory group. A list of unique
+     usernames without domain specifier."""
+    administrators: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Users to be added to the Built-in Administrators active directory group. A list of unique
+     usernames without domain specifier."""
+    security_operators: Optional[list[str]] = rest_field(
+        name="securityOperators", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Domain Users in the Active directory to be given SecurityPrivilege privilege (Needed for SMB
+     Continuously available shares for SQL). A list of unique usernames without domain specifier."""
+    domain: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the Active Directory domain."""
+    secret_password: Optional["_models.SecretPassword"] = rest_field(
+        name="secretPassword", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Access password from Azure KeyVault Secrets to connect Active Directory."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user_name: Optional[str] = None,
+        dns: Optional[list[str]] = None,
+        smb_server_name: Optional[str] = None,
+        organizational_unit: Optional[str] = None,
+        site: Optional[str] = None,
+        backup_operators: Optional[list[str]] = None,
+        administrators: Optional[list[str]] = None,
+        security_operators: Optional[list[str]] = None,
+        domain: Optional[str] = None,
+        secret_password: Optional["_models.SecretPassword"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ActiveDirectoryPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Active Directory settings for PATCH operations (no default values).
 
@@ -603,6 +997,49 @@ class ActiveDirectoryPatch(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
+class AsyncDirectoryDelete(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Async Directory Delete configuration for the volume.
+
+    :ivar status: Specifies whether Async Directory Delete is enabled for the volume. Known values
+     are: "Enabled" and "Disabled".
+    :vartype status: str or ~azure.mgmt.netapp.models.AsyncDirectoryDeleteStatus
+    :ivar trash_bin_name: The name of the Trash bin folder for deleted files. Max length of 255.
+     Must contain at least one alphanumeric character (A-Z, a-z, 0-9) and may include dots (.),
+     underscores (_), and hyphens (-).
+    :vartype trash_bin_name: str
+    """
+
+    status: Optional[Union[str, "_models.AsyncDirectoryDeleteStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether Async Directory Delete is enabled for the volume. Known values are:
+     \"Enabled\" and \"Disabled\"."""
+    trash_bin_name: Optional[str] = rest_field(
+        name="trashBinName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the Trash bin folder for deleted files. Max length of 255. Must contain at least
+     one alphanumeric character (A-Z, a-z, 0-9) and may include dots (.), underscores (_), and
+     hyphens (-)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.AsyncDirectoryDeleteStatus"]] = None,
+        trash_bin_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AuthorizeRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authorize request.
 
@@ -683,34 +1120,6 @@ class AzureKeyVaultDetails(_Model):  # pylint: disable=docstring-keyword-should-
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class Resource(_Model):
-    """Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the resource."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
 class ProxyResource(Resource):
@@ -869,50 +1278,6 @@ class BackupPatchProperties(_Model):  # pylint: disable=docstring-keyword-should
         self,
         *,
         label: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Tracked Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    location: str = rest_field(visibility=["read", "create"])
-    """The geo-location where the resource lives. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -2769,6 +3134,11 @@ class CertificateAkvDetails(_Model):  # pylint: disable=docstring-keyword-should
     :ivar certificate_name: The name of the bucket server certificate stored in the Azure Key
      Vault.
     :vartype certificate_name: str
+    :ivar user_assigned_identity: Optional resource ID of the managed identity that has access to
+     the Azure Key Vault (AKV) secret. If a value is provided, it is used to find a matching entry
+     in the account's collection of user-assigned managed identities. If no match is found, an
+     exception is thrown. If no value is provided, the system-assigned managed identity is used.
+    :vartype user_assigned_identity: str
     """
 
     certificate_key_vault_uri: Optional[str] = rest_field(
@@ -2779,6 +3149,13 @@ class CertificateAkvDetails(_Model):  # pylint: disable=docstring-keyword-should
         name="certificateName", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the bucket server certificate stored in the Azure Key Vault."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional resource ID of the managed identity that has access to the Azure Key Vault (AKV)
+     secret. If a value is provided, it is used to find a matching entry in the account's collection
+     of user-assigned managed identities. If no match is found, an exception is thrown. If no value
+     is provided, the system-assigned managed identity is used."""
 
     @overload
     def __init__(
@@ -2786,6 +3163,7 @@ class CertificateAkvDetails(_Model):  # pylint: disable=docstring-keyword-should
         *,
         certificate_key_vault_uri: Optional[str] = None,
         certificate_name: Optional[str] = None,
+        user_assigned_identity: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2838,6 +3216,34 @@ class ChangeKeyVault(_Model):  # pylint: disable=docstring-keyword-should-match-
         key_name: str,
         key_vault_private_endpoints: list["_models.KeyVaultPrivateEndpoint"],
         key_vault_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ChangeZoneRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Changes the zone for the Zone Redundant elastic capacity pool.
+
+    :ivar new_zone: Availability zone to move Zone Redundant elastic capacity pool to. Required.
+    :vartype new_zone: str
+    """
+
+    new_zone: str = rest_field(name="newZone", visibility=["read", "create", "update", "delete", "query"])
+    """Availability zone to move Zone Redundant elastic capacity pool to. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        new_zone: str,
     ) -> None: ...
 
     @overload
@@ -2905,6 +3311,93 @@ class CheckAvailabilityResponse(_Model):  # pylint: disable=docstring-keyword-sh
         super().__init__(*args, **kwargs)
 
 
+class CheckElasticResourceAvailabilityResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Information regarding availability of a resource.
+
+    :ivar is_available: True indicates name is valid and available. False indicates the name is
+     invalid, unavailable, or both. Known values are: "True" and "False".
+    :vartype is_available: str or ~azure.mgmt.netapp.models.CheckElasticResourceAvailabilityStatus
+    :ivar reason: Invalid indicates the name provided does not match Azure NetApp Files naming
+     requirements. AlreadyExists indicates that the name is already in use and is therefore
+     unavailable. Known values are: "Invalid" and "AlreadyExists".
+    :vartype reason: str or ~azure.mgmt.netapp.models.CheckElasticResourceAvailabilityReason
+    :ivar message: If reason == invalid, provide the user with the reason why the given name is
+     invalid, and provide the resource naming requirements so that the user can select a valid name.
+     If reason == AlreadyExists, explain that resource name is already in use, and direct them to
+     select a different name.
+    :vartype message: str
+    """
+
+    is_available: Optional[Union[str, "_models.CheckElasticResourceAvailabilityStatus"]] = rest_field(
+        name="isAvailable", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """True indicates name is valid and available. False indicates the name is invalid, unavailable,
+     or both. Known values are: \"True\" and \"False\"."""
+    reason: Optional[Union[str, "_models.CheckElasticResourceAvailabilityReason"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Invalid indicates the name provided does not match Azure NetApp Files naming requirements.
+     AlreadyExists indicates that the name is already in use and is therefore unavailable. Known
+     values are: \"Invalid\" and \"AlreadyExists\"."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """If reason == invalid, provide the user with the reason why the given name is invalid, and
+     provide the resource naming requirements so that the user can select a valid name. If reason ==
+     AlreadyExists, explain that resource name is already in use, and direct them to select a
+     different name."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_available: Optional[Union[str, "_models.CheckElasticResourceAvailabilityStatus"]] = None,
+        reason: Optional[Union[str, "_models.CheckElasticResourceAvailabilityReason"]] = None,
+        message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CheckElasticVolumeFilePathAvailabilityRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """File path availability request content - availability is based on the elastic volume filePath
+    within the given elastic capacityPool.
+
+    :ivar file_path: A unique file path for the volume. Used when creating mount targets. This
+     needs to be unique within the elastic capacity pool. Required.
+    :vartype file_path: str
+    """
+
+    file_path: str = rest_field(name="filePath", visibility=["read", "create", "update", "delete", "query"])
+    """A unique file path for the volume. Used when creating mount targets. This needs to be unique
+     within the elastic capacity pool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_path: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class CifsUser(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The effective CIFS username when accessing the volume data.
 
@@ -2920,6 +3413,48 @@ class CifsUser(_Model):  # pylint: disable=docstring-keyword-should-match-keywor
         self,
         *,
         username: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ClusterPeer(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Cluster Peer resource, represents a peer relationship between an external cluster and an Azure
+    NetApp Files cluster.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ClusterPeerProperties
+    """
+
+    properties: Optional["_models.ClusterPeerProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ClusterPeerProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -3000,6 +3535,66 @@ class ClusterPeerCommandResponseProperties(_Model):  # pylint: disable=docstring
         super().__init__(*args, **kwargs)
 
 
+class ClusterPeerProperties(_Model):
+    """Cluster Peer properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar anf_cluster_name: Name of the Azure NetApp Files (ANF) cluster.
+    :vartype anf_cluster_name: str
+    :ivar ontap_cluster_name: Name of the external ONTAP cluster, discovered during cluster
+     peering.
+    :vartype ontap_cluster_name: str
+    :ivar ontap_version: The ONTAP version of the external cluster.
+    :vartype ontap_version: str
+    :ivar status: Status of the peer relationship. Known values are: "Active", "Error", and
+     "Pending".
+    :vartype status: str or ~azure.mgmt.netapp.models.ClusterPeerStatus
+    :ivar hybrid_replication_resource_ids: External volume replication resource IDs.
+    :vartype hybrid_replication_resource_ids: list[str]
+    :ivar external_cache_connection_resource_ids: External cache connection resource IDs.
+    :vartype external_cache_connection_resource_ids: list[str]
+    :ivar command: Command to execute to create the peer relationship.
+    :vartype command: str
+    :ivar network_interfaces: Network interfaces created that allow communications between the
+     clusters.
+    :vartype network_interfaces: list[~azure.mgmt.netapp.models.ExternalResourceNetworkInterfaces]
+    :ivar cluster_peer_subnet_resource_id: Cluster Peer Subnet Resource ID.
+    :vartype cluster_peer_subnet_resource_id: str
+    """
+
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+    anf_cluster_name: Optional[str] = rest_field(name="anfClusterName", visibility=["read"])
+    """Name of the Azure NetApp Files (ANF) cluster."""
+    ontap_cluster_name: Optional[str] = rest_field(name="ontapClusterName", visibility=["read"])
+    """Name of the external ONTAP cluster, discovered during cluster peering."""
+    ontap_version: Optional[str] = rest_field(name="ontapVersion", visibility=["read"])
+    """The ONTAP version of the external cluster."""
+    status: Optional[Union[str, "_models.ClusterPeerStatus"]] = rest_field(visibility=["read"])
+    """Status of the peer relationship. Known values are: \"Active\", \"Error\", and \"Pending\"."""
+    hybrid_replication_resource_ids: Optional[list[str]] = rest_field(
+        name="hybridReplicationResourceIds", visibility=["read"]
+    )
+    """External volume replication resource IDs."""
+    external_cache_connection_resource_ids: Optional[list[str]] = rest_field(
+        name="externalCacheConnectionResourceIds", visibility=["read"]
+    )
+    """External cache connection resource IDs."""
+    command: Optional[str] = rest_field(visibility=["read"])
+    """Command to execute to create the peer relationship."""
+    network_interfaces: Optional[list["_models.ExternalResourceNetworkInterfaces"]] = rest_field(
+        name="networkInterfaces", visibility=["read"]
+    )
+    """Network interfaces created that allow communications between the clusters."""
+    cluster_peer_subnet_resource_id: Optional[str] = rest_field(name="clusterPeerSubnetResourceId", visibility=["read"])
+    """Cluster Peer Subnet Resource ID."""
+
+
 class CredentialsAkvDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the Azure Key Vault settings for storing the bucket credentials.
 
@@ -3014,6 +3609,11 @@ class CredentialsAkvDetails(_Model):  # pylint: disable=docstring-keyword-should
      "secret_access_key": "<REDACTED>"
      }.
     :vartype secret_name: str
+    :ivar user_assigned_identity: Optional resource ID of the managed identity that has access to
+     the Azure Key Vault (AKV) secret. If a value is provided, it is used to find a matching entry
+     in the account's collection of user-assigned managed identities. If no match is found, an
+     exception is thrown. If no value is provided, the system-assigned managed identity is used.
+    :vartype user_assigned_identity: str
     """
 
     credentials_key_vault_uri: Optional[str] = rest_field(
@@ -3030,6 +3630,13 @@ class CredentialsAkvDetails(_Model):  # pylint: disable=docstring-keyword-should
      \"access_key_id\": \"<REDACTED>\",
      \"secret_access_key\": \"<REDACTED>\"
      }."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional resource ID of the managed identity that has access to the Azure Key Vault (AKV)
+     secret. If a value is provided, it is used to find a matching entry in the account's collection
+     of user-assigned managed identities. If no match is found, an exception is thrown. If no value
+     is provided, the system-assigned managed identity is used."""
 
     @overload
     def __init__(
@@ -3037,6 +3644,7 @@ class CredentialsAkvDetails(_Model):  # pylint: disable=docstring-keyword-should
         *,
         credentials_key_vault_uri: Optional[str] = None,
         secret_name: Optional[str] = None,
+        user_assigned_identity: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3179,6 +3787,2152 @@ class Dimension(_Model):  # pylint: disable=docstring-keyword-should-match-keywo
         super().__init__(*args, **kwargs)
 
 
+class ElasticAccount(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """NetApp elastic account resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticAccountProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
+    """
+
+    properties: Optional["_models.ElasticAccountProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticAccountProperties"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticAccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """NetApp elastic account properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar encryption: Encryption settings.
+    :vartype encryption: ~azure.mgmt.netapp.models.ElasticEncryption
+    """
+
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+    encryption: Optional["_models.ElasticEncryption"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Encryption settings."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        encryption: Optional["_models.ElasticEncryption"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticAccountUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the ElasticAccount.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticAccountUpdateProperties
+    """
+
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ElasticAccountUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticAccountUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticAccountUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the ElasticAccount.
+
+    :ivar encryption: Encryption settings.
+    :vartype encryption: ~azure.mgmt.netapp.models.ElasticEncryption
+    """
+
+    encryption: Optional["_models.ElasticEncryption"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Encryption settings."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        encryption: Optional["_models.ElasticEncryption"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """NetApp Elastic Backup under an elastic Backup Vault.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticBackupProperties
+    """
+
+    properties: Optional["_models.ElasticBackupProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ElasticBackupProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackupPolicy(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """NetApp Elastic Backup Policy resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticBackupPolicyProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.ElasticBackupPolicyProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticBackupPolicyProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackupPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Elastic Backup Policy properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar daily_backups_to_keep: Daily backups count to keep.
+    :vartype daily_backups_to_keep: int
+    :ivar weekly_backups_to_keep: Weekly backups count to keep.
+    :vartype weekly_backups_to_keep: int
+    :ivar monthly_backups_to_keep: Monthly backups count to keep.
+    :vartype monthly_backups_to_keep: int
+    :ivar assigned_volumes_count: The number of volumes currently using this Backup Policy.
+    :vartype assigned_volumes_count: int
+    :ivar policy_state: The property to identify whether Backup Policy is enabled or not. Known
+     values are: "Enabled" and "Disabled".
+    :vartype policy_state: str or ~azure.mgmt.netapp.models.ElasticBackupPolicyState
+    """
+
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+    daily_backups_to_keep: Optional[int] = rest_field(
+        name="dailyBackupsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Daily backups count to keep."""
+    weekly_backups_to_keep: Optional[int] = rest_field(
+        name="weeklyBackupsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Weekly backups count to keep."""
+    monthly_backups_to_keep: Optional[int] = rest_field(
+        name="monthlyBackupsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Monthly backups count to keep."""
+    assigned_volumes_count: Optional[int] = rest_field(name="assignedVolumesCount", visibility=["read"])
+    """The number of volumes currently using this Backup Policy."""
+    policy_state: Optional[Union[str, "_models.ElasticBackupPolicyState"]] = rest_field(
+        name="policyState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The property to identify whether Backup Policy is enabled or not. Known values are: \"Enabled\"
+     and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        daily_backups_to_keep: Optional[int] = None,
+        weekly_backups_to_keep: Optional[int] = None,
+        monthly_backups_to_keep: Optional[int] = None,
+        policy_state: Optional[Union[str, "_models.ElasticBackupPolicyState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackupPolicyUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the ElasticBackupPolicy.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticBackupPolicyUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ElasticBackupPolicyUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticBackupPolicyUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackupPolicyUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the ElasticBackupPolicy.
+
+    :ivar daily_backups_to_keep: Daily backups count to keep.
+    :vartype daily_backups_to_keep: int
+    :ivar weekly_backups_to_keep: Weekly backups count to keep.
+    :vartype weekly_backups_to_keep: int
+    :ivar monthly_backups_to_keep: Monthly backups count to keep.
+    :vartype monthly_backups_to_keep: int
+    :ivar policy_state: The property to identify whether Backup Policy is enabled or not. Known
+     values are: "Enabled" and "Disabled".
+    :vartype policy_state: str or ~azure.mgmt.netapp.models.ElasticBackupPolicyState
+    """
+
+    daily_backups_to_keep: Optional[int] = rest_field(
+        name="dailyBackupsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Daily backups count to keep."""
+    weekly_backups_to_keep: Optional[int] = rest_field(
+        name="weeklyBackupsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Weekly backups count to keep."""
+    monthly_backups_to_keep: Optional[int] = rest_field(
+        name="monthlyBackupsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Monthly backups count to keep."""
+    policy_state: Optional[Union[str, "_models.ElasticBackupPolicyState"]] = rest_field(
+        name="policyState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The property to identify whether Backup Policy is enabled or not. Known values are: \"Enabled\"
+     and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        daily_backups_to_keep: Optional[int] = None,
+        weekly_backups_to_keep: Optional[int] = None,
+        monthly_backups_to_keep: Optional[int] = None,
+        policy_state: Optional[Union[str, "_models.ElasticBackupPolicyState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Elastic Backup properties.
+
+    :ivar creation_date: The creation date of the backup.
+    :vartype creation_date: ~datetime.datetime
+    :ivar snapshot_creation_date: The snapshot creation date of the backup.
+    :vartype snapshot_creation_date: ~datetime.datetime
+    :ivar completion_date: The completion date of the backup.
+    :vartype completion_date: ~datetime.datetime
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar size: Size of backup in bytes.
+    :vartype size: int
+    :ivar label: Label for backup.
+    :vartype label: str
+    :ivar backup_type: Type of backup Manual or Scheduled. Known values are: "Manual" and
+     "Scheduled".
+    :vartype backup_type: str or ~azure.mgmt.netapp.models.ElasticBackupType
+    :ivar failure_reason: Failure reason.
+    :vartype failure_reason: str
+    :ivar elastic_volume_resource_id: ResourceId used to identify the Elastic Volume. Required.
+    :vartype elastic_volume_resource_id: str
+    :ivar snapshot_usage: Manual backup using an already existing snapshot. This will always be
+     CreateNewSnapshot for scheduled backups and UseExistingSnapshot/CreateNewSnapshot for manual
+     backups. Known values are: "UseExistingSnapshot" and "CreateNewSnapshot".
+    :vartype snapshot_usage: str or ~azure.mgmt.netapp.models.SnapshotUsage
+    :ivar elastic_snapshot_resource_id: ResourceId used to identify the elastic snapshot resource.
+     This is required when an existing snapshot needs to be used for creating a manual backup.
+    :vartype elastic_snapshot_resource_id: str
+    :ivar elastic_backup_policy_resource_id: ResourceId used to identify the elastic backup policy.
+    :vartype elastic_backup_policy_resource_id: str
+    :ivar volume_size: Specifies if the backup is for a large volume. Known values are: "Large" and
+     "Regular".
+    :vartype volume_size: str or ~azure.mgmt.netapp.models.VolumeSize
+    """
+
+    creation_date: Optional[datetime.datetime] = rest_field(name="creationDate", visibility=["read"], format="rfc3339")
+    """The creation date of the backup."""
+    snapshot_creation_date: Optional[datetime.datetime] = rest_field(
+        name="snapshotCreationDate", visibility=["read"], format="rfc3339"
+    )
+    """The snapshot creation date of the backup."""
+    completion_date: Optional[datetime.datetime] = rest_field(
+        name="completionDate", visibility=["read"], format="rfc3339"
+    )
+    """The completion date of the backup."""
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+    size: Optional[int] = rest_field(visibility=["read"])
+    """Size of backup in bytes."""
+    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Label for backup."""
+    backup_type: Optional[Union[str, "_models.ElasticBackupType"]] = rest_field(name="backupType", visibility=["read"])
+    """Type of backup Manual or Scheduled. Known values are: \"Manual\" and \"Scheduled\"."""
+    failure_reason: Optional[str] = rest_field(name="failureReason", visibility=["read"])
+    """Failure reason."""
+    elastic_volume_resource_id: str = rest_field(name="elasticVolumeResourceId", visibility=["read", "create"])
+    """ResourceId used to identify the Elastic Volume. Required."""
+    snapshot_usage: Optional[Union[str, "_models.SnapshotUsage"]] = rest_field(
+        name="snapshotUsage", visibility=["read", "create"]
+    )
+    """Manual backup using an already existing snapshot. This will always be CreateNewSnapshot for
+     scheduled backups and UseExistingSnapshot/CreateNewSnapshot for manual backups. Known values
+     are: \"UseExistingSnapshot\" and \"CreateNewSnapshot\"."""
+    elastic_snapshot_resource_id: Optional[str] = rest_field(
+        name="elasticSnapshotResourceId", visibility=["read", "create"]
+    )
+    """ResourceId used to identify the elastic snapshot resource. This is required when an existing
+     snapshot needs to be used for creating a manual backup."""
+    elastic_backup_policy_resource_id: Optional[str] = rest_field(
+        name="elasticBackupPolicyResourceId", visibility=["read"]
+    )
+    """ResourceId used to identify the elastic backup policy."""
+    volume_size: Optional[Union[str, "_models.VolumeSize"]] = rest_field(name="volumeSize", visibility=["read"])
+    """Specifies if the backup is for a large volume. Known values are: \"Large\" and \"Regular\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        elastic_volume_resource_id: str,
+        label: Optional[str] = None,
+        snapshot_usage: Optional[Union[str, "_models.SnapshotUsage"]] = None,
+        elastic_snapshot_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackupVault(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """NetApp elastic backup vault resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticBackupVaultProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.ElasticBackupVaultProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticBackupVaultProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticBackupVaultProperties(_Model):
+    """Elastic Backup Vault properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    """
+
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+
+
+class ElasticBackupVaultUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the ElasticBackupVault.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticCapacityPool(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """NetApp Elastic Capacity Pool resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticCapacityPoolProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    """
+
+    properties: Optional["_models.ElasticCapacityPoolProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create"])
+    """The availability zones."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticCapacityPoolProperties"] = None,
+        zones: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticCapacityPoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Elastic capacity pool properties.
+
+    :ivar size: Provisioned size of the pool (in bytes). For zoneRedundant service level pool,
+     value must be in the range 1TiB to 16TiB or 1TiB to 128TiB for supported region. Values
+     expressed in bytes as multiples of 1TiB till 16TiB and in multiples of 8TiB from 24TiB to
+     128TiB. Pool size can't be shrunk once it is created. Required.
+    :vartype size: int
+    :ivar service_level: The service level of the elastic capacity pool. Required. "ZoneRedundant"
+    :vartype service_level: str or ~azure.mgmt.netapp.models.ElasticServiceLevel
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar encryption: Encryption settings.
+    :vartype encryption: ~azure.mgmt.netapp.models.ElasticEncryptionConfiguration
+    :ivar total_throughput_mibps: Total throughput of the pool in MiB/s.
+    :vartype total_throughput_mibps: float
+    :ivar subnet_resource_id: The Azure Resource URI for a delegated subnet. Must have the
+     delegation Microsoft.NetApp/elasticVolumes, this is used by all the volumes within the pool.
+     Required.
+    :vartype subnet_resource_id: str
+    :ivar current_zone: Indicates the current zone of the pool. This can be changed for
+     zoneRedundant service level pool with the changeZone action.
+    :vartype current_zone: str
+    :ivar availability_status: Current availability status of the resource. Known values are:
+     "Online" and "Offline".
+    :vartype availability_status: str or
+     ~azure.mgmt.netapp.models.ElasticResourceAvailabilityStatus
+    :ivar active_directory_config_resource_id: The Azure Resource URI for an Active Directory
+     configuration. This is used by all the SMB volumes within the pool.
+    :vartype active_directory_config_resource_id: str
+    """
+
+    size: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Provisioned size of the pool (in bytes). For zoneRedundant service level pool, value must be in
+     the range 1TiB to 16TiB or 1TiB to 128TiB for supported region. Values expressed in bytes as
+     multiples of 1TiB till 16TiB and in multiples of 8TiB from 24TiB to 128TiB. Pool size can't be
+     shrunk once it is created. Required."""
+    service_level: Union[str, "_models.ElasticServiceLevel"] = rest_field(
+        name="serviceLevel", visibility=["read", "create"]
+    )
+    """The service level of the elastic capacity pool. Required. \"ZoneRedundant\""""
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+    encryption: Optional["_models.ElasticEncryptionConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Encryption settings."""
+    total_throughput_mibps: Optional[float] = rest_field(name="totalThroughputMibps", visibility=["read"])
+    """Total throughput of the pool in MiB/s."""
+    subnet_resource_id: str = rest_field(name="subnetResourceId", visibility=["read", "create"])
+    """The Azure Resource URI for a delegated subnet. Must have the delegation
+     Microsoft.NetApp/elasticVolumes, this is used by all the volumes within the pool. Required."""
+    current_zone: Optional[str] = rest_field(name="currentZone", visibility=["read"])
+    """Indicates the current zone of the pool. This can be changed for zoneRedundant service level
+     pool with the changeZone action."""
+    availability_status: Optional[Union[str, "_models.ElasticResourceAvailabilityStatus"]] = rest_field(
+        name="availabilityStatus", visibility=["read"]
+    )
+    """Current availability status of the resource. Known values are: \"Online\" and \"Offline\"."""
+    active_directory_config_resource_id: Optional[str] = rest_field(
+        name="activeDirectoryConfigResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Resource URI for an Active Directory configuration. This is used by all the SMB
+     volumes within the pool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        size: int,
+        service_level: Union[str, "_models.ElasticServiceLevel"],
+        subnet_resource_id: str,
+        encryption: Optional["_models.ElasticEncryptionConfiguration"] = None,
+        active_directory_config_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticCapacityPoolUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the ElasticCapacityPool.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticCapacityPoolUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ElasticCapacityPoolUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticCapacityPoolUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticCapacityPoolUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the ElasticCapacityPool.
+
+    :ivar size: Provisioned size of the pool (in bytes). For zoneRedundant service level pool,
+     value must be in the range 1TiB to 16TiB or 1TiB to 128TiB for supported region. Values
+     expressed in bytes as multiples of 1TiB till 16TiB and in multiples of 8TiB from 24TiB to
+     128TiB. Pool size can't be shrunk once it is created.
+    :vartype size: int
+    :ivar encryption: Encryption settings.
+    :vartype encryption: ~azure.mgmt.netapp.models.ElasticEncryptionConfiguration
+    :ivar active_directory_config_resource_id: The Azure Resource URI for an Active Directory
+     configuration. This is used by all the SMB volumes within the pool.
+    :vartype active_directory_config_resource_id: str
+    """
+
+    size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Provisioned size of the pool (in bytes). For zoneRedundant service level pool, value must be in
+     the range 1TiB to 16TiB or 1TiB to 128TiB for supported region. Values expressed in bytes as
+     multiples of 1TiB till 16TiB and in multiples of 8TiB from 24TiB to 128TiB. Pool size can't be
+     shrunk once it is created."""
+    encryption: Optional["_models.ElasticEncryptionConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Encryption settings."""
+    active_directory_config_resource_id: Optional[str] = rest_field(
+        name="activeDirectoryConfigResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Resource URI for an Active Directory configuration. This is used by all the SMB
+     volumes within the pool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        size: Optional[int] = None,
+        encryption: Optional["_models.ElasticEncryptionConfiguration"] = None,
+        active_directory_config_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Encryption settings.
+
+    :ivar key_source: The encryption keySource (provider). Possible values (case-insensitive):
+     Microsoft.NetApp, Microsoft.KeyVault. Known values are: "Microsoft.NetApp" and
+     "Microsoft.KeyVault".
+    :vartype key_source: str or ~azure.mgmt.netapp.models.KeySource
+    :ivar key_vault_properties: Properties provided by KeyVault. Applicable if keySource is
+     'Microsoft.KeyVault'.
+    :vartype key_vault_properties: ~azure.mgmt.netapp.models.ElasticKeyVaultProperties
+    :ivar identity: Identity used to authenticate to KeyVault. Applicable if keySource is
+     'Microsoft.KeyVault'.
+    :vartype identity: ~azure.mgmt.netapp.models.ElasticEncryptionIdentity
+    """
+
+    key_source: Optional[Union[str, "_models.KeySource"]] = rest_field(
+        name="keySource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The encryption keySource (provider). Possible values (case-insensitive): Microsoft.NetApp,
+     Microsoft.KeyVault. Known values are: \"Microsoft.NetApp\" and \"Microsoft.KeyVault\"."""
+    key_vault_properties: Optional["_models.ElasticKeyVaultProperties"] = rest_field(
+        name="keyVaultProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties provided by KeyVault. Applicable if keySource is 'Microsoft.KeyVault'."""
+    identity: Optional["_models.ElasticEncryptionIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Identity used to authenticate to KeyVault. Applicable if keySource is 'Microsoft.KeyVault'."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_source: Optional[Union[str, "_models.KeySource"]] = None,
+        key_vault_properties: Optional["_models.ElasticKeyVaultProperties"] = None,
+        identity: Optional["_models.ElasticEncryptionIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticEncryptionConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """CMK Encryption Configuration.
+
+    :ivar elastic_pool_encryption_key_source: Pool Encryption Key Source. Required. Known values
+     are: "NetApp" and "KeyVault".
+    :vartype elastic_pool_encryption_key_source: str or
+     ~azure.mgmt.netapp.models.ElasticPoolEncryptionKeySource
+    :ivar key_vault_private_endpoint_resource_id: The resource ID of private endpoint for KeyVault.
+     It must reside in the same VNET as the volume. Only applicable if encryptionKeySource =
+     'Microsoft.KeyVault'. Required.
+    :vartype key_vault_private_endpoint_resource_id: str
+    """
+
+    elastic_pool_encryption_key_source: Union[str, "_models.ElasticPoolEncryptionKeySource"] = rest_field(
+        name="elasticPoolEncryptionKeySource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Pool Encryption Key Source. Required. Known values are: \"NetApp\" and \"KeyVault\"."""
+    key_vault_private_endpoint_resource_id: str = rest_field(
+        name="keyVaultPrivateEndpointResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of private endpoint for KeyVault. It must reside in the same VNET as the
+     volume. Only applicable if encryptionKeySource = 'Microsoft.KeyVault'. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        elastic_pool_encryption_key_source: Union[str, "_models.ElasticPoolEncryptionKeySource"],
+        key_vault_private_endpoint_resource_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticEncryptionIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Identity used to authenticate with key vault.
+
+    :ivar principal_id: The principal ID (object ID) of the identity used to authenticate with key
+     vault. Read-only.
+    :vartype principal_id: str
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match
+     key of identity.userAssignedIdentities.
+    :vartype user_assigned_identity: str
+    :ivar federated_client_id: ClientId of the multi-tenant Entra ID Application. Used to access
+     cross-tenant keyvaults.
+    :vartype federated_client_id: str
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID (object ID) of the identity used to authenticate with key vault. Read-only."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault.
+     Applicable if identity.type has 'UserAssigned'. It should match key of
+     identity.userAssignedIdentities."""
+    federated_client_id: Optional[str] = rest_field(
+        name="federatedClientId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ClientId of the multi-tenant Entra ID Application. Used to access cross-tenant keyvaults."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user_assigned_identity: Optional[str] = None,
+        federated_client_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticExportPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Set of export policy rules.
+
+    :ivar rules: Export policy rule.
+    :vartype rules: list[~azure.mgmt.netapp.models.ElasticExportPolicyRule]
+    """
+
+    rules: Optional[list["_models.ElasticExportPolicyRule"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Export policy rule."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rules: Optional[list["_models.ElasticExportPolicyRule"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticExportPolicyRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Elastic Volume Export Policy Rule.
+
+    :ivar rule_index: Controls the priority of the export policy rule. When connecting to the
+     volume the rule with the lowest index that applies to the connecting client is used.
+    :vartype rule_index: int
+    :ivar unix_access_rule: Specifies the Unix file access level for the volume. It encompasses
+     both read-only and read-write permissions. Additionally, NoAccess can be set to block all
+     access to the volume. Known values are: "ReadOnly", "ReadWrite", and "NoAccess".
+    :vartype unix_access_rule: str or ~azure.mgmt.netapp.models.ElasticUnixAccessRule
+    :ivar nfsv3: Allows clients to access the volume with the NFSv3 protocol. Enable only for NFSv3
+     type volumes. Known values are: "Enabled" and "Disabled".
+    :vartype nfsv3: str or ~azure.mgmt.netapp.models.ElasticNfsv3Access
+    :ivar nfsv4: Allows clients to access the volume with at least NFSv4.1 protocol. Known values
+     are: "Enabled" and "Disabled".
+    :vartype nfsv4: str or ~azure.mgmt.netapp.models.ElasticNfsv4Access
+    :ivar allowed_clients: Client ingress specification for the export policy as list of IPv4
+     CIDRs, IPv4 host addresses and host names.
+    :vartype allowed_clients: list[str]
+    :ivar root_access: Indicates whether root access to the volume is granted to clients affected
+     by this rule. Known values are: "Enabled" and "Disabled".
+    :vartype root_access: str or ~azure.mgmt.netapp.models.ElasticRootAccess
+    """
+
+    rule_index: Optional[int] = rest_field(name="ruleIndex", visibility=["read", "create", "update", "delete", "query"])
+    """Controls the priority of the export policy rule. When connecting to the volume the rule with
+     the lowest index that applies to the connecting client is used."""
+    unix_access_rule: Optional[Union[str, "_models.ElasticUnixAccessRule"]] = rest_field(
+        name="unixAccessRule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Unix file access level for the volume. It encompasses both read-only and
+     read-write permissions. Additionally, NoAccess can be set to block all access to the volume.
+     Known values are: \"ReadOnly\", \"ReadWrite\", and \"NoAccess\"."""
+    nfsv3: Optional[Union[str, "_models.ElasticNfsv3Access"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Allows clients to access the volume with the NFSv3 protocol. Enable only for NFSv3 type
+     volumes. Known values are: \"Enabled\" and \"Disabled\"."""
+    nfsv4: Optional[Union[str, "_models.ElasticNfsv4Access"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Allows clients to access the volume with at least NFSv4.1 protocol. Known values are:
+     \"Enabled\" and \"Disabled\"."""
+    allowed_clients: Optional[list[str]] = rest_field(
+        name="allowedClients", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Client ingress specification for the export policy as list of IPv4 CIDRs, IPv4 host addresses
+     and host names."""
+    root_access: Optional[Union[str, "_models.ElasticRootAccess"]] = rest_field(
+        name="rootAccess", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether root access to the volume is granted to clients affected by this rule. Known
+     values are: \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rule_index: Optional[int] = None,
+        unix_access_rule: Optional[Union[str, "_models.ElasticUnixAccessRule"]] = None,
+        nfsv3: Optional[Union[str, "_models.ElasticNfsv3Access"]] = None,
+        nfsv4: Optional[Union[str, "_models.ElasticNfsv4Access"]] = None,
+        allowed_clients: Optional[list[str]] = None,
+        root_access: Optional[Union[str, "_models.ElasticRootAccess"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticKeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of key vault.
+
+    :ivar key_vault_uri: The Uri of KeyVault.
+    :vartype key_vault_uri: str
+    :ivar key_name: The name of KeyVault key.
+    :vartype key_name: str
+    :ivar key_vault_resource_id: The resource ID of KeyVault.
+    :vartype key_vault_resource_id: str
+    :ivar status: Status of the KeyVault connection. Known values are: "Created", "InUse",
+     "Deleted", "Error", and "Updating".
+    :vartype status: str or ~azure.mgmt.netapp.models.ElasticKeyVaultStatus
+    """
+
+    key_vault_uri: Optional[str] = rest_field(
+        name="keyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Uri of KeyVault."""
+    key_name: Optional[str] = rest_field(name="keyName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of KeyVault key."""
+    key_vault_resource_id: Optional[str] = rest_field(
+        name="keyVaultResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of KeyVault."""
+    status: Optional[Union[str, "_models.ElasticKeyVaultStatus"]] = rest_field(visibility=["read"])
+    """Status of the KeyVault connection. Known values are: \"Created\", \"InUse\", \"Deleted\",
+     \"Error\", and \"Updating\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_vault_uri: Optional[str] = None,
+        key_name: Optional[str] = None,
+        key_vault_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticMountTargetProperties(_Model):
+    """Contains all the information needed to mount an elastic volume.
+
+    :ivar ip_address: The mount target's IPv4 address, used to mount the volume.
+    :vartype ip_address: str
+    :ivar smb_server_fqdn: The SMB server's Fully Qualified Domain Name, FQDN.
+    :vartype smb_server_fqdn: str
+    """
+
+    ip_address: Optional[str] = rest_field(name="ipAddress", visibility=["read"])
+    """The mount target's IPv4 address, used to mount the volume."""
+    smb_server_fqdn: Optional[str] = rest_field(name="smbServerFqdn", visibility=["read"])
+    """The SMB server's Fully Qualified Domain Name, FQDN."""
+
+
+class ElasticSmbPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """SMB Patch Properties.
+
+    :ivar smb_encryption: Used to enable or disable encryption for in-flight SMB data volume. This
+     flag can be modified during Elastic volume update operation as well. Only applicable for SMB
+     protocol Elastic volumes. Known values are: "Enabled" and "Disabled".
+    :vartype smb_encryption: str or ~azure.mgmt.netapp.models.ElasticSmbEncryption
+    """
+
+    smb_encryption: Optional[Union[str, "_models.ElasticSmbEncryption"]] = rest_field(
+        name="smbEncryption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Used to enable or disable encryption for in-flight SMB data volume. This flag can be modified
+     during Elastic volume update operation as well. Only applicable for SMB protocol Elastic
+     volumes. Known values are: \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        smb_encryption: Optional[Union[str, "_models.ElasticSmbEncryption"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSmbProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """SMB Properties.
+
+    :ivar smb_encryption: Used to enable or disable encryption for in-flight SMB data volume. This
+     flag can be modified during Elastic volume update operation as well. Only applicable for SMB
+     protocol Elastic volumes. Known values are: "Enabled" and "Disabled".
+    :vartype smb_encryption: str or ~azure.mgmt.netapp.models.ElasticSmbEncryption
+    """
+
+    smb_encryption: Optional[Union[str, "_models.ElasticSmbEncryption"]] = rest_field(
+        name="smbEncryption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Used to enable or disable encryption for in-flight SMB data volume. This flag can be modified
+     during Elastic volume update operation as well. Only applicable for SMB protocol Elastic
+     volumes. Known values are: \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        smb_encryption: Optional[Union[str, "_models.ElasticSmbEncryption"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshot(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """NetApp Elastic Snapshot under an Elastic Volume.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticSnapshotProperties
+    """
+
+    properties: Optional["_models.ElasticSnapshotProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ElasticSnapshotProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicy(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """NetApp Elastic Snapshot Policy under an Elastic Account.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.ElasticSnapshotPolicyProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticSnapshotPolicyProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyDailySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Daily Schedule properties used to create NetApp snapshot policy.
+
+    :ivar snapshots_to_keep: Daily snapshot count to keep.
+    :vartype snapshots_to_keep: int
+    :ivar hour: Indicates which hour in UTC timezone a snapshot should be taken.
+    :vartype hour: int
+    :ivar minute: Indicates which minute snapshot should be taken.
+    :vartype minute: int
+    """
+
+    snapshots_to_keep: Optional[int] = rest_field(
+        name="snapshotsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Daily snapshot count to keep."""
+    hour: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates which hour in UTC timezone a snapshot should be taken."""
+    minute: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates which minute snapshot should be taken."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshots_to_keep: Optional[int] = None,
+        hour: Optional[int] = None,
+        minute: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyHourlySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Hourly Schedule properties used to create NetApp snapshot policy.
+
+    :ivar snapshots_to_keep: Hourly snapshot count to keep.
+    :vartype snapshots_to_keep: int
+    :ivar minute: Indicates which minute snapshot should be taken.
+    :vartype minute: int
+    """
+
+    snapshots_to_keep: Optional[int] = rest_field(
+        name="snapshotsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Hourly snapshot count to keep."""
+    minute: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates which minute snapshot should be taken."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshots_to_keep: Optional[int] = None,
+        minute: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyMonthlySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Monthly Schedule properties used to create NetApp snapshot policy.
+
+    :ivar snapshots_to_keep: Monthly snapshot count to keep.
+    :vartype snapshots_to_keep: int
+    :ivar days_of_month: Indicates which days of the month snapshot (1-31) should be taken, accepts
+     a list of integers.
+    :vartype days_of_month: list[int]
+    :ivar hour: Indicates which hour in UTC timezone a snapshot should be taken.
+    :vartype hour: int
+    :ivar minute: Indicates which minute snapshot should be taken.
+    :vartype minute: int
+    """
+
+    snapshots_to_keep: Optional[int] = rest_field(
+        name="snapshotsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Monthly snapshot count to keep."""
+    days_of_month: Optional[list[int]] = rest_field(
+        name="daysOfMonth", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates which days of the month snapshot (1-31) should be taken, accepts a list of integers."""
+    hour: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates which hour in UTC timezone a snapshot should be taken."""
+    minute: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates which minute snapshot should be taken."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshots_to_keep: Optional[int] = None,
+        days_of_month: Optional[list[int]] = None,
+        hour: Optional[int] = None,
+        minute: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Elastic Snapshot policy properties.
+
+    :ivar hourly_schedule: Schedule for hourly snapshots.
+    :vartype hourly_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyHourlySchedule
+    :ivar daily_schedule: Schedule for daily snapshots.
+    :vartype daily_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyDailySchedule
+    :ivar weekly_schedule: Schedule for weekly snapshots.
+    :vartype weekly_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyWeeklySchedule
+    :ivar monthly_schedule: Schedule for monthly snapshots.
+    :vartype monthly_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyMonthlySchedule
+    :ivar policy_status: Configures if the snapshot policy is enabled on the volumes connected to
+     the policy. Known values are: "Enabled" and "Disabled".
+    :vartype policy_status: str or ~azure.mgmt.netapp.models.PolicyStatus
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    """
+
+    hourly_schedule: Optional["_models.ElasticSnapshotPolicyHourlySchedule"] = rest_field(
+        name="hourlySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for hourly snapshots."""
+    daily_schedule: Optional["_models.ElasticSnapshotPolicyDailySchedule"] = rest_field(
+        name="dailySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for daily snapshots."""
+    weekly_schedule: Optional["_models.ElasticSnapshotPolicyWeeklySchedule"] = rest_field(
+        name="weeklySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for weekly snapshots."""
+    monthly_schedule: Optional["_models.ElasticSnapshotPolicyMonthlySchedule"] = rest_field(
+        name="monthlySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for monthly snapshots."""
+    policy_status: Optional[Union[str, "_models.PolicyStatus"]] = rest_field(
+        name="policyStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configures if the snapshot policy is enabled on the volumes connected to the policy. Known
+     values are: \"Enabled\" and \"Disabled\"."""
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        hourly_schedule: Optional["_models.ElasticSnapshotPolicyHourlySchedule"] = None,
+        daily_schedule: Optional["_models.ElasticSnapshotPolicyDailySchedule"] = None,
+        weekly_schedule: Optional["_models.ElasticSnapshotPolicyWeeklySchedule"] = None,
+        monthly_schedule: Optional["_models.ElasticSnapshotPolicyMonthlySchedule"] = None,
+        policy_status: Optional[Union[str, "_models.PolicyStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the ElasticSnapshotPolicy.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ElasticSnapshotPolicyUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticSnapshotPolicyUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the ElasticSnapshotPolicy.
+
+    :ivar hourly_schedule: Schedule for hourly snapshots.
+    :vartype hourly_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyHourlySchedule
+    :ivar daily_schedule: Schedule for daily snapshots.
+    :vartype daily_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyDailySchedule
+    :ivar weekly_schedule: Schedule for weekly snapshots.
+    :vartype weekly_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyWeeklySchedule
+    :ivar monthly_schedule: Schedule for monthly snapshots.
+    :vartype monthly_schedule: ~azure.mgmt.netapp.models.ElasticSnapshotPolicyMonthlySchedule
+    :ivar policy_status: Configures if the snapshot policy is enabled on the volumes connected to
+     the policy. Known values are: "Enabled" and "Disabled".
+    :vartype policy_status: str or ~azure.mgmt.netapp.models.PolicyStatus
+    """
+
+    hourly_schedule: Optional["_models.ElasticSnapshotPolicyHourlySchedule"] = rest_field(
+        name="hourlySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for hourly snapshots."""
+    daily_schedule: Optional["_models.ElasticSnapshotPolicyDailySchedule"] = rest_field(
+        name="dailySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for daily snapshots."""
+    weekly_schedule: Optional["_models.ElasticSnapshotPolicyWeeklySchedule"] = rest_field(
+        name="weeklySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for weekly snapshots."""
+    monthly_schedule: Optional["_models.ElasticSnapshotPolicyMonthlySchedule"] = rest_field(
+        name="monthlySchedule", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Schedule for monthly snapshots."""
+    policy_status: Optional[Union[str, "_models.PolicyStatus"]] = rest_field(
+        name="policyStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configures if the snapshot policy is enabled on the volumes connected to the policy. Known
+     values are: \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        hourly_schedule: Optional["_models.ElasticSnapshotPolicyHourlySchedule"] = None,
+        daily_schedule: Optional["_models.ElasticSnapshotPolicyDailySchedule"] = None,
+        weekly_schedule: Optional["_models.ElasticSnapshotPolicyWeeklySchedule"] = None,
+        monthly_schedule: Optional["_models.ElasticSnapshotPolicyMonthlySchedule"] = None,
+        policy_status: Optional[Union[str, "_models.PolicyStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotPolicyWeeklySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Weekly Schedule properties used to create NetApp snapshot policy.
+
+    :ivar snapshots_to_keep: Weekly snapshot count to keep.
+    :vartype snapshots_to_keep: int
+    :ivar days: Indicates which weekday(s) snapshot(s) should be taken, accepts a list of week day
+     names in english.
+    :vartype days: list[str or ~azure.mgmt.netapp.models.DayOfWeek]
+    :ivar hour: Indicates which hour in UTC timezone a snapshot should be taken.
+    :vartype hour: int
+    :ivar minute: Indicates which minute snapshot should be taken.
+    :vartype minute: int
+    """
+
+    snapshots_to_keep: Optional[int] = rest_field(
+        name="snapshotsToKeep", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Weekly snapshot count to keep."""
+    days: Optional[list[Union[str, "_models.DayOfWeek"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates which weekday(s) snapshot(s) should be taken, accepts a list of week day names in
+     english."""
+    hour: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates which hour in UTC timezone a snapshot should be taken."""
+    minute: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates which minute snapshot should be taken."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshots_to_keep: Optional[int] = None,
+        days: Optional[list[Union[str, "_models.DayOfWeek"]]] = None,
+        hour: Optional[int] = None,
+        minute: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticSnapshotProperties(_Model):
+    """Elastic Snapshot properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    """
+
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+
+
+class ElasticVolume(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """NetApp Elastic Volume resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticVolumeProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    """
+
+    properties: Optional["_models.ElasticVolumeProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create"])
+    """The availability zones."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticVolumeProperties"] = None,
+        zones: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeBackupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Elastic Volume Backup Properties.
+
+    :ivar elastic_backup_policy_resource_id: ResourceId used to identify Elastic Backup Policy.
+    :vartype elastic_backup_policy_resource_id: str
+    :ivar policy_enforcement: The property to decide policy is enforced or not on the volume. Known
+     values are: "Enforced" and "NotEnforced".
+    :vartype policy_enforcement: str or ~azure.mgmt.netapp.models.ElasticVolumePolicyEnforcement
+    :ivar elastic_backup_vault_resource_id: ResourceId used to identify Elastic Backup Vault.
+    :vartype elastic_backup_vault_resource_id: str
+    """
+
+    elastic_backup_policy_resource_id: Optional[str] = rest_field(
+        name="elasticBackupPolicyResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ResourceId used to identify Elastic Backup Policy."""
+    policy_enforcement: Optional[Union[str, "_models.ElasticVolumePolicyEnforcement"]] = rest_field(
+        name="policyEnforcement", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The property to decide policy is enforced or not on the volume. Known values are: \"Enforced\"
+     and \"NotEnforced\"."""
+    elastic_backup_vault_resource_id: Optional[str] = rest_field(
+        name="elasticBackupVaultResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ResourceId used to identify Elastic Backup Vault."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        elastic_backup_policy_resource_id: Optional[str] = None,
+        policy_enforcement: Optional[Union[str, "_models.ElasticVolumePolicyEnforcement"]] = None,
+        elastic_backup_vault_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeDataProtectionPatchProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Data protection configuration option for updating the volume, including snapshot policies and
+    backup.
+
+    :ivar snapshot: Used to apply a snapshot policy to a volume.
+    :vartype snapshot: ~azure.mgmt.netapp.models.ElasticVolumeSnapshotProperties
+    :ivar backup: Used to configure backups on an elastic volume.
+    :vartype backup: ~azure.mgmt.netapp.models.ElasticVolumeBackupProperties
+    """
+
+    snapshot: Optional["_models.ElasticVolumeSnapshotProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Used to apply a snapshot policy to a volume."""
+    backup: Optional["_models.ElasticVolumeBackupProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Used to configure backups on an elastic volume."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshot: Optional["_models.ElasticVolumeSnapshotProperties"] = None,
+        backup: Optional["_models.ElasticVolumeBackupProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeDataProtectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Data protection configuration option for the volume, including snapshot policies and backup.
+
+    :ivar snapshot: Used to apply a snapshot policy to a volume.
+    :vartype snapshot: ~azure.mgmt.netapp.models.ElasticVolumeSnapshotProperties
+    :ivar backup: Used to configure backups on an elastic volume.
+    :vartype backup: ~azure.mgmt.netapp.models.ElasticVolumeBackupProperties
+    """
+
+    snapshot: Optional["_models.ElasticVolumeSnapshotProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Used to apply a snapshot policy to a volume."""
+    backup: Optional["_models.ElasticVolumeBackupProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Used to configure backups on an elastic volume."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshot: Optional["_models.ElasticVolumeSnapshotProperties"] = None,
+        backup: Optional["_models.ElasticVolumeBackupProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Elastic Volume properties.
+
+    :ivar file_path: A unique file path for the volume. Used when creating mount targets. This
+     needs to be unique within the elastic capacity pool. Required.
+    :vartype file_path: str
+    :ivar size: Maximum size allowed for a volume in bytes. Valid values are in the range 1GiB to
+     16TiB. Values expressed in bytes as multiples of 1 GiB. Required.
+    :vartype size: int
+    :ivar export_policy: Set of export policy rules.
+    :vartype export_policy: ~azure.mgmt.netapp.models.ElasticExportPolicy
+    :ivar protocol_types: Set of support protocol types for the elastic volume. Required.
+    :vartype protocol_types: list[str or ~azure.mgmt.netapp.models.ElasticProtocolType]
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar availability_status: Current availability status of the resource. Known values are:
+     "Online" and "Offline".
+    :vartype availability_status: str or
+     ~azure.mgmt.netapp.models.ElasticResourceAvailabilityStatus
+    :ivar snapshot_resource_id: Resource identifier used to identify the Elastic Snapshot.
+    :vartype snapshot_resource_id: str
+    :ivar mount_targets: List of mount targets that can be used to mount this volume.
+    :vartype mount_targets: list[~azure.mgmt.netapp.models.ElasticMountTargetProperties]
+    :ivar data_protection: Data protection configuration option for the volume, including snapshot
+     policies and backup.
+    :vartype data_protection: ~azure.mgmt.netapp.models.ElasticVolumeDataProtectionProperties
+    :ivar snapshot_directory_visibility: Controls the visibility of the volume's read-only snapshot
+     directory, which provides access to each of the volume's snapshots. Known values are: "Hidden"
+     and "Visible".
+    :vartype snapshot_directory_visibility: str or
+     ~azure.mgmt.netapp.models.SnapshotDirectoryVisibility
+    :ivar smb_properties: SMB Properties.
+    :vartype smb_properties: ~azure.mgmt.netapp.models.ElasticSmbProperties
+    :ivar backup_resource_id: Resource identifier used to identify the Elastic Backup.
+    :vartype backup_resource_id: str
+    :ivar restoration_state: The current state of the restoration process. Known values are:
+     "Restoring", "Restored", and "Failed".
+    :vartype restoration_state: str or ~azure.mgmt.netapp.models.ElasticVolumeRestorationState
+    """
+
+    file_path: str = rest_field(name="filePath", visibility=["read", "create"])
+    """A unique file path for the volume. Used when creating mount targets. This needs to be unique
+     within the elastic capacity pool. Required."""
+    size: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum size allowed for a volume in bytes. Valid values are in the range 1GiB to 16TiB. Values
+     expressed in bytes as multiples of 1 GiB. Required."""
+    export_policy: Optional["_models.ElasticExportPolicy"] = rest_field(
+        name="exportPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of export policy rules."""
+    protocol_types: list[Union[str, "_models.ElasticProtocolType"]] = rest_field(
+        name="protocolTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of support protocol types for the elastic volume. Required."""
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+    availability_status: Optional[Union[str, "_models.ElasticResourceAvailabilityStatus"]] = rest_field(
+        name="availabilityStatus", visibility=["read"]
+    )
+    """Current availability status of the resource. Known values are: \"Online\" and \"Offline\"."""
+    snapshot_resource_id: Optional[str] = rest_field(name="snapshotResourceId", visibility=["read", "create"])
+    """Resource identifier used to identify the Elastic Snapshot."""
+    mount_targets: Optional[list["_models.ElasticMountTargetProperties"]] = rest_field(
+        name="mountTargets", visibility=["read"]
+    )
+    """List of mount targets that can be used to mount this volume."""
+    data_protection: Optional["_models.ElasticVolumeDataProtectionProperties"] = rest_field(
+        name="dataProtection", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Data protection configuration option for the volume, including snapshot policies and backup."""
+    snapshot_directory_visibility: Optional[Union[str, "_models.SnapshotDirectoryVisibility"]] = rest_field(
+        name="snapshotDirectoryVisibility", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls the visibility of the volume's read-only snapshot directory, which provides access to
+     each of the volume's snapshots. Known values are: \"Hidden\" and \"Visible\"."""
+    smb_properties: Optional["_models.ElasticSmbProperties"] = rest_field(
+        name="smbProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SMB Properties."""
+    backup_resource_id: Optional[str] = rest_field(name="backupResourceId", visibility=["read", "create"])
+    """Resource identifier used to identify the Elastic Backup."""
+    restoration_state: Optional[Union[str, "_models.ElasticVolumeRestorationState"]] = rest_field(
+        name="restorationState", visibility=["read"]
+    )
+    """The current state of the restoration process. Known values are: \"Restoring\", \"Restored\",
+     and \"Failed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_path: str,
+        size: int,
+        protocol_types: list[Union[str, "_models.ElasticProtocolType"]],
+        export_policy: Optional["_models.ElasticExportPolicy"] = None,
+        snapshot_resource_id: Optional[str] = None,
+        data_protection: Optional["_models.ElasticVolumeDataProtectionProperties"] = None,
+        snapshot_directory_visibility: Optional[Union[str, "_models.SnapshotDirectoryVisibility"]] = None,
+        smb_properties: Optional["_models.ElasticSmbProperties"] = None,
+        backup_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeRevert(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Reverts the elastic volume to the specified snapshot.
+
+    :ivar snapshot_resource_id: Resource identifier used to identify the Elastic Snapshot.
+    :vartype snapshot_resource_id: str
+    """
+
+    snapshot_resource_id: Optional[str] = rest_field(name="snapshotResourceId", visibility=["read", "create"])
+    """Resource identifier used to identify the Elastic Snapshot."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshot_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeSnapshotProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Elastic Volume Snapshot Properties.
+
+    :ivar snapshot_policy_resource_id: Snapshot Policy ResourceId.
+    :vartype snapshot_policy_resource_id: str
+    """
+
+    snapshot_policy_resource_id: Optional[str] = rest_field(
+        name="snapshotPolicyResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Snapshot Policy ResourceId."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        snapshot_policy_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the ElasticVolume.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ElasticVolumeUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ElasticVolumeUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ElasticVolumeUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ElasticVolumeUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the ElasticVolume.
+
+    :ivar size: Maximum size allowed for a volume in bytes. Valid values are in the range 1GiB to
+     16TiB. Values expressed in bytes as multiples of 1 GiB.
+    :vartype size: int
+    :ivar export_policy: Set of export policy rules.
+    :vartype export_policy: ~azure.mgmt.netapp.models.ElasticExportPolicy
+    :ivar data_protection: Data protection configuration option for the volume, including snapshot
+     policies and backup.
+    :vartype data_protection: ~azure.mgmt.netapp.models.ElasticVolumeDataProtectionPatchProperties
+    :ivar snapshot_directory_visibility: Controls the visibility of the volume's read-only snapshot
+     directory, which provides access to each of the volume's snapshots. Known values are: "Hidden"
+     and "Visible".
+    :vartype snapshot_directory_visibility: str or
+     ~azure.mgmt.netapp.models.SnapshotDirectoryVisibility
+    :ivar smb_properties: SMB Properties.
+    :vartype smb_properties: ~azure.mgmt.netapp.models.ElasticSmbPatchProperties
+    """
+
+    size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum size allowed for a volume in bytes. Valid values are in the range 1GiB to 16TiB. Values
+     expressed in bytes as multiples of 1 GiB."""
+    export_policy: Optional["_models.ElasticExportPolicy"] = rest_field(
+        name="exportPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of export policy rules."""
+    data_protection: Optional["_models.ElasticVolumeDataProtectionPatchProperties"] = rest_field(
+        name="dataProtection", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Data protection configuration option for the volume, including snapshot policies and backup."""
+    snapshot_directory_visibility: Optional[Union[str, "_models.SnapshotDirectoryVisibility"]] = rest_field(
+        name="snapshotDirectoryVisibility", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controls the visibility of the volume's read-only snapshot directory, which provides access to
+     each of the volume's snapshots. Known values are: \"Hidden\" and \"Visible\"."""
+    smb_properties: Optional["_models.ElasticSmbPatchProperties"] = rest_field(
+        name="smbProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SMB Properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        size: Optional[int] = None,
+        export_policy: Optional["_models.ElasticExportPolicy"] = None,
+        data_protection: Optional["_models.ElasticVolumeDataProtectionPatchProperties"] = None,
+        snapshot_directory_visibility: Optional[Union[str, "_models.SnapshotDirectoryVisibility"]] = None,
+        smb_properties: Optional["_models.ElasticSmbPatchProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class EncryptionIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity used to authenticate with key vault.
 
@@ -3293,6 +6047,213 @@ class EncryptionTransitionRequest(_Model):  # pylint: disable=docstring-keyword-
         *,
         virtual_network_id: str,
         private_endpoint_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EntraIdAkvConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Using AKV config, certificate will be fetched, which will contain private key & public
+    certificate, that correspond to the public certificate which is uploaded on the application
+    created by customer. This will be used further for authentication.
+
+    :ivar azure_key_vault_uri: The Azure Key Vault URI where the Entra ID credentials are stored.
+     Required.
+    :vartype azure_key_vault_uri: str
+    :ivar certificate_name: The name of the certificate in Azure Key Vault. Required.
+    :vartype certificate_name: str
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault.
+    :vartype user_assigned_identity: str
+    """
+
+    azure_key_vault_uri: str = rest_field(
+        name="azureKeyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault URI where the Entra ID credentials are stored. Required."""
+    certificate_name: str = rest_field(
+        name="certificateName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the certificate in Azure Key Vault. Required."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_key_vault_uri: str,
+        certificate_name: str,
+        user_assigned_identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EntraIdAkvConfigPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Entra ID Patch configuration for the account.
+
+    :ivar azure_key_vault_uri: The Azure Key Vault URI where the Entra ID credentials are stored.
+    :vartype azure_key_vault_uri: str
+    :ivar certificate_name: The name of the certificate in Azure Key Vault.
+    :vartype certificate_name: str
+    :ivar user_assigned_identity: The ARM resource identifier of the user assigned identity used to
+     authenticate with key vault.
+    :vartype user_assigned_identity: str
+    """
+
+    azure_key_vault_uri: Optional[str] = rest_field(
+        name="azureKeyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault URI where the Entra ID credentials are stored."""
+    certificate_name: Optional[str] = rest_field(
+        name="certificateName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the certificate in Azure Key Vault."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_key_vault_uri: Optional[str] = None,
+        certificate_name: Optional[str] = None,
+        user_assigned_identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EntraIdConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Entra ID configuration for the account.
+
+    :ivar application_id: ApplicationId of the app created by customer to provide authentication
+     and required API permissions for Microsoft Graph endpoint. Required.
+    :vartype application_id: str
+    :ivar domain: Domain of the Active directory synced to Entra ID for hybrid identities.
+     Required.
+    :vartype domain: str
+    :ivar server_name_prefix: Using ServerNamePrefix, FQDN (Fully Qualified Domain Name) will be
+     generated for SMB share, using this FQDN, SMB Share will be mounted on Entra Joined VM.
+     Required.
+    :vartype server_name_prefix: str
+    :ivar entra_id_akv_config: Using AKV config, certificate will be fetched, which will contain
+     private key & public certificate, that correspond to the public certificate which is uploaded
+     on the application created by customer. This will be used further for authentication.
+    :vartype entra_id_akv_config: ~azure.mgmt.netapp.models.EntraIdAkvConfig
+    """
+
+    application_id: str = rest_field(name="applicationId", visibility=["read", "create", "update", "delete", "query"])
+    """ApplicationId of the app created by customer to provide authentication and required API
+     permissions for Microsoft Graph endpoint. Required."""
+    domain: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Domain of the Active directory synced to Entra ID for hybrid identities. Required."""
+    server_name_prefix: str = rest_field(
+        name="serverNamePrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Using ServerNamePrefix, FQDN (Fully Qualified Domain Name) will be generated for SMB share,
+     using this FQDN, SMB Share will be mounted on Entra Joined VM. Required."""
+    entra_id_akv_config: Optional["_models.EntraIdAkvConfig"] = rest_field(
+        name="entraIdAkvConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Using AKV config, certificate will be fetched, which will contain private key & public
+     certificate, that correspond to the public certificate which is uploaded on the application
+     created by customer. This will be used further for authentication."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        application_id: str,
+        domain: str,
+        server_name_prefix: str,
+        entra_id_akv_config: Optional["_models.EntraIdAkvConfig"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EntraIdConfigPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Entra ID Patch configuration for the account.
+
+    :ivar application_id: ApplicationId of the app created by customer to provide authentication
+     and required API permissions for Microsoft Graph endpoint.
+    :vartype application_id: str
+    :ivar domain: Domain of the Active directory synced to Entra ID for hybrid identities.
+    :vartype domain: str
+    :ivar server_name_prefix: Using ServerNamePrefix, FQDN (Fully Qualified Domain Name) will be
+     generated for SMB share, using this FQDN, SMB Share will be mounted on Entra Joined VM.
+    :vartype server_name_prefix: str
+    :ivar entra_id_akv_config: Using AKV config, certificate will be fetched, which will contain
+     private key & public certificate, that correspond to the public certificate which is uploaded
+     on the application created by customer. This will be used further for authentication.
+    :vartype entra_id_akv_config: ~azure.mgmt.netapp.models.EntraIdAkvConfigPatch
+    """
+
+    application_id: Optional[str] = rest_field(
+        name="applicationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ApplicationId of the app created by customer to provide authentication and required API
+     permissions for Microsoft Graph endpoint."""
+    domain: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Domain of the Active directory synced to Entra ID for hybrid identities."""
+    server_name_prefix: Optional[str] = rest_field(
+        name="serverNamePrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Using ServerNamePrefix, FQDN (Fully Qualified Domain Name) will be generated for SMB share,
+     using this FQDN, SMB Share will be mounted on Entra Joined VM."""
+    entra_id_akv_config: Optional["_models.EntraIdAkvConfigPatch"] = rest_field(
+        name="entraIdAkvConfig", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Using AKV config, certificate will be fetched, which will contain private key & public
+     certificate, that correspond to the public certificate which is uploaded on the application
+     created by customer. This will be used further for authentication."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        application_id: Optional[str] = None,
+        domain: Optional[str] = None,
+        server_name_prefix: Optional[str] = None,
+        entra_id_akv_config: Optional["_models.EntraIdAkvConfigPatch"] = None,
     ) -> None: ...
 
     @overload
@@ -3497,6 +6458,585 @@ class ExportPolicyRule(_Model):  # pylint: disable=docstring-keyword-should-matc
         allowed_clients: Optional[str] = None,
         has_root_access: Optional[bool] = None,
         chown_mode: Optional[Union[str, "_models.ChownMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExternalCache(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """External Cache resource, representing a cache volume on an external ONTAP system.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ExternalCacheProperties
+    """
+
+    properties: Optional["_models.ExternalCacheProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ExternalCacheProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExternalCacheConnection(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """External Cache Connection resource, representing a cache connection relationship between
+    External and Azure NetApp Files volumes.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ExternalCacheConnectionProperties
+    """
+
+    properties: Optional["_models.ExternalCacheConnectionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ExternalCacheConnectionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExternalCacheConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """External Cache Connection properties.
+
+    :ivar provisioning_state: Current status of the operation. Known values are: "Succeeded",
+     "Failed", "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar origin_volume_resource_id: Origin volume resource ID, the ANF volume that acts as the
+     origin for the cache connection. Required.
+    :vartype origin_volume_resource_id: str
+    :ivar external_cache_name: Name of the cache associated with this connection. Required.
+    :vartype external_cache_name: str
+    :ivar external_svm_resource_id: External SVM resource ID, the external storage virtual machine
+     associated with this cache connection. Required.
+    :vartype external_svm_resource_id: str
+    :ivar cluster_peer_subnet_resource_id: The Azure Resource URI for a delegated subnet used for
+     cluster peering.
+    :vartype cluster_peer_subnet_resource_id: str
+    :ivar cluster_peer_resource_id: Resource ID of the cluster peer.
+    :vartype cluster_peer_resource_id: str
+    :ivar svm_peer_resource_id: Resource ID of the SVM peer.
+    :vartype svm_peer_resource_id: str
+    :ivar setup_information: Setup information for the external cache connection.
+    :vartype setup_information: ~azure.mgmt.netapp.models.SetupInformation
+    """
+
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Current status of the operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+    origin_volume_resource_id: str = rest_field(name="originVolumeResourceId", visibility=["read", "create"])
+    """Origin volume resource ID, the ANF volume that acts as the origin for the cache connection.
+     Required."""
+    external_cache_name: str = rest_field(name="externalCacheName", visibility=["read", "create"])
+    """Name of the cache associated with this connection. Required."""
+    external_svm_resource_id: str = rest_field(name="externalSvmResourceId", visibility=["read", "create"])
+    """External SVM resource ID, the external storage virtual machine associated with this cache
+     connection. Required."""
+    cluster_peer_subnet_resource_id: Optional[str] = rest_field(
+        name="clusterPeerSubnetResourceId", visibility=["read", "create"]
+    )
+    """The Azure Resource URI for a delegated subnet used for cluster peering."""
+    cluster_peer_resource_id: Optional[str] = rest_field(name="clusterPeerResourceId", visibility=["read"])
+    """Resource ID of the cluster peer."""
+    svm_peer_resource_id: Optional[str] = rest_field(name="svmPeerResourceId", visibility=["read"])
+    """Resource ID of the SVM peer."""
+    setup_information: Optional["_models.SetupInformation"] = rest_field(name="setupInformation", visibility=["read"])
+    """Setup information for the external cache connection."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        origin_volume_resource_id: str,
+        external_cache_name: str,
+        external_svm_resource_id: str,
+        cluster_peer_subnet_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExternalCacheConnectionTagsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for updating tags in ExternalCacheConnection resources.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExternalCacheProperties(_Model):
+    """External Cache properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar external_cache_name: Name of the cache volume on the external ONTAP system.
+    :vartype external_cache_name: str
+    :ivar origin_volume_resource_id: Origin volume resource ID, the ANF volume that acts as the
+     origin for this cache.
+    :vartype origin_volume_resource_id: str
+    :ivar origin_volume_name: Name of the origin volume associated with this cache.
+    :vartype origin_volume_name: str
+    :ivar origin_svm_name: Name of the origin SVM (Storage Virtual Machine) associated with this
+     cache.
+    :vartype origin_svm_name: str
+    :ivar size_in_bytes: Size of the cache in bytes.
+    :vartype size_in_bytes: int
+    :ivar state: State of the remote cache volume. Known values are: "error", "mixed", "offline",
+     "online", "pending", and "unsupported".
+    :vartype state: str or ~azure.mgmt.netapp.models.ExternalCacheState
+    :ivar create_command: The ONTAP CLI command to create this cache.
+    :vartype create_command: str
+    :ivar connection_status: Connection status of the external cache. Known values are: "Pending",
+     "Connected", "Disconnected", "Unknown", and "Unsupported".
+    :vartype connection_status: str or ~azure.mgmt.netapp.models.ExternalCacheConnectionStatus
+    """
+
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+    external_cache_name: Optional[str] = rest_field(name="externalCacheName", visibility=["read"])
+    """Name of the cache volume on the external ONTAP system."""
+    origin_volume_resource_id: Optional[str] = rest_field(name="originVolumeResourceId", visibility=["read"])
+    """Origin volume resource ID, the ANF volume that acts as the origin for this cache."""
+    origin_volume_name: Optional[str] = rest_field(name="originVolumeName", visibility=["read"])
+    """Name of the origin volume associated with this cache."""
+    origin_svm_name: Optional[str] = rest_field(name="originSvmName", visibility=["read"])
+    """Name of the origin SVM (Storage Virtual Machine) associated with this cache."""
+    size_in_bytes: Optional[int] = rest_field(name="sizeInBytes", visibility=["read"])
+    """Size of the cache in bytes."""
+    state: Optional[Union[str, "_models.ExternalCacheState"]] = rest_field(visibility=["read"])
+    """State of the remote cache volume. Known values are: \"error\", \"mixed\", \"offline\",
+     \"online\", \"pending\", and \"unsupported\"."""
+    create_command: Optional[str] = rest_field(name="createCommand", visibility=["read"])
+    """The ONTAP CLI command to create this cache."""
+    connection_status: Optional[Union[str, "_models.ExternalCacheConnectionStatus"]] = rest_field(
+        name="connectionStatus", visibility=["read"]
+    )
+    """Connection status of the external cache. Known values are: \"Pending\", \"Connected\",
+     \"Disconnected\", \"Unknown\", and \"Unsupported\"."""
+
+
+class ExternalCluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """External Cluster resource, representing a cluster on an external NetApp ONTAP system.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ExternalClusterProperties
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
+    """
+
+    properties: Optional["_models.ExternalClusterProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ExternalClusterProperties"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExternalClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """External Cluster properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar intercluster_lifs_ip_addresses: Intercluster LIFs, external cluster IPs for cluster peer
+     connection. Required.
+    :vartype intercluster_lifs_ip_addresses: list[str]
+    :ivar cluster_peer_passphrase_key_vault: Key Vault authentication configuration for cluster
+     peering passphrase. Required.
+    :vartype cluster_peer_passphrase_key_vault:
+     ~azure.mgmt.netapp.models.KeyVaultClusterPeerPassphraseProperties
+    """
+
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+    intercluster_lifs_ip_addresses: list[str] = rest_field(
+        name="interclusterLifsIpAddresses", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Intercluster LIFs, external cluster IPs for cluster peer connection. Required."""
+    cluster_peer_passphrase_key_vault: "_models.KeyVaultClusterPeerPassphraseProperties" = rest_field(
+        name="clusterPeerPassphraseKeyVault", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Key Vault authentication configuration for cluster peering passphrase. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        intercluster_lifs_ip_addresses: list[str],
+        cluster_peer_passphrase_key_vault: "_models.KeyVaultClusterPeerPassphraseProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExternalClusterUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for update operations of the ExternalCluster.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.netapp.models.ManagedServiceIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ExternalClusterUpdateProperties
+    """
+
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.ExternalClusterUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ExternalClusterUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExternalClusterUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The updatable properties of the ExternalCluster.
+
+    :ivar intercluster_lifs_ip_addresses: Intercluster LIFs, external cluster IPs for cluster peer
+     connection.
+    :vartype intercluster_lifs_ip_addresses: list[str]
+    :ivar cluster_peer_passphrase_key_vault: Key Vault authentication configuration for cluster
+     peering passphrase.
+    :vartype cluster_peer_passphrase_key_vault:
+     ~azure.mgmt.netapp.models.KeyVaultClusterPeerPassphrasePatchProperties
+    """
+
+    intercluster_lifs_ip_addresses: Optional[list[str]] = rest_field(
+        name="interclusterLifsIpAddresses", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Intercluster LIFs, external cluster IPs for cluster peer connection."""
+    cluster_peer_passphrase_key_vault: Optional["_models.KeyVaultClusterPeerPassphrasePatchProperties"] = rest_field(
+        name="clusterPeerPassphraseKeyVault", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Key Vault authentication configuration for cluster peering passphrase."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        intercluster_lifs_ip_addresses: Optional[list[str]] = None,
+        cluster_peer_passphrase_key_vault: Optional["_models.KeyVaultClusterPeerPassphrasePatchProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExternalResourceNetworkInterfaces(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """External Resource Network Interfaces.
+
+    :ivar network_interface_resource_id: Network Interface Resource ID. Required.
+    :vartype network_interface_resource_id: str
+    :ivar peer_ip_address: Peer IP address used for peering. Required.
+    :vartype peer_ip_address: str
+    """
+
+    network_interface_resource_id: str = rest_field(
+        name="networkInterfaceResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Network Interface Resource ID. Required."""
+    peer_ip_address: str = rest_field(name="peerIpAddress", visibility=["read", "create", "update", "delete", "query"])
+    """Peer IP address used for peering. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        network_interface_resource_id: str,
+        peer_ip_address: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExternalSvm(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """External SVM (Storage Virtual Machine, Vserver) resource, representing an SVM on an external
+    NetApp ONTAP system.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.ExternalSvmProperties
+    """
+
+    properties: Optional["_models.ExternalSvmProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.ExternalSvmProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExternalSvmProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """External SVM properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar ontap_svm_name: Name of the external ONTAP SVM (different from Azure resource name). Must
+     be unique across the cluster. Required.
+    :vartype ontap_svm_name: str
+    :ivar svm_peer_resource_ids: Resource IDs of associated SVM Peer relationships.
+    :vartype svm_peer_resource_ids: list[str]
+    """
+
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+    ontap_svm_name: str = rest_field(name="ontapSvmName", visibility=["read", "create"])
+    """Name of the external ONTAP SVM (different from Azure resource name). Must be unique across the
+     cluster. Required."""
+    svm_peer_resource_ids: Optional[list[str]] = rest_field(name="svmPeerResourceIds", visibility=["read"])
+    """Resource IDs of associated SVM Peer relationships."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ontap_svm_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExternalSvmTagsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for updating tags in ExternalSvm resources.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -3783,6 +7323,104 @@ class HourlySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-
         snapshots_to_keep: Optional[int] = None,
         minute: Optional[int] = None,
         used_bytes: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KeyVaultClusterPeerPassphrasePatchProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Key Vault authentication properties for PATCH operations.
+
+    :ivar key_vault_uri: The Azure Key Vault URI where the passphrase for cluster peering handshake
+     is stored.
+    :vartype key_vault_uri: str
+    :ivar secret_name: The name of the secret in Azure Key Vault. Passphrase for cluster peering
+     handshake is stored in this secret.
+    :vartype secret_name: str
+    :ivar user_assigned_identity_resource_id: The ARM resource identifier of the user assigned
+     identity used to authenticate with key vault. If not provided, system-assigned identity will be
+     used.
+    :vartype user_assigned_identity_resource_id: str
+    """
+
+    key_vault_uri: Optional[str] = rest_field(
+        name="keyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Key Vault URI where the passphrase for cluster peering handshake is stored."""
+    secret_name: Optional[str] = rest_field(
+        name="secretName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the secret in Azure Key Vault. Passphrase for cluster peering handshake is stored
+     in this secret."""
+    user_assigned_identity_resource_id: Optional[str] = rest_field(
+        name="userAssignedIdentityResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault.
+     If not provided, system-assigned identity will be used."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_vault_uri: Optional[str] = None,
+        secret_name: Optional[str] = None,
+        user_assigned_identity_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class KeyVaultClusterPeerPassphraseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Key Vault authentication properties.
+
+    :ivar key_vault_uri: The Azure Key Vault URI where the passphrase for cluster peering handshake
+     is stored. Required.
+    :vartype key_vault_uri: str
+    :ivar secret_name: The name of the secret in Azure Key Vault. Passphrase for cluster peering
+     handshake is stored in this secret. Required.
+    :vartype secret_name: str
+    :ivar user_assigned_identity_resource_id: The ARM resource identifier of the user assigned
+     identity used to authenticate with key vault. If not provided, system-assigned identity will be
+     used.
+    :vartype user_assigned_identity_resource_id: str
+    """
+
+    key_vault_uri: str = rest_field(name="keyVaultUri", visibility=["read", "create", "update", "delete", "query"])
+    """The Azure Key Vault URI where the passphrase for cluster peering handshake is stored. Required."""
+    secret_name: str = rest_field(name="secretName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the secret in Azure Key Vault. Passphrase for cluster peering handshake is stored
+     in this secret. Required."""
+    user_assigned_identity_resource_id: Optional[str] = rest_field(
+        name="userAssignedIdentityResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM resource identifier of the user assigned identity used to authenticate with key vault.
+     If not provided, system-assigned identity will be used."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_vault_uri: str,
+        secret_name: str,
+        user_assigned_identity_resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -4663,6 +8301,7 @@ class NetAppAccount(TrackedResource):  # pylint: disable=docstring-keyword-shoul
     __flattened_items = [
         "provisioning_state",
         "active_directories",
+        "entra_id_config",
         "encryption",
         "disable_showmount",
         "nfs_v4_id_domain",
@@ -4731,7 +8370,13 @@ class NetAppAccountPatch(_Model):  # pylint: disable=docstring-keyword-should-ma
     )
     """NetApp Account properties."""
 
-    __flattened_items = ["active_directories", "encryption", "nfs_v4_id_domain", "ldap_configuration"]
+    __flattened_items = [
+        "active_directories",
+        "encryption",
+        "nfs_v4_id_domain",
+        "entra_id_config",
+        "ldap_configuration",
+    ]
 
     @overload
     def __init__(
@@ -5256,8 +8901,8 @@ class PoolChangeRequest(_Model):  # pylint: disable=docstring-keyword-should-mat
 class PoolPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Patchable pool properties.
 
-    :ivar size: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value
-     must be multiple of 1099511627776).
+    :ivar size: Provisioned size of the pool (in bytes). Allowed values are 512GiB (549755813888
+     bytes) or in 1TiB chunks (value must be multiple of 1099511627776).
     :vartype size: int
     :ivar qos_type: The qos type of the pool. Known values are: "Auto" and "Manual".
     :vartype qos_type: str or ~azure.mgmt.netapp.models.QosType
@@ -5269,8 +8914,8 @@ class PoolPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-m
     """
 
     size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value must be
-     multiple of 1099511627776)."""
+    """Provisioned size of the pool (in bytes). Allowed values are 512GiB (549755813888 bytes) or in
+     1TiB chunks (value must be multiple of 1099511627776)."""
     qos_type: Optional[Union[str, "_models.QosType"]] = rest_field(
         name="qosType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5311,8 +8956,8 @@ class PoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-
 
     :ivar pool_id: UUID v4 used to identify the Pool.
     :vartype pool_id: str
-    :ivar size: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value
-     must be multiple of 1099511627776). Required.
+    :ivar size: Provisioned size of the pool (in bytes). Allowed values are 512GiB (549755813888
+     bytes) or in 1TiB chunks (value must be multiple of 1099511627776). Required.
     :vartype size: int
     :ivar service_level: The service level of the file system. Required. Known values are:
      "Standard", "Premium", "Ultra", "StandardZRS", and "Flexible".
@@ -5339,8 +8984,8 @@ class PoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-
     pool_id: Optional[str] = rest_field(name="poolId", visibility=["read"])
     """UUID v4 used to identify the Pool."""
     size: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value must be
-     multiple of 1099511627776). Required."""
+    """Provisioned size of the pool (in bytes). Allowed values are 512GiB (549755813888 bytes) or in
+     1TiB chunks (value must be multiple of 1099511627776). Required."""
     service_level: Union[str, "_models.ServiceLevel"] = rest_field(
         name="serviceLevel", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6509,6 +10154,116 @@ class RestoreStatus(_Model):
     """Displays the total bytes transferred."""
 
 
+class SecretPassword(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Access password from Azure KeyVault Secrets to connect Active Directory.
+
+    :ivar key_vault_properties: Properties provided by KeyVault.
+    :vartype key_vault_properties: ~azure.mgmt.netapp.models.SecretPasswordKeyVaultProperties
+    :ivar identity: Identity used to authenticate to KeyVault. Applicable if keySource is
+     'Microsoft.KeyVault'.
+    :vartype identity: ~azure.mgmt.netapp.models.SecretPasswordIdentity
+    """
+
+    key_vault_properties: Optional["_models.SecretPasswordKeyVaultProperties"] = rest_field(
+        name="keyVaultProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties provided by KeyVault."""
+    identity: Optional["_models.SecretPasswordIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Identity used to authenticate to KeyVault. Applicable if keySource is 'Microsoft.KeyVault'."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_vault_properties: Optional["_models.SecretPasswordKeyVaultProperties"] = None,
+        identity: Optional["_models.SecretPasswordIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SecretPasswordIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Identity used to authenticate with key vault.
+
+    :ivar principal_id: The principal ID (object ID) of the identity used to authenticate with key
+     vault. Read-only.
+    :vartype principal_id: str
+    :ivar user_assigned_identity: The Azure resource identifier of the user assigned identity used
+     to authenticate with key vault. Applicable if identity.type has 'UserAssigned'. It should match
+     key of identity.userAssignedIdentities.
+    :vartype user_assigned_identity: str
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID (object ID) of the identity used to authenticate with key vault. Read-only."""
+    user_assigned_identity: Optional[str] = rest_field(
+        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure resource identifier of the user assigned identity used to authenticate with key
+     vault. Applicable if identity.type has 'UserAssigned'. It should match key of
+     identity.userAssignedIdentities."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user_assigned_identity: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SecretPasswordKeyVaultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of key vault to get the secrets for password.
+
+    :ivar key_vault_uri: The Uri of KeyVault. Required.
+    :vartype key_vault_uri: str
+    :ivar secret_name: The name of KeyVault password secret. Required.
+    :vartype secret_name: str
+    """
+
+    key_vault_uri: str = rest_field(name="keyVaultUri", visibility=["read", "create", "update", "delete", "query"])
+    """The Uri of KeyVault. Required."""
+    secret_name: str = rest_field(name="secretName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of KeyVault password secret. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_vault_uri: str,
+        secret_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ServiceSpecification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """One property of operation, include metric specifications.
 
@@ -6546,6 +10301,29 @@ class ServiceSpecification(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
+class SetupInformation(_Model):
+    """Setup Information for External Connection Setups.
+
+    :ivar setup_status: Setup status indicating the current step in the setup process. Known values
+     are: "ClusterPeerPending", "VServerPeerRequired", and "NoActionRequired".
+    :vartype setup_status: str or ~azure.mgmt.netapp.models.ExternalConnectionSetupState
+    :ivar status_information: Additional status information.
+    :vartype status_information: str
+    :ivar command: Command to execute.
+    :vartype command: str
+    """
+
+    setup_status: Optional[Union[str, "_models.ExternalConnectionSetupState"]] = rest_field(
+        name="setupStatus", visibility=["read"]
+    )
+    """Setup status indicating the current step in the setup process. Known values are:
+     \"ClusterPeerPending\", \"VServerPeerRequired\", and \"NoActionRequired\"."""
+    status_information: Optional[str] = rest_field(name="statusInformation", visibility=["read"])
+    """Additional status information."""
+    command: Optional[str] = rest_field(visibility=["read"])
+    """Command to execute."""
+
+
 class SmbSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SMB settings for the cache.
 
@@ -6559,6 +10337,9 @@ class SmbSettings(_Model):  # pylint: disable=docstring-keyword-should-match-key
     :ivar smb_non_browsable: Enables non-browsable property for SMB Shares. Only applicable for
      SMB/DualProtocol cache. Known values are: "Disabled" and "Enabled".
     :vartype smb_non_browsable: str or ~azure.mgmt.netapp.models.SmbNonBrowsable
+    :ivar smb_oplocks: Enables or disables SMB opportunistic lock property for SMB Shares. Only
+     applicable for SMB/DualProtocol cache. Known values are: "Disabled" and "Enabled".
+    :vartype smb_oplocks: str or ~azure.mgmt.netapp.models.SmbOplocks
     """
 
     smb_encryption: Optional[Union[str, "_models.SmbEncryptionState"]] = rest_field(
@@ -6576,6 +10357,11 @@ class SmbSettings(_Model):  # pylint: disable=docstring-keyword-should-match-key
     )
     """Enables non-browsable property for SMB Shares. Only applicable for SMB/DualProtocol cache.
      Known values are: \"Disabled\" and \"Enabled\"."""
+    smb_oplocks: Optional[Union[str, "_models.SmbOplocks"]] = rest_field(
+        name="smbOplocks", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enables or disables SMB opportunistic lock property for SMB Shares. Only applicable for
+     SMB/DualProtocol cache. Known values are: \"Disabled\" and \"Enabled\"."""
 
     @overload
     def __init__(
@@ -6584,6 +10370,7 @@ class SmbSettings(_Model):  # pylint: disable=docstring-keyword-should-match-key
         smb_encryption: Optional[Union[str, "_models.SmbEncryptionState"]] = None,
         smb_access_based_enumeration: Optional[Union[str, "_models.SmbAccessBasedEnumeration"]] = None,
         smb_non_browsable: Optional[Union[str, "_models.SmbNonBrowsable"]] = None,
+        smb_oplocks: Optional[Union[str, "_models.SmbOplocks"]] = None,
     ) -> None: ...
 
     @overload
@@ -7341,6 +11128,48 @@ class SuspectFile(_Model):
     """The creation date and time of the file."""
 
 
+class SvmPeer(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """SVM Peer resource, represents a peer relationship between an external SVM and an Azure NetApp
+    Files SVM.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.netapp.models.SvmPeerProperties
+    """
+
+    properties: Optional["_models.SvmPeerProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SvmPeerProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SvmPeerCommandResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about svm peering process.
 
@@ -7401,6 +11230,56 @@ class SvmPeerCommandResponseProperties(_Model):  # pylint: disable=docstring-key
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class SvmPeerProperties(_Model):
+    """SVM Peer properties.
+
+    :ivar provisioning_state: Azure lifecycle management. Known values are: "Succeeded", "Failed",
+     "Canceled", "Accepted", "Creating", "Patching", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.netapp.models.NetAppProvisioningState
+    :ivar accept_command: Command to accept the peer relationship.
+    :vartype accept_command: str
+    :ivar anf_svm_name: Name of the Azure Net App Files (ANF) SVM.
+    :vartype anf_svm_name: str
+    :ivar external_svm_resource_id: Resource ID of the external SVM.
+    :vartype external_svm_resource_id: str
+    :ivar status: Status of the peer relationship. Known values are: "Active", "Error", and
+     "Pending".
+    :vartype status: str or ~azure.mgmt.netapp.models.SvmPeerStatus
+    :ivar peer_types: Peer types; expected values include "Replication" or "Cache".
+    :vartype peer_types: list[str or ~azure.mgmt.netapp.models.SvmPeerType]
+    :ivar hybrid_replication_resource_ids: Resource IDs of Hybrid Replication resources associated
+     with this SVM peer.
+    :vartype hybrid_replication_resource_ids: list[str]
+    :ivar external_cache_connection_resource_ids: Resource IDs of External Cache Connections
+     associated with this SVM peer.
+    :vartype external_cache_connection_resource_ids: list[str]
+    """
+
+    provisioning_state: Optional[Union[str, "_models.NetAppProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Azure lifecycle management. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", \"Creating\", \"Patching\", \"Updating\", \"Deleting\", and \"Moving\"."""
+    accept_command: Optional[str] = rest_field(name="acceptCommand", visibility=["read"])
+    """Command to accept the peer relationship."""
+    anf_svm_name: Optional[str] = rest_field(name="anfSvmName", visibility=["read"])
+    """Name of the Azure Net App Files (ANF) SVM."""
+    external_svm_resource_id: Optional[str] = rest_field(name="externalSvmResourceId", visibility=["read"])
+    """Resource ID of the external SVM."""
+    status: Optional[Union[str, "_models.SvmPeerStatus"]] = rest_field(visibility=["read"])
+    """Status of the peer relationship. Known values are: \"Active\", \"Error\", and \"Pending\"."""
+    peer_types: Optional[list[Union[str, "_models.SvmPeerType"]]] = rest_field(name="peerTypes", visibility=["read"])
+    """Peer types; expected values include \"Replication\" or \"Cache\"."""
+    hybrid_replication_resource_ids: Optional[list[str]] = rest_field(
+        name="hybridReplicationResourceIds", visibility=["read"]
+    )
+    """Resource IDs of Hybrid Replication resources associated with this SVM peer."""
+    external_cache_connection_resource_ids: Optional[list[str]] = rest_field(
+        name="externalCacheConnectionResourceIds", visibility=["read"]
+    )
+    """Resource IDs of External Cache Connections associated with this SVM peer."""
 
 
 class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -7725,11 +11604,13 @@ class Volume(TrackedResource):  # pylint: disable=docstring-keyword-should-match
         "smb_access_based_enumeration",
         "smb_non_browsable",
         "smb_continuously_available",
+        "smb_oplocks",
         "throughput_mibps",
         "actual_throughput_mibps",
         "encryption_key_source",
         "key_vault_private_endpoint_resource_id",
         "ldap_enabled",
+        "ldap_server_type",
         "cool_access",
         "coolness_period",
         "cool_access_retrieval_policy",
@@ -7740,6 +11621,7 @@ class Volume(TrackedResource):  # pylint: disable=docstring-keyword-should-match
         "avs_data_store",
         "data_store_resource_id",
         "is_default_quota_enabled",
+        "async_directory_delete",
         "default_user_quota_in_ki_bs",
         "default_group_quota_in_ki_bs",
         "maximum_number_of_files",
@@ -7753,9 +11635,12 @@ class Volume(TrackedResource):  # pylint: disable=docstring-keyword-should-match
         "enable_subvolumes",
         "provisioned_availability_zone",
         "is_large_volume",
+        "large_volume_type",
         "originating_resource_id",
         "inherited_size_in_bytes",
+        "language",
         "breakthrough_mode",
+        "geo_namespace_properties",
     ]
 
     @overload
@@ -8214,11 +12099,13 @@ class VolumeGroupVolumeProperties(_Model):  # pylint: disable=docstring-keyword-
         "smb_access_based_enumeration",
         "smb_non_browsable",
         "smb_continuously_available",
+        "smb_oplocks",
         "throughput_mibps",
         "actual_throughput_mibps",
         "encryption_key_source",
         "key_vault_private_endpoint_resource_id",
         "ldap_enabled",
+        "ldap_server_type",
         "cool_access",
         "coolness_period",
         "cool_access_retrieval_policy",
@@ -8229,6 +12116,7 @@ class VolumeGroupVolumeProperties(_Model):  # pylint: disable=docstring-keyword-
         "avs_data_store",
         "data_store_resource_id",
         "is_default_quota_enabled",
+        "async_directory_delete",
         "default_user_quota_in_ki_bs",
         "default_group_quota_in_ki_bs",
         "maximum_number_of_files",
@@ -8242,9 +12130,12 @@ class VolumeGroupVolumeProperties(_Model):  # pylint: disable=docstring-keyword-
         "enable_subvolumes",
         "provisioned_availability_zone",
         "is_large_volume",
+        "large_volume_type",
         "originating_resource_id",
         "inherited_size_in_bytes",
+        "language",
         "breakthrough_mode",
+        "geo_namespace_properties",
     ]
 
     @overload
@@ -8284,6 +12175,38 @@ class VolumeGroupVolumeProperties(_Model):  # pylint: disable=docstring-keyword-
             setattr(self.properties, key, value)
         else:
             super().__setattr__(key, value)
+
+
+class VolumeNamespaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Geographic namespace properties for a volume.
+
+    :ivar origin_volume: Indicates whether this volume is designated as an origin for cache
+     volumes. Known values are: "Disabled" and "Enabled".
+    :vartype origin_volume: str or ~azure.mgmt.netapp.models.OriginVolume
+    """
+
+    origin_volume: Optional[Union[str, "_models.OriginVolume"]] = rest_field(
+        name="originVolume", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether this volume is designated as an origin for cache volumes. Known values are:
+     \"Disabled\" and \"Enabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        origin_volume: Optional[Union[str, "_models.OriginVolume"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class VolumePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -8326,6 +12249,7 @@ class VolumePatch(_Model):  # pylint: disable=docstring-keyword-should-match-key
         "throughput_mibps",
         "data_protection",
         "is_default_quota_enabled",
+        "async_directory_delete",
         "default_user_quota_in_ki_bs",
         "default_group_quota_in_ki_bs",
         "unix_permissions",
@@ -8336,6 +12260,8 @@ class VolumePatch(_Model):  # pylint: disable=docstring-keyword-should-match-key
         "snapshot_directory_visible",
         "smb_access_based_enumeration",
         "smb_non_browsable",
+        "smb_oplocks",
+        "geo_namespace_properties",
     ]
 
     @overload
@@ -8376,6 +12302,38 @@ class VolumePatch(_Model):  # pylint: disable=docstring-keyword-should-match-key
             super().__setattr__(key, value)
 
 
+class VolumePatchNamespaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Geographic namespace properties for a volume patch operation.
+
+    :ivar origin_volume: Indicates whether this volume is designated as an origin for cache
+     volumes. Known values are: "Disabled" and "Enabled".
+    :vartype origin_volume: str or ~azure.mgmt.netapp.models.OriginVolume
+    """
+
+    origin_volume: Optional[Union[str, "_models.OriginVolume"]] = rest_field(
+        name="originVolume", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether this volume is designated as an origin for cache volumes. Known values are:
+     \"Disabled\" and \"Enabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        origin_volume: Optional[Union[str, "_models.OriginVolume"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class VolumePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Patchable volume properties.
 
@@ -8385,7 +12343,8 @@ class VolumePatchProperties(_Model):  # pylint: disable=docstring-keyword-should
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
      quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
      100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
-     exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
+     exceptional basis, from to 2400GiB to 2400TiB. For extra large volumes, valid values are in the
+     range 2400GiB to 7200TiB. Values expressed in bytes as multiples of 1 GiB.
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
@@ -8401,6 +12360,8 @@ class VolumePatchProperties(_Model):  # pylint: disable=docstring-keyword-should
     :vartype data_protection: ~azure.mgmt.netapp.models.VolumePatchPropertiesDataProtection
     :ivar is_default_quota_enabled: Specifies if default quota is enabled for the volume.
     :vartype is_default_quota_enabled: bool
+    :ivar async_directory_delete: Async Directory Delete configuration for the volume.
+    :vartype async_directory_delete: ~azure.mgmt.netapp.models.AsyncDirectoryDelete
     :ivar default_user_quota_in_ki_bs: Default user quota for volume in KiBs. If
      isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies .
     :vartype default_user_quota_in_ki_bs: int
@@ -8446,6 +12407,11 @@ class VolumePatchProperties(_Model):  # pylint: disable=docstring-keyword-should
     :ivar smb_non_browsable: Enables non-browsable property for SMB Shares. Only applicable for
      SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
     :vartype smb_non_browsable: str or ~azure.mgmt.netapp.models.SmbNonBrowsable
+    :ivar smb_oplocks: Enables or disables SMB opportunistic lock property for SMB Shares. Only
+     applicable for SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
+    :vartype smb_oplocks: str or ~azure.mgmt.netapp.models.SmbOplocks
+    :ivar geo_namespace_properties: Geographic namespace properties for this volume.
+    :vartype geo_namespace_properties: ~azure.mgmt.netapp.models.VolumePatchNamespaceProperties
     """
 
     service_level: Optional[Union[str, "_models.ServiceLevel"]] = rest_field(
@@ -8459,7 +12425,8 @@ class VolumePatchProperties(_Model):  # pylint: disable=docstring-keyword-should
     """Maximum storage quota allowed for a file system in bytes. This is a soft quota used for
      alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB. For large
      volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis, from to
-     2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB."""
+     2400GiB to 2400TiB. For extra large volumes, valid values are in the range 2400GiB to 7200TiB.
+     Values expressed in bytes as multiples of 1 GiB."""
     export_policy: Optional["_models.VolumePatchPropertiesExportPolicy"] = rest_field(
         name="exportPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8483,6 +12450,10 @@ class VolumePatchProperties(_Model):  # pylint: disable=docstring-keyword-should
         name="isDefaultQuotaEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies if default quota is enabled for the volume."""
+    async_directory_delete: Optional["_models.AsyncDirectoryDelete"] = rest_field(
+        name="asyncDirectoryDelete", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Async Directory Delete configuration for the volume."""
     default_user_quota_in_ki_bs: Optional[int] = rest_field(
         name="defaultUserQuotaInKiBs", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8541,6 +12512,15 @@ class VolumePatchProperties(_Model):  # pylint: disable=docstring-keyword-should
     )
     """Enables non-browsable property for SMB Shares. Only applicable for SMB/DualProtocol volume.
      Known values are: \"Disabled\" and \"Enabled\"."""
+    smb_oplocks: Optional[Union[str, "_models.SmbOplocks"]] = rest_field(
+        name="smbOplocks", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enables or disables SMB opportunistic lock property for SMB Shares. Only applicable for
+     SMB/DualProtocol volume. Known values are: \"Disabled\" and \"Enabled\"."""
+    geo_namespace_properties: Optional["_models.VolumePatchNamespaceProperties"] = rest_field(
+        name="geoNamespaceProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Geographic namespace properties for this volume."""
 
     @overload
     def __init__(
@@ -8553,6 +12533,7 @@ class VolumePatchProperties(_Model):  # pylint: disable=docstring-keyword-should
         throughput_mibps: Optional[float] = None,
         data_protection: Optional["_models.VolumePatchPropertiesDataProtection"] = None,
         is_default_quota_enabled: Optional[bool] = None,
+        async_directory_delete: Optional["_models.AsyncDirectoryDelete"] = None,
         default_user_quota_in_ki_bs: Optional[int] = None,
         default_group_quota_in_ki_bs: Optional[int] = None,
         unix_permissions: Optional[str] = None,
@@ -8563,6 +12544,8 @@ class VolumePatchProperties(_Model):  # pylint: disable=docstring-keyword-should
         snapshot_directory_visible: Optional[bool] = None,
         smb_access_based_enumeration: Optional[Union[str, "_models.SmbAccessBasedEnumeration"]] = None,
         smb_non_browsable: Optional[Union[str, "_models.SmbNonBrowsable"]] = None,
+        smb_oplocks: Optional[Union[str, "_models.SmbOplocks"]] = None,
+        geo_namespace_properties: Optional["_models.VolumePatchNamespaceProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -8664,8 +12647,8 @@ class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
      quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
      100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
-     exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
-     Required.
+     exceptional basis, from to 2400GiB to 2400TiB. For extra large volumes, valid values are in the
+     range 2400GiB to 7200TiB. Values expressed in bytes as multiples of 1 GiB. Required.
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
@@ -8742,6 +12725,9 @@ class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
     :ivar smb_continuously_available: Enables continuously available share property for smb volume.
      Only applicable for SMB volume.
     :vartype smb_continuously_available: bool
+    :ivar smb_oplocks: Enables or disables SMB opportunistic lock property for SMB Shares. Only
+     applicable for SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
+    :vartype smb_oplocks: str or ~azure.mgmt.netapp.models.SmbOplocks
     :ivar throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
      this will be accepted as input only for manual qosType volume.
     :vartype throughput_mibps: float
@@ -8759,6 +12745,9 @@ class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
     :vartype key_vault_private_endpoint_resource_id: str
     :ivar ldap_enabled: Specifies whether LDAP is enabled or not for a given NFS volume.
     :vartype ldap_enabled: bool
+    :ivar ldap_server_type: Specifies the type of LDAP server for a given NFS volume. Known values
+     are: "ActiveDirectory" and "OpenLDAP".
+    :vartype ldap_server_type: str or ~azure.mgmt.netapp.models.LdapServerType
     :ivar cool_access: Specifies whether Cool Access(tiering) is enabled for the volume.
     :vartype cool_access: bool
     :ivar coolness_period: Specifies the number of days after which data that is not accessed by
@@ -8803,6 +12792,8 @@ class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
     :vartype data_store_resource_id: list[str]
     :ivar is_default_quota_enabled: Specifies if default quota is enabled for the volume.
     :vartype is_default_quota_enabled: bool
+    :ivar async_directory_delete: Async Directory Delete configuration for the volume.
+    :vartype async_directory_delete: ~azure.mgmt.netapp.models.AsyncDirectoryDelete
     :ivar default_user_quota_in_ki_bs: Default user quota for volume in KiBs. If
      isDefaultQuotaEnabled is set, the minimum value of 4 KiBs applies .
     :vartype default_user_quota_in_ki_bs: int
@@ -8838,14 +12829,32 @@ class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
     :vartype provisioned_availability_zone: str
     :ivar is_large_volume: Specifies whether volume is a Large Volume or Regular Volume.
     :vartype is_large_volume: bool
+    :ivar large_volume_type: Specifies the type of the Large Volume. When set to 'LargeVolume', the
+     large volume is created with standard configuration. If it is set to
+     'ExtraLargeVolume7Dot2PiB', the extra large volume is created with higher capacity limit 7.2PiB
+     with cool access enabled, delivering higher capacity limit with lower costs. Known values are:
+     "LargeVolume" and "PremExtraLargeVolume7Dot2PiB".
+    :vartype large_volume_type: str or ~azure.mgmt.netapp.models.LargeVolumeType
     :ivar originating_resource_id: Id of the snapshot or backup that the volume is restored from.
     :vartype originating_resource_id: str
     :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
      bytes.
     :vartype inherited_size_in_bytes: int
+    :ivar language: Language supported for volume. Known values are: "c.utf-8", "utf8mb4", "ar",
+     "ar.utf-8", "hr", "hr.utf-8", "cs", "cs.utf-8", "da", "da.utf-8", "nl", "nl.utf-8", "en",
+     "en.utf-8", "fi", "fi.utf-8", "fr", "fr.utf-8", "de", "de.utf-8", "he", "he.utf-8", "hu",
+     "hu.utf-8", "it", "it.utf-8", "ja", "ja.utf-8", "ja-v1", "ja-v1.utf-8", "ja-jp.pck",
+     "ja-jp.pck.utf-8", "ja-jp.932", "ja-jp.932.utf-8", "ja-jp.pck-v2", "ja-jp.pck-v2.utf-8", "ko",
+     "ko.utf-8", "no", "no.utf-8", "pl", "pl.utf-8", "pt", "pt.utf-8", "c", "ro", "ro.utf-8", "ru",
+     "ru.utf-8", "zh", "zh.utf-8", "zh.gbk", "zh.gbk.utf-8", "zh-tw.big5", "zh-tw.big5.utf-8",
+     "zh-tw", "zh-tw.utf-8", "sk", "sk.utf-8", "sl", "sl.utf-8", "es", "es.utf-8", "sv", "sv.utf-8",
+     "tr", "tr.utf-8", "en-us", and "en-us.utf-8".
+    :vartype language: str or ~azure.mgmt.netapp.models.VolumeLanguage
     :ivar breakthrough_mode: Specifies whether the volume operates in Breakthrough Mode. Known
      values are: "Enabled" and "Disabled".
     :vartype breakthrough_mode: str or ~azure.mgmt.netapp.models.BreakthroughMode
+    :ivar geo_namespace_properties: Geographic namespace properties for this volume.
+    :vartype geo_namespace_properties: ~azure.mgmt.netapp.models.VolumeNamespaceProperties
     """
 
     file_system_id: Optional[str] = rest_field(name="fileSystemId", visibility=["read"])
@@ -8861,7 +12870,8 @@ class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
     """Maximum storage quota allowed for a file system in bytes. This is a soft quota used for
      alerting only. For regular volumes, valid values are in the range 50GiB to 100TiB. For large
      volumes, valid values are in the range 100TiB to 500TiB, and on an exceptional basis, from to
-     2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB. Required."""
+     2400GiB to 2400TiB. For extra large volumes, valid values are in the range 2400GiB to 7200TiB.
+     Values expressed in bytes as multiples of 1 GiB. Required."""
     export_policy: Optional["_models.VolumePropertiesExportPolicy"] = rest_field(
         name="exportPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8957,6 +12967,11 @@ class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
         name="smbContinuouslyAvailable", visibility=["read", "create", "update", "delete", "query"]
     )
     """Enables continuously available share property for smb volume. Only applicable for SMB volume."""
+    smb_oplocks: Optional[Union[str, "_models.SmbOplocks"]] = rest_field(
+        name="smbOplocks", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enables or disables SMB opportunistic lock property for SMB Shares. Only applicable for
+     SMB/DualProtocol volume. Known values are: \"Disabled\" and \"Enabled\"."""
     throughput_mibps: Optional[float] = rest_field(
         name="throughputMibps", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -8978,6 +12993,11 @@ class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
      volume. Only applicable if encryptionKeySource = 'Microsoft.KeyVault'."""
     ldap_enabled: Optional[bool] = rest_field(name="ldapEnabled", visibility=["read", "create"])
     """Specifies whether LDAP is enabled or not for a given NFS volume."""
+    ldap_server_type: Optional[Union[str, "_models.LdapServerType"]] = rest_field(
+        name="ldapServerType", visibility=["read", "create"]
+    )
+    """Specifies the type of LDAP server for a given NFS volume. Known values are: \"ActiveDirectory\"
+     and \"OpenLDAP\"."""
     cool_access: Optional[bool] = rest_field(
         name="coolAccess", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9031,6 +13051,10 @@ class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
         name="isDefaultQuotaEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies if default quota is enabled for the volume."""
+    async_directory_delete: Optional["_models.AsyncDirectoryDelete"] = rest_field(
+        name="asyncDirectoryDelete", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Async Directory Delete configuration for the volume."""
     default_user_quota_in_ki_bs: Optional[int] = rest_field(
         name="defaultUserQuotaInKiBs", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9079,15 +13103,41 @@ class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
      zone where the volume resides."""
     is_large_volume: Optional[bool] = rest_field(name="isLargeVolume", visibility=["read", "create"])
     """Specifies whether volume is a Large Volume or Regular Volume."""
+    large_volume_type: Optional[Union[str, "_models.LargeVolumeType"]] = rest_field(
+        name="largeVolumeType", visibility=["read", "create"]
+    )
+    """Specifies the type of the Large Volume. When set to 'LargeVolume', the large volume is created
+     with standard configuration. If it is set to 'ExtraLargeVolume7Dot2PiB', the extra large volume
+     is created with higher capacity limit 7.2PiB with cool access enabled, delivering higher
+     capacity limit with lower costs. Known values are: \"LargeVolume\" and
+     \"PremExtraLargeVolume7Dot2PiB\"."""
     originating_resource_id: Optional[str] = rest_field(name="originatingResourceId", visibility=["read"])
     """Id of the snapshot or backup that the volume is restored from."""
     inherited_size_in_bytes: Optional[int] = rest_field(name="inheritedSizeInBytes", visibility=["read"])
     """Space shared by short term clone volume with parent volume in bytes."""
+    language: Optional[Union[str, "_models.VolumeLanguage"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Language supported for volume. Known values are: \"c.utf-8\", \"utf8mb4\", \"ar\",
+     \"ar.utf-8\", \"hr\", \"hr.utf-8\", \"cs\", \"cs.utf-8\", \"da\", \"da.utf-8\", \"nl\",
+     \"nl.utf-8\", \"en\", \"en.utf-8\", \"fi\", \"fi.utf-8\", \"fr\", \"fr.utf-8\", \"de\",
+     \"de.utf-8\", \"he\", \"he.utf-8\", \"hu\", \"hu.utf-8\", \"it\", \"it.utf-8\", \"ja\",
+     \"ja.utf-8\", \"ja-v1\", \"ja-v1.utf-8\", \"ja-jp.pck\", \"ja-jp.pck.utf-8\", \"ja-jp.932\",
+     \"ja-jp.932.utf-8\", \"ja-jp.pck-v2\", \"ja-jp.pck-v2.utf-8\", \"ko\", \"ko.utf-8\", \"no\",
+     \"no.utf-8\", \"pl\", \"pl.utf-8\", \"pt\", \"pt.utf-8\", \"c\", \"ro\", \"ro.utf-8\", \"ru\",
+     \"ru.utf-8\", \"zh\", \"zh.utf-8\", \"zh.gbk\", \"zh.gbk.utf-8\", \"zh-tw.big5\",
+     \"zh-tw.big5.utf-8\", \"zh-tw\", \"zh-tw.utf-8\", \"sk\", \"sk.utf-8\", \"sl\", \"sl.utf-8\",
+     \"es\", \"es.utf-8\", \"sv\", \"sv.utf-8\", \"tr\", \"tr.utf-8\", \"en-us\", and
+     \"en-us.utf-8\"."""
     breakthrough_mode: Optional[Union[str, "_models.BreakthroughMode"]] = rest_field(
         name="breakthroughMode", visibility=["read", "create"]
     )
     """Specifies whether the volume operates in Breakthrough Mode. Known values are: \"Enabled\" and
      \"Disabled\"."""
+    geo_namespace_properties: Optional["_models.VolumeNamespaceProperties"] = rest_field(
+        name="geoNamespaceProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Geographic namespace properties for this volume."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -9115,10 +13165,12 @@ class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
         smb_access_based_enumeration: Optional[Union[str, "_models.SmbAccessBasedEnumeration"]] = None,
         smb_non_browsable: Optional[Union[str, "_models.SmbNonBrowsable"]] = None,
         smb_continuously_available: Optional[bool] = None,
+        smb_oplocks: Optional[Union[str, "_models.SmbOplocks"]] = None,
         throughput_mibps: Optional[float] = None,
         encryption_key_source: Optional[Union[str, "_models.EncryptionKeySource"]] = None,
         key_vault_private_endpoint_resource_id: Optional[str] = None,
         ldap_enabled: Optional[bool] = None,
+        ldap_server_type: Optional[Union[str, "_models.LdapServerType"]] = None,
         cool_access: Optional[bool] = None,
         coolness_period: Optional[int] = None,
         cool_access_retrieval_policy: Optional[Union[str, "_models.CoolAccessRetrievalPolicy"]] = None,
@@ -9126,6 +13178,7 @@ class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
         unix_permissions: Optional[str] = None,
         avs_data_store: Optional[Union[str, "_models.AvsDataStore"]] = None,
         is_default_quota_enabled: Optional[bool] = None,
+        async_directory_delete: Optional["_models.AsyncDirectoryDelete"] = None,
         default_user_quota_in_ki_bs: Optional[int] = None,
         default_group_quota_in_ki_bs: Optional[int] = None,
         capacity_pool_resource_id: Optional[str] = None,
@@ -9134,7 +13187,10 @@ class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-matc
         placement_rules: Optional[list["_models.PlacementKeyValuePairs"]] = None,
         enable_subvolumes: Optional[Union[str, "_models.EnableSubvolumes"]] = None,
         is_large_volume: Optional[bool] = None,
+        large_volume_type: Optional[Union[str, "_models.LargeVolumeType"]] = None,
+        language: Optional[Union[str, "_models.VolumeLanguage"]] = None,
         breakthrough_mode: Optional[Union[str, "_models.BreakthroughMode"]] = None,
+        geo_namespace_properties: Optional["_models.VolumeNamespaceProperties"] = None,
     ) -> None: ...
 
     @overload

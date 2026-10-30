@@ -1,5 +1,5 @@
 # Run pip install from THIS samples directory so the editable paths resolve.
-# Core 2.3.0b3 and A2A are installed from the sibling source checkouts for previews.
+# Core 2.3.1b1 and A2A are installed from the sibling source checkouts for previews.
 -e ../../azure-ai-agentserver-core
 -e ..
 -e ../../azure-ai-agentserver-invocations
