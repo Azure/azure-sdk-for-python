@@ -35,42 +35,40 @@ def main():
         resource_group_name="rgconfigurationmanager",
         target_name="testname",
         resource={
-            "extendedLocation": {"name": "szjrwimeqyiue", "type": "EdgeZone"},
-            "location": "kckloegmwsjgwtcl",
+            "extendedLocation": {"name": "ggfwkwklvvkrmlysvvhcj", "type": "EdgeZone"},
+            "location": "yimw",
             "properties": {
-                "capabilities": ["grjapghdidoao"],
-                "contextId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}",
-                "description": "riabrxtvhlmizyhffdpjeyhvw",
-                "displayName": "qjlbshhqzfmwxvvynibkoi",
-                "hierarchyLevel": "octqptfirejhjfavlnfqeiikqx",
+                "capabilities": ["jo"],
+                "contextId": "/subscriptions/612CB927-8AC8-42DD-B74E-C676C3960BA5/resourceGroups/rgconfigurationmanager/providers/Microsoft.Edge/contexts/testContext",
+                "description": "tprpzngmtoweelhwwilawu",
+                "displayName": "uqslbtoqsdhxuzhjyxxhh",
+                "hierarchyLevel": "gfeixwakwerayliymdejq",
                 "solutionScope": "testname",
                 "state": "active",
                 "status": {
-                    "deployed": 24,
-                    "expectedRunningJobId": 19,
-                    "generation": 21,
-                    "lastModified": "2025-06-09T10:12:04.224Z",
-                    "runningJobId": 6,
-                    "status": "nnpksn",
-                    "statusDetails": "bslqqnfciczenaltdcmrgg",
+                    "deployed": 23,
+                    "expectedRunningJobId": 26,
+                    "generation": 6,
+                    "lastModified": "2026-04-03T06:50:31.397Z",
+                    "runningJobId": 14,
+                    "status": "cgnpefkydfiqivyeggo",
+                    "statusDetails": "tigubrypckktt",
                     "targetStatuses": [
                         {
-                            "componentStatuses": [
-                                {"name": "lxzbkoblvaoubknkblwplf", "status": "txtthlvducufbblgtctegtgpzkzgyi"}
-                            ],
-                            "name": "jpbfbxmjvr",
-                            "status": "gsgkxfwtyoaepwa",
+                            "componentStatuses": [{"name": "xyucclhkogrcbyasbibiuvjwxmw", "status": "iimiidgzeawmi"}],
+                            "name": "jtgdfywzpqjvyigrqy",
+                            "status": "uq",
                         }
                     ],
                 },
                 "targetSpecification": {},
             },
-            "tags": {"key612": "vtqzrk"},
+            "tags": {},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/Targets_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Targets_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

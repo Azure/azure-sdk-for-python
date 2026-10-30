@@ -48,6 +48,14 @@ class TestWorkloadOrchestrationMgmtSolutionVersionsOperations(AzureMgmtRecordedT
                     "specification": {"str": {}},
                     "actionType": "str",
                     "configuration": "str",
+                    "currentStage": {
+                        "displayState": "str",
+                        "stage": "str",
+                        "status": "str",
+                        "childStages": [...],
+                        "endTime": "2020-02-20 00:00:00",
+                        "startTime": "2020-02-20 00:00:00",
+                    },
                     "errorDetails": {
                         "additionalInfo": [{"info": {}, "type": "str"}],
                         "code": "str",
@@ -57,6 +65,7 @@ class TestWorkloadOrchestrationMgmtSolutionVersionsOperations(AzureMgmtRecordedT
                     },
                     "externalValidationId": "str",
                     "latestActionTrackingUri": "str",
+                    "latestActionTriggeredBy": "str",
                     "provisioningState": "str",
                     "reviewId": "str",
                     "revision": 0,
@@ -71,6 +80,16 @@ class TestWorkloadOrchestrationMgmtSolutionVersionsOperations(AzureMgmtRecordedT
                     ],
                     "solutionInstanceName": "str",
                     "solutionTemplateVersionId": "str",
+                    "stages": [
+                        {
+                            "displayState": "str",
+                            "stage": "str",
+                            "status": "str",
+                            "childStages": [...],
+                            "endTime": "2020-02-20 00:00:00",
+                            "startTime": "2020-02-20 00:00:00",
+                        }
+                    ],
                     "state": "str",
                     "targetDisplayName": "str",
                     "targetLevelConfiguration": "str",
@@ -107,6 +126,14 @@ class TestWorkloadOrchestrationMgmtSolutionVersionsOperations(AzureMgmtRecordedT
                     "specification": {"str": {}},
                     "actionType": "str",
                     "configuration": "str",
+                    "currentStage": {
+                        "displayState": "str",
+                        "stage": "str",
+                        "status": "str",
+                        "childStages": [...],
+                        "endTime": "2020-02-20 00:00:00",
+                        "startTime": "2020-02-20 00:00:00",
+                    },
                     "errorDetails": {
                         "additionalInfo": [{"info": {}, "type": "str"}],
                         "code": "str",
@@ -116,6 +143,7 @@ class TestWorkloadOrchestrationMgmtSolutionVersionsOperations(AzureMgmtRecordedT
                     },
                     "externalValidationId": "str",
                     "latestActionTrackingUri": "str",
+                    "latestActionTriggeredBy": "str",
                     "provisioningState": "str",
                     "reviewId": "str",
                     "revision": 0,
@@ -130,6 +158,16 @@ class TestWorkloadOrchestrationMgmtSolutionVersionsOperations(AzureMgmtRecordedT
                     ],
                     "solutionInstanceName": "str",
                     "solutionTemplateVersionId": "str",
+                    "stages": [
+                        {
+                            "displayState": "str",
+                            "stage": "str",
+                            "status": "str",
+                            "childStages": [...],
+                            "endTime": "2020-02-20 00:00:00",
+                            "startTime": "2020-02-20 00:00:00",
+                        }
+                    ],
                     "state": "str",
                     "targetDisplayName": "str",
                     "targetLevelConfiguration": "str",
