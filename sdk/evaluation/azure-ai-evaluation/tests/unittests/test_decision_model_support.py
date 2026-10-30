@@ -457,6 +457,40 @@ class TestDecisionModelRunnerRequests:
         )
 
     @pytest.mark.parametrize(
+        "protocol, status, code, fix",
+        [
+            ("microsoft", 400, "unknown_model", "set decision_protocol to 'openai'."),
+            ("openai", 404, "model_not_found", "set decision_protocol to 'microsoft' or remove it."),
+        ],
+    )
+    def test_a_deployment_that_serves_the_other_protocol_names_the_fix(self, client, protocol, status, code, fix):
+        payload = {"error": {"code": code, "message": "test-key-value and private-message"}}
+        client.response = FakeResponse(status, json.dumps(payload).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner({**DECISION_CONFIG, "decision_protocol": protocol}, max_retries=0))
+        message = str(raised.value)
+        assert message.startswith(f"(UserError) The decision model returned HTTP {status} ({code}). The deployment")
+        assert message.endswith(fix)
+        assert "test-key-value" not in message and "private-message" not in message
+        assert raised.value.blame == ErrorBlame.USER_ERROR
+        assert raised.value.properties["decision_model"]["protocol"] == protocol
+
+    @pytest.mark.parametrize(
+        "protocol, code",
+        [
+            ("microsoft", "model_not_found"),
+            ("openai", "unknown_model"),
+            ("microsoft", "DeploymentNotFound"),
+            ("openai", "DeploymentNotFound"),
+        ],
+    )
+    def test_other_error_codes_get_no_protocol_hint(self, client, protocol, code):
+        client.response = FakeResponse(404, json.dumps({"error": {"code": code}}).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner({**DECISION_CONFIG, "decision_protocol": protocol}, max_retries=0))
+        assert str(raised.value) == f"(UserError) The decision model returned HTTP 404 ({code})."
+
+    @pytest.mark.parametrize(
         "payload",
         [
             {"error": {"code": ""}},
@@ -739,16 +773,17 @@ class TestDecisionTokenReuse:
         client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
         credential = Mock(get_token=Mock(return_value=self.access_token("shared")))
         fetch = _model_runners._TOKENS.fetch
+        scope = _model_runners._DECISION_TOKEN_SCOPE
 
-        def fetch_then_reject(*args):
-            token = fetch(*args)
+        def fetch_then_reject(*args, **kwargs):
+            token = fetch(*args, **kwargs)
             # Another request's 401 discards the token before this request's event loop resumes.
-            _model_runners._TOKENS.discard(credential, token.token)
+            _model_runners._TOKENS.discard(credential, scope, token.token)
             return token
 
         monkeypatch.setattr(_model_runners._TOKENS, "fetch", fetch_then_reject)
         run(DecisionModelRunner(self.CONFIG, credential))
-        assert _model_runners._TOKENS.cached(credential) is None
+        assert _model_runners._TOKENS.cached(credential, scope) is None
 
     def test_failed_token_request_does_not_keep_the_credential_alive(self, client):
         class Credential:
@@ -810,7 +845,7 @@ class TestDecisionTokenReuse:
 
         credential = Credential()
         run(DecisionModelRunner(self.CONFIG, credential))
-        assert _model_runners._TOKENS.cached(credential) is token
+        assert _model_runners._TOKENS.cached(credential, _model_runners._DECISION_TOKEN_SCOPE) is token
         reference = weakref.ref(credential)
         del credential
         gc.collect()

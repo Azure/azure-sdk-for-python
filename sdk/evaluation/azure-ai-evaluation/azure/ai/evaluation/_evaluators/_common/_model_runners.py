@@ -18,7 +18,6 @@ import os
 import re
 import threading
 import time
-import weakref
 from typing import Any, Callable, Dict, List, Optional
 from urllib.parse import urlsplit
 
@@ -26,6 +25,7 @@ from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy, 
 from azure.core.pipeline.transport import AioHttpTransport
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._legacy._common._token_cache import TOKENS as _TOKENS
 from ..._common.utils import construct_prompty_model_config, validate_model_config
 from ..._http_utils import get_async_http_client
 from ._decision_protocols import DECISION_PROTOCOLS, REFUSAL, DecisionProtocol
@@ -47,10 +47,6 @@ except ImportError:
 
 DECISION_MODEL_TYPE = "decision"
 _DECISION_TOKEN_SCOPE = "https://cognitiveservices.azure.com/.default"
-# A token is reused until this many seconds before it expires, like azure-core's bearer token policy.
-_TOKEN_REFRESH_SECONDS = 300
-# How often a request waiting for another request's token checks whether it was cancelled.
-_TOKEN_WAIT_INTERVAL_SECONDS = 0.05
 _DECISION_RETRY_STATUS_CODES = [408, 429, 500, 502, 503, 504, 529]
 LOGGER = logging.getLogger(__name__)
 _PREFIX = "azure.ai.evaluation.decision."
@@ -387,15 +383,6 @@ def _is_finite_number(value: Any) -> bool:
         return False
 
 
-def _fresh_token(token: Any) -> bool:
-    expires_on = getattr(token, "expires_on", None)
-    return (
-        isinstance(getattr(token, "token", None), str)
-        and _is_finite_number(expires_on)
-        and expires_on - time.time() > _TOKEN_REFRESH_SECONDS
-    )
-
-
 def _token_failure(error: BaseException) -> Dict[str, Any]:
     """Describe a failed token request without keeping the error, whose traceback references the credential."""
     if isinstance(error, EvaluationException):
@@ -414,119 +401,6 @@ def _token_failure(error: BaseException) -> Dict[str, Any]:
         "category": ErrorCategory.FAILED_EXECUTION,
         "blame": ErrorBlame.USER_ERROR,
     }
-
-
-class _CredentialTokens:
-    """One credential's cached token, the lock for its token requests and its latest failed request."""
-
-    def __init__(self, reference: Any) -> None:
-        self.reference = reference
-        self.token: Any = None
-        self.lock = threading.Lock()
-        self.attempts = 0
-        self.failure: Optional[Dict[str, Any]] = None
-
-
-class _DecisionTokenCache:
-    """Share each caller credential's Decision token across requests until shortly before it expires.
-
-    Developer credentials such as ``AzureCliCredential`` start a process for every token request, so concurrent
-    evaluations that each requested a token were slow and could fail. Credentials are keyed by identity through a
-    weak reference and never kept alive; a credential that cannot be weakly referenced, or a token without a
-    numeric expiry, is not cached. Concurrent requests that share a synchronous credential wait for one token
-    request, and requests that waited on a failed one share its failure instead of each retrying.
-    """
-
-    def __init__(self) -> None:
-        self._entries: Dict[int, _CredentialTokens] = {}
-        # Reentrant because a weak reference callback can run while a lookup holds the lock.
-        self._guard = threading.RLock()
-
-    def _entry(self, credential: Any, create: bool = False) -> Optional[_CredentialTokens]:
-        key = id(credential)
-        with self._guard:
-            entry = self._entries.get(key)
-            if entry is not None and entry.reference() is credential:
-                return entry
-            if not create:
-                return None
-
-            def forget(reference: Any) -> None:
-                with self._guard:
-                    current = self._entries.get(key)
-                    if current is not None and current.reference is reference:
-                        del self._entries[key]
-
-            try:
-                entry = _CredentialTokens(weakref.ref(credential, forget))
-            except TypeError:
-                return None
-            self._entries[key] = entry
-            return entry
-
-    def cached(self, credential: Any) -> Any:
-        entry = self._entry(credential)
-        with self._guard:
-            token = entry.token if entry is not None else None
-        return token if _fresh_token(token) else None
-
-    def store(self, credential: Any, token: Any) -> None:
-        entry = self._entry(credential, create=True) if _fresh_token(token) else None
-        if entry is not None:
-            with self._guard:
-                entry.token = token
-
-    def discard(self, credential: Any, token: str) -> None:
-        entry = self._entry(credential)
-        if entry is not None:
-            with self._guard:
-                if entry.token is not None and entry.token.token == token:
-                    entry.token = None
-
-    def fetch(self, credential: Any, abandoned: threading.Event, deadline: float) -> Any:
-        """Request a synchronous credential's token in a worker thread, once for concurrent requests.
-
-        Returns None, without requesting a token, when the request was abandoned or its deadline passed while it
-        waited for another request's token.
-        """
-        entry = self._entry(credential, create=True)
-        if entry is None:
-            return None if abandoned.is_set() else credential.get_token(_DECISION_TOKEN_SCOPE)
-        with self._guard:
-            queued_after = entry.attempts
-        # Wait in short steps so a cancelled request stops waiting promptly.
-        while True:
-            remaining = deadline - time.monotonic()
-            if abandoned.is_set() or remaining <= 0:
-                return None
-            if entry.lock.acquire(timeout=min(remaining, _TOKEN_WAIT_INTERVAL_SECONDS)):
-                break
-        try:
-            token = self.cached(credential)
-            if token is not None or abandoned.is_set() or time.monotonic() >= deadline:
-                return token
-            with self._guard:
-                failure = entry.failure if entry.attempts != queued_after else None
-            if failure is not None:
-                raise EvaluationException(**failure)
-            try:
-                token = credential.get_token(_DECISION_TOKEN_SCOPE)
-            except Exception as error:
-                with self._guard:
-                    entry.attempts += 1
-                    entry.failure = _token_failure(error)
-                raise
-            with self._guard:
-                entry.attempts += 1
-                entry.failure = None
-            if not inspect.isawaitable(token):
-                self.store(credential, token)
-            return token
-        finally:
-            entry.lock.release()
-
-
-_TOKENS = _DecisionTokenCache()
 
 
 def _probability(value: Any) -> float:
@@ -863,22 +737,29 @@ class DecisionModelRunner:
     async def _get_token(self, deadline: float) -> Optional[str]:
         """Return a bearer token, or None when the deadline passed while waiting for another request's token."""
         credential = self._credential
-        token = _TOKENS.cached(credential)
+        token = _TOKENS.cached(credential, _DECISION_TOKEN_SCOPE)
         if token is None:
             if inspect.iscoroutinefunction(credential.get_token):
                 token = await credential.get_token(_DECISION_TOKEN_SCOPE)
-                _TOKENS.store(credential, token)
+                _TOKENS.store(credential, _DECISION_TOKEN_SCOPE, token)
             else:
                 abandoned = threading.Event()
                 try:
-                    token = await asyncio.to_thread(_TOKENS.fetch, credential, abandoned, deadline)
+                    token = await asyncio.to_thread(
+                        _TOKENS.fetch,
+                        credential,
+                        _DECISION_TOKEN_SCOPE,
+                        abandoned=abandoned,
+                        deadline=deadline,
+                        describe_failure=_token_failure,
+                    )
                 finally:
                     abandoned.set()
                 if token is None:
                     return None
                 if inspect.isawaitable(token):
                     token = await token
-                    _TOKENS.store(credential, token)
+                    _TOKENS.store(credential, _DECISION_TOKEN_SCOPE, token)
         return token.token
 
     async def _post(self, content: bytes, *, deadline: float, execution: DecisionExecution) -> Any:
@@ -950,7 +831,7 @@ class DecisionModelRunner:
         if status != 200:
             if status == 401 and token is not None:
                 # A rejected token is not reused.
-                _TOKENS.discard(self._credential, token)
+                _TOKENS.discard(self._credential, _DECISION_TOKEN_SCOPE, token)
             blame = ErrorBlame.USER_ERROR if status in (400, 401, 403, 404, 422) else ErrorBlame.SYSTEM_ERROR
             provider_error = payload.get("error") if isinstance(payload, dict) else None
             code = provider_error.get("code") if isinstance(provider_error, dict) else None
@@ -959,7 +840,10 @@ class DecisionModelRunner:
                 if isinstance(code, str) and re.fullmatch(r"[A-Za-z][A-Za-z0-9_.-]{0,127}", code) is not None
                 else ""
             )
-            error = _failed(f"The decision model returned HTTP {status}{diagnostic}.", blame)
+            message = f"The decision model returned HTTP {status}{diagnostic}."
+            if diagnostic and code == self._protocol.mismatch_code:
+                message = f"{message} {self._protocol.mismatch_hint}"
+            error = _failed(message, blame)
             error.properties = self._response_properties(payload)
             if code == CONTENT_FILTER:
                 # The provider's content filter rejected the evaluated content, not how the request was built.

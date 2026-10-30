@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added `decision_protocol="openai"` for Decision evaluators, which calls Azure OpenAI's `/openai/v1/decisions` operation on the account's OpenAI endpoint. The Microsoft Decision protocol remains the default, and model names never select a protocol.
+- Added `decision_protocol="openai"` for Decision evaluators, which calls Azure OpenAI's `/openai/v1/decisions` operation on the account's OpenAI endpoint. The Microsoft Decision protocol remains the default, and model names never select a protocol. A deployment that serves the other protocol fails with a user error that names the `decision_protocol` value to use.
 - Each protocol is a small adapter that translates the shared Boolean and ordinal questions to its provider contract and binds answers back to the same identifiers, so evaluators keep their scoring, applicability and probability cutoffs. OpenAI score levels are labeled `Level 1` to `Level n`, matching rubric text such as "imply level 2". The shared transport, authentication, retries, deadlines, cancellation and byte budgets are reused; no OpenAI client upgrade is required. Byte budgets measure the same canonical request on every protocol, so OpenAI admits the same evidence as Microsoft Decision.
 - Decision provenance and execution metrics name the protocol (`microsoft` or `openai`), and provider cache and reasoning counters are kept under `decision_model.usage_details` without being added to token totals. Split conversations sum each counter over the turns whose token usage is counted, so the counters never cover requests that the token totals omit.
 - An OpenAI question can be refused. A refusal fails an evaluation only when the evaluation reads that answer, so a skipped evaluation never depends on its grade. The failure is a user-classified `EvaluationException` with known usage and `decision_model.error_kind` set to `model_refusal`.
@@ -14,7 +14,7 @@
 
 ### Bugs Fixed
 
-- Decision requests reuse a credential's token until five minutes before it expires, as azure-core's bearer token policy does, instead of requesting a token for every request. Concurrent evaluations that share a synchronous credential wait for one token request, and share its failure if it fails. With developer credentials such as `AzureCliCredential`, which start a process per request, concurrent evaluations were slow and could fail with "Could not acquire a token for the decision model". A token rejected with HTTP 401 is not reused, tokens without an expiry are still requested for every request, and the cache never keeps a credential alive.
+- Decision and chat model requests reuse a credential's token until five minutes before it expires, as azure-core's bearer token policy does, instead of requesting a token for every request. Concurrent evaluations that share a synchronous credential wait for one token request. With developer credentials such as `AzureCliCredential`, which start a process per request, concurrent evaluations were slow and could fail. Decision requests that waited on a failed token request share its failure instead of each requesting a token again, chat requests share an authentication failure the same way, and a token rejected with HTTP 401 is not reused. The default credential that an evaluator creates when no `credential` is passed also reuses its token. Tokens are kept per scope, tokens without an expiry are still requested for every request, and the cache never keeps a credential alive.
 
 ## 1.18.10 (2026-10-22)
 
