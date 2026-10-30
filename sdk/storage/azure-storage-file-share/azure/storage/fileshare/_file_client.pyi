@@ -34,6 +34,7 @@ from ._models import (
     FileProperties,
     FileRange,
     Handle,
+    HardLink,
     NTFSAttributes,
 )
 from ._shared.base_client import StorageAccountHostsMixin
@@ -47,6 +48,7 @@ class ShareFileClient(StorageAccountHostsMixin):
     allow_trailing_dot: Optional[bool]
     allow_source_trailing_dot: Optional[bool]
     file_request_intent: Optional[Literal["backup"]]
+    file_id: Optional[str]
     def __init__(
         self,
         account_url: str,
@@ -395,3 +397,11 @@ class ShareFileClient(StorageAccountHostsMixin):
     ) -> Dict[str, Any]: ...
     @distributed_trace
     def get_symlink(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
+    @distributed_trace
+    def get_file_links(
+        self,
+        *,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> List[HardLink]: ...

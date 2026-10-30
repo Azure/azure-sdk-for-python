@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -1087,7 +1088,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await self._create_block_blob()
         container = self.bsc.get_container_client(self.container_name)
         blob_list = []
-        async for b in container.list_blobs():
+        async for b in container.list_blobs(response_format="xml"):
             blob_list.append(b)
 
         # Act
@@ -1135,7 +1136,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         res = await blob.create_snapshot()
         blobs = []
-        async for b in container.list_blobs(include="snapshots"):
+        async for b in container.list_blobs(include="snapshots", response_format="xml"):
             blobs.append(b)
 
         assert len(blobs) == 2
@@ -1330,7 +1331,9 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Act
         resp = await blob.delete_blob(version_id=resp["version_id"])
         blob_list = []
-        async for blob in self.bsc.get_container_client(self.container_name).list_blobs(include="versions"):
+        async for blob in self.bsc.get_container_client(self.container_name).list_blobs(
+            include="versions", response_format="xml"
+        ):
             blob_list.append(blob)
         # Assert
         assert resp is None
@@ -1368,7 +1371,9 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert resp is None
-        async for blob in self.bsc.get_container_client(self.container_name).list_blobs(include="versions"):
+        async for blob in self.bsc.get_container_client(self.container_name).list_blobs(
+            include="versions", response_format="xml"
+        ):
             assert blob.version_id != version_id
 
     @BlobPreparer()
@@ -1407,7 +1412,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         container = self.bsc.get_container_client(self.container_name)
         blobs = []
-        async for b in container.list_blobs(include="snapshots"):
+        async for b in container.list_blobs(include="snapshots", response_format="xml"):
             blobs.append(b)
         assert len(blobs) == 1
         assert blobs[0].name == blob_name
@@ -1431,7 +1436,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         container = self.bsc.get_container_client(self.container_name)
         blobs = []
-        async for b in container.list_blobs(include="snapshots"):
+        async for b in container.list_blobs(include="snapshots", response_format="xml"):
             blobs.append(b)
         assert len(blobs) == 1
         assert blobs[0].snapshot is None
@@ -1450,7 +1455,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         resp = await blob.create_snapshot()
         blobs = []
-        async for b in container.list_blobs(include="snapshots"):
+        async for b in container.list_blobs(include="snapshots", response_format="xml"):
             blobs.append(b)
 
         # Assert
@@ -1463,7 +1468,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         blobs = []
-        async for b in container.list_blobs(include=["snapshots", "versions"]):
+        async for b in container.list_blobs(include=["snapshots", "versions"], response_format="xml"):
             blobs.append(b)
         assert len(blobs) > 0
         assert blobs[0].snapshot is None
@@ -1489,7 +1494,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         container = self.bsc.get_container_client(self.container_name)
         blobs = []
-        async for b in container.list_blobs(include="snapshots"):
+        async for b in container.list_blobs(include="snapshots", response_format="xml"):
             blobs.append(b)
         assert len(blobs) == 0
 
@@ -1509,7 +1514,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Soft delete the blob
         await blob.delete_blob()
         blob_list = []
-        async for b in container.list_blobs(include="deleted"):
+        async for b in container.list_blobs(include="deleted", response_format="xml"):
             blob_list.append(b)
 
         # Assert
@@ -1518,7 +1523,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # list_blobs should not list soft deleted blobs if Include(deleted=True) is not specified
         blob_list = []
-        async for b in container.list_blobs():
+        async for b in container.list_blobs(response_format="xml"):
             blob_list.append(b)
 
         # Assert
@@ -1527,7 +1532,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Restore blob with undelete
         await blob.undelete_blob()
         blob_list = []
-        async for b in container.list_blobs(include="deleted"):
+        async for b in container.list_blobs(include="deleted", response_format="xml"):
             blob_list.append(b)
 
         # Assert
@@ -1556,7 +1561,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         container = self.bsc.get_container_client(self.container_name)
         blob_list = []
-        async for b in container.list_blobs(include=["snapshots", "deleted"]):
+        async for b in container.list_blobs(include=["snapshots", "deleted"], response_format="xml"):
             blob_list.append(b)
 
         # Assert
@@ -1569,7 +1574,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # list_blobs should not list soft deleted blob snapshots if Include(deleted=True) is not specified
         blob_list = []
-        async for b in container.list_blobs(include="snapshots"):
+        async for b in container.list_blobs(include="snapshots", response_format="xml"):
             blob_list.append(b)
 
         # Assert
@@ -1578,7 +1583,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Restore snapshot with undelete
         await blob.undelete_blob()
         blob_list = []
-        async for b in container.list_blobs(include=["snapshots", "deleted"]):
+        async for b in container.list_blobs(include=["snapshots", "deleted"], response_format="xml"):
             blob_list.append(b)
 
         # Assert
@@ -1603,7 +1608,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await blob.delete_blob(delete_snapshots="only")
         container = self.bsc.get_container_client(self.container_name)
         blob_list = []
-        async for b in container.list_blobs(include=["snapshots", "deleted"]):
+        async for b in container.list_blobs(include=["snapshots", "deleted"], response_format="xml"):
             blob_list.append(b)
 
         # Assert
@@ -1618,7 +1623,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # list_blobs should not list soft deleted blob snapshots if Include(deleted=True) is not specified
         blob_list = []
-        async for b in container.list_blobs(include="snapshots"):
+        async for b in container.list_blobs(include="snapshots", response_format="xml"):
             blob_list.append(b)
 
         # Assert
@@ -1627,7 +1632,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Restore snapshots with undelete
         await blob.undelete_blob()
         blob_list = []
-        async for b in container.list_blobs(include=["snapshots", "deleted"]):
+        async for b in container.list_blobs(include=["snapshots", "deleted"], response_format="xml"):
             blob_list.append(b)
 
         # Assert
@@ -1652,7 +1657,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await blob.delete_blob(delete_snapshots="include")
         container = self.bsc.get_container_client(self.container_name)
         blob_list = []
-        async for b in container.list_blobs(include=["snapshots", "deleted"]):
+        async for b in container.list_blobs(include=["snapshots", "deleted"], response_format="xml"):
             blob_list.append(b)
 
         # Assert
@@ -1662,7 +1667,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # list_blobs should not list soft deleted blob snapshots if Include(deleted=True) is not specified
         blob_list = []
-        async for b in container.list_blobs(include=["snapshots"]):
+        async for b in container.list_blobs(include=["snapshots"], response_format="xml"):
             blob_list.append(b)
 
         # Assert
@@ -1671,7 +1676,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Restore blob and snapshots with undelete
         await blob.undelete_blob()
         blob_list = []
-        async for b in container.list_blobs(include=["snapshots", "deleted"]):
+        async for b in container.list_blobs(include=["snapshots", "deleted"], response_format="xml"):
             blob_list.append(b)
 
         # Assert
@@ -1699,7 +1704,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await blob.delete_blob(lease=lease)
         container = self.bsc.get_container_client(self.container_name)
         blob_list = []
-        async for b in container.list_blobs(include="deleted"):
+        async for b in container.list_blobs(include="deleted", response_format="xml"):
             blob_list.append(b)
 
         # Assert
@@ -1708,7 +1713,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # list_blobs should not list soft deleted blobs if Include(deleted=True) is not specified
         blob_list = []
-        async for b in container.list_blobs():
+        async for b in container.list_blobs(response_format="xml"):
             blob_list.append(b)
 
         # Assert
@@ -1717,7 +1722,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Restore blob with undelete, this also gets rid of the lease
         await blob.undelete_blob()
         blob_list = []
-        async for b in container.list_blobs(include="deleted"):
+        async for b in container.list_blobs(include="deleted", response_format="xml"):
             blob_list.append(b)
 
         # Assert
@@ -2464,7 +2469,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
                 await container.upload_blob(blob_name + "3", b"HelloWorld")
 
                 delete_batch = []
-                blob_list = container.list_blobs(name_starts_with=blob_name)
+                blob_list = container.list_blobs(name_starts_with=blob_name, response_format="xml")
                 async for blob in blob_list:
                     delete_batch.append(blob.name)
 
@@ -3267,7 +3272,9 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await blob.upload_blob(content, immutability_policy=immutability_policy, legal_hold=True, overwrite=True)
 
         blob_list = []
-        async for blob_prop in container_client.list_blobs(include=["immutabilitypolicy", "legalhold"]):
+        async for blob_prop in container_client.list_blobs(
+            include=["immutabilitypolicy", "legalhold"], response_format="xml"
+        ):
             blob_list.append(blob_prop)
 
         assert blob_list[0]["has_legal_hold"]
@@ -3790,7 +3797,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         )
 
         blobs_list = []
-        async for b in container_client.list_blobs():
+        async for b in container_client.list_blobs(response_format="xml"):
             blobs_list.append(b)
         assert blobs_list is not None
 

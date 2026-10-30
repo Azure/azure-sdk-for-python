@@ -34,6 +34,7 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONDITION_HEADERS_NOT_SUPPORTED = "ConditionHeadersNotSupported"
     CONDITION_NOT_MET = "ConditionNotMet"
     EMPTY_METADATA_KEY = "EmptyMetadataKey"
+    FEATURE_NOT_ENABLED = "FeatureNotEnabled"
     INSUFFICIENT_ACCOUNT_PERMISSIONS = "InsufficientAccountPermissions"
     INTERNAL_ERROR = "InternalError"
     INVALID_AUTHENTICATION_INFO = "InvalidAuthenticationInfo"
@@ -64,6 +65,7 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESOURCE_ALREADY_EXISTS = "ResourceAlreadyExists"
     RESOURCE_NOT_FOUND = "ResourceNotFound"
     SERVER_BUSY = "ServerBusy"
+    SESSIONS_UNAVAILABLE = "SessionOperationsTemporarilyUnavailable"
     UNSUPPORTED_HEADER = "UnsupportedHeader"
     UNSUPPORTED_XML_NODE = "UnsupportedXmlNode"
     UNSUPPORTED_QUERY_PARAMETER = "UnsupportedQueryParameter"
@@ -556,7 +558,7 @@ class StorageConfiguration(Configuration):
 
     :param int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will be
         uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
-        the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+        the blob will be uploaded in chunks. Defaults to 4*1024*1024, or 4MB.
     :param int copy_polling_interval: The interval in seconds for polling copy operations.
     :param int max_block_size: The maximum chunk size for uploading a block blob in chunks.
         Defaults to 4*1024*1024, or 4MB.
@@ -566,7 +568,7 @@ class StorageConfiguration(Configuration):
     :param int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
     :param int min_large_chunk_upload_threshold: The max size for a single put operation.
     :param int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
-        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 4*1024*1024, or 4MB.
     :param int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
     :param int max_range_size: The max range size for file upload.
@@ -587,13 +589,13 @@ class StorageConfiguration(Configuration):
 
     def __init__(self, **kwargs):
         super(StorageConfiguration, self).__init__(**kwargs)
-        self.max_single_put_size = kwargs.pop("max_single_put_size", 64 * 1024 * 1024)
+        self.max_single_put_size = kwargs.pop("max_single_put_size", 4 * 1024 * 1024)
         self.copy_polling_interval = 15
         self.max_block_size = kwargs.pop("max_block_size", 4 * 1024 * 1024)
         self.min_large_block_upload_threshold = kwargs.get("min_large_block_upload_threshold", 4 * 1024 * 1024 + 1)
         self.use_byte_buffer = kwargs.pop("use_byte_buffer", False)
         self.max_page_size = kwargs.pop("max_page_size", 4 * 1024 * 1024)
         self.min_large_chunk_upload_threshold = kwargs.pop("min_large_chunk_upload_threshold", 100 * 1024 * 1024 + 1)
-        self.max_single_get_size = kwargs.pop("max_single_get_size", 32 * 1024 * 1024)
+        self.max_single_get_size = kwargs.pop("max_single_get_size", 4 * 1024 * 1024)
         self.max_chunk_get_size = kwargs.pop("max_chunk_get_size", 4 * 1024 * 1024)
         self.max_range_size = kwargs.pop("max_range_size", 4 * 1024 * 1024)

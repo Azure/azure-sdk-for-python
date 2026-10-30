@@ -126,7 +126,7 @@ class TestBlobStorageAccountAsync(AsyncStorageRecordedTestCase):
         assert not blob_ref.blob_tier_inferred
 
         blobs = []
-        async for b in container.list_blobs():
+        async for b in container.list_blobs(response_format="xml"):
             blobs.append(b)
 
         await blob.delete_blob()
@@ -150,7 +150,7 @@ class TestBlobStorageAccountAsync(AsyncStorageRecordedTestCase):
         assert not blob_ref2.blob_tier_inferred
 
         blobs = []
-        async for b in container.list_blobs():
+        async for b in container.list_blobs(response_format="xml"):
             blobs.append(b)
 
         # Assert

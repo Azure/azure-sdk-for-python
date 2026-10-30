@@ -32,7 +32,6 @@ from azure.storage.queue._shared.parser import (
 )
 from azure.storage.queue._shared.policies import StorageLoggingPolicy
 
-
 # ------------------------------------------------------------------------------
 SERVICES = {
     QueueServiceClient: "queue",

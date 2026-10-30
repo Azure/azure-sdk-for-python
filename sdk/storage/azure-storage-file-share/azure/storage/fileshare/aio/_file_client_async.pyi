@@ -34,7 +34,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._download_async import StorageStreamDownloader
 from ._lease_async import ShareLeaseClient
 from ._models import FileProperties, Handle
-from .._models import ContentSettings, FileRange, NTFSAttributes
+from .._models import ContentSettings, FileRange, HardLink, NTFSAttributes
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
@@ -47,6 +47,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     allow_trailing_dot: Optional[bool]
     allow_source_trailing_dot: Optional[bool]
     file_request_intent: Optional[Literal["backup"]]
+    file_id: Optional[str]
     def __init__(
         self,
         account_url: str,
@@ -394,3 +395,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
     ) -> Dict[str, Any]: ...
     @distributed_trace_async
     async def get_symlink(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
+    @distributed_trace_async
+    async def get_file_links(
+        self,
+        *,
+        lease: Optional[Union[ShareLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> List[HardLink]: ...
