@@ -469,6 +469,18 @@ class TestContentSafetyEvaluator:
         assert result[metric_name + "_score"] == 5
         assert result[metric_name + "_reason"] == ""
 
+        for zero in (0, 0.0, "0"):
+            batch_response[0] = {metric_name: zero}
+            result = parse_response(batch_response=batch_response, metric_name=metric_name)
+            assert result[metric_name] == HarmSeverityLevel.VeryLow.value
+            assert result[metric_name + "_score"] == 0
+            assert result[metric_name + "_reason"] == ""
+
+        for boolean in (False, True):
+            batch_response[0] = {metric_name: boolean}
+            result = parse_response(batch_response=batch_response, metric_name=metric_name)
+            assert math.isnan(result[metric_name + "_score"])
+
         batch_response[0] = {metric_name: 8}
         result = parse_response(batch_response=batch_response, metric_name=metric_name)
         assert math.isnan(result[metric_name])
