@@ -201,6 +201,26 @@ class DiskAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Premium_ZRS."""
 
 
+class DiskNetworkAccessPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The network access policy for managed disks."""
+
+    ALLOW_ALL = "AllowAll"
+    """Allow all network access."""
+    ALLOW_PRIVATE = "AllowPrivate"
+    """Allow private access through disk access resource."""
+    DENY_ALL = "DenyAll"
+    """Deny all network access."""
+
+
+class DiskPublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The public network access setting for managed disks."""
+
+    ENABLED = "Enabled"
+    """Public network access is enabled."""
+    DISABLED = "Disabled"
+    """Public network access is disabled."""
+
+
 class DiskReplicationProgressHealth(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The progress health."""
 
@@ -343,6 +363,15 @@ class InMageV2RpRecoveryPointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """LatestCrashConsistent."""
     LATEST_PROCESSED = "LatestProcessed"
     """LatestProcessed."""
+
+
+class IPVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The IP version (address family) of an ip-config."""
+
+    I_PV4 = "IPv4"
+    """The ip-config carries an IPv4 address."""
+    I_PV6 = "IPv6"
+    """The ip-config carries an IPv6 address."""
 
 
 class LicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -537,6 +566,19 @@ class RcmComponentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Critical."""
     UNKNOWN = "Unknown"
     """Unknown."""
+
+
+class RecoveryNetworkConfigAutoSyncPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The vault level policy controlling whether the A2A recovery network configuration is
+    automatically kept in sync with the source virtual machine.
+    """
+
+    DISABLED = "Disabled"
+    """Automatic synchronization of the recovery network configuration is turned off. Recovery NIC
+    settings are changed only through an explicit update operation."""
+    ENABLED = "Enabled"
+    """Automatic synchronization of the recovery network configuration is turned on. Recovery NIC
+    settings are refreshed from the source virtual machine as its network configuration changes."""
 
 
 class RecoveryPlanActionLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -37,13 +37,14 @@ def main():
         vault_setting_name="default",
         input={
             "properties": {
-                "migrationSolutionId": "/subscriptions/c183865e-6077-46f2-a3b1-deb0f4f4650a/resourceGroups/resourceGroupPS1/providers/Microsoft.Migrate/MigrateProjects/resourceGroupPS1-MigrateProject/Solutions/Servers-Migration-ServerMigration"
+                "migrationSolutionId": "/subscriptions/c183865e-6077-46f2-a3b1-deb0f4f4650a/resourceGroups/resourceGroupPS1/providers/Microsoft.Migrate/MigrateProjects/resourceGroupPS1-MigrateProject/Solutions/Servers-Migration-ServerMigration",
+                "recoveryNetworkConfigAutoSync": "Enabled",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-08-01/ReplicationVaultSetting_Create.json
+# x-ms-original-file: 2026-11-01/ReplicationVaultSetting_Create.json
 if __name__ == "__main__":
     main()

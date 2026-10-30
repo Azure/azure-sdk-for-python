@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AddDisksProviderSpecificInput(_Model):
+class AddDisksProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Add Disks provider specific input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -51,7 +51,9 @@ class AddDisksProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2AAddDisksInput(AddDisksProviderSpecificInput, discriminator="A2A"):
+class A2AAddDisksInput(
+    AddDisksProviderSpecificInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A add disk(s) input.
 
     :ivar vm_disks: The list of vm disk details.
@@ -94,7 +96,7 @@ class A2AAddDisksInput(AddDisksProviderSpecificInput, discriminator="A2A"):
         self.instance_type = "A2A"  # type: ignore
 
 
-class A2AAgentReinstallBlockingErrorDetails(_Model):
+class A2AAgentReinstallBlockingErrorDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A source agent reinstall blocking error details.
 
     :ivar error_code: error code.
@@ -157,7 +159,9 @@ class A2AAgentReinstallBlockingErrorDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplyClusterRecoveryPointProviderSpecificInput(_Model):  # pylint: disable=name-too-long
+class ApplyClusterRecoveryPointProviderSpecificInput(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Provider specific input for apply cluster recovery point.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -218,7 +222,7 @@ class A2AApplyClusterRecoveryPointInput(ApplyClusterRecoveryPointProviderSpecifi
         self.instance_type = "A2A"  # type: ignore
 
 
-class ApplyRecoveryPointProviderSpecificInput(_Model):
+class ApplyRecoveryPointProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provider specific input for apply recovery point.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -281,7 +285,9 @@ class A2AApplyRecoveryPointInput(ApplyRecoveryPointProviderSpecificInput, discri
         self.instance_type = "A2A"  # type: ignore
 
 
-class ClusterProviderSpecificRecoveryPointDetails(_Model):  # pylint: disable=name-too-long
+class ClusterProviderSpecificRecoveryPointDetails(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Replication provider specific cluster recovery point details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -313,7 +319,9 @@ class ClusterProviderSpecificRecoveryPointDetails(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class A2AClusterRecoveryPointDetails(ClusterProviderSpecificRecoveryPointDetails, discriminator="A2A"):
+class A2AClusterRecoveryPointDetails(
+    ClusterProviderSpecificRecoveryPointDetails, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A provider specific cluster recovery point details.
 
     :ivar recovery_point_sync_type: A value indicating whether the recovery point is multi VM
@@ -356,7 +364,7 @@ class A2AClusterRecoveryPointDetails(ClusterProviderSpecificRecoveryPointDetails
         self.instance_type = "A2A"  # type: ignore
 
 
-class ClusterTestFailoverProviderSpecificInput(_Model):
+class ClusterTestFailoverProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provider specific test cluster failover input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -390,7 +398,9 @@ class ClusterTestFailoverProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2AClusterTestFailoverInput(ClusterTestFailoverProviderSpecificInput, discriminator="A2A"):
+class A2AClusterTestFailoverInput(
+    ClusterTestFailoverProviderSpecificInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A provider specific input for test cluster failover.
 
     :ivar cluster_recovery_point_id: The cluster recovery point id to be passed to failover to a
@@ -433,7 +443,9 @@ class A2AClusterTestFailoverInput(ClusterTestFailoverProviderSpecificInput, disc
         self.instance_type = "A2A"  # type: ignore
 
 
-class ClusterUnplannedFailoverProviderSpecificInput(_Model):  # pylint: disable=name-too-long
+class ClusterUnplannedFailoverProviderSpecificInput(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Provider specific unplanned cluster failover input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -467,7 +479,9 @@ class ClusterUnplannedFailoverProviderSpecificInput(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class A2AClusterUnplannedFailoverInput(ClusterUnplannedFailoverProviderSpecificInput, discriminator="A2A"):
+class A2AClusterUnplannedFailoverInput(
+    ClusterUnplannedFailoverProviderSpecificInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A provider specific input for unplanned cluster failover.
 
     :ivar cluster_recovery_point_id: The cluster recovery point id to be passed to failover to a
@@ -510,7 +524,113 @@ class A2AClusterUnplannedFailoverInput(ClusterUnplannedFailoverProviderSpecificI
         self.instance_type = "A2A"  # type: ignore
 
 
-class ReplicationProviderSpecificContainerCreationInput(_Model):  # pylint: disable=name-too-long
+class A2AClusterVmManagedDiskInputDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A2A managed disk input details for cluster switch protection.
+
+    :ivar disk_id: The disk Id. Required.
+    :vartype disk_id: str
+    :ivar primary_staging_azure_storage_account_id: The primary staging storage account Arm Id.
+     Required.
+    :vartype primary_staging_azure_storage_account_id: str
+    :ivar recovery_resource_group_id: The target resource group Arm Id. Required.
+    :vartype recovery_resource_group_id: str
+    :ivar recovery_replica_disk_account_type: The replica disk type. Its an optional value and will
+     be same as source disk type if not user provided.
+    :vartype recovery_replica_disk_account_type: str
+    :ivar recovery_target_disk_account_type: The target disk type after failover. Its an optional
+     value and will be same as source disk type if not user provided.
+    :vartype recovery_target_disk_account_type: str
+    :ivar recovery_disk_encryption_set_id: The recovery disk encryption set Id.
+    :vartype recovery_disk_encryption_set_id: str
+    :ivar disk_encryption_info: The recovery disk encryption information (for one / single pass
+     flows).
+    :vartype disk_encryption_info:
+     ~azure.mgmt.recoveryservicessiterecovery.models.DiskEncryptionInfo
+    :ivar recovery_network_access_policy: The network access policy for the recovery managed disk.
+     Known values are: "AllowAll", "AllowPrivate", and "DenyAll".
+    :vartype recovery_network_access_policy: str or
+     ~azure.mgmt.recoveryservicessiterecovery.models.DiskNetworkAccessPolicy
+    :ivar recovery_disk_access_id: The recovery disk access Arm Id.
+    :vartype recovery_disk_access_id: str
+    :ivar recovery_public_network_access: The public network access setting for the recovery
+     managed disk. Known values are: "Enabled" and "Disabled".
+    :vartype recovery_public_network_access: str or
+     ~azure.mgmt.recoveryservicessiterecovery.models.DiskPublicNetworkAccess
+    """
+
+    disk_id: str = rest_field(name="diskId", visibility=["read", "create", "update", "delete", "query"])
+    """The disk Id. Required."""
+    primary_staging_azure_storage_account_id: str = rest_field(
+        name="primaryStagingAzureStorageAccountId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The primary staging storage account Arm Id. Required."""
+    recovery_resource_group_id: str = rest_field(
+        name="recoveryResourceGroupId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target resource group Arm Id. Required."""
+    recovery_replica_disk_account_type: Optional[str] = rest_field(
+        name="recoveryReplicaDiskAccountType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The replica disk type. Its an optional value and will be same as source disk type if not user
+     provided."""
+    recovery_target_disk_account_type: Optional[str] = rest_field(
+        name="recoveryTargetDiskAccountType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target disk type after failover. Its an optional value and will be same as source disk type
+     if not user provided."""
+    recovery_disk_encryption_set_id: Optional[str] = rest_field(
+        name="recoveryDiskEncryptionSetId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The recovery disk encryption set Id."""
+    disk_encryption_info: Optional["_models.DiskEncryptionInfo"] = rest_field(
+        name="diskEncryptionInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The recovery disk encryption information (for one / single pass flows)."""
+    recovery_network_access_policy: Optional[Union[str, "_models.DiskNetworkAccessPolicy"]] = rest_field(
+        name="recoveryNetworkAccessPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The network access policy for the recovery managed disk. Known values are: \"AllowAll\",
+     \"AllowPrivate\", and \"DenyAll\"."""
+    recovery_disk_access_id: Optional[str] = rest_field(
+        name="recoveryDiskAccessId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The recovery disk access Arm Id."""
+    recovery_public_network_access: Optional[Union[str, "_models.DiskPublicNetworkAccess"]] = rest_field(
+        name="recoveryPublicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The public network access setting for the recovery managed disk. Known values are: \"Enabled\"
+     and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        disk_id: str,
+        primary_staging_azure_storage_account_id: str,
+        recovery_resource_group_id: str,
+        recovery_replica_disk_account_type: Optional[str] = None,
+        recovery_target_disk_account_type: Optional[str] = None,
+        recovery_disk_encryption_set_id: Optional[str] = None,
+        disk_encryption_info: Optional["_models.DiskEncryptionInfo"] = None,
+        recovery_network_access_policy: Optional[Union[str, "_models.DiskNetworkAccessPolicy"]] = None,
+        recovery_disk_access_id: Optional[str] = None,
+        recovery_public_network_access: Optional[Union[str, "_models.DiskPublicNetworkAccess"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ReplicationProviderSpecificContainerCreationInput(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Provider specific input for container creation operation.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -572,7 +692,9 @@ class A2AContainerCreationInput(ReplicationProviderSpecificContainerCreationInpu
         self.instance_type = "A2A"  # type: ignore
 
 
-class ReplicationProviderSpecificContainerMappingInput(_Model):  # pylint: disable=name-too-long
+class ReplicationProviderSpecificContainerMappingInput(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Provider specific input for pairing operations.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -606,7 +728,9 @@ class ReplicationProviderSpecificContainerMappingInput(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class A2AContainerMappingInput(ReplicationProviderSpecificContainerMappingInput, discriminator="A2A"):
+class A2AContainerMappingInput(
+    ReplicationProviderSpecificContainerMappingInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A container mapping input.
 
     :ivar agent_auto_update_status: A value indicating whether the auto update is enabled. Known
@@ -665,7 +789,9 @@ class A2AContainerMappingInput(ReplicationProviderSpecificContainerMappingInput,
         self.instance_type = "A2A"  # type: ignore
 
 
-class CreateProtectionIntentProviderSpecificDetails(_Model):  # pylint: disable=name-too-long
+class CreateProtectionIntentProviderSpecificDetails(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Create protection intent provider specific input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -699,7 +825,9 @@ class CreateProtectionIntentProviderSpecificDetails(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class A2ACreateProtectionIntentInput(CreateProtectionIntentProviderSpecificDetails, discriminator="A2A"):
+class A2ACreateProtectionIntentInput(
+    CreateProtectionIntentProviderSpecificDetails, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A create protection intent input.
 
     :ivar fabric_object_id: The fabric specific object Id of the virtual machine. Required.
@@ -971,7 +1099,7 @@ class A2ACrossClusterMigrationContainerCreationInput(
         self.instance_type = "A2ACrossClusterMigration"  # type: ignore
 
 
-class EnableProtectionProviderSpecificInput(_Model):
+class EnableProtectionProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enable protection provider specific input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1009,7 +1137,7 @@ class EnableProtectionProviderSpecificInput(_Model):
 
 class A2ACrossClusterMigrationEnableProtectionInput(
     EnableProtectionProviderSpecificInput, discriminator="A2ACrossClusterMigration"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """A2A Cross-Cluster Migration enable protection input.
 
     :ivar fabric_object_id: The fabric specific object Id of the virtual machine.
@@ -1051,7 +1179,7 @@ class A2ACrossClusterMigrationEnableProtectionInput(
         self.instance_type = "A2ACrossClusterMigration"  # type: ignore
 
 
-class PolicyProviderSpecificInput(_Model):
+class PolicyProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for provider specific input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1117,7 +1245,7 @@ class A2ACrossClusterMigrationPolicyCreationInput(
         self.instance_type = "A2ACrossClusterMigration"  # type: ignore
 
 
-class ReplicationProviderSpecificSettings(_Model):
+class ReplicationProviderSpecificSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication provider specific settings.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1157,7 +1285,7 @@ class ReplicationProviderSpecificSettings(_Model):
 
 class A2ACrossClusterMigrationReplicationDetails(
     ReplicationProviderSpecificSettings, discriminator="A2ACrossClusterMigration"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """A2A provider specific settings.
 
     :ivar fabric_object_id: The fabric specific object Id of the virtual machine.
@@ -1232,7 +1360,9 @@ class A2ACrossClusterMigrationReplicationDetails(
         self.instance_type = "A2ACrossClusterMigration"  # type: ignore
 
 
-class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput, discriminator="A2A"):
+class A2AEnableProtectionInput(
+    EnableProtectionProviderSpecificInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A enable protection input.
 
     :ivar fabric_object_id: The fabric specific object Id of the virtual machine. Required.
@@ -1282,6 +1412,10 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput, discrimina
      Known values are: "Disabled" and "Enabled".
     :vartype auto_protection_of_data_disk: str or
      ~azure.mgmt.recoveryservicessiterecovery.models.AutoProtectionOfDataDisk
+    :ivar recovery_confidential_data_disk_encryption_identity: The Azure resource ID of the
+     confidential data disk encryption user-assigned identity. Applicable to CMK confidential VM
+     data disks.
+    :vartype recovery_confidential_data_disk_encryption_identity: str
     :ivar instance_type: The class type. Required. Default value is "A2A".
     :vartype instance_type: str
     """
@@ -1371,6 +1505,12 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput, discrimina
     )
     """A value indicating whether the auto protection is enabled. Known values are: \"Disabled\" and
      \"Enabled\"."""
+    recovery_confidential_data_disk_encryption_identity: Optional[str] = rest_field(
+        name="recoveryConfidentialDataDiskEncryptionIdentity",
+        visibility=["read", "create", "update", "delete", "query"],
+    )
+    """The Azure resource ID of the confidential data disk encryption user-assigned identity.
+     Applicable to CMK confidential VM data disks."""
     instance_type: Literal["A2A"] = rest_discriminator(name="instanceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The class type. Required. Default value is \"A2A\"."""
 
@@ -1399,6 +1539,7 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput, discrimina
         recovery_capacity_reservation_group_id: Optional[str] = None,
         platform_fault_domain: Optional[int] = None,
         auto_protection_of_data_disk: Optional[Union[str, "_models.AutoProtectionOfDataDisk"]] = None,
+        recovery_confidential_data_disk_encryption_identity: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1413,7 +1554,7 @@ class A2AEnableProtectionInput(EnableProtectionProviderSpecificInput, discrimina
         self.instance_type = "A2A"  # type: ignore
 
 
-class EventProviderSpecificDetails(_Model):
+class EventProviderSpecificDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model class for provider specific details for an event.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1450,7 +1591,9 @@ class EventProviderSpecificDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2AEventDetails(EventProviderSpecificDetails, discriminator="A2A"):
+class A2AEventDetails(
+    EventProviderSpecificDetails, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model class for event details of a A2A event.
 
     :ivar protected_item_name: The protected item arm name.
@@ -1521,7 +1664,7 @@ class A2AEventDetails(EventProviderSpecificDetails, discriminator="A2A"):
         self.instance_type = "A2A"  # type: ignore
 
 
-class A2AExtendedLocationDetails(_Model):
+class A2AExtendedLocationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExtendedLocation details data.
 
     :ivar primary_extended_location: The primary ExtendedLocation.
@@ -1560,7 +1703,7 @@ class A2AExtendedLocationDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2AFabricSpecificLocationDetails(_Model):
+class A2AFabricSpecificLocationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExtendedLocation details data.
 
     :ivar initial_primary_zone: The initial source zone info.
@@ -1671,7 +1814,9 @@ class A2AFabricSpecificLocationDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2APolicyCreationInput(PolicyProviderSpecificInput, discriminator="A2A"):
+class A2APolicyCreationInput(
+    PolicyProviderSpecificInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A Policy creation input.
 
     :ivar recovery_point_history: The duration in minutes until which the recovery points need to
@@ -1732,7 +1877,7 @@ class A2APolicyCreationInput(PolicyProviderSpecificInput, discriminator="A2A"):
         self.instance_type = "A2A"  # type: ignore
 
 
-class PolicyProviderSpecificDetails(_Model):
+class PolicyProviderSpecificDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for Provider specific details for policies.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1770,7 +1915,9 @@ class PolicyProviderSpecificDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2APolicyDetails(PolicyProviderSpecificDetails, discriminator="A2A"):
+class A2APolicyDetails(
+    PolicyProviderSpecificDetails, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A specific policy details.
 
     :ivar recovery_point_threshold_in_minutes: The recovery point threshold in minutes.
@@ -1836,7 +1983,7 @@ class A2APolicyDetails(PolicyProviderSpecificDetails, discriminator="A2A"):
         self.instance_type = "A2A"  # type: ignore
 
 
-class A2AProtectedDiskDetails(_Model):
+class A2AProtectedDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A protected disk details.
 
     :ivar disk_uri: The disk uri.
@@ -2017,12 +2164,12 @@ class A2AProtectedDiskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2AProtectedItemDetail(_Model):
+class A2AProtectedItemDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A specific switch cluster protection input.
 
     :ivar vm_managed_disks: The list of vm managed disk details.
     :vartype vm_managed_disks:
-     list[~azure.mgmt.recoveryservicessiterecovery.models.A2AVmManagedDiskInputDetails]
+     list[~azure.mgmt.recoveryservicessiterecovery.models.A2AClusterVmManagedDiskInputDetails]
     :ivar recovery_resource_group_id: The recovery resource group Id.
     :vartype recovery_resource_group_id: str
     :ivar recovery_availability_set_id: The recovery availability set.
@@ -2044,7 +2191,7 @@ class A2AProtectedItemDetail(_Model):
     :vartype replication_protected_item_name: str
     """
 
-    vm_managed_disks: Optional[list["_models.A2AVmManagedDiskInputDetails"]] = rest_field(
+    vm_managed_disks: Optional[list["_models.A2AClusterVmManagedDiskInputDetails"]] = rest_field(
         name="vmManagedDisks", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of vm managed disk details."""
@@ -2089,7 +2236,7 @@ class A2AProtectedItemDetail(_Model):
     def __init__(
         self,
         *,
-        vm_managed_disks: Optional[list["_models.A2AVmManagedDiskInputDetails"]] = None,
+        vm_managed_disks: Optional[list["_models.A2AClusterVmManagedDiskInputDetails"]] = None,
         recovery_resource_group_id: Optional[str] = None,
         recovery_availability_set_id: Optional[str] = None,
         recovery_boot_diag_storage_account_id: Optional[str] = None,
@@ -2112,7 +2259,7 @@ class A2AProtectedItemDetail(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2AProtectedManagedDiskDetails(_Model):
+class A2AProtectedManagedDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A protected managed disk details.
 
     :ivar disk_id: The managed disk Arm id.
@@ -2176,6 +2323,20 @@ class A2AProtectedManagedDiskDetails(_Model):
     :vartype failover_disk_name: str
     :ivar tfo_disk_name: The test failover name for the managed disk.
     :vartype tfo_disk_name: str
+    :ivar recovery_network_access_policy: The network access policy for the recovery managed disk.
+     Known values are: "AllowAll", "AllowPrivate", and "DenyAll".
+    :vartype recovery_network_access_policy: str or
+     ~azure.mgmt.recoveryservicessiterecovery.models.DiskNetworkAccessPolicy
+    :ivar recovery_disk_access_id: The recovery disk access Arm Id.
+    :vartype recovery_disk_access_id: str
+    :ivar recovery_public_network_access: The public network access setting for the recovery
+     managed disk. Known values are: "Enabled" and "Disabled".
+    :vartype recovery_public_network_access: str or
+     ~azure.mgmt.recoveryservicessiterecovery.models.DiskPublicNetworkAccess
+    :ivar confidential_disk_encryption_info: The confidential disk encryption info for the managed
+     disk. Applicable to CMK confidential VMs.
+    :vartype confidential_disk_encryption_info:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ConfidentialDiskEncryptionInfo
     """
 
     disk_id: Optional[str] = rest_field(name="diskId", visibility=["read", "create", "update", "delete", "query"])
@@ -2286,6 +2447,24 @@ class A2AProtectedManagedDiskDetails(_Model):
         name="tfoDiskName", visibility=["read", "create", "update", "delete", "query"]
     )
     """The test failover name for the managed disk."""
+    recovery_network_access_policy: Optional[Union[str, "_models.DiskNetworkAccessPolicy"]] = rest_field(
+        name="recoveryNetworkAccessPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The network access policy for the recovery managed disk. Known values are: \"AllowAll\",
+     \"AllowPrivate\", and \"DenyAll\"."""
+    recovery_disk_access_id: Optional[str] = rest_field(
+        name="recoveryDiskAccessId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The recovery disk access Arm Id."""
+    recovery_public_network_access: Optional[Union[str, "_models.DiskPublicNetworkAccess"]] = rest_field(
+        name="recoveryPublicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The public network access setting for the recovery managed disk. Known values are: \"Enabled\"
+     and \"Disabled\"."""
+    confidential_disk_encryption_info: Optional["_models.ConfidentialDiskEncryptionInfo"] = rest_field(
+        name="confidentialDiskEncryptionInfo", visibility=["read"]
+    )
+    """The confidential disk encryption info for the managed disk. Applicable to CMK confidential VMs."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -2319,6 +2498,9 @@ class A2AProtectedManagedDiskDetails(_Model):
         kek_key_vault_arm_id: Optional[str] = None,
         failover_disk_name: Optional[str] = None,
         tfo_disk_name: Optional[str] = None,
+        recovery_network_access_policy: Optional[Union[str, "_models.DiskNetworkAccessPolicy"]] = None,
+        recovery_disk_access_id: Optional[str] = None,
+        recovery_public_network_access: Optional[Union[str, "_models.DiskPublicNetworkAccess"]] = None,
     ) -> None: ...
 
     @overload
@@ -2332,7 +2514,9 @@ class A2AProtectedManagedDiskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionContainerMappingProviderSpecificDetails(_Model):  # pylint: disable=name-too-long
+class ProtectionContainerMappingProviderSpecificDetails(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Container mapping provider specific details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2368,7 +2552,9 @@ class ProtectionContainerMappingProviderSpecificDetails(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class A2AProtectionContainerMappingDetails(ProtectionContainerMappingProviderSpecificDetails, discriminator="A2A"):
+class A2AProtectionContainerMappingDetails(
+    ProtectionContainerMappingProviderSpecificDetails, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A provider specific settings.
 
     :ivar agent_auto_update_status: A value indicating whether the auto update is enabled. Known
@@ -2442,7 +2628,7 @@ class A2AProtectionContainerMappingDetails(ProtectionContainerMappingProviderSpe
         self.instance_type = "A2A"  # type: ignore
 
 
-class A2AProtectionIntentDiskInputDetails(_Model):
+class A2AProtectionIntentDiskInputDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure VM unmanaged disk input details.
 
     :ivar disk_uri: The disk Uri. Required.
@@ -2486,7 +2672,9 @@ class A2AProtectionIntentDiskInputDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2AProtectionIntentManagedDiskInputDetails(_Model):  # pylint: disable=name-too-long
+class A2AProtectionIntentManagedDiskInputDetails(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure VM managed disk input details.
 
     :ivar disk_id: The disk Id. Required.
@@ -2564,7 +2752,7 @@ class A2AProtectionIntentManagedDiskInputDetails(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class ProviderSpecificRecoveryPointDetails(_Model):
+class ProviderSpecificRecoveryPointDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication provider specific recovery point details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2598,7 +2786,9 @@ class ProviderSpecificRecoveryPointDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2ARecoveryPointDetails(ProviderSpecificRecoveryPointDetails, discriminator="A2A"):
+class A2ARecoveryPointDetails(
+    ProviderSpecificRecoveryPointDetails, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A provider specific recovery point details.
 
     :ivar recovery_point_sync_type: A value indicating whether the recovery point is multi VM
@@ -2641,7 +2831,7 @@ class A2ARecoveryPointDetails(ProviderSpecificRecoveryPointDetails, discriminato
         self.instance_type = "A2A"  # type: ignore
 
 
-class RemoveDisksProviderSpecificInput(_Model):
+class RemoveDisksProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Remove Disk provider specific input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2675,7 +2865,9 @@ class RemoveDisksProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2ARemoveDisksInput(RemoveDisksProviderSpecificInput, discriminator="A2A"):
+class A2ARemoveDisksInput(
+    RemoveDisksProviderSpecificInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A remove disk(s) input.
 
     :ivar vm_disks_uris: The list of vm disk vhd URIs.
@@ -2717,7 +2909,9 @@ class A2ARemoveDisksInput(RemoveDisksProviderSpecificInput, discriminator="A2A")
         self.instance_type = "A2A"  # type: ignore
 
 
-class A2AReplicationDetails(ReplicationProviderSpecificSettings, discriminator="A2A"):
+class A2AReplicationDetails(
+    ReplicationProviderSpecificSettings, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A provider specific settings.
 
     :ivar fabric_object_id: The fabric specific object Id of the virtual machine.
@@ -2887,6 +3081,10 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings, discriminator="
     :vartype is_agent_upgrade_retry_threshold_exhausted: bool
     :ivar platform_fault_domain: the platform fault domain.
     :vartype platform_fault_domain: int
+    :ivar recovery_confidential_data_disk_encryption_identity: The Azure resource ID of the
+     confidential data disk encryption user-assigned identity. Applicable to CMK confidential VM
+     data disks.
+    :vartype recovery_confidential_data_disk_encryption_identity: str
     :ivar instance_type: Gets the Instance type. Required. Default value is "A2A".
     :vartype instance_type: str
     """
@@ -3164,6 +3362,12 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings, discriminator="
         name="platformFaultDomain", visibility=["read", "create", "update", "delete", "query"]
     )
     """the platform fault domain."""
+    recovery_confidential_data_disk_encryption_identity: Optional[str] = rest_field(
+        name="recoveryConfidentialDataDiskEncryptionIdentity",
+        visibility=["read", "create", "update", "delete", "query"],
+    )
+    """The Azure resource ID of the confidential data disk encryption user-assigned identity.
+     Applicable to CMK confidential VM data disks."""
     instance_type: Literal["A2A"] = rest_discriminator(name="instanceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Gets the Instance type. Required. Default value is \"A2A\"."""
 
@@ -3231,6 +3435,7 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings, discriminator="
         auto_agent_upgrade_retry_count: Optional[int] = None,
         is_agent_upgrade_retry_threshold_exhausted: Optional[bool] = None,
         platform_fault_domain: Optional[int] = None,
+        recovery_confidential_data_disk_encryption_identity: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3245,7 +3450,9 @@ class A2AReplicationDetails(ReplicationProviderSpecificSettings, discriminator="
         self.instance_type = "A2A"  # type: ignore
 
 
-class ReplicationProtectionIntentProviderSpecificSettings(_Model):  # pylint: disable=name-too-long
+class ReplicationProtectionIntentProviderSpecificSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Replication provider specific settings.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3279,7 +3486,9 @@ class ReplicationProtectionIntentProviderSpecificSettings(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class A2AReplicationIntentDetails(ReplicationProtectionIntentProviderSpecificSettings, discriminator="A2A"):
+class A2AReplicationIntentDetails(
+    ReplicationProtectionIntentProviderSpecificSettings, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A provider specific settings.
 
     :ivar fabric_object_id: The fabric specific object Id of the virtual machine.
@@ -3485,7 +3694,9 @@ class A2AReplicationIntentDetails(ReplicationProtectionIntentProviderSpecificSet
         self.instance_type = "A2A"  # type: ignore
 
 
-class ReplicationClusterProviderSpecificSettings(_Model):  # pylint: disable=name-too-long
+class ReplicationClusterProviderSpecificSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Replication cluster provider specific settings.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3519,7 +3730,9 @@ class ReplicationClusterProviderSpecificSettings(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class A2AReplicationProtectionClusterDetails(ReplicationClusterProviderSpecificSettings, discriminator="A2A"):
+class A2AReplicationProtectionClusterDetails(
+    ReplicationClusterProviderSpecificSettings, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A provider specific settings.
 
     :ivar multi_vm_group_id: The multi vm group Id.
@@ -3701,7 +3914,7 @@ class A2AReplicationProtectionClusterDetails(ReplicationClusterProviderSpecificS
         self.instance_type = "A2A"  # type: ignore
 
 
-class ReverseReplicationProviderSpecificInput(_Model):
+class ReverseReplicationProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provider specific reverse replication input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3736,7 +3949,9 @@ class ReverseReplicationProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2AReprotectInput(ReverseReplicationProviderSpecificInput, discriminator="A2A"):
+class A2AReprotectInput(
+    ReverseReplicationProviderSpecificInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure specific reprotect input.
 
     :ivar recovery_container_id: The recovery container Id.
@@ -3831,7 +4046,9 @@ class A2ASharedDiskIRErrorDetails(_Model):
     """The recommended action."""
 
 
-class SharedDiskReplicationProviderSpecificSettings(_Model):  # pylint: disable=name-too-long
+class SharedDiskReplicationProviderSpecificSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Replication provider specific settings.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3865,7 +4082,9 @@ class SharedDiskReplicationProviderSpecificSettings(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class A2ASharedDiskReplicationDetails(SharedDiskReplicationProviderSpecificSettings, discriminator="A2A"):
+class A2ASharedDiskReplicationDetails(
+    SharedDiskReplicationProviderSpecificSettings, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A provider specific settings.
 
     :ivar management_id: The management Id.
@@ -3979,7 +4198,9 @@ class A2ASharedDiskReplicationDetails(SharedDiskReplicationProviderSpecificSetti
         self.instance_type = "A2A"  # type: ignore
 
 
-class SwitchClusterProtectionProviderSpecificInput(_Model):  # pylint: disable=name-too-long
+class SwitchClusterProtectionProviderSpecificInput(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Provider specific switch cluster protection input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4013,7 +4234,9 @@ class SwitchClusterProtectionProviderSpecificInput(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class A2ASwitchClusterProtectionInput(SwitchClusterProtectionProviderSpecificInput, discriminator="A2A"):
+class A2ASwitchClusterProtectionInput(
+    SwitchClusterProtectionProviderSpecificInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A specific switch cluster protection input.
 
     :ivar recovery_container_id: The recovery container Id.
@@ -4060,7 +4283,7 @@ class A2ASwitchClusterProtectionInput(SwitchClusterProtectionProviderSpecificInp
         self.instance_type = "A2A"  # type: ignore
 
 
-class SwitchProtectionProviderSpecificInput(_Model):
+class SwitchProtectionProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provider specific switch protection input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4094,7 +4317,9 @@ class SwitchProtectionProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2ASwitchProtectionInput(SwitchProtectionProviderSpecificInput, discriminator="A2A"):
+class A2ASwitchProtectionInput(
+    SwitchProtectionProviderSpecificInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A specific switch protection input.
 
     :ivar recovery_container_id: The recovery container Id.
@@ -4127,6 +4352,10 @@ class A2ASwitchProtectionInput(SwitchProtectionProviderSpecificInput, discrimina
     :ivar disk_encryption_info: The recovery disk encryption information.
     :vartype disk_encryption_info:
      ~azure.mgmt.recoveryservicessiterecovery.models.DiskEncryptionInfo
+    :ivar recovery_confidential_data_disk_encryption_identity: The Azure resource ID of the
+     confidential data disk encryption user-assigned identity. Applicable to CMK confidential VM
+     data disks.
+    :vartype recovery_confidential_data_disk_encryption_identity: str
     :ivar instance_type: Gets the Instance type. Required. Default value is "A2A".
     :vartype instance_type: str
     """
@@ -4185,6 +4414,12 @@ class A2ASwitchProtectionInput(SwitchProtectionProviderSpecificInput, discrimina
         name="diskEncryptionInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """The recovery disk encryption information."""
+    recovery_confidential_data_disk_encryption_identity: Optional[str] = rest_field(
+        name="recoveryConfidentialDataDiskEncryptionIdentity",
+        visibility=["read", "create", "update", "delete", "query"],
+    )
+    """The Azure resource ID of the confidential data disk encryption user-assigned identity.
+     Applicable to CMK confidential VM data disks."""
     instance_type: Literal["A2A"] = rest_discriminator(name="instanceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Gets the Instance type. Required. Default value is \"A2A\"."""
 
@@ -4206,6 +4441,7 @@ class A2ASwitchProtectionInput(SwitchProtectionProviderSpecificInput, discrimina
         recovery_capacity_reservation_group_id: Optional[str] = None,
         platform_fault_domain: Optional[int] = None,
         disk_encryption_info: Optional["_models.DiskEncryptionInfo"] = None,
+        recovery_confidential_data_disk_encryption_identity: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -4220,7 +4456,7 @@ class A2ASwitchProtectionInput(SwitchProtectionProviderSpecificInput, discrimina
         self.instance_type = "A2A"  # type: ignore
 
 
-class TestFailoverProviderSpecificInput(_Model):
+class TestFailoverProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provider specific test failover input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4255,7 +4491,9 @@ class TestFailoverProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2ATestFailoverInput(TestFailoverProviderSpecificInput, discriminator="A2A"):
+class A2ATestFailoverInput(
+    TestFailoverProviderSpecificInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A provider specific input for test failover.
 
     :ivar recovery_point_id: The recovery point id to be passed to test failover to a particular
@@ -4300,7 +4538,7 @@ class A2ATestFailoverInput(TestFailoverProviderSpecificInput, discriminator="A2A
         self.instance_type = "A2A"  # type: ignore
 
 
-class UnplannedFailoverProviderSpecificInput(_Model):
+class UnplannedFailoverProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provider specific unplanned failover input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4336,7 +4574,9 @@ class UnplannedFailoverProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2AUnplannedFailoverInput(UnplannedFailoverProviderSpecificInput, discriminator="A2A"):
+class A2AUnplannedFailoverInput(
+    UnplannedFailoverProviderSpecificInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A provider specific input for unplanned failover.
 
     :ivar recovery_point_id: The recovery point id to be passed to failover to a particular
@@ -4381,7 +4621,7 @@ class A2AUnplannedFailoverInput(UnplannedFailoverProviderSpecificInput, discrimi
         self.instance_type = "A2A"  # type: ignore
 
 
-class A2AUnprotectedDiskDetails(_Model):
+class A2AUnprotectedDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A unprotected disk details.
 
     :ivar disk_lun_id: The source lun Id for the data disk.
@@ -4421,7 +4661,9 @@ class A2AUnprotectedDiskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationProviderSpecificUpdateContainerMappingInput(_Model):  # pylint: disable=name-too-long
+class ReplicationProviderSpecificUpdateContainerMappingInput(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Provider specific input for update pairing operations.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4455,7 +4697,9 @@ class ReplicationProviderSpecificUpdateContainerMappingInput(_Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class A2AUpdateContainerMappingInput(ReplicationProviderSpecificUpdateContainerMappingInput, discriminator="A2A"):
+class A2AUpdateContainerMappingInput(
+    ReplicationProviderSpecificUpdateContainerMappingInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A update protection container mapping.
 
     :ivar agent_auto_update_status: A value indicating whether the auto update is enabled. Known
@@ -4514,7 +4758,9 @@ class A2AUpdateContainerMappingInput(ReplicationProviderSpecificUpdateContainerM
         self.instance_type = "A2A"  # type: ignore
 
 
-class UpdateReplicationProtectedItemProviderInput(_Model):  # pylint: disable=name-too-long
+class UpdateReplicationProtectedItemProviderInput(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Update replication protected item provider specific input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4549,7 +4795,9 @@ class UpdateReplicationProtectedItemProviderInput(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class A2AUpdateReplicationProtectedItemInput(UpdateReplicationProtectedItemProviderInput, discriminator="A2A"):
+class A2AUpdateReplicationProtectedItemInput(
+    UpdateReplicationProtectedItemProviderInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMage Azure V2 input to update replication protected item.
 
     :ivar recovery_cloud_service_id: The target cloud service ARM Id (for V1).
@@ -4576,6 +4824,10 @@ class A2AUpdateReplicationProtectedItemInput(UpdateReplicationProtectedItemProvi
     :vartype recovery_availability_zone: str
     :ivar platform_fault_domain: The platform fault domain.
     :vartype platform_fault_domain: int
+    :ivar recovery_confidential_data_disk_encryption_identity: The Azure resource ID of the
+     confidential data disk encryption user-assigned identity. Applicable to CMK confidential VM
+     data disks.
+    :vartype recovery_confidential_data_disk_encryption_identity: str
     :ivar instance_type: The class type. Required. Default value is "A2A".
     :vartype instance_type: str
     """
@@ -4624,6 +4876,12 @@ class A2AUpdateReplicationProtectedItemInput(UpdateReplicationProtectedItemProvi
         name="platformFaultDomain", visibility=["read", "create", "update", "delete", "query"]
     )
     """The platform fault domain."""
+    recovery_confidential_data_disk_encryption_identity: Optional[str] = rest_field(
+        name="recoveryConfidentialDataDiskEncryptionIdentity",
+        visibility=["read", "create", "update", "delete", "query"],
+    )
+    """The Azure resource ID of the confidential data disk encryption user-assigned identity.
+     Applicable to CMK confidential VM data disks."""
     instance_type: Literal["A2A"] = rest_discriminator(name="instanceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The class type. Required. Default value is \"A2A\"."""
 
@@ -4642,6 +4900,7 @@ class A2AUpdateReplicationProtectedItemInput(UpdateReplicationProtectedItemProvi
         recovery_capacity_reservation_group_id: Optional[str] = None,
         recovery_availability_zone: Optional[str] = None,
         platform_fault_domain: Optional[int] = None,
+        recovery_confidential_data_disk_encryption_identity: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -4656,7 +4915,7 @@ class A2AUpdateReplicationProtectedItemInput(UpdateReplicationProtectedItemProvi
         self.instance_type = "A2A"  # type: ignore
 
 
-class A2AVmDiskInputDetails(_Model):
+class A2AVmDiskInputDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A disk input details.
 
     :ivar disk_uri: The disk Uri. Required.
@@ -4699,7 +4958,7 @@ class A2AVmDiskInputDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2AVmManagedDiskInputDetails(_Model):
+class A2AVmManagedDiskInputDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A managed disk input details.
 
     :ivar disk_id: The disk Id. Required.
@@ -4721,6 +4980,20 @@ class A2AVmManagedDiskInputDetails(_Model):
      flows).
     :vartype disk_encryption_info:
      ~azure.mgmt.recoveryservicessiterecovery.models.DiskEncryptionInfo
+    :ivar recovery_network_access_policy: The network access policy for the recovery managed disk.
+     Known values are: "AllowAll", "AllowPrivate", and "DenyAll".
+    :vartype recovery_network_access_policy: str or
+     ~azure.mgmt.recoveryservicessiterecovery.models.DiskNetworkAccessPolicy
+    :ivar recovery_disk_access_id: The recovery disk access Arm Id.
+    :vartype recovery_disk_access_id: str
+    :ivar recovery_public_network_access: The public network access setting for the recovery
+     managed disk. Known values are: "Enabled" and "Disabled".
+    :vartype recovery_public_network_access: str or
+     ~azure.mgmt.recoveryservicessiterecovery.models.DiskPublicNetworkAccess
+    :ivar confidential_disk_encryption_info: The confidential disk encryption info for the managed
+     disk. Applicable to CMK confidential VMs.
+    :vartype confidential_disk_encryption_info:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ConfidentialDiskEncryptionInfo
     """
 
     disk_id: str = rest_field(name="diskId", visibility=["read", "create", "update", "delete", "query"])
@@ -4751,6 +5024,24 @@ class A2AVmManagedDiskInputDetails(_Model):
         name="diskEncryptionInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """The recovery disk encryption information (for one / single pass flows)."""
+    recovery_network_access_policy: Optional[Union[str, "_models.DiskNetworkAccessPolicy"]] = rest_field(
+        name="recoveryNetworkAccessPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The network access policy for the recovery managed disk. Known values are: \"AllowAll\",
+     \"AllowPrivate\", and \"DenyAll\"."""
+    recovery_disk_access_id: Optional[str] = rest_field(
+        name="recoveryDiskAccessId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The recovery disk access Arm Id."""
+    recovery_public_network_access: Optional[Union[str, "_models.DiskPublicNetworkAccess"]] = rest_field(
+        name="recoveryPublicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The public network access setting for the recovery managed disk. Known values are: \"Enabled\"
+     and \"Disabled\"."""
+    confidential_disk_encryption_info: Optional["_models.ConfidentialDiskEncryptionInfo"] = rest_field(
+        name="confidentialDiskEncryptionInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The confidential disk encryption info for the managed disk. Applicable to CMK confidential VMs."""
 
     @overload
     def __init__(
@@ -4763,6 +5054,10 @@ class A2AVmManagedDiskInputDetails(_Model):
         recovery_target_disk_account_type: Optional[str] = None,
         recovery_disk_encryption_set_id: Optional[str] = None,
         disk_encryption_info: Optional["_models.DiskEncryptionInfo"] = None,
+        recovery_network_access_policy: Optional[Union[str, "_models.DiskNetworkAccessPolicy"]] = None,
+        recovery_disk_access_id: Optional[str] = None,
+        recovery_public_network_access: Optional[Union[str, "_models.DiskPublicNetworkAccess"]] = None,
+        confidential_disk_encryption_info: Optional["_models.ConfidentialDiskEncryptionInfo"] = None,
     ) -> None: ...
 
     @overload
@@ -4776,7 +5071,7 @@ class A2AVmManagedDiskInputDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2AVmManagedDiskUpdateDetails(_Model):
+class A2AVmManagedDiskUpdateDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A Vm managed disk update details.
 
     :ivar disk_id: The disk Id.
@@ -4792,6 +5087,11 @@ class A2AVmManagedDiskUpdateDetails(_Model):
     :vartype failover_disk_name: str
     :ivar tfo_disk_name: The target disk name for test failover operation.
     :vartype tfo_disk_name: str
+    :ivar confidential_disk_encryption_info: The confidential disk encryption info to update for
+     the managed disk. Only the recovery target confidential disk encryption set can be changed
+     through this update operation. Applicable to A2A CMK confidential VMs.
+    :vartype confidential_disk_encryption_info:
+     ~azure.mgmt.recoveryservicessiterecovery.models.UpdateConfidentialDiskEncryptionInfo
     """
 
     disk_id: Optional[str] = rest_field(name="diskId", visibility=["read", "create", "update", "delete", "query"])
@@ -4816,6 +5116,12 @@ class A2AVmManagedDiskUpdateDetails(_Model):
         name="tfoDiskName", visibility=["read", "create", "update", "delete", "query"]
     )
     """The target disk name for test failover operation."""
+    confidential_disk_encryption_info: Optional["_models.UpdateConfidentialDiskEncryptionInfo"] = rest_field(
+        name="confidentialDiskEncryptionInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The confidential disk encryption info to update for the managed disk. Only the recovery target
+     confidential disk encryption set can be changed through this update operation. Applicable to
+     A2A CMK confidential VMs."""
 
     @overload
     def __init__(
@@ -4827,6 +5133,7 @@ class A2AVmManagedDiskUpdateDetails(_Model):
         disk_encryption_info: Optional["_models.DiskEncryptionInfo"] = None,
         failover_disk_name: Optional[str] = None,
         tfo_disk_name: Optional[str] = None,
+        confidential_disk_encryption_info: Optional["_models.UpdateConfidentialDiskEncryptionInfo"] = None,
     ) -> None: ...
 
     @overload
@@ -4840,7 +5147,7 @@ class A2AVmManagedDiskUpdateDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class A2AZoneDetails(_Model):
+class A2AZoneDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Zone details data.
 
     :ivar source: Source zone info.
@@ -4873,7 +5180,7 @@ class A2AZoneDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AddDisksInput(_Model):
+class AddDisksInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input for add disk(s) operation.
 
     :ivar properties: Add disks input properties.
@@ -4903,7 +5210,7 @@ class AddDisksInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AddDisksInputProperties(_Model):
+class AddDisksInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Add Disks input properties.
 
     :ivar provider_specific_details: The ReplicationProviderInput. For HyperVReplicaAzure provider,
@@ -4938,7 +5245,7 @@ class AddDisksInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AddRecoveryServicesProviderInput(_Model):
+class AddRecoveryServicesProviderInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input required to add a provider.
 
     :ivar properties: The properties of an add provider request. Required.
@@ -4969,7 +5276,9 @@ class AddRecoveryServicesProviderInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AddRecoveryServicesProviderInputProperties(_Model):  # pylint: disable=name-too-long
+class AddRecoveryServicesProviderInputProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties of an add provider request.
 
     :ivar machine_name: The name of the machine where the provider is getting added. Required.
@@ -5034,7 +5343,7 @@ class AddRecoveryServicesProviderInputProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class AddVCenterRequest(_Model):
+class AddVCenterRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input required to add vCenter.
 
     :ivar properties: The properties of an add vCenter request.
@@ -5065,7 +5374,7 @@ class AddVCenterRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AddVCenterRequestProperties(_Model):
+class AddVCenterRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an add vCenter request.
 
     :ivar friendly_name: The friendly name of the vCenter.
@@ -5218,7 +5527,7 @@ class ProxyResource(Resource):
     """
 
 
-class Alert(ProxyResource):
+class Alert(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Implements the Alert class.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5264,7 +5573,7 @@ class Alert(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AlertProperties(_Model):
+class AlertProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an alert.
 
     :ivar send_to_owners: A value indicating whether to send email to subscription administrator.
@@ -5374,7 +5683,7 @@ class ApplianceResourceDetails(_Model):
     """A value indicating the status of appliance resource."""
 
 
-class ApplianceSpecificDetails(_Model):
+class ApplianceSpecificDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Appliance specific details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5409,7 +5718,7 @@ class ApplianceSpecificDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplyClusterRecoveryPointInput(_Model):
+class ApplyClusterRecoveryPointInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for apply cluster recovery point.
 
     :ivar properties: The properties to apply cluster recovery point input. Required.
@@ -5440,7 +5749,7 @@ class ApplyClusterRecoveryPointInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplyClusterRecoveryPointInputProperties(_Model):
+class ApplyClusterRecoveryPointInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for apply cluster recovery point properties.
 
     :ivar cluster_recovery_point_id: The cluster recovery point id to be passed to failover to a
@@ -5487,7 +5796,7 @@ class ApplyClusterRecoveryPointInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplyRecoveryPointInput(_Model):
+class ApplyRecoveryPointInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input to apply recovery point.
 
     :ivar properties: The input properties to apply recovery point. Required.
@@ -5518,7 +5827,7 @@ class ApplyRecoveryPointInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ApplyRecoveryPointInputProperties(_Model):
+class ApplyRecoveryPointInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input properties to apply recovery point.
 
     :ivar recovery_point_id: The recovery point Id.
@@ -5556,7 +5865,7 @@ class ApplyRecoveryPointInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobDetails(_Model):
+class JobDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job details based on specific job type.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5603,7 +5912,9 @@ class JobDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AsrJobDetails(JobDetails, discriminator="AsrJobDetails"):
+class AsrJobDetails(
+    JobDetails, discriminator="AsrJobDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents job details based on specific job type.
 
     :ivar affected_object_details: The affected object properties like source server, source cloud,
@@ -5637,7 +5948,7 @@ class AsrJobDetails(JobDetails, discriminator="AsrJobDetails"):
         self.instance_type = "AsrJobDetails"  # type: ignore
 
 
-class ASRTask(_Model):
+class ASRTask(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Task of the Job.
 
     :ivar task_id: The Id.
@@ -5743,7 +6054,7 @@ class ASRTask(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TaskTypeDetails(_Model):
+class TaskTypeDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Task details based on specific task type.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5779,7 +6090,9 @@ class TaskTypeDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomationRunbookTaskDetails(TaskTypeDetails, discriminator="AutomationRunbookTaskDetails"):
+class AutomationRunbookTaskDetails(
+    TaskTypeDetails, discriminator="AutomationRunbookTaskDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents the task details for an automation runbook.
 
     :ivar name: The recovery plan task name.
@@ -5863,7 +6176,7 @@ class AutomationRunbookTaskDetails(TaskTypeDetails, discriminator="AutomationRun
         self.instance_type = "AutomationRunbookTaskDetails"  # type: ignore
 
 
-class FabricSpecificCreationInput(_Model):
+class FabricSpecificCreationInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fabric provider specific settings.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5897,7 +6210,9 @@ class FabricSpecificCreationInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFabricCreationInput(FabricSpecificCreationInput, discriminator="Azure"):
+class AzureFabricCreationInput(
+    FabricSpecificCreationInput, discriminator="Azure"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fabric provider specific settings.
 
     :ivar location: The Location.
@@ -5930,7 +6245,7 @@ class AzureFabricCreationInput(FabricSpecificCreationInput, discriminator="Azure
         self.instance_type = "Azure"  # type: ignore
 
 
-class FabricSpecificDetails(_Model):
+class FabricSpecificDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fabric specific details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -5966,7 +6281,9 @@ class FabricSpecificDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFabricSpecificDetails(FabricSpecificDetails, discriminator="Azure"):
+class AzureFabricSpecificDetails(
+    FabricSpecificDetails, discriminator="Azure"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Fabric Specific Details.
 
     :ivar location: The Location for the Azure fabric.
@@ -6030,7 +6347,7 @@ class AzureFabricSpecificDetails(FabricSpecificDetails, discriminator="Azure"):
         self.instance_type = "Azure"  # type: ignore
 
 
-class FabricSpecificCreateNetworkMappingInput(_Model):
+class FabricSpecificCreateNetworkMappingInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input details specific to fabrics during Network Mapping.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -6065,7 +6382,9 @@ class FabricSpecificCreateNetworkMappingInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureToAzureCreateNetworkMappingInput(FabricSpecificCreateNetworkMappingInput, discriminator="AzureToAzure"):
+class AzureToAzureCreateNetworkMappingInput(
+    FabricSpecificCreateNetworkMappingInput, discriminator="AzureToAzure"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Create network mappings input properties/behavior specific to Azure to Azure Network mapping.
 
     :ivar primary_network_id: The primary azure vnet Id. Required.
@@ -6100,7 +6419,7 @@ class AzureToAzureCreateNetworkMappingInput(FabricSpecificCreateNetworkMappingIn
         self.instance_type = "AzureToAzure"  # type: ignore
 
 
-class NetworkMappingFabricSpecificSettings(_Model):
+class NetworkMappingFabricSpecificSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Mapping fabric specific settings.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -6135,7 +6454,9 @@ class NetworkMappingFabricSpecificSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureToAzureNetworkMappingSettings(NetworkMappingFabricSpecificSettings, discriminator="AzureToAzure"):
+class AzureToAzureNetworkMappingSettings(
+    NetworkMappingFabricSpecificSettings, discriminator="AzureToAzure"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A2A Network Mapping fabric specific settings.
 
     :ivar primary_fabric_location: The primary fabric location.
@@ -6177,7 +6498,7 @@ class AzureToAzureNetworkMappingSettings(NetworkMappingFabricSpecificSettings, d
         self.instance_type = "AzureToAzure"  # type: ignore
 
 
-class FabricSpecificUpdateNetworkMappingInput(_Model):
+class FabricSpecificUpdateNetworkMappingInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input details specific to fabrics during Network Mapping.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -6212,7 +6533,9 @@ class FabricSpecificUpdateNetworkMappingInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureToAzureUpdateNetworkMappingInput(FabricSpecificUpdateNetworkMappingInput, discriminator="AzureToAzure"):
+class AzureToAzureUpdateNetworkMappingInput(
+    FabricSpecificUpdateNetworkMappingInput, discriminator="AzureToAzure"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Updates network mappings input.
 
     :ivar primary_network_id: The primary azure vnet Id.
@@ -6247,7 +6570,7 @@ class AzureToAzureUpdateNetworkMappingInput(FabricSpecificUpdateNetworkMappingIn
         self.instance_type = "AzureToAzure"  # type: ignore
 
 
-class AzureToAzureVmSyncedConfigDetails(_Model):
+class AzureToAzureVmSyncedConfigDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure to Azure VM synced configuration details.
 
     :ivar tags: The Azure VM tags.
@@ -6282,7 +6605,7 @@ class AzureToAzureVmSyncedConfigDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureVmDiskDetails(_Model):
+class AzureVmDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk details for E2A provider.
 
     :ivar vhd_type: VHD type.
@@ -6365,7 +6688,9 @@ class AzureVmDiskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterFailoverJobDetails(JobDetails, discriminator="ClusterFailoverJobDetails"):
+class ClusterFailoverJobDetails(
+    JobDetails, discriminator="ClusterFailoverJobDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents the details for a failover job of cluster.
 
     :ivar affected_object_details: The affected object properties like source server, source cloud,
@@ -6407,7 +6732,7 @@ class ClusterFailoverJobDetails(JobDetails, discriminator="ClusterFailoverJobDet
         self.instance_type = "ClusterFailoverJobDetails"  # type: ignore
 
 
-class ClusterRecoveryPoint(_Model):
+class ClusterRecoveryPoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery point.
 
     :ivar id: The recovery point Id.
@@ -6453,7 +6778,7 @@ class ClusterRecoveryPoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterRecoveryPointProperties(_Model):
+class ClusterRecoveryPointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cluster recovery point properties.
 
     :ivar recovery_point_time: The recovery point time.
@@ -6501,7 +6826,9 @@ class ClusterRecoveryPointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterSwitchProtectionJobDetails(JobDetails, discriminator="ClusterSwitchProtectionJobDetails"):
+class ClusterSwitchProtectionJobDetails(
+    JobDetails, discriminator="ClusterSwitchProtectionJobDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents details for switch cluster protection job.
 
     :ivar affected_object_details: The affected object properties like source server, source cloud,
@@ -6542,7 +6869,7 @@ class ClusterSwitchProtectionJobDetails(JobDetails, discriminator="ClusterSwitch
         self.instance_type = "ClusterSwitchProtectionJobDetails"  # type: ignore
 
 
-class ClusterTestFailoverCleanupInput(_Model):
+class ClusterTestFailoverCleanupInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for test failover cleanup for cluster.
 
     :ivar properties: Test failover cleanup input properties. Required.
@@ -6573,7 +6900,9 @@ class ClusterTestFailoverCleanupInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterTestFailoverCleanupInputProperties(_Model):  # pylint: disable=name-too-long
+class ClusterTestFailoverCleanupInputProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Input definition for test failover cleanup input properties.
 
     :ivar comments: Test failover cleanup comments.
@@ -6601,7 +6930,7 @@ class ClusterTestFailoverCleanupInputProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ClusterTestFailoverInput(_Model):
+class ClusterTestFailoverInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for test cluster failover.
 
     :ivar properties: Test failover input properties. Required.
@@ -6632,7 +6961,7 @@ class ClusterTestFailoverInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterTestFailoverInputProperties(_Model):
+class ClusterTestFailoverInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for test failover input properties.
 
     :ivar failover_direction: Failover direction. Known values are: "PrimaryToRecovery" and
@@ -6684,7 +7013,9 @@ class ClusterTestFailoverInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterTestFailoverJobDetails(JobDetails, discriminator="ClusterTestFailoverJobDetails"):
+class ClusterTestFailoverJobDetails(
+    JobDetails, discriminator="ClusterTestFailoverJobDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents the details for a test failover job of cluster.
 
     :ivar affected_object_details: The affected object properties like source server, source cloud,
@@ -6759,7 +7090,7 @@ class ClusterTestFailoverJobDetails(JobDetails, discriminator="ClusterTestFailov
         self.instance_type = "ClusterTestFailoverJobDetails"  # type: ignore
 
 
-class ClusterUnplannedFailoverInput(_Model):
+class ClusterUnplannedFailoverInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for unplanned cluster failover.
 
     :ivar properties: Unplanned failover input properties. Required.
@@ -6790,7 +7121,7 @@ class ClusterUnplannedFailoverInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterUnplannedFailoverInputProperties(_Model):
+class ClusterUnplannedFailoverInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for unplanned failover input properties.
 
     :ivar failover_direction: Failover direction.
@@ -6835,7 +7166,7 @@ class ClusterUnplannedFailoverInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComputeSizeErrorDetails(_Model):
+class ComputeSizeErrorDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the error used to indicate why the target compute size is not applicable.
 
     :ivar message: The error message.
@@ -6868,7 +7199,52 @@ class ComputeSizeErrorDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfigurationSettings(_Model):
+class ConfidentialDiskEncryptionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Confidential disk encryption info for an A2A CMK confidential VM managed disk. Specifies the
+    confidential disk encryption set ID for the replica disk used during replication and the
+    confidential disk encryption set ID for the target disk used after failover.
+
+    :ivar recovery_replica_confidential_disk_encryption_set_id: The Azure resource ID of the
+     confidential disk encryption set used for the replica disk. Applicable to CMK confidential VMs.
+    :vartype recovery_replica_confidential_disk_encryption_set_id: str
+    :ivar recovery_target_confidential_disk_encryption_set_id: The Azure resource ID of the
+     confidential disk encryption set used for the target disk after failover. Applicable to CMK
+     confidential VMs.
+    :vartype recovery_target_confidential_disk_encryption_set_id: str
+    """
+
+    recovery_replica_confidential_disk_encryption_set_id: Optional[str] = rest_field(
+        name="recoveryReplicaConfidentialDiskEncryptionSetId",
+        visibility=["read", "create", "update", "delete", "query"],
+    )
+    """The Azure resource ID of the confidential disk encryption set used for the replica disk.
+     Applicable to CMK confidential VMs."""
+    recovery_target_confidential_disk_encryption_set_id: Optional[str] = rest_field(
+        name="recoveryTargetConfidentialDiskEncryptionSetId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure resource ID of the confidential disk encryption set used for the target disk after
+     failover. Applicable to CMK confidential VMs."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recovery_replica_confidential_disk_encryption_set_id: Optional[str] = None,
+        recovery_target_confidential_disk_encryption_set_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConfigurationSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication provider specific settings.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -6904,7 +7280,7 @@ class ConfigurationSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfigureAlertRequest(_Model):
+class ConfigureAlertRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to configure alerts for the system.
 
     :ivar properties: The properties of a configure alert request.
@@ -6935,7 +7311,7 @@ class ConfigureAlertRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfigureAlertRequestProperties(_Model):
+class ConfigureAlertRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a configure alert request.
 
     :ivar send_to_owners: A value indicating whether to send email to subscription administrator.
@@ -6977,7 +7353,9 @@ class ConfigureAlertRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConsistencyCheckTaskDetails(TaskTypeDetails, discriminator="ConsistencyCheckTaskDetails"):
+class ConsistencyCheckTaskDetails(
+    TaskTypeDetails, discriminator="ConsistencyCheckTaskDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class contains monitoring details of all the inconsistent Protected Entities in Vmm.
 
     :ivar vm_details: The list of inconsistent Vm details.
@@ -7014,7 +7392,7 @@ class ConsistencyCheckTaskDetails(TaskTypeDetails, discriminator="ConsistencyChe
         self.instance_type = "ConsistencyCheckTaskDetails"  # type: ignore
 
 
-class CreateNetworkMappingInput(_Model):
+class CreateNetworkMappingInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Create network mappings input.
 
     :ivar properties: Input properties for creating network mapping. Required.
@@ -7045,7 +7423,7 @@ class CreateNetworkMappingInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateNetworkMappingInputProperties(_Model):
+class CreateNetworkMappingInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common input details for network mapping operation.
 
     :ivar recovery_fabric_name: Recovery fabric Name.
@@ -7090,7 +7468,7 @@ class CreateNetworkMappingInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreatePolicyInput(_Model):
+class CreatePolicyInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protection Policy input.
 
     :ivar properties: Policy creation properties.
@@ -7121,7 +7499,7 @@ class CreatePolicyInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreatePolicyInputProperties(_Model):
+class CreatePolicyInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy creation properties.
 
     :ivar provider_specific_input: The ReplicationProviderSettings.
@@ -7152,7 +7530,7 @@ class CreatePolicyInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateProtectionContainerInput(_Model):
+class CreateProtectionContainerInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Create protection container input.
 
     :ivar properties: Create protection container input properties.
@@ -7183,7 +7561,7 @@ class CreateProtectionContainerInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateProtectionContainerInputProperties(_Model):
+class CreateProtectionContainerInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Create protection container input properties.
 
     :ivar provider_specific_input: Provider specific inputs for container creation.
@@ -7214,7 +7592,7 @@ class CreateProtectionContainerInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateProtectionContainerMappingInput(_Model):
+class CreateProtectionContainerMappingInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configure pairing input.
 
     :ivar properties: Configure protection input properties.
@@ -7245,7 +7623,9 @@ class CreateProtectionContainerMappingInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateProtectionContainerMappingInputProperties(_Model):  # pylint: disable=name-too-long
+class CreateProtectionContainerMappingInputProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Configure pairing input properties.
 
     :ivar target_protection_container_id: The target unique protection container name.
@@ -7288,7 +7668,7 @@ class CreateProtectionContainerMappingInputProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class CreateProtectionIntentInput(_Model):
+class CreateProtectionIntentInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Create protection intent input.
 
     :ivar properties: Create protection intent input properties.
@@ -7319,7 +7699,7 @@ class CreateProtectionIntentInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateProtectionIntentProperties(_Model):
+class CreateProtectionIntentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Create protection intent input properties.
 
     :ivar provider_specific_details: The ReplicationProviderInput. For A2A provider, it will be
@@ -7352,7 +7732,7 @@ class CreateProtectionIntentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateRecoveryPlanInput(_Model):
+class CreateRecoveryPlanInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Create recovery plan input class.
 
     :ivar properties: Recovery plan creation properties. Required.
@@ -7383,7 +7763,7 @@ class CreateRecoveryPlanInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateRecoveryPlanInputProperties(_Model):
+class CreateRecoveryPlanInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan creation properties.
 
     :ivar primary_fabric_id: The primary fabric Id. Required.
@@ -7485,7 +7865,7 @@ class CurrentJobDetails(_Model):
     """The start time of the job."""
 
 
-class CurrentScenarioDetails(_Model):
+class CurrentScenarioDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Current scenario details of the protected entity.
 
     :ivar scenario_name: Scenario name.
@@ -7527,7 +7907,7 @@ class CurrentScenarioDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataStore(_Model):
+class DataStore(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The datastore details of the MT.
 
     :ivar symbolic_name: The symbolic name of data store.
@@ -7597,7 +7977,7 @@ class DataStoreUtilizationDetails(_Model):
     """The datastore name."""
 
 
-class DisableProtectionInput(_Model):
+class DisableProtectionInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disable protection input.
 
     :ivar properties: Disable protection input properties. Required.
@@ -7628,7 +8008,7 @@ class DisableProtectionInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DisableProtectionInputProperties(_Model):
+class DisableProtectionInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disable protection input properties.
 
     :ivar disable_protection_reason: Disable protection reason. It can have values
@@ -7669,7 +8049,7 @@ class DisableProtectionInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DisableProtectionProviderSpecificInput(_Model):
+class DisableProtectionProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disable protection provider specific input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -7703,7 +8083,7 @@ class DisableProtectionProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiscoverProtectableItemRequest(_Model):
+class DiscoverProtectableItemRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to add a physical machine as a protectable item in a container.
 
     :ivar properties: The properties of a discover protectable item request.
@@ -7734,7 +8114,7 @@ class DiscoverProtectableItemRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiscoverProtectableItemRequestProperties(_Model):
+class DiscoverProtectableItemRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Discover protectable item properties.
 
     :ivar friendly_name: The friendly name of the physical machine.
@@ -7774,7 +8154,7 @@ class DiscoverProtectableItemRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskDetails(_Model):
+class DiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Onprem disk details data.
 
     :ivar max_size_mb: The hard disk max size in MB.
@@ -7819,7 +8199,7 @@ class DiskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskEncryptionInfo(_Model):
+class DiskEncryptionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery disk encryption info (BEK and KEK).
 
     :ivar disk_encryption_key_info: The recovery KeyVault reference for secret.
@@ -7858,7 +8238,7 @@ class DiskEncryptionInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskEncryptionKeyInfo(_Model):
+class DiskEncryptionKeyInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk Encryption Key Information (BitLocker Encryption Key (BEK) on Windows).
 
     :ivar secret_identifier: The secret url / identifier.
@@ -7895,7 +8275,7 @@ class DiskEncryptionKeyInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskVolumeDetails(_Model):
+class DiskVolumeDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume details.
 
     :ivar label: The volume label.
@@ -7928,7 +8308,7 @@ class DiskVolumeDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Display(_Model):
+class Display(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the localized display information for this particular operation / action. These value
     will be used by several clients for (1) custom role definitions for RBAC; (2) complex query
     filters for the event service; and (3) audit history / records for management operations.
@@ -8051,7 +8431,7 @@ class DraDetails(_Model):
     """The count of protected items which are protected in reverse direction."""
 
 
-class EnableMigrationInput(_Model):
+class EnableMigrationInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enable migration input.
 
     :ivar properties: Enable migration input properties. Required.
@@ -8082,7 +8462,7 @@ class EnableMigrationInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnableMigrationInputProperties(_Model):
+class EnableMigrationInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enable migration input properties.
 
     :ivar policy_id: The policy Id. Required.
@@ -8118,7 +8498,7 @@ class EnableMigrationInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnableMigrationProviderSpecificInput(_Model):
+class EnableMigrationProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enable migration provider specific input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8152,7 +8532,7 @@ class EnableMigrationProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnableProtectionInput(_Model):
+class EnableProtectionInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enable protection input.
 
     :ivar properties: Enable protection input properties.
@@ -8183,7 +8563,7 @@ class EnableProtectionInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnableProtectionInputProperties(_Model):
+class EnableProtectionInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enable protection input properties.
 
     :ivar policy_id: The Policy Id.
@@ -8230,7 +8610,7 @@ class EnableProtectionInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncryptionDetails(_Model):
+class EncryptionDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encryption details for the fabric.
 
     :ivar kek_state: The key encryption key state for the Vmm.
@@ -8317,7 +8697,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -8345,7 +8725,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Event(ProxyResource):
+class Event(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Implements the Event class.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8391,7 +8771,7 @@ class Event(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class EventProperties(_Model):
+class EventProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a monitoring event.
 
     :ivar event_code: The Id of the monitoring event.
@@ -8486,7 +8866,7 @@ class EventProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventSpecificDetails(_Model):
+class EventSpecificDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model class for event specific details for an event.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8521,7 +8901,7 @@ class EventSpecificDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionProfileCustomDetails(_Model):
+class ProtectionProfileCustomDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protection Profile custom input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8555,7 +8935,9 @@ class ProtectionProfileCustomDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExistingProtectionProfile(ProtectionProfileCustomDetails, discriminator="Existing"):
+class ExistingProtectionProfile(
+    ProtectionProfileCustomDetails, discriminator="Existing"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Existing storage account input.
 
     :ivar protection_profile_id: The protection profile Arm Id. Throw error, if resource does not
@@ -8591,7 +8973,7 @@ class ExistingProtectionProfile(ProtectionProfileCustomDetails, discriminator="E
         self.resource_type = "Existing"  # type: ignore
 
 
-class RecoveryAvailabilitySetCustomDetails(_Model):
+class RecoveryAvailabilitySetCustomDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery Availability Set custom input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8625,7 +9007,9 @@ class RecoveryAvailabilitySetCustomDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExistingRecoveryAvailabilitySet(RecoveryAvailabilitySetCustomDetails, discriminator="Existing"):
+class ExistingRecoveryAvailabilitySet(
+    RecoveryAvailabilitySetCustomDetails, discriminator="Existing"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Existing recovery availability set input.
 
     :ivar recovery_availability_set_id: The recovery availability set Id. Will throw error, if
@@ -8661,7 +9045,9 @@ class ExistingRecoveryAvailabilitySet(RecoveryAvailabilitySetCustomDetails, disc
         self.resource_type = "Existing"  # type: ignore
 
 
-class RecoveryProximityPlacementGroupCustomDetails(_Model):  # pylint: disable=name-too-long
+class RecoveryProximityPlacementGroupCustomDetails(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Recovery Proximity placement group custom input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8695,7 +9081,9 @@ class RecoveryProximityPlacementGroupCustomDetails(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class ExistingRecoveryProximityPlacementGroup(RecoveryProximityPlacementGroupCustomDetails, discriminator="Existing"):
+class ExistingRecoveryProximityPlacementGroup(
+    RecoveryProximityPlacementGroupCustomDetails, discriminator="Existing"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Existing recovery proximity placement group input.
 
     :ivar recovery_proximity_placement_group_id: The recovery proximity placement group Id. Will
@@ -8731,7 +9119,7 @@ class ExistingRecoveryProximityPlacementGroup(RecoveryProximityPlacementGroupCus
         self.resource_type = "Existing"  # type: ignore
 
 
-class RecoveryResourceGroupCustomDetails(_Model):
+class RecoveryResourceGroupCustomDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery Resource Group custom input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8765,7 +9153,9 @@ class RecoveryResourceGroupCustomDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExistingRecoveryResourceGroup(RecoveryResourceGroupCustomDetails, discriminator="Existing"):
+class ExistingRecoveryResourceGroup(
+    RecoveryResourceGroupCustomDetails, discriminator="Existing"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Existing recovery resource group input.
 
     :ivar recovery_resource_group_id: The recovery resource group Id. Valid for V2 scenarios.
@@ -8800,7 +9190,7 @@ class ExistingRecoveryResourceGroup(RecoveryResourceGroupCustomDetails, discrimi
         self.resource_type = "Existing"  # type: ignore
 
 
-class RecoveryVirtualNetworkCustomDetails(_Model):
+class RecoveryVirtualNetworkCustomDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery Virtual network custom input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8834,7 +9224,9 @@ class RecoveryVirtualNetworkCustomDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExistingRecoveryVirtualNetwork(RecoveryVirtualNetworkCustomDetails, discriminator="Existing"):
+class ExistingRecoveryVirtualNetwork(
+    RecoveryVirtualNetworkCustomDetails, discriminator="Existing"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Existing recovery virtual network input.
 
     :ivar recovery_virtual_network_id: The recovery virtual network Id. Will throw error, if
@@ -8877,7 +9269,7 @@ class ExistingRecoveryVirtualNetwork(RecoveryVirtualNetworkCustomDetails, discri
         self.resource_type = "Existing"  # type: ignore
 
 
-class StorageAccountCustomDetails(_Model):
+class StorageAccountCustomDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage account custom input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8911,7 +9303,9 @@ class StorageAccountCustomDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExistingStorageAccount(StorageAccountCustomDetails, discriminator="Existing"):
+class ExistingStorageAccount(
+    StorageAccountCustomDetails, discriminator="Existing"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Existing storage account input.
 
     :ivar azure_storage_account_id: The storage account Arm Id. Throw error, if resource does not
@@ -8947,7 +9341,9 @@ class ExistingStorageAccount(StorageAccountCustomDetails, discriminator="Existin
         self.resource_type = "Existing"  # type: ignore
 
 
-class ExportJobDetails(JobDetails, discriminator="ExportJobDetails"):
+class ExportJobDetails(
+    JobDetails, discriminator="ExportJobDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents details for export jobs workflow.
 
     :ivar affected_object_details: The affected object properties like source server, source cloud,
@@ -8991,7 +9387,7 @@ class ExportJobDetails(JobDetails, discriminator="ExportJobDetails"):
         self.instance_type = "ExportJobDetails"  # type: ignore
 
 
-class ExtendedLocation(_Model):
+class ExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Extended location of the resource.
 
     :ivar name: The name of the extended location. Required.
@@ -9026,7 +9422,7 @@ class ExtendedLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Fabric(ProxyResource):
+class Fabric(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fabric definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9072,7 +9468,7 @@ class Fabric(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class FabricCreationInput(_Model):
+class FabricCreationInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Site details provided during the time of site creation.
 
     :ivar properties: Fabric creation input.
@@ -9103,7 +9499,7 @@ class FabricCreationInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FabricCreationInputProperties(_Model):
+class FabricCreationInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of site details provided during the time of site creation.
 
     :ivar custom_details: Fabric provider specific creation input.
@@ -9134,7 +9530,7 @@ class FabricCreationInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FabricProperties(_Model):
+class FabricProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fabric properties.
 
     :ivar friendly_name: Friendly name of the fabric.
@@ -9211,7 +9607,9 @@ class FabricProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobTaskDetails(TaskTypeDetails, discriminator="JobTaskDetails"):
+class JobTaskDetails(
+    TaskTypeDetails, discriminator="JobTaskDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents a task which is actually a workflow so that one can navigate to its
     individual drill down.
 
@@ -9251,7 +9649,9 @@ class JobTaskDetails(TaskTypeDetails, discriminator="JobTaskDetails"):
         self.instance_type = "JobTaskDetails"  # type: ignore
 
 
-class FabricReplicationGroupTaskDetails(JobTaskDetails, discriminator="FabricReplicationGroupTaskDetails"):
+class FabricReplicationGroupTaskDetails(
+    JobTaskDetails, discriminator="FabricReplicationGroupTaskDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents the fabric replication group task details.
 
     :ivar job_task: The job entity.
@@ -9297,7 +9697,9 @@ class FabricReplicationGroupTaskDetails(JobTaskDetails, discriminator="FabricRep
         self.instance_type = "FabricReplicationGroupTaskDetails"  # type: ignore
 
 
-class FailoverJobDetails(JobDetails, discriminator="FailoverJobDetails"):
+class FailoverJobDetails(
+    JobDetails, discriminator="FailoverJobDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents the details for a failover job.
 
     :ivar affected_object_details: The affected object properties like source server, source cloud,
@@ -9339,7 +9741,7 @@ class FailoverJobDetails(JobDetails, discriminator="FailoverJobDetails"):
         self.instance_type = "FailoverJobDetails"  # type: ignore
 
 
-class FailoverProcessServerRequest(_Model):
+class FailoverProcessServerRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to failover a process server.
 
     :ivar properties: The properties of the PS Failover request.
@@ -9370,7 +9772,7 @@ class FailoverProcessServerRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FailoverProcessServerRequestProperties(_Model):
+class FailoverProcessServerRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the Failover Process Server request.
 
     :ivar container_name: The container identifier.
@@ -9428,7 +9830,7 @@ class FailoverProcessServerRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FailoverReplicationProtectedItemDetails(_Model):
+class FailoverReplicationProtectedItemDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Failover details for a replication protected item.
 
     :ivar name: The name.
@@ -9550,7 +9952,7 @@ class GatewayOperationDetails(_Model):
     """A value indicating the VMware read throughput in bytes per second."""
 
 
-class GroupTaskDetails(_Model):
+class GroupTaskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents the group task details when parent child relationship exists in the drill
     down.
 
@@ -9592,7 +9994,7 @@ class GroupTaskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthError(_Model):
+class HealthError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Health Error.
 
     :ivar inner_health_errors: The inner health errors. HealthError having a list of HealthError as
@@ -9724,7 +10126,7 @@ class HealthError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthErrorSummary(_Model):
+class HealthErrorSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """class to define the summary of the health error details.
 
     :ivar summary_code: The code of the health error.
@@ -9827,7 +10229,9 @@ class HyperVHostDetails(_Model):
     """The Mars agent version."""
 
 
-class HyperVReplica2012EventDetails(EventProviderSpecificDetails, discriminator="HyperVReplica2012"):
+class HyperVReplica2012EventDetails(
+    EventProviderSpecificDetails, discriminator="HyperVReplica2012"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model class for event details of a HyperVReplica E2E event.
 
     :ivar container_name: The container friendly name.
@@ -9885,7 +10289,9 @@ class HyperVReplica2012EventDetails(EventProviderSpecificDetails, discriminator=
         self.instance_type = "HyperVReplica2012"  # type: ignore
 
 
-class HyperVReplica2012R2EventDetails(EventProviderSpecificDetails, discriminator="HyperVReplica2012R2"):
+class HyperVReplica2012R2EventDetails(
+    EventProviderSpecificDetails, discriminator="HyperVReplica2012R2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model class for event details of a HyperVReplica blue E2E event.
 
     :ivar container_name: The container friendly name.
@@ -9945,7 +10351,7 @@ class HyperVReplica2012R2EventDetails(EventProviderSpecificDetails, discriminato
 
 class HyperVReplicaAzureApplyRecoveryPointInput(
     ApplyRecoveryPointProviderSpecificInput, discriminator="HyperVReplicaAzure"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ApplyRecoveryPoint input specific to HyperVReplicaAzure provider.
 
     :ivar primary_kek_certificate_pfx: The primary kek certificate pfx.
@@ -9987,7 +10393,7 @@ class HyperVReplicaAzureApplyRecoveryPointInput(
         self.instance_type = "HyperVReplicaAzure"  # type: ignore
 
 
-class HyperVReplicaAzureDiskInputDetails(_Model):
+class HyperVReplicaAzureDiskInputDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk input details.
 
     :ivar disk_id: The DiskId.
@@ -10066,7 +10472,7 @@ class HyperVReplicaAzureDiskInputDetails(_Model):
 
 class HyperVReplicaAzureEnableProtectionInput(
     EnableProtectionProviderSpecificInput, discriminator="HyperVReplicaAzure"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HyperVReplicaAzure specific enable protection input.
 
     :ivar hv_host_vm_id: The Hyper-V host VM Id.
@@ -10332,7 +10738,9 @@ class HyperVReplicaAzureEnableProtectionInput(
         self.instance_type = "HyperVReplicaAzure"  # type: ignore
 
 
-class HyperVReplicaAzureEventDetails(EventProviderSpecificDetails, discriminator="HyperVReplicaAzure"):
+class HyperVReplicaAzureEventDetails(
+    EventProviderSpecificDetails, discriminator="HyperVReplicaAzure"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model class for event details of a HyperVReplica E2A event.
 
     :ivar container_name: The container friendly name.
@@ -10383,7 +10791,9 @@ class HyperVReplicaAzureEventDetails(EventProviderSpecificDetails, discriminator
         self.instance_type = "HyperVReplicaAzure"  # type: ignore
 
 
-class PlannedFailoverProviderSpecificFailoverInput(_Model):  # pylint: disable=name-too-long
+class PlannedFailoverProviderSpecificFailoverInput(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Provider specific failover input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -10420,7 +10830,7 @@ class PlannedFailoverProviderSpecificFailoverInput(_Model):  # pylint: disable=n
 
 class HyperVReplicaAzureFailbackProviderInput(
     PlannedFailoverProviderSpecificFailoverInput, discriminator="HyperVReplicaAzureFailback"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HyperVReplicaAzureFailback specific planned failover input.
 
     :ivar data_sync_option: Data sync option.
@@ -10469,7 +10879,7 @@ class HyperVReplicaAzureFailbackProviderInput(
         self.instance_type = "HyperVReplicaAzureFailback"  # type: ignore
 
 
-class HyperVReplicaAzureManagedDiskDetails(_Model):
+class HyperVReplicaAzureManagedDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hyper-V Managed disk details.
 
     :ivar disk_id: The disk Id.
@@ -10556,7 +10966,7 @@ class HyperVReplicaAzureManagedDiskDetails(_Model):
 
 class HyperVReplicaAzurePlannedFailoverProviderInput(
     PlannedFailoverProviderSpecificFailoverInput, discriminator="HyperVReplicaAzure"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """HyperVReplicaAzure specific planned failover input.
 
     :ivar primary_kek_certificate_pfx: Primary kek certificate pfx.
@@ -10621,7 +11031,9 @@ class HyperVReplicaAzurePlannedFailoverProviderInput(
         self.instance_type = "HyperVReplicaAzure"  # type: ignore
 
 
-class HyperVReplicaAzurePolicyDetails(PolicyProviderSpecificDetails, discriminator="HyperVReplicaAzure"):
+class HyperVReplicaAzurePolicyDetails(
+    PolicyProviderSpecificDetails, discriminator="HyperVReplicaAzure"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hyper-V Replica Azure specific protection profile details.
 
     :ivar recovery_point_history_duration_in_hours: The duration (in hours) to which point the
@@ -10697,7 +11109,9 @@ class HyperVReplicaAzurePolicyDetails(PolicyProviderSpecificDetails, discriminat
         self.instance_type = "HyperVReplicaAzure"  # type: ignore
 
 
-class HyperVReplicaAzurePolicyInput(PolicyProviderSpecificInput, discriminator="HyperVReplicaAzure"):
+class HyperVReplicaAzurePolicyInput(
+    PolicyProviderSpecificInput, discriminator="HyperVReplicaAzure"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hyper-V Replica Azure specific input for creating a protection profile.
 
     :ivar recovery_point_history_duration: The duration (in hours) to which point the recovery
@@ -10766,7 +11180,9 @@ class HyperVReplicaAzurePolicyInput(PolicyProviderSpecificInput, discriminator="
         self.instance_type = "HyperVReplicaAzure"  # type: ignore
 
 
-class HyperVReplicaAzureReplicationDetails(ReplicationProviderSpecificSettings, discriminator="HyperVReplicaAzure"):
+class HyperVReplicaAzureReplicationDetails(
+    ReplicationProviderSpecificSettings, discriminator="HyperVReplicaAzure"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hyper V Replica Azure provider specific settings.
 
     :ivar azure_vm_disk_details: Azure VM Disk details.
@@ -11064,7 +11480,9 @@ class HyperVReplicaAzureReplicationDetails(ReplicationProviderSpecificSettings, 
         self.instance_type = "HyperVReplicaAzure"  # type: ignore
 
 
-class HyperVReplicaAzureReprotectInput(ReverseReplicationProviderSpecificInput, discriminator="HyperVReplicaAzure"):
+class HyperVReplicaAzureReprotectInput(
+    ReverseReplicationProviderSpecificInput, discriminator="HyperVReplicaAzure"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure specific reprotect input.
 
     :ivar hv_host_vm_id: The Hyper-V host Vm Id.
@@ -11128,7 +11546,9 @@ class HyperVReplicaAzureReprotectInput(ReverseReplicationProviderSpecificInput, 
         self.instance_type = "HyperVReplicaAzure"  # type: ignore
 
 
-class HyperVReplicaAzureTestFailoverInput(TestFailoverProviderSpecificInput, discriminator="HyperVReplicaAzure"):
+class HyperVReplicaAzureTestFailoverInput(
+    TestFailoverProviderSpecificInput, discriminator="HyperVReplicaAzure"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HvrA provider specific input for test failover.
 
     :ivar primary_kek_certificate_pfx: Primary kek certificate pfx.
@@ -11188,7 +11608,7 @@ class HyperVReplicaAzureTestFailoverInput(TestFailoverProviderSpecificInput, dis
 
 class HyperVReplicaAzureUnplannedFailoverInput(
     UnplannedFailoverProviderSpecificInput, discriminator="HyperVReplicaAzure"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HvrA provider specific input for unplanned failover.
 
     :ivar primary_kek_certificate_pfx: Primary kek certificate pfx.
@@ -11241,7 +11661,7 @@ class HyperVReplicaAzureUnplannedFailoverInput(
 
 class HyperVReplicaAzureUpdateReplicationProtectedItemInput(
     UpdateReplicationProtectedItemProviderInput, discriminator="HyperVReplicaAzure"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """HyperV replica Azure input to update replication protected item.
 
     :ivar recovery_azure_v1_resource_group_id: The recovery Azure resource group Id for classic
@@ -11377,7 +11797,9 @@ class HyperVReplicaAzureUpdateReplicationProtectedItemInput(
         self.instance_type = "HyperVReplicaAzure"  # type: ignore
 
 
-class HyperVReplicaBaseEventDetails(EventProviderSpecificDetails, discriminator="HyperVReplicaBaseEventDetails"):
+class HyperVReplicaBaseEventDetails(
+    EventProviderSpecificDetails, discriminator="HyperVReplicaBaseEventDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Abstract model class for event details of a HyperVReplica E2E event.
 
     :ivar container_name: The container friendly name.
@@ -11435,7 +11857,9 @@ class HyperVReplicaBaseEventDetails(EventProviderSpecificDetails, discriminator=
         self.instance_type = "HyperVReplicaBaseEventDetails"  # type: ignore
 
 
-class HyperVReplicaBasePolicyDetails(PolicyProviderSpecificDetails, discriminator="HyperVReplicaBasePolicyDetails"):
+class HyperVReplicaBasePolicyDetails(
+    PolicyProviderSpecificDetails, discriminator="HyperVReplicaBasePolicyDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for HyperVReplica policy details.
 
     :ivar recovery_points: A value indicating the number of recovery points.
@@ -11538,7 +11962,7 @@ class HyperVReplicaBasePolicyDetails(PolicyProviderSpecificDetails, discriminato
 
 class HyperVReplicaBaseReplicationDetails(
     ReplicationProviderSpecificSettings, discriminator="HyperVReplicaBaseReplicationDetails"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hyper V replica provider specific settings base class.
 
     :ivar last_replicated_time: The Last replication time.
@@ -11615,7 +12039,9 @@ class HyperVReplicaBaseReplicationDetails(
         self.instance_type = "HyperVReplicaBaseReplicationDetails"  # type: ignore
 
 
-class HyperVReplicaBluePolicyDetails(PolicyProviderSpecificDetails, discriminator="HyperVReplica2012R2"):
+class HyperVReplicaBluePolicyDetails(
+    PolicyProviderSpecificDetails, discriminator="HyperVReplica2012R2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hyper-V Replica Blue specific protection profile details.
 
     :ivar replication_frequency_in_seconds: A value indicating the replication interval.
@@ -11723,7 +12149,9 @@ class HyperVReplicaBluePolicyDetails(PolicyProviderSpecificDetails, discriminato
         self.instance_type = "HyperVReplica2012R2"  # type: ignore
 
 
-class HyperVReplicaPolicyInput(PolicyProviderSpecificInput, discriminator="HyperVReplica2012"):
+class HyperVReplicaPolicyInput(
+    PolicyProviderSpecificInput, discriminator="HyperVReplica2012"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hyper-V Replica specific policy Input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -11824,7 +12252,9 @@ class HyperVReplicaPolicyInput(PolicyProviderSpecificInput, discriminator="Hyper
         self.instance_type = "HyperVReplica2012"  # type: ignore
 
 
-class HyperVReplicaBluePolicyInput(HyperVReplicaPolicyInput, discriminator="HyperVReplica2012R2"):
+class HyperVReplicaBluePolicyInput(
+    HyperVReplicaPolicyInput, discriminator="HyperVReplica2012R2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HyperV Replica Blue policy input.
 
     :ivar recovery_points: A value indicating the number of recovery points.
@@ -11890,7 +12320,9 @@ class HyperVReplicaBluePolicyInput(HyperVReplicaPolicyInput, discriminator="Hype
         self.instance_type = "HyperVReplica2012R2"  # type: ignore
 
 
-class HyperVReplicaBlueReplicationDetails(ReplicationProviderSpecificSettings, discriminator="HyperVReplica2012R2"):
+class HyperVReplicaBlueReplicationDetails(
+    ReplicationProviderSpecificSettings, discriminator="HyperVReplica2012R2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HyperV replica 2012 R2 (Blue) replication details.
 
     :ivar last_replicated_time: The Last replication time.
@@ -11966,7 +12398,9 @@ class HyperVReplicaBlueReplicationDetails(ReplicationProviderSpecificSettings, d
         self.instance_type = "HyperVReplica2012R2"  # type: ignore
 
 
-class HyperVReplicaPolicyDetails(PolicyProviderSpecificDetails, discriminator="HyperVReplica2012"):
+class HyperVReplicaPolicyDetails(
+    PolicyProviderSpecificDetails, discriminator="HyperVReplica2012"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hyper-V Replica Blue specific protection profile details.
 
     :ivar recovery_points: A value indicating the number of recovery points.
@@ -12067,7 +12501,9 @@ class HyperVReplicaPolicyDetails(PolicyProviderSpecificDetails, discriminator="H
         self.instance_type = "HyperVReplica2012"  # type: ignore
 
 
-class HyperVReplicaReplicationDetails(ReplicationProviderSpecificSettings, discriminator="HyperVReplica2012"):
+class HyperVReplicaReplicationDetails(
+    ReplicationProviderSpecificSettings, discriminator="HyperVReplica2012"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HyperV replica 2012 replication details.
 
     :ivar last_replicated_time: The Last replication time.
@@ -12143,7 +12579,9 @@ class HyperVReplicaReplicationDetails(ReplicationProviderSpecificSettings, discr
         self.instance_type = "HyperVReplica2012"  # type: ignore
 
 
-class HyperVSiteDetails(FabricSpecificDetails, discriminator="HyperVSite"):
+class HyperVSiteDetails(
+    FabricSpecificDetails, discriminator="HyperVSite"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HyperVSite fabric specific details.
 
     :ivar hyper_v_hosts: The list of Hyper-V hosts associated with the fabric.
@@ -12179,7 +12617,9 @@ class HyperVSiteDetails(FabricSpecificDetails, discriminator="HyperVSite"):
         self.instance_type = "HyperVSite"  # type: ignore
 
 
-class HyperVVirtualMachineDetails(ConfigurationSettings, discriminator="HyperVVirtualMachine"):
+class HyperVVirtualMachineDetails(
+    ConfigurationSettings, discriminator="HyperVVirtualMachine"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Single Host fabric provider specific VM settings.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -12279,7 +12719,7 @@ class HyperVVirtualMachineDetails(ConfigurationSettings, discriminator="HyperVVi
         self.instance_type = "HyperVVirtualMachine"  # type: ignore
 
 
-class IdentityProviderDetails(_Model):
+class IdentityProviderDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity provider details.
 
     :ivar tenant_id: The tenant Id for the service principal with which the on-premise
@@ -12339,7 +12779,7 @@ class IdentityProviderDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentityProviderInput(_Model):
+class IdentityProviderInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity provider input.
 
     :ivar tenant_id: The tenant Id for the service principal with which the on-premise
@@ -12396,7 +12836,7 @@ class IdentityProviderInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InconsistentVmDetails(_Model):
+class InconsistentVmDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class stores the monitoring details for consistency check of inconsistent Protected
     Entity.
 
@@ -12442,7 +12882,7 @@ class InconsistentVmDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InitialReplicationDetails(_Model):
+class InitialReplicationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Initial replication details.
 
     :ivar initial_replication_type: Initial replication type.
@@ -12479,7 +12919,9 @@ class InitialReplicationDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InlineWorkflowTaskDetails(GroupTaskDetails, discriminator="InlineWorkflowTaskDetails"):
+class InlineWorkflowTaskDetails(
+    GroupTaskDetails, discriminator="InlineWorkflowTaskDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents the inline workflow task details.
 
     :ivar child_tasks: The child tasks.
@@ -12518,7 +12960,7 @@ class InlineWorkflowTaskDetails(GroupTaskDetails, discriminator="InlineWorkflowT
         self.instance_type = "InlineWorkflowTaskDetails"  # type: ignore
 
 
-class InMageAgentDetails(_Model):
+class InMageAgentDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of the InMage agent.
 
     :ivar agent_version: The agent version.
@@ -12597,7 +13039,7 @@ class InMageAzureV2ApplyRecoveryPointInput(ApplyRecoveryPointProviderSpecificInp
         self.instance_type = "InMageAzureV2"  # type: ignore
 
 
-class InMageAzureV2DiskInputDetails(_Model):
+class InMageAzureV2DiskInputDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk input details.
 
     :ivar disk_id: The DiskId.
@@ -12648,7 +13090,9 @@ class InMageAzureV2DiskInputDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InMageAzureV2EnableProtectionInput(EnableProtectionProviderSpecificInput, discriminator="InMageAzureV2"):
+class InMageAzureV2EnableProtectionInput(
+    EnableProtectionProviderSpecificInput, discriminator="InMageAzureV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMware Azure specific enable protection input.
 
     :ivar master_target_id: The Master target Id.
@@ -12872,7 +13316,9 @@ class InMageAzureV2EnableProtectionInput(EnableProtectionProviderSpecificInput, 
         self.instance_type = "InMageAzureV2"  # type: ignore
 
 
-class InMageAzureV2EventDetails(EventProviderSpecificDetails, discriminator="InMageAzureV2"):
+class InMageAzureV2EventDetails(
+    EventProviderSpecificDetails, discriminator="InMageAzureV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model class for event details of a VMwareAzureV2 event.
 
     :ivar event_type: InMage Event type. Takes one of the values of
@@ -12940,7 +13386,7 @@ class InMageAzureV2EventDetails(EventProviderSpecificDetails, discriminator="InM
         self.instance_type = "InMageAzureV2"  # type: ignore
 
 
-class InMageAzureV2ManagedDiskDetails(_Model):
+class InMageAzureV2ManagedDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageAzureV2 Managed disk details.
 
     :ivar disk_id: The disk id.
@@ -12996,7 +13442,9 @@ class InMageAzureV2ManagedDiskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InMageAzureV2PolicyDetails(PolicyProviderSpecificDetails, discriminator="InMageAzureV2"):
+class InMageAzureV2PolicyDetails(
+    PolicyProviderSpecificDetails, discriminator="InMageAzureV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMage Azure v2 specific protection profile details.
 
     :ivar crash_consistent_frequency_in_minutes: The crash consistent snapshot frequency in
@@ -13063,7 +13511,9 @@ class InMageAzureV2PolicyDetails(PolicyProviderSpecificDetails, discriminator="I
         self.instance_type = "InMageAzureV2"  # type: ignore
 
 
-class InMageAzureV2PolicyInput(PolicyProviderSpecificInput, discriminator="InMageAzureV2"):
+class InMageAzureV2PolicyInput(
+    PolicyProviderSpecificInput, discriminator="InMageAzureV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMWare Azure specific policy Input.
 
     :ivar recovery_point_threshold_in_minutes: The recovery point threshold in minutes.
@@ -13131,7 +13581,7 @@ class InMageAzureV2PolicyInput(PolicyProviderSpecificInput, discriminator="InMag
         self.instance_type = "InMageAzureV2"  # type: ignore
 
 
-class InMageAzureV2ProtectedDiskDetails(_Model):
+class InMageAzureV2ProtectedDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageAzureV2 protected disk details.
 
     :ivar disk_id: The disk id.
@@ -13313,7 +13763,9 @@ class InMageAzureV2ProtectedDiskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InMageAzureV2RecoveryPointDetails(ProviderSpecificRecoveryPointDetails, discriminator="InMageAzureV2"):
+class InMageAzureV2RecoveryPointDetails(
+    ProviderSpecificRecoveryPointDetails, discriminator="InMageAzureV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMage Azure V2 provider specific recovery point details.
 
     :ivar is_multi_vm_sync_point: A value indicating whether the recovery point is multi VM
@@ -13349,7 +13801,9 @@ class InMageAzureV2RecoveryPointDetails(ProviderSpecificRecoveryPointDetails, di
         self.instance_type = "InMageAzureV2"  # type: ignore
 
 
-class InMageAzureV2ReplicationDetails(ReplicationProviderSpecificSettings, discriminator="InMageAzureV2"):
+class InMageAzureV2ReplicationDetails(
+    ReplicationProviderSpecificSettings, discriminator="InMageAzureV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageAzureV2 provider specific settings.
 
     :ivar infrastructure_vm_id: The infrastructure VM Id.
@@ -13873,7 +14327,9 @@ class InMageAzureV2ReplicationDetails(ReplicationProviderSpecificSettings, discr
         self.instance_type = "InMageAzureV2"  # type: ignore
 
 
-class InMageAzureV2ReprotectInput(ReverseReplicationProviderSpecificInput, discriminator="InMageAzureV2"):
+class InMageAzureV2ReprotectInput(
+    ReverseReplicationProviderSpecificInput, discriminator="InMageAzureV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageAzureV2 specific provider input.
 
     :ivar master_target_id: The Master target Id.
@@ -14002,7 +14458,7 @@ class InMageAzureV2SwitchProviderDetails(_Model):
     """The target appliance Id."""
 
 
-class SwitchProviderSpecificInput(_Model):
+class SwitchProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provider specific switch provider input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -14036,7 +14492,9 @@ class SwitchProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InMageAzureV2SwitchProviderInput(SwitchProviderSpecificInput, discriminator="InMageAzureV2"):
+class InMageAzureV2SwitchProviderInput(
+    SwitchProviderSpecificInput, discriminator="InMageAzureV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provider specific input for InMageAzureV2 switch provider.
 
     :ivar target_vault_id: The target vault Id. Required.
@@ -14083,7 +14541,9 @@ class InMageAzureV2SwitchProviderInput(SwitchProviderSpecificInput, discriminato
         self.instance_type = "InMageAzureV2"  # type: ignore
 
 
-class InMageAzureV2TestFailoverInput(TestFailoverProviderSpecificInput, discriminator="InMageAzureV2"):
+class InMageAzureV2TestFailoverInput(
+    TestFailoverProviderSpecificInput, discriminator="InMageAzureV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageAzureV2 provider specific input for test failover.
 
     :ivar recovery_point_id: The recovery point id to be passed to test failover to a particular
@@ -14127,7 +14587,9 @@ class InMageAzureV2TestFailoverInput(TestFailoverProviderSpecificInput, discrimi
         self.instance_type = "InMageAzureV2"  # type: ignore
 
 
-class InMageAzureV2UnplannedFailoverInput(UnplannedFailoverProviderSpecificInput, discriminator="InMageAzureV2"):
+class InMageAzureV2UnplannedFailoverInput(
+    UnplannedFailoverProviderSpecificInput, discriminator="InMageAzureV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageAzureV2 provider specific input for unplanned failover.
 
     :ivar recovery_point_id: The recovery point id to be passed to failover to a particular
@@ -14173,7 +14635,7 @@ class InMageAzureV2UnplannedFailoverInput(UnplannedFailoverProviderSpecificInput
 
 class InMageAzureV2UpdateReplicationProtectedItemInput(
     UpdateReplicationProtectedItemProviderInput, discriminator="InMageAzureV2"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """InMage Azure V2 input to update replication protected item.
 
     :ivar recovery_azure_v1_resource_group_id: The recovery Azure resource group Id for classic
@@ -14277,7 +14739,9 @@ class InMageAzureV2UpdateReplicationProtectedItemInput(
         self.instance_type = "InMageAzureV2"  # type: ignore
 
 
-class InMageBasePolicyDetails(PolicyProviderSpecificDetails, discriminator="InMageBasePolicyDetails"):
+class InMageBasePolicyDetails(
+    PolicyProviderSpecificDetails, discriminator="InMageBasePolicyDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class for the policies of providers using InMage replication.
 
     :ivar recovery_point_threshold_in_minutes: The recovery point threshold in minutes.
@@ -14338,7 +14802,7 @@ class InMageBasePolicyDetails(PolicyProviderSpecificDetails, discriminator="InMa
 
 class InMageDisableProtectionProviderSpecificInput(
     DisableProtectionProviderSpecificInput, discriminator="InMage"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """InMage disable protection provider specific input.
 
     :ivar replica_vm_deletion_status: A value indicating whether the replica VM should be destroyed
@@ -14375,7 +14839,7 @@ class InMageDisableProtectionProviderSpecificInput(
         self.instance_type = "InMage"  # type: ignore
 
 
-class InMageDiskDetails(_Model):
+class InMageDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMware/Physical specific Disk Details.
 
     :ivar disk_id: The disk Id.
@@ -14434,7 +14898,7 @@ class InMageDiskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InMageDiskExclusionInput(_Model):
+class InMageDiskExclusionInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DiskExclusionInput when doing enable protection of virtual machine in InMage provider.
 
     :ivar volume_options: The volume label based option for disk exclusion.
@@ -14473,7 +14937,7 @@ class InMageDiskExclusionInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InMageDiskSignatureExclusionOptions(_Model):
+class InMageDiskSignatureExclusionOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Guest disk signature based disk exclusion option when doing enable protection of virtual
     machine in InMage provider.
 
@@ -14504,7 +14968,9 @@ class InMageDiskSignatureExclusionOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InMageEnableProtectionInput(EnableProtectionProviderSpecificInput, discriminator="InMage"):
+class InMageEnableProtectionInput(
+    EnableProtectionProviderSpecificInput, discriminator="InMage"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMware Azure specific enable protection input.
 
     :ivar vm_friendly_name: The VM Name.
@@ -14632,7 +15098,9 @@ class InMageFabricSwitchProviderBlockingErrorDetails(_Model):  # pylint: disable
     """The error tags."""
 
 
-class InMagePolicyDetails(PolicyProviderSpecificDetails, discriminator="InMage"):
+class InMagePolicyDetails(
+    PolicyProviderSpecificDetails, discriminator="InMage"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMage specific protection profile details.
 
     :ivar recovery_point_threshold_in_minutes: The recovery point threshold in minutes.
@@ -14690,7 +15158,9 @@ class InMagePolicyDetails(PolicyProviderSpecificDetails, discriminator="InMage")
         self.instance_type = "InMage"  # type: ignore
 
 
-class InMagePolicyInput(PolicyProviderSpecificInput, discriminator="InMage"):
+class InMagePolicyInput(
+    PolicyProviderSpecificInput, discriminator="InMage"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMWare Azure specific protection profile Input.
 
     :ivar recovery_point_threshold_in_minutes: The recovery point threshold in minutes.
@@ -14750,7 +15220,7 @@ class InMagePolicyInput(PolicyProviderSpecificInput, discriminator="InMage"):
         self.instance_type = "InMage"  # type: ignore
 
 
-class InMageProtectedDiskDetails(_Model):
+class InMageProtectedDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMage protected disk details.
 
     :ivar disk_id: The disk id.
@@ -14925,7 +15395,9 @@ class InMageProtectedDiskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InMageRcmAddDisksInput(AddDisksProviderSpecificInput, discriminator="InMageRcm"):
+class InMageRcmAddDisksInput(
+    AddDisksProviderSpecificInput, discriminator="InMageRcm"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm add disk(s) input.
 
     :ivar disks: The list of disk details. Required.
@@ -14958,7 +15430,9 @@ class InMageRcmAddDisksInput(AddDisksProviderSpecificInput, discriminator="InMag
         self.instance_type = "InMageRcm"  # type: ignore
 
 
-class InMageRcmAgentReinstallBlockingErrorDetails(_Model):  # pylint: disable=name-too-long
+class InMageRcmAgentReinstallBlockingErrorDetails(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """InMageRcm source agent reinstall blocking error details.
 
     :ivar error_code: error code.
@@ -15142,7 +15616,9 @@ class InMageRcmApplianceSpecificDetails(ApplianceSpecificDetails, discriminator=
         self.instance_type = "InMageRcm"  # type: ignore
 
 
-class InMageRcmApplyRecoveryPointInput(ApplyRecoveryPointProviderSpecificInput, discriminator="InMageRcm"):
+class InMageRcmApplyRecoveryPointInput(
+    ApplyRecoveryPointProviderSpecificInput, discriminator="InMageRcm"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ApplyRecoveryPoint input specific to InMageRcm provider.
 
     :ivar recovery_point_id: The recovery point Id. Required.
@@ -15238,7 +15714,7 @@ class InMageRcmDiscoveredProtectedVmDetails(_Model):
     """The last time when SDS information discovered in SRS."""
 
 
-class InMageRcmDiskInput(_Model):
+class InMageRcmDiskInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm disk input.
 
     :ivar disk_id: The disk Id. Required.
@@ -15250,6 +15726,8 @@ class InMageRcmDiskInput(_Model):
     :vartype disk_type: str or ~azure.mgmt.recoveryservicessiterecovery.models.DiskAccountType
     :ivar disk_encryption_set_id: The DiskEncryptionSet ARM Id.
     :vartype disk_encryption_set_id: str
+    :ivar confidential_disk_encryption_set_id: The ConfidentialDiskEncryptionSet ARM Id.
+    :vartype confidential_disk_encryption_set_id: str
     :ivar sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
     :vartype sector_size_in_bytes: int
     :ivar iops: The number of IOPS allowed for Premium V2 and Ultra disks.
@@ -15276,6 +15754,10 @@ class InMageRcmDiskInput(_Model):
         name="diskEncryptionSetId", visibility=["read", "create", "update", "delete", "query"]
     )
     """The DiskEncryptionSet ARM Id."""
+    confidential_disk_encryption_set_id: Optional[str] = rest_field(
+        name="confidentialDiskEncryptionSetId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ConfidentialDiskEncryptionSet ARM Id."""
     sector_size_in_bytes: Optional[int] = rest_field(
         name="sectorSizeInBytes", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -15299,6 +15781,7 @@ class InMageRcmDiskInput(_Model):
         log_storage_account_id: str,
         disk_type: Union[str, "_models.DiskAccountType"],
         disk_encryption_set_id: Optional[str] = None,
+        confidential_disk_encryption_set_id: Optional[str] = None,
         sector_size_in_bytes: Optional[int] = None,
         iops: Optional[int] = None,
         throughput_in_mbps: Optional[int] = None,
@@ -15316,7 +15799,7 @@ class InMageRcmDiskInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InMageRcmDisksDefaultInput(_Model):
+class InMageRcmDisksDefaultInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm disk input.
 
     :ivar log_storage_account_id: The log storage account ARM Id. Required.
@@ -15326,6 +15809,8 @@ class InMageRcmDisksDefaultInput(_Model):
     :vartype disk_type: str or ~azure.mgmt.recoveryservicessiterecovery.models.DiskAccountType
     :ivar disk_encryption_set_id: The DiskEncryptionSet ARM Id.
     :vartype disk_encryption_set_id: str
+    :ivar confidential_disk_encryption_set_id: The ConfidentialDiskEncryptionSet ARM Id.
+    :vartype confidential_disk_encryption_set_id: str
     :ivar sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
     :vartype sector_size_in_bytes: int
     :ivar iops: The number of IOPS allowed for Premium V2 and Ultra disks.
@@ -15350,6 +15835,10 @@ class InMageRcmDisksDefaultInput(_Model):
         name="diskEncryptionSetId", visibility=["read", "create", "update", "delete", "query"]
     )
     """The DiskEncryptionSet ARM Id."""
+    confidential_disk_encryption_set_id: Optional[str] = rest_field(
+        name="confidentialDiskEncryptionSetId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ConfidentialDiskEncryptionSet ARM Id."""
     sector_size_in_bytes: Optional[int] = rest_field(
         name="sectorSizeInBytes", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -15372,6 +15861,7 @@ class InMageRcmDisksDefaultInput(_Model):
         log_storage_account_id: str,
         disk_type: Union[str, "_models.DiskAccountType"],
         disk_encryption_set_id: Optional[str] = None,
+        confidential_disk_encryption_set_id: Optional[str] = None,
         sector_size_in_bytes: Optional[int] = None,
         iops: Optional[int] = None,
         throughput_in_mbps: Optional[int] = None,
@@ -15389,7 +15879,9 @@ class InMageRcmDisksDefaultInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InMageRcmEnableProtectionInput(EnableProtectionProviderSpecificInput, discriminator="InMageRcm"):
+class InMageRcmEnableProtectionInput(
+    EnableProtectionProviderSpecificInput, discriminator="InMageRcm"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm specific enable protection input.
 
     :ivar fabric_discovery_machine_id: The ARM Id of discovered machine. Required.
@@ -15459,6 +15951,9 @@ class InMageRcmEnableProtectionInput(EnableProtectionProviderSpecificInput, disc
      ~azure.mgmt.recoveryservicessiterecovery.models.SecurityProfileProperties
     :ivar target_capacity_reservation_group_id: The target capacity reservation group ARM Id.
     :vartype target_capacity_reservation_group_id: str
+    :ivar target_extended_location: The target extended location.
+    :vartype target_extended_location:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
     :ivar instance_type: The class type. Required. Default value is "InMageRcm".
     :vartype instance_type: str
     """
@@ -15573,6 +16068,10 @@ class InMageRcmEnableProtectionInput(EnableProtectionProviderSpecificInput, disc
         name="targetCapacityReservationGroupId", visibility=["read", "create", "update", "delete", "query"]
     )
     """The target capacity reservation group ARM Id."""
+    target_extended_location: Optional["_models.ExtendedLocation"] = rest_field(
+        name="targetExtendedLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target extended location."""
     instance_type: Literal["InMageRcm"] = rest_discriminator(name="instanceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The class type. Required. Default value is \"InMageRcm\"."""
 
@@ -15607,6 +16106,7 @@ class InMageRcmEnableProtectionInput(EnableProtectionProviderSpecificInput, disc
         user_selected_os_name: Optional[str] = None,
         target_vm_security_profile: Optional["_models.SecurityProfileProperties"] = None,
         target_capacity_reservation_group_id: Optional[str] = None,
+        target_extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
 
     @overload
@@ -15681,7 +16181,9 @@ class InMageRcmEventDetails(EventProviderSpecificDetails, discriminator="InMageR
         self.instance_type = "InMageRcm"  # type: ignore
 
 
-class InMageRcmFabricCreationInput(FabricSpecificCreationInput, discriminator="InMageRcm"):
+class InMageRcmFabricCreationInput(
+    FabricSpecificCreationInput, discriminator="InMageRcm"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm fabric provider specific settings.
 
     :ivar vmware_site_id: The ARM Id of the VMware site. Required.
@@ -15730,7 +16232,9 @@ class InMageRcmFabricCreationInput(FabricSpecificCreationInput, discriminator="I
         self.instance_type = "InMageRcm"  # type: ignore
 
 
-class InMageRcmFabricSpecificDetails(FabricSpecificDetails, discriminator="InMageRcm"):
+class InMageRcmFabricSpecificDetails(
+    FabricSpecificDetails, discriminator="InMageRcm"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm fabric specific details.
 
     :ivar vmware_site_id: The ARM Id of the VMware site.
@@ -16060,7 +16564,7 @@ class InMageRcmFailbackNicDetails(_Model):
 
 class InMageRcmFailbackPlannedFailoverProviderInput(
     PlannedFailoverProviderSpecificFailoverInput, discriminator="InMageRcmFailback"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Provider specific input for InMageRcmFailback failover.
 
     :ivar recovery_point_type: The recovery point type. Required. Known values are:
@@ -16098,7 +16602,9 @@ class InMageRcmFailbackPlannedFailoverProviderInput(
         self.instance_type = "InMageRcmFailback"  # type: ignore
 
 
-class InMageRcmFailbackPolicyCreationInput(PolicyProviderSpecificInput, discriminator="InMageRcmFailback"):
+class InMageRcmFailbackPolicyCreationInput(
+    PolicyProviderSpecificInput, discriminator="InMageRcmFailback"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcmFailback policy creation input.
 
     :ivar crash_consistent_frequency_in_minutes: The crash consistent snapshot frequency (in
@@ -16141,7 +16647,9 @@ class InMageRcmFailbackPolicyCreationInput(PolicyProviderSpecificInput, discrimi
         self.instance_type = "InMageRcmFailback"  # type: ignore
 
 
-class InMageRcmFailbackPolicyDetails(PolicyProviderSpecificDetails, discriminator="InMageRcmFailback"):
+class InMageRcmFailbackPolicyDetails(
+    PolicyProviderSpecificDetails, discriminator="InMageRcmFailback"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm failback specific policy details.
 
     :ivar app_consistent_frequency_in_minutes: The app consistent snapshot frequency in minutes.
@@ -16186,7 +16694,7 @@ class InMageRcmFailbackPolicyDetails(PolicyProviderSpecificDetails, discriminato
         self.instance_type = "InMageRcmFailback"  # type: ignore
 
 
-class InMageRcmFailbackProtectedDiskDetails(_Model):
+class InMageRcmFailbackProtectedDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcmFailback protected disk details.
 
     :ivar disk_id: The disk Id (reported by source agent).
@@ -16268,7 +16776,9 @@ class InMageRcmFailbackProtectedDiskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InMageRcmFailbackReplicationDetails(ReplicationProviderSpecificSettings, discriminator="InMageRcmFailback"):
+class InMageRcmFailbackReplicationDetails(
+    ReplicationProviderSpecificSettings, discriminator="InMageRcmFailback"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcmFailback provider specific details.
 
     :ivar internal_identifier: The virtual machine internal identifier.
@@ -16463,7 +16973,9 @@ class InMageRcmFailbackReplicationDetails(ReplicationProviderSpecificSettings, d
         self.instance_type = "InMageRcmFailback"  # type: ignore
 
 
-class InMageRcmFailbackReprotectInput(ReverseReplicationProviderSpecificInput, discriminator="InMageRcmFailback"):
+class InMageRcmFailbackReprotectInput(
+    ReverseReplicationProviderSpecificInput, discriminator="InMageRcmFailback"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcmFailback specific provider input.
 
     :ivar process_server_id: The process server Id. Required.
@@ -16591,7 +17103,7 @@ class InMageRcmLastAgentUpgradeErrorDetails(_Model):
     """The error tags."""
 
 
-class InMageRcmMobilityAgentDetails(_Model):
+class InMageRcmMobilityAgentDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm mobility agent details.
 
     :ivar version: The agent version.
@@ -16616,9 +17128,10 @@ class InMageRcmMobilityAgentDetails(_Model):
      ~azure.mgmt.recoveryservicessiterecovery.models.AgentUpgradeBlockedReason]
     :ivar is_upgradeable: A value indicating whether agent is upgradeable or not.
     :vartype is_upgradeable: str
-    :ivar agent_reinstall_state: The agent auto reinstall state.
-    :vartype agent_reinstall_state: list[str or
-     ~azure.mgmt.recoveryservicessiterecovery.models.MobilityAgentReinstallType]
+    :ivar agent_reinstall_state: The agent auto reinstall state. Known values are: "UserTriggered"
+     and "AutoTriggered".
+    :vartype agent_reinstall_state: str or
+     ~azure.mgmt.recoveryservicessiterecovery.models.MobilityAgentReinstallType
     :ivar last_agent_reinstall_type: The last agent reinstall type.
     :vartype last_agent_reinstall_type: str
     :ivar agent_reinstall_job_id: The agent reinstall job Id.
@@ -16677,10 +17190,10 @@ class InMageRcmMobilityAgentDetails(_Model):
     """The whether update is possible or not."""
     is_upgradeable: Optional[str] = rest_field(name="isUpgradeable", visibility=["read"])
     """A value indicating whether agent is upgradeable or not."""
-    agent_reinstall_state: Optional[list[Union[str, "_models.MobilityAgentReinstallType"]]] = rest_field(
+    agent_reinstall_state: Optional[Union[str, "_models.MobilityAgentReinstallType"]] = rest_field(
         name="agentReinstallState", visibility=["read"]
     )
-    """The agent auto reinstall state."""
+    """The agent auto reinstall state. Known values are: \"UserTriggered\" and \"AutoTriggered\"."""
     last_agent_reinstall_type: Optional[str] = rest_field(name="lastAgentReinstallType", visibility=["read"])
     """The last agent reinstall type."""
     agent_reinstall_job_id: Optional[str] = rest_field(name="agentReinstallJobId", visibility=["read"])
@@ -16745,7 +17258,7 @@ class InMageRcmMobilityAgentDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InMageRcmNicDetails(_Model):
+class InMageRcmNicDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm NIC details.
 
     :ivar nic_id: The NIC Id.
@@ -16858,7 +17371,7 @@ class InMageRcmNicDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InMageRcmNicInput(_Model):
+class InMageRcmNicInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm NIC input.
 
     :ivar nic_id: The NIC Id. Required.
@@ -16933,7 +17446,9 @@ class InMageRcmNicInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InMageRcmPolicyCreationInput(PolicyProviderSpecificInput, discriminator="InMageRcm"):
+class InMageRcmPolicyCreationInput(
+    PolicyProviderSpecificInput, discriminator="InMageRcm"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm policy creation input.
 
     :ivar recovery_point_history_in_minutes: The duration in minutes until which the recovery
@@ -16991,7 +17506,9 @@ class InMageRcmPolicyCreationInput(PolicyProviderSpecificInput, discriminator="I
         self.instance_type = "InMageRcm"  # type: ignore
 
 
-class InMageRcmPolicyDetails(PolicyProviderSpecificDetails, discriminator="InMageRcm"):
+class InMageRcmPolicyDetails(
+    PolicyProviderSpecificDetails, discriminator="InMageRcm"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm specific policy details.
 
     :ivar recovery_point_history_in_minutes: The duration in minutes until which the recovery
@@ -17050,7 +17567,7 @@ class InMageRcmPolicyDetails(PolicyProviderSpecificDetails, discriminator="InMag
         self.instance_type = "InMageRcm"  # type: ignore
 
 
-class InMageRcmProtectedDiskDetails(_Model):
+class InMageRcmProtectedDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm protected disk details.
 
     :ivar disk_id: The disk Id.
@@ -17068,6 +17585,8 @@ class InMageRcmProtectedDiskDetails(_Model):
     :vartype log_storage_account_id: str
     :ivar disk_encryption_set_id: The DiskEncryptionSet ARM Id.
     :vartype disk_encryption_set_id: str
+    :ivar confidential_disk_encryption_set_id: The ConfidentialDiskEncryptionSet ARM Id.
+    :vartype confidential_disk_encryption_set_id: str
     :ivar seed_managed_disk_id: The ARM Id of the seed managed disk.
     :vartype seed_managed_disk_id: str
     :ivar seed_blob_uri: The uri of the seed blob.
@@ -17115,6 +17634,10 @@ class InMageRcmProtectedDiskDetails(_Model):
     """The log storage account ARM Id."""
     disk_encryption_set_id: Optional[str] = rest_field(name="diskEncryptionSetId", visibility=["read"])
     """The DiskEncryptionSet ARM Id."""
+    confidential_disk_encryption_set_id: Optional[str] = rest_field(
+        name="confidentialDiskEncryptionSetId", visibility=["read"]
+    )
+    """The ConfidentialDiskEncryptionSet ARM Id."""
     seed_managed_disk_id: Optional[str] = rest_field(name="seedManagedDiskId", visibility=["read"])
     """The ARM Id of the seed managed disk."""
     seed_blob_uri: Optional[str] = rest_field(name="seedBlobUri", visibility=["read"])
@@ -17257,7 +17780,9 @@ class InMageRcmRecoveryPointDetails(ProviderSpecificRecoveryPointDetails, discri
         self.instance_type = "InMageRcm"  # type: ignore
 
 
-class InMageRcmReplicationDetails(ReplicationProviderSpecificSettings, discriminator="InMageRcm"):
+class InMageRcmReplicationDetails(
+    ReplicationProviderSpecificSettings, discriminator="InMageRcm"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm provider specific details.
 
     :ivar internal_identifier: The virtual machine internal identifier.
@@ -17307,6 +17832,9 @@ class InMageRcmReplicationDetails(ReplicationProviderSpecificSettings, discrimin
     :vartype target_availability_set_id: str
     :ivar target_availability_zone: The target availability zone.
     :vartype target_availability_zone: str
+    :ivar target_extended_location: The target extended location.
+    :vartype target_extended_location:
+     ~azure.mgmt.recoveryservicessiterecovery.models.ExtendedLocation
     :ivar target_proximity_placement_group_id: The target proximity placement group Id.
     :vartype target_proximity_placement_group_id: str
     :ivar target_boot_diagnostics_storage_account_id: The target boot diagnostics storage account
@@ -17483,6 +18011,10 @@ class InMageRcmReplicationDetails(ReplicationProviderSpecificSettings, discrimin
         name="targetAvailabilityZone", visibility=["read", "create", "update", "delete", "query"]
     )
     """The target availability zone."""
+    target_extended_location: Optional["_models.ExtendedLocation"] = rest_field(
+        name="targetExtendedLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target extended location."""
     target_proximity_placement_group_id: Optional[str] = rest_field(
         name="targetProximityPlacementGroupId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -17647,6 +18179,7 @@ class InMageRcmReplicationDetails(ReplicationProviderSpecificSettings, discrimin
         target_location: Optional[str] = None,
         target_availability_set_id: Optional[str] = None,
         target_availability_zone: Optional[str] = None,
+        target_extended_location: Optional["_models.ExtendedLocation"] = None,
         target_proximity_placement_group_id: Optional[str] = None,
         target_boot_diagnostics_storage_account_id: Optional[str] = None,
         target_network_id: Optional[str] = None,
@@ -17683,7 +18216,9 @@ class InMageRcmReplicationDetails(ReplicationProviderSpecificSettings, discrimin
         self.instance_type = "InMageRcm"  # type: ignore
 
 
-class InMageRcmReprotectInput(ReverseReplicationProviderSpecificInput, discriminator="InMageRcm"):
+class InMageRcmReprotectInput(
+    ReverseReplicationProviderSpecificInput, discriminator="InMageRcm"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm specific provider input.
 
     :ivar reprotect_agent_id: The reprotect agent Id. Required.
@@ -17785,7 +18320,9 @@ class InMageRcmSyncDetails(_Model):
     """Progress in percentage. Progress percentage is calculated based on processed bytes."""
 
 
-class InMageRcmTestFailoverInput(TestFailoverProviderSpecificInput, discriminator="InMageRcm"):
+class InMageRcmTestFailoverInput(
+    TestFailoverProviderSpecificInput, discriminator="InMageRcm"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm provider specific input for test failover.
 
     :ivar network_id: The test network Id.
@@ -17834,7 +18371,9 @@ class InMageRcmTestFailoverInput(TestFailoverProviderSpecificInput, discriminato
         self.instance_type = "InMageRcm"  # type: ignore
 
 
-class InMageRcmUnplannedFailoverInput(UnplannedFailoverProviderSpecificInput, discriminator="InMageRcm"):
+class InMageRcmUnplannedFailoverInput(
+    UnplannedFailoverProviderSpecificInput, discriminator="InMageRcm"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm provider specific input for unplanned failover.
 
     :ivar perform_shutdown: A value indicating whether VM is to be shutdown. Required.
@@ -17911,7 +18450,9 @@ class InMageRcmUnProtectedDiskDetails(_Model):
     """The disk capacity in bytes."""
 
 
-class UpdateApplianceForReplicationProtectedItemProviderSpecificInput(_Model):  # pylint: disable=name-too-long
+class UpdateApplianceForReplicationProtectedItemProviderSpecificInput(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Update replication protected item provider specific input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -17947,7 +18488,7 @@ class UpdateApplianceForReplicationProtectedItemProviderSpecificInput(_Model):  
 
 class InMageRcmUpdateApplianceForReplicationProtectedItemInput(
     UpdateApplianceForReplicationProtectedItemProviderSpecificInput, discriminator="InMageRcm"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """InMageRcm provider specific input to update appliance for replication protected item.
 
     :ivar run_as_account_id: The run as account Id.
@@ -17984,7 +18525,7 @@ class InMageRcmUpdateApplianceForReplicationProtectedItemInput(
 
 class InMageRcmUpdateContainerMappingInput(
     ReplicationProviderSpecificUpdateContainerMappingInput, discriminator="InMageRcm"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageRcm update protection container mapping.
 
     :ivar enable_agent_auto_upgrade: A value indicating whether agent auto upgrade has to be
@@ -18022,7 +18563,7 @@ class InMageRcmUpdateContainerMappingInput(
 
 class InMageRcmUpdateReplicationProtectedItemInput(
     UpdateReplicationProtectedItemProviderInput, discriminator="InMageRcm"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """InMageRcm provider specific input to update replication protected item.
 
     :ivar target_vm_name: The target VM name.
@@ -18194,7 +18735,9 @@ class InMageRcmUpdateReplicationProtectedItemInput(
         self.instance_type = "InMageRcm"  # type: ignore
 
 
-class InMageReplicationDetails(ReplicationProviderSpecificSettings, discriminator="InMage"):
+class InMageReplicationDetails(
+    ReplicationProviderSpecificSettings, discriminator="InMage"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMage provider specific settings.
 
     :ivar active_site_type: The active location of the VM. If the VM is being protected from Azure,
@@ -18506,7 +19049,9 @@ class InMageReplicationDetails(ReplicationProviderSpecificSettings, discriminato
         self.instance_type = "InMage"  # type: ignore
 
 
-class InMageReprotectInput(ReverseReplicationProviderSpecificInput, discriminator="InMage"):
+class InMageReprotectInput(
+    ReverseReplicationProviderSpecificInput, discriminator="InMage"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InMageAzureV2 specific provider input.
 
     :ivar master_target_id: The Master Target Id. Required.
@@ -18587,7 +19132,9 @@ class InMageReprotectInput(ReverseReplicationProviderSpecificInput, discriminato
         self.instance_type = "InMage"  # type: ignore
 
 
-class InMageTestFailoverInput(TestFailoverProviderSpecificInput, discriminator="InMage"):
+class InMageTestFailoverInput(
+    TestFailoverProviderSpecificInput, discriminator="InMage"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provider specific input for InMage test failover.
 
     :ivar recovery_point_type: The recovery point type. Values from LatestTime, LatestTag or
@@ -18637,7 +19184,9 @@ class InMageTestFailoverInput(TestFailoverProviderSpecificInput, discriminator="
         self.instance_type = "InMage"  # type: ignore
 
 
-class InMageUnplannedFailoverInput(UnplannedFailoverProviderSpecificInput, discriminator="InMage"):
+class InMageUnplannedFailoverInput(
+    UnplannedFailoverProviderSpecificInput, discriminator="InMage"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provider specific input for InMage unplanned failover.
 
     :ivar recovery_point_type: The recovery point type. Values from LatestTime, LatestTag or
@@ -18687,7 +19236,7 @@ class InMageUnplannedFailoverInput(UnplannedFailoverProviderSpecificInput, discr
         self.instance_type = "InMage"  # type: ignore
 
 
-class InMageVolumeExclusionOptions(_Model):
+class InMageVolumeExclusionOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Guest disk signature based disk exclusion option when doing enable protection of virtual
     machine in InMage provider.
 
@@ -18730,7 +19279,7 @@ class InMageVolumeExclusionOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InnerHealthError(_Model):
+class InnerHealthError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Implements InnerHealthError class. HealthError object has a list of InnerHealthErrors as child
     errors. InnerHealthError is used because this will prevent an infinite loop of structures when
     Hydra tries to auto-generate the contract. We are exposing the related health errors as inner
@@ -18850,7 +19399,7 @@ class InnerHealthError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InputEndpoint(_Model):
+class InputEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InputEndpoint.
 
     :ivar endpoint_name:
@@ -18895,7 +19444,7 @@ class InputEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPConfigDetails(_Model):
+class IPConfigDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IPConfigDetails.
 
     :ivar name:
@@ -18928,6 +19477,11 @@ class IPConfigDetails(_Model):
     :vartype tfo_public_ip_address_id: str
     :ivar tfo_lb_backend_address_pool_ids:
     :vartype tfo_lb_backend_address_pool_ids: list[str]
+    :ivar ip_version: The IP version (IPv4 / IPv6) of the ip-config, as reported by the service.
+     Read-only - it reflects the discovered NIC configuration and cannot be set by the caller.
+     Orthogonal to the allocation type (static / dynamic). Omitted when IPv6 support is not enabled.
+     Known values are: "IPv4" and "IPv6".
+    :vartype ip_version: str or ~azure.mgmt.recoveryservicessiterecovery.models.IPVersion
     """
 
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -18973,6 +19527,11 @@ class IPConfigDetails(_Model):
     tfo_lb_backend_address_pool_ids: Optional[list[str]] = rest_field(
         name="tfoLBBackendAddressPoolIds", visibility=["read", "create", "update", "delete", "query"]
     )
+    ip_version: Optional[Union[str, "_models.IPVersion"]] = rest_field(name="ipVersion", visibility=["read"])
+    """The IP version (IPv4 / IPv6) of the ip-config, as reported by the service. Read-only - it
+     reflects the discovered NIC configuration and cannot be set by the caller. Orthogonal to the
+     allocation type (static / dynamic). Omitted when IPv6 support is not enabled. Known values are:
+     \"IPv4\" and \"IPv6\"."""
 
     @overload
     def __init__(
@@ -19006,7 +19565,7 @@ class IPConfigDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPConfigInputDetails(_Model):
+class IPConfigInputDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IPConfigInputDetails.
 
     :ivar ip_config_name:
@@ -19095,7 +19654,7 @@ class IPConfigInputDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Job(ProxyResource):
+class Job(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19141,7 +19700,7 @@ class Job(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class JobEntity(_Model):
+class JobEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class contains the minimal job details required to navigate to the desired drill down.
 
     :ivar job_id: The job id.
@@ -19204,7 +19763,7 @@ class JobEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobErrorDetails(_Model):
+class JobErrorDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class contains the error details per object.
 
     :ivar service_error_details: The Service error details.
@@ -19260,7 +19819,7 @@ class JobErrorDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobProperties(_Model):
+class JobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job custom data details.
 
     :ivar activity_id: The activity id.
@@ -19383,7 +19942,7 @@ class JobProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobQueryParameter(_Model):
+class JobQueryParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Query parameter to enumerate jobs.
 
     :ivar start_time: Date time to get jobs from.
@@ -19454,7 +20013,9 @@ class JobQueryParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobStatusEventDetails(EventSpecificDetails, discriminator="JobStatus"):
+class JobStatusEventDetails(
+    EventSpecificDetails, discriminator="JobStatus"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model class for event details of a job status event.
 
     :ivar job_id: Job arm id for the event.
@@ -19507,7 +20068,7 @@ class JobStatusEventDetails(EventSpecificDetails, discriminator="JobStatus"):
         self.instance_type = "JobStatus"  # type: ignore
 
 
-class KeyEncryptionKeyInfo(_Model):
+class KeyEncryptionKeyInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Key Encryption Key (KEK) information.
 
     :ivar key_identifier: The key URL / identifier.
@@ -19544,7 +20105,7 @@ class KeyEncryptionKeyInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogicalNetwork(ProxyResource):
+class LogicalNetwork(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Logical network data model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19590,7 +20151,7 @@ class LogicalNetwork(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class LogicalNetworkProperties(_Model):
+class LogicalNetworkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Logical Network Properties.
 
     :ivar friendly_name: The Friendly Name.
@@ -19644,7 +20205,7 @@ class LogicalNetworkProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedRunCommandScriptInput(_Model):
+class ManagedRunCommandScriptInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed RunCommand script input.
 
     :ivar step_name: The step name. Required.
@@ -19684,7 +20245,9 @@ class ManagedRunCommandScriptInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManualActionTaskDetails(TaskTypeDetails, discriminator="ManualActionTaskDetails"):
+class ManualActionTaskDetails(
+    TaskTypeDetails, discriminator="ManualActionTaskDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents the manual action task details.
 
     :ivar name: The name.
@@ -19775,7 +20338,7 @@ class MarsAgentDetails(_Model):
     """The health errors."""
 
 
-class MasterTargetServer(_Model):
+class MasterTargetServer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of a Master Target Server.
 
     :ivar id: The server Id.
@@ -19914,7 +20477,7 @@ class MasterTargetServer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrateInput(_Model):
+class MigrateInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input for migrate.
 
     :ivar properties: Migrate input properties. Required.
@@ -19944,7 +20507,7 @@ class MigrateInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrateInputProperties(_Model):
+class MigrateInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Migrate input properties.
 
     :ivar provider_specific_details: The provider specific details. Required.
@@ -19975,7 +20538,7 @@ class MigrateInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrateProviderSpecificInput(_Model):
+class MigrateProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Migrate provider specific input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -20009,7 +20572,7 @@ class MigrateProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrationItem(ProxyResource):
+class MigrationItem(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Migration item.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20055,7 +20618,7 @@ class MigrationItem(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class MigrationItemProperties(_Model):
+class MigrationItemProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Migration item properties.
 
     :ivar machine_name: The on-premise virtual machine name.
@@ -20194,7 +20757,7 @@ class MigrationItemProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrationProviderSpecificSettings(_Model):
+class MigrationProviderSpecificSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Migration provider specific settings.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -20228,7 +20791,7 @@ class MigrationProviderSpecificSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrationRecoveryPoint(ProxyResource):
+class MigrationRecoveryPoint(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery point for a migration item.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20297,7 +20860,7 @@ class MigrationRecoveryPointProperties(_Model):
      \"CrashConsistent\"."""
 
 
-class MobilityServiceUpdate(_Model):
+class MobilityServiceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Mobility Service update details.
 
     :ivar version: The version of the latest update.
@@ -20337,7 +20900,7 @@ class MobilityServiceUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Network(ProxyResource):
+class Network(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -20383,7 +20946,7 @@ class Network(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkMapping(ProxyResource):
+class NetworkMapping(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Mapping model. Ideally it should have been possible to inherit this class from prev
     version in InheritedModels as long as there is no difference in structure or method signature.
     Since there were no base Models for certain fields and methods viz NetworkMappingProperties and
@@ -20433,7 +20996,7 @@ class NetworkMapping(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkMappingProperties(_Model):
+class NetworkMappingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Mapping Properties.
 
     :ivar state: The pairing state for network mapping.
@@ -20518,7 +21081,7 @@ class NetworkMappingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkProperties(_Model):
+class NetworkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Properties.
 
     :ivar fabric_type: The Fabric Type.
@@ -20567,7 +21130,9 @@ class NetworkProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NewProtectionProfile(ProtectionProfileCustomDetails, discriminator="New"):
+class NewProtectionProfile(
+    ProtectionProfileCustomDetails, discriminator="New"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """New Protection profile input.
 
     :ivar policy_name: The protection profile input. Required.
@@ -20633,7 +21198,9 @@ class NewProtectionProfile(ProtectionProfileCustomDetails, discriminator="New"):
         self.resource_type = "New"  # type: ignore
 
 
-class NewRecoveryVirtualNetwork(RecoveryVirtualNetworkCustomDetails, discriminator="New"):
+class NewRecoveryVirtualNetwork(
+    RecoveryVirtualNetworkCustomDetails, discriminator="New"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery virtual network input to create new virtual network from given source network.
 
     :ivar recovery_virtual_network_resource_group_name: The name of the resource group to be used
@@ -20678,7 +21245,7 @@ class NewRecoveryVirtualNetwork(RecoveryVirtualNetworkCustomDetails, discriminat
         self.resource_type = "New"  # type: ignore
 
 
-class OperationsDiscovery(_Model):
+class OperationsDiscovery(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Operations discovery class.
 
     :ivar name: Name of the API. The name of the operation being performed on this particular
@@ -20747,7 +21314,7 @@ class OperationsDiscovery(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OSDetails(_Model):
+class OSDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk Details.
 
     :ivar os_type: VM Disk details.
@@ -20815,7 +21382,7 @@ class OSDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OSDiskDetails(_Model):
+class OSDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the OS Disk.
 
     :ivar os_vhd_id: The id of the disk containing the OS.
@@ -20870,7 +21437,7 @@ class OSUpgradeSupportedVersions(_Model):
     """The target OS version names."""
 
 
-class OSVersionWrapper(_Model):
+class OSVersionWrapper(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Wrapper model for OSVersion to include version and service pack info.
 
     :ivar version: The version.
@@ -20905,7 +21472,7 @@ class OSVersionWrapper(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PauseReplicationInput(_Model):
+class PauseReplicationInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pause replication input.
 
     :ivar properties: Pause replication input properties. Required.
@@ -20936,7 +21503,7 @@ class PauseReplicationInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PauseReplicationInputProperties(_Model):
+class PauseReplicationInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pause replication input properties.
 
     :ivar instance_type: The class type. Required.
@@ -20964,7 +21531,7 @@ class PauseReplicationInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlannedFailoverInput(_Model):
+class PlannedFailoverInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for planned failover.
 
     :ivar properties: Planned failover input properties.
@@ -20995,7 +21562,7 @@ class PlannedFailoverInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlannedFailoverInputProperties(_Model):
+class PlannedFailoverInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for planned failover input properties.
 
     :ivar failover_direction: Failover direction.
@@ -21033,7 +21600,7 @@ class PlannedFailoverInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Policy(ProxyResource):
+class Policy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protection profile details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -21079,7 +21646,7 @@ class Policy(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PolicyProperties(_Model):
+class PolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protection profile custom data details.
 
     :ivar friendly_name: The FriendlyName.
@@ -21117,7 +21684,7 @@ class PolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProcessServer(_Model):
+class ProcessServer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the Process Server.
 
     :ivar friendly_name: The Process Server's friendly name.
@@ -21525,7 +22092,7 @@ class ProcessServerDetails(_Model):
      are: \"None\", \"Normal\", \"Warning\", and \"Critical\"."""
 
 
-class ProtectableItem(ProxyResource):
+class ProtectableItem(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication protected item.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -21571,7 +22138,7 @@ class ProtectableItem(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ProtectableItemProperties(_Model):
+class ProtectableItemProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication protected item custom data details.
 
     :ivar friendly_name: The name.
@@ -21644,7 +22211,7 @@ class ProtectableItemProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionContainer(ProxyResource):
+class ProtectionContainer(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protection container details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -21702,7 +22269,7 @@ class ProtectionContainerFabricSpecificDetails(_Model):
     """Gets the class type. Overridden in derived classes."""
 
 
-class ProtectionContainerMapping(ProxyResource):
+class ProtectionContainerMapping(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protection container mapping object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -21749,7 +22316,7 @@ class ProtectionContainerMapping(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionContainerMappingProperties(_Model):
+class ProtectionContainerMappingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protection container mapping properties.
 
     :ivar target_protection_container_id: Paired protection container ARM ID.
@@ -21845,7 +22412,7 @@ class ProtectionContainerMappingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionContainerProperties(_Model):
+class ProtectionContainerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protection profile custom data details.
 
     :ivar fabric_friendly_name: Fabric friendly name.
@@ -21916,7 +22483,7 @@ class ProtectionContainerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProviderError(_Model):
+class ProviderError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class contains the error details per object.
 
     :ivar error_code: The Error code.
@@ -22068,7 +22635,7 @@ class RcmProxyDetails(_Model):
     """The health errors."""
 
 
-class RecoveryPlan(ProxyResource):
+class RecoveryPlan(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -22114,7 +22681,7 @@ class RecoveryPlan(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanProviderSpecificDetails(_Model):
+class RecoveryPlanProviderSpecificDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan provider specific details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -22148,7 +22715,9 @@ class RecoveryPlanProviderSpecificDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanA2ADetails(RecoveryPlanProviderSpecificDetails, discriminator="A2A"):
+class RecoveryPlanA2ADetails(
+    RecoveryPlanProviderSpecificDetails, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan A2A specific details.
 
     :ivar primary_zone: The primary zone.
@@ -22206,7 +22775,9 @@ class RecoveryPlanA2ADetails(RecoveryPlanProviderSpecificDetails, discriminator=
         self.instance_type = "A2A"  # type: ignore
 
 
-class RecoveryPlanProviderSpecificFailoverInput(_Model):  # pylint: disable=name-too-long
+class RecoveryPlanProviderSpecificFailoverInput(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Recovery plan provider specific failover input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -22243,7 +22814,9 @@ class RecoveryPlanProviderSpecificFailoverInput(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanA2AFailoverInput(RecoveryPlanProviderSpecificFailoverInput, discriminator="A2A"):
+class RecoveryPlanA2AFailoverInput(
+    RecoveryPlanProviderSpecificFailoverInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan A2A failover input.
 
     :ivar recovery_point_type: The recovery point type. Required. Known values are: "Latest",
@@ -22300,7 +22873,7 @@ class RecoveryPlanA2AFailoverInput(RecoveryPlanProviderSpecificFailoverInput, di
         self.instance_type = "A2A"  # type: ignore
 
 
-class RecoveryPlanProviderSpecificInput(_Model):
+class RecoveryPlanProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan provider specific input base class.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -22334,7 +22907,9 @@ class RecoveryPlanProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanA2AInput(RecoveryPlanProviderSpecificInput, discriminator="A2A"):
+class RecoveryPlanA2AInput(
+    RecoveryPlanProviderSpecificInput, discriminator="A2A"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan A2A input.
 
     :ivar primary_zone: The primary zone.
@@ -22392,7 +22967,7 @@ class RecoveryPlanA2AInput(RecoveryPlanProviderSpecificInput, discriminator="A2A
         self.instance_type = "A2A"  # type: ignore
 
 
-class RecoveryPlanAction(_Model):
+class RecoveryPlanAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan action details.
 
     :ivar action_name: The action name. Required.
@@ -22444,7 +23019,7 @@ class RecoveryPlanAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanActionDetails(_Model):
+class RecoveryPlanActionDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan action custom details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -22483,7 +23058,7 @@ class RecoveryPlanActionDetails(_Model):
 
 class RecoveryPlanAutomationRunbookActionDetails(
     RecoveryPlanActionDetails, discriminator="AutomationRunbookActionDetails"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Recovery plan Automation runbook action details.
 
     :ivar runbook_id: The runbook ARM Id.
@@ -22532,7 +23107,7 @@ class RecoveryPlanAutomationRunbookActionDetails(
         self.instance_type = "AutomationRunbookActionDetails"  # type: ignore
 
 
-class RecoveryPlanGroup(_Model):
+class RecoveryPlanGroup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan group details.
 
     :ivar group_type: The group type. Required. Known values are: "Shutdown", "Boot", and
@@ -22588,7 +23163,9 @@ class RecoveryPlanGroup(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanGroupTaskDetails(GroupTaskDetails, discriminator="RecoveryPlanGroupTaskDetails"):
+class RecoveryPlanGroupTaskDetails(
+    GroupTaskDetails, discriminator="RecoveryPlanGroupTaskDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents the recovery plan group task.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -22642,7 +23219,7 @@ class RecoveryPlanGroupTaskDetails(GroupTaskDetails, discriminator="RecoveryPlan
 
 class RecoveryPlanHyperVReplicaAzureFailbackInput(
     RecoveryPlanProviderSpecificFailoverInput, discriminator="HyperVReplicaAzureFailback"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Recovery plan HVR Azure failback input.
 
     :ivar data_sync_option: The data sync option. Required. Known values are: "ForDownTime" and
@@ -22690,7 +23267,7 @@ class RecoveryPlanHyperVReplicaAzureFailbackInput(
 
 class RecoveryPlanHyperVReplicaAzureFailoverInput(
     RecoveryPlanProviderSpecificFailoverInput, discriminator="HyperVReplicaAzure"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Recovery plan HVR Azure failover input.
 
     :ivar primary_kek_certificate_pfx: The primary KEK certificate PFX.
@@ -22742,7 +23319,9 @@ class RecoveryPlanHyperVReplicaAzureFailoverInput(
         self.instance_type = "HyperVReplicaAzure"  # type: ignore
 
 
-class RecoveryPlanInMageAzureV2FailoverInput(RecoveryPlanProviderSpecificFailoverInput, discriminator="InMageAzureV2"):
+class RecoveryPlanInMageAzureV2FailoverInput(
+    RecoveryPlanProviderSpecificFailoverInput, discriminator="InMageAzureV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan InMageAzureV2 failover input.
 
     :ivar recovery_point_type: The recovery point type. Required. Known values are: "Latest",
@@ -22789,7 +23368,9 @@ class RecoveryPlanInMageAzureV2FailoverInput(RecoveryPlanProviderSpecificFailove
         self.instance_type = "InMageAzureV2"  # type: ignore
 
 
-class RecoveryPlanInMageFailoverInput(RecoveryPlanProviderSpecificFailoverInput, discriminator="InMage"):
+class RecoveryPlanInMageFailoverInput(
+    RecoveryPlanProviderSpecificFailoverInput, discriminator="InMage"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan InMage failover input.
 
     :ivar recovery_point_type: The recovery point type. Required. Known values are: "LatestTime",
@@ -22829,7 +23410,7 @@ class RecoveryPlanInMageFailoverInput(RecoveryPlanProviderSpecificFailoverInput,
 
 class RecoveryPlanInMageRcmFailbackFailoverInput(
     RecoveryPlanProviderSpecificFailoverInput, discriminator="InMageRcmFailback"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Recovery plan InMageRcmFailback failover input.
 
     :ivar recovery_point_type: The recovery point type. Required. Known values are:
@@ -22876,7 +23457,9 @@ class RecoveryPlanInMageRcmFailbackFailoverInput(
         self.instance_type = "InMageRcmFailback"  # type: ignore
 
 
-class RecoveryPlanInMageRcmFailoverInput(RecoveryPlanProviderSpecificFailoverInput, discriminator="InMageRcm"):
+class RecoveryPlanInMageRcmFailoverInput(
+    RecoveryPlanProviderSpecificFailoverInput, discriminator="InMageRcm"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan InMageRcm failover input.
 
     :ivar recovery_point_type: The recovery point type. Required. Known values are: "Latest",
@@ -22923,7 +23506,9 @@ class RecoveryPlanInMageRcmFailoverInput(RecoveryPlanProviderSpecificFailoverInp
         self.instance_type = "InMageRcm"  # type: ignore
 
 
-class RecoveryPlanManualActionDetails(RecoveryPlanActionDetails, discriminator="ManualActionDetails"):
+class RecoveryPlanManualActionDetails(
+    RecoveryPlanActionDetails, discriminator="ManualActionDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan manual action details.
 
     :ivar description: The manual action description.
@@ -22958,7 +23543,7 @@ class RecoveryPlanManualActionDetails(RecoveryPlanActionDetails, discriminator="
         self.instance_type = "ManualActionDetails"  # type: ignore
 
 
-class RecoveryPlanPlannedFailoverInput(_Model):
+class RecoveryPlanPlannedFailoverInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan planned failover input.
 
     :ivar properties: The recovery plan planned failover input properties. Required.
@@ -22989,7 +23574,9 @@ class RecoveryPlanPlannedFailoverInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanPlannedFailoverInputProperties(_Model):  # pylint: disable=name-too-long
+class RecoveryPlanPlannedFailoverInputProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Recovery plan planned failover input properties.
 
     :ivar failover_direction: The failover direction. Required. Known values are:
@@ -23030,7 +23617,7 @@ class RecoveryPlanPlannedFailoverInputProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanProperties(_Model):
+class RecoveryPlanProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan properties.
 
     :ivar friendly_name: The friendly name.
@@ -23167,7 +23754,7 @@ class RecoveryPlanProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanProtectedItem(_Model):
+class RecoveryPlanProtectedItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan protected item.
 
     :ivar id: The ARM Id of the recovery plan protected item.
@@ -23202,7 +23789,9 @@ class RecoveryPlanProtectedItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanScriptActionDetails(RecoveryPlanActionDetails, discriminator="ScriptActionDetails"):
+class RecoveryPlanScriptActionDetails(
+    RecoveryPlanActionDetails, discriminator="ScriptActionDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan script action details.
 
     :ivar path: The script path. Required.
@@ -23253,7 +23842,7 @@ class RecoveryPlanScriptActionDetails(RecoveryPlanActionDetails, discriminator="
 
 class RecoveryPlanShutdownGroupTaskDetails(
     RecoveryPlanGroupTaskDetails, discriminator="RecoveryPlanShutdownGroupTaskDetails"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents the recovery plan shutdown group task details.
 
     :ivar child_tasks: The child tasks.
@@ -23294,7 +23883,7 @@ class RecoveryPlanShutdownGroupTaskDetails(
         self.instance_type = "RecoveryPlanShutdownGroupTaskDetails"  # type: ignore
 
 
-class RecoveryPlanTestFailoverCleanupInput(_Model):
+class RecoveryPlanTestFailoverCleanupInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan test failover cleanup input.
 
     :ivar properties: The recovery plan test failover cleanup input properties. Required.
@@ -23325,7 +23914,9 @@ class RecoveryPlanTestFailoverCleanupInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanTestFailoverCleanupInputProperties(_Model):  # pylint: disable=name-too-long
+class RecoveryPlanTestFailoverCleanupInputProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Recovery plan test failover cleanup input properties.
 
     :ivar comments: The test failover cleanup comments.
@@ -23353,7 +23944,7 @@ class RecoveryPlanTestFailoverCleanupInputProperties(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanTestFailoverInput(_Model):
+class RecoveryPlanTestFailoverInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan test failover input.
 
     :ivar properties: The recovery plan test failover input properties. Required.
@@ -23384,7 +23975,7 @@ class RecoveryPlanTestFailoverInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanTestFailoverInputProperties(_Model):
+class RecoveryPlanTestFailoverInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan test failover input properties.
 
     :ivar failover_direction: The failover direction. Required. Known values are:
@@ -23435,7 +24026,7 @@ class RecoveryPlanTestFailoverInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanUnplannedFailoverInput(_Model):
+class RecoveryPlanUnplannedFailoverInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan unplanned failover input.
 
     :ivar properties: The recovery plan unplanned failover input properties. Required.
@@ -23466,7 +24057,9 @@ class RecoveryPlanUnplannedFailoverInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPlanUnplannedFailoverInputProperties(_Model):  # pylint: disable=name-too-long
+class RecoveryPlanUnplannedFailoverInputProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Recovery plan unplanned failover input properties.
 
     :ivar failover_direction: The failover direction. Required. Known values are:
@@ -23517,7 +24110,7 @@ class RecoveryPlanUnplannedFailoverInputProperties(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPoint(ProxyResource):
+class RecoveryPoint(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery point.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -23563,7 +24156,7 @@ class RecoveryPoint(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPointProperties(_Model):
+class RecoveryPointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery point properties.
 
     :ivar recovery_point_time: The recovery point time.
@@ -23608,7 +24201,7 @@ class RecoveryPointProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryServicesProvider(ProxyResource):
+class RecoveryServicesProvider(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provider details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -23655,7 +24248,7 @@ class RecoveryServicesProvider(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryServicesProviderProperties(_Model):
+class RecoveryServicesProviderProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery services provider properties.
 
     :ivar fabric_type: Type of the site.
@@ -23820,7 +24413,7 @@ class RecoveryServicesProviderProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegisteredClusterNodes(_Model):
+class RegisteredClusterNodes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Extended location of the resource.
 
     :ivar cluster_node_fqdn: The cluster node name.
@@ -23868,7 +24461,7 @@ class RegisteredClusterNodes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReinstallMobilityServiceRequest(_Model):
+class ReinstallMobilityServiceRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to Reinstall the mobility service on a protected item.
 
     :ivar properties: The properties of the reinstall mobility service request.
@@ -23899,7 +24492,9 @@ class ReinstallMobilityServiceRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReinstallMobilityServiceRequestProperties(_Model):  # pylint: disable=name-too-long
+class ReinstallMobilityServiceRequestProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties of an update mobility service request.
 
     :ivar run_as_account_id: The CS run as account Id.
@@ -23929,7 +24524,7 @@ class ReinstallMobilityServiceRequestProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class RemoveDisksInput(_Model):
+class RemoveDisksInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input for remove disk(s) operation.
 
     :ivar properties: Remove disk input properties.
@@ -23959,7 +24554,7 @@ class RemoveDisksInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RemoveDisksInputProperties(_Model):
+class RemoveDisksInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Remove Disk input properties.
 
     :ivar provider_specific_details: The ReplicationProviderInput. For HyperVReplicaAzure provider,
@@ -23994,7 +24589,7 @@ class RemoveDisksInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RemoveProtectionContainerMappingInput(_Model):
+class RemoveProtectionContainerMappingInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container unpairing input.
 
     :ivar properties: Configure protection input properties.
@@ -24025,7 +24620,9 @@ class RemoveProtectionContainerMappingInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RemoveProtectionContainerMappingInputProperties(_Model):  # pylint: disable=name-too-long
+class RemoveProtectionContainerMappingInputProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Unpairing input properties.
 
     :ivar provider_specific_input: Provider specific input for unpairing.
@@ -24056,7 +24653,7 @@ class RemoveProtectionContainerMappingInputProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class RenewCertificateInput(_Model):
+class RenewCertificateInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Certificate renewal input.
 
     :ivar properties: Renew certificate input properties.
@@ -24087,7 +24684,7 @@ class RenewCertificateInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RenewCertificateInputProperties(_Model):
+class RenewCertificateInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Renew Certificate input properties.
 
     :ivar renew_certificate_type: Renew certificate type.
@@ -24164,7 +24761,7 @@ class ReplicationAgentDetails(_Model):
     """The health errors."""
 
 
-class ReplicationAppliance(_Model):
+class ReplicationAppliance(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication appliance definition.
 
     :ivar properties: Appliance related data.
@@ -24195,7 +24792,7 @@ class ReplicationAppliance(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationApplianceProperties(_Model):
+class ReplicationApplianceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication appliance properties.
 
     :ivar provider_specific_details: Provider specific settings.
@@ -24226,7 +24823,7 @@ class ReplicationApplianceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationEligibilityResults(ProxyResource):
+class ReplicationEligibilityResults(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication eligibility results response model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -24268,7 +24865,7 @@ class ReplicationEligibilityResults(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationEligibilityResultsCollection(_Model):
+class ReplicationEligibilityResultsCollection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication eligibility results collection response model.
 
     :ivar value: The replication eligibility results details.
@@ -24299,7 +24896,7 @@ class ReplicationEligibilityResultsCollection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationEligibilityResultsErrorInfo(_Model):
+class ReplicationEligibilityResultsErrorInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error model that can be exposed to the user.
 
     :ivar code: The error code.
@@ -24350,7 +24947,7 @@ class ReplicationEligibilityResultsErrorInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationEligibilityResultsProperties(_Model):
+class ReplicationEligibilityResultsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties model for replication eligibility results API.
 
     :ivar client_request_id: The client request Id.
@@ -24414,7 +25011,7 @@ class ReplicationGroupDetails(ConfigurationSettings, discriminator="ReplicationG
         self.instance_type = "ReplicationGroupDetails"  # type: ignore
 
 
-class ReplicationProtectedItem(ProxyResource):
+class ReplicationProtectedItem(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication protected item.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -24461,7 +25058,7 @@ class ReplicationProtectedItem(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationProtectedItemProperties(_Model):
+class ReplicationProtectedItemProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication protected item custom data details.
 
     :ivar friendly_name: The name.
@@ -24702,7 +25299,7 @@ class ReplicationProtectedItemProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationProtectionCluster(ProxyResource):
+class ReplicationProtectionCluster(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication protection Cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -24744,7 +25341,7 @@ class ReplicationProtectionCluster(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationProtectionClusterProperties(_Model):
+class ReplicationProtectionClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication protection cluster custom data details.
 
     :ivar protection_cluster_type: The type of protection cluster type.
@@ -24985,7 +25582,7 @@ class ReplicationProtectionClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationProtectionIntent(ProxyResource):
+class ReplicationProtectionIntent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication protection intent.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -25032,7 +25629,7 @@ class ReplicationProtectionIntent(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationProtectionIntentProperties(_Model):
+class ReplicationProtectionIntentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication protection intent custom data details.
 
     :ivar friendly_name: The name.
@@ -25086,7 +25683,9 @@ class ReplicationProtectionIntentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationProviderContainerUnmappingInput(_Model):  # pylint: disable=name-too-long
+class ReplicationProviderContainerUnmappingInput(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Provider specific input for unpairing operations.
 
     :ivar instance_type: The class type.
@@ -25181,7 +25780,7 @@ class ReprotectAgentDetails(_Model):
     """The last time when SDS information discovered in SRS."""
 
 
-class ResolveHealthError(_Model):
+class ResolveHealthError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resolve health errors input properties.
 
     :ivar health_error_id: Health error id.
@@ -25211,7 +25810,7 @@ class ResolveHealthError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResolveHealthInput(_Model):
+class ResolveHealthInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resolve health input.
 
     :ivar properties: Disable resolve health input properties.
@@ -25242,7 +25841,7 @@ class ResolveHealthInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResolveHealthInputProperties(_Model):
+class ResolveHealthInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resolve health input properties.
 
     :ivar health_errors: Health errors.
@@ -25273,7 +25872,7 @@ class ResolveHealthInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceHealthSummary(_Model):
+class ResourceHealthSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base class to define the health summary of the resources contained under an Arm resource.
 
     :ivar resource_count: The count of total resources under the container.
@@ -25317,7 +25916,7 @@ class ResourceHealthSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResumeJobParams(_Model):
+class ResumeJobParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resume job params.
 
     :ivar properties: Resume job properties.
@@ -25347,7 +25946,7 @@ class ResumeJobParams(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResumeJobParamsProperties(_Model):
+class ResumeJobParamsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resume job properties.
 
     :ivar comments: Resume job comments.
@@ -25375,7 +25974,7 @@ class ResumeJobParamsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResumeReplicationInput(_Model):
+class ResumeReplicationInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resume replication input.
 
     :ivar properties: Resume replication input properties. Required.
@@ -25406,7 +26005,7 @@ class ResumeReplicationInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResumeReplicationInputProperties(_Model):
+class ResumeReplicationInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resume replication input properties.
 
     :ivar provider_specific_details: The provider specific input for resume replication. Required.
@@ -25437,7 +26036,7 @@ class ResumeReplicationInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResumeReplicationProviderSpecificInput(_Model):
+class ResumeReplicationProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resume replication provider specific input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -25471,7 +26070,7 @@ class ResumeReplicationProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResyncInput(_Model):
+class ResyncInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resync input.
 
     :ivar properties: Resync input properties. Required.
@@ -25499,7 +26098,7 @@ class ResyncInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResyncInputProperties(_Model):
+class ResyncInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resync input properties.
 
     :ivar provider_specific_details: The provider specific details. Required.
@@ -25530,7 +26129,7 @@ class ResyncInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResyncProviderSpecificInput(_Model):
+class ResyncProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resync provider specific input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -25564,7 +26163,7 @@ class ResyncProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RetentionVolume(_Model):
+class RetentionVolume(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The retention details of the MT.
 
     :ivar volume_name: The volume name.
@@ -25615,7 +26214,7 @@ class RetentionVolume(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReverseReplicationInput(_Model):
+class ReverseReplicationInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reverse replication input.
 
     :ivar properties: Reverse replication properties.
@@ -25646,7 +26245,7 @@ class ReverseReplicationInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReverseReplicationInputProperties(_Model):
+class ReverseReplicationInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reverse replication input properties.
 
     :ivar failover_direction: Failover direction.
@@ -25684,7 +26283,7 @@ class ReverseReplicationInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunAsAccount(_Model):
+class RunAsAccount(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CS Accounts Details.
 
     :ivar account_id: The CS RunAs account Id.
@@ -25719,7 +26318,9 @@ class RunAsAccount(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScriptActionTaskDetails(TaskTypeDetails, discriminator="ScriptActionTaskDetails"):
+class ScriptActionTaskDetails(
+    TaskTypeDetails, discriminator="ScriptActionTaskDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents the script action task details.
 
     :ivar name: The name.
@@ -25770,7 +26371,7 @@ class ScriptActionTaskDetails(TaskTypeDetails, discriminator="ScriptActionTaskDe
         self.instance_type = "ScriptActionTaskDetails"  # type: ignore
 
 
-class SecurityProfileProperties(_Model):
+class SecurityProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security profile input.
 
     :ivar target_vm_security_type: The target VM security type. Known values are: "None",
@@ -25843,7 +26444,7 @@ class SecurityProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceError(_Model):
+class ServiceError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ASR error model.
 
     :ivar code: Error code.
@@ -25897,7 +26498,7 @@ class ServiceError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SharedDiskReplicationItemProperties(_Model):
+class SharedDiskReplicationItemProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Shared Disk Replication item custom data details.
 
     :ivar protection_state: The protection state of shared disk.
@@ -25982,7 +26583,7 @@ class SharedDiskReplicationItemProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageClassification(ProxyResource):
+class StorageClassification(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage object definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -26029,7 +26630,7 @@ class StorageClassification(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class StorageClassificationMapping(ProxyResource):
+class StorageClassificationMapping(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage mapping object.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -26076,7 +26677,7 @@ class StorageClassificationMapping(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class StorageClassificationMappingInput(_Model):
+class StorageClassificationMappingInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage mapping input.
 
     :ivar properties: Storage mapping input properties.
@@ -26107,7 +26708,7 @@ class StorageClassificationMappingInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageClassificationMappingProperties(_Model):
+class StorageClassificationMappingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage mapping properties.
 
     :ivar target_storage_classification_id: Target storage object Id.
@@ -26137,7 +26738,7 @@ class StorageClassificationMappingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageClassificationProperties(_Model):
+class StorageClassificationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage object properties.
 
     :ivar friendly_name: Friendly name of the Storage classification.
@@ -26167,7 +26768,7 @@ class StorageClassificationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageMappingInputProperties(_Model):
+class StorageMappingInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage mapping input properties.
 
     :ivar target_storage_classification_id: The ID of the storage object.
@@ -26197,7 +26798,7 @@ class StorageMappingInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Subnet(_Model):
+class Subnet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subnets of the network.
 
     :ivar name: The subnet name.
@@ -26239,7 +26840,7 @@ class Subnet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SupportedOperatingSystems(Resource):
+class SupportedOperatingSystems(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported operating systems.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -26285,7 +26886,7 @@ class SupportedOperatingSystems(Resource):
         super().__init__(*args, **kwargs)
 
 
-class SupportedOSDetails(_Model):
+class SupportedOSDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported operating system details.
 
     :ivar os_name: The name.
@@ -26325,7 +26926,7 @@ class SupportedOSDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SupportedOSProperties(_Model):
+class SupportedOSProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported operating systems properties.
 
     :ivar supported_os_list: The supported operating systems property list.
@@ -26356,7 +26957,7 @@ class SupportedOSProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SupportedOSProperty(_Model):
+class SupportedOSProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported operating systems property.
 
     :ivar instance_type: The replication provider type.
@@ -26393,7 +26994,7 @@ class SupportedOSProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SwitchClusterProtectionInput(_Model):
+class SwitchClusterProtectionInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Switch cluster protection input.
 
     :ivar properties: Switch cluster protection properties.
@@ -26424,7 +27025,7 @@ class SwitchClusterProtectionInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SwitchClusterProtectionInputProperties(_Model):
+class SwitchClusterProtectionInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Switch cluster protection input properties.
 
     :ivar replication_protection_cluster_name: The unique replication protection cluster name.
@@ -26462,7 +27063,7 @@ class SwitchClusterProtectionInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SwitchProtectionInput(_Model):
+class SwitchProtectionInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Switch protection input.
 
     :ivar properties: Switch protection properties.
@@ -26493,7 +27094,7 @@ class SwitchProtectionInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SwitchProtectionInputProperties(_Model):
+class SwitchProtectionInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Switch protection input properties.
 
     :ivar replication_protected_item_name: The unique replication protected item name.
@@ -26531,7 +27132,9 @@ class SwitchProtectionInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SwitchProtectionJobDetails(JobDetails, discriminator="SwitchProtectionJobDetails"):
+class SwitchProtectionJobDetails(
+    JobDetails, discriminator="SwitchProtectionJobDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents details for switch protection job.
 
     :ivar affected_object_details: The affected object properties like source server, source cloud,
@@ -26572,7 +27175,7 @@ class SwitchProtectionJobDetails(JobDetails, discriminator="SwitchProtectionJobD
         self.instance_type = "SwitchProtectionJobDetails"  # type: ignore
 
 
-class SwitchProviderInput(_Model):
+class SwitchProviderInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for switch provider.
 
     :ivar properties: Switch provider input properties.
@@ -26603,7 +27206,7 @@ class SwitchProviderInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SwitchProviderInputProperties(_Model):
+class SwitchProviderInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for switch provider input properties.
 
     :ivar target_instance_type: Target provider type.
@@ -26641,7 +27244,7 @@ class SwitchProviderInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -26709,7 +27312,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetComputeSize(_Model):
+class TargetComputeSize(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents applicable recovery vm sizes.
 
     :ivar id: The Id.
@@ -26755,7 +27358,7 @@ class TargetComputeSize(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetComputeSizeProperties(_Model):
+class TargetComputeSizeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents applicable recovery vm sizes properties.
 
     :ivar name: Target compute size name.
@@ -26844,7 +27447,7 @@ class TargetComputeSizeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestFailoverCleanupInput(_Model):
+class TestFailoverCleanupInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for test failover cleanup.
 
     :ivar properties: Test failover cleanup input properties. Required.
@@ -26875,7 +27478,7 @@ class TestFailoverCleanupInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestFailoverCleanupInputProperties(_Model):
+class TestFailoverCleanupInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for test failover cleanup input properties.
 
     :ivar comments: Test failover cleanup comments.
@@ -26903,7 +27506,7 @@ class TestFailoverCleanupInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestFailoverInput(_Model):
+class TestFailoverInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for test failover.
 
     :ivar properties: Test failover input properties. Required.
@@ -26934,7 +27537,7 @@ class TestFailoverInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestFailoverInputProperties(_Model):
+class TestFailoverInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for test failover input properties.
 
     :ivar failover_direction: Test failover direction.
@@ -26984,7 +27587,9 @@ class TestFailoverInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestFailoverJobDetails(JobDetails, discriminator="TestFailoverJobDetails"):
+class TestFailoverJobDetails(
+    JobDetails, discriminator="TestFailoverJobDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents the details for a test failover job.
 
     :ivar affected_object_details: The affected object properties like source server, source cloud,
@@ -27059,7 +27664,7 @@ class TestFailoverJobDetails(JobDetails, discriminator="TestFailoverJobDetails")
         self.instance_type = "TestFailoverJobDetails"  # type: ignore
 
 
-class TestMigrateCleanupInput(_Model):
+class TestMigrateCleanupInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input for test migrate cleanup.
 
     :ivar properties: Test migrate cleanup input properties. Required.
@@ -27090,7 +27695,7 @@ class TestMigrateCleanupInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestMigrateCleanupInputProperties(_Model):
+class TestMigrateCleanupInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Test migrate cleanup input properties.
 
     :ivar comments: Test migrate cleanup comments.
@@ -27118,7 +27723,7 @@ class TestMigrateCleanupInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestMigrateInput(_Model):
+class TestMigrateInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input for test migrate.
 
     :ivar properties: Test migrate input properties. Required.
@@ -27148,7 +27753,7 @@ class TestMigrateInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestMigrateInputProperties(_Model):
+class TestMigrateInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Test migrate input properties.
 
     :ivar provider_specific_details: The provider specific details. Required.
@@ -27179,7 +27784,7 @@ class TestMigrateInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TestMigrateProviderSpecificInput(_Model):
+class TestMigrateProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Test migrate provider specific input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -27213,7 +27818,7 @@ class TestMigrateProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UnplannedFailoverInput(_Model):
+class UnplannedFailoverInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for unplanned failover.
 
     :ivar properties: Unplanned failover input properties. Required.
@@ -27244,7 +27849,7 @@ class UnplannedFailoverInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UnplannedFailoverInputProperties(_Model):
+class UnplannedFailoverInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input definition for unplanned failover input properties.
 
     :ivar failover_direction: Failover direction.
@@ -27289,7 +27894,9 @@ class UnplannedFailoverInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateApplianceForReplicationProtectedItemInput(_Model):  # pylint: disable=name-too-long
+class UpdateApplianceForReplicationProtectedItemInput(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Update appliance for replication protected item input.
 
     :ivar properties: Update appliance replication protected item properties. Required.
@@ -27320,7 +27927,9 @@ class UpdateApplianceForReplicationProtectedItemInput(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class UpdateApplianceForReplicationProtectedItemInputProperties(_Model):  # pylint: disable=name-too-long
+class UpdateApplianceForReplicationProtectedItemInputProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Update appliance for protected item input properties.
 
     :ivar target_appliance_id: The target appliance Id. Required.
@@ -27359,7 +27968,41 @@ class UpdateApplianceForReplicationProtectedItemInputProperties(_Model):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class UpdateDiskInput(_Model):
+class UpdateConfidentialDiskEncryptionInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Confidential disk encryption info used while updating replication of a CMK confidential VM
+    managed disk.
+
+    :ivar recovery_target_confidential_disk_encryption_set_id: The Azure resource ID of the
+     confidential disk encryption set used for the target disk after failover. Applicable to CMK
+     confidential VMs.
+    :vartype recovery_target_confidential_disk_encryption_set_id: str
+    """
+
+    recovery_target_confidential_disk_encryption_set_id: Optional[str] = rest_field(
+        name="recoveryTargetConfidentialDiskEncryptionSetId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure resource ID of the confidential disk encryption set used for the target disk after
+     failover. Applicable to CMK confidential VMs."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        recovery_target_confidential_disk_encryption_set_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpdateDiskInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk input for update.
 
     :ivar disk_id: The disk Id. Required.
@@ -27413,7 +28056,7 @@ class UpdateDiskInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateMigrationItemInput(_Model):
+class UpdateMigrationItemInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update migration item input.
 
     :ivar properties: Update migration item input properties.
@@ -27444,7 +28087,7 @@ class UpdateMigrationItemInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateMigrationItemInputProperties(_Model):
+class UpdateMigrationItemInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update migration item input properties.
 
     :ivar provider_specific_details: The provider specific input to update migration item.
@@ -27476,7 +28119,7 @@ class UpdateMigrationItemInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateMigrationItemProviderSpecificInput(_Model):
+class UpdateMigrationItemProviderSpecificInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update migration item provider specific input.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -27510,7 +28153,7 @@ class UpdateMigrationItemProviderSpecificInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateMobilityServiceRequest(_Model):
+class UpdateMobilityServiceRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to update the mobility service on a protected item.
 
     :ivar properties: The properties of the update mobility service request.
@@ -27541,7 +28184,7 @@ class UpdateMobilityServiceRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateMobilityServiceRequestProperties(_Model):
+class UpdateMobilityServiceRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an update mobility service request.
 
     :ivar run_as_account_id: The CS run as account Id.
@@ -27571,7 +28214,7 @@ class UpdateMobilityServiceRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateNetworkMappingInput(_Model):
+class UpdateNetworkMappingInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update network mapping input.
 
     :ivar properties: The input properties needed to update network mapping.
@@ -27602,7 +28245,7 @@ class UpdateNetworkMappingInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateNetworkMappingInputProperties(_Model):
+class UpdateNetworkMappingInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common input details for network mapping operation.
 
     :ivar recovery_fabric_name: Recovery fabric name.
@@ -27647,7 +28290,7 @@ class UpdateNetworkMappingInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdatePolicyInput(_Model):
+class UpdatePolicyInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update policy input.
 
     :ivar properties: The ReplicationProviderSettings.
@@ -27678,7 +28321,7 @@ class UpdatePolicyInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdatePolicyInputProperties(_Model):
+class UpdatePolicyInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy update properties.
 
     :ivar replication_provider_settings: The ReplicationProviderSettings.
@@ -27709,7 +28352,7 @@ class UpdatePolicyInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateProtectionContainerMappingInput(_Model):
+class UpdateProtectionContainerMappingInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Container pairing update input.
 
     :ivar properties: Update protection container mapping input properties.
@@ -27740,7 +28383,9 @@ class UpdateProtectionContainerMappingInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateProtectionContainerMappingInputProperties(_Model):  # pylint: disable=name-too-long
+class UpdateProtectionContainerMappingInputProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Container pairing update input.
 
     :ivar provider_specific_input: Provider specific input for updating protection container
@@ -27772,7 +28417,7 @@ class UpdateProtectionContainerMappingInputProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class UpdateRecoveryPlanInput(_Model):
+class UpdateRecoveryPlanInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update recovery plan input class.
 
     :ivar properties: Recovery plan update properties.
@@ -27803,7 +28448,7 @@ class UpdateRecoveryPlanInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateRecoveryPlanInputProperties(_Model):
+class UpdateRecoveryPlanInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery plan update properties.
 
     :ivar groups: The recovery plan groups.
@@ -27833,7 +28478,7 @@ class UpdateRecoveryPlanInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateReplicationProtectedItemInput(_Model):
+class UpdateReplicationProtectedItemInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update replication protected item input.
 
     :ivar properties: Update replication protected item properties.
@@ -27864,7 +28509,9 @@ class UpdateReplicationProtectedItemInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateReplicationProtectedItemInputProperties(_Model):  # pylint: disable=name-too-long
+class UpdateReplicationProtectedItemInputProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Update protected item input properties.
 
     :ivar recovery_azure_vm_name: Target Azure VM name given by the user.
@@ -27963,7 +28610,7 @@ class UpdateReplicationProtectedItemInputProperties(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class UpdateVCenterRequest(_Model):
+class UpdateVCenterRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input required to update vCenter.
 
     :ivar properties: The update VCenter Request Properties.
@@ -27994,7 +28641,7 @@ class UpdateVCenterRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateVCenterRequestProperties(_Model):
+class UpdateVCenterRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an update vCenter request.
 
     :ivar friendly_name: The friendly name of the vCenter.
@@ -28048,7 +28695,7 @@ class UpdateVCenterRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserCreatedResourceTag(_Model):
+class UserCreatedResourceTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource tag input.
 
     :ivar tag_name: The tag name. Please read for more information:
@@ -28089,7 +28736,7 @@ class UserCreatedResourceTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultHealthDetails(Resource):
+class VaultHealthDetails(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Vault health details definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -28135,7 +28782,7 @@ class VaultHealthDetails(Resource):
         super().__init__(*args, **kwargs)
 
 
-class VaultHealthProperties(_Model):
+class VaultHealthProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """class to define the health summary of the Vault.
 
     :ivar vault_errors: The list of errors on the vault.
@@ -28189,7 +28836,7 @@ class VaultHealthProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultSetting(ProxyResource):
+class VaultSetting(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Vault setting.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -28235,7 +28882,7 @@ class VaultSetting(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class VaultSettingCreationInput(_Model):
+class VaultSettingCreationInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input to create vault setting.
 
     :ivar properties: Vault setting creation input properties. Required.
@@ -28266,13 +28913,19 @@ class VaultSettingCreationInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultSettingCreationInputProperties(_Model):
+class VaultSettingCreationInputProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input to create vault setting.
 
     :ivar migration_solution_id: The migration solution Id.
     :vartype migration_solution_id: str
     :ivar vmware_to_azure_provider_type: VMware to Azure provider type.
     :vartype vmware_to_azure_provider_type: str
+    :ivar recovery_network_config_auto_sync: The vault level policy controlling whether the A2A
+     recovery network configuration is automatically kept in sync with the source virtual machine.
+     If the property is omitted from the request body, the policy is set to ``Disabled``. Known
+     values are: "Disabled" and "Enabled".
+    :vartype recovery_network_config_auto_sync: str or
+     ~azure.mgmt.recoveryservicessiterecovery.models.RecoveryNetworkConfigAutoSyncPolicy
     """
 
     migration_solution_id: Optional[str] = rest_field(
@@ -28283,6 +28936,13 @@ class VaultSettingCreationInputProperties(_Model):
         name="vmwareToAzureProviderType", visibility=["read", "create", "update", "delete", "query"]
     )
     """VMware to Azure provider type."""
+    recovery_network_config_auto_sync: Optional[Union[str, "_models.RecoveryNetworkConfigAutoSyncPolicy"]] = rest_field(
+        name="recoveryNetworkConfigAutoSync", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The vault level policy controlling whether the A2A recovery network configuration is
+     automatically kept in sync with the source virtual machine. If the property is omitted from the
+     request body, the policy is set to ``Disabled``. Known values are: \"Disabled\" and
+     \"Enabled\"."""
 
     @overload
     def __init__(
@@ -28290,6 +28950,7 @@ class VaultSettingCreationInputProperties(_Model):
         *,
         migration_solution_id: Optional[str] = None,
         vmware_to_azure_provider_type: Optional[str] = None,
+        recovery_network_config_auto_sync: Optional[Union[str, "_models.RecoveryNetworkConfigAutoSyncPolicy"]] = None,
     ) -> None: ...
 
     @overload
@@ -28303,13 +28964,18 @@ class VaultSettingCreationInputProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultSettingProperties(_Model):
+class VaultSettingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Vault setting properties.
 
     :ivar migration_solution_id: The migration solution ARM Id.
     :vartype migration_solution_id: str
     :ivar vmware_to_azure_provider_type: VMware to Azure provider type.
     :vartype vmware_to_azure_provider_type: str
+    :ivar recovery_network_config_auto_sync: The vault level policy controlling whether the A2A
+     recovery network configuration is automatically kept in sync with the source virtual machine.
+     Known values are: "Disabled" and "Enabled".
+    :vartype recovery_network_config_auto_sync: str or
+     ~azure.mgmt.recoveryservicessiterecovery.models.RecoveryNetworkConfigAutoSyncPolicy
     """
 
     migration_solution_id: Optional[str] = rest_field(
@@ -28320,6 +28986,12 @@ class VaultSettingProperties(_Model):
         name="vmwareToAzureProviderType", visibility=["read", "create", "update", "delete", "query"]
     )
     """VMware to Azure provider type."""
+    recovery_network_config_auto_sync: Optional[Union[str, "_models.RecoveryNetworkConfigAutoSyncPolicy"]] = rest_field(
+        name="recoveryNetworkConfigAutoSync", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The vault level policy controlling whether the A2A recovery network configuration is
+     automatically kept in sync with the source virtual machine. Known values are: \"Disabled\" and
+     \"Enabled\"."""
 
     @overload
     def __init__(
@@ -28327,6 +28999,7 @@ class VaultSettingProperties(_Model):
         *,
         migration_solution_id: Optional[str] = None,
         vmware_to_azure_provider_type: Optional[str] = None,
+        recovery_network_config_auto_sync: Optional[Union[str, "_models.RecoveryNetworkConfigAutoSyncPolicy"]] = None,
     ) -> None: ...
 
     @overload
@@ -28340,7 +29013,7 @@ class VaultSettingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VCenter(ProxyResource):
+class VCenter(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """vCenter definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -28386,7 +29059,7 @@ class VCenter(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class VCenterProperties(_Model):
+class VCenterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """vCenter properties.
 
     :ivar friendly_name: Friendly name of the vCenter.
@@ -28482,7 +29155,7 @@ class VCenterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VersionDetails(_Model):
+class VersionDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Version related details.
 
     :ivar version: The agent version.
@@ -28526,7 +29199,9 @@ class VersionDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineTaskDetails(JobTaskDetails, discriminator="VirtualMachineTaskDetails"):
+class VirtualMachineTaskDetails(
+    JobTaskDetails, discriminator="VirtualMachineTaskDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents the virtual machine task details.
 
     :ivar job_task: The job entity.
@@ -28762,7 +29437,9 @@ class VmmToVmmUpdateNetworkMappingInput(FabricSpecificUpdateNetworkMappingInput,
         self.instance_type = "VmmToVmm"  # type: ignore
 
 
-class VmmVirtualMachineDetails(HyperVVirtualMachineDetails, discriminator="VmmVirtualMachine"):
+class VmmVirtualMachineDetails(
+    HyperVVirtualMachineDetails, discriminator="VmmVirtualMachine"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMM fabric provider specific VM settings.
 
     :ivar source_item_id: The source id of the object.
@@ -28824,7 +29501,7 @@ class VmmVirtualMachineDetails(HyperVVirtualMachineDetails, discriminator="VmmVi
         self.instance_type = "VmmVirtualMachine"  # type: ignore
 
 
-class VMNicDetails(_Model):
+class VMNicDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hyper V VM network details.
 
     :ivar nic_id: The nic Id.
@@ -28986,7 +29663,7 @@ class VMNicDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMNicInputDetails(_Model):
+class VMNicInputDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hyper V VM network input details.
 
     :ivar nic_id: The nic Id.
@@ -29113,7 +29790,9 @@ class VMNicInputDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VmNicUpdatesTaskDetails(TaskTypeDetails, discriminator="VmNicUpdatesTaskDetails"):
+class VmNicUpdatesTaskDetails(
+    TaskTypeDetails, discriminator="VmNicUpdatesTaskDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This class represents the vm NicUpdates task details.
 
     :ivar vm_id: Virtual machine Id.
@@ -29184,7 +29863,9 @@ class VMwareCbtContainerCreationInput(ReplicationProviderSpecificContainerCreati
         self.instance_type = "VMwareCbt"  # type: ignore
 
 
-class VMwareCbtContainerMappingInput(ReplicationProviderSpecificContainerMappingInput, discriminator="VMwareCbt"):
+class VMwareCbtContainerMappingInput(
+    ReplicationProviderSpecificContainerMappingInput, discriminator="VMwareCbt"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareCbt container mapping input.
 
     :ivar key_vault_id: The target key vault ARM Id.
@@ -29253,7 +29934,7 @@ class VMwareCbtContainerMappingInput(ReplicationProviderSpecificContainerMapping
         self.instance_type = "VMwareCbt"  # type: ignore
 
 
-class VMwareCbtDiskInput(_Model):
+class VMwareCbtDiskInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareCbt disk input.
 
     :ivar disk_id: The disk Id. Required.
@@ -29270,6 +29951,8 @@ class VMwareCbtDiskInput(_Model):
     :vartype log_storage_account_sas_secret_name: str
     :ivar disk_encryption_set_id: The DiskEncryptionSet ARM Id.
     :vartype disk_encryption_set_id: str
+    :ivar confidential_disk_encryption_set_id: The ConfidentialDiskEncryptionSet ARM Id.
+    :vartype confidential_disk_encryption_set_id: str
     :ivar sector_size_in_bytes: The logical sector size (in bytes), 512 by default.
     :vartype sector_size_in_bytes: int
     :ivar iops: The number of IOPS allowed for Premium V2 and Ultra disks.
@@ -29301,6 +29984,10 @@ class VMwareCbtDiskInput(_Model):
         name="diskEncryptionSetId", visibility=["read", "create", "update", "delete", "query"]
     )
     """The DiskEncryptionSet ARM Id."""
+    confidential_disk_encryption_set_id: Optional[str] = rest_field(
+        name="confidentialDiskEncryptionSetId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ConfidentialDiskEncryptionSet ARM Id."""
     sector_size_in_bytes: Optional[int] = rest_field(
         name="sectorSizeInBytes", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -29326,6 +30013,7 @@ class VMwareCbtDiskInput(_Model):
         log_storage_account_sas_secret_name: str,
         disk_type: Optional[Union[str, "_models.DiskAccountType"]] = None,
         disk_encryption_set_id: Optional[str] = None,
+        confidential_disk_encryption_set_id: Optional[str] = None,
         sector_size_in_bytes: Optional[int] = None,
         iops: Optional[int] = None,
         throughput_in_mbps: Optional[int] = None,
@@ -29343,7 +30031,9 @@ class VMwareCbtDiskInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMwareCbtEnableMigrationInput(EnableMigrationProviderSpecificInput, discriminator="VMwareCbt"):
+class VMwareCbtEnableMigrationInput(
+    EnableMigrationProviderSpecificInput, discriminator="VMwareCbt"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareCbt specific enable migration input.
 
     :ivar vmware_machine_id: The ARM Id of the VM discovered in VMware. Required.
@@ -29610,7 +30300,9 @@ class VMwareCbtEventDetails(EventProviderSpecificDetails, discriminator="VMwareC
         self.instance_type = "VMwareCbt"  # type: ignore
 
 
-class VMwareCbtMigrateInput(MigrateProviderSpecificInput, discriminator="VMwareCbt"):
+class VMwareCbtMigrateInput(
+    MigrateProviderSpecificInput, discriminator="VMwareCbt"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareCbt specific migrate input.
 
     :ivar perform_shutdown: A value indicating whether VM is to be shutdown. Required.
@@ -29667,7 +30359,9 @@ class VMwareCbtMigrateInput(MigrateProviderSpecificInput, discriminator="VMwareC
         self.instance_type = "VMwareCbt"  # type: ignore
 
 
-class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings, discriminator="VMwareCbt"):
+class VMwareCbtMigrationDetails(
+    MigrationProviderSpecificSettings, discriminator="VMwareCbt"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareCbt provider specific settings.
 
     :ivar vmware_machine_id: The ARM Id of the VM discovered in VMware.
@@ -29985,7 +30679,7 @@ class VMwareCbtMigrationDetails(MigrationProviderSpecificSettings, discriminator
         self.instance_type = "VMwareCbt"  # type: ignore
 
 
-class VMwareCbtNicDetails(_Model):
+class VMwareCbtNicDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareCbt NIC details.
 
     :ivar nic_id: The NIC Id.
@@ -30101,7 +30795,7 @@ class VMwareCbtNicDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMwareCbtNicInput(_Model):
+class VMwareCbtNicInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareCbt NIC input.
 
     :ivar nic_id: The NIC Id. Required.
@@ -30176,7 +30870,9 @@ class VMwareCbtNicInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMwareCbtPolicyCreationInput(PolicyProviderSpecificInput, discriminator="VMwareCbt"):
+class VMwareCbtPolicyCreationInput(
+    PolicyProviderSpecificInput, discriminator="VMwareCbt"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMware Cbt policy creation input.
 
     :ivar recovery_point_history_in_minutes: The duration in minutes until which the recovery
@@ -30227,7 +30923,9 @@ class VMwareCbtPolicyCreationInput(PolicyProviderSpecificInput, discriminator="V
         self.instance_type = "VMwareCbt"  # type: ignore
 
 
-class VmwareCbtPolicyDetails(PolicyProviderSpecificDetails, discriminator="VMwareCbt"):
+class VmwareCbtPolicyDetails(
+    PolicyProviderSpecificDetails, discriminator="VMwareCbt"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMware Cbt specific policy details.
 
     :ivar recovery_point_history_in_minutes: The duration in minutes until which the recovery
@@ -30279,7 +30977,7 @@ class VmwareCbtPolicyDetails(PolicyProviderSpecificDetails, discriminator="VMwar
         self.instance_type = "VMwareCbt"  # type: ignore
 
 
-class VMwareCbtProtectedDiskDetails(_Model):
+class VMwareCbtProtectedDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareCbt protected disk details.
 
     :ivar disk_id: The disk id.
@@ -30302,6 +31000,8 @@ class VMwareCbtProtectedDiskDetails(_Model):
     :vartype log_storage_account_sas_secret_name: str
     :ivar disk_encryption_set_id: The DiskEncryptionSet ARM Id.
     :vartype disk_encryption_set_id: str
+    :ivar confidential_disk_encryption_set_id: The ConfidentialDiskEncryptionSet ARM Id.
+    :vartype confidential_disk_encryption_set_id: str
     :ivar seed_managed_disk_id: The ARM Id of the seed managed disk.
     :vartype seed_managed_disk_id: str
     :ivar seed_blob_uri: The uri of the seed blob.
@@ -30348,6 +31048,10 @@ class VMwareCbtProtectedDiskDetails(_Model):
     """The key vault secret name of the log storage account."""
     disk_encryption_set_id: Optional[str] = rest_field(name="diskEncryptionSetId", visibility=["read"])
     """The DiskEncryptionSet ARM Id."""
+    confidential_disk_encryption_set_id: Optional[str] = rest_field(
+        name="confidentialDiskEncryptionSetId", visibility=["read"]
+    )
+    """The ConfidentialDiskEncryptionSet ARM Id."""
     seed_managed_disk_id: Optional[str] = rest_field(name="seedManagedDiskId", visibility=["read"])
     """The ARM Id of the seed managed disk."""
     seed_blob_uri: Optional[str] = rest_field(name="seedBlobUri", visibility=["read"])
@@ -30404,7 +31108,7 @@ class VMwareCbtProtectedDiskDetails(_Model):
 
 class VMwareCbtProtectionContainerMappingDetails(
     ProtectionContainerMappingProviderSpecificDetails, discriminator="VMwareCbt"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """VMwareCbt provider specific container mapping details.
 
     :ivar key_vault_id: The target key vault ARM Id.
@@ -30471,7 +31175,9 @@ class VMwareCbtProtectionContainerMappingDetails(
         self.instance_type = "VMwareCbt"  # type: ignore
 
 
-class VMwareCbtResumeReplicationInput(ResumeReplicationProviderSpecificInput, discriminator="VMwareCbt"):
+class VMwareCbtResumeReplicationInput(
+    ResumeReplicationProviderSpecificInput, discriminator="VMwareCbt"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareCbt specific resume replication input.
 
     :ivar delete_migration_resources: A value indicating whether Migration resources to be deleted.
@@ -30506,7 +31212,9 @@ class VMwareCbtResumeReplicationInput(ResumeReplicationProviderSpecificInput, di
         self.instance_type = "VMwareCbt"  # type: ignore
 
 
-class VMwareCbtResyncInput(ResyncProviderSpecificInput, discriminator="VMwareCbt"):
+class VMwareCbtResyncInput(
+    ResyncProviderSpecificInput, discriminator="VMwareCbt"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareCbt specific resync input.
 
     :ivar skip_cbt_reset: A value indicating whether CBT is to be reset. Required.
@@ -30539,7 +31247,7 @@ class VMwareCbtResyncInput(ResyncProviderSpecificInput, discriminator="VMwareCbt
         self.instance_type = "VMwareCbt"  # type: ignore
 
 
-class VMwareCbtSecurityProfileProperties(_Model):
+class VMwareCbtSecurityProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareCbt security profile input.
 
     :ivar target_vm_security_type: The target VM security type. Known values are: "None",
@@ -30603,7 +31311,9 @@ class VMwareCbtSecurityProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMwareCbtTestMigrateInput(TestMigrateProviderSpecificInput, discriminator="VMwareCbt"):
+class VMwareCbtTestMigrateInput(
+    TestMigrateProviderSpecificInput, discriminator="VMwareCbt"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareCbt specific test migrate input.
 
     :ivar recovery_point_id: The recovery point Id. Required.
@@ -30665,7 +31375,7 @@ class VMwareCbtTestMigrateInput(TestMigrateProviderSpecificInput, discriminator=
         self.instance_type = "VMwareCbt"  # type: ignore
 
 
-class VMwareCbtUpdateDiskInput(_Model):
+class VMwareCbtUpdateDiskInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareCbt disk input for update.
 
     :ivar disk_id: The disk Id. Required.
@@ -30724,7 +31434,9 @@ class VMwareCbtUpdateDiskInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMwareCbtUpdateMigrationItemInput(UpdateMigrationItemProviderSpecificInput, discriminator="VMwareCbt"):
+class VMwareCbtUpdateMigrationItemInput(
+    UpdateMigrationItemProviderSpecificInput, discriminator="VMwareCbt"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareCbt specific update migration item input.
 
     :ivar target_vm_name: The target VM name.
@@ -30901,7 +31613,9 @@ class VMwareCbtUpdateMigrationItemInput(UpdateMigrationItemProviderSpecificInput
         self.instance_type = "VMwareCbt"  # type: ignore
 
 
-class VMwareDetails(FabricSpecificDetails, discriminator="VMware"):
+class VMwareDetails(
+    FabricSpecificDetails, discriminator="VMware"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Store the fabric details specific to the VMware fabric.
 
     :ivar process_servers: The list of Process Servers associated with the fabric.
@@ -31159,7 +31873,9 @@ class VMwareDetails(FabricSpecificDetails, discriminator="VMware"):
         self.instance_type = "VMware"  # type: ignore
 
 
-class VMwareV2FabricCreationInput(FabricSpecificCreationInput, discriminator="VMwareV2"):
+class VMwareV2FabricCreationInput(
+    FabricSpecificCreationInput, discriminator="VMwareV2"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareV2 fabric provider specific settings.
 
     :ivar vmware_site_id: The ARM Id of the VMware site.
@@ -31267,7 +31983,9 @@ class VMwareV2FabricSpecificDetails(FabricSpecificDetails, discriminator="VMware
         self.instance_type = "VMwareV2"  # type: ignore
 
 
-class VMwareVirtualMachineDetails(ConfigurationSettings, discriminator="VMwareVirtualMachine"):
+class VMwareVirtualMachineDetails(
+    ConfigurationSettings, discriminator="VMwareVirtualMachine"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMware provider specific settings.
 
     :ivar agent_generated_id: The ID generated by the InMage agent after it gets installed on

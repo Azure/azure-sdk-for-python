@@ -1,5 +1,40 @@
 # Release History
 
+## 2.1.0 (2026-10-30)
+
+### Features Added
+
+  - Model `A2AEnableProtectionInput` added property `recovery_confidential_data_disk_encryption_identity`
+  - Model `A2AProtectedManagedDiskDetails` added property `confidential_disk_encryption_info`
+  - Model `A2AProtectedManagedDiskDetails` added property `recovery_disk_access_id`
+  - Model `A2AProtectedManagedDiskDetails` added property `recovery_network_access_policy`
+  - Model `A2AProtectedManagedDiskDetails` added property `recovery_public_network_access`
+  - Model `A2AReplicationDetails` added property `recovery_confidential_data_disk_encryption_identity`
+  - Model `A2ASwitchProtectionInput` added property `recovery_confidential_data_disk_encryption_identity`
+  - Model `A2AUpdateReplicationProtectedItemInput` added property `recovery_confidential_data_disk_encryption_identity`
+  - Model `A2AVmManagedDiskInputDetails` added property `confidential_disk_encryption_info`
+  - Model `A2AVmManagedDiskInputDetails` added property `recovery_disk_access_id`
+  - Model `A2AVmManagedDiskInputDetails` added property `recovery_network_access_policy`
+  - Model `A2AVmManagedDiskInputDetails` added property `recovery_public_network_access`
+  - Model `A2AVmManagedDiskUpdateDetails` added property `confidential_disk_encryption_info`
+  - Model `IPConfigDetails` added property `ip_version`
+  - Model `InMageRcmDiskInput` added property `confidential_disk_encryption_set_id`
+  - Model `InMageRcmDisksDefaultInput` added property `confidential_disk_encryption_set_id`
+  - Model `InMageRcmEnableProtectionInput` added property `target_extended_location`
+  - Model `InMageRcmProtectedDiskDetails` added property `confidential_disk_encryption_set_id`
+  - Model `InMageRcmReplicationDetails` added property `target_extended_location`
+  - Model `VMwareCbtDiskInput` added property `confidential_disk_encryption_set_id`
+  - Model `VMwareCbtProtectedDiskDetails` added property `confidential_disk_encryption_set_id`
+  - Model `VaultSettingCreationInputProperties` added property `recovery_network_config_auto_sync`
+  - Model `VaultSettingProperties` added property `recovery_network_config_auto_sync`
+  - Added model `A2AClusterVmManagedDiskInputDetails`
+  - Added model `ConfidentialDiskEncryptionInfo`
+  - Added enum `DiskNetworkAccessPolicy`
+  - Added enum `DiskPublicNetworkAccess`
+  - Added enum `IPVersion`
+  - Added enum `RecoveryNetworkConfigAutoSyncPolicy`
+  - Added model `UpdateConfidentialDiskEncryptionInfo`
+
 ## 2.0.0 (2026-06-25)
 
 ### Features Added
