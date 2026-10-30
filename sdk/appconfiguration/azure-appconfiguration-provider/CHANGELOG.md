@@ -1,20 +1,16 @@
 # Release History
 
-## 2.5.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 2.5.1 (2026-10-30)
 
 ### Bugs Fixed
 
-- Fixed a resource leak where replica clients that were no longer part of the auto-failover set were not closed during client refresh.
-- Fixed auto-failover replica discovery so that a DNS SRV lookup timeout (for either the origin or replica records) is distinguished from an empty replica list. A timeout now correctly triggers the longer fallback refresh interval, while an empty result refreshes at the normal interval.
-- Fixed a thread-safety issue by publishing refreshed secret values through a new configuration mapping instead of mutating the existing mapping while readers may be iterating.
-- Fixed `refresh_on` handling so that a single-string watched setting is treated as a key with the default (no) label instead of being incorrectly unpacked character-by-character.
-- Fixed a `KeyError` when loading with an endpoint and credential (no connection string).
-- Fixed feature flag processing so that an empty feature flag list clears previously loaded feature flags.
-- Fixed feature flag refresh so that the `on_refresh_success` callback is invoked when the refreshed feature flag list is empty.
+- Fixed a resource leak where replica clients that were no longer part of the auto-failover set were not closed during client refresh. ([#47922](https://github.com/Azure/azure-sdk-for-python/pull/47922))
+- Fixed auto-failover replica discovery so that a DNS SRV lookup timeout (for either the origin or replica records) is distinguished from an empty replica list. A timeout now correctly triggers the longer fallback refresh interval, while an empty result refreshes at the normal interval. ([#47922](https://github.com/Azure/azure-sdk-for-python/pull/47922))
+- Fixed a thread-safety issue by publishing refreshed secret values through a new configuration mapping instead of mutating the existing mapping while readers may be iterating. ([#47922](https://github.com/Azure/azure-sdk-for-python/pull/47922))
+- Fixed `refresh_on` handling so that a single-string watched setting is treated as a key with the default (no) label instead of being incorrectly unpacked character-by-character. ([#47922](https://github.com/Azure/azure-sdk-for-python/pull/47922))
+- Fixed a `KeyError` when loading with an endpoint and credential (no connection string). ([#47922](https://github.com/Azure/azure-sdk-for-python/pull/47922))
+- Fixed feature flag processing so that an empty feature flag list clears previously loaded feature flags. ([#49152](https://github.com/Azure/azure-sdk-for-python/pull/49152))
+- Fixed feature flag refresh so that the `on_refresh_success` callback is invoked when the refreshed feature flag list is empty. ([#49216](https://github.com/Azure/azure-sdk-for-python/pull/49216))
 
 ### Other Changes
 
