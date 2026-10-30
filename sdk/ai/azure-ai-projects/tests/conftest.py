@@ -190,6 +190,13 @@ def add_sanitizers(test_proxy, sanitized_values):
     # Sanitize eval dataset names with timestamps (e.g., eval-data-2026-01-19_040648_UTC)
     add_general_regex_sanitizer(regex=r"eval-data-\d{4}-\d{2}-\d{2}_\d{6}_UTC", value="eval-data-sanitized-timestamp")
 
+    # Preserve distinct job/dataset names while stabilizing their timestamp/UUID suffixes.
+    add_general_regex_sanitizer(
+        regex=r"simulation-seed(?:-sample)?-(\d{12}-[a-f0-9]{4})",
+        value="sanitized-run-id",
+        group_for_replace="1",
+    )
+
     # Sanitize Unix timestamps in eval names (from sample_redteam_evaluations.py)
     # Pattern 1: "Red Team Agent Safety Evaluation -<timestamp>"
     add_general_regex_sanitizer(regex=r"Evaluation -\d{10}", value="Evaluation -SANITIZED-TS")

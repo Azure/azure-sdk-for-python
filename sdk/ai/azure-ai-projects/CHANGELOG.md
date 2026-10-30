@@ -15,6 +15,7 @@
 ### Bugs Fixed
 
 * Fixed tracing to record `temperature=0` and `top_p=0` instead of omitting these valid values.
+* Fixed `SimulationSeedDataGenerationJobConfiguration` to expose the service-required `max_samples` property and constructor argument. Updated the simulation-seed evaluation sample to pass this argument directly instead of using the mapping workaround.
 
 ## 2.9.0 (2026-10-16)
 
