@@ -154,8 +154,8 @@ class ProblemDetails(_Model):  # pylint: disable=docstring-keyword-should-match-
     :vartype title: str
     :ivar status: The HTTP status code associated with the problem.
     :vartype status: int
-    :ivar detail: A human-readable explanation specific to this occurrence.
-    :vartype detail: str
+    :ivar explanation: A human-readable explanation specific to this occurrence.
+    :vartype explanation: str
     :ivar instance: A URI reference identifying this occurrence of the problem.
     :vartype instance: str
     :ivar extensions: Additional service-defined details about the problem.
@@ -178,7 +178,7 @@ class ProblemDetails(_Model):  # pylint: disable=docstring-keyword-should-match-
     """A short, human-readable summary of the problem."""
     status: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The HTTP status code associated with the problem."""
-    detail: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    explanation: Optional[str] = rest_field(name="detail", visibility=["read", "create", "update", "delete", "query"])
     """A human-readable explanation specific to this occurrence."""
     instance: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A URI reference identifying this occurrence of the problem."""
@@ -197,7 +197,7 @@ class ProblemDetails(_Model):  # pylint: disable=docstring-keyword-should-match-
         type: Optional[str] = None,
         title: Optional[str] = None,
         status: Optional[int] = None,
-        detail: Optional[str] = None,
+        explanation: Optional[str] = None,
         instance: Optional[str] = None,
         extensions: Optional[dict[str, Any]] = None,
     ) -> None: ...
