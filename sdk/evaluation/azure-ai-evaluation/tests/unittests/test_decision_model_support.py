@@ -5,12 +5,15 @@
 """Offline tests for shared decision-model runners, base selection, and evaluation strategy."""
 
 import asyncio
+import gc
 import hashlib
 import json
 import logging
 import math
 import sys
 import threading
+import time
+import weakref
 from copy import deepcopy
 from logging.handlers import BufferingHandler
 from concurrent.futures import ThreadPoolExecutor
@@ -19,6 +22,7 @@ from unittest.mock import AsyncMock, Mock, call, patch
 
 import pytest
 from openai.types.chat import ChatCompletion
+from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport, HttpResponse
 from azure.core.exceptions import ServiceRequestError
@@ -540,6 +544,277 @@ class TestDecisionModelRunnerRequests:
             run(DecisionModelRunner(DECISION_CONFIG), questions={"team": {"type": "choice", "criteria": {}}})
         assert raised.value.blame == ErrorBlame.USER_ERROR
         assert not client.calls
+
+
+class TestDecisionTokenReuse:
+    """A credential's token serves repeated and concurrent requests until shortly before it expires."""
+
+    CONFIG = {key: value for key, value in DECISION_CONFIG.items() if key != "api_key"}
+
+    @staticmethod
+    def access_token(value, lifetime=3600):
+        return AccessToken(value, int(time.time()) + lifetime)
+
+    @staticmethod
+    def authorizations(client):
+        return [call["headers"]["Authorization"] for call in client.calls]
+
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    def test_fresh_token_is_reused_across_requests_and_runners(self, client, asynchronous):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        token = self.access_token("shared-token")
+        credential = Mock()
+        credential.get_token = AsyncMock(return_value=token) if asynchronous else Mock(return_value=token)
+        first, second = DecisionModelRunner(self.CONFIG, credential), DecisionModelRunner(self.CONFIG, credential)
+        for runner in (first, second, first):
+            run(runner)
+        credential.get_token.assert_called_once_with("https://cognitiveservices.azure.com/.default")
+        assert self.authorizations(client) == ["Bearer shared-token"] * 3
+
+    @pytest.mark.parametrize("lifetime", [None, 60], ids=["no-expiry", "near-expiry"])
+    def test_tokens_without_a_usable_expiry_are_requested_each_time(self, client, lifetime):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        token = SimpleNamespace(token="per-request") if lifetime is None else self.access_token("per-request", lifetime)
+        credential = Mock(get_token=Mock(return_value=token))
+        runner = DecisionModelRunner(self.CONFIG, credential)
+        run(runner)
+        run(runner)
+        assert credential.get_token.call_count == 2
+
+    def test_concurrent_requests_share_one_synchronous_token_request(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        requested = []
+
+        def get_token(*scopes, **_):
+            requested.append(scopes)
+            time.sleep(0.2)
+            return self.access_token("single-request")
+
+        credential = Mock(get_token=Mock(side_effect=get_token))
+        runners = [DecisionModelRunner(self.CONFIG, credential) for _ in range(6)]
+        # Like evaluate(), each runner awaits on its own thread and event loop.
+        with ThreadPoolExecutor(max_workers=6) as pool:
+            list(pool.map(run, runners))
+        assert len(requested) == 1
+        assert self.authorizations(client) == ["Bearer single-request"] * 6
+
+    def test_rejected_token_is_not_reused(self, client):
+        client.response = FakeResponse(status_code=401, body=b"{}")
+        tokens = iter([self.access_token("rejected"), self.access_token("renewed")])
+        credential = Mock(get_token=Mock(side_effect=lambda *_, **__: next(tokens)))
+        runner = DecisionModelRunner(self.CONFIG, credential)
+        with pytest.raises(EvaluationException, match="HTTP 401"):
+            run(runner)
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        run(runner)
+        run(runner)
+        assert credential.get_token.call_count == 2
+        assert self.authorizations(client) == ["Bearer rejected", "Bearer renewed", "Bearer renewed"]
+
+    def test_credential_without_weak_references_is_used_without_caching(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        requested = []
+        credential = SimpleNamespace(get_token=lambda *scopes, **_: requested.append(scopes) or self.access_token("t"))
+        runner = DecisionModelRunner(self.CONFIG, credential)
+        run(runner)
+        run(runner)
+        assert len(requested) == 2
+
+    def test_unhashable_credential_is_cached_by_identity(self, client):
+        from dataclasses import dataclass
+
+        @dataclass
+        class Credential:
+            requested: int = 0
+
+            def get_token(self, *_, **__):
+                self.requested += 1
+                return TestDecisionTokenReuse.access_token("by-identity")
+
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        credential = Credential()
+        runner = DecisionModelRunner(self.CONFIG, credential)
+        run(runner)
+        run(runner)
+        assert credential.requested == 1
+
+    def test_equal_credentials_keep_their_own_tokens(self, client):
+        class Credential:
+            def __init__(self, token):
+                self.token = token
+
+            def __eq__(self, other):
+                return isinstance(other, Credential)
+
+            def __hash__(self):
+                return 0
+
+            def get_token(self, *_, **__):
+                return TestDecisionTokenReuse.access_token(self.token)
+
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        first, second = Credential("first-identity"), Credential("second-identity")
+        assert first == second
+        run(DecisionModelRunner(self.CONFIG, first))
+        run(DecisionModelRunner(self.CONFIG, second))
+        assert self.authorizations(client) == ["Bearer first-identity", "Bearer second-identity"]
+
+    def test_request_whose_deadline_passes_while_waiting_does_not_request_a_token(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        release = threading.Event()
+        requested = []
+
+        def get_token(*_, **__):
+            requested.append(1)
+            release.wait(5)
+            raise RuntimeError("Azure CLI is not logged in")
+
+        credential = Mock(get_token=Mock(side_effect=get_token))
+        outcomes = {}
+
+        def request(name, timeout):
+            try:
+                run(DecisionModelRunner(self.CONFIG, credential), timeout=timeout)
+            except EvaluationException as error:
+                outcomes[name] = str(error)
+
+        leader = threading.Thread(target=request, args=("leader", 5))
+        leader.start()
+        while not requested:
+            time.sleep(0.01)
+        waiter = threading.Thread(target=request, args=("waiter", 0.3))
+        waiter.start()
+        waiter.join(5)
+        release.set()
+        leader.join(5)
+        assert len(requested) == 1
+        assert "timed out" in outcomes["waiter"]
+        assert "Could not acquire a token" in outcomes["leader"]
+
+    def test_requests_waiting_on_a_failed_token_request_share_its_failure(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        release = threading.Event()
+        requested = []
+
+        def get_token(*_, **__):
+            requested.append(1)
+            release.wait(5)
+            raise EvaluationException(
+                message="Service-owned Decision credential acquisition failed (RuntimeError, status unknown).",
+                blame=ErrorBlame.SYSTEM_ERROR,
+                category=ErrorCategory.FAILED_EXECUTION,
+                target=ErrorTarget.EVALUATE,
+            )
+
+        credential = Mock(get_token=Mock(side_effect=get_token))
+        errors = {}
+
+        def request(name):
+            try:
+                run(DecisionModelRunner(self.CONFIG, credential), timeout=10)
+            except EvaluationException as error:
+                errors[name] = error
+
+        leader = threading.Thread(target=request, args=("leader",))
+        leader.start()
+        while not requested:
+            time.sleep(0.01)
+        waiters = [threading.Thread(target=request, args=(f"waiter-{index}",)) for index in range(3)]
+        for waiter in waiters:
+            waiter.start()
+        time.sleep(0.3)
+        release.set()
+        for thread in [leader, *waiters]:
+            thread.join(10)
+        # The queued requests fail with the same typed error instead of each starting another request.
+        assert len(requested) == 1 and len(errors) == 4
+        assert all(
+            error.blame == ErrorBlame.SYSTEM_ERROR and "acquisition failed" in str(error) for error in errors.values()
+        )
+        credential.get_token.side_effect = lambda *_, **__: self.access_token("recovered")
+        run(DecisionModelRunner(self.CONFIG, credential))
+        assert len(requested) == 1 and self.authorizations(client) == ["Bearer recovered"]
+
+    def test_a_token_rejected_before_its_request_resumes_is_not_stored_again(self, client, monkeypatch):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        credential = Mock(get_token=Mock(return_value=self.access_token("shared")))
+        fetch = _model_runners._TOKENS.fetch
+
+        def fetch_then_reject(*args):
+            token = fetch(*args)
+            # Another request's 401 discards the token before this request's event loop resumes.
+            _model_runners._TOKENS.discard(credential, token.token)
+            return token
+
+        monkeypatch.setattr(_model_runners._TOKENS, "fetch", fetch_then_reject)
+        run(DecisionModelRunner(self.CONFIG, credential))
+        assert _model_runners._TOKENS.cached(credential) is None
+
+    def test_failed_token_request_does_not_keep_the_credential_alive(self, client):
+        class Credential:
+            def get_token(self, *_, **__):
+                raise RuntimeError("Azure CLI is not logged in")
+
+        credential = Credential()
+        with pytest.raises(EvaluationException, match="Could not acquire a token"):
+            run(DecisionModelRunner(self.CONFIG, credential))
+        reference = weakref.ref(credential)
+        del credential
+        gc.collect()
+        assert reference() is None
+
+    def test_cancelled_request_stops_waiting_for_another_token_request(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        release = threading.Event()
+        requested = []
+
+        def get_token(*_, **__):
+            requested.append(1)
+            release.wait(5)
+            return self.access_token("late")
+
+        credential = Mock(get_token=Mock(side_effect=get_token))
+        cancelled = threading.Event()
+        outcomes = {}
+
+        def waiter():
+            try:
+                run(DecisionModelRunner(self.CONFIG, credential, cancellation_requested=cancelled.is_set), timeout=10)
+            except EvaluationException as error:
+                outcomes["waiter"] = str(error)
+
+        leader = threading.Thread(target=lambda: run(DecisionModelRunner(self.CONFIG, credential), timeout=10))
+        leader.start()
+        while not requested:
+            time.sleep(0.01)
+        waiting = threading.Thread(target=waiter)
+        waiting.start()
+        time.sleep(0.2)
+        cancelled.set()
+        # The cancelled request returns while the first request still holds the credential's lock.
+        waiting.join(2)
+        still_waiting = waiting.is_alive()
+        release.set()
+        leader.join(5)
+        waiting.join(5)
+        assert not still_waiting and "cancelled" in outcomes["waiter"]
+        assert len(requested) == 1
+
+    def test_cache_does_not_keep_the_credential_alive(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        token = self.access_token("caller-owned")
+
+        class Credential:
+            def get_token(self, *_, **__):
+                return token
+
+        credential = Credential()
+        run(DecisionModelRunner(self.CONFIG, credential))
+        assert _model_runners._TOKENS.cached(credential) is token
+        reference = weakref.ref(credential)
+        del credential
+        gc.collect()
+        assert reference() is None
 
 
 class TestAnswerValidation:

@@ -12,6 +12,10 @@
 - Evidence that is not finite JSON data fails with the same user-classified error on every protocol.
 - Each Decision evaluation that `DecisionEvaluationStrategy.evaluate` requests and interprets records the optional OpenTelemetry metrics `azure.ai.evaluation.decision.evaluations` (count) and `azure.ai.evaluation.decision.evaluation.duration` (ms), with `protocol`, `metric`, `outcome` (`completed`, `skipped`, `error` or `cancelled`, including cancellation by the cancellation callback), `blame` (`none`, `user` or `system`) and `error_kind` (`none`, `model_refusal` or `content_filter`). They complement the per-request metrics: an HTTP 200 response that fails validation or is not applicable is visible here. Inputs found not applicable before any request are not counted, and evaluators that interpret a shared request without `evaluate`, such as composite evaluators, are covered by the per-request metrics only. A metric sink failure, including a broken OpenTelemetry installation, never changes the evaluation result or error.
 
+### Bugs Fixed
+
+- Decision requests reuse a credential's token until five minutes before it expires, as azure-core's bearer token policy does, instead of requesting a token for every request. Concurrent evaluations that share a synchronous credential wait for one token request, and share its failure if it fails. With developer credentials such as `AzureCliCredential`, which start a process per request, concurrent evaluations were slow and could fail with "Could not acquire a token for the decision model". A token rejected with HTTP 401 is not reused, tokens without an expiry are still requested for every request, and the cache never keeps a credential alive.
+
 ## 1.18.10 (2026-10-22)
 
 ### Features Added
