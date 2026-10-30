@@ -1,0 +1,4 @@
+directory: specification/aiinfraoptimization/resource-manager/Microsoft.AIInfraOptimization/AIInfraOptimization
+commit: 8fa9aef3b78571d49ac9855659b943acf01154c4
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

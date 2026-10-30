@@ -11,11 +11,7 @@
 
 ### Bugs Fixed
 - Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning an empty list.
-- Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_container_sas`,
-  `generate_blob_sas`, and `BlobServiceClient.get_user_delegation_key` (sync and async).
-  Datetimes without timezone information continue to be treated as UTC.
 - Fixed an issue where a SAS generated for a blob name containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
-- Fixed an issue where certain headers were not being properly redacted when DEBUG logging was enabled.
 
 ### Other Changes
 - Added `nanoarrow>=0.7.0` as a required dependency.
@@ -23,6 +19,14 @@
   and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
   models instead of generated internal types.
 - `ContainerClient`'s `list_blobs`, `list_blob_names`, and `walk_blobs` now use Arrow by default. Pass `response_format="xml"` to use the previous behavior.
+
+## 12.31.1 (2026-10-29)
+
+### Bugs Fixed
+- Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_container_sas`,
+  `generate_blob_sas`, and `BlobServiceClient.get_user_delegation_key` (sync and async).
+  Datetimes without timezone information continue to be treated as UTC.
+- Fixed an issue where certain headers were not being properly redacted when DEBUG logging was enabled.
 
 ## 12.31.0 (2026-09-30)
 

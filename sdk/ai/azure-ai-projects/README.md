@@ -66,6 +66,7 @@ To report an issue with the client library, or request additional features, plea
 * Python 3.10 or later.
 * An [Azure subscription][azure_sub].
 * A [project in Microsoft Foundry](https://learn.microsoft.com/azure/foundry/how-to/create-projects).
+* An [Application Insights resource connected to your Foundry project](https://learn.microsoft.com/azure/foundry/observability/how-to/trace-agent-setup) for agent tracing.
 * A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project home page. Below we will assume the environment variable `FOUNDRY_PROJECT_ENDPOINT` was defined to hold this value.
 * Client authentication is done using Entra ID. To authenticate, your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
   * An appropriate role assignment. See [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry). Role assignment can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
@@ -162,6 +163,7 @@ See the **responses** folder in the [samples][samples] for additional samples in
 See Foundry documentation:
 
 * **[Microsoft Foundry Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview)** — concepts, setup, and quick-starts.
+* **[Quickstart: Set up Microsoft Foundry resources](https://learn.microsoft.com/azure/foundry/tutorials/quickstart-create-foundry-resources)** — create a project, deploy a model, and connect Application Insights for agent tracing.
 * **[Runtime components](https://learn.microsoft.com/azure/foundry/agents/concepts/runtime-components?tabs=python)** — deep-dive into agent architecture.
 * **[Tool catalog](https://learn.microsoft.com/azure/foundry/agents/concepts/tool-catalog)** — all available tools and agent capabilities.
 * **[SDK samples folder][samples]** — fully runnable Python code for synchronous and asynchronous clients covering all operations below.
