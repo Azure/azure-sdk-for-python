@@ -21,7 +21,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
 # API version 2026-09-01 is only in the canary ARM manifest, so use the same canary defaults as the
 # other tests (see _fs_test_helpers). Override via env vars to point at a different endpoint or RG.
 ARM_ENDPOINT = os.environ.get("ARM_ENDPOINT", "https://eastus2euap.management.azure.com")
-RESOURCE_GROUP = os.environ.get("FILESHARES_TEST_RG", "mfstest-prod-eastus2euap-crud-2026-06-01-rg")
+RESOURCE_GROUP = os.environ.get("FILESHARES_TEST_RG", "azsdk-python-fileshares-rg")
 LOCATION = os.environ.get("FILESHARES_TEST_LOCATION", "eastus2euap")
 
 
