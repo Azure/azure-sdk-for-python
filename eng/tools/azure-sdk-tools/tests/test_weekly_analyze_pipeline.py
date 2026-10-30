@@ -25,7 +25,7 @@ def eligibility_step():
     stage = load_template("python-analyze-weekly.yml")["stages"][0]
     check, analyze = stage["jobs"]
     assert check["job"] == "CheckWeekend"
-    assert check["variables"]["PipelineStartTime"] == "$[ format('{0:yyyy-MM-ddTHH:mm:ssK}', pipeline.startTime) ]"
+    assert check["variables"]["PipelineStartTime"] == "$[ format('{0:yyyyMMddHHmmssK}', pipeline.startTime) ]"
     assert check["steps"][0] == {"checkout": "none"}
     assert analyze["dependsOn"] == check["job"]
     step = check["steps"][1]
@@ -39,20 +39,24 @@ def eligibility_step():
 @pytest.mark.parametrize(
     "timestamp,expected",
     [
-        ("2026-10-12T00:00:00Z", False),
-        ("2026-10-13T12:00:00Z", False),
-        ("2026-10-14T12:00:00Z", False),
-        ("2026-10-15T12:00:00Z", False),
-        ("2026-10-16T23:59:59Z", False),
-        ("2026-10-17T00:00:00Z", True),
-        ("2026-10-18T23:59:59Z", True),
-        ("2026-10-19T00:00:00Z", False),
-        ("2026-10-16T17:00:00-07:00", True),
-        ("2026-10-19T01:00:00+02:00", True),
-        ("2026-10-18T17:00:00-07:00", False),
-        ("2026-10-17T01:00:00+02:00", False),
-        ("2028-02-29T00:00:00Z", False),
-        ("2027-01-02T00:00:00Z", True),
+        ("20261012000000Z", False),
+        ("20261013120000Z", False),
+        ("20261014120000Z", False),
+        ("20261015120000Z", False),
+        ("20261016235959Z", False),
+        ("20261017000000Z", True),
+        ("20261018235959Z", True),
+        ("20261019000000Z", False),
+        ("20261016170000-07:00", True),
+        ("20261019010000+02:00", True),
+        ("20261018170000-07:00", False),
+        ("20261017010000+02:00", False),
+        ("20261016235959", False),
+        ("20261017000000", True),
+        ("20261018235959", True),
+        ("20261019000000", False),
+        ("20280229000000Z", False),
+        ("20270102000000Z", True),
         ("", None),
         ("invalid", None),
     ],
@@ -69,7 +73,7 @@ def test_weekend_eligibility_uses_pipeline_start_time(eligibility_step, timestam
             "-Command",
             "$ErrorActionPreference = 'Stop'\n" + eligibility_step["pwsh"],
         ],
-        env={**os.environ, "PIPELINE_START_TIME": timestamp},
+        env={**os.environ, "PIPELINE_START_TIME": timestamp, "TZ": "America/Los_Angeles"},
         capture_output=True,
         text=True,
         timeout=30,

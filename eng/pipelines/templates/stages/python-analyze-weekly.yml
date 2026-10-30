@@ -33,15 +33,17 @@ stages:
           image: $(LINUXVMIMAGE)
           os: linux
         variables:
-          PipelineStartTime: $[ format('{0:yyyy-MM-ddTHH:mm:ssK}', pipeline.startTime) ]
+          # Keep the pipeline expression's date format free of literal separators.
+          PipelineStartTime: $[ format('{0:yyyyMMddHHmmssK}', pipeline.startTime) ]
         steps:
           - checkout: none
           # Azure Pipelines format() does not support day-of-week specifiers.
           - pwsh: |
               $startTime = [DateTimeOffset]::ParseExact(
                 $env:PIPELINE_START_TIME,
-                'yyyy-MM-ddTHH:mm:ssK',
-                [Globalization.CultureInfo]::InvariantCulture
+                'yyyyMMddHHmmssK',
+                [Globalization.CultureInfo]::InvariantCulture,
+                [Globalization.DateTimeStyles]::AssumeUniversal
               )
               $isWeekend = $startTime.UtcDateTime.DayOfWeek -in @(
                 [DayOfWeek]::Saturday, [DayOfWeek]::Sunday
