@@ -50,37 +50,37 @@ extends:
     MsRustToolchainFeed: https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json
     MsRustAdditionalTargets: aarch64-pc-windows-msvc
     Artifacts:
-    - name: azure-storage-blob
-      safeName: azurestorageblob
-    - name: azure-storage-blob-changefeed
-      safeName: azurestorageblobchangefeed
-    - name: azure-storage-file-share
-      safeName: azurestoragefileshare
-    - name: azure-storage-file-datalake
-      safeName: azurestoragefiledatalake
-    - name: azure-storage-queue
-      safeName: azurestoragequeue
-    - name: azure-storage-extensions
-      safeName: azurestorageextensions
-      # Ships compiled binaries, so its wheels are routed through a dedicated
-      # Sign_azurestorageextensions stage before release and dev feed publishing.
-      signBinaries: true
-      triggeringPaths:
-        - /sdk/storage/azure-storage-blob
-        - /sdk/storage/azure-storage-file-datalake
-        - /sdk/storage/azure-storage-file-share
-        - /sdk/storage/azure-storage-queue
-      # Pure C-based storage extension package, not generating docs at this moment.
-      skipPublishDocGithubIo: true
-      skipPublishDocMs: true
+    # - name: azure-storage-blob
+    #   safeName: azurestorageblob
+    # - name: azure-storage-blob-changefeed
+    #   safeName: azurestorageblobchangefeed
+    # - name: azure-storage-file-share
+    #   safeName: azurestoragefileshare
+    # - name: azure-storage-file-datalake
+    #   safeName: azurestoragefiledatalake
+    # - name: azure-storage-queue
+    #   safeName: azurestoragequeue
+    # - name: azure-storage-extensions
+    #   safeName: azurestorageextensions
+    #   # Ships compiled binaries, so its wheels are routed through a dedicated
+    #   # Sign_azurestorageextensions stage before release and dev feed publishing.
+    #   signBinaries: true
+    #   triggeringPaths:
+    #     - /sdk/storage/azure-storage-blob
+    #     - /sdk/storage/azure-storage-file-datalake
+    #     - /sdk/storage/azure-storage-file-share
+    #     - /sdk/storage/azure-storage-queue
+    #   # Pure C-based storage extension package, not generating docs at this moment.
+    #   skipPublishDocGithubIo: true
+    #   skipPublishDocMs: true
     - name: azure-storage-extensions-transfer
       safeName: azurestorageextensionstransfer
       signBinaries: true
-    - name: azure-mgmt-storage
-      safeName: azuremgmtstorage
-    - name: azure-mgmt-storagecache
-      safeName: azuremgmtstoragecache
-    - name: azure-mgmt-storagesync
-      safeName: azuremgmtstoragesync
-    - name: azure-mgmt-storageimportexport
-      safeName: azuremgmtstorageimportexport
+    # - name: azure-mgmt-storage
+    #   safeName: azuremgmtstorage
+    # - name: azure-mgmt-storagecache
+    #   safeName: azuremgmtstoragecache
+    # - name: azure-mgmt-storagesync
+    #   safeName: azuremgmtstoragesync
+    # - name: azure-mgmt-storageimportexport
+    #   safeName: azuremgmtstorageimportexport
