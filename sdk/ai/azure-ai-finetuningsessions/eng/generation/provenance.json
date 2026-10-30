@@ -3,7 +3,7 @@
   "status": "validated-typespec-and-supported-python-hooks",
   "distribution": "azure-ai-finetuningsessions",
   "namespace": "azure.ai.finetuningsessions",
-  "version": "1.0.0b1",
+  "version": "1.0.0b2",
   "reference": {
     "manifest": "eng/generation/reference.json",
     "repository": "loom",
@@ -15,14 +15,14 @@
   "typespec": {
     "repository": "Azure/azure-rest-api-specs",
     "directory": "specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions",
-    "base_commit": "ad04115d8266b5d2929654132219526cab6ab559",
-    "commit": "b37e3333b3e35ebc1539e33ebee09bd0c9ea101d",
+    "base_commit": "3853383ccd0548b8c002c251ea3723a7afd43843",
+    "commit": "0a86307b307665b6a0b9b12ebc42248c2b262325",
     "requires_uncommitted_working_tree": false,
-    "source_fingerprint_sha256": "f20b6328d202b728d46b26c5a5410d72ffb2d1552d5a3436d5e9b89eb75df872",
-    "client_sha256": "ce817e0ceb617e2c48fcf66c26732b2d56454df6cd9b5780ae07217b804c1f68",
+    "source_fingerprint_sha256": "be76992eba71dccddd4926e6839eb15630e531236249908ea0cbe38d4d3d5bba",
+    "client_sha256": "a974c5c1b8bb6649f9baaeba925a24b9e3439c1e80c9c92dd2ded2e2bd286694",
     "models_path": "specification/ai-foundry/data-plane/Foundry/src/session-finetuning/models-custom-code.tsp",
-    "models_sha256": "411d9a5fe99ac3ce24448b2557af5ada4e579325fdbd5aa584a9b5b2d51dc745",
-    "config_sha256": "ad13f4e89a5aa23c9e2cbb8c542c83f8740c50724c995f76901abe9304cdf11a",
+    "models_sha256": "bee9a1c4f4b8d80315f98212e378c28aef552d28eee3d6ec2327f1b30a0cbec3",
+    "config_sha256": "5de8e07a030e194a0cc0e132b9c0cbe3ff03db376e7b431bff61ba693bd3df69",
     "remote_generation_blocker": null
   },
   "toolchain": {
@@ -30,34 +30,38 @@
     "lockfile": "../../../eng/emitter-package-lock.json",
     "archived_manifest": "eng/generation/emitter-package.json",
     "archived_lockfile": "eng/generation/emitter-package-lock.json",
-    "manifest_sha256": "68d8b0bbfec19a0189acca481998f2c03b8e4d5a06fbbd7473b4f55c86be286c",
-    "lockfile_sha256": "ae3cea6b98fbfc950d68a106ed4af08853ae61aec886fe75c0500c45f8a3b227",
+    "manifest_sha256": "f1b253748522a7e77491fb92b3e48de8dd00478d6d26cb384719f410311ce582",
+    "lockfile_sha256": "c89670adce8e98c0b8040d9e7a274ea12f9d724dde80a80b18440598d9b87d68",
     "hash_normalization": "CRLF-to-LF",
     "python_backend_requirements": "eng/generation/requirements.txt",
-    "python_emitter": "0.63.8",
-    "http_client_python": "0.38.0",
-    "compiler": "1.16.0",
-    "client_generator_core": "0.72.2"
+    "python_emitter": "0.63.10",
+    "http_client_python": "0.39.0",
+    "compiler": "1.17.0",
+    "client_generator_core": "0.73.0"
   },
   "assembly": {
     "generated_inventory_entries": 21,
-    "generated_inventory_fingerprint_sha256": "9cf7a722a1d15f4a7358455c05e55bea02704e18a085474945721a9f5d0d92e7",
-    "runtime_files": 28,
-    "runtime_python_modules": 27,
+    "generated_inventory_fingerprint_sha256": "eec5a01b484837210d5c1dbc70abfa1896e31778673e9659f621b1b3e4767f74",
+    "runtime_files": 32,
+    "runtime_python_modules": 31,
     "baseline_runtime_fingerprint_sha256": "7cccad8118a905db7b6f526e13ffc0b77bf9dbc501068e22122ee8fea66363e1",
-    "runtime_fingerprint_sha256": "7cb1c4d4af28c3d939fd917e37de6cc542f0133ea253a4490b164d052840e164",
+    "runtime_fingerprint_sha256": "00b1001f49189c1eaba47d1f8adc10b50223266570510800a36fd40a8dc340b0",
     "maintained_modules": [
-      "_patch.py",
-      "aio/_patch.py",
-      "models/_patch.py",
-      "operations/_patch.py",
-      "aio/operations/_patch.py",
+      "_checkpoint_download.py",
       "_client_options.py",
-      "_operation_compat.py",
       "_exceptions.py",
-      "_logging_setup.py"
+      "_logging_setup.py",
+      "_operation_compat.py",
+      "_patch.py",
+      "_scalar_serialization.py",
+      "_text_only.py",
+      "aio/_patch.py",
+      "aio/operations/_patch.py",
+      "models/_patch.py",
+      "models/_text_only.py",
+      "operations/_patch.py"
     ],
-    "method": "Seed only maintained modules before emission; pinned emitter preserves/formats them; compare complete output with public runtime. No generated-source rewriting."
+    "method": "Seed only supported maintained modules, including scalar optimization via models.patch_sdk, before fresh emission; compare complete generated inventory and assembled runtime. No generated-source rewriting."
   },
   "validation": {
     "current_source_refresh_20260925": {
@@ -67,7 +71,10 @@
       "canonical_feature_members": 12,
       "removed_obsolete_feature": "AGENTS_OPTIMIZATION_V2_PREVIEW",
       "custom_models_moved_without_python_api_rename": true,
-      "maintained_features": ["Positive-integer chunk-size environment override with unchanged default", "Strict read-only optional backend prompt_tokens and identical sampling result alias"],
+      "maintained_features": [
+        "Positive-integer chunk-size environment override with unchanged default",
+        "Strict read-only optional backend prompt_tokens and identical sampling result alias"
+      ],
       "new_comparison_contract": "sampling-prompt-tokens",
       "immutable_reference_changed": false,
       "independent_emissions": 2,
@@ -93,7 +100,10 @@
       "base_sdk_commit": "cbb13c32bbcaea073bbddebe96067a845e750b5e",
       "base_loom_commit": "80de7cbb41198d0afb6c005b73f0544396ff37c5",
       "decision_record": "GENERATION.md#current-sdk-first-decisions",
-      "review_comments": [4099598821, 4099604743],
+      "review_comments": [
+        4099598821,
+        4099604743
+      ],
       "canonical_aliases": 18,
       "remaining_compatibility_models": 22,
       "remaining_compatibility_unions": 3,
@@ -101,7 +111,10 @@
       "existing_feature_members_preserved": 6,
       "new_discriminator_tests": 196,
       "new_canonical_feature_tests": 17,
-      "new_comparison_contracts": ["input-chunk-discriminator", "canonical-foundry-features"],
+      "new_comparison_contracts": [
+        "input-chunk-discriminator",
+        "canonical-foundry-features"
+      ],
       "service_compatibility_and_image_sampling_tests_passed": 162,
       "sdk_to_service_pipeline_cases_passed": 20,
       "service_schema_origin_verified": true,
@@ -126,8 +139,8 @@
     },
     "upstream_tests": 434,
     "upstream_test_files": 19,
-    "current_tests": 1879,
-    "current_test_files": 32,
+    "current_tests": 2498,
+    "current_test_files": 37,
     "paired_convenience_cases": 20,
     "requests_per_sdk": 134,
     "checks_per_sdk": 2246,
@@ -162,7 +175,10 @@
       "current_azure_core": "1.41.0",
       "current_core_python_313_tests_passed": 1637,
       "remote_ci_green_verified": false,
-      "external_requirements": ["Python package-name approval/reservation", "Required human review approval"]
+      "external_requirements": [
+        "Python package-name approval/reservation",
+        "Required human review approval"
+      ]
     },
     "model_reuse_and_training_type_20260924": {
       "base_spec_commit": "1a2dfe67604b7b2e69965cd46c127fb0889c31f8",
@@ -256,6 +272,51 @@
     "python_313_tests_passed": 1879,
     "live_service_tested": false,
     "review_fixes_applied": true,
-    "scope": "preview-parity-baseline plus explicit reviewed fixes recorded in eng/generation/review-deltas.json; nested dated sections record historical validations only"
+    "scope": "preview-parity-baseline plus explicit reviewed fixes recorded in eng/generation/review-deltas.json; nested dated sections record historical validations only",
+    "beta2_sync_20261030": {
+      "loom_commit": "26869a447bd03527712ac1c390a96d13e8ad235d",
+      "spec_commit": "0a86307b307665b6a0b9b12ebc42248c2b262325",
+      "sdk_base_commit": "b78702d64c9b1bfc9e86577e50f7005bcaa9299f",
+      "canonical_paths": 15,
+      "canonical_methods": 17,
+      "unrelated_rest_paths_changed": 0,
+      "unrelated_rest_schemas_changed": 0,
+      "typespec_strict_compile_passed": true,
+      "full_foundry_compile_passed": true,
+      "security_review": "No security vulnerabilities found in the initial port or canonical-route context follow-up.",
+      "scalar_regressions_passed": 27,
+      "independent_emissions": 2,
+      "source_tests_passed": 2498,
+      "installed_wheel_tests_passed": 2497,
+      "live_service_tested": false,
+      "remote_ci_green_verified": false,
+      "canonical_context_scope": "Known canonical native session routes plus exact checkpoint preparation, with configured origin/resource bounds; file locators and unknown/lookalike paths remain excluded.",
+      "source_tests_skipped": 72,
+      "python_310_tests_passed": 2497,
+      "python_310_tests_skipped": 73,
+      "python_310_azure_core": "1.37.0",
+      "python_313_version": "3.13.14",
+      "python_310_version": "3.10.21",
+      "installed_wheel_tests_skipped": 73,
+      "maintainer_tool_tests_passed": 16,
+      "mypy_version": "1.19.1",
+      "mypy_passed": true,
+      "pyright_version": "1.1.411",
+      "pyright_passed": true,
+      "api_markdown_sha256": "4db78e24f16353b0bace331e7d194b20daa38511f07b7deab27dfaacda004275",
+      "python_313_azure_core": "1.38.0",
+      "pylint_version": "4.0.4",
+      "pylint_guidelines_checker": "0.5.7",
+      "pylint_passed": true,
+      "wheel_sha256": "c70037bd628204c20427a42557518c95d0371097a3b5d909203c8e9755bdbd24",
+      "wheel_runtime_files": 32,
+      "wheel_runtime_matches_source": true,
+      "artifact_scope": "Final wheel runtime and complete installed-wheel suite validated; provenance and API snapshot metadata finalized afterward. No live service/GPU run or package publication."
+    }
+  },
+  "sync_reference": {
+    "repository": "loom",
+    "commit": "26869a447bd03527712ac1c390a96d13e8ad235d",
+    "scope": "Maintained SDK behavior and offline regressions; version, current shared generation, canonical routes, and the supported scalar hook are intentional public-repository differences."
   }
 }

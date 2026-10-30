@@ -13,7 +13,7 @@
         "azure.ai.finetuningsessions.models.ForwardBackwardInput": "Azure.AI.Projects.SessionFineTuning.ForwardBackwardInput",
         "azure.ai.finetuningsessions.models.OperationResult": "Azure.AI.FineTuning.Sessions.Loom.OperationResult",
         "azure.ai.finetuningsessions.models.ForwardBackwardOperationResult": "Azure.AI.FineTuning.Sessions.Loom.ForwardBackwardOperationResult",
-        "azure.ai.finetuningsessions.models.ForwardBackwardRequest": "Azure.AI.Projects.SessionFineTuning.ForwardBackwardRequest",
+        "azure.ai.finetuningsessions.models.ForwardBackwardRequest": "Azure.AI.FineTuning.Sessions.Loom.ForwardBackwardRequest",
         "azure.ai.finetuningsessions.models.ForwardInput": "Azure.AI.FineTuning.Sessions.Loom.ForwardInput",
         "azure.ai.finetuningsessions.models.ForwardRequest": "Azure.AI.Projects.SessionFineTuning.ForwardRequest",
         "azure.ai.finetuningsessions.models.HeartbeatResponse": "Azure.AI.FineTuning.Sessions.Loom.HeartbeatResponse",
@@ -75,5 +75,5 @@
         "azure.ai.finetuningsessions.operations.Operations.get": "Azure.AI.Projects.SessionFineTuning.Operations.get",
         "azure.ai.finetuningsessions.aio.operations.Operations.get": "Azure.AI.Projects.SessionFineTuning.Operations.get"
     },
-    "CrossLanguageVersion": "4f4178e51d02"
+    "CrossLanguageVersion": "b0797a3c08a5"
 }

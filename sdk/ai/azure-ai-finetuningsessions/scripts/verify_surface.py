@@ -27,6 +27,8 @@ import types
 import typing
 from uuid import UUID
 
+from typing_extensions import NotRequired, Required, is_typeddict
+
 NAMESPACE = "azure.ai.finetuningsessions"
 MODULE = Path("azure/ai/finetuningsessions")
 RAW_RESULT = {"type": "sample", "operation_id": "op", "status": "succeeded", "sequences": []}
@@ -271,6 +273,23 @@ def surface(input_chunk_discriminator=False):
         report["modules"][suffix] = list(module.__all__)
     for name in models.__all__:
         cls = getattr(models, name)
+        if typing.get_origin(cls) is not None:
+            report["models"][name] = {"alias": typename(cls)}
+            continue
+        if is_typeddict(cls):
+            report["models"][name] = {
+                "typed_dict": True,
+                "fields": {
+                    field: {
+                        "type": typename(evaluate(annotation, cls, models)),
+                        "required": field in cls.__required_keys__,
+                    }
+                    for field, annotation in cls.__annotations__.items()
+                },
+            }
+            continue
+        if not inspect.isclass(cls):
+            raise TypeError(f"Unsupported public model export: {name}")
         if issubclass(cls, Enum):
             report["models"][name] = {"enum": [(k, v.value) for k, v in cls.__members__.items()]}
             continue
@@ -328,6 +347,8 @@ def surface(input_chunk_discriminator=False):
         if depth > 8:
             return None
         origin, args = typing.get_origin(annotation), typing.get_args(annotation)
+        if origin in (Required, NotRequired):
+            return sample(args[0], depth)
         if origin in (typing.Union, types.UnionType):
             return sample(next(a for a in args if a is not type(None)), depth + 1)
         if origin is typing.Literal:
@@ -352,6 +373,8 @@ def surface(input_chunk_discriminator=False):
             return b"\xff\xd8\xfftest"
         if inspect.isclass(annotation) and issubclass(annotation, Enum):
             return next(iter(annotation)).value
+        if is_typeddict(annotation):
+            return model_input(annotation, depth + 1)
         if inspect.isclass(annotation) and issubclass(annotation, base.Model):
             return model_input(annotation, depth + 1)
         if getattr(annotation, "__name__", "") == "datetime":
@@ -385,8 +408,11 @@ def surface(input_chunk_discriminator=False):
     serialization = {}
     for name in models.__all__:
         cls = getattr(models, name)
+        if typing.get_origin(cls) is not None:
+            continue
         if issubclass(cls, Enum):
             continue
+        typed_dictionary = is_typeddict(cls)
         data = model_input(cls)
         observations = []
         for constructor in (lambda: cls(data), lambda: cls(**data)):
@@ -396,9 +422,10 @@ def surface(input_chunk_discriminator=False):
                     {
                         "class": type(obj).__name__,
                         "all": record(obj),
-                        "writable": record(obj.as_dict(exclude_readonly=True)),
+                        "writable": record(obj if typed_dictionary else obj.as_dict(exclude_readonly=True)),
                         "attributes": {
-                            field: record(getattr(obj, field)) for field in report["models"][name]["fields"]
+                            field: record(obj[field] if typed_dictionary else getattr(obj, field))
+                            for field in report["models"][name]["fields"]
                         },
                     }
                 )

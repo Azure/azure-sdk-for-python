@@ -124,6 +124,16 @@ class SurfaceToolTests(unittest.TestCase):
             sum(len(method["overloads"]) for client in fallback["clients"].values() for method in client.values()), 0
         )
 
+    def test_surface_records_typed_dict_requiredness_and_union_aliases(self):
+        report = surface_tool.surface(input_chunk_discriminator=True)
+        sample = report["models"]["TextOnlySampleInput"]
+        self.assertTrue(sample["typed_dict"])
+        self.assertTrue(sample["fields"]["messages"]["required"])
+        self.assertFalse(sample["fields"]["tools"]["required"])
+        self.assertIn("alias", report["models"]["TextOnlyMessage"])
+        self.assertNotIn("TextOnlyMessage", report["serialization"])
+        self.assertEqual(report["serialization"]["TextOnlySampleInput"][0]["class"], "dict")
+
 
 class ProvenanceLinkTests(unittest.TestCase):
     def setUp(self):

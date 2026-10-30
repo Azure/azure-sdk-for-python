@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """Exercise raw begin operations through real public clients and offline transports."""
@@ -15,16 +16,18 @@ import os
 from pathlib import Path
 import threading
 from typing import Any
-from urllib.parse import parse_qs, quote, urlsplit
+from urllib.parse import parse_qs, quote, urlencode, urlsplit
 
 import pytest
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.core.exceptions import (
     ClientAuthenticationError,
+    DecodeError,
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    ServiceRequestError,
 )
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryPolicy
 from azure.core.pipeline.transport import AsyncHttpResponse, AsyncHttpTransport, HttpResponse, HttpTransport
@@ -35,10 +38,24 @@ from azure.core.utils import case_insensitive_dict
 
 from azure.ai.finetuningsessions import FineTuningSessionClient, _exceptions, _operation_compat
 from azure.ai.finetuningsessions.aio import FineTuningSessionClient as AsyncFineTuningSessionClient
+from azure.ai.finetuningsessions.models import TextOnlySampleOperationResult
 
 ENDPOINT = "https://unit.invalid/api/projects/p"
 COMMON = {"api_version": "v1", "foundry_features": "FineTuningSessions=V1Preview"}
 RESULT = {"type": "optim_step", "operation_id": "request_test", "status": "succeeded", "step_count": 2}
+DOWNLOAD_URL = ENDPOINT + "/fine_tuning_sessions/session_test/checkpoints/checkpoint_test/download?api-version=v1"
+
+
+def download_file(file_id: str = "a" * 64, *, api_version: str = "v1", **changes: Any) -> dict[str, Any]:
+    """Realistic private metadata matching the current preparation API."""
+    return {
+        "file_id": file_id,
+        "filename": "nested/weights.bin",
+        "size_bytes": 123,
+        "etag": '"file-v1"',
+        "download_url": f"download/files/{file_id}?" + urlencode({"api-version": api_version}),
+        **changes,
+    }
 
 
 @dataclass
@@ -207,7 +224,8 @@ def client_for(script: Script, asynchronous: bool, **kwargs: Any) -> Any:
     transport = AsyncTransport(script) if asynchronous else SyncTransport(script)
     options = {"polling_interval": 0, "retry_total": 0, **kwargs}
     endpoint = options.pop("endpoint", ENDPOINT)
-    return client_type(endpoint, AzureKeyCredential("fixture-key"), transport=transport, **options)
+    credential = options.pop("credential", AzureKeyCredential("fixture-key"))
+    return client_type(endpoint, credential, transport=transport, **options)
 
 
 async def begin(client: Any, asynchronous: bool, **kwargs: Any) -> Any:
@@ -249,8 +267,271 @@ def test_public_source_import() -> None:
         }
 
     expected = inventory(source)
-    assert len(expected) == 28
+    assert len(expected) == 32
+    assert {
+        "_text_only.py",
+        "models/_text_only.py",
+        "_checkpoint_download.py",
+        "_scalar_serialization.py",
+    } <= expected.keys()
     assert inventory(imported.parent) == expected
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+async def test_raw_sampling_poller_preserves_public_choices(asynchronous: bool) -> None:
+    """Raw JSON bodies use the same routes and expose choices, not token sequences."""
+    public = {
+        "choices": [
+            {
+                "index": 0,
+                "message": {"role": "assistant", "content": "hello", "tool_calls": []},
+                "sample_ref": "opaque-do-not-decode",
+                "finish_reason": "stop",
+            }
+        ]
+    }
+    script = Script(
+        Reply({"request_id": "request_test", "status": "pending"}),
+        Reply({"status": "completed", "result": public}),
+    )
+    client = client_for(script, asynchronous)
+    try:
+        poller = client.sampling.begin_sample(
+            "session_test",
+            {
+                "text_only_input": {"messages": [{"role": "user", "content": "hello"}]},
+                "sampling_params": {"max_tokens": 8},
+            },
+            params={"checkpoint_id": "sampler_test"},
+            **COMMON,
+        )
+        if asynchronous:
+            poller = await poller
+        value = await result_of(poller, asynchronous)
+        assert isinstance(value, TextOnlySampleOperationResult)
+        assert value.choices[0].sample_ref == "opaque-do-not-decode"
+        assert value.as_dict() == public
+    finally:
+        await close_client(client, asynchronous)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("keyword_inputs", [False, True], ids=["positional", "keyword"])
+@pytest.mark.parametrize("token_credential", [False, True], ids=["key", "token"])
+async def test_download_weights_validates_and_polls_without_writing_files(
+    asynchronous, keyword_inputs, token_credential, tmp_path
+):
+    scopes_requested = []
+
+    class Credential:
+        def get_token(self, *scopes, **kwargs):
+            scopes_requested.append(scopes)
+            return AccessToken("fixture-token", 2**31)
+
+    class AsyncCredential(Credential):
+        async def get_token(self, *scopes, **kwargs):
+            return super().get_token(*scopes, **kwargs)
+
+    credential = (
+        (AsyncCredential() if asynchronous else Credential()) if token_credential else AzureKeyCredential("fixture-key")
+    )
+    script = Script(
+        Reply({"status": "Pending"}, status=202, headers={"Retry-After": "30"}),
+        Reply({"status": "Pending"}, status=202, headers={"Retry-After": "1000"}),
+        Reply({"status": "Pending"}, status=202),
+        Reply({"status": "Succeeded", "files": [download_file(api_version="test-preview")]}),
+    )
+    (tmp_path / "unrelated.txt").write_text("keep")
+    client = client_for(script, asynchronous, credential=credential, api_version="test-preview", polling_interval=7)
+    try:
+        result = (
+            client.checkpoints.download_weights(
+                session_id="session_test", checkpoint_id="checkpoint_test", output_path=tmp_path
+            )
+            if keyword_inputs
+            else client.checkpoints.download_weights("session_test", "checkpoint_test", str(tmp_path))
+        )
+        if asynchronous:
+            result = await result
+        assert result is None
+        assert len(script.requests) == 4
+        for request in script.requests:
+            assert request["method"] == "POST"
+            assert request["url"] == DOWNLOAD_URL.replace("api-version=v1", "api-version=test-preview")
+            assert request["headers"]["Foundry-Features"] == COMMON["foundry_features"]
+            if token_credential:
+                assert request["headers"]["Authorization"] == "Bearer fixture-token"
+                assert "api-key" not in request["headers"]
+            else:
+                assert request["headers"]["api-key"] == "fixture-key"
+                assert "Authorization" not in request["headers"]
+            assert request["body"] is None
+        assert scopes_requested == ([("https://ai.azure.com/.default",)] if token_credential else [])
+        assert script.delays == [30, 60, 7]
+        assert not script.replies
+        assert [path.name for path in tmp_path.iterdir()] == ["unrelated.txt"]
+        assert (tmp_path / "unrelated.txt").read_text() == "keep"
+    finally:
+        await close_client(client, asynchronous)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize(
+    "reply,error_type",
+    [
+        (Reply({}, status=401), ClientAuthenticationError),
+        (Reply({"detail": {"type": "checkpoint_download_disabled"}}, status=403), HttpResponseError),
+        (Reply({}, status=404), ResourceNotFoundError),
+        (Reply({"detail": "Checkpoint registration is pending. Try again later."}, status=409), ResourceExistsError),
+        (Reply({}, status=500), HttpResponseError),
+        (Reply({}, status=503), HttpResponseError),
+        (Reply({}, status=307, headers={"Location": "https://other.invalid/config"}), HttpResponseError),
+        (Reply(b"{"), DecodeError),
+        (Reply({"status": "Failed"}), _exceptions.FineTuningSessionsError),
+        (Reply({}), _exceptions.MalformedResponseError),
+        (Reply({"status": "Pending"}), _exceptions.MalformedResponseError),
+        (Reply({"status": "Succeeded"}), _exceptions.MalformedResponseError),
+        (Reply({"status": "Succeeded"}, status=202), _exceptions.MalformedResponseError),
+    ],
+)
+async def test_download_server_errors_are_explicit_without_retry_redirect_or_transfer(
+    asynchronous, reply, error_type, tmp_path
+):
+    script = Script(Reply({"status": "Pending"}, status=202, headers={"Retry-After": "2"}), reply)
+    client = client_for(script, asynchronous, retry_total=5, retry_status=5)
+    try:
+        with pytest.raises(error_type):
+            result = client.checkpoints.download_weights("session_test", "checkpoint_test", tmp_path)
+            if asynchronous:
+                await result
+        assert len(script.requests) == 2
+        assert all(request["url"] == DOWNLOAD_URL for request in script.requests)
+        assert script.delays == [2]
+        assert list(tmp_path.iterdir()) == []
+    finally:
+        await close_client(client, asynchronous)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+async def test_download_transport_failure_is_not_retried(asynchronous, monkeypatch, tmp_path):
+    script = Script(Reply({"status": "Pending"}, status=202, headers={"Retry-After": "2"}), Reply({}))
+    receive = script.receive
+
+    def fail(request, options):
+        reply = receive(request, options)
+        if len(script.requests) == 2:
+            raise ServiceRequestError("offline preparation transport failure")
+        return reply
+
+    monkeypatch.setattr(script, "receive", fail)
+    client = client_for(script, asynchronous, retry_total=5)
+    try:
+        with pytest.raises(ServiceRequestError, match="offline preparation transport failure"):
+            result = client.checkpoints.download_weights("session_test", "checkpoint_test", tmp_path)
+            if asynchronous:
+                await result
+        assert len(script.requests) == 2
+        assert script.delays == [2]
+    finally:
+        await close_client(client, asynchronous)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize(
+    "session_id,expected_session_id,checkpoint_id,endpoint",
+    [
+        ("session_abc", "session_abc", "step-100", ENDPOINT),
+        ("model_abc", "session_abc", "step-100", ENDPOINT),
+        ("abc", "session_abc", "step-100", ENDPOINT),
+        ("session_abc_dz", "session_abc_dz", "step-100", ENDPOINT),
+        ("session_a %#", "session_a %#", "step %#-100", ENDPOINT),
+        (
+            "session_abc",
+            "session_abc",
+            "step-100",
+            "https://unit.invalid/subscriptions/arm-sub/resourceGroups/rg/providers/"
+            "Microsoft.CognitiveServices/accounts/account",
+        ),
+        (
+            "session_abc",
+            "session_abc",
+            "step-100",
+            "https://unit.invalid/loom/v1.0/subscriptions/arm-sub/resourceGroups/rg/providers/"
+            "Microsoft.MachineLearningServices/workspaces/account@project@AML",
+        ),
+    ],
+)
+async def test_download_normalizes_http_ids_but_preserves_local_path(
+    asynchronous, session_id, expected_session_id, checkpoint_id, endpoint, tmp_path, monkeypatch
+):
+    monkeypatch.setenv("X_COGNITIVE_SUBSCRIPTION_ID", "fixture-sub")
+    if session_id != expected_session_id:
+        other = tmp_path / expected_session_id / checkpoint_id
+        other.mkdir(parents=True)
+        (other / "weights.bin").write_bytes(b"keep")
+    before = list(tmp_path.rglob("*"))
+    script = Script(Reply({"status": "Succeeded", "files": [download_file()]}))
+    client = client_for(script, asynchronous, endpoint=endpoint)
+    try:
+        result = client.checkpoints.download_weights(session_id, checkpoint_id, tmp_path)
+        if asynchronous:
+            result = await result
+        assert result is None
+        assert len(script.requests) == 1
+        request = script.requests[0]
+        assert request["method"] == "POST"
+        assert request["url"] == (
+            endpoint
+            + "/fine_tuning_sessions/"
+            + quote(expected_session_id, safe="")
+            + "/checkpoints/"
+            + quote(checkpoint_id, safe="")
+            + "/download?api-version=v1"
+        )
+        assert request["body"] is None
+        assert request["headers"]["apim-subscription-id"] == "fixture-sub"
+        assert not script.delays
+        assert list(tmp_path.rglob("*")) == before
+    finally:
+        await close_client(client, asynchronous)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+async def test_download_rejects_nonempty_verbatim_checkpoint_before_http(asynchronous, tmp_path):
+    checkpoint = tmp_path / "model_legacy" / "final"
+    checkpoint.mkdir(parents=True)
+    (checkpoint / "weights.bin").write_bytes(b"keep")
+    script = Script()
+    client = client_for(script, asynchronous)
+    try:
+        with pytest.raises(ValueError, match="Checkpoint directory must be empty"):
+            result = client.checkpoints.download_weights("model_legacy", "final", tmp_path)
+            if asynchronous:
+                await result
+        assert not script.requests
+        assert (checkpoint / "weights.bin").read_bytes() == b"keep"
+    finally:
+        await close_client(client, asynchronous)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize(
+    "session_id,checkpoint_id,interval",
+    [("session_", "c", 0), ("model_", "c", 0), ("session_s", "c", math.inf)],
+)
+async def test_download_invalid_request_options_do_not_send_requests(
+    asynchronous, session_id, checkpoint_id, interval, tmp_path
+):
+    script = Script()
+    client = client_for(script, asynchronous, polling_interval=interval)
+    try:
+        with pytest.raises(ValueError):
+            result = client.checkpoints.download_weights(session_id, checkpoint_id, tmp_path)
+            if asynchronous:
+                await result
+        assert not script.requests
+    finally:
+        await close_client(client, asynchronous)
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
@@ -308,8 +589,9 @@ async def test_all_raw_begin_routes_and_pending_states(asynchronous, group, meth
         assert isinstance(poller.polling_method(), AsyncPollingMethod if asynchronous else PollingMethod)
         assert (await result_of(poller, asynchronous)).as_dict() == RESULT
         assert poller.status() == "Succeeded"
-        base = ENDPOINT + "/fine_tuning/sessions"
-        expected_post = base if method == "begin_create" else base + "/" + quote(session_id, safe="") + path
+        base = ENDPOINT + "/fine_tuning_sessions"
+        post_base = ENDPOINT + "/fine_tuning/sessions" if method == "begin_sample" else base
+        expected_post = post_base if method == "begin_create" else post_base + "/" + quote(session_id, safe="") + path
         assert script.requests[0]["url"] == expected_post + "?api-version=v1"
         assert script.requests[0]["body"] == (None if method == "begin_unload" else {"fixture": "unchanged"})
         expected_poll = base + "/" + quote(session_id, safe="") + "/request/" + quote(request_id, safe="")
@@ -458,6 +740,10 @@ async def test_error_map_applies_even_to_non_json_poll_error(asynchronous):
 
 FAILED_ERRORS = [
     ({"error_code": "worker_crashed"}, _exceptions.TrainingEngineError),
+    (
+        {"error_code": "engine_dead", "should_retry": True, "retry_after_sec": 1},
+        _exceptions.TrainingEngineError,
+    ),
     ({"error_code": "engine_oom"}, _exceptions.BatchTooLargeError),
     ({"error_code": "invalid_request"}, _exceptions.RequestValidationError),
     ({"error_code": "anything", "should_retry": True, "retry_after_sec": "inf"}, _exceptions.RequestRetryableError),
@@ -491,6 +777,8 @@ async def test_failed_envelopes_never_resubmit(asynchronous, failure, error_type
             assert caught.value.retry_after_sec is None
         if isinstance(caught.value, _exceptions.TrainingEngineError):
             assert caught.value.session_id == "session_test"
+            assert "continual fine-tuning (CFT)" in str(caught.value)
+            assert "completed training checkpoint" in str(caught.value)
         if isinstance(caught.value, _exceptions.OperationResultUnavailableError):
             assert caught.value.operation_completed == (
                 failure["error_code"] == "operation_completed_result_unavailable"
@@ -692,7 +980,10 @@ async def test_continuation_resumes_get_without_second_post(asynchronous, create
         assert (await result_of(resumed, not asynchronous)).as_dict() == RESULT
         assert [item["method"] for item in script.requests] == ["POST", "GET", "GET"]
         assert [item["method"] for item in resumed_script.requests] == ["GET", "GET"]
-        assert all("/sessions/session_test/request/request_test?" in item["url"] for item in resumed_script.requests)
+        assert all(
+            "/fine_tuning_sessions/session_test/request/request_test?" in item["url"]
+            for item in resumed_script.requests
+        )
     finally:
         await close_client(resumed_client, not asynchronous)
 
@@ -745,7 +1036,7 @@ async def test_token_request_id_is_encoded_not_interpreted_as_url(asynchronous):
         poller = await begin(client, asynchronous, continuation_token=locator_token(request_id=request_id))
         await result_of(poller, asynchronous)
         assert script.requests[0]["url"] == (
-            ENDPOINT + "/fine_tuning/sessions/session_test/request/" + quote(request_id, safe="") + "?api-version=v1"
+            ENDPOINT + "/fine_tuning_sessions/session_test/request/" + quote(request_id, safe="") + "?api-version=v1"
         )
     finally:
         await close_client(client, asynchronous)
@@ -890,7 +1181,7 @@ async def test_queued_creation_polls_request_and_preserves_raw_session_id(asynch
         if asynchronous:
             poller = await poller
         assert (await result_of(poller, asynchronous)).as_dict() == {"session_id": "session_test"}
-        assert script.requests[1]["url"] == ENDPOINT + "/fine_tuning/sessions/model_test/request/r?api-version=v1"
+        assert script.requests[1]["url"] == ENDPOINT + "/fine_tuning_sessions/model_test/request/r?api-version=v1"
     finally:
         await close_client(client, asynchronous)
 

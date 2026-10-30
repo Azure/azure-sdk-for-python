@@ -40,6 +40,8 @@ namespace azure.ai.finetuningsessions
                 **kwargs: Any
             ) -> None: ...
 
+        def __str__(self) -> str: ...
+
 
     class azure.ai.finetuningsessions.FineTuningSession:
 
@@ -57,6 +59,7 @@ namespace azure.ai.finetuningsessions
                 base_model: str,
                 from_checkpoint: Optional[FromCheckpoint] = ...,
                 lora_config: LoRAConfig,
+                text_only: bool = False,
                 timeout_sec: float = 600.0,
                 training_type: Optional[Union[str, TrainingType]] = ...,
                 type: str = "training",
@@ -90,10 +93,11 @@ namespace azure.ai.finetuningsessions
 
         def forward_backward(
                 self,
-                batch: List[Datum],
+                batch: Optional[List[Datum]] = None,
                 *,
                 loss_fn: Union[str, LossFn] = LossFn.CROSS_ENTROPY,
                 loss_fn_config: Optional[LossFnConfig] = ...,
+                text_only_input: Optional[TextOnlyTrainingInput] = ...,
                 **kwargs: Any
             ) -> OperationResult: ...
 
@@ -107,14 +111,15 @@ namespace azure.ai.finetuningsessions
 
         def sample(
                 self,
-                prompt_tokens: List[int] | ModelInput,
-                sampling_params: SamplingParams,
+                prompt_tokens: Optional[List[int] | ModelInput] = None,
+                sampling_params: Optional[SamplingParams] = None,
                 *,
                 checkpoint_id: str,
                 num_samples: int = 1,
                 prompt_logprobs: bool = False,
                 sampling_session_id: Optional[str] = ...,
                 seq_id: Optional[int] = ...,
+                text_only_input: Optional[TextOnlySampleInput] = ...,
                 topk_prompt_logprobs: int = 0,
                 **kwargs: Any
             ) -> OperationResult: ...
@@ -188,6 +193,17 @@ namespace azure.ai.finetuningsessions
             ) -> None: ...
 
 
+    class azure.ai.finetuningsessions.MalformedResponseError(FineTuningSessionsError):
+
+        def __init__(
+                self,
+                message: str,
+                *,
+                request_id: Optional[str] = ...,
+                **kwargs: Any
+            ) -> None: ...
+
+
     class azure.ai.finetuningsessions.NoCapacityError(FineTuningSessionsError):
 
         def __init__(
@@ -211,6 +227,7 @@ namespace azure.ai.finetuningsessions
                 error_code: Optional[str] = ...,
                 operation_completed: bool,
                 response: Any = ...,
+                result_unavailable_reason: Optional[str] = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -256,6 +273,29 @@ namespace azure.ai.finetuningsessions
             ) -> None: ...
 
 
+    class azure.ai.finetuningsessions.SubscriptionNotAuthorizedError(FineTuningSessionsError):
+
+        def __init__(
+                self,
+                message: str,
+                *,
+                error_code: Optional[str] = ...,
+                field: Optional[str] = ...,
+                response: Any = ...,
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.finetuningsessions.TextOnlyTrainingChunkError(FineTuningSessionsError):
+
+        def __init__(
+                self,
+                request_ids: list[str],
+                chunk_index: int,
+                phase: str
+            ) -> None: ...
+
+
     class azure.ai.finetuningsessions.TrainingEngineError(FineTuningSessionsError):
 
         def __init__(
@@ -269,6 +309,8 @@ namespace azure.ai.finetuningsessions
                 **kwargs: Any
             ) -> None: ...
 
+        def __str__(self) -> str: ...
+
 
 namespace azure.ai.finetuningsessions.aio
 
@@ -281,6 +323,8 @@ namespace azure.ai.finetuningsessions.aio
                 **kwargs: Any
             ) -> None: ...
 
+        async def attach_session(self: FineTuningSessionClient, session_id: str) -> None: ...
+
         async def close(self) -> None: ...
 
         async def close_session(self: FineTuningSessionClient, session_id: str) -> None: ...
@@ -291,6 +335,7 @@ namespace azure.ai.finetuningsessions.aio
                 base_model: str,
                 from_checkpoint: Optional[FromCheckpoint] = ...,
                 lora_config: LoRAConfig,
+                text_only: bool = False,
                 timeout_sec: float = 600.0,
                 training_type: Optional[Union[str, TrainingType]] = ...,
                 type: str = "training",
@@ -330,31 +375,34 @@ namespace azure.ai.finetuningsessions.aio
         async def forward_backward(
                 self: FineTuningSessionClient,
                 session_id: str,
-                batch: List[Datum],
+                batch: Optional[List[Datum]] = None,
                 *,
                 loss_fn: Union[str, LossFn] = LossFn.CROSS_ENTROPY,
-                loss_fn_config: Optional[LossFnConfig] = ...
+                loss_fn_config: Optional[LossFnConfig] = ...,
+                text_only_input: Optional[TextOnlyTrainingInput] = ...
             ) -> OperationResult: ...
 
         async def forward_backward_async(
                 self: FineTuningSessionClient,
                 session_id: str,
-                batch: List[Datum],
+                batch: Optional[List[Datum]] = None,
                 *,
                 loss_fn: Union[str, LossFn] = LossFn.CROSS_ENTROPY,
                 loss_fn_config: Optional[LossFnConfig] = ...,
                 max_chunks_per_wave: Optional[int] = ...,
                 poll_max_sec: Optional[float] = ...,
-                poll_min_sec: Optional[float] = ...
+                poll_min_sec: Optional[float] = ...,
+                text_only_input: Optional[TextOnlyTrainingInput] = ...
             ) -> Task[OperationResult]: ...
 
         async def forward_backward_post(
                 self: FineTuningSessionClient,
                 session_id: str,
-                batch: List[Datum],
+                batch: Optional[List[Datum]] = None,
                 *,
                 loss_fn: Union[str, LossFn] = LossFn.CROSS_ENTROPY,
-                loss_fn_config: Optional[LossFnConfig] = ...
+                loss_fn_config: Optional[LossFnConfig] = ...,
+                text_only_input: Optional[TextOnlyTrainingInput] = ...
             ) -> PendingRequests: ...
 
         async def forward_post(
@@ -390,14 +438,15 @@ namespace azure.ai.finetuningsessions.aio
         async def sample(
                 self: FineTuningSessionClient,
                 session_id: str,
-                prompt_tokens: List[int] | ModelInput,
-                sampling_params: SamplingParams,
+                prompt_tokens: Optional[List[int] | ModelInput] = None,
+                sampling_params: Optional[SamplingParams] = None,
                 *,
                 checkpoint_id: str,
                 num_samples: int = 1,
                 prompt_logprobs: bool = False,
                 sampling_session_id: Optional[str] = ...,
                 seq_id: Optional[int] = ...,
+                text_only_input: Optional[TextOnlySampleInput] = ...,
                 topk_prompt_logprobs: int = 0
             ) -> OperationResult: ...
 
@@ -527,6 +576,13 @@ namespace azure.ai.finetuningsessions.aio.operations
                 foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
                 **kwargs: Any
             ) -> AsyncLROPoller[OperationResult]: ...
+
+        async def download_weights(
+                self,
+                session_id: str,
+                checkpoint_id: str,
+                output_path: Union[str, PathLike[str]]
+            ) -> None: ...
 
         @distributed_trace_async
         async def get(
@@ -1555,6 +1611,91 @@ namespace azure.ai.finetuningsessions.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.finetuningsessions.models.TextOnlyAssistantMessage(TypedDict):
+        key "content": NotRequired[Optional[str]]
+        key "role": Literal["assistant"]
+        key "tool_calls": NotRequired[List[TextOnlyToolCall]]
+
+
+    class azure.ai.finetuningsessions.models.TextOnlyContextMessage(TypedDict):
+        key "content": str
+        key "role": Literal["system", "user"]
+
+
+    class azure.ai.finetuningsessions.models.TextOnlyFunctionCall(TypedDict):
+        key "arguments": str
+        key "name": str
+
+
+    class azure.ai.finetuningsessions.models.TextOnlyFunctionDefinition(TypedDict):
+        key "description": NotRequired[str]
+        key "name": str
+        key "parameters": Dict[str, Any]
+
+
+    class azure.ai.finetuningsessions.models.TextOnlyInvalidSampleChoice(Model):
+        finish_reason: Literal["stop", "length"]
+        index: int
+        outcome: Literal["invalid_model_output"]
+        reason: Literal["output_token_limit", "missing_private_boundary", "malformed_tool_call", "invalid_tool_arguments", "invalid_public_output"]
+        sample_ref: str
+
+
+    class azure.ai.finetuningsessions.models.TextOnlySampleChoice(Model):
+        finish_reason: Literal["stop", "tool_calls"]
+        index: int
+        message: Dict[str, Any]
+        sample_ref: str
+
+
+    class azure.ai.finetuningsessions.models.TextOnlySampleInput(TypedDict):
+        key "messages": List[Union[TextOnlyContextMessage, TextOnlyAssistantMessage, TextOnlyToolMessage]]
+        key "tools": NotRequired[List[TextOnlyTool]]
+
+
+    class azure.ai.finetuningsessions.models.TextOnlySampleOperationResult(OperationResult):
+        choices: List[Union[TextOnlySampleChoice, TextOnlyInvalidSampleChoice]]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.finetuningsessions.models.TextOnlyTool(TypedDict):
+        key "function": TextOnlyFunctionDefinition
+        key "type": Literal["function"]
+
+
+    class azure.ai.finetuningsessions.models.TextOnlyToolCall(TypedDict):
+        key "function": TextOnlyFunctionCall
+        key "id": str
+        key "type": Literal["function"]
+
+
+    class azure.ai.finetuningsessions.models.TextOnlyToolMessage(TypedDict):
+        key "content": str
+        key "name": NotRequired[str]
+        key "role": Literal["tool"]
+        key "tool_call_id": str
+
+
+    class azure.ai.finetuningsessions.models.TextOnlyTrainingInput(TypedDict):
+        key "loss_fn": NotRequired[Literal["importance_sampling", "ppo", "cispo", "sapo"]]
+        key "loss_fn_config": NotRequired[Dict[str, Any]]
+        key "samples": List[TextOnlyTrainingSample]
+
+
+    class azure.ai.finetuningsessions.models.TextOnlyTrainingSample(TypedDict):
+        key "advantage": float
+        key "sample_ref": str
+
+
     class azure.ai.finetuningsessions.models.TrainingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DATAZONE_STANDARD = "DatazoneStandard"
         DEVELOPER_TIER = "DeveloperTier"
@@ -1642,6 +1783,13 @@ namespace azure.ai.finetuningsessions.operations
                 foundry_features: Literal[FoundryFeaturesOptInKeys.FINETUNING_SESSIONS_V1_PREVIEW],
                 **kwargs: Any
             ) -> LROPoller[OperationResult]: ...
+
+        def download_weights(
+                self,
+                session_id: str,
+                checkpoint_id: str,
+                output_path: Union[str, PathLike[str]]
+            ) -> None: ...
 
         @distributed_trace
         def get(

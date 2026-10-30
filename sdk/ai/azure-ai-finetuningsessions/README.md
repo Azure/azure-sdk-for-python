@@ -44,7 +44,7 @@ or skip the reinstall. Do not rely on both preview distributions being installed
 - Python 3.10 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - A Foundry project with access to fine-tuning sessions and compatible model capacity.
-- A service endpoint supporting `/fine_tuning/sessions`.
+- A service endpoint supporting canonical `/fine_tuning_sessions` routes.
 
 #### Authenticate with Microsoft Entra ID
 
@@ -79,6 +79,37 @@ plaintext authentication. Use HTTPS and non-production credentials for testing.
   a completed sampler checkpoint identifier.
 - Heartbeats keep sessions active. Close/delete sessions explicitly and close
   clients or use their context managers to release HTTP resources.
+
+### Opt-in text-only operations
+
+The maintained sampling and training convenience methods accept
+`text_only_input` in place of token-native inputs. Sampling uses public
+`system`, `user`, `assistant`, and `tool` messages and optional function
+definitions. Training consumes opaque `sample_ref` values and finite scalar
+advantages, rather than exposing private token evidence.
+
+A text-only sampling result contains valid public assistant choices or safely
+classified invalid choices. Invalid choices have no public message but can
+still carry trainable references; they are not automatically operation failures.
+Text-only sampling does not support prompt log-probabilities, caller-selected
+stopping criteria, or structured-output `response_format`.
+
+These are opt-in service capabilities. Installing this package does not grant
+model eligibility or access. Existing token-native convenience calls and raw
+request constructors remain supported.
+
+### Checkpoint preparation is not file delivery
+
+`client.checkpoints.download_weights(session_id, checkpoint_id, output_path)`
+and its asynchronous counterpart currently validate the destination, poll
+server-side preparation, and validate the complete file manifest. They return
+`None` after preparation and **do not create directories, write files, or
+transfer weights**. Do not interpret that return value as confirmation that
+weights were downloaded.
+
+Preparation remains subject to server-side download admission and checkpoint
+ownership checks. This package does not enable download access or change those
+policies.
 
 ## Examples
 
@@ -128,6 +159,33 @@ remain `GlobalStandard`, `DatazoneStandard`, and `DeveloperTier`; future strings
 are passed through without client-side validation. Set the property explicitly
 to select a tier. If omitted, the SDK leaves selection to the service.
 
+### Attach an existing session (async)
+
+Call `await async_client.attach_session(session_id)` before using a session
+created elsewhere. It starts the existing best-effort heartbeat every 30 seconds
+on that client, without creating, loading, polling, or checking the session.
+Repeated attachment on the same client does not duplicate its heartbeat task.
+Canonical, legacy `model_`, and bare IDs use existing lifecycle normalization
+and resource routing; the method returns `None` and does not replace the ID.
+
+Client `close()` or async context exit drains its heartbeat tasks and closes
+the transport, without unloading/deleting sessions. Explicit `close_session`
+and `delete_session` retain their existing unload/delete behavior. Other clients'
+heartbeats are independent. Normal operation/poll endpoints also refresh session
+liveness, but periodic heartbeats cover long gaps between those requests, such
+as local rollout work. Keep the event loop responsive during blocking local work.
+No heartbeat retry policy or service expiration behavior changes.
+
+The async logger distinguishes `task registered` (local scheduling only),
+`first HTTP success` (one INFO message per task, after HTTP 200), and
+`task stopped` (shutdown drained). Registration does not confirm authentication
+or server liveness. Messages include canonical `SessionId`; registration and
+first success also include the wire `ResourceSessionId` for legacy/bare IDs.
+Subsequent successful ticks are silent; failures remain warnings with a status
+code or exception type, not transport exception details. Enable INFO on the
+normal application console logger to see these messages; HTTP payload logging
+is not required. Missing first-success output alone does not establish expiry.
+
 ### Text and image input chunks
 
 `ModelInput` reuses the canonical service model with an ordered list of
@@ -172,6 +230,48 @@ invalid evidence is `None` (unverified), including responses from older services
 The SDK does not infer this count from request length, prompt log-probabilities,
 or COGS metrics. The identical `SamplingOperationResult` alias exposes the same
 field; existing constructor keywords and overloads are unchanged.
+
+### Checkpoint weight download (preparation only)
+
+`client.checkpoints.download_weights(session_id, checkpoint_id, output_path)`
+and `await async_client.checkpoints.download_weights(session_id, checkpoint_id, output_path)`
+first validate the local path, then poll the bodyless
+`POST /fine_tuning_sessions/{session_id}/checkpoints/{checkpoint_id}/download`
+while `Pending`. They honor `Retry-After` or the client's `polling_interval`
+(waits capped at 60s), return `None` on `Succeeded`, and raise on failed,
+malformed, HTTP/auth, or transport responses without HTTP retries or redirects.
+Successful preparation requires a complete private manifest with unique file IDs,
+portable relative filenames (nested paths preserved), exact nonnegative sizes,
+strong ETags, and same-origin, resource/version-preserving Loom file locators.
+Invalid metadata, case/Unicode filename aliases, and file/directory conflicts
+raise `MalformedResponseError`; no entries are skipped or flattened.
+The API enforces gating and ownership; credentials use the existing client pipeline.
+**Success means server-side preparation only, not local file delivery.**
+No directories are created, files written, or weights transferred.
+
+This requires a compatible canonical-download API/proxy deployment; there is no
+fallback to `/fine_tuning/sessions`. Existing delegated Entra or API-key credential
+policies are unchanged. Service-side default-project binding, admission, API-key
+DataAction allowlists, and download/ownership checks remain authoritative; SDK
+credential support does not grant access. Other SDK operation routes are unchanged.
+
+The checked destination is `output_path/<session_id>/<checkpoint_id>`. That
+checkpoint directory must be empty or absent. The output root and session
+directory may already contain unrelated files, other checkpoints, and sessions.
+`output_path` accepts a string or `os.PathLike[str]`, including relative paths.
+Identifiers in the local path are used verbatim; each must
+be a nonempty portable directory name, not `.`/`..`, a path, a Windows device
+name, or a name containing ASCII characters 0-31, `<>:"/\|?*`, or a trailing dot
+or space. Resolved session/checkpoint paths must stay inside the output root,
+including through symlinks.
+
+Invalid identifiers, escaping paths, and nonempty checkpoint directories raise
+`ValueError`; incompatible argument types raise `TypeError`. A file in place of
+a needed directory raises `NotADirectoryError`; other filesystem errors propagate.
+Validation runs before any preparation request and is a point-in-time check,
+not a reservation of the destination. HTTP requests retain the existing
+session-ID normalization for bare and legacy model IDs; it does not change the
+local path. Actual file transfer remains deferred to a subsequent PR.
 
 ### Forward-only passes and session deletion
 
@@ -269,13 +369,44 @@ fine-tuning header `Foundry-Features: FineTuningSessions=V1Preview`.
 
 ## Troubleshooting
 
+### Resuming after a training engine interruption
+
+A `TrainingEngineError` (also available as `EngineDeadError`) with code
+`engine_dead` or `worker_crashed` indicates a terminal training interruption.
+Legacy trainer-loss messages receive the same recovery guidance. Resume the run
+with **continual fine-tuning (CFT)** in a **new session** initialized from the
+latest **completed training checkpoint**. Saved checkpoints remain usable after
+the trainer stops.
+
+- Sync: use `FineTuningSession.create_from_checkpoint(client,
+  checkpoint_path="<source_session_id>/<checkpoint_name>", base_model=...,
+  lora_config=...)`.
+- Async: use `await client.create_session(base_model=..., lora_config=...,
+  from_checkpoint=FromCheckpoint(source_session_id=..., checkpoint_id=...))`.
+- Keep the source base model and LoRA configuration. Use a training checkpoint
+  saved with `save_weights`, not sampler-only or ephemeral inference weights.
+- Resume the recipe's dataset cursor and client-side learning-rate schedule
+  separately. The SDK restores neither. Progress after the checkpoint is not
+  restored; without a completed training checkpoint, restart from the base model.
+
+Do not resubmit training operations on the interrupted session. The
+`engine_dead` code stays terminal even if a response incorrectly advertises
+`should_retry=true`; session IDs and support references remain on the exception.
+
+The HTTP compatibility path also uses `TrainingEngineError` for `engine_oom`
+and `engine_timeout`. These codes do not by themselves indicate a terminal
+interruption. Follow the service's original guidance: for `engine_oom`, try a
+smaller batch or shorter sequences instead of creating a new session for CFT.
+
 ### Inference error codes
 
 Retryable inference failures use `request_timeout`, `request_orphaned`,
 `inference_request_rate_limited`, and `inference_unavailable`. The SDK exposes
 the server's code on `RequestRetryableError.error_code`. Convenience polling
 uses `should_retry` to decide whether to resubmit, honoring `retry_after_sec`;
-it does not match code names. Default raw pollers surface the error instead.
+it does not match inference code names. Terminal `engine_dead` and unavailable
+operation-result codes take precedence over retry hints. Default raw pollers
+surface the error instead.
 Older inference codes remain supported by the same mechanism. `invalid_request`
 and `internal_error` remain terminal.
 
@@ -310,6 +441,9 @@ replace that pipeline or promise that its defaults protect caller-owned policies
 Malformed or non-object error bodies retain typed error handling rather than
 causing an attribute error. Retry hints must be finite and non-negative.
 Mapping-form image inputs undergo the same image validation as keyword inputs.
+A session-creation HTTP 403 with the service's subscription-authorization detail
+raises `SubscriptionNotAuthorizedError`; enable the Azure subscription for
+training in the region before creating a new session.
 
 ## Next steps
 

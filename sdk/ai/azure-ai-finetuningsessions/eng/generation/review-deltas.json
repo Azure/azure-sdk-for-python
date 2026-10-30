@@ -3,6 +3,22 @@
   "baseline_sdk_commit": "39c2b3c882526897619785089074176b367099a6",
   "baseline_loom_commit": "485774df502642879fdf3a53777be4a0d95155dc",
   "review_pull_request": "https://github.com/Azure/azure-sdk-for-python/pull/47495",
+  "beta2_sync": {
+    "version": "1.0.0b2",
+    "loom_commit": "26869a447bd03527712ac1c390a96d13e8ad235d",
+    "typespec_commit": "0a86307b307665b6a0b9b12ebc42248c2b262325",
+    "typespec_pull_request": "https://github.com/Azure/azure-rest-api-specs/pull/47795",
+    "scope": "The older baseline and fixture hashes below are historical. Beta 2 ports the current maintained runtime and adds its offline regressions without rewriting the immutable baseline.",
+    "contracts": [
+      "Text-only public messages and opaque-reference training, with safe invalid choices and scalar-only training results",
+      "Checkpoint destination validation, preparation polling, and complete manifest validation; no file transfer or feature enablement",
+      "Canonical generated native routes with origin/resource-bounded direct context; maintained forward/sampling compatibility routes remain unchanged",
+      "Published token-native constructors and list-based stop criteria preserved by Python TypeSpec projections",
+      "Trainer interruption guidance, bounded sampling retries, polling and heartbeat fixes",
+      "Exact scalar fast path registered through supported maintained hooks instead of editing generated utilities"
+    ],
+    "maintenance": "Surface probes explicitly describe TypedDict requiredness and union aliases; source/wheel inventory includes the maintained scalar helper."
+  },
   "fixture_contracts": ["direct-context-headers", "dual-auth-credential-annotations", "multimodal-model-input-typing", "training-type-enum", "required-lora-config", "sampling-response-format", "sampling-operation-result-alias", "credential-transport-security", "no-post-retries", "raw-request-id-polling", "input-chunk-discriminator", "canonical-foundry-features", "sampling-prompt-tokens"],
   "foundry_features_contract": {
     "version": 1,

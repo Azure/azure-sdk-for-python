@@ -531,7 +531,8 @@ class ForwardBackwardOperationResult(
 
 
 class ForwardBackwardRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning/sessions/{sessionId}/forward_backward.
+    """Existing token-native raw-operation constructor. Maintained convenience methods serialize
+    reference-based text-only requests without changing it.
 
     :ivar forward_backward_input: Batch inputs for the combined forward and backward pass.
      Required.
@@ -598,7 +599,7 @@ class ForwardInput(ForwardBackwardInput):  # pylint: disable=docstring-keyword-s
 
 
 class ForwardRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning/sessions/{sessionId}/forward.
+    """Request body for POST /fine_tuning_sessions/{sessionId}/forward.
 
     :ivar forward_input: Batch inputs for the forward-only pass. Required.
     :vartype forward_input: ~azure.ai.finetuningsessions.models.ForwardInput
@@ -999,7 +1000,7 @@ class OptimStepOperationResult(
 
 
 class OptimStepRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning/sessions/{sessionId}/optim_step.
+    """Request body for POST /fine_tuning_sessions/{sessionId}/optim_step.
 
     :ivar adam_params: Adam optimizer parameters used to apply accumulated gradients. Required.
     :vartype adam_params: ~azure.ai.finetuningsessions.models.AdamParams
@@ -1305,7 +1306,7 @@ class SaveCheckpointOperationResult(
 
 
 class SaveCheckpointRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning/sessions/{sessionId}/checkpoint.
+    """Request body for POST /fine_tuning_sessions/{sessionId}/checkpoint.
 
     :ivar path: User-supplied checkpoint identifier. Alphanumeric plus underscores and hyphens; max
      255 characters. Required.
