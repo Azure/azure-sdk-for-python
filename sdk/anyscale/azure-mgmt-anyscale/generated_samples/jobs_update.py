@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.anyscale import PlatformClient
+from azure.mgmt.anyscale import AnyscaleMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.anyscale import PlatformClient
 
 
 def main():
-    client = PlatformClient(
+    client = AnyscaleMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

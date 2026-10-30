@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import PlatformClientConfiguration
+from ._configuration import AnyscaleMgmtClientConfiguration
 from .operations import (
     AgreementsOperations,
     CloudResourcesOperations,
@@ -43,7 +43,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class PlatformClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
+class AnyscaleMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Anyscale.Platform Resource Provider management API.
 
     :ivar operations: Operations operations
@@ -100,7 +100,7 @@ class PlatformClient:  # pylint: disable=too-many-instance-attributes,docstring-
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = PlatformClientConfiguration(
+        self._config = AnyscaleMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

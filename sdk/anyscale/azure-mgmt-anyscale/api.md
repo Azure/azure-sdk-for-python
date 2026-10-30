@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.anyscale
 
-    class azure.mgmt.anyscale.PlatformClient: implements ContextManager 
+    class azure.mgmt.anyscale.AnyscaleMgmtClient: implements ContextManager 
         agreements: AgreementsOperations
         cloud_resources: CloudResourcesOperations
         clouds: CloudsOperations
@@ -39,7 +39,7 @@ namespace azure.mgmt.anyscale
 
 namespace azure.mgmt.anyscale.aio
 
-    class azure.mgmt.anyscale.aio.PlatformClient: implements AsyncContextManager 
+    class azure.mgmt.anyscale.aio.AnyscaleMgmtClient: implements AsyncContextManager 
         agreements: AgreementsOperations
         cloud_resources: CloudResourcesOperations
         clouds: CloudsOperations

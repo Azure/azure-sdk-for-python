@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.anyscale.aio import PlatformClient
+from azure.mgmt.anyscale.aio import AnyscaleMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,33 +15,33 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestPlatformCloudResourcesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestAnyscaleMgmtCloudsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(PlatformClient, is_async=True)
+        self.client = self.create_mgmt_client(AnyscaleMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_cloud_resources_begin_create_or_update(self, resource_group):
+    async def test_clouds_get(self, resource_group):
+        response = await self.client.clouds.get(
+            resource_group_name=resource_group.name,
+            cloud_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_clouds_begin_create_or_update(self, resource_group):
         response = await (
-            await self.client.cloud_resources.begin_create_or_update(
+            await self.client.clouds.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 cloud_name="str",
-                cloud_resource_name="str",
                 resource={
                     "location": "str",
                     "id": "str",
                     "name": "str",
-                    "properties": {
-                        "cloudStorageBucketEndpoint": "str",
-                        "cloudStorageBucketName": "str",
-                        "computeStack": "str",
-                        "provider": "str",
-                        "anyscaleOperatorIamIdentity": "str",
-                        "cloudResourceId": "str",
-                        "cloudStorageBucketRegion": "str",
-                        "provisioningState": "str",
-                        "region": "str",
-                    },
+                    "properties": {"acrResourceId": "str", "provisioningState": "str", "ssoUrl": "str"},
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -61,21 +61,11 @@ class TestPlatformCloudResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_cloud_resources_update(self, resource_group):
-        response = await self.client.cloud_resources.update(
+    async def test_clouds_update(self, resource_group):
+        response = await self.client.clouds.update(
             resource_group_name=resource_group.name,
             cloud_name="str",
-            cloud_resource_name="str",
-            properties={
-                "properties": {
-                    "anyscaleOperatorIamIdentity": "str",
-                    "cloudStorageBucketEndpoint": "str",
-                    "cloudStorageBucketName": "str",
-                    "computeStack": "str",
-                    "provider": "str",
-                },
-                "tags": {"str": "str"},
-            },
+            properties={"properties": {"acrResourceId": "str"}, "tags": {"str": "str"}},
         )
 
         # please add some check logic here by yourself
@@ -83,12 +73,11 @@ class TestPlatformCloudResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_cloud_resources_begin_delete(self, resource_group):
+    async def test_clouds_begin_delete(self, resource_group):
         response = await (
-            await self.client.cloud_resources.begin_delete(
+            await self.client.clouds.begin_delete(
                 resource_group_name=resource_group.name,
                 cloud_name="str",
-                cloud_resource_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -97,23 +86,18 @@ class TestPlatformCloudResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_cloud_resources_get(self, resource_group):
-        response = await self.client.cloud_resources.get(
+    async def test_clouds_list_by_resource_group(self, resource_group):
+        response = self.client.clouds.list_by_resource_group(
             resource_group_name=resource_group.name,
-            cloud_name="str",
-            cloud_resource_name="str",
         )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_cloud_resources_list_by_resource_group(self, resource_group):
-        response = self.client.cloud_resources.list_by_resource_group(
-            resource_group_name=resource_group.name,
-            cloud_name="str",
-        )
+    async def test_clouds_list_by_subscription(self, resource_group):
+        response = self.client.clouds.list_by_subscription()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

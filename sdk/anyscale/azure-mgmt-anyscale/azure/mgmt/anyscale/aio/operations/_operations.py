@@ -84,7 +84,7 @@ from ...operations._operations import (
     build_workspaces_list_by_resource_group_request,
     build_workspaces_update_request,
 )
-from .._configuration import PlatformClientConfiguration
+from .._configuration import AnyscaleMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -97,14 +97,14 @@ class Operations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.anyscale.aio.PlatformClient`'s
+        :class:`~azure.mgmt.anyscale.aio.AnyscaleMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AnyscaleMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -207,14 +207,14 @@ class OperationStatusesOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.anyscale.aio.PlatformClient`'s
+        :class:`~azure.mgmt.anyscale.aio.AnyscaleMgmtClient`'s
         :attr:`operation_statuses` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AnyscaleMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -294,14 +294,14 @@ class AgreementsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.anyscale.aio.PlatformClient`'s
+        :class:`~azure.mgmt.anyscale.aio.AnyscaleMgmtClient`'s
         :attr:`agreements` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AnyscaleMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -682,14 +682,14 @@ class CloudsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.anyscale.aio.PlatformClient`'s
+        :class:`~azure.mgmt.anyscale.aio.AnyscaleMgmtClient`'s
         :attr:`clouds` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AnyscaleMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1487,14 +1487,14 @@ class CloudResourcesOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.anyscale.aio.PlatformClient`'s
+        :class:`~azure.mgmt.anyscale.aio.AnyscaleMgmtClient`'s
         :attr:`cloud_resources` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AnyscaleMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2245,14 +2245,14 @@ class ComputeConfigsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.anyscale.aio.PlatformClient`'s
+        :class:`~azure.mgmt.anyscale.aio.AnyscaleMgmtClient`'s
         :attr:`compute_configs` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AnyscaleMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3003,14 +3003,14 @@ class ContainerImagesOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.anyscale.aio.PlatformClient`'s
+        :class:`~azure.mgmt.anyscale.aio.AnyscaleMgmtClient`'s
         :attr:`container_images` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AnyscaleMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3761,14 +3761,14 @@ class JobsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.anyscale.aio.PlatformClient`'s
+        :class:`~azure.mgmt.anyscale.aio.AnyscaleMgmtClient`'s
         :attr:`jobs` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AnyscaleMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4556,14 +4556,14 @@ class ProjectsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.anyscale.aio.PlatformClient`'s
+        :class:`~azure.mgmt.anyscale.aio.AnyscaleMgmtClient`'s
         :attr:`projects` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AnyscaleMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5128,14 +5128,14 @@ class ServicesOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.anyscale.aio.PlatformClient`'s
+        :class:`~azure.mgmt.anyscale.aio.AnyscaleMgmtClient`'s
         :attr:`services` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AnyscaleMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5924,14 +5924,14 @@ class WorkspacesOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.anyscale.aio.PlatformClient`'s
+        :class:`~azure.mgmt.anyscale.aio.AnyscaleMgmtClient`'s
         :attr:`workspaces` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PlatformClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AnyscaleMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

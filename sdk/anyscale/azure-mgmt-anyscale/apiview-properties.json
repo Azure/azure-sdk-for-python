@@ -163,5 +163,5 @@
         "azure.mgmt.anyscale.operations.WorkspacesOperations.list_by_resource_group": "Anyscale.Platform.Workspaces.listByResourceGroup",
         "azure.mgmt.anyscale.aio.operations.WorkspacesOperations.list_by_resource_group": "Anyscale.Platform.Workspaces.listByResourceGroup"
     },
-    "CrossLanguageVersion": "03187963336d"
+    "CrossLanguageVersion": "c2705b0a806a"
 }

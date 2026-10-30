@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.anyscale import PlatformClient
+from azure.mgmt.anyscale import AnyscaleMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = PlatformClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = AnyscaleMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples

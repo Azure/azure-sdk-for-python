@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.anyscale import PlatformClient
+from azure.mgmt.anyscale.aio import AnyscaleMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestPlatformJobsOperations(AzureMgmtRecordedTestCase):
+class TestAnyscaleMgmtJobsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(PlatformClient)
+        self.client = self.create_mgmt_client(AnyscaleMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_jobs_get(self, resource_group):
-        response = self.client.jobs.get(
+    @recorded_by_proxy_async
+    async def test_jobs_get(self, resource_group):
+        response = await self.client.jobs.get(
             resource_group_name=resource_group.name,
             cloud_name="str",
             project_name="str",
@@ -32,59 +33,30 @@ class TestPlatformJobsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_jobs_begin_create_or_update(self, resource_group):
-        response = self.client.jobs.begin_create_or_update(
-            resource_group_name=resource_group.name,
-            cloud_name="str",
-            project_name="str",
-            job_name="str",
-            resource={
-                "id": "str",
-                "name": "str",
-                "properties": {
-                    "config": {
-                        "computeConfig": {
-                            "computeConfigName": "str",
-                            "spec": {
-                                "options": [
-                                    {
-                                        "headNode": {
-                                            "name": "str",
-                                            "advancedInstanceConfig": "str",
-                                            "flags": {},
-                                            "instanceType": "str",
-                                            "labels": {},
-                                            "requiredLabels": {},
-                                            "requiredResources": {
-                                                "accelerator": "str",
-                                                "cpu": 0,
-                                                "cpuArchitecture": "str",
-                                                "gpu": 0,
-                                                "memory": 0,
-                                                "tpu": 0,
-                                            },
-                                            "resources": {
-                                                "cpu": 0,
-                                                "customResources": {},
-                                                "gpu": 0,
-                                                "memory": 0,
-                                                "objectStoreMemory": 0,
-                                            },
-                                        },
-                                        "advancedInstanceConfig": "str",
-                                        "cloudResourceNames": ["str"],
-                                        "flags": {},
-                                        "workerNodes": [
-                                            {
+    @recorded_by_proxy_async
+    async def test_jobs_begin_create_or_update(self, resource_group):
+        response = await (
+            await self.client.jobs.begin_create_or_update(
+                resource_group_name=resource_group.name,
+                cloud_name="str",
+                project_name="str",
+                job_name="str",
+                resource={
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "config": {
+                            "computeConfig": {
+                                "computeConfigName": "str",
+                                "spec": {
+                                    "options": [
+                                        {
+                                            "headNode": {
                                                 "name": "str",
                                                 "advancedInstanceConfig": "str",
                                                 "flags": {},
                                                 "instanceType": "str",
                                                 "labels": {},
-                                                "marketType": "str",
-                                                "maxNodes": 0,
-                                                "minNodes": 0,
                                                 "requiredLabels": {},
                                                 "requiredResources": {
                                                     "accelerator": "str",
@@ -101,45 +73,76 @@ class TestPlatformJobsOperations(AzureMgmtRecordedTestCase):
                                                     "memory": 0,
                                                     "objectStoreMemory": 0,
                                                 },
-                                            }
-                                        ],
-                                        "zones": ["str"],
-                                    }
-                                ]
+                                            },
+                                            "advancedInstanceConfig": "str",
+                                            "cloudResourceNames": ["str"],
+                                            "flags": {},
+                                            "workerNodes": [
+                                                {
+                                                    "name": "str",
+                                                    "advancedInstanceConfig": "str",
+                                                    "flags": {},
+                                                    "instanceType": "str",
+                                                    "labels": {},
+                                                    "marketType": "str",
+                                                    "maxNodes": 0,
+                                                    "minNodes": 0,
+                                                    "requiredLabels": {},
+                                                    "requiredResources": {
+                                                        "accelerator": "str",
+                                                        "cpu": 0,
+                                                        "cpuArchitecture": "str",
+                                                        "gpu": 0,
+                                                        "memory": 0,
+                                                        "tpu": 0,
+                                                    },
+                                                    "resources": {
+                                                        "cpu": 0,
+                                                        "customResources": {},
+                                                        "gpu": 0,
+                                                        "memory": 0,
+                                                        "objectStoreMemory": 0,
+                                                    },
+                                                }
+                                            ],
+                                            "zones": ["str"],
+                                        }
+                                    ]
+                                },
                             },
+                            "entrypoint": "str",
+                            "envVars": {},
+                            "imageUri": "str",
+                            "maxRetries": 0,
+                            "pipRequirements": ["str"],
+                            "pyModules": ["str"],
+                            "timeout": "1 day, 0:00:00",
+                            "workingDir": "str",
                         },
-                        "entrypoint": "str",
-                        "envVars": {},
-                        "imageUri": "str",
-                        "maxRetries": 0,
-                        "pipRequirements": ["str"],
-                        "pyModules": ["str"],
-                        "timeout": "1 day, 0:00:00",
-                        "workingDir": "str",
+                        "provisioningState": "str",
+                        "state": "str",
+                        "url": "str",
                     },
-                    "provisioningState": "str",
-                    "state": "str",
-                    "url": "str",
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "type": "str",
                 },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "type": "str",
-            },
+            )
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_jobs_update(self, resource_group):
-        response = self.client.jobs.update(
+    @recorded_by_proxy_async
+    async def test_jobs_update(self, resource_group):
+        response = await self.client.jobs.update(
             resource_group_name=resource_group.name,
             cloud_name="str",
             project_name="str",
@@ -228,26 +231,28 @@ class TestPlatformJobsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_jobs_begin_delete(self, resource_group):
-        response = self.client.jobs.begin_delete(
-            resource_group_name=resource_group.name,
-            cloud_name="str",
-            project_name="str",
-            job_name="str",
+    @recorded_by_proxy_async
+    async def test_jobs_begin_delete(self, resource_group):
+        response = await (
+            await self.client.jobs.begin_delete(
+                resource_group_name=resource_group.name,
+                cloud_name="str",
+                project_name="str",
+                job_name="str",
+            )
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_jobs_list_by_resource_group(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_jobs_list_by_resource_group(self, resource_group):
         response = self.client.jobs.list_by_resource_group(
             resource_group_name=resource_group.name,
             cloud_name="str",
             project_name="str",
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

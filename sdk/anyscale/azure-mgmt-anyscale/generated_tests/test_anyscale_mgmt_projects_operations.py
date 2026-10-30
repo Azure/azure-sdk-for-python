@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.anyscale import PlatformClient
+from azure.mgmt.anyscale import AnyscaleMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,15 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestPlatformAgreementsOperations(AzureMgmtRecordedTestCase):
+class TestAnyscaleMgmtProjectsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(PlatformClient)
+        self.client = self.create_mgmt_client(AnyscaleMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_agreements_get(self, resource_group):
-        response = self.client.agreements.get(
-            agreement_name="str",
+    def test_projects_get(self, resource_group):
+        response = self.client.projects.get(
+            resource_group_name=resource_group.name,
+            cloud_name="str",
+            project_name="str",
         )
 
         # please add some check logic here by yourself
@@ -30,27 +32,15 @@ class TestPlatformAgreementsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_agreements_list_by_subscription(self, resource_group):
-        response = self.client.agreements.list_by_subscription()
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_agreements_create_or_update(self, resource_group):
-        response = self.client.agreements.create_or_update(
-            agreement_name="str",
+    def test_projects_begin_create_or_update(self, resource_group):
+        response = self.client.projects.begin_create_or_update(
+            resource_group_name=resource_group.name,
+            cloud_name="str",
+            project_name="str",
             resource={
                 "id": "str",
                 "name": "str",
-                "properties": {
-                    "agreementLink": "str",
-                    "displayName": "str",
-                    "effectiveDate": "2020-02-20 00:00:00",
-                    "provisioningState": "str",
-                    "status": "str",
-                },
+                "properties": {"provisioningState": "str", "url": "str"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -61,17 +51,30 @@ class TestPlatformAgreementsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_agreements_delete(self, resource_group):
-        response = self.client.agreements.delete(
-            agreement_name="str",
-        )
+    def test_projects_begin_delete(self, resource_group):
+        response = self.client.projects.begin_delete(
+            resource_group_name=resource_group.name,
+            cloud_name="str",
+            project_name="str",
+        ).result()  # call '.result()' to poll until service return final result
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_projects_list_by_resource_group(self, resource_group):
+        response = self.client.projects.list_by_resource_group(
+            resource_group_name=resource_group.name,
+            cloud_name="str",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

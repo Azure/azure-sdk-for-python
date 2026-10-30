@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.anyscale.aio import PlatformClient
+from azure.mgmt.anyscale.aio import AnyscaleMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,16 +15,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestPlatformCloudsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestAnyscaleMgmtProjectsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(PlatformClient, is_async=True)
+        self.client = self.create_mgmt_client(AnyscaleMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_clouds_get(self, resource_group):
-        response = await self.client.clouds.get(
+    async def test_projects_get(self, resource_group):
+        response = await self.client.projects.get(
             resource_group_name=resource_group.name,
             cloud_name="str",
+            project_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,16 +33,16 @@ class TestPlatformCloudsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_clouds_begin_create_or_update(self, resource_group):
+    async def test_projects_begin_create_or_update(self, resource_group):
         response = await (
-            await self.client.clouds.begin_create_or_update(
+            await self.client.projects.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 cloud_name="str",
+                project_name="str",
                 resource={
-                    "location": "str",
                     "id": "str",
                     "name": "str",
-                    "properties": {"acrResourceId": "str", "provisioningState": "str", "ssoUrl": "str"},
+                    "properties": {"provisioningState": "str", "url": "str"},
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -50,7 +51,6 @@ class TestPlatformCloudsOperationsAsync(AzureMgmtRecordedTestCase):
                         "lastModifiedBy": "str",
                         "lastModifiedByType": "str",
                     },
-                    "tags": {"str": "str"},
                     "type": "str",
                 },
             )
@@ -61,23 +61,12 @@ class TestPlatformCloudsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_clouds_update(self, resource_group):
-        response = await self.client.clouds.update(
-            resource_group_name=resource_group.name,
-            cloud_name="str",
-            properties={"properties": {"acrResourceId": "str"}, "tags": {"str": "str"}},
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_clouds_begin_delete(self, resource_group):
+    async def test_projects_begin_delete(self, resource_group):
         response = await (
-            await self.client.clouds.begin_delete(
+            await self.client.projects.begin_delete(
                 resource_group_name=resource_group.name,
                 cloud_name="str",
+                project_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -86,18 +75,11 @@ class TestPlatformCloudsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_clouds_list_by_resource_group(self, resource_group):
-        response = self.client.clouds.list_by_resource_group(
+    async def test_projects_list_by_resource_group(self, resource_group):
+        response = self.client.projects.list_by_resource_group(
             resource_group_name=resource_group.name,
+            cloud_name="str",
         )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_clouds_list_by_subscription(self, resource_group):
-        response = self.client.clouds.list_by_subscription()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
