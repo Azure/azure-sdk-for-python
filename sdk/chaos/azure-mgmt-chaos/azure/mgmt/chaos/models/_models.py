@@ -63,7 +63,7 @@ class ProxyResource(Resource):
     """
 
 
-class Action(ProxyResource):
+class Action(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents an Action resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -132,7 +132,7 @@ class Action(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ActionDependency(_Model):
+class ActionDependency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents an action dependency.
 
     :ivar type: The type of dependency. Required. "Action"
@@ -258,7 +258,7 @@ class ActionStatus(_Model):
     """The array of targets."""
 
 
-class ActionSupportedTargetType(_Model):
+class ActionSupportedTargetType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a target type supported by an action.
 
     :ivar target_type: The Azure resource type (e.g., "Microsoft.Compute/virtualMachines").
@@ -295,7 +295,7 @@ class ActionSupportedTargetType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActionVersion(ProxyResource):
+class ActionVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents an Action Version resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -387,7 +387,7 @@ class BranchStatus(_Model):
     """The array of actions."""
 
 
-class Capability(ProxyResource):
+class Capability(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a Capability resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -485,7 +485,7 @@ class CapabilityProperties(_Model):
      \"Deleting\", and \"Running\"."""
 
 
-class CapabilityType(ProxyResource):
+class CapabilityType(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a Capability Type resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -625,7 +625,7 @@ class CapabilityTypePropertiesRuntimeProperties(_Model):  # pylint: disable=name
     """String of the kind of the resource's action type (continuous or discrete)."""
 
 
-class ChaosExperimentAction(_Model):
+class ChaosExperimentAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the base action model. 9 total per experiment.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -664,7 +664,7 @@ class ChaosExperimentAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChaosExperimentBranch(_Model):
+class ChaosExperimentBranch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a branch in the step. 9 total per experiment.
 
     :ivar name: String of the branch name. Required.
@@ -699,7 +699,7 @@ class ChaosExperimentBranch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChaosExperimentStep(_Model):
+class ChaosExperimentStep(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a step in the Experiment resource.
 
     :ivar name: String of the step name. Required.
@@ -734,7 +734,7 @@ class ChaosExperimentStep(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChaosTargetFilter(_Model):
+class ChaosTargetFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents available filter types that can be applied to a targets list.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -766,7 +766,7 @@ class ChaosTargetFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChaosTargetSelector(_Model):
+class ChaosTargetSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a selector in the Experiment resource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -812,7 +812,9 @@ class ChaosTargetSelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChaosTargetListSelector(ChaosTargetSelector, discriminator="List"):
+class ChaosTargetListSelector(
+    ChaosTargetSelector, discriminator="List"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a list selector.
 
     :ivar id: String of the selector ID. Required.
@@ -852,7 +854,9 @@ class ChaosTargetListSelector(ChaosTargetSelector, discriminator="List"):
         self.type = SelectorType.LIST  # type: ignore
 
 
-class ChaosTargetQuerySelector(ChaosTargetSelector, discriminator="Query"):
+class ChaosTargetQuerySelector(
+    ChaosTargetSelector, discriminator="Query"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a query selector.
 
     :ivar id: String of the selector ID. Required.
@@ -900,7 +904,9 @@ class ChaosTargetQuerySelector(ChaosTargetSelector, discriminator="Query"):
         self.type = SelectorType.QUERY  # type: ignore
 
 
-class ChaosTargetSimpleFilter(ChaosTargetFilter, discriminator="Simple"):
+class ChaosTargetSimpleFilter(
+    ChaosTargetFilter, discriminator="Simple"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a simple target filter.
 
     :ivar parameters: Model that represents the Simple filter parameters.
@@ -937,7 +943,7 @@ class ChaosTargetSimpleFilter(ChaosTargetFilter, discriminator="Simple"):
         self.type = FilterType.SIMPLE  # type: ignore
 
 
-class ChaosTargetSimpleFilterParameters(_Model):
+class ChaosTargetSimpleFilterParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the Simple filter parameters.
 
     :ivar zones: List of Azure availability zones to filter targets by.
@@ -965,7 +971,7 @@ class ChaosTargetSimpleFilterParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Connection(ProxyResource):
+class Connection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a connection between a workspace and a target resource. A connection
     provisions and tracks the trust relationship that authorizes the actor to reach the Chaos
     Studio data plane for the workspace and target during fault injection.
@@ -1008,7 +1014,7 @@ class Connection(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionProperties(_Model):
+class ConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the properties of a connection.
 
     The schema is flat and discriminated by ``kind``. Optional fields form the
@@ -1016,8 +1022,8 @@ class ConnectionProperties(_Model):
     validated by the service per kind.
 
     :ivar kind: The kind of connection, indicating the actor type authorized to reach the Chaos
-     Studio data plane for the workspace and target. Required. Known values are: "AksExtension",
-     "ChaosAgent", and "Csfi".
+     Studio data plane for the workspace and target. Required. Known values are: "AksExtension" and
+     "ChaosAgent".
     :vartype kind: str or ~azure.mgmt.chaos.models.ConnectionKind
     :ivar target_resource_id: The fully qualified Azure resource ID of the target resource this
      connection is established with. Required.
@@ -1032,8 +1038,6 @@ class ConnectionProperties(_Model):
     :vartype certificate_subject_name: str
     :ivar certificate_issuer: The issuer of the certificate used to authenticate the connection.
     :vartype certificate_issuer: str
-    :ivar dsts_principal: The dSTS principal name used to authenticate the connection.
-    :vartype dsts_principal: str
     :ivar data_plane_endpoint: The regional Chaos Studio data-plane endpoint assigned to this
      connection. Clients and agents use this endpoint to reach the Chaos Studio data plane for the
      connection.
@@ -1049,8 +1053,8 @@ class ConnectionProperties(_Model):
 
     kind: Union[str, "_models.ConnectionKind"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The kind of connection, indicating the actor type authorized to reach the Chaos Studio data
-     plane for the workspace and target. Required. Known values are: \"AksExtension\",
-     \"ChaosAgent\", and \"Csfi\"."""
+     plane for the workspace and target. Required. Known values are: \"AksExtension\" and
+     \"ChaosAgent\"."""
     target_resource_id: str = rest_field(
         name="targetResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1070,10 +1074,6 @@ class ConnectionProperties(_Model):
         name="certificateIssuer", visibility=["read", "create", "update", "delete", "query"]
     )
     """The issuer of the certificate used to authenticate the connection."""
-    dsts_principal: Optional[str] = rest_field(
-        name="dstsPrincipal", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The dSTS principal name used to authenticate the connection."""
     data_plane_endpoint: Optional[str] = rest_field(name="dataPlaneEndpoint", visibility=["read"])
     """The regional Chaos Studio data-plane endpoint assigned to this connection. Clients and agents
      use this endpoint to reach the Chaos Studio data plane for the connection."""
@@ -1097,7 +1097,6 @@ class ConnectionProperties(_Model):
         tenant_id: Optional[str] = None,
         certificate_subject_name: Optional[str] = None,
         certificate_issuer: Optional[str] = None,
-        dsts_principal: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1111,7 +1110,9 @@ class ConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContinuousAction(ChaosExperimentAction, discriminator="continuous"):
+class ContinuousAction(
+    ChaosExperimentAction, discriminator="continuous"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a continuous action.
 
     :ivar name: String that represents a Capability URN. Required.
@@ -1157,7 +1158,7 @@ class ContinuousAction(ChaosExperimentAction, discriminator="continuous"):
         self.type = ExperimentActionType.CONTINUOUS  # type: ignore
 
 
-class CustomerDataStorageProperties(_Model):
+class CustomerDataStorageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the Customer Managed Storage for an Experiment.
 
     :ivar storage_account_resource_id: Azure Resource ID of the Storage account to use for Customer
@@ -1195,7 +1196,9 @@ class CustomerDataStorageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DelayAction(ChaosExperimentAction, discriminator="delay"):
+class DelayAction(
+    ChaosExperimentAction, discriminator="delay"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a delay action.
 
     :ivar name: String that represents a Capability URN. Required.
@@ -1231,7 +1234,7 @@ class DelayAction(ChaosExperimentAction, discriminator="delay"):
         self.type = ExperimentActionType.DELAY  # type: ignore
 
 
-class DiscoveredResource(ProxyResource):
+class DiscoveredResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a discovered resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1304,7 +1307,9 @@ class DiscoveredResourceProperties(_Model):
     """The scope of the discovered resource. Required."""
 
 
-class DiscreteAction(ChaosExperimentAction, discriminator="discrete"):
+class DiscreteAction(
+    ChaosExperimentAction, discriminator="discrete"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a discrete action.
 
     :ivar name: String that represents a Capability URN. Required.
@@ -1404,7 +1409,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -1432,7 +1437,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1476,7 +1481,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Experiment(TrackedResource):
+class Experiment(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a Experiment resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1548,7 +1553,7 @@ class Experiment(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ExperimentExecution(ProxyResource):
+class ExperimentExecution(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the execution of a Experiment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1772,7 +1777,7 @@ class ExperimentExecutionProperties(_Model):
      \"Running\"."""
 
 
-class ExperimentProperties(_Model):
+class ExperimentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the Experiment properties model.
 
     :ivar provisioning_state: Most recent provisioning state for the given experiment resource.
@@ -1825,7 +1830,7 @@ class ExperimentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExperimentUpdate(_Model):
+class ExperimentUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an experiment update.
 
     :ivar tags: Resource tags.
@@ -1860,7 +1865,7 @@ class ExperimentUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExternalResource(_Model):
+class ExternalResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents an external resource reference.
 
     :ivar resource_id: The resource ID of the external resource.
@@ -1890,7 +1895,7 @@ class ExternalResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FixResourcePermissionsRequest(_Model):
+class FixResourcePermissionsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request body for fixing resource permissions.
 
     :ivar what_if: Optional value that indicates whether to run a "dry run" of fixing resource
@@ -1919,7 +1924,7 @@ class FixResourcePermissionsRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyValuePair(_Model):
+class KeyValuePair(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A key-value pair used to describe parameters for actions or configurations.
 
     :ivar key: The name of the setting for the action. Required.
@@ -1952,7 +1957,7 @@ class KeyValuePair(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -2003,7 +2008,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -2091,7 +2096,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OperationError(_Model):
+class OperationError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a system or infrastructure error encountered during an async operation.
 
     :ivar error_code: The error code identifying the type of system error. Required.
@@ -2124,7 +2129,7 @@ class OperationError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatusResult(_Model):
+class OperationStatusResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The current status of an async operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -2234,7 +2239,7 @@ class PermissionError(_Model):
      distinct message (for example, when the target could not be read to evaluate access)."""
 
 
-class PermissionsFix(ProxyResource):
+class PermissionsFix(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the fix resource permissions result.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2348,7 +2353,7 @@ class PhysicalToLogicalZoneMapping(_Model):
      ``\"3\"``). Required."""
 
 
-class PrivateAccess(TrackedResource):
+class PrivateAccess(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PrivateAccesses tracked resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2395,7 +2400,7 @@ class PrivateAccess(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateAccessPatch(_Model):
+class PrivateAccessPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a private access update.
 
     :ivar tags: Resource tags.
@@ -2423,7 +2428,7 @@ class PrivateAccessPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateAccessProperties(_Model):
+class PrivateAccessProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a private access resource.
 
     :ivar provisioning_state: Most recent provisioning state for the given privateAccess resource.
@@ -2484,7 +2489,7 @@ class PrivateEndpoint(_Model):
     """The Azure identifier for private endpoint."""
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The private endpoint connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2525,7 +2530,7 @@ class PrivateEndpointConnection(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection.
 
     :ivar group_ids: The group ids for the private endpoint resource.
@@ -2579,7 +2584,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(TrackedResource):
+class PrivateLinkResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2626,40 +2631,7 @@ class PrivateLinkResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceListResult(_Model):
-    """A list of private link resources.
-
-    :ivar value: The PrivateLinkResource items on this page. Required.
-    :vartype value: list[~azure.mgmt.chaos.models.PrivateLinkResource]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: list["_models.PrivateLinkResource"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The PrivateLinkResource items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: list["_models.PrivateLinkResource"],
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -2705,7 +2677,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -2796,7 +2768,7 @@ class ResourceStateError(_Model):
     """The remediation uri. Required."""
 
 
-class ResourceTargeting(_Model):
+class ResourceTargeting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents unified resource targeting with symmetric include/exclude criteria. Both
     sides support the same set of dimensions.
 
@@ -2838,7 +2810,7 @@ class ResourceTargeting(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceTargetingCriteria(_Model):
+class ResourceTargetingCriteria(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a set of targeting criteria for resource selection.
     Used on both the include and exclude sides of ResourceTargeting.
 
@@ -2981,7 +2953,7 @@ class RoleAssignmentResult(_Model):
     """Error details if the assignment failed."""
 
 
-class RunAfter(_Model):
+class RunAfter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents action dependencies.
 
     :ivar behavior: Defines how multiple dependencies are evaluated. Known values are: "Any",
@@ -3020,7 +2992,7 @@ class RunAfter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Scenario(ProxyResource):
+class Scenario(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the scenario.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3061,7 +3033,7 @@ class Scenario(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ScenarioAction(_Model):
+class ScenarioAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a scenario action.
 
     :ivar name: Unique name for the action. Required.
@@ -3143,7 +3115,7 @@ class ScenarioAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScenarioConfiguration(ProxyResource):
+class ScenarioConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the scenario.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3184,7 +3156,7 @@ class ScenarioConfiguration(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ScenarioConfigurationProperties(_Model):
+class ScenarioConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the properties of the scenario configuration.
 
     :ivar scenario_id: Resource ID of the scenario this configuration applies to. Required.
@@ -3255,7 +3227,7 @@ class ScenarioConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScenarioErrors(_Model):
+class ScenarioErrors(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the scenario run errors.
 
     :ivar error_code: Error code for internal server errors.
@@ -3298,7 +3270,7 @@ class ScenarioErrors(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScenarioParameter(_Model):
+class ScenarioParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a single scenario parameter definition.
 
     :ivar name: The name of the parameter. Required.
@@ -3348,7 +3320,7 @@ class ScenarioParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScenarioProperties(_Model):
+class ScenarioProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the properties of the scenario.
 
     :ivar provisioning_state: Most recent provisioning state for the given scenario resource. Known
@@ -3411,7 +3383,7 @@ class ScenarioProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScenarioRun(ProxyResource):
+class ScenarioRun(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the scenario run.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3608,7 +3580,7 @@ class StepStatus(_Model):
     """The array of branches."""
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -3675,7 +3647,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Target(ProxyResource):
+class Target(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a Target resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3719,7 +3691,7 @@ class Target(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class TargetReference(_Model):
+class TargetReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a reference to a Target in the selector.
 
     :ivar type: Enum of the Target reference type. Required. "ChaosTarget"
@@ -3754,7 +3726,7 @@ class TargetReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetType(ProxyResource):
+class TargetType(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a Target Type resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3836,7 +3808,7 @@ class TargetTypeProperties(_Model):
     """List of resource types this Target Type can extend."""
 
 
-class TemplateEvaluationResultItem(_Model):
+class TemplateEvaluationResultItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a single template evaluation result.
 
     :ivar template_id: The template ID that was evaluated. Optional because the underlying BE field
@@ -3906,7 +3878,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class Validation(ProxyResource):
+class Validation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -3948,7 +3920,7 @@ class Validation(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ValidationProperties(_Model):
+class ValidationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the properties of the scenario validation.
 
     :ivar status: The scenario validation status. Required. Known values are: "Resolving",
@@ -4024,7 +3996,7 @@ class ValidationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Workspace(TrackedResource):
+class Workspace(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents a Workspace resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4076,7 +4048,7 @@ class Workspace(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceDiscovery(ProxyResource):
+class WorkspaceDiscovery(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the latest workspace discovery result.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4150,7 +4122,7 @@ class WorkspaceDiscoveryProperties(_Model):
     """The resource snapshot ID produced by this discovery."""
 
 
-class WorkspaceEvaluation(ProxyResource):
+class WorkspaceEvaluation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the latest workspace evaluation result.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4257,7 +4229,7 @@ class WorkspaceEvaluationProperties(_Model):
     """Per-template evaluation results."""
 
 
-class WorkspaceProperties(_Model):
+class WorkspaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model that represents the Workspace properties model.
 
     :ivar provisioning_state: Most recent provisioning state for the given Workspace resource.
@@ -4302,7 +4274,7 @@ class WorkspaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceUpdate(_Model):
+class WorkspaceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a workspace update.
 
     :ivar tags: Resource tags.

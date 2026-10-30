@@ -1,5 +1,16 @@
 # Release History
 
+## 3.0.0b3 (2026-10-28)
+
+### Breaking Changes
+
+  - Method `PrivateAccessesOperations.get_private_link_resources` changed from `asynchronous` to `synchronous`
+  - Deleted or renamed enum value `ConnectionKind.CSFI`
+  - Model `ConnectionProperties` deleted or renamed its instance variable `dsts_principal`
+  - Deleted or renamed model `PrivateLinkResourceListResult`
+  - Method `PrivateAccessesOperations.get_private_link_resources` changed return type from `PrivateLinkResourceListResult` to `AsyncItemPaged[PrivateLinkResource]`
+  - Method `PrivateAccessesOperations.get_private_link_resources` changed return type from `PrivateLinkResourceListResult` to `ItemPaged[PrivateLinkResource]`
+
 ## 3.0.0b2 (2026-07-28)
 
 ### Features Added

@@ -47,7 +47,6 @@ class TestChaosManagementConnectionsOperationsAsync(AzureMgmtRecordedTestCase):
                     "certificateIssuer": "str",
                     "certificateSubjectName": "str",
                     "dataPlaneEndpoint": "str",
-                    "dstsPrincipal": "str",
                     "principalId": "str",
                     "provisioningState": "str",
                     "status": "str",

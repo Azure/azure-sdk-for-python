@@ -67,7 +67,6 @@
         "azure.mgmt.chaos.models.PrivateEndpointConnection": "Microsoft.Chaos.PrivateEndpointConnection",
         "azure.mgmt.chaos.models.PrivateEndpointConnectionProperties": "Microsoft.Chaos.PrivateEndpointConnectionProperties",
         "azure.mgmt.chaos.models.PrivateLinkResource": "Microsoft.Chaos.PrivateLinkResource",
-        "azure.mgmt.chaos.models.PrivateLinkResourceListResult": "Microsoft.Chaos.PrivateLinkResourceListResult",
         "azure.mgmt.chaos.models.PrivateLinkResourceProperties": "Microsoft.Chaos.PrivateLinkResourceProperties",
         "azure.mgmt.chaos.models.PrivateLinkServiceConnectionState": "Microsoft.Chaos.PrivateLinkServiceConnectionState",
         "azure.mgmt.chaos.models.Recommendation": "Microsoft.Chaos.Recommendation",
@@ -269,5 +268,5 @@
         "azure.mgmt.chaos.operations.ConnectionsOperations.list_all": "Microsoft.Chaos.Connections.listAll",
         "azure.mgmt.chaos.aio.operations.ConnectionsOperations.list_all": "Microsoft.Chaos.Connections.listAll"
     },
-    "CrossLanguageVersion": "23168285983f"
+    "CrossLanguageVersion": "9a14b134e80a"
 }

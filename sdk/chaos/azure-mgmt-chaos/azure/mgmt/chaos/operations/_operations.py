@@ -2067,7 +2067,7 @@ def build_connections_list_all_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class CapabilitiesOperations:
+class CapabilitiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2600,7 +2600,7 @@ class CapabilitiesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2710,7 +2710,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class TargetsOperations:
+class TargetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3217,7 +3217,7 @@ class TargetsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CapabilityTypesOperations:
+class CapabilityTypesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3414,7 +3414,7 @@ class CapabilityTypesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ExperimentsOperations:
+class ExperimentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4790,7 +4790,7 @@ class ExperimentsOperations:
         return deserialized  # type: ignore
 
 
-class PrivateAccessesOperations:
+class PrivateAccessesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5806,7 +5806,7 @@ class PrivateAccessesOperations:
     )
     def get_private_link_resources(
         self, resource_group_name: str, private_access_name: str, **kwargs: Any
-    ) -> _models.PrivateLinkResourceListResult:
+    ) -> ItemPaged["_models.PrivateLinkResource"]:
         """Gets the private link resources possible under private access resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5816,11 +5816,15 @@ class PrivateAccessesOperations:
          Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
          characters. Required.
         :type private_access_name: str
-        :return: PrivateLinkResourceListResult. The PrivateLinkResourceListResult is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.chaos.models.PrivateLinkResourceListResult
+        :return: An iterator like instance of PrivateLinkResource
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.chaos.models.PrivateLinkResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.PrivateLinkResource]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5829,54 +5833,79 @@ class PrivateAccessesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.PrivateLinkResourceListResult] = kwargs.pop("cls", None)
+                _request = build_private_accesses_get_private_link_resources_request(
+                    resource_group_name=resource_group_name,
+                    private_access_name=private_access_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_private_accesses_get_private_link_resources_request(
-            resource_group_name=resource_group_name,
-            private_access_name=private_access_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.PrivateLinkResource],
+                deserialized.get("value", []),
             )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.PrivateLinkResourceListResult, response.json())
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        return deserialized  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     @api_version_validation(
@@ -6240,7 +6269,7 @@ class PrivateAccessesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ActionsOperations:
+class ActionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6447,7 +6476,7 @@ class ActionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ActionVersionsOperations:
+class ActionVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6670,7 +6699,7 @@ class ActionVersionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class TargetTypesOperations:
+class TargetTypesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6859,7 +6888,7 @@ class TargetTypesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class OperationStatusesOperations:
+class OperationStatusesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6946,7 +6975,7 @@ class OperationStatusesOperations:
         return deserialized  # type: ignore
 
 
-class WorkspacesOperations:
+class WorkspacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8203,7 +8232,7 @@ class WorkspacesOperations:
         )
 
 
-class DiscoveredResourcesOperations:
+class DiscoveredResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8419,7 +8448,7 @@ class DiscoveredResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ScenariosOperations:
+class ScenariosOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8905,7 +8934,7 @@ class ScenariosOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ScenarioConfigurationsOperations:
+class ScenarioConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10262,7 +10291,7 @@ class ScenarioConfigurationsOperations:
         )
 
 
-class ScenarioRunsOperations:
+class ScenarioRunsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10668,7 +10697,7 @@ class ScenarioRunsOperations:
         )
 
 
-class ConnectionsOperations:
+class ConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
