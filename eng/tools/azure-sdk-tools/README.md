@@ -124,6 +124,11 @@ On top of assembling packages, azure-sdk-tools also can be used to complete vari
 
 ### `sdk_set_dev_version`
 
+Dev builds also adjust Azure package requirements to accept alpha dependencies.
+Replacement uses each requirement's original text so equivalent version-limit
+orderings and spacing work in both `pyproject.toml` and `setup.py`; unrelated
+requirements and surrounding formatting are preserved.
+
 ```text
 usage: sdk_set_dev_version [-h] [--service SERVICE] -b BUILD_ID [--repo REPO] [glob_string]
 

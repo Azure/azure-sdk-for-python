@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import asyncio
 import json
-from importlib.metadata import requires
+from importlib.metadata import requires, version
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote, unquote
@@ -27,6 +27,7 @@ import httpx
 from openai import AsyncOpenAI, AsyncStream
 import pytest
 from packaging.requirements import Requirement
+from packaging.version import Version
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.core import (
@@ -46,7 +47,11 @@ from azure.ai.agentserver.responses.hosting._observability import InMemoryCreate
 def test_original_subject_core_dependency_floor() -> None:
     requirements = (Requirement(value) for value in requires("azure-ai-agentserver-responses") or [])
     core = next(value for value in requirements if value.name == "azure-ai-agentserver-core")
-    assert "2.3.0b3" in core.specifier
+    package_version = Version(version("azure-ai-agentserver-responses"))
+    if package_version.pre and package_version.pre[0] == "a":
+        assert Version(version("azure-ai-agentserver-core")) in core.specifier
+    else:
+        assert "2.3.0b3" in core.specifier
     assert "2.3.0b2" not in core.specifier
     assert "2.3.0b1" not in core.specifier
     assert callable(FoundryAgentRequestContext.model_attribution_headers)

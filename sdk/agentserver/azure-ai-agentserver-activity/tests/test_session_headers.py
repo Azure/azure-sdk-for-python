@@ -3,11 +3,12 @@
 # ---------------------------------------------------------
 """Tests for session resolution and required response headers."""
 
-from importlib.metadata import requires
+from importlib.metadata import requires, version
 from urllib.parse import unquote
 
 import pytest
 from packaging.requirements import Requirement
+from packaging.version import Version
 from starlette.responses import JSONResponse
 
 from azure.ai.agentserver.activity import ActivityAgentServerHost
@@ -17,7 +18,11 @@ from azure.ai.agentserver.core import FoundryAgentRequestContext, get_request_co
 def test_original_subject_core_dependency_floor():
     requirements = (Requirement(value) for value in requires("azure-ai-agentserver-activity") or [])
     core = next(value for value in requirements if value.name == "azure-ai-agentserver-core")
-    assert "2.3.0b2" in core.specifier
+    package_version = Version(version("azure-ai-agentserver-activity"))
+    if package_version.pre and package_version.pre[0] == "a":
+        assert Version(version("azure-ai-agentserver-core")) in core.specifier
+    else:
+        assert "2.3.0b2" in core.specifier
     assert "2.3.0b1" not in core.specifier
     assert "2.0.0b8" not in core.specifier
     assert callable(FoundryAgentRequestContext.model_attribution_headers)
