@@ -16,5 +16,5 @@
         "azure.data.ai.InferenceClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank",
         "azure.data.ai.aio.InferenceClient.semantic_rerank": "Azure.Data.AI.InferenceOperationGroup.semanticRerank"
     },
-    "CrossLanguageVersion": "e5852170de97"
+    "CrossLanguageVersion": "916c947b08bf"
 }
