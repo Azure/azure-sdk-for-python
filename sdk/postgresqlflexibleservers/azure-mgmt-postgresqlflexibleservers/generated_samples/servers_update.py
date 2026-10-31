@@ -36,9 +36,15 @@ def main():
         parameters={
             "properties": {
                 "administratorLoginPassword": "examplenewpassword",
-                "backup": {"backupRetentionDays": 20},
+                "backup": {"backupRetentionDays": 20, "immutableBackup": "Enabled"},
                 "createMode": "Update",
-                "storage": {"autoGrow": "Enabled", "storageSizeGB": 1024, "tier": "P30"},
+                "storage": {
+                    "autoGrow": "Enabled",
+                    "autoGrowIncrementPercent": 20,
+                    "autoGrowMaxThresholdMb": 2097152,
+                    "storageSizeGB": 1024,
+                    "tier": "P30",
+                },
             },
             "sku": {"name": "Standard_D8s_v3", "tier": "GeneralPurpose"},
         },
@@ -46,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-01-preview/ServersUpdate.json
+# x-ms-original-file: 2026-10-01/ServersUpdate.json
 if __name__ == "__main__":
     main()

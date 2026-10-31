@@ -11,7 +11,6 @@ namespace azure.mgmt.postgresqlflexibleservers
         captured_logs: CapturedLogsOperations
         configurations: ConfigurationsOperations
         databases: DatabasesOperations
-        db_agents: DbAgentsOperations
         firewall_rules: FirewallRulesOperations
         maintenance_events: MaintenanceEventsOperations
         major_version_upgrade_precheck: MajorVersionUpgradePrecheckOperations
@@ -64,7 +63,6 @@ namespace azure.mgmt.postgresqlflexibleservers.aio
         captured_logs: CapturedLogsOperations
         configurations: ConfigurationsOperations
         databases: DatabasesOperations
-        db_agents: DbAgentsOperations
         firewall_rules: FirewallRulesOperations
         maintenance_events: MaintenanceEventsOperations
         major_version_upgrade_precheck: MajorVersionUpgradePrecheckOperations
@@ -559,66 +557,6 @@ namespace azure.mgmt.postgresqlflexibleservers.aio.operations
             ) -> AsyncItemPaged[Database]: ...
 
 
-    class azure.mgmt.postgresqlflexibleservers.aio.operations.DbAgentsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                server_name: str, 
-                resource: DbAgentForUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[DbAgent]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                server_name: str, 
-                resource: DbAgentForUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[DbAgent]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                server_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[DbAgent]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        async def get(
-                self, 
-                resource_group_name: str, 
-                server_name: str, 
-                **kwargs: Any
-            ) -> DbAgent: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        def list(
-                self, 
-                resource_group_name: str, 
-                server_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[DbAgent]: ...
-
-
     class azure.mgmt.postgresqlflexibleservers.aio.operations.FirewallRulesOperations:
 
         def __init__(
@@ -699,7 +637,7 @@ namespace azure.mgmt.postgresqlflexibleservers.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'maintenance_event_id', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview'])
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'maintenance_event_id', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview', '2026-10-01'])
         async def begin_apply_now(
                 self, 
                 resource_group_name: str, 
@@ -745,7 +683,7 @@ namespace azure.mgmt.postgresqlflexibleservers.aio.operations
             ) -> AsyncLROPoller[MaintenanceEventActionResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'maintenance_event_id', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview'])
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'maintenance_event_id', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview', '2026-10-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -755,7 +693,7 @@ namespace azure.mgmt.postgresqlflexibleservers.aio.operations
             ) -> MaintenanceEventResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'maintenance_status', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview'])
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'maintenance_status', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview', '2026-10-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -775,7 +713,7 @@ namespace azure.mgmt.postgresqlflexibleservers.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'precheck_validation_id', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview'])
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'precheck_validation_id', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview', '2026-10-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -785,7 +723,7 @@ namespace azure.mgmt.postgresqlflexibleservers.aio.operations
             ) -> MajorVersionUpgradePrecheckResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview'])
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview', '2026-10-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -1251,7 +1189,7 @@ namespace azure.mgmt.postgresqlflexibleservers.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-04-01-preview', '2026-07-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-04-01-preview', '2026-07-01-preview', '2026-10-01'])
         async def begin_migrate_network_mode(
                 self, 
                 resource_group_name: str, 
@@ -2366,78 +2304,6 @@ namespace azure.mgmt.postgresqlflexibleservers.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.postgresqlflexibleservers.models.DbAgent(ProxyResource):
-        id: str
-        name: str
-        properties: Optional[DbAgentProperties]
-        system_data: SystemData
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: Optional[DbAgentProperties] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.postgresqlflexibleservers.models.DbAgentForUpdate(_Model):
-        properties: DbAgentForUpdateProperties
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: DbAgentForUpdateProperties
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.postgresqlflexibleservers.models.DbAgentForUpdateProperties(_Model):
-        state: Union[str, DbAgentForUpdateState]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                state: Union[str, DbAgentForUpdateState]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.postgresqlflexibleservers.models.DbAgentForUpdateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DISABLED = "Disabled"
-        ENABLED = "Enabled"
-
-
-    class azure.mgmt.postgresqlflexibleservers.models.DbAgentProperties(_Model):
-        last_modified_time: Optional[datetime]
-        provisioning_state: Optional[Union[str, DbAgentProvisioningState]]
-        state: Union[str, DbAgentState]
-
-
-    class azure.mgmt.postgresqlflexibleservers.models.DbAgentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CANCELED = "Canceled"
-        FAILED = "Failed"
-        IN_PROGRESS = "InProgress"
-        SUCCEEDED = "Succeeded"
-
-
-    class azure.mgmt.postgresqlflexibleservers.models.DbAgentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DISABLED = "Disabled"
-        DISABLING = "Disabling"
-        ENABLED = "Enabled"
-        ENABLING = "Enabling"
-        FAILED = "Failed"
-
-
     class azure.mgmt.postgresqlflexibleservers.models.DbLevelValidationStatus(_Model):
         database_name: Optional[str]
         ended_on: Optional[datetime]
@@ -2934,7 +2800,7 @@ namespace azure.mgmt.postgresqlflexibleservers.models
         policy_details: Optional[list[PolicyDetail]]
         precheck_result: Optional[PrecheckResult]
         status: Optional[Union[str, MajorVersionUpgradePrecheckStatus]]
-        target_version: Optional[Union[str, PostgresMajorVersion]]
+        target_version: Optional[str]
 
         @overload
         def __init__(
@@ -2944,7 +2810,7 @@ namespace azure.mgmt.postgresqlflexibleservers.models
                 policy_details: Optional[list[PolicyDetail]] = ..., 
                 precheck_result: Optional[PrecheckResult] = ..., 
                 status: Optional[Union[str, MajorVersionUpgradePrecheckStatus]] = ..., 
-                target_version: Optional[Union[str, PostgresMajorVersion]] = ...
+                target_version: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -3571,18 +3437,6 @@ namespace azure.mgmt.postgresqlflexibleservers.models
         ZONE_REDUNDANT = "ZoneRedundant"
 
 
-    class azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        EIGHTEEN = "18"
-        ELEVEN = "11"
-        ENUM_19 = "19"
-        FIFTEEN = "15"
-        FOURTEEN = "14"
-        SEVENTEEN = "17"
-        SIXTEEN = "16"
-        THIRTEEN = "13"
-        TWELVE = "12"
-
-
     class azure.mgmt.postgresqlflexibleservers.models.PrecheckErrorInfo(_Model):
         error_code: Optional[int]
         error_message: Optional[str]
@@ -3953,7 +3807,7 @@ namespace azure.mgmt.postgresqlflexibleservers.models
         source_server_resource_id: Optional[str]
         state: Optional[Union[str, ServerState]]
         storage: Optional[Storage]
-        version: Optional[Union[str, PostgresMajorVersion]]
+        version: Optional[str]
 
         @overload
         def __init__(
@@ -3976,7 +3830,7 @@ namespace azure.mgmt.postgresqlflexibleservers.models
                 replication_role: Optional[Union[str, ReplicationRole]] = ..., 
                 source_server_resource_id: Optional[str] = ..., 
                 storage: Optional[Storage] = ..., 
-                version: Optional[Union[str, PostgresMajorVersion]] = ...
+                version: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -4000,7 +3854,7 @@ namespace azure.mgmt.postgresqlflexibleservers.models
         replication_role: Optional[Union[str, ReplicationRole]]
         source_server_resource_id: Optional[str]
         storage: Optional[Storage]
-        version: Optional[Union[str, PostgresMajorVersion]]
+        version: Optional[str]
 
         @overload
         def __init__(
@@ -4021,7 +3875,7 @@ namespace azure.mgmt.postgresqlflexibleservers.models
                 replication_role: Optional[Union[str, ReplicationRole]] = ..., 
                 source_server_resource_id: Optional[str] = ..., 
                 storage: Optional[Storage] = ..., 
-                version: Optional[Union[str, PostgresMajorVersion]] = ...
+                version: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -4166,13 +4020,13 @@ namespace azure.mgmt.postgresqlflexibleservers.models
 
 
     class azure.mgmt.postgresqlflexibleservers.models.StartMajorVersionUpgradePrecheckRequest(_Model):
-        target_version: Union[str, PostgresMajorVersion]
+        target_version: str
 
         @overload
         def __init__(
                 self, 
                 *, 
-                target_version: Union[str, PostgresMajorVersion]
+                target_version: str
             ) -> None: ...
 
         @overload
@@ -4360,15 +4214,15 @@ namespace azure.mgmt.postgresqlflexibleservers.models
 
 
     class azure.mgmt.postgresqlflexibleservers.models.UpgradeSequence(_Model):
-        source_version: Optional[Union[str, PostgresMajorVersion]]
-        target_version: Optional[Union[str, PostgresMajorVersion]]
+        source_version: Optional[str]
+        target_version: Optional[str]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                source_version: Optional[Union[str, PostgresMajorVersion]] = ..., 
-                target_version: Optional[Union[str, PostgresMajorVersion]] = ...
+                source_version: Optional[str] = ..., 
+                target_version: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -5025,66 +4879,6 @@ namespace azure.mgmt.postgresqlflexibleservers.operations
             ) -> ItemPaged[Database]: ...
 
 
-    class azure.mgmt.postgresqlflexibleservers.operations.DbAgentsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                server_name: str, 
-                resource: DbAgentForUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[DbAgent]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                server_name: str, 
-                resource: DbAgentForUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[DbAgent]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                server_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[DbAgent]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        def get(
-                self, 
-                resource_group_name: str, 
-                server_name: str, 
-                **kwargs: Any
-            ) -> DbAgent: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
-        def list(
-                self, 
-                resource_group_name: str, 
-                server_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[DbAgent]: ...
-
-
     class azure.mgmt.postgresqlflexibleservers.operations.FirewallRulesOperations:
 
         def __init__(
@@ -5165,7 +4959,7 @@ namespace azure.mgmt.postgresqlflexibleservers.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'maintenance_event_id', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview'])
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'maintenance_event_id', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview', '2026-10-01'])
         def begin_apply_now(
                 self, 
                 resource_group_name: str, 
@@ -5211,7 +5005,7 @@ namespace azure.mgmt.postgresqlflexibleservers.operations
             ) -> LROPoller[MaintenanceEventActionResponse]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'maintenance_event_id', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview'])
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'maintenance_event_id', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview', '2026-10-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5221,7 +5015,7 @@ namespace azure.mgmt.postgresqlflexibleservers.operations
             ) -> MaintenanceEventResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'maintenance_status', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview'])
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'maintenance_status', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview', '2026-10-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -5241,7 +5035,7 @@ namespace azure.mgmt.postgresqlflexibleservers.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'precheck_validation_id', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview'])
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'precheck_validation_id', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview', '2026-10-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5251,7 +5045,7 @@ namespace azure.mgmt.postgresqlflexibleservers.operations
             ) -> MajorVersionUpgradePrecheckResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview'])
+        @api_version_validation(method_added_on='2026-04-01-preview', params_added_on={'2026-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'accept']}, api_versions_list=['2026-04-01-preview', '2026-07-01-preview', '2026-10-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -5717,7 +5511,7 @@ namespace azure.mgmt.postgresqlflexibleservers.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-04-01-preview', '2026-07-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'server_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-04-01-preview', '2026-07-01-preview', '2026-10-01'])
         def begin_migrate_network_mode(
                 self, 
                 resource_group_name: str, 
@@ -6274,16 +6068,6 @@ namespace azure.mgmt.postgresqlflexibleservers.types
         collation: str
 
 
-    class azure.mgmt.postgresqlflexibleservers.types.DbAgentForUpdate(TypedDict, total=False):
-        key "properties": Required[DbAgentForUpdateProperties]
-        properties: DbAgentForUpdateProperties
-
-
-    class azure.mgmt.postgresqlflexibleservers.types.DbAgentForUpdateProperties(TypedDict, total=False):
-        key "state": Required[Union[str, DbAgentForUpdateState]]
-        state: Union[str, DbAgentForUpdateState]
-
-
     class azure.mgmt.postgresqlflexibleservers.types.DbLevelValidationStatus(TypedDict, total=False):
         key "databaseName": str
         key "endedOn": str
@@ -6665,7 +6449,7 @@ namespace azure.mgmt.postgresqlflexibleservers.types
         key "sourceServerResourceId": str
         key "state": Union[str, ServerState]
         key "storage": ForwardRef('Storage', module='types')
-        key "version": Union[str, PostgresMajorVersion]
+        key "version": str
         administratorLogin: str
         administratorLoginPassword: str
         authConfig: AuthConfig
@@ -6688,7 +6472,7 @@ namespace azure.mgmt.postgresqlflexibleservers.types
         sourceServerResourceId: str
         state: Union[str, ServerState]
         storage: Storage
-        version: Union[str, PostgresMajorVersion]
+        version: str
 
 
     class azure.mgmt.postgresqlflexibleservers.types.ServerPropertiesForPatch(TypedDict, total=False):
@@ -6708,7 +6492,7 @@ namespace azure.mgmt.postgresqlflexibleservers.types
         key "replicationRole": Union[str, ReplicationRole]
         key "sourceServerResourceId": str
         key "storage": ForwardRef('Storage', module='types')
-        key "version": Union[str, PostgresMajorVersion]
+        key "version": str
         administratorLogin: str
         administratorLoginPassword: str
         authConfig: AuthConfigForPatch
@@ -6725,7 +6509,7 @@ namespace azure.mgmt.postgresqlflexibleservers.types
         replicationRole: Union[str, ReplicationRole]
         sourceServerResourceId: str
         storage: Storage
-        version: Union[str, PostgresMajorVersion]
+        version: str
 
 
     class azure.mgmt.postgresqlflexibleservers.types.ServerSku(TypedDict, total=False):
@@ -6750,8 +6534,8 @@ namespace azure.mgmt.postgresqlflexibleservers.types
 
 
     class azure.mgmt.postgresqlflexibleservers.types.StartMajorVersionUpgradePrecheckRequest(TypedDict, total=False):
-        key "targetVersion": Required[Union[str, PostgresMajorVersion]]
-        targetVersion: Union[str, PostgresMajorVersion]
+        key "targetVersion": Required[str]
+        targetVersion: str
 
 
     class azure.mgmt.postgresqlflexibleservers.types.Storage(TypedDict, total=False):

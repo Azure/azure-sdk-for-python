@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-01-preview/VirtualNetworkSubnetUsageList.json
+# x-ms-original-file: 2026-10-01/VirtualNetworkSubnetUsageList.json
 if __name__ == "__main__":
     main()

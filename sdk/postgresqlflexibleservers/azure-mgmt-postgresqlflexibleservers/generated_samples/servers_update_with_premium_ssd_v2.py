@@ -15,7 +15,7 @@ from azure.mgmt.postgresqlflexibleservers import PostgreSQLManagementClient
     pip install azure-identity
     pip install azure-mgmt-postgresqlflexibleservers
 # USAGE
-    python db_agent_update_disable.py
+    python servers_update_with_premium_ssd_v2.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.db_agents.begin_create_or_update(
+    response = client.servers.begin_update(
         resource_group_name="exampleresourcegroup",
         server_name="exampleserver",
-        resource={"properties": {"state": "Disabled"}},
+        parameters={"properties": {"storage": {"iops": 6000, "throughput": 250, "type": "PremiumV2_LRS"}}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-07-01-preview/DBAgentUpdateDisable.json
+# x-ms-original-file: 2026-10-01/ServersUpdateWithPremiumSsdV2.json
 if __name__ == "__main__":
     main()
