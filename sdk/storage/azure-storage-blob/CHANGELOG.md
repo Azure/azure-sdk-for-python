@@ -5,18 +5,21 @@
 ### Features Added
 
 ### Bugs Fixed
-- Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_container_sas`,
-  `generate_blob_sas`, and `BlobServiceClient.get_user_delegation_key` (sync and async).
-  Datetimes without timezone information continue to be treated as UTC.
-- Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning
-  an empty list.
+- Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning an empty list.
 - Fixed an issue where a SAS generated for a blob name containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
-- Fixed an issue where certain headers were not being properly redacted when DEBUG logging was enabled.
 
 ### Other Changes
 - Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`
   and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
   models instead of generated internal types.
+
+## 12.31.1 (2026-10-29)
+
+### Bugs Fixed
+- Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_container_sas`,
+  `generate_blob_sas`, and `BlobServiceClient.get_user_delegation_key` (sync and async).
+  Datetimes without timezone information continue to be treated as UTC.
+- Fixed an issue where certain headers were not being properly redacted when DEBUG logging was enabled.
 
 ## 12.31.0 (2026-09-30)
 

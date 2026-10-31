@@ -1,0 +1,8 @@
+include *.md
+include LICENSE
+recursive-include tests *.py *.json
+recursive-include samples *.py *.md *.txt
+include azure/__init__.py
+include azure/ai/__init__.py
+include azure/ai/agentserver/__init__.py
+include azure/ai/agentserver/a2a/py.typed
