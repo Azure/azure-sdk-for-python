@@ -6,11 +6,13 @@ import pytest
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_compute
+from azure.ai.ml._restclient.arm_ml_service.models import ComputeResource
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities import (
     AmlCompute,
     Compute,
     ComputeInstance,
+    FabricSparkCompute,
     IdentityConfiguration,
     ManagedIdentityConfiguration,
 )
@@ -37,6 +39,54 @@ def mock_compute_operation(
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestComputeOperation:
+    def test_fabric_spark_attach_get_list_detach(self, mock_compute_operation: ComputeOperations) -> None:
+        compute = FabricSparkCompute(
+            name="fabricpoc01",
+            fabric_workspace_id="workspace-id",
+            lakehouse_id="lakehouse-id",
+            environment_id="environment-id",
+            pool_id="pool-id",
+        )
+        mock_compute_operation._get_workspace_location = Mock(return_value="eastus2euap")
+        mock_compute_operation.begin_attach(compute)
+        attach_kwargs = mock_compute_operation._operation.begin_create_or_update.call_args.kwargs
+        assert attach_kwargs["compute_name"] == "fabricpoc01"
+        assert attach_kwargs["parameters"].properties.compute_type == "FabricSpark"
+        assert attach_kwargs["parameters"].properties.properties.pool_id == "pool-id"
+
+        response = ComputeResource(
+            {
+                "name": "fabricpoc01",
+                "location": "eastus2euap",
+                "properties": {
+                    "computeType": "FabricSpark",
+                    "isAttachedCompute": True,
+                    "properties": {
+                        "fabricWorkspaceId": "workspace-id",
+                        "lakehouseId": "lakehouse-id",
+                        "environmentId": "environment-id",
+                        "poolId": "pool-id",
+                        "poolName": "CustomPool",
+                    },
+                },
+            }
+        )
+        mock_compute_operation._operation.get.return_value = response
+        assert isinstance(mock_compute_operation.get("fabricpoc01"), FabricSparkCompute)
+        assert mock_compute_operation.get("fabricpoc01").pool_name == "CustomPool"
+
+        def list_results(*args, **kwargs):
+            return kwargs["cls"]([response])
+
+        mock_compute_operation._operation.list.side_effect = list_results
+        listed = list(mock_compute_operation.list(compute_type="fabricspark"))
+        assert len(listed) == 1
+        assert isinstance(listed[0], FabricSparkCompute)
+        assert listed[0].pool_id == "pool-id"
+
+        mock_compute_operation.begin_delete("fabricpoc01", action="Detach")
+        assert mock_compute_operation._operation.begin_delete.call_args.kwargs["underlying_resource_action"] == "Detach"
+
     def test_list(self, mock_compute_operation: ComputeOperations) -> None:
         mock_compute_operation.list()
         mock_compute_operation._operation.list.assert_called_once()
