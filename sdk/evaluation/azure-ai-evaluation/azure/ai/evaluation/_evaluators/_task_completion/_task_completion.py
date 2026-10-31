@@ -10,6 +10,8 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy, with_probability_threshold
+from azure.ai.evaluation._evaluators._common._model_runners import is_decision_model_config
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
 from ..._common.utils import reformat_conversation_history, reformat_agent_response, reformat_tool_definitions
 from azure.ai.evaluation._model_configurations import Message
@@ -34,9 +36,14 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     The evaluation includes task requirement analysis, outcome assessment, and completion gap identification.
 
 
-    :param model_config: Configuration for the Azure OpenAI model.
+    :param model_config: Configuration for the Azure OpenAI model, or a decision model configuration with
+        ``type="decision"``, ``azure_endpoint`` and ``azure_deployment``.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :keyword probability_threshold: The decision model probability, in [0, 1], at or above which the score is 1.
+        Defaults to 0.75 and overrides ``probability_threshold`` in a decision ``model_config``. Chat models
+        ignore it with a warning.
+    :paramtype probability_threshold: Optional[float]
 
     .. admonition:: Example:
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
@@ -59,8 +66,13 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "task_completion.prompty"
+    _DECISION_FILE = "task_completion.decision.yaml"
     _RESULT_KEY = "task_completion"
     _OPTIONAL_PARAMS = ["tool_definitions"]
+    _supports_decision_models = True
+    _binary_decision = True
+    # The catalog evaluator's threshold, which Decision results report unless a threshold is given.
+    _DEFAULT_DECISION_THRESHOLD = 1
 
     _validator: ValidatorInterface
 
@@ -68,19 +80,27 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, credential=None, **kwargs):
+    def __init__(self, model_config, *, credential=None, probability_threshold=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
 
         # Initialize input validator
         self._validator = ToolDefinitionsValidator(error_target=ErrorTarget.TASK_COMPLETION_EVALUATOR)
 
+        if is_decision_model_config(model_config):
+            # Chat results keep the threshold they reported before.
+            kwargs.setdefault("threshold", self._DEFAULT_DECISION_THRESHOLD)
         super().__init__(
-            model_config=model_config,
+            model_config=with_probability_threshold(model_config, probability_threshold, type(self).__name__),
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             credential=credential,
             **kwargs,
+        )
+        self._decision = (
+            rubric_strategy(self, os.path.join(current_dir, self._DECISION_FILE), ErrorTarget.TASK_COMPLETION_EVALUATOR)
+            if self._uses_decision_model
+            else None
         )
 
     @overload
@@ -189,6 +209,10 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
         if "tool_definitions" in eval_input and eval_input["tool_definitions"]:
             eval_input["tool_definitions"] = reformat_tool_definitions(eval_input["tool_definitions"], logger)
+
+        if self._uses_decision_model:
+            state = {key: eval_input[key] for key in ("query", "response", "tool_definitions") if key in eval_input}
+            return await self._decision.evaluate(state)
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)

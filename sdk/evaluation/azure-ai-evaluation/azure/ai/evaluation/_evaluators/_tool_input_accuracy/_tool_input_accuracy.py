@@ -8,6 +8,7 @@ import json
 from typing import Dict, List, Union, TypeVar, Optional, cast
 from typing_extensions import override
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy, with_probability_threshold
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
 from azure.ai.evaluation._exceptions import (
     ErrorBlame,
@@ -39,9 +40,14 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     This evaluation focuses on ensuring tool call parameters are completely correct without any tolerance
     for partial correctness.
 
-    :param model_config: Configuration for the Azure OpenAI model.
+    :param model_config: Configuration for the Azure OpenAI model, or a decision model configuration with
+        ``type="decision"``, ``azure_endpoint`` and ``azure_deployment``.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :keyword probability_threshold: The decision model probability, in [0, 1], at or above which the score is 1.
+        Defaults to 0.75 and overrides ``probability_threshold`` in a decision ``model_config``. Chat models
+        ignore it with a warning.
+    :paramtype probability_threshold: Optional[float]
 
     .. admonition:: Example:
 
@@ -70,7 +76,10 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "tool_input_accuracy.prompty"
+    _DECISION_FILE = "tool_input_accuracy.decision.yaml"
     _RESULT_KEY = "tool_input_accuracy"
+    _supports_decision_models = True
+    _binary_decision = True
 
     _NO_TOOL_CALLS_MESSAGE = "No tool calls found in response or provided tool_calls."
     _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
@@ -83,6 +92,7 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         model_config,
         *,
         credential=None,
+        probability_threshold=None,
         **kwargs,
     ):
         current_dir = os.path.dirname(__file__)
@@ -96,12 +106,19 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         )
 
         super().__init__(
-            model_config=model_config,
+            model_config=with_probability_threshold(model_config, probability_threshold, type(self).__name__),
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=1,
             credential=credential,
             **kwargs,
+        )
+        self._decision = (
+            rubric_strategy(
+                self, os.path.join(current_dir, self._DECISION_FILE), ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR
+            )
+            if self._uses_decision_model
+            else None
         )
 
     def _convert_kwargs_to_eval_input(self, **kwargs):
@@ -210,6 +227,10 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input["query"] = reformat_conversation_history(
             eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
         )
+
+        if self._uses_decision_model:
+            state = {key: eval_input[key] for key in ("query", "tool_calls", "tool_definitions")}
+            return await self._decision.evaluate(state)
 
         # Call the LLM to evaluate
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)

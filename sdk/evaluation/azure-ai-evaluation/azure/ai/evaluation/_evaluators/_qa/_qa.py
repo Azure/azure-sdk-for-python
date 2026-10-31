@@ -7,6 +7,7 @@ from typing import Union
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import MultiEvaluatorBase
+from azure.ai.evaluation._evaluators._common._model_runners import is_decision_model_config
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 from .._coherence import CoherenceEvaluator
@@ -16,12 +17,26 @@ from .._groundedness import GroundednessEvaluator
 from .._relevance import RelevanceEvaluator
 from .._similarity import SimilarityEvaluator
 
+_DECISION_MEMBER_OPTIONS = (
+    "credential",
+    "timeout",
+    "timeout_seconds",
+    "max_retries",
+    "cancellation_requested",
+    "max_request_bytes",
+    "max_state_question_bytes",
+    "max_response_bytes",
+)
+
 
 class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
     """
     Initialize a question-answer evaluator configured for a specific Azure OpenAI model.
 
-    :param model_config: Configuration for the Azure OpenAI model.
+    :param model_config: Configuration for the Azure OpenAI model, or a decision model configuration with
+        ``type="decision"``, ``azure_endpoint`` and ``azure_deployment``. With a decision model, ``credential`` and
+        the decision execution controls are passed to the model-based evaluators, which run on separate threads, so
+        the credential must be synchronous.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param groundedness_threshold: The threshold for groundedness evaluation. Default is 3.
@@ -108,34 +123,17 @@ class QAEvaluator(MultiEvaluatorBase[Union[str, float]]):
                 )
 
         # Extract is_reasoning_model from kwargs to pass to LLM-based evaluators
-        is_reasoning_model = kwargs.get("is_reasoning_model", False)
+        member_kwargs = {"is_reasoning_model": kwargs.get("is_reasoning_model", False)}
+        if is_decision_model_config(model_config):
+            # Decision members need the caller's credential and execution controls; chat members are unchanged.
+            member_kwargs.update({name: kwargs[name] for name in _DECISION_MEMBER_OPTIONS if name in kwargs})
 
         evaluators = [
-            GroundednessEvaluator(
-                model_config,
-                threshold=groundedness_threshold,
-                is_reasoning_model=is_reasoning_model,
-            ),
-            RelevanceEvaluator(
-                model_config,
-                threshold=relevance_threshold,
-                is_reasoning_model=is_reasoning_model,
-            ),
-            CoherenceEvaluator(
-                model_config,
-                threshold=coherence_threshold,
-                is_reasoning_model=is_reasoning_model,
-            ),
-            FluencyEvaluator(
-                model_config,
-                threshold=fluency_threshold,
-                is_reasoning_model=is_reasoning_model,
-            ),
-            SimilarityEvaluator(
-                model_config,
-                threshold=similarity_threshold,
-                is_reasoning_model=is_reasoning_model,
-            ),
+            GroundednessEvaluator(model_config, threshold=groundedness_threshold, **member_kwargs),
+            RelevanceEvaluator(model_config, threshold=relevance_threshold, **member_kwargs),
+            CoherenceEvaluator(model_config, threshold=coherence_threshold, **member_kwargs),
+            FluencyEvaluator(model_config, threshold=fluency_threshold, **member_kwargs),
+            SimilarityEvaluator(model_config, threshold=similarity_threshold, **member_kwargs),
             F1ScoreEvaluator(threshold=f1_score_threshold),
         ]
         super().__init__(evaluators=evaluators, **kwargs)

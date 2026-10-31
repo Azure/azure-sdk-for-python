@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import math
-from typing import Dict, TypeVar, Union
+from typing import Any, Dict, TypeVar, Union
 
 from typing_extensions import override
 
@@ -83,6 +83,9 @@ class PromptyEvaluatorBase(ModelEvaluatorBase[T]):
         if isinstance(eval_input.get("query"), list):
             eval_input["query"] = _preprocess_messages(eval_input["query"])
 
+        if self._uses_decision_model:
+            return await self._do_decision_eval(eval_input)
+
         return await PromptyEvaluationStrategy(
             self._prompty_model_runner,
             result_key=self._result_key,
@@ -92,3 +95,16 @@ class PromptyEvaluatorBase(ModelEvaluatorBase[T]):
             missing_score=math.nan,
             higher_is_better=self._higher_is_better,
         ).evaluate(eval_input)
+
+    async def _do_decision_eval(self, eval_input: Dict) -> Dict[str, Any]:
+        """Evaluate the prepared input with the evaluator's decision model.
+
+        Decision-capable evaluators that use this class's ``_do_eval`` override this to send the inputs their
+        prompt renders.
+
+        :param eval_input: The validated and preprocessed input.
+        :type eval_input: Dict
+        :return: The evaluation result.
+        :rtype: Dict
+        """
+        raise NotImplementedError(f"{type(self).__name__} does not define its decision model inputs.")

@@ -9,6 +9,8 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common._base_prompty_eval import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common import hoist_messages_to_conversation
+from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy
+from azure.ai.evaluation._exceptions import ErrorTarget
 from azure.ai.evaluation._model_configurations import Conversation
 
 logger = logging.getLogger(__name__)
@@ -29,7 +31,8 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     has failed to surface the most relevant context chunks at the top of the list
     and/or introduced bias and ignored factual correctness.
 
-    :param model_config: Configuration for the Azure OpenAI model.
+    :param model_config: Configuration for the Azure OpenAI model, or a decision model configuration with
+        ``type="decision"``, ``azure_endpoint`` and ``azure_deployment``.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the evaluation. Default is 3.
@@ -78,7 +81,9 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "retrieval.prompty"
+    _DECISION_FILE = "retrieval.decision.yaml"
     _RESULT_KEY = "retrieval"
+    _supports_decision_models = True
 
     id = "azureai://built-in/evaluators/retrieval"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
@@ -97,6 +102,11 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             credential=credential,
             _higher_is_better=self._higher_is_better,
             **kwargs,
+        )
+        self._decision = (
+            rubric_strategy(self, os.path.join(current_dir, self._DECISION_FILE), ErrorTarget.RETRIEVAL_EVALUATOR)
+            if self._uses_decision_model
+            else None
         )
 
     @overload
@@ -156,3 +166,8 @@ class RetrievalEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         can extract per-turn q/r for the judge."""
         hoist_messages_to_conversation(kwargs)
         return super()._convert_kwargs_to_eval_input(**kwargs)
+
+    @override
+    async def _do_decision_eval(self, eval_input: Dict) -> Dict[str, Union[str, float]]:
+        state = {key: eval_input[key] for key in ("query", "context") if eval_input.get(key) is not None}
+        return await self._decision.evaluate(state)
