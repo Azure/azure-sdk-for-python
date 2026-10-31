@@ -98,6 +98,7 @@
         "azure.mgmt.applicationinsights.models.RequestSource": "Components.RequestSource",
         "azure.mgmt.applicationinsights.models.PublicNetworkAccessType": "Components.PublicNetworkAccessType",
         "azure.mgmt.applicationinsights.models.IngestionMode": "Components.IngestionMode",
+        "azure.mgmt.applicationinsights.models.AzureMonitorWorkspaceIngestionMode": "Components.AzureMonitorWorkspaceIngestionMode",
         "azure.mgmt.applicationinsights.models.PurgeState": "Components.PurgeState",
         "azure.mgmt.applicationinsights.models.FavoriteType": "Favorites.FavoriteType",
         "azure.mgmt.applicationinsights.models.FavoriteSourceType": "Favorites.FavoriteSourceType",
@@ -246,5 +247,5 @@
         "azure.mgmt.applicationinsights.operations.WebTestLocationsOperations.list": "WebTestLocation.webTestLocationsOperationGroup.list",
         "azure.mgmt.applicationinsights.aio.operations.WebTestLocationsOperations.list": "WebTestLocation.webTestLocationsOperationGroup.list"
     },
-    "CrossLanguageVersion": "eec2933378d0"
+    "CrossLanguageVersion": "3aecb8a7c64a"
 }
