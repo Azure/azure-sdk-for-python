@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
@@ -46,9 +46,11 @@ from ...operations._operations import (
     build_file_shares_check_name_availability_request,
     build_file_shares_create_or_update_request,
     build_file_shares_delete_request,
+    build_file_shares_get_redundancy_conversion_status_request,
     build_file_shares_get_request,
     build_file_shares_list_by_parent_request,
     build_file_shares_list_by_subscription_request,
+    build_file_shares_start_redundancy_conversion_request,
     build_file_shares_update_request,
     build_informational_operations_get_limits_request,
     build_informational_operations_get_provisioning_recommendation_request,
@@ -63,13 +65,12 @@ from ...operations._operations import (
 )
 from .._configuration import FileSharesMgmtClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
 
 
-class FileSharesOperations:
+class FileSharesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -161,7 +162,7 @@ class FileSharesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        resource: Union[_models.FileShare, JSON, IO[bytes]],
+        resource: Union[_models.FileShare, _types.FileShare, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -268,7 +269,7 @@ class FileSharesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        resource: JSON,
+        resource: _types.FileShare,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -282,7 +283,7 @@ class FileSharesOperations:
          Azure Resource Manager. Required.
         :type resource_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.fileshares.types.FileShare
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -326,7 +327,7 @@ class FileSharesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        resource: Union[_models.FileShare, JSON, IO[bytes]],
+        resource: Union[_models.FileShare, _types.FileShare, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FileShare]:
         """Create or update a file share.
@@ -337,9 +338,10 @@ class FileSharesOperations:
         :param resource_name: The resource name of the file share, as seen by the administrator through
          Azure Resource Manager. Required.
         :type resource_name: str
-        :param resource: Resource create parameters. Is one of the following types: FileShare, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.fileshares.models.FileShare or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a FileShare type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.fileshares.models.FileShare or
+         ~azure.mgmt.fileshares.types.FileShare or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FileShare. The FileShare is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.fileshares.models.FileShare]
@@ -401,7 +403,7 @@ class FileSharesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        properties: Union[_models.FileShareUpdate, JSON, IO[bytes]],
+        properties: Union[_models.FileShareUpdate, _types.FileShareUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -506,7 +508,7 @@ class FileSharesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        properties: JSON,
+        properties: _types.FileShareUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -520,7 +522,7 @@ class FileSharesOperations:
          Azure Resource Manager. Required.
         :type resource_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.fileshares.types.FileShareUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -564,7 +566,7 @@ class FileSharesOperations:
         self,
         resource_group_name: str,
         resource_name: str,
-        properties: Union[_models.FileShareUpdate, JSON, IO[bytes]],
+        properties: Union[_models.FileShareUpdate, _types.FileShareUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FileShare]:
         """Update a FileShare.
@@ -575,9 +577,10 @@ class FileSharesOperations:
         :param resource_name: The resource name of the file share, as seen by the administrator through
          Azure Resource Manager. Required.
         :type resource_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         FileShareUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.fileshares.models.FileShareUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a FileShareUpdate type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.fileshares.models.FileShareUpdate or
+         ~azure.mgmt.fileshares.types.FileShareUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FileShare. The FileShare is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.fileshares.models.FileShare]
@@ -802,7 +805,10 @@ class FileSharesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -896,7 +902,10 @@ class FileSharesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -964,14 +973,19 @@ class FileSharesOperations:
 
     @overload
     async def check_name_availability(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        body: _types.CheckNameAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Implements local CheckNameAvailability operations.
 
         :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The CheckAvailability request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.fileshares.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1002,15 +1016,19 @@ class FileSharesOperations:
 
     @distributed_trace_async
     async def check_name_availability(
-        self, location: str, body: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        body: Union[_models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Implements local CheckNameAvailability operations.
 
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: The CheckAvailability request. Is one of the following types:
-         CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.fileshares.models.CheckNameAvailabilityRequest or JSON or IO[bytes]
+        :param body: The CheckAvailability request. Is either a CheckNameAvailabilityRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.fileshares.models.CheckNameAvailabilityRequest or
+         ~azure.mgmt.fileshares.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResponse. The CheckNameAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.fileshares.models.CheckNameAvailabilityResponse
@@ -1082,8 +1100,259 @@ class FileSharesOperations:
 
         return deserialized  # type: ignore
 
+    @overload
+    async def start_redundancy_conversion(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        body: _models.StartRedundancyConversionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Starts a redundancy conversion for the file share.
 
-class FileShareSnapshotsOperations:
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The resource name of the file share, as seen by the administrator through
+         Azure Resource Manager. Required.
+        :type resource_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.fileshares.models.StartRedundancyConversionRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def start_redundancy_conversion(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        body: _types.StartRedundancyConversionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Starts a redundancy conversion for the file share.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The resource name of the file share, as seen by the administrator through
+         Azure Resource Manager. Required.
+        :type resource_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.fileshares.types.StartRedundancyConversionRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def start_redundancy_conversion(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> None:
+        """Starts a redundancy conversion for the file share.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The resource name of the file share, as seen by the administrator through
+         Azure Resource Manager. Required.
+        :type resource_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": ["api_version", "subscription_id", "resource_group_name", "resource_name", "content_type"]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    async def start_redundancy_conversion(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        body: Union[_models.StartRedundancyConversionRequest, _types.StartRedundancyConversionRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> None:
+        """Starts a redundancy conversion for the file share.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The resource name of the file share, as seen by the administrator through
+         Azure Resource Manager. Required.
+        :type resource_name: str
+        :param body: The content of the action request. Is either a StartRedundancyConversionRequest
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.fileshares.models.StartRedundancyConversionRequest or
+         ~azure.mgmt.fileshares.types.StartRedundancyConversionRequest or IO[bytes]
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_file_shares_start_redundancy_conversion_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    async def get_redundancy_conversion_status(
+        self, resource_group_name: str, resource_name: str, **kwargs: Any
+    ) -> _models.RedundancyConversionStatusResponse:
+        """Gets the status and details of the current or most recent redundancy conversion for the file
+        share.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The resource name of the file share, as seen by the administrator through
+         Azure Resource Manager. Required.
+        :type resource_name: str
+        :return: RedundancyConversionStatusResponse. The RedundancyConversionStatusResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.fileshares.models.RedundancyConversionStatusResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RedundancyConversionStatusResponse] = kwargs.pop("cls", None)
+
+        _request = build_file_shares_get_redundancy_conversion_status_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RedundancyConversionStatusResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class FileShareSnapshotsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1181,7 +1450,7 @@ class FileShareSnapshotsOperations:
         resource_group_name: str,
         resource_name: str,
         name: str,
-        resource: Union[_models.FileShareSnapshot, JSON, IO[bytes]],
+        resource: Union[_models.FileShareSnapshot, _types.FileShareSnapshot, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1293,7 +1562,7 @@ class FileShareSnapshotsOperations:
         resource_group_name: str,
         resource_name: str,
         name: str,
-        resource: JSON,
+        resource: _types.FileShareSnapshot,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1309,7 +1578,7 @@ class FileShareSnapshotsOperations:
         :param name: The name of the FileShareSnapshot. Required.
         :type name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.fileshares.types.FileShareSnapshot
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1357,7 +1626,7 @@ class FileShareSnapshotsOperations:
         resource_group_name: str,
         resource_name: str,
         name: str,
-        resource: Union[_models.FileShareSnapshot, JSON, IO[bytes]],
+        resource: Union[_models.FileShareSnapshot, _types.FileShareSnapshot, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FileShareSnapshot]:
         """Create a FileShareSnapshot.
@@ -1370,9 +1639,10 @@ class FileShareSnapshotsOperations:
         :type resource_name: str
         :param name: The name of the FileShareSnapshot. Required.
         :type name: str
-        :param resource: Resource create parameters. Is one of the following types: FileShareSnapshot,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.fileshares.models.FileShareSnapshot or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a FileShareSnapshot type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.fileshares.models.FileShareSnapshot or
+         ~azure.mgmt.fileshares.types.FileShareSnapshot or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FileShareSnapshot. The FileShareSnapshot is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.fileshares.models.FileShareSnapshot]
@@ -1443,7 +1713,7 @@ class FileShareSnapshotsOperations:
         resource_group_name: str,
         resource_name: str,
         name: str,
-        properties: Union[_models.FileShareSnapshotUpdate, JSON, IO[bytes]],
+        properties: Union[_models.FileShareSnapshotUpdate, _types.FileShareSnapshotUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1556,7 +1826,7 @@ class FileShareSnapshotsOperations:
         resource_group_name: str,
         resource_name: str,
         name: str,
-        properties: JSON,
+        properties: _types.FileShareSnapshotUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1572,7 +1842,7 @@ class FileShareSnapshotsOperations:
         :param name: The name of the FileShareSnapshot. Required.
         :type name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.fileshares.types.FileShareSnapshotUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1620,7 +1890,7 @@ class FileShareSnapshotsOperations:
         resource_group_name: str,
         resource_name: str,
         name: str,
-        properties: Union[_models.FileShareSnapshotUpdate, JSON, IO[bytes]],
+        properties: Union[_models.FileShareSnapshotUpdate, _types.FileShareSnapshotUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FileShareSnapshot]:
         """Update a FileShareSnapshot.
@@ -1633,9 +1903,10 @@ class FileShareSnapshotsOperations:
         :type resource_name: str
         :param name: The name of the FileShareSnapshot. Required.
         :type name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         FileShareSnapshotUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.fileshares.models.FileShareSnapshotUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a FileShareSnapshotUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.fileshares.models.FileShareSnapshotUpdate or
+         ~azure.mgmt.fileshares.types.FileShareSnapshotUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FileShareSnapshot. The FileShareSnapshot is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.fileshares.models.FileShareSnapshot]
@@ -1878,7 +2149,10 @@ class FileShareSnapshotsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1921,7 +2195,7 @@ class FileShareSnapshotsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1985,7 +2259,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2028,7 +2305,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class InformationalOperationsOperations:
+class InformationalOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2112,12 +2389,90 @@ class InformationalOperationsOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def get_limits(self, location: str, **kwargs: Any) -> _models.FileShareLimitsResponse:
+    @overload
+    async def get_limits(
+        self,
+        location: str,
+        body: Optional[_models.FileShareLimitsRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.FileShareLimitsResponse:
         """Get file shares limits.
 
         :param location: The name of the Azure region. Required.
         :type location: str
+        :param body: The request body. Default value is None.
+        :type body: ~azure.mgmt.fileshares.models.FileShareLimitsRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: FileShareLimitsResponse. The FileShareLimitsResponse is compatible with MutableMapping
+        :rtype: ~azure.mgmt.fileshares.models.FileShareLimitsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def get_limits(
+        self,
+        location: str,
+        body: Optional[_types.FileShareLimitsRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.FileShareLimitsResponse:
+        """Get file shares limits.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param body: The request body. Default value is None.
+        :type body: ~azure.mgmt.fileshares.types.FileShareLimitsRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: FileShareLimitsResponse. The FileShareLimitsResponse is compatible with MutableMapping
+        :rtype: ~azure.mgmt.fileshares.models.FileShareLimitsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def get_limits(
+        self, location: str, body: Optional[IO[bytes]] = None, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.FileShareLimitsResponse:
+        """Get file shares limits.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param body: The request body. Default value is None.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: FileShareLimitsResponse. The FileShareLimitsResponse is compatible with MutableMapping
+        :rtype: ~azure.mgmt.fileshares.models.FileShareLimitsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={"2026-09-01": ["api_version", "subscription_id", "location", "content_type", "accept"]},
+        api_versions_list=["2026-09-01"],
+    )
+    async def get_limits(
+        self,
+        location: str,
+        body: Optional[Union[_models.FileShareLimitsRequest, _types.FileShareLimitsRequest, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> _models.FileShareLimitsResponse:
+        """Get file shares limits.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param body: The request body. Is either a FileShareLimitsRequest type or a IO[bytes] type.
+         Default value is None.
+        :type body: ~azure.mgmt.fileshares.models.FileShareLimitsRequest or
+         ~azure.mgmt.fileshares.types.FileShareLimitsRequest or IO[bytes]
         :return: FileShareLimitsResponse. The FileShareLimitsResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.fileshares.models.FileShareLimitsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2130,15 +2485,29 @@ class InformationalOperationsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
         cls: ClsType[_models.FileShareLimitsResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if body else None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
 
         _request = build_informational_operations_get_limits_request(
             location=location,
             subscription_id=self._config.subscription_id,
+            content_type=content_type,
             api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -2204,14 +2573,19 @@ class InformationalOperationsOperations:
 
     @overload
     async def get_provisioning_recommendation(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        body: _types.FileShareProvisioningRecommendationRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.FileShareProvisioningRecommendationResponse:
         """Get file shares provisioning parameters recommendation.
 
         :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.fileshares.types.FileShareProvisioningRecommendationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2244,17 +2618,21 @@ class InformationalOperationsOperations:
     async def get_provisioning_recommendation(
         self,
         location: str,
-        body: Union[_models.FileShareProvisioningRecommendationRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.FileShareProvisioningRecommendationRequest,
+            _types.FileShareProvisioningRecommendationRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.FileShareProvisioningRecommendationResponse:
         """Get file shares provisioning parameters recommendation.
 
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: The request body. Is one of the following types:
-         FileShareProvisioningRecommendationRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.fileshares.models.FileShareProvisioningRecommendationRequest or JSON or
-         IO[bytes]
+        :param body: The request body. Is either a FileShareProvisioningRecommendationRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.fileshares.models.FileShareProvisioningRecommendationRequest or
+         ~azure.mgmt.fileshares.types.FileShareProvisioningRecommendationRequest or IO[bytes]
         :return: FileShareProvisioningRecommendationResponse. The
          FileShareProvisioningRecommendationResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.fileshares.models.FileShareProvisioningRecommendationResponse
@@ -2327,7 +2705,7 @@ class InformationalOperationsOperations:
         return deserialized  # type: ignore
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2357,7 +2735,7 @@ class PrivateEndpointConnectionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview", "2026-06-01"],
+        api_versions_list=["2025-09-01-preview", "2026-06-01", "2026-09-01"],
     )
     async def get(
         self, resource_group_name: str, resource_name: str, private_endpoint_connection_name: str, **kwargs: Any
@@ -2449,14 +2827,14 @@ class PrivateEndpointConnectionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview", "2026-06-01"],
+        api_versions_list=["2025-09-01-preview", "2026-06-01", "2026-09-01"],
     )
     async def _create_initial(
         self,
         resource_group_name: str,
         resource_name: str,
         private_endpoint_connection_name: str,
-        resource: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        resource: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2571,7 +2949,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         resource_name: str,
         private_endpoint_connection_name: str,
-        resource: JSON,
+        resource: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2588,7 +2966,7 @@ class PrivateEndpointConnectionsOperations:
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
         :param resource: The private endpoint connection properties. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.fileshares.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2647,14 +3025,14 @@ class PrivateEndpointConnectionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview", "2026-06-01"],
+        api_versions_list=["2025-09-01-preview", "2026-06-01", "2026-09-01"],
     )
     async def begin_create(
         self,
         resource_group_name: str,
         resource_name: str,
         private_endpoint_connection_name: str,
-        resource: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        resource: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
         """Update the state of specified private endpoint connection associated with the file share.
@@ -2668,9 +3046,10 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
-        :param resource: The private endpoint connection properties. Is one of the following types:
-         PrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.fileshares.models.PrivateEndpointConnection or JSON or IO[bytes]
+        :param resource: The private endpoint connection properties. Is either a
+         PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.fileshares.models.PrivateEndpointConnection or
+         ~azure.mgmt.fileshares.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -2741,7 +3120,7 @@ class PrivateEndpointConnectionsOperations:
                 "private_endpoint_connection_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview", "2026-06-01"],
+        api_versions_list=["2025-09-01-preview", "2026-06-01", "2026-09-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, resource_name: str, private_endpoint_connection_name: str, **kwargs: Any
@@ -2820,7 +3199,7 @@ class PrivateEndpointConnectionsOperations:
                 "private_endpoint_connection_name",
             ]
         },
-        api_versions_list=["2025-09-01-preview", "2026-06-01"],
+        api_versions_list=["2025-09-01-preview", "2026-06-01", "2026-09-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, resource_name: str, private_endpoint_connection_name: str, **kwargs: Any
@@ -2891,7 +3270,7 @@ class PrivateEndpointConnectionsOperations:
         params_added_on={
             "2025-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2025-09-01-preview", "2026-06-01"],
+        api_versions_list=["2025-09-01-preview", "2026-06-01", "2026-09-01"],
     )
     def list_by_file_share(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -2951,7 +3330,10 @@ class PrivateEndpointConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2994,7 +3376,7 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3024,7 +3406,7 @@ class PrivateLinkResourcesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-09-01-preview", "2026-06-01"],
+        api_versions_list=["2025-09-01-preview", "2026-06-01", "2026-09-01"],
     )
     async def get(
         self, resource_group_name: str, resource_name: str, private_link_resource_name: str, **kwargs: Any
@@ -3107,7 +3489,7 @@ class PrivateLinkResourcesOperations:
         params_added_on={
             "2025-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "resource_name", "accept"]
         },
-        api_versions_list=["2025-09-01-preview", "2026-06-01"],
+        api_versions_list=["2025-09-01-preview", "2026-06-01", "2026-09-01"],
     )
     def list(
         self, resource_group_name: str, resource_name: str, **kwargs: Any
@@ -3167,7 +3549,10 @@ class PrivateLinkResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
