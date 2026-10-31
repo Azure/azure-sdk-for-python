@@ -222,6 +222,57 @@ class TestChatTokenReuse:
         TOKENS.discard(credential, CHAT_SCOPE, "issued")
         assert entry.unstored is None
 
+    def test_requests_waiting_on_a_failed_token_request_do_not_get_an_older_token(self):
+        class TokenServiceOutage(Exception):
+            pass
+
+        entered, first_release, second_release = threading.Event(), threading.Event(), threading.Event()
+        calls = []
+
+        class StagedCredential(Credential):
+            def get_token(self, *scopes, **kwargs):
+                calls.append(1)
+                if len(calls) == 1:
+                    entered.set()
+                    first_release.wait(10)
+                elif len(calls) == 2:
+                    second_release.wait(10)
+                return super().get_token(*scopes, **kwargs)
+
+        credential = StagedCredential(
+            access_token("issued"), TokenServiceOutage("The token service is unavailable."), access_token("recovered")
+        )
+        results = {}
+
+        def request(name):
+            try:
+                results[name] = request_token(credential)
+            except Exception as error:  # pylint: disable=broad-except
+                results[name] = type(error).__name__
+
+        # A rejection while the first token is requested keeps that token out of the cache.
+        first = threading.Thread(target=request, args=("first",))
+        first.start()
+        assert entered.wait(10)
+        TOKENS.discard(credential, CHAT_SCOPE, "rejected-earlier")
+        first_release.set()
+        first.join(10)
+        assert results["first"] == "issued" and TOKENS.cached(credential, CHAT_SCOPE) is None
+
+        # The next token request fails; the requests waiting on it make their own attempt.
+        all_queued = watch_token_queue(credential, 3)
+        names = ["second", "waiter-1", "waiter-2"]
+        threads = [threading.Thread(target=request, args=(name,)) for name in names]
+        for thread in threads:
+            thread.start()
+        assert all_queued.wait(10)
+        second_release.set()
+        for thread in threads:
+            thread.join(10)
+
+        assert sorted(results[name] for name in names) == ["TokenServiceOutage", "recovered", "recovered"]
+        assert len(calls) == 3
+
     def test_a_token_without_an_expiry_is_requested_each_time(self):
         credential = Credential(SimpleNamespace(token="no-expiry", expires_on=None))
 

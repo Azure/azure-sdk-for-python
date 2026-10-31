@@ -193,8 +193,8 @@ class CredentialTokenCache:
             if failure is not None:
                 raise failure_type(**failure)
             if _is_fresh(unstored):
-                # Issued for the request this one waited on and not rejected since, so use it rather than request
-                # another token after it.
+                # Issued for the request this one waited on and not rejected since it was shared, so use it rather
+                # than request another token.
                 return unstored
             with self._guard:
                 generation = entry.generation
