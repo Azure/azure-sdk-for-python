@@ -312,6 +312,16 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         :param request: The request to be modified before sending.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
+        # Do not send the key credential to a cross-domain redirect target: the request is now
+        # bound for a different authority than the one the credential was provisioned for.
+        # "insecure_domain_change" is set by RedirectPolicy on a cross-domain redirect and is the
+        # same signal SensitiveHeaderCleanupPolicy uses to strip the Authorization header family.
+        # Because this credential uses a custom header name, SensitiveHeaderCleanupPolicy does not
+        # know to remove it, so the header set on the pre-redirect request must be removed here
+        # (and not re-added) on the redirected send.
+        if request.context.get("insecure_domain_change", False):
+            request.http_request.headers.pop(self._name, None)
+            return
         request.http_request.headers[self._name] = f"{self._prefix}{self._credential.key}"
 
 
@@ -339,6 +349,11 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         :param request: The request to be modified before sending.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
+        # Do not re-attach the SAS after a cross-domain redirect; the signature would otherwise be
+        # appended to a URL on a different authority than the one it was issued for. See the note in
+        # AzureKeyCredentialPolicy.on_request about the "insecure_domain_change" signal.
+        if request.context.get("insecure_domain_change", False):
+            return
         url = request.http_request.url
         query = request.http_request.query
         signature = self._credential.signature
