@@ -11,6 +11,7 @@ from typing_extensions import overload, override
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy, with_probability_threshold
+from azure.ai.evaluation._evaluators._common._model_runners import is_decision_model_config
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
 from ..._common.utils import (
     reformat_conversation_history,
@@ -99,6 +100,10 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Initialize input validator
         self._validator = ToolDefinitionsValidator(error_target=ErrorTarget.TASK_ADHERENCE_EVALUATOR)
 
+        if is_decision_model_config(model_config):
+            # Decision results report the requested threshold, as the catalog evaluator does. Chat results keep the
+            # threshold they reported before.
+            kwargs["threshold"] = threshold
         super().__init__(
             model_config=with_probability_threshold(model_config, probability_threshold, type(self).__name__),
             prompty_file=prompty_path,

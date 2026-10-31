@@ -11,6 +11,7 @@ from typing_extensions import overload, override
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy, with_probability_threshold
+from azure.ai.evaluation._evaluators._common._model_runners import is_decision_model_config
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
 from ..._common.utils import reformat_conversation_history, reformat_agent_response, reformat_tool_definitions
 from azure.ai.evaluation._model_configurations import Message
@@ -70,6 +71,8 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _OPTIONAL_PARAMS = ["tool_definitions"]
     _supports_decision_models = True
     _binary_decision = True
+    # The catalog evaluator's threshold, which Decision results report unless a threshold is given.
+    _DEFAULT_DECISION_THRESHOLD = 1
 
     _validator: ValidatorInterface
 
@@ -84,6 +87,9 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Initialize input validator
         self._validator = ToolDefinitionsValidator(error_target=ErrorTarget.TASK_COMPLETION_EVALUATOR)
 
+        if is_decision_model_config(model_config):
+            # Chat results keep the threshold they reported before.
+            kwargs.setdefault("threshold", self._DEFAULT_DECISION_THRESHOLD)
         super().__init__(
             model_config=with_probability_threshold(model_config, probability_threshold, type(self).__name__),
             prompty_file=prompty_path,

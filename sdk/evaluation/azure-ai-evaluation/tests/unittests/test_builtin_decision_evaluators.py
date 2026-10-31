@@ -132,7 +132,7 @@ TOOL_DEFINITIONS_TEXT = "TOOL_DEFINITIONS:\n- fetch_weather: Fetches the weather
 GLOBAL_CONTEXT = "Weather data for European cities."
 
 # Single-turn cases: evaluator, result key, rubric file, inputs, the exact Decision state (None when it is the
-# inputs) and the result threshold.
+# inputs) and the catalog evaluator's result threshold.
 LIKERT_CASES = [
     (CoherenceEvaluator, "coherence", "coherence.decision.yaml", {"query": QUERY, "response": RESPONSE}, None, 3),
     (FluencyEvaluator, "fluency", "fluency.decision.yaml", {"response": RESPONSE_MESSAGES}, {"response": RESPONSE}, 3),
@@ -186,7 +186,7 @@ BINARY_CASES = [
         "task_adherence.decision.yaml",
         {"query": QUERY, "response": RESPONSE},
         {"system_message": "", "query": QUERY, "response": RESPONSE, "tool_calls": ""},
-        3,
+        0,
     ),
     (
         _TaskCompletionEvaluator,
@@ -194,7 +194,7 @@ BINARY_CASES = [
         "task_completion.decision.yaml",
         {"query": QUERY, "response": RESPONSE},
         {"query": QUERY, "response": RESPONSE, "tool_definitions": None},
-        3,
+        1,
     ),
     (
         _ToolCallSuccessEvaluator,
@@ -579,6 +579,13 @@ def test_construction_selects_the_strategy_from_the_model_type(service, evaluato
     expected_scoring = BinaryScoring(0.75) if evaluator_type in BINARY_TYPES else LikertScoring(5, minimum=1)
     assert decision._decision.scoring == expected_scoring
     assert decision._decision.timeout == 120 and decision._decision.threshold == decision._threshold
+
+
+@pytest.mark.parametrize("evaluator_type", [TaskAdherenceEvaluator, _TaskCompletionEvaluator])
+def test_a_requested_threshold_is_reported_on_decision_models(service, evaluator_type):
+    decision = _decision(evaluator_type, threshold=2)
+
+    assert decision._threshold == decision._decision.threshold == 2
 
 
 def test_groundedness_chat_construction_has_no_decision_strategies():
