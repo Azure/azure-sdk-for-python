@@ -182,6 +182,46 @@ class TestChatTokenReuse:
         assert outcomes == ["TokenServiceOutage"] * 3
         assert len(credential.scopes) == 3
 
+    def test_requests_waiting_on_a_token_kept_out_of_the_cache_use_it(self):
+        entered, release = threading.Event(), threading.Event()
+
+        class SlowCredential(Credential):
+            def get_token(self, *scopes, **kwargs):
+                entered.set()
+                release.wait(10)
+                return super().get_token(*scopes, **kwargs)
+
+        credential = SlowCredential(access_token("issued"))
+        all_queued = watch_token_queue(credential, 4)
+        tokens = []
+        threads = [threading.Thread(target=lambda: tokens.append(request_token(credential))) for _ in range(4)]
+        for thread in threads:
+            thread.start()
+        assert entered.wait(10) and all_queued.wait(10)
+        # Another request's 401 lands while the token is requested, so the token is not cached.
+        TOKENS.discard(credential, CHAT_SCOPE, "rejected-earlier")
+        release.set()
+        for thread in threads:
+            thread.join(10)
+
+        assert tokens == ["issued"] * 4
+        assert len(credential.scopes) == 1
+        assert TOKENS.cached(credential, CHAT_SCOPE) is None
+        # A request that starts afterwards requests its own token, which is cached again.
+        assert request_token(credential) == "issued"
+        assert len(credential.scopes) == 2
+        assert TOKENS.cached(credential, CHAT_SCOPE).token == "issued"
+
+    def test_a_rejected_token_is_not_given_to_waiting_requests(self):
+        credential = Credential(access_token("unused"))
+        entry = TOKENS._entry(credential, CHAT_SCOPE, create=True)
+        entry.unstored = access_token("issued")
+
+        TOKENS.discard(credential, CHAT_SCOPE, "other")
+        assert entry.unstored.token == "issued"
+        TOKENS.discard(credential, CHAT_SCOPE, "issued")
+        assert entry.unstored is None
+
     def test_a_token_without_an_expiry_is_requested_each_time(self):
         credential = Credential(SimpleNamespace(token="no-expiry", expires_on=None))
 

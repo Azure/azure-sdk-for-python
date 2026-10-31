@@ -844,6 +844,36 @@ class TestDecisionTokenReuse:
         run(DecisionModelRunner(self.CONFIG, credential))
         assert len(requested) == 1 and self.authorizations(client) == ["Bearer recovered"]
 
+    def test_requests_waiting_on_a_token_kept_out_of_the_cache_use_it(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        entered, release = threading.Event(), threading.Event()
+        requested = []
+
+        def get_token(*_, **__):
+            requested.append(1)
+            entered.set()
+            release.wait(10)
+            return self.access_token("issued")
+
+        credential = Mock(get_token=Mock(side_effect=get_token))
+        all_queued = watch_token_queue(credential, 4)
+        scope = _model_runners._DECISION_TOKEN_SCOPE
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            requests = [pool.submit(run, DecisionModelRunner(self.CONFIG, credential), timeout=10) for _ in range(4)]
+            assert entered.wait(10) and all_queued.wait(10)
+            # Another request's 401 lands while the token is requested, so the token is not cached.
+            _model_runners._TOKENS.discard(credential, scope, "rejected-earlier")
+            release.set()
+            for request in requests:
+                request.result(10)
+        assert len(requested) == 1
+        assert self.authorizations(client) == ["Bearer issued"] * 4
+        assert _model_runners._TOKENS.cached(credential, scope) is None
+        # A request that starts afterwards requests its own token, which is cached again.
+        run(DecisionModelRunner(self.CONFIG, credential))
+        assert len(requested) == 2
+        assert _model_runners._TOKENS.cached(credential, scope).token == "issued"
+
     def test_a_token_rejected_before_its_request_resumes_is_not_stored_again(self, client, monkeypatch):
         client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
         credential = Mock(get_token=Mock(return_value=self.access_token("shared")))
