@@ -1014,6 +1014,79 @@ class CrossSubscriptionRestoreSettings(TypedDict, total=False):
      \"Enabled\"."""
 
 
+class CrossTenantVaultMapping(ProxyResource):
+    """Cross-tenant vault mapping resource for cross-tenant restore.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: CrossTenantVaultMapping properties.
+    :vartype properties: "CrossTenantVaultMappingProperties"
+    """
+
+    properties: "CrossTenantVaultMappingProperties"
+    """CrossTenantVaultMapping properties."""
+
+
+class CrossTenantVaultMappingProperties(TypedDict, total=False):
+    """Cross-tenant vault mapping properties for cross-tenant restore.
+
+    :ivar sourceVaultId: ARM resource ID of the source backup vault whose data can be restored
+     across tenants. Required.
+    :vartype sourceVaultId: str
+    :ivar resourceGuardOperationRequests: ResourceGuardOperationRequests on which the MUA (LAC)
+     check will be performed.
+    :vartype resourceGuardOperationRequests: list[str]
+    :ivar sourceTenantId: Tenant ID of the source vault in the cross-tenant vault mapping.
+    :vartype sourceTenantId: str
+    :ivar provisioningState: Provisioning state of the cross-tenant vault mapping. Known values
+     are: "Failed", "Provisioning", "Succeeded", "Unknown", and "Updating".
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    """
+
+    sourceVaultId: Required[str]
+    """ARM resource ID of the source backup vault whose data can be restored across tenants. Required."""
+    resourceGuardOperationRequests: list[str]
+    """ResourceGuardOperationRequests on which the MUA (LAC) check will be performed."""
+    sourceTenantId: str
+    """Tenant ID of the source vault in the cross-tenant vault mapping."""
+    provisioningState: Union[str, "ProvisioningState"]
+    """Provisioning state of the cross-tenant vault mapping. Known values are: \"Failed\",
+     \"Provisioning\", \"Succeeded\", \"Unknown\", and \"Updating\"."""
+
+
+class CrossTenantVaultMappingRemoveRequest(TypedDict, total=False):
+    """Request body for the remove cross-tenant vault mapping action. Carries the Resource Guard
+    operation requests used for the MUA (multi-user authorization) check on the remove.
+
+    :ivar properties: Properties of the remove cross-tenant vault mapping request.
+    :vartype properties: "CrossTenantVaultMappingRemoveRequestProperties"
+    """
+
+    properties: "CrossTenantVaultMappingRemoveRequestProperties"
+    """Properties of the remove cross-tenant vault mapping request."""
+
+
+class CrossTenantVaultMappingRemoveRequestProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Properties of the remove cross-tenant vault mapping request.
+
+    :ivar resourceGuardOperationRequests: ResourceGuardOperationRequests on which the MUA (LAC)
+     check will be performed for the remove.
+    :vartype resourceGuardOperationRequests: list[str]
+    """
+
+    resourceGuardOperationRequests: list[str]
+    """ResourceGuardOperationRequests on which the MUA (LAC) check will be performed for the remove."""
+
+
 class CustomCopyOption(TypedDict, total=False):
     """Duration based custom options to copy.
 

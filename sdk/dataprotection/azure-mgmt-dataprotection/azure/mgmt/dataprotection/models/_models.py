@@ -3004,6 +3004,488 @@ class CrossSubscriptionRestoreSettings(_Model):  # pylint: disable=docstring-key
         super().__init__(*args, **kwargs)
 
 
+class CrossTenantAuthCredentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Cross-tenant projection of the authentication-credentials discriminated base, forked so its
+    secret-store subtype references the value-less CrossTenantSecretStoreResource. Mirror any new
+    AuthCredentials subtype here.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    CrossTenantSecretStoreBasedAuthCredentials
+
+    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
+     value is None.
+    :vartype object_type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    object_type: str = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of the specific object - used for deserializing. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        object_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CrossTenantBackupInstance(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Cross-tenant read projection of BackupInstance. Spreads the shared model so new fields flow
+    through automatically; only datasourceAuthCredentials is re-typed to the value-less
+    CrossTenantAuthCredentials chain.
+
+    :ivar friendly_name: Gets or sets the Backup Instance friendly name.
+    :vartype friendly_name: str
+    :ivar data_source_info: Gets or sets the data source information. Required.
+    :vartype data_source_info: ~azure.mgmt.dataprotection.models.Datasource
+    :ivar data_source_set_info: Gets or sets the data source set information.
+    :vartype data_source_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
+    :ivar policy_info: Gets or sets the policy information. Required.
+    :vartype policy_info: ~azure.mgmt.dataprotection.models.PolicyInfo
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
+    :ivar protection_status: Specifies the protection status of the resource.
+    :vartype protection_status: ~azure.mgmt.dataprotection.models.ProtectionStatusDetails
+    :ivar current_protection_state: Specifies the current protection state of the resource. Known
+     values are: "Invalid", "NotProtected", "ConfiguringProtection", "ProtectionConfigured",
+     "BackupSchedulesSuspended", "RetentionSchedulesSuspended", "ProtectionStopped",
+     "ProtectionError", "ConfiguringProtectionFailed", "SoftDeleting", "SoftDeleted", and
+     "UpdatingProtection".
+    :vartype current_protection_state: str or
+     ~azure.mgmt.dataprotection.models.CurrentProtectionState
+    :ivar protection_error_details: Specifies the protection error of the resource.
+    :vartype protection_error_details: ~azure.mgmt.dataprotection.models.UserFacingError
+    :ivar provisioning_state: Specifies the provisioning state of the resource i.e.
+     provisioning/updating/Succeeded/Failed.
+    :vartype provisioning_state: str
+    :ivar validation_type: Specifies the type of validation. In case of DeepValidation, all
+     validations from /validateForBackup API will run again. Known values are: "ShallowValidation"
+     and "DeepValidation".
+    :vartype validation_type: str or ~azure.mgmt.dataprotection.models.ValidationType
+    :ivar identity_details: Contains information of the Identity Details for the BI. If it is null,
+     default will be considered as System Assigned.
+    :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
+    :ivar object_type: Required.
+    :vartype object_type: str
+    :ivar datasource_auth_credentials: Credentials to use to authenticate with data source
+     provider.
+    :vartype datasource_auth_credentials:
+     ~azure.mgmt.dataprotection.models.CrossTenantAuthCredentials
+    """
+
+    friendly_name: Optional[str] = rest_field(
+        name="friendlyName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets the Backup Instance friendly name."""
+    data_source_info: "_models.Datasource" = rest_field(
+        name="dataSourceInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets the data source information. Required."""
+    data_source_set_info: Optional["_models.DatasourceSet"] = rest_field(
+        name="dataSourceSetInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets the data source set information."""
+    policy_info: "_models.PolicyInfo" = rest_field(
+        name="policyInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets the policy information. Required."""
+    resource_guard_operation_requests: Optional[list[str]] = rest_field(
+        name="resourceGuardOperationRequests", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ResourceGuardOperationRequests on which LAC check will be performed."""
+    protection_status: Optional["_models.ProtectionStatusDetails"] = rest_field(
+        name="protectionStatus", visibility=["read"]
+    )
+    """Specifies the protection status of the resource."""
+    current_protection_state: Optional[Union[str, "_models.CurrentProtectionState"]] = rest_field(
+        name="currentProtectionState", visibility=["read"]
+    )
+    """Specifies the current protection state of the resource. Known values are: \"Invalid\",
+     \"NotProtected\", \"ConfiguringProtection\", \"ProtectionConfigured\",
+     \"BackupSchedulesSuspended\", \"RetentionSchedulesSuspended\", \"ProtectionStopped\",
+     \"ProtectionError\", \"ConfiguringProtectionFailed\", \"SoftDeleting\", \"SoftDeleted\", and
+     \"UpdatingProtection\"."""
+    protection_error_details: Optional["_models.UserFacingError"] = rest_field(
+        name="protectionErrorDetails", visibility=["read"]
+    )
+    """Specifies the protection error of the resource."""
+    provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
+    """Specifies the provisioning state of the resource i.e. provisioning/updating/Succeeded/Failed."""
+    validation_type: Optional[Union[str, "_models.ValidationType"]] = rest_field(
+        name="validationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the type of validation. In case of DeepValidation, all validations from
+     /validateForBackup API will run again. Known values are: \"ShallowValidation\" and
+     \"DeepValidation\"."""
+    identity_details: Optional["_models.IdentityDetails"] = rest_field(
+        name="identityDetails", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Contains information of the Identity Details for the BI. If it is null, default will be
+     considered as System Assigned."""
+    object_type: str = rest_field(name="objectType", visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    datasource_auth_credentials: Optional["_models.CrossTenantAuthCredentials"] = rest_field(
+        name="datasourceAuthCredentials", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Credentials to use to authenticate with data source provider."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data_source_info: "_models.Datasource",
+        policy_info: "_models.PolicyInfo",
+        object_type: str,
+        friendly_name: Optional[str] = None,
+        data_source_set_info: Optional["_models.DatasourceSet"] = None,
+        resource_guard_operation_requests: Optional[list[str]] = None,
+        validation_type: Optional[Union[str, "_models.ValidationType"]] = None,
+        identity_details: Optional["_models.IdentityDetails"] = None,
+        datasource_auth_credentials: Optional["_models.CrossTenantAuthCredentials"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CrossTenantBackupInstanceResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """BackupInstance resource as returned by the cross-tenant read surface; its properties exclude
+    SecretStoreResource.value.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.dataprotection.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.dataprotection.models.CrossTenantBackupInstance
+    :ivar tags: Proxy Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    properties: Optional["_models.CrossTenantBackupInstance"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Proxy Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.CrossTenantBackupInstance"] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CrossTenantSecretStoreBasedAuthCredentials(
+    CrossTenantAuthCredentials, discriminator="SecretStoreBasedAuthCredentials"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Cross-tenant projection of SecretStoreBasedAuthCredentials whose secret store omits ``value``.
+
+    :ivar secret_store_resource: Secret store resource (cross-tenant read projection, without
+     ``value``).
+    :vartype secret_store_resource:
+     ~azure.mgmt.dataprotection.models.CrossTenantSecretStoreResource
+    :ivar object_type: Type of the specific object - used for deserializing. Required. Default
+     value is "SecretStoreBasedAuthCredentials".
+    :vartype object_type: str
+    """
+
+    secret_store_resource: Optional["_models.CrossTenantSecretStoreResource"] = rest_field(
+        name="secretStoreResource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Secret store resource (cross-tenant read projection, without ``value``)."""
+    object_type: Literal["SecretStoreBasedAuthCredentials"] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Type of the specific object - used for deserializing. Required. Default value is
+     \"SecretStoreBasedAuthCredentials\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        secret_store_resource: Optional["_models.CrossTenantSecretStoreResource"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object_type = "SecretStoreBasedAuthCredentials"  # type: ignore
+
+
+class CrossTenantSecretStoreResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Cross-tenant projection of SecretStoreResource used only by the cross-tenant backup-instance
+    read surface: the shared model minus ``value`` (a write-time credential the service never
+    returns). Spread keeps uri/secretStoreType in sync.
+
+    :ivar uri: Uri to get to the resource.
+    :vartype uri: str
+    :ivar secret_store_type: Gets or sets the type of secret store. Required. Known values are:
+     "Invalid" and "AzureKeyVault".
+    :vartype secret_store_type: str or ~azure.mgmt.dataprotection.models.SecretStoreType
+    """
+
+    uri: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Uri to get to the resource."""
+    secret_store_type: Union[str, "_models.SecretStoreType"] = rest_field(
+        name="secretStoreType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets the type of secret store. Required. Known values are: \"Invalid\" and
+     \"AzureKeyVault\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        secret_store_type: Union[str, "_models.SecretStoreType"],
+        uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CrossTenantVaultMapping(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Cross-tenant vault mapping resource for cross-tenant restore.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.dataprotection.models.SystemData
+    :ivar properties: CrossTenantVaultMapping properties.
+    :vartype properties: ~azure.mgmt.dataprotection.models.CrossTenantVaultMappingProperties
+    """
+
+    properties: Optional["_models.CrossTenantVaultMappingProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """CrossTenantVaultMapping properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.CrossTenantVaultMappingProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CrossTenantVaultMappingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Cross-tenant vault mapping properties for cross-tenant restore.
+
+    :ivar source_vault_id: ARM resource ID of the source backup vault whose data can be restored
+     across tenants. Required.
+    :vartype source_vault_id: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which the MUA (LAC)
+     check will be performed.
+    :vartype resource_guard_operation_requests: list[str]
+    :ivar source_tenant_id: Tenant ID of the source vault in the cross-tenant vault mapping.
+    :vartype source_tenant_id: str
+    :ivar provisioning_state: Provisioning state of the cross-tenant vault mapping. Known values
+     are: "Failed", "Provisioning", "Succeeded", "Unknown", and "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.dataprotection.models.ProvisioningState
+    """
+
+    source_vault_id: str = rest_field(name="sourceVaultId", visibility=["read", "create", "update", "delete", "query"])
+    """ARM resource ID of the source backup vault whose data can be restored across tenants. Required."""
+    resource_guard_operation_requests: Optional[list[str]] = rest_field(
+        name="resourceGuardOperationRequests", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ResourceGuardOperationRequests on which the MUA (LAC) check will be performed."""
+    source_tenant_id: Optional[str] = rest_field(name="sourceTenantId", visibility=["read"])
+    """Tenant ID of the source vault in the cross-tenant vault mapping."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the cross-tenant vault mapping. Known values are: \"Failed\",
+     \"Provisioning\", \"Succeeded\", \"Unknown\", and \"Updating\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_vault_id: str,
+        resource_guard_operation_requests: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CrossTenantVaultMappingRemoveRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request body for the remove cross-tenant vault mapping action. Carries the Resource Guard
+    operation requests used for the MUA (multi-user authorization) check on the remove.
+
+    :ivar properties: Properties of the remove cross-tenant vault mapping request.
+    :vartype properties:
+     ~azure.mgmt.dataprotection.models.CrossTenantVaultMappingRemoveRequestProperties
+    """
+
+    properties: Optional["_models.CrossTenantVaultMappingRemoveRequestProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the remove cross-tenant vault mapping request."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.CrossTenantVaultMappingRemoveRequestProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CrossTenantVaultMappingRemoveRequestProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Properties of the remove cross-tenant vault mapping request.
+
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which the MUA (LAC)
+     check will be performed for the remove.
+    :vartype resource_guard_operation_requests: list[str]
+    """
+
+    resource_guard_operation_requests: Optional[list[str]] = rest_field(
+        name="resourceGuardOperationRequests", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ResourceGuardOperationRequests on which the MUA (LAC) check will be performed for the remove."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_guard_operation_requests: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CrossTenantVaultMappingStatusResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Response for the cross-tenant vault mapping status check, from the source vault side.
+
+    :ivar mapping_name: Name of the cross-tenant vault mapping, if the source vault is mapped.
+    :vartype mapping_name: str
+    :ivar mapping_state: Current state of the cross-tenant vault mapping. Known values are:
+     "Active" and "Inactive".
+    :vartype mapping_state: str or ~azure.mgmt.dataprotection.models.VaultMappingState
+    """
+
+    mapping_name: Optional[str] = rest_field(
+        name="mappingName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Name of the cross-tenant vault mapping, if the source vault is mapped."""
+    mapping_state: Optional[Union[str, "_models.VaultMappingState"]] = rest_field(
+        name="mappingState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current state of the cross-tenant vault mapping. Known values are: \"Active\" and \"Inactive\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mapping_name: Optional[str] = None,
+        mapping_state: Optional[Union[str, "_models.VaultMappingState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class CustomCopyOption(
     CopyOption, discriminator="CustomCopyOption"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only

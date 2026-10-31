@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-07-01/BackupInstanceOperations/ResumeBackups.json
+# x-ms-original-file: 2026-08-31-preview/BackupInstanceOperations/ResumeBackups.json
 if __name__ == "__main__":
     main()

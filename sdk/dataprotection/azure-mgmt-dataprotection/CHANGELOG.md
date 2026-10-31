@@ -1,5 +1,47 @@
 # Release History
 
+## 2.3.0b2 (2026-10-15)
+
+### Features Added
+
+  - Client `DataProtectionMgmtClient` added operation group `backup_instance_from_dpp_cross_tenant_vault`
+  - Client `DataProtectionMgmtClient` added operation group `backup_instance_operation_result_from_dpp_cross_tenant_vault`
+  - Client `DataProtectionMgmtClient` added operation group `backup_instance_operation_status_from_dpp_cross_tenant_vault`
+  - Client `DataProtectionMgmtClient` added operation group `backup_instances_from_dpp_cross_tenant_vault`
+  - Client `DataProtectionMgmtClient` added operation group `backup_jobs_from_dpp_cross_tenant_vault`
+  - Client `DataProtectionMgmtClient` added operation group `dpp_cross_tenant_vault_mapping_status`
+  - Client `DataProtectionMgmtClient` added operation group `dpp_cross_tenant_vault_mappings`
+  - Client `DataProtectionMgmtClient` added operation group `job_from_dpp_cross_tenant_vault`
+  - Client `DataProtectionMgmtClient` added operation group `recovery_point_from_dpp_cross_tenant_vault`
+  - Client `DataProtectionMgmtClient` added operation group `recovery_points_from_dpp_cross_tenant_vault`
+  - Client `DataProtectionMgmtClient` added operation group `restorable_time_ranges_from_dpp_cross_tenant_vault`
+  - Client `DataProtectionMgmtClient` added operation group `restores_from_dpp_cross_tenant_vault`
+  - Client `DataProtectionMgmtClient` added operation group `validate_restore_from_dpp_cross_tenant_vault`
+  - Added model `CrossTenantAuthCredentials`
+  - Added model `CrossTenantBackupInstance`
+  - Added model `CrossTenantBackupInstanceResource`
+  - Added model `CrossTenantSecretStoreBasedAuthCredentials`
+  - Added model `CrossTenantSecretStoreResource`
+  - Added model `CrossTenantVaultMapping`
+  - Added model `CrossTenantVaultMappingProperties`
+  - Added model `CrossTenantVaultMappingRemoveRequest`
+  - Added model `CrossTenantVaultMappingRemoveRequestProperties`
+  - Added model `CrossTenantVaultMappingStatusResponse`
+  - Added enum `VaultMappingState`
+  - Added operation group `BackupInstanceFromDppCrossTenantVaultOperations`
+  - Added operation group `BackupInstanceOperationResultFromDppCrossTenantVaultOperations`
+  - Added operation group `BackupInstanceOperationStatusFromDppCrossTenantVaultOperations`
+  - Added operation group `BackupInstancesFromDppCrossTenantVaultOperations`
+  - Added operation group `BackupJobsFromDppCrossTenantVaultOperations`
+  - Added operation group `DppCrossTenantVaultMappingStatusOperations`
+  - Added operation group `DppCrossTenantVaultMappingsOperations`
+  - Added operation group `JobFromDppCrossTenantVaultOperations`
+  - Added operation group `RecoveryPointFromDppCrossTenantVaultOperations`
+  - Added operation group `RecoveryPointsFromDppCrossTenantVaultOperations`
+  - Added operation group `RestorableTimeRangesFromDppCrossTenantVaultOperations`
+  - Added operation group `RestoresFromDppCrossTenantVaultOperations`
+  - Added operation group `ValidateRestoreFromDppCrossTenantVaultOperations`
+
 ## 2.3.0b1 (2026-09-29)
 
 ### Features Added
