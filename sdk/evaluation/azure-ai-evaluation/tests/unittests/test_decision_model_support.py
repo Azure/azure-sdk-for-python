@@ -143,6 +143,29 @@ def run(runner, **overrides):
     return asyncio.run(runner(**arguments))
 
 
+def watch_token_queue(credential, requests):
+    """Return an event set once ``requests`` threads have queued for the credential's Decision token request.
+
+    Each request reads the cache's attempt count before it queues, so a token request released after this event
+    fails while every request is queued, whatever the thread scheduling.
+    """
+    entry = _model_runners._TOKENS._entry(credential, _model_runners._DECISION_TOKEN_SCOPE, create=True)
+    lock, queued, all_queued = entry.lock, set(), threading.Event()
+
+    class QueueWatchingLock:
+        def acquire(self, *args, **kwargs):
+            queued.add(threading.get_ident())
+            if len(queued) >= requests:
+                all_queued.set()
+            return lock.acquire(*args, **kwargs)
+
+        def release(self):
+            lock.release()
+
+    entry.lock = QueueWatchingLock()
+    return all_queued
+
+
 class TestDecisionModelRunnerConfiguration:
     @pytest.mark.parametrize(
         "changes",
@@ -783,7 +806,7 @@ class TestDecisionTokenReuse:
 
         def get_token(*_, **__):
             requested.append(1)
-            release.wait(5)
+            release.wait(10)
             raise EvaluationException(
                 message="Service-owned Decision credential acquisition failed (RuntimeError, status unknown).",
                 blame=ErrorBlame.SYSTEM_ERROR,
@@ -792,6 +815,7 @@ class TestDecisionTokenReuse:
             )
 
         credential = Mock(get_token=Mock(side_effect=get_token))
+        all_queued = watch_token_queue(credential, 4)
         errors = {}
 
         def request(name):
@@ -807,7 +831,7 @@ class TestDecisionTokenReuse:
         waiters = [threading.Thread(target=request, args=(f"waiter-{index}",)) for index in range(3)]
         for waiter in waiters:
             waiter.start()
-        time.sleep(0.3)
+        assert all_queued.wait(10)
         release.set()
         for thread in [leader, *waiters]:
             thread.join(10)

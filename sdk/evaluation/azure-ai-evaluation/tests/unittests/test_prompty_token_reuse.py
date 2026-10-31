@@ -40,6 +40,29 @@ def request_token(credential):
     return asyncio.run(AsyncPrompty.get_token_provider(credential)())
 
 
+def watch_token_queue(credential, requests):
+    """Return an event set once ``requests`` threads have queued for the credential's chat token request.
+
+    Each request reads the cache's attempt count before it queues, so a token request released after this event
+    fails while every request is queued, whatever the thread scheduling.
+    """
+    entry = TOKENS._entry(credential, CHAT_SCOPE, create=True)
+    lock, queued, all_queued = entry.lock, set(), threading.Event()
+
+    class QueueWatchingLock:
+        def acquire(self, *args, **kwargs):
+            queued.add(threading.get_ident())
+            if len(queued) >= requests:
+                all_queued.set()
+            return lock.acquire(*args, **kwargs)
+
+        def release(self):
+            lock.release()
+
+    entry.lock = QueueWatchingLock()
+    return all_queued
+
+
 class Credential:
     """A synchronous credential that records each token request and answers from a queue of results."""
 
@@ -101,10 +124,11 @@ class TestChatTokenReuse:
 
         class FailingCredential(Credential):
             def get_token(self, *scopes, **kwargs):
-                release.wait(5)
+                release.wait(10)
                 return super().get_token(*scopes, **kwargs)
 
         credential = FailingCredential(ClientAuthenticationError("Please run az login."), access_token("recovered"))
+        all_queued = watch_token_queue(credential, 4)
         outcomes = []
 
         def request():
@@ -116,7 +140,7 @@ class TestChatTokenReuse:
         threads = [threading.Thread(target=request) for _ in range(4)]
         for thread in threads:
             thread.start()
-        time.sleep(0.3)
+        assert all_queued.wait(10)
         release.set()
         for thread in threads:
             thread.join(10)
@@ -134,10 +158,11 @@ class TestChatTokenReuse:
 
         class OutageCredential(Credential):
             def get_token(self, *scopes, **kwargs):
-                release.wait(5)
+                release.wait(10)
                 return super().get_token(*scopes, **kwargs)
 
         credential = OutageCredential(TokenServiceOutage("The token service is unavailable."))
+        all_queued = watch_token_queue(credential, 3)
         outcomes = []
 
         def request():
@@ -149,7 +174,7 @@ class TestChatTokenReuse:
         threads = [threading.Thread(target=request) for _ in range(3)]
         for thread in threads:
             thread.start()
-        time.sleep(0.3)
+        assert all_queued.wait(10)
         release.set()
         for thread in threads:
             thread.join(10)
