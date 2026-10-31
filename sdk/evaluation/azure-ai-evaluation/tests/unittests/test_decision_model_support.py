@@ -5,20 +5,24 @@
 """Offline tests for shared decision-model runners, base selection, and evaluation strategy."""
 
 import asyncio
+import gc
 import hashlib
 import json
 import logging
 import math
 import sys
 import threading
+import time
+import weakref
 from copy import deepcopy
 from logging.handlers import BufferingHandler
 from concurrent.futures import ThreadPoolExecutor
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
 from unittest.mock import AsyncMock, Mock, call, patch
 
 import pytest
 from openai.types.chat import ChatCompletion
+from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport, HttpResponse
 from azure.core.exceptions import ServiceRequestError
@@ -29,6 +33,7 @@ from azure.ai.evaluation._evaluators._common import _model_runners
 from azure.ai.evaluation._evaluators._common._decision_strategy import (
     BinaryScoring,
     DecisionEvaluationStrategy,
+    DecisionRefusalError,
     LikertScoring,
 )
 from azure.ai.evaluation._evaluators._common._model_runners import (
@@ -136,6 +141,29 @@ def run(runner, **overrides):
     arguments = {"state": {"query": "q"}, "questions": QUESTIONS, "timeout": 5}
     arguments.update(overrides)
     return asyncio.run(runner(**arguments))
+
+
+def watch_token_queue(credential, requests):
+    """Return an event set once ``requests`` threads have queued for the credential's Decision token request.
+
+    Each request reads the cache's attempt count before it queues, so a token request released after this event
+    fails while every request is queued, whatever the thread scheduling.
+    """
+    entry = _model_runners._TOKENS._entry(credential, _model_runners._DECISION_TOKEN_SCOPE, create=True)
+    lock, queued, all_queued = entry.lock, set(), threading.Event()
+
+    class QueueWatchingLock:
+        def acquire(self, *args, **kwargs):
+            queued.add(threading.get_ident())
+            if len(queued) >= requests:
+                all_queued.set()
+            return lock.acquire(*args, **kwargs)
+
+        def release(self):
+            lock.release()
+
+    entry.lock = QueueWatchingLock()
+    return all_queued
 
 
 class TestDecisionModelRunnerConfiguration:
@@ -441,15 +469,49 @@ class TestDecisionModelRunnerRequests:
         assert execution["outcome"] == "error"
         assert raised.value.properties == (
             {
-                "decision_model": {"deployment": "Decision-1"},
+                "decision_model": {"deployment": "Decision-1", "protocol": "microsoft"},
                 "prompt_tokens": 120,
                 "completion_tokens": 3,
                 "total_tokens": 123,
                 "model": "microsoft-decision-1",
             }
             if response_limit == 1024
-            else {"decision_model": {"deployment": "Decision-1"}}
+            else {"decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}}
         )
+
+    @pytest.mark.parametrize(
+        "protocol, status, code, fix",
+        [
+            ("microsoft", 400, "unknown_model", "set decision_protocol to 'openai'."),
+            ("openai", 404, "model_not_found", "set decision_protocol to 'microsoft' or remove it."),
+        ],
+    )
+    def test_a_deployment_that_serves_the_other_protocol_names_the_fix(self, client, protocol, status, code, fix):
+        payload = {"error": {"code": code, "message": "test-key-value and private-message"}}
+        client.response = FakeResponse(status, json.dumps(payload).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner({**DECISION_CONFIG, "decision_protocol": protocol}, max_retries=0))
+        message = str(raised.value)
+        assert message.startswith(f"(UserError) The decision model returned HTTP {status} ({code}). The deployment")
+        assert message.endswith(fix)
+        assert "test-key-value" not in message and "private-message" not in message
+        assert raised.value.blame == ErrorBlame.USER_ERROR
+        assert raised.value.properties["decision_model"]["protocol"] == protocol
+
+    @pytest.mark.parametrize(
+        "protocol, code",
+        [
+            ("microsoft", "model_not_found"),
+            ("openai", "unknown_model"),
+            ("microsoft", "DeploymentNotFound"),
+            ("openai", "DeploymentNotFound"),
+        ],
+    )
+    def test_other_error_codes_get_no_protocol_hint(self, client, protocol, code):
+        client.response = FakeResponse(404, json.dumps({"error": {"code": code}}).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner({**DECISION_CONFIG, "decision_protocol": protocol}, max_retries=0))
+        assert str(raised.value) == f"(UserError) The decision model returned HTTP 404 ({code})."
 
     @pytest.mark.parametrize(
         "payload",
@@ -539,6 +601,360 @@ class TestDecisionModelRunnerRequests:
             run(DecisionModelRunner(DECISION_CONFIG), questions={"team": {"type": "choice", "criteria": {}}})
         assert raised.value.blame == ErrorBlame.USER_ERROR
         assert not client.calls
+
+
+class TestDecisionTokenReuse:
+    """A credential's token serves repeated and concurrent requests until shortly before it expires."""
+
+    CONFIG = {key: value for key, value in DECISION_CONFIG.items() if key != "api_key"}
+
+    @staticmethod
+    def access_token(value, lifetime=3600):
+        return AccessToken(value, int(time.time()) + lifetime)
+
+    @staticmethod
+    def authorizations(client):
+        return [call["headers"]["Authorization"] for call in client.calls]
+
+    @pytest.mark.parametrize("asynchronous", [False, True])
+    def test_fresh_token_is_reused_across_requests_and_runners(self, client, asynchronous):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        token = self.access_token("shared-token")
+        credential = Mock()
+        credential.get_token = AsyncMock(return_value=token) if asynchronous else Mock(return_value=token)
+        first, second = DecisionModelRunner(self.CONFIG, credential), DecisionModelRunner(self.CONFIG, credential)
+        for runner in (first, second, first):
+            run(runner)
+        credential.get_token.assert_called_once_with("https://cognitiveservices.azure.com/.default")
+        assert self.authorizations(client) == ["Bearer shared-token"] * 3
+
+    @pytest.mark.parametrize("lifetime", [None, 60], ids=["no-expiry", "near-expiry"])
+    def test_tokens_without_a_usable_expiry_are_requested_each_time(self, client, lifetime):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        token = SimpleNamespace(token="per-request") if lifetime is None else self.access_token("per-request", lifetime)
+        credential = Mock(get_token=Mock(return_value=token))
+        runner = DecisionModelRunner(self.CONFIG, credential)
+        run(runner)
+        run(runner)
+        assert credential.get_token.call_count == 2
+
+    def test_concurrent_requests_share_one_synchronous_token_request(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        requested = []
+
+        def get_token(*scopes, **_):
+            requested.append(scopes)
+            time.sleep(0.2)
+            return self.access_token("single-request")
+
+        credential = Mock(get_token=Mock(side_effect=get_token))
+        runners = [DecisionModelRunner(self.CONFIG, credential) for _ in range(6)]
+        # Like evaluate(), each runner awaits on its own thread and event loop.
+        with ThreadPoolExecutor(max_workers=6) as pool:
+            list(pool.map(run, runners))
+        assert len(requested) == 1
+        assert self.authorizations(client) == ["Bearer single-request"] * 6
+
+    def test_rejected_token_is_not_reused(self, client):
+        client.response = FakeResponse(status_code=401, body=b"{}")
+        tokens = iter([self.access_token("rejected"), self.access_token("renewed")])
+        credential = Mock(get_token=Mock(side_effect=lambda *_, **__: next(tokens)))
+        runner = DecisionModelRunner(self.CONFIG, credential)
+        with pytest.raises(EvaluationException, match="HTTP 401"):
+            run(runner)
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        run(runner)
+        run(runner)
+        assert credential.get_token.call_count == 2
+        assert self.authorizations(client) == ["Bearer rejected", "Bearer renewed", "Bearer renewed"]
+
+    def test_a_token_the_credential_reissues_after_a_rejection_is_cached_again(self, client):
+        client.response = FakeResponse(status_code=401, body=b"{}")
+        credential = Mock(get_token=Mock(return_value=self.access_token("same")))
+        runner = DecisionModelRunner(self.CONFIG, credential)
+        with pytest.raises(EvaluationException, match="HTTP 401"):
+            run(runner)
+        assert _model_runners._TOKENS.cached(credential, _model_runners._DECISION_TOKEN_SCOPE) is None
+        # The service accepts the token now, for example after a role assignment propagated. The credential
+        # re-issues the same token: it is requested once more, then reused again instead of once per request.
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        for _ in range(3):
+            run(runner)
+        assert credential.get_token.call_count == 2
+        assert self.authorizations(client) == ["Bearer same"] * 4
+        assert _model_runners._TOKENS.cached(credential, _model_runners._DECISION_TOKEN_SCOPE).token == "same"
+
+    def test_an_acquisition_that_began_before_two_rejections_is_not_stored(self):
+        scope = _model_runners._DECISION_TOKEN_SCOPE
+
+        async def scenario():
+            gate = asyncio.Event()
+            calls = []
+
+            class AsyncCredential:
+                async def get_token(self, *_, **__):
+                    calls.append(1)
+                    call = len(calls)
+                    if call == 1:
+                        await gate.wait()
+                    # The delayed first acquisition and the second return token A; later ones return token B.
+                    return TestDecisionTokenReuse.access_token("token-A" if call <= 2 else "token-B")
+
+            credential = AsyncCredential()
+            runner = DecisionModelRunner(self.CONFIG, credential)
+            deadline = time.monotonic() + 10
+            pending = asyncio.ensure_future(runner._get_token(deadline))
+            await asyncio.sleep(0)
+            # Two later acquisitions complete first, and the service rejects each token with a 401.
+            for expected in ("token-A", "token-B"):
+                assert await runner._get_token(deadline) == expected
+                _model_runners._TOKENS.discard(credential, scope, expected)
+            gate.set()
+            # The delayed acquisition returns a token the service already rejected; it must not be cached.
+            assert await pending == "token-A"
+            assert _model_runners._TOKENS.cached(credential, scope) is None
+            # The next acquisition is cached again.
+            assert await runner._get_token(deadline) == "token-B"
+            assert _model_runners._TOKENS.cached(credential, scope).token == "token-B"
+
+        asyncio.run(scenario())
+
+    def test_credential_without_weak_references_is_used_without_caching(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        requested = []
+        credential = SimpleNamespace(get_token=lambda *scopes, **_: requested.append(scopes) or self.access_token("t"))
+        runner = DecisionModelRunner(self.CONFIG, credential)
+        run(runner)
+        run(runner)
+        assert len(requested) == 2
+
+    def test_unhashable_credential_is_cached_by_identity(self, client):
+        from dataclasses import dataclass
+
+        @dataclass
+        class Credential:
+            requested: int = 0
+
+            def get_token(self, *_, **__):
+                self.requested += 1
+                return TestDecisionTokenReuse.access_token("by-identity")
+
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        credential = Credential()
+        runner = DecisionModelRunner(self.CONFIG, credential)
+        run(runner)
+        run(runner)
+        assert credential.requested == 1
+
+    def test_equal_credentials_keep_their_own_tokens(self, client):
+        class Credential:
+            def __init__(self, token):
+                self.token = token
+
+            def __eq__(self, other):
+                return isinstance(other, Credential)
+
+            def __hash__(self):
+                return 0
+
+            def get_token(self, *_, **__):
+                return TestDecisionTokenReuse.access_token(self.token)
+
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        first, second = Credential("first-identity"), Credential("second-identity")
+        assert first == second
+        run(DecisionModelRunner(self.CONFIG, first))
+        run(DecisionModelRunner(self.CONFIG, second))
+        assert self.authorizations(client) == ["Bearer first-identity", "Bearer second-identity"]
+
+    def test_request_whose_deadline_passes_while_waiting_does_not_request_a_token(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        release = threading.Event()
+        requested = []
+
+        def get_token(*_, **__):
+            requested.append(1)
+            release.wait(5)
+            raise RuntimeError("Azure CLI is not logged in")
+
+        credential = Mock(get_token=Mock(side_effect=get_token))
+        outcomes = {}
+
+        def request(name, timeout):
+            try:
+                run(DecisionModelRunner(self.CONFIG, credential), timeout=timeout)
+            except EvaluationException as error:
+                outcomes[name] = str(error)
+
+        leader = threading.Thread(target=request, args=("leader", 5))
+        leader.start()
+        while not requested:
+            time.sleep(0.01)
+        waiter = threading.Thread(target=request, args=("waiter", 0.3))
+        waiter.start()
+        waiter.join(5)
+        release.set()
+        leader.join(5)
+        assert len(requested) == 1
+        assert "timed out" in outcomes["waiter"]
+        assert "Could not acquire a token" in outcomes["leader"]
+
+    def test_requests_waiting_on_a_failed_token_request_share_its_failure(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        release = threading.Event()
+        requested = []
+
+        def get_token(*_, **__):
+            requested.append(1)
+            release.wait(10)
+            raise EvaluationException(
+                message="Service-owned Decision credential acquisition failed (RuntimeError, status unknown).",
+                blame=ErrorBlame.SYSTEM_ERROR,
+                category=ErrorCategory.FAILED_EXECUTION,
+                target=ErrorTarget.EVALUATE,
+            )
+
+        credential = Mock(get_token=Mock(side_effect=get_token))
+        all_queued = watch_token_queue(credential, 4)
+        errors = {}
+
+        def request(name):
+            try:
+                run(DecisionModelRunner(self.CONFIG, credential), timeout=10)
+            except EvaluationException as error:
+                errors[name] = error
+
+        leader = threading.Thread(target=request, args=("leader",))
+        leader.start()
+        while not requested:
+            time.sleep(0.01)
+        waiters = [threading.Thread(target=request, args=(f"waiter-{index}",)) for index in range(3)]
+        for waiter in waiters:
+            waiter.start()
+        assert all_queued.wait(10)
+        release.set()
+        for thread in [leader, *waiters]:
+            thread.join(10)
+        # The queued requests fail with the same typed error instead of each starting another request.
+        assert len(requested) == 1 and len(errors) == 4
+        assert all(
+            error.blame == ErrorBlame.SYSTEM_ERROR and "acquisition failed" in str(error) for error in errors.values()
+        )
+        credential.get_token.side_effect = lambda *_, **__: self.access_token("recovered")
+        run(DecisionModelRunner(self.CONFIG, credential))
+        assert len(requested) == 1 and self.authorizations(client) == ["Bearer recovered"]
+
+    def test_requests_waiting_on_a_token_kept_out_of_the_cache_use_it(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        entered, release = threading.Event(), threading.Event()
+        requested = []
+
+        def get_token(*_, **__):
+            requested.append(1)
+            entered.set()
+            release.wait(10)
+            return self.access_token("issued")
+
+        credential = Mock(get_token=Mock(side_effect=get_token))
+        all_queued = watch_token_queue(credential, 4)
+        scope = _model_runners._DECISION_TOKEN_SCOPE
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            requests = [pool.submit(run, DecisionModelRunner(self.CONFIG, credential), timeout=10) for _ in range(4)]
+            assert entered.wait(10) and all_queued.wait(10)
+            # Another request's 401 lands while the token is requested, so the token is not cached.
+            _model_runners._TOKENS.discard(credential, scope, "rejected-earlier")
+            release.set()
+            for request in requests:
+                request.result(10)
+        assert len(requested) == 1
+        assert self.authorizations(client) == ["Bearer issued"] * 4
+        assert _model_runners._TOKENS.cached(credential, scope) is None
+        # A request that starts afterwards requests its own token, which is cached again.
+        run(DecisionModelRunner(self.CONFIG, credential))
+        assert len(requested) == 2
+        assert _model_runners._TOKENS.cached(credential, scope).token == "issued"
+
+    def test_a_token_rejected_before_its_request_resumes_is_not_stored_again(self, client, monkeypatch):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        credential = Mock(get_token=Mock(return_value=self.access_token("shared")))
+        fetch = _model_runners._TOKENS.fetch
+        scope = _model_runners._DECISION_TOKEN_SCOPE
+
+        def fetch_then_reject(*args, **kwargs):
+            token = fetch(*args, **kwargs)
+            # Another request's 401 discards the token before this request's event loop resumes.
+            _model_runners._TOKENS.discard(credential, scope, token.token)
+            return token
+
+        monkeypatch.setattr(_model_runners._TOKENS, "fetch", fetch_then_reject)
+        run(DecisionModelRunner(self.CONFIG, credential))
+        assert _model_runners._TOKENS.cached(credential, scope) is None
+
+    def test_failed_token_request_does_not_keep_the_credential_alive(self, client):
+        class Credential:
+            def get_token(self, *_, **__):
+                raise RuntimeError("Azure CLI is not logged in")
+
+        credential = Credential()
+        with pytest.raises(EvaluationException, match="Could not acquire a token"):
+            run(DecisionModelRunner(self.CONFIG, credential))
+        reference = weakref.ref(credential)
+        del credential
+        gc.collect()
+        assert reference() is None
+
+    def test_cancelled_request_stops_waiting_for_another_token_request(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        release = threading.Event()
+        requested = []
+
+        def get_token(*_, **__):
+            requested.append(1)
+            release.wait(5)
+            return self.access_token("late")
+
+        credential = Mock(get_token=Mock(side_effect=get_token))
+        cancelled = threading.Event()
+        outcomes = {}
+
+        def waiter():
+            try:
+                run(DecisionModelRunner(self.CONFIG, credential, cancellation_requested=cancelled.is_set), timeout=10)
+            except EvaluationException as error:
+                outcomes["waiter"] = str(error)
+
+        leader = threading.Thread(target=lambda: run(DecisionModelRunner(self.CONFIG, credential), timeout=10))
+        leader.start()
+        while not requested:
+            time.sleep(0.01)
+        waiting = threading.Thread(target=waiter)
+        waiting.start()
+        time.sleep(0.2)
+        cancelled.set()
+        # The cancelled request returns while the first request still holds the credential's lock.
+        waiting.join(2)
+        still_waiting = waiting.is_alive()
+        release.set()
+        leader.join(5)
+        waiting.join(5)
+        assert not still_waiting and "cancelled" in outcomes["waiter"]
+        assert len(requested) == 1
+
+    def test_cache_does_not_keep_the_credential_alive(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        token = self.access_token("caller-owned")
+
+        class Credential:
+            def get_token(self, *_, **__):
+                return token
+
+        credential = Credential()
+        run(DecisionModelRunner(self.CONFIG, credential))
+        assert _model_runners._TOKENS.cached(credential, _model_runners._DECISION_TOKEN_SCOPE) is token
+        reference = weakref.ref(credential)
+        del credential
+        gc.collect()
+        assert reference() is None
 
 
 class TestAnswerValidation:
@@ -832,6 +1248,7 @@ def completion_payload(probability, status=0.95):
 def strategy_with(payload, scoring, key="tool_call_accuracy", extra_properties=None):
     runner = AsyncMock(return_value=payload)
     runner.deployment = "Decision-1"
+    runner.decision_protocol = "microsoft"
     return DecisionEvaluationStrategy(
         runner,
         result_key=key,
@@ -1182,6 +1599,7 @@ class TestDecisionConversationUsage:
         }
         assert properties["model"] == "microsoft-decision-1"
         assert properties["decision_model"]["result_usage_scope"] == "reported_turns_only"
+        assert properties["decision_model"]["protocol"] == "microsoft"
         assert "execution" not in properties["decision_model"]
         assert persisted["properties"] == properties
         turns = result["evaluation_per_turn"]["tool_call_accuracy_properties"]
@@ -1339,6 +1757,248 @@ class TestDecisionConversationUsage:
         ]
         assert evaluator._aggregate_results(turns) == EvaluatorBase._aggregate_results(evaluator, turns)
 
+    def test_usage_details_are_summed_over_the_turns_that_reported_them(self):
+        evaluator = ProbeModelEvaluator(result_key="probe", model_config=DECISION_CONFIG)
+        first = {"input_tokens_details": {"cached_tokens": 4}, "output_tokens_details": {"reasoning_tokens": 2}}
+        second = {"input_tokens_details": {"cached_tokens": 6, "cache_write_tokens": 1}}
+        turns = [
+            {"probe": 1, "probe_prompt_tokens": 12, "probe_properties": {"decision_model": {"usage_details": first}}},
+            {"probe": 5, "probe_prompt_tokens": 34, "probe_properties": {"decision_model": {"usage_details": second}}},
+            {"probe": 3, "probe_prompt_tokens": 7, "probe_properties": {"decision_model": {}}},
+        ]
+        result = evaluator._aggregate_results(turns)
+        native = result["probe_properties"]["decision_model"]
+        assert native["usage_details"] == {
+            "input_tokens_details": {"cached_tokens": 10, "cache_write_tokens": 1},
+            "output_tokens_details": {"reasoning_tokens": 2},
+        }
+        assert native["result_usage_scope"] == "reported_turns_only"
+        assert result["probe_prompt_tokens"] == 53
+        per_turn = result["evaluation_per_turn"]["probe_properties"]
+        assert [turn["decision_model"].get("usage_details") for turn in per_turn] == [first, second, None]
+
+    def test_last_turn_usage_details_are_not_reported_as_conversation_totals(self):
+        evaluator = ProbeModelEvaluator(result_key="probe", model_config=DECISION_CONFIG)
+        invalid = {"input_tokens_details": {"cached_tokens": -1}, "output_tokens_details": {"reasoning_tokens": True}}
+        turns = [
+            {"probe": 1, "probe_prompt_tokens": 12, "probe_properties": {"decision_model": {}}},
+            {"probe": 5, "probe_prompt_tokens": 34, "probe_properties": {"decision_model": {"usage_details": invalid}}},
+        ]
+        native = evaluator._aggregate_results(turns)["probe_properties"]["decision_model"]
+        assert "usage_details" not in native
+
+    def test_usage_details_of_turns_without_counted_usage_are_not_summed(self):
+        evaluator = ProbeModelEvaluator(result_key="probe", model_config=DECISION_CONFIG)
+        counted = {"input_tokens_details": {"cached_tokens": 4}}
+        uncounted = {"input_tokens_details": {"cached_tokens": 90}, "output_tokens_details": {"reasoning_tokens": 9}}
+        turns = [
+            {"probe": 1, "probe_prompt_tokens": 12, "probe_properties": {"decision_model": {"usage_details": counted}}},
+            {"probe": 5, "probe_properties": {"decision_model": {"usage_details": uncounted}}},
+            {"probe": 3, "probe_prompt_tokens": 7, "probe_properties": {"decision_model": {}}},
+        ]
+        result = evaluator._aggregate_results(turns)
+        assert result["probe_prompt_tokens"] == 19
+        assert result["probe_properties"]["decision_model"]["usage_details"] == counted
+
+
+class TestDecisionEvaluationMetrics:
+    """Every Decision evaluation records one outcome count and one duration with the same bounded attributes."""
+
+    EVALUATIONS = "azure.ai.evaluation.decision.evaluations"
+    DURATION = "azure.ai.evaluation.decision.evaluation.duration"
+
+    @pytest.fixture
+    def recorded(self):
+        records = []
+
+        class Instrument:
+            def __init__(self, name, **_):
+                self.name = name
+
+            def add(self, value, attributes):
+                records.append((self.name, value, dict(attributes)))
+
+            record = add
+
+        meter = SimpleNamespace(create_counter=Instrument, create_histogram=Instrument)
+        with patch.dict(sys.modules, {"opentelemetry.metrics": SimpleNamespace(get_meter=lambda _: meter)}):
+            yield records
+
+    def evaluation_attributes(self, records):
+        evaluations = [record for record in records if record[0] in (self.EVALUATIONS, self.DURATION)]
+        assert [name for name, _, _ in evaluations] == [self.EVALUATIONS, self.DURATION]
+        (_, count, attributes), (_, duration, duration_attributes) = evaluations
+        assert count == 1 and duration >= 0 and attributes == duration_attributes
+        assert set(attributes) == {"backend", "protocol", "metric", "outcome", "blame", "error_kind"}
+        return attributes
+
+    def test_completed_evaluation(self, recorded):
+        result = asyncio.run(strategy_with(level_payload(4), LikertScoring(5)).evaluate({}))
+        assert result["tool_call_accuracy_status"] != "skipped"
+        assert self.evaluation_attributes(recorded) == {
+            "backend": "decision",
+            "protocol": "microsoft",
+            "metric": "tool_call_accuracy",
+            "outcome": "completed",
+            "blame": "none",
+            "error_kind": "none",
+        }
+
+    def test_not_applicable_evaluation_is_skipped(self, recorded):
+        result = asyncio.run(strategy_with(level_payload(4, status=0.1), LikertScoring(5)).evaluate({}))
+        assert result["tool_call_accuracy_status"] == "skipped"
+        assert self.evaluation_attributes(recorded)["outcome"] == "skipped"
+
+    def test_invalid_response_is_a_system_error(self, recorded):
+        response = level_payload(4)
+        response["answers"]["status"]["diagnostic"] = math.inf
+        with pytest.raises(EvaluationException):
+            asyncio.run(strategy_with(response, LikertScoring(5)).evaluate({}))
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["blame"], attributes["error_kind"]) == ("error", "system", "none")
+
+    @pytest.mark.parametrize("protocol", ["microsoft", "openai"])
+    def test_request_error_keeps_its_blame_and_protocol(self, recorded, protocol):
+        configured = strategy_with(level_payload(4), LikertScoring(5))
+        configured.runner.side_effect = EvaluationException(
+            message="rejected",
+            blame=ErrorBlame.USER_ERROR,
+            category=ErrorCategory.INVALID_VALUE,
+            target=ErrorTarget.EVALUATE,
+        )
+        configured.runner.decision_protocol = protocol
+        with pytest.raises(EvaluationException):
+            asyncio.run(configured.evaluate({}))
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["blame"], attributes["protocol"]) == ("error", "user", protocol)
+
+    def test_refusal_is_a_user_error_with_its_kind(self, recorded):
+        response = level_payload(4)
+        response["answers"]["tool_call_accuracy"] = {"type": "refusal"}
+        with pytest.raises(DecisionRefusalError):
+            asyncio.run(strategy_with(response, LikertScoring(5)).evaluate({}))
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["blame"], attributes["error_kind"]) == (
+            "error",
+            "user",
+            "model_refusal",
+        )
+
+    def test_content_filter_rejection_keeps_its_kind(self, recorded):
+        error = EvaluationException(
+            message="The decision model returned HTTP 400 (content_filter).",
+            blame=ErrorBlame.USER_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )
+        error.properties = {"decision_model": {"error_kind": "content_filter"}}
+        configured = strategy_with(level_payload(4), LikertScoring(5))
+        configured.runner.side_effect = error
+        with pytest.raises(EvaluationException):
+            asyncio.run(configured.evaluate({}))
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["blame"], attributes["error_kind"]) == (
+            "error",
+            "user",
+            "content_filter",
+        )
+
+    def test_cancellation_is_not_counted_as_an_error(self, recorded):
+        configured = strategy_with(level_payload(4), LikertScoring(5))
+        configured.runner.side_effect = asyncio.CancelledError()
+        with pytest.raises(asyncio.CancelledError):
+            asyncio.run(configured.evaluate({}))
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["blame"]) == ("cancelled", "none")
+
+    @staticmethod
+    def runner_strategy(runner):
+        return DecisionEvaluationStrategy(
+            runner,
+            result_key="tool_call_accuracy",
+            error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+            questions=QUESTIONS,
+            scoring=LikertScoring(5),
+            threshold=3,
+            timeout=5,
+        )
+
+    @pytest.mark.parametrize("summary_kept", [True, False], ids=["summary", "summary_over_bounds"])
+    def test_callback_cancellation_is_not_counted_as_an_error(self, client, recorded, monkeypatch, summary_kept):
+        if not summary_kept:
+            # A summary beyond the hosted bounds, such as one after more than 20 retries, is omitted.
+            monkeypatch.setattr(_model_runners, "validated_execution", lambda _: None)
+        runner = DecisionModelRunner(DECISION_CONFIG, cancellation_requested=lambda: True)
+        with pytest.raises(EvaluationException, match="cancelled") as raised:
+            asyncio.run(self.runner_strategy(runner).evaluate({}))
+        # The exception is unchanged; only the evaluation metric reads the runner's cancellation marker.
+        assert raised.value.blame == ErrorBlame.USER_ERROR and not client.calls
+        execution = (raised.value.properties.get("decision_model") or {}).get("execution") or {}
+        assert execution.get("outcome") == ("cancelled" if summary_kept else None)
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["blame"], attributes["error_kind"]) == ("cancelled", "none", "none")
+
+    def test_cancellation_callback_failure_stays_a_user_error(self, client, recorded):
+        def broken():
+            raise RuntimeError("callback down")
+
+        runner = DecisionModelRunner(DECISION_CONFIG, cancellation_requested=broken)
+        with pytest.raises(EvaluationException, match="cancellation callback failed"):
+            asyncio.run(self.runner_strategy(runner).evaluate({}))
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["blame"], attributes["error_kind"]) == ("error", "user", "none")
+
+    def test_metric_sink_failure_does_not_change_the_result(self):
+        broken = SimpleNamespace(get_meter=Mock(side_effect=RuntimeError("sink down")))
+        with patch.dict(sys.modules, {"opentelemetry.metrics": broken}):
+            result = asyncio.run(strategy_with(level_payload(4), LikertScoring(5)).evaluate({}))
+        assert result["tool_call_accuracy_status"] != "skipped"
+        broken.get_meter.assert_called()
+
+    def test_broken_opentelemetry_import_does_not_change_the_result_or_error(self):
+        broken = ModuleType("opentelemetry.metrics")
+
+        def unavailable(name):
+            raise RuntimeError(f"broken opentelemetry installation: {name}")
+
+        broken.__getattr__ = unavailable
+        refused = level_payload(4)
+        refused["answers"]["tool_call_accuracy"] = {"type": "refusal"}
+        with patch.dict(sys.modules, {"opentelemetry.metrics": broken}):
+            result = asyncio.run(strategy_with(level_payload(4), LikertScoring(5)).evaluate({}))
+            with pytest.raises(DecisionRefusalError):
+                asyncio.run(strategy_with(refused, LikertScoring(5)).evaluate({}))
+        assert result["tool_call_accuracy_status"] != "skipped"
+
+    def test_missing_opentelemetry_is_ignored(self):
+        with patch.dict(sys.modules, {"opentelemetry.metrics": None}):
+            result = asyncio.run(strategy_with(level_payload(4), LikertScoring(5)).evaluate({}))
+        assert result["tool_call_accuracy_status"] != "skipped"
+
+    def test_public_evaluator_records_request_and_evaluation_metrics(self, client, recorded):
+        class Judge(ModelEvaluatorBase):
+            _supports_decision_models = True
+
+            def _derive_singleton_inputs(self):
+                return [["query", "response"]]
+
+            async def _do_eval(self, eval_input):
+                return await DecisionEvaluationStrategy(
+                    self._decision_model_runner,
+                    result_key="tool_call_accuracy",
+                    error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                    questions=QUESTIONS,
+                    scoring=LikertScoring(5),
+                    threshold=3,
+                    timeout=self._LLM_CALL_TIMEOUT,
+                ).evaluate(eval_input)
+
+        client.post = AsyncMock(return_value=FakeResponse(body=json.dumps(level_payload(4)).encode()))
+        Judge(result_key="tool_call_accuracy", model_config=DECISION_CONFIG)(query="q", response="r")
+        assert "azure.ai.evaluation.decision.operations" in [name for name, _, _ in recorded]
+        attributes = self.evaluation_attributes(recorded)
+        assert (attributes["outcome"], attributes["protocol"]) == ("completed", "microsoft")
+
 
 class TestDecisionExecutionControls:
     @pytest.mark.parametrize(
@@ -1429,7 +2089,7 @@ class TestDecisionExecutionControls:
         assert validated_execution(execution) == execution
         assert execution["outcome"] == "error"
         if response_limit == 1:
-            assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+            assert raised.value.properties == {"decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}}
         else:
             assert raised.value.properties["total_tokens"] == 123
             assert raised.value.properties["model"] == "microsoft-decision-1"
@@ -1540,7 +2200,10 @@ class TestDecisionExecutionControls:
             run(DecisionModelRunner(DECISION_CONFIG))
         execution = raised.value.properties["decision_model"].pop("execution")
         assert execution["usage_state"] == "unknown"
-        assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}, "completion_tokens": 3}
+        assert raised.value.properties == {
+            "decision_model": {"deployment": "Decision-1", "protocol": "microsoft"},
+            "completion_tokens": 3,
+        }
 
     def test_default_pipeline_owns_an_execution_observer(self, client):
         client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
@@ -1627,7 +2290,7 @@ class TestDecisionExecutionControls:
         execution = raised.value.properties["decision_model"].pop("execution")
         assert execution["attempt_count"] == 0
         assert execution["usage_state"] == "unknown"
-        assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+        assert raised.value.properties == {"decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}}
         assert "secret" not in str(raised.value)
         assert not client.calls
 
@@ -1764,7 +2427,9 @@ class TestDecisionExecutionControls:
                 execution = raised.value.properties["decision_model"].pop("execution")
                 assert execution["attempt_count"] == 1
                 assert execution["outcome"] == ("deadline" if termination == "timeout" else "cancelled")
-                assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+                assert raised.value.properties == {
+                    "decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}
+                }
             finally:
                 handle.cancel()
 
@@ -1803,7 +2468,7 @@ class TestDecisionExecutionControls:
         assert execution["attempt_count"] == expected
         assert execution["retry_count"] == max_retries
         assert execution["outcome"] == "error"
-        assert raised.value.properties == {"decision_model": {"deployment": "Decision-1"}}
+        assert raised.value.properties == {"decision_model": {"deployment": "Decision-1", "protocol": "microsoft"}}
         assert "secret" not in str(raised.value)
 
     def test_real_pipeline_success_has_no_hook_failure_or_billed_replay(self, monkeypatch):
@@ -1964,6 +2629,7 @@ class TestDecisionExecutionObservations:
                     assert set(attributes) == {
                         "backend",
                         "route",
+                        "protocol",
                         "phase",
                         "outcome",
                         "usage_state",

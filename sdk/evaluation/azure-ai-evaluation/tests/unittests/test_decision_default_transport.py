@@ -78,7 +78,7 @@ def invoke(endpoint, timeout=3, **controls):
 def assert_failure_execution(error, attempts, outcome):
     assert set(error.properties) == {"decision_model"}
     native = error.properties["decision_model"]
-    assert set(native) == {"deployment", "execution"} and native["deployment"] == "Decision-1"
+    assert set(native) == {"deployment", "execution", "protocol"} and native["deployment"] == "Decision-1"
     execution = native["execution"]
     assert validated_execution(execution) == execution
     assert execution["attempt_count"] == attempts and execution["retry_count"] == max(0, attempts - 1)

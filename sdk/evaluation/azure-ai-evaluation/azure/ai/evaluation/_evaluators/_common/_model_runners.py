@@ -16,6 +16,7 @@ import logging
 import math
 import os
 import re
+import threading
 import time
 from typing import Any, Callable, Dict, List, Optional
 from urllib.parse import urlsplit
@@ -24,8 +25,10 @@ from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy, 
 from azure.core.pipeline.transport import AioHttpTransport
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._legacy._common._token_cache import TOKENS as _TOKENS
 from ..._common.utils import construct_prompty_model_config, validate_model_config
 from ..._http_utils import get_async_http_client
+from ._decision_protocols import DECISION_PROTOCOLS, REFUSAL, DecisionProtocol
 
 if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
     from promptflow.core._flow import AsyncPrompty
@@ -43,7 +46,6 @@ except ImportError:
 
 
 DECISION_MODEL_TYPE = "decision"
-_DECISION_PATH = "/providers/microsoft/v1/systemone"
 _DECISION_TOKEN_SCOPE = "https://cognitiveservices.azure.com/.default"
 _DECISION_RETRY_STATUS_CODES = [408, 429, 500, 502, 503, 504, 529]
 LOGGER = logging.getLogger(__name__)
@@ -55,10 +57,22 @@ _DECISION_CONFIG_KEYS = {
     "api_key",
     "credential",
     "probability_threshold",
+    "decision_protocol",
 }
 _DEFAULT_PROBABILITY_THRESHOLD = 0.75
+_DEFAULT_PROTOCOL = "microsoft"
+_INVALID_EVIDENCE = "Decision evidence must be finite JSON-serializable data."
+# The provider error code, and failed-row error kind, of a content filter rejecting the evaluated content.
+CONTENT_FILTER = "content_filter"
+# Set on the EvaluationException raised when the cancellation callback stops a request. Unlike the execution
+# summary, which is omitted when it exceeds the hosted metadata bounds, it is always present.
+CANCELLED_BY_CALLBACK = "_decision_cancelled_by_callback"
 # The service adds api_version to every resolved model configuration; the decision endpoint does not use it.
 _IGNORED_CONFIG_KEYS = {"api_version"}
+_USAGE_DETAIL_FIELDS = (
+    ("input_tokens_details", ("cached_tokens", "cache_write_tokens")),
+    ("output_tokens_details", ("reasoning_tokens",)),
+)
 
 
 def is_decision_model_config(model_config: Any) -> bool:
@@ -76,6 +90,33 @@ def _integer(value: Any, maximum: Optional[int] = None) -> bool:
     return (
         isinstance(value, int) and not isinstance(value, bool) and 0 <= value and (maximum is None or value <= maximum)
     )
+
+
+def _utf8_json(value: Any) -> bytes:
+    return json.dumps(value, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8")
+
+
+def usage_details(usage: Any) -> Dict[str, Dict[str, int]]:
+    """Return the known cache and reasoning counters of a provider usage object.
+
+    For example, ``{"input_tokens": 12, "input_tokens_details": {"cached_tokens": 4}}`` yields
+    ``{"input_tokens_details": {"cached_tokens": 4}}``. The counters describe part of the input or output tokens and
+    are never added to token totals; counters that are not nonnegative integers are omitted.
+
+    :param usage: The untrusted provider usage object.
+    :type usage: Any
+    :return: Known counters grouped like the provider's usage object.
+    :rtype: Dict[str, Dict[str, int]]
+    """
+    details: Dict[str, Dict[str, int]] = {}
+    if isinstance(usage, dict):
+        for group, fields in _USAGE_DETAIL_FIELDS:
+            values = usage.get(group)
+            if isinstance(values, dict):
+                known = {field: values[field] for field in fields if _integer(values.get(field))}
+                if known:
+                    details[group] = known
+    return details
 
 
 def validated_execution(value: Any) -> Optional[Dict[str, Any]]:
@@ -143,10 +184,11 @@ def _diagnostic(message: str) -> None:
 class DecisionExecution(CustomHookPolicy):
     """One operation's per-attempt pipeline policy; never shared between concurrent calls."""
 
-    def __init__(self, logger: Any, max_response_bytes: Optional[int]) -> None:
+    def __init__(self, logger: Any, max_response_bytes: Optional[int], protocol: str = _DEFAULT_PROTOCOL) -> None:
         super().__init__()
         self.logger = logger
         self.max_response_bytes = max_response_bytes
+        self.protocol = protocol
         self.started = time.monotonic()
         self.attempt_started: Optional[float] = None
         self.attempt_count = 0
@@ -232,6 +274,7 @@ class DecisionExecution(CustomHookPolicy):
         dimensions = {
             "backend": "decision",
             "route": "shared_sdk",
+            "protocol": self.protocol,
             "phase": phase,
             "outcome": outcome,
             "usage_state": usage,
@@ -340,6 +383,26 @@ def _is_finite_number(value: Any) -> bool:
         return False
 
 
+def _token_failure(error: BaseException) -> Dict[str, Any]:
+    """Describe a failed token request without keeping the error, whose traceback references the credential."""
+    if isinstance(error, EvaluationException):
+        return {
+            "message": error.message,
+            "internal_message": error.internal_message,
+            "target": error.target,
+            "category": error.category,
+            "blame": error.blame,
+        }
+    message = "Could not acquire a token for the decision model."
+    return {
+        "message": message,
+        "internal_message": message,
+        "target": ErrorTarget.EVALUATE,
+        "category": ErrorCategory.FAILED_EXECUTION,
+        "blame": ErrorBlame.USER_ERROR,
+    }
+
+
 def _probability(value: Any) -> float:
     if not _is_finite_number(value):
         raise ValueError("Decision probabilities must be finite numbers.")
@@ -390,7 +453,7 @@ def validate_score_answer(answer: Dict[str, Any], levels: int) -> List[float]:
 
 
 class DecisionModelRunner:
-    """Sends prepared evidence and typed questions to a Microsoft-Decision-1 deployment in Foundry.
+    """Sends prepared evidence and typed questions to a Decision deployment in Foundry.
 
     The model configuration must be tagged ``type="decision"`` and contain the Foundry resource endpoint
     (``azure_endpoint``) and the deployment name (``azure_deployment``). Authentication uses ``api_key`` when
@@ -403,19 +466,31 @@ class DecisionModelRunner:
     only be reused on that loop; cross-loop reuse is not supported.
     ``probability_threshold`` (default 0.75) is only accepted when ``binary=True``.
 
-    ``azure_endpoint`` must be the account resource root, not a project or OpenAI API endpoint.
+    ``decision_protocol`` selects the provider contract: the default ``"microsoft"`` uses the Microsoft Decision
+    operation, and ``"openai"`` uses Azure OpenAI's ``/openai/v1/decisions`` operation, which requires a deployment
+    with the Decision capability in a supported region. Model names never select a protocol. Every protocol returns
+    the same answers keyed by question identifier, so evaluators score them with the same policies. An OpenAI
+    question can be refused; the refusal fails an evaluation only when that evaluation reads the refused answer.
+
+    ``azure_endpoint`` must be the account resource root, not a project endpoint.
     For example, use ``https://account.services.ai.azure.com`` rather than a URL ending in
-    ``/api/projects/project`` or ``/openai``. Any path supplied is retained when appending the provider operation.
+    ``/api/projects/project``. OpenAI requires the account's OpenAI endpoint, such as
+    ``https://account.openai.azure.com``, optionally with its ``/openai`` or ``/openai/v1`` base path;
+    the Microsoft protocol retains a supplied path when appending the provider operation.
 
     Execution controls are keyword-only and separate from model configuration. ``timeout_seconds`` bounds
     each connect/read; the call's ``timeout`` limits authentication, retries and response body reading.
     Decision requests use the native async HTTP transport so timeout and cancellation stop body reads.
     An injected pipeline retains its own transport; that transport must support cancellation for the same guarantee.
     ``max_retries`` defaults to 3. ``cancellation_requested`` is polled every 50 ms, including retry waits;
-    it stops awaiting synchronous credentials but cannot stop their worker threads. Byte limits measure
-    compact unescaped UTF-8 JSON, with ``max_state_question_bytes`` applying to the largest individual pair.
-    ``max_response_bytes`` limits acceptance before parsing, not transport allocation.
+    it stops awaiting synchronous credentials but cannot stop their worker threads. Byte limits measure the
+    compact unescaped UTF-8 JSON of the canonical request ``{"model", "state", "questions"}`` before protocol
+    encoding, so every protocol admits the same evidence; ``max_state_question_bytes`` applies to the largest
+    individual ``{"state", "question"}`` pair. ``max_response_bytes`` limits acceptance before parsing,
+    not transport allocation.
     """
+
+    SUPPORTED_PROTOCOLS = frozenset(DECISION_PROTOCOLS)
 
     def __init__(
         self,
@@ -516,7 +591,14 @@ class DecisionModelRunner:
         except ValueError:
             raise _invalid_config("'probability_threshold' must be a number in [0, 1].") from None
 
-        self._url = f"{endpoint.rstrip('/')}{_DECISION_PATH}"
+        protocol = model_config.get("decision_protocol", _DEFAULT_PROTOCOL)
+        if not isinstance(protocol, str) or protocol not in DECISION_PROTOCOLS:
+            raise _invalid_config(f"'decision_protocol' must be one of {sorted(DECISION_PROTOCOLS)}.")
+        self._protocol: DecisionProtocol = DECISION_PROTOCOLS[protocol]
+        try:
+            self._url = self._protocol.operation_url(endpoint)
+        except ValueError as exc:
+            raise _invalid_config(str(exc)) from None
         self._deployment = deployment
         self._api_key = api_key
         self._user_agent = f"{UserAgentSingleton().value} (type=evaluator subtype={evaluator_name})"
@@ -535,6 +617,11 @@ class DecisionModelRunner:
         """The deployment name sent as the request's model."""
         return self._deployment
 
+    @property
+    def decision_protocol(self) -> str:
+        """The provider protocol, for example ``"microsoft"`` or ``"openai"``."""
+        return self._protocol.name
+
     async def __call__(self, *, state: Any, questions: Dict[str, Dict[str, Any]], timeout: float) -> Dict[str, Any]:
         """Request the decisions for ``questions`` about ``state`` and return the validated response.
 
@@ -544,46 +631,43 @@ class DecisionModelRunner:
         :paramtype questions: Dict[str, Dict[str, Any]]
         :keyword timeout: Overall time limit in seconds.
         :paramtype timeout: float
-        :return: ``{"model", "answers", "usage"}`` with the response's structure checked against the questions.
+        :return: ``{"model", "answers", "usage", "usage_details"}`` with answers keyed by question identifier and
+            the response's structure checked against the questions.
         :rtype: Dict[str, Any]
         """
         if not _is_finite_number(timeout) or timeout <= 0:
             raise _invalid_config("'timeout' must be a positive finite number.")
         deadline = time.monotonic() + timeout
-        execution = DecisionExecution(self._execution_logger, self._max_response_bytes)
+        execution = DecisionExecution(self._execution_logger, self._max_response_bytes, self.decision_protocol)
         outcome = "error"
         properties = self._response_properties(None)
         try:
             for question in questions.values():
                 if question.get("type") not in ("noul", "score"):
                     raise _invalid_config(f"Decision question type '{question.get('type')}' is not supported.")
-            body = {"model": self._deployment, "state": state, "questions": questions}
+            # Budgets bound the evidence and questions the model reads, so every protocol measures the same canonical
+            # request and admits the same evidence; wire encoding, such as evidence escaped into JSON text, is not read.
+            canonical = {"model": self._deployment, "state": state, "questions": questions}
             try:
-                content = json.dumps(body, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode("utf-8")
+                request = _utf8_json(canonical)
                 state_question_bytes = 0
                 if self._max_state_question_bytes is not None:
                     state_question_bytes = max(
-                        (
-                            len(
-                                json.dumps(
-                                    {"state": state, "question": question},
-                                    ensure_ascii=False,
-                                    separators=(",", ":"),
-                                    allow_nan=False,
-                                ).encode("utf-8")
-                            )
-                            for question in questions.values()
-                        ),
+                        (len(_utf8_json({"state": state, "question": question})) for question in questions.values()),
                         default=0,
                     )
             except (ValueError, TypeError, OverflowError, UnicodeError):
-                raise _failed(
-                    "Decision evidence must be finite JSON-serializable data.", ErrorBlame.USER_ERROR
-                ) from None
-            if (self._max_request_bytes is not None and len(content) > self._max_request_bytes) or (
+                raise _failed(_INVALID_EVIDENCE, ErrorBlame.USER_ERROR) from None
+            if (self._max_request_bytes is not None and len(request) > self._max_request_bytes) or (
                 self._max_state_question_bytes is not None and state_question_bytes > self._max_state_question_bytes
             ):
                 raise _failed("The decision request exceeds the configured byte budget.", ErrorBlame.USER_ERROR)
+            try:
+                body = self._protocol.encode(self._deployment, state, questions)
+                # A wire body that is the canonical request, as Microsoft's is, is not serialized again.
+                content = request if body == canonical else _utf8_json(body)
+            except (ValueError, TypeError, OverflowError, UnicodeError) as exc:
+                raise _invalid_config(f"Invalid decision request: {exc}") from None
             try:
                 payload = await asyncio.wait_for(
                     self._await_request(content, deadline, execution), timeout=max(0, deadline - time.monotonic())
@@ -605,6 +689,8 @@ class DecisionModelRunner:
         except EvaluationException as exc:
             if outcome != "deadline":
                 outcome = execution.outcome
+            if outcome == "cancelled":
+                setattr(exc, CANCELLED_BY_CALLBACK, True)
             if exc.properties is None:
                 exc.properties = properties
             properties = exc.properties
@@ -648,25 +734,53 @@ class DecisionModelRunner:
                 task.cancel()
                 await asyncio.gather(task, return_exceptions=True)
 
-    async def _get_token(self) -> str:
-        if inspect.iscoroutinefunction(self._credential.get_token):
-            return (await self._credential.get_token(_DECISION_TOKEN_SCOPE)).token
-        token = await asyncio.to_thread(self._credential.get_token, _DECISION_TOKEN_SCOPE)
-        if inspect.isawaitable(token):
-            token = await token
+    async def _get_token(self, deadline: float) -> Optional[str]:
+        """Return a bearer token, or None when the deadline passed while waiting for another request's token."""
+        credential = self._credential
+        token = _TOKENS.cached(credential, _DECISION_TOKEN_SCOPE)
+        if token is None:
+            # An acquisition that begins before a service rejects a token may return that token; the generation it
+            # began under lets the cache refuse it.
+            generation = _TOKENS.generation(credential, _DECISION_TOKEN_SCOPE)
+            if inspect.iscoroutinefunction(credential.get_token):
+                token = await credential.get_token(_DECISION_TOKEN_SCOPE)
+                _TOKENS.store(credential, _DECISION_TOKEN_SCOPE, token, generation)
+            else:
+                abandoned = threading.Event()
+                try:
+                    token = await asyncio.to_thread(
+                        _TOKENS.fetch,
+                        credential,
+                        _DECISION_TOKEN_SCOPE,
+                        abandoned=abandoned,
+                        deadline=deadline,
+                        describe_failure=_token_failure,
+                    )
+                finally:
+                    abandoned.set()
+                if token is None:
+                    return None
+                if inspect.isawaitable(token):
+                    token = await token
+                    _TOKENS.store(credential, _DECISION_TOKEN_SCOPE, token, generation)
         return token.token
 
     async def _post(self, content: bytes, *, deadline: float, execution: DecisionExecution) -> Any:
         headers = {"x-ms-useragent": self._user_agent, "Content-Type": "application/json"}
+        token = None
         if self._api_key:
             headers["api-key"] = self._api_key
         else:
             try:
-                headers["Authorization"] = f"Bearer {await self._get_token()}"
+                token = await self._get_token(deadline)
             except EvaluationException:
                 raise
             except Exception:  # pylint: disable=broad-except
                 raise _failed("Could not acquire a token for the decision model.", ErrorBlame.USER_ERROR) from None
+            if token is None:
+                execution.outcome = "deadline"
+                raise _failed("The decision model request timed out.")
+            headers["Authorization"] = "Bearer " + token
 
         policies: Dict[str, Any] = {
             "custom_hook_policy": execution,
@@ -718,6 +832,9 @@ class DecisionModelRunner:
                     raise _failed("The decision model returned invalid JSON.") from None
                 payload = None
         if status != 200:
+            if status == 401 and token is not None:
+                # A rejected token is not reused.
+                _TOKENS.discard(self._credential, _DECISION_TOKEN_SCOPE, token)
             blame = ErrorBlame.USER_ERROR if status in (400, 401, 403, 404, 422) else ErrorBlame.SYSTEM_ERROR
             provider_error = payload.get("error") if isinstance(payload, dict) else None
             code = provider_error.get("code") if isinstance(provider_error, dict) else None
@@ -726,16 +843,27 @@ class DecisionModelRunner:
                 if isinstance(code, str) and re.fullmatch(r"[A-Za-z][A-Za-z0-9_.-]{0,127}", code) is not None
                 else ""
             )
-            error = _failed(f"The decision model returned HTTP {status}{diagnostic}.", blame)
+            message = f"The decision model returned HTTP {status}{diagnostic}."
+            if diagnostic and code == self._protocol.mismatch_code:
+                message = f"{message} {self._protocol.mismatch_hint}"
+            error = _failed(message, blame)
             error.properties = self._response_properties(payload)
+            if code == CONTENT_FILTER:
+                # The provider's content filter rejected the evaluated content, not how the request was built.
+                error.properties["decision_model"]["error_kind"] = CONTENT_FILTER
             raise error
         return payload
 
     def _response_properties(self, payload: Any) -> Dict[str, Any]:
         """Retain only independently known final-response usage, never raw answers or retry totals."""
-        properties: Dict[str, Any] = {"decision_model": {"deployment": self._deployment}}
+        properties: Dict[str, Any] = {
+            "decision_model": {"deployment": self._deployment, "protocol": self.decision_protocol}
+        }
         usage = payload.get("usage") if isinstance(payload, dict) else None
         usage = usage if isinstance(usage, dict) else {}
+        details = usage_details(usage)
+        if details:
+            properties["decision_model"]["usage_details"] = details
         for native_key, key in (("input_tokens", "prompt_tokens"), ("output_tokens", "completion_tokens")):
             value = usage.get(native_key)
             if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
@@ -747,19 +875,19 @@ class DecisionModelRunner:
             properties["model"] = model
         return properties
 
-    @staticmethod
-    def _validate_response(payload: Any, questions: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
-        # Only the response's structure is checked here; answer values are validated by the evaluator after it
-        # has read the status answer, so a skipped evaluation never depends on an unusable score.
-        if not isinstance(payload, dict) or not isinstance(payload.get("answers"), dict):
+    def _validate_response(self, payload: Any, questions: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
+        # Only the response's structure is checked here; answer values are validated by the evaluator when it reads
+        # them, so a skipped evaluation never depends on an unusable or refused score.
+        if not isinstance(payload, dict):
             raise ValueError("answers are missing.")
-        answers = payload["answers"]
+        answers = self._protocol.bind_answers(payload, questions)
         if set(answers) != set(questions):
             raise ValueError("answer identifiers do not match the questions.")
         for question_id, question in questions.items():
             answer = answers[question_id]
-            question_type = question.get("type")
-            if not isinstance(answer, dict) or answer.get("type") != question_type:
+            answer_type = answer.get("type") if isinstance(answer, dict) else None
+            refused = answer_type == REFUSAL and self._protocol.supports_refusals
+            if answer_type != question.get("type") and not refused:
                 raise ValueError(f"answer '{question_id}' does not match its question type.")
 
         usage = payload.get("usage")
@@ -775,4 +903,5 @@ class DecisionModelRunner:
             "model": model,
             "answers": answers,
             "usage": {"input_tokens": usage["input_tokens"], "output_tokens": usage["output_tokens"]},
+            "usage_details": usage_details(usage),
         }

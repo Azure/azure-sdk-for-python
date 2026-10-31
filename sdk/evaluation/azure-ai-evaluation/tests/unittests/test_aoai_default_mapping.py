@@ -24,8 +24,15 @@ pytestmark = pytest.mark.unittest
 
 @pytest.fixture(autouse=True)
 def no_network(monkeypatch):
-    def reject_connection(*args, **kwargs):
-        pytest.fail("Mapping regressions must not open network connections.")
+    connect = socket.socket.connect
+
+    def reject_connection(sock, *args, **kwargs):
+        # Refuse only network sockets. Local IPC must keep working: a garbage-collection run inside these tests can
+        # finalize another test's multiprocessing manager, and a refused connection there leaves its server process
+        # running, so interpreter exit waits for it forever.
+        if sock.family in (socket.AF_INET, socket.AF_INET6):
+            pytest.fail("Mapping regressions must not open network connections.")
+        return connect(sock, *args, **kwargs)
 
     monkeypatch.setattr(socket.socket, "connect", reject_connection)
 

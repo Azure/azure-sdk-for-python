@@ -176,6 +176,7 @@ def test_failed_split_conversation_preserves_known_usage(monkeypatch, tmp_path, 
         assert {field: properties[field] for field in expected} == expected
         assert properties["decision_model"]["result_usage_scope"] == "reported_turns_only"
         assert properties["decision_model"]["usage_available"] is True
+        assert properties["decision_model"]["protocol"] == "microsoft"
         assert "execution" not in properties["decision_model"]
         if mixed:
             assert "model" not in properties and "model" not in properties["decision_model"]
@@ -300,6 +301,85 @@ def test_cancelled_error_without_properties_can_retain_known_turn_metadata():
     )
     assert error.properties["total_tokens"] == 15
     assert error.properties["decision_model"]["usage_available"] is True
+
+
+def test_failed_split_conversation_sums_usage_details_with_the_failing_turn():
+    """Cache and reasoning counters follow the same reported-turn rule as the token totals."""
+    evaluator = SplitDecisionEvaluator()
+    error = asyncio.CancelledError()
+    error.properties = {
+        "prompt_tokens": 20,
+        "model": "known-model",
+        "decision_model": {
+            "usage_details": {
+                "input_tokens_details": {"cached_tokens": 5},
+                "output_tokens_details": {"reasoning_tokens": 7},
+            }
+        },
+    }
+    evaluator._on_evaluation_error(
+        error,
+        [
+            {
+                "task_completion_prompt_tokens": 12,
+                "task_completion_model": "known-model",
+                "task_completion_properties": {
+                    "decision_model": {"usage_details": {"input_tokens_details": {"cached_tokens": 4}}}
+                },
+            }
+        ],
+    )
+    assert error.properties["prompt_tokens"] == 32
+    assert error.properties["decision_model"]["usage_details"] == {
+        "input_tokens_details": {"cached_tokens": 9},
+        "output_tokens_details": {"reasoning_tokens": 7},
+    }
+
+
+def test_failed_split_conversation_sums_usage_details_only_with_counted_usage():
+    """Counters of a turn whose token usage is not counted could exceed the reported token totals."""
+    evaluator = SplitDecisionEvaluator()
+    error = asyncio.CancelledError()
+    error.properties = {"decision_model": {"usage_details": {"input_tokens_details": {"cached_tokens": 50}}}}
+    evaluator._on_evaluation_error(
+        error,
+        [
+            {
+                "task_completion_prompt_tokens": 12,
+                "task_completion_properties": {
+                    "decision_model": {"usage_details": {"input_tokens_details": {"cached_tokens": 4}}}
+                },
+            },
+            {
+                "task_completion_properties": {
+                    "decision_model": {"usage_details": {"output_tokens_details": {"reasoning_tokens": 9}}}
+                },
+            },
+        ],
+    )
+    assert error.properties["prompt_tokens"] == 12
+    assert error.properties["decision_model"]["usage_details"] == {"input_tokens_details": {"cached_tokens": 4}}
+
+
+def test_failure_after_turns_without_requests_keeps_the_failing_request_metadata():
+    """Earlier turns that made no request leave the failing request's usage, counters and summary as reported."""
+    evaluator = SplitDecisionEvaluator()
+    error = asyncio.CancelledError()
+    error.properties = {
+        "prompt_tokens": 20,
+        "completion_tokens": 2,
+        "total_tokens": 22,
+        "model": "known-model",
+        "decision_model": {
+            "usage_details": {"input_tokens_details": {"cached_tokens": 5}},
+            "execution": {"attempt_count": 1, "outcome": "error"},
+        },
+    }
+    reported = deepcopy(error.properties)
+    evaluator._on_evaluation_error(
+        error, [{"task_completion": None, "task_completion_status": "skipped", "task_completion_properties": None}]
+    )
+    assert error.properties == reported
 
 
 def test_prompty_split_failure_preserves_existing_exception(monkeypatch):

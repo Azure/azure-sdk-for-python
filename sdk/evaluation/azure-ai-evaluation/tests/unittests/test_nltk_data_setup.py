@@ -172,6 +172,24 @@ class TestNltkDataSetup:
         assert not (tmp_path / "tokenizers" / "punkt_tab").exists()
         assert not (tmp_path / "outside.txt").exists()
 
+    @pytest.mark.skipif(os.name != "posix", reason="NLTK refuses data writable by other accounts only on POSIX.")
+    def test_prepared_data_is_private_to_its_owner(self, tmp_path, monkeypatch):
+        contents = _archive_contents({"punkt_tab/english/abbrev_types.txt": "example"})
+        _pin_test_archive(monkeypatch, contents)
+        _mock_download(monkeypatch, contents)
+        data_dir = tmp_path / "nltk_data"
+        previous = os.umask(0o002)
+        try:
+            test_config._prepare_nltk_test_data(data_dir)
+        finally:
+            os.umask(previous)
+
+        writable = [path for path in (data_dir, *data_dir.rglob("*")) if path.stat().st_mode & 0o022]
+        assert writable == []
+        # NLTK reads only under nltk.data.path and a private temp directory, which Linux's shared /tmp is not.
+        monkeypatch.setattr(nltk.data, "path", [str(data_dir)])
+        assert nltk.data.find("tokenizers/punkt_tab/english/")
+
     def test_fixture_preserves_and_restores_existing_data_paths(self, tmp_path, monkeypatch):
         original_path = str(tmp_path / "existing_data")
         monkeypatch.setenv("NLTK_DATA", original_path)
