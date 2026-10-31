@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-07-15/privateLinkScope/PrivateLinkScopes_Delete.json
+# x-ms-original-file: 2026-09-01/privateLinkScope/PrivateLinkScopes_Delete.json
 if __name__ == "__main__":
     main()

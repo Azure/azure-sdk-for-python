@@ -37,6 +37,7 @@ from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_extension_metadata_get_request,
     build_extension_metadata_list_request,
@@ -103,6 +104,12 @@ from ...operations._operations import (
     build_settings_get_request,
     build_settings_patch_request,
     build_settings_update_request,
+    build_vm_applications_create_or_update_request,
+    build_vm_applications_delete_request,
+    build_vm_applications_get_instance_view_request,
+    build_vm_applications_get_request,
+    build_vm_applications_list_request,
+    build_vm_applications_update_request,
 )
 from .._configuration import HybridComputeManagementClientConfiguration
 
@@ -111,7 +118,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -224,7 +231,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class LicensesOperations:
+class LicensesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1284,7 +1291,7 @@ class LicensesOperations:
         )
 
 
-class MachinesOperations:
+class MachinesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2432,7 +2439,7 @@ class MachinesOperations:
         )
 
 
-class LicenseProfilesOperations:
+class LicenseProfilesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3237,7 +3244,7 @@ class LicenseProfilesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MachineExtensionsOperations:
+class MachineExtensionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4074,7 +4081,7 @@ class MachineExtensionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MachineRunCommandsOperations:
+class MachineRunCommandsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4655,7 +4662,1046 @@ class MachineRunCommandsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GatewaysOperations:
+class VmApplicationsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.hybridcompute.aio.HybridComputeManagementClient`'s
+        :attr:`vm_applications` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: HybridComputeManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "machine_name",
+                "application_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    async def get(
+        self, resource_group_name: str, machine_name: str, application_name: str, **kwargs: Any
+    ) -> _models.VmApplication:
+        """Gets a VM application.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param machine_name: The name of the hybrid machine. Required.
+        :type machine_name: str
+        :param application_name: The name of the VM application. When creating the resource, this name
+         must match the application name in the selected gallery reference. Required.
+        :type application_name: str
+        :return: VmApplication. The VmApplication is compatible with MutableMapping
+        :rtype: ~azure.mgmt.hybridcompute.models.VmApplication
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VmApplication] = kwargs.pop("cls", None)
+
+        _request = build_vm_applications_get_request(
+            resource_group_name=resource_group_name,
+            machine_name=machine_name,
+            application_name=application_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VmApplication, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "machine_name",
+                "application_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    async def get_instance_view(
+        self, resource_group_name: str, machine_name: str, application_name: str, **kwargs: Any
+    ) -> _models.VmApplication:
+        """Gets the instance view of a VM application.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param machine_name: The name of the hybrid machine. Required.
+        :type machine_name: str
+        :param application_name: The name of the VM application. When creating the resource, this name
+         must match the application name in the selected gallery reference. Required.
+        :type application_name: str
+        :return: VmApplication. The VmApplication is compatible with MutableMapping
+        :rtype: ~azure.mgmt.hybridcompute.models.VmApplication
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VmApplication] = kwargs.pop("cls", None)
+
+        _request = build_vm_applications_get_instance_view_request(
+            resource_group_name=resource_group_name,
+            machine_name=machine_name,
+            application_name=application_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VmApplication, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "machine_name",
+                "application_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        machine_name: str,
+        application_name: str,
+        resource: Union[_models.VmApplication, _types.VmApplication, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_vm_applications_create_or_update_request(
+            resource_group_name=resource_group_name,
+            machine_name=machine_name,
+            application_name=application_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        machine_name: str,
+        application_name: str,
+        resource: _models.VmApplication,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.VmApplication]:
+        """Creates or updates a VM application.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param machine_name: The name of the hybrid machine. Required.
+        :type machine_name: str
+        :param application_name: The name of the VM application. When creating the resource, this name
+         must match the application name in the selected gallery reference. Required.
+        :type application_name: str
+        :param resource: The VM application resource. Required.
+        :type resource: ~azure.mgmt.hybridcompute.models.VmApplication
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns VmApplication. The VmApplication is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hybridcompute.models.VmApplication]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        machine_name: str,
+        application_name: str,
+        resource: _types.VmApplication,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.VmApplication]:
+        """Creates or updates a VM application.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param machine_name: The name of the hybrid machine. Required.
+        :type machine_name: str
+        :param application_name: The name of the VM application. When creating the resource, this name
+         must match the application name in the selected gallery reference. Required.
+        :type application_name: str
+        :param resource: The VM application resource. Required.
+        :type resource: ~azure.mgmt.hybridcompute.types.VmApplication
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns VmApplication. The VmApplication is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hybridcompute.models.VmApplication]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        machine_name: str,
+        application_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.VmApplication]:
+        """Creates or updates a VM application.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param machine_name: The name of the hybrid machine. Required.
+        :type machine_name: str
+        :param application_name: The name of the VM application. When creating the resource, this name
+         must match the application name in the selected gallery reference. Required.
+        :type application_name: str
+        :param resource: The VM application resource. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns VmApplication. The VmApplication is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hybridcompute.models.VmApplication]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "machine_name",
+                "application_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        machine_name: str,
+        application_name: str,
+        resource: Union[_models.VmApplication, _types.VmApplication, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.VmApplication]:
+        """Creates or updates a VM application.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param machine_name: The name of the hybrid machine. Required.
+        :type machine_name: str
+        :param application_name: The name of the VM application. When creating the resource, this name
+         must match the application name in the selected gallery reference. Required.
+        :type application_name: str
+        :param resource: The VM application resource. Is either a VmApplication type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.hybridcompute.models.VmApplication or
+         ~azure.mgmt.hybridcompute.types.VmApplication or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns VmApplication. The VmApplication is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hybridcompute.models.VmApplication]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.VmApplication] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                machine_name=machine_name,
+                application_name=application_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.VmApplication, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.VmApplication].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.VmApplication](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "machine_name",
+                "application_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        machine_name: str,
+        application_name: str,
+        properties: Union[_models.VmApplicationUpdate, _types.VmApplicationUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_vm_applications_update_request(
+            resource_group_name=resource_group_name,
+            machine_name=machine_name,
+            application_name=application_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        machine_name: str,
+        application_name: str,
+        properties: _models.VmApplicationUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.VmApplication]:
+        """Updates a VM application.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param machine_name: The name of the hybrid machine. Required.
+        :type machine_name: str
+        :param application_name: The name of the VM application. When creating the resource, this name
+         must match the application name in the selected gallery reference. Required.
+        :type application_name: str
+        :param properties: The VM application update properties. Required.
+        :type properties: ~azure.mgmt.hybridcompute.models.VmApplicationUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns VmApplication. The VmApplication is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hybridcompute.models.VmApplication]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        machine_name: str,
+        application_name: str,
+        properties: _types.VmApplicationUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.VmApplication]:
+        """Updates a VM application.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param machine_name: The name of the hybrid machine. Required.
+        :type machine_name: str
+        :param application_name: The name of the VM application. When creating the resource, this name
+         must match the application name in the selected gallery reference. Required.
+        :type application_name: str
+        :param properties: The VM application update properties. Required.
+        :type properties: ~azure.mgmt.hybridcompute.types.VmApplicationUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns VmApplication. The VmApplication is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hybridcompute.models.VmApplication]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        machine_name: str,
+        application_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.VmApplication]:
+        """Updates a VM application.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param machine_name: The name of the hybrid machine. Required.
+        :type machine_name: str
+        :param application_name: The name of the VM application. When creating the resource, this name
+         must match the application name in the selected gallery reference. Required.
+        :type application_name: str
+        :param properties: The VM application update properties. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns VmApplication. The VmApplication is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hybridcompute.models.VmApplication]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "machine_name",
+                "application_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        machine_name: str,
+        application_name: str,
+        properties: Union[_models.VmApplicationUpdate, _types.VmApplicationUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.VmApplication]:
+        """Updates a VM application.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param machine_name: The name of the hybrid machine. Required.
+        :type machine_name: str
+        :param application_name: The name of the VM application. When creating the resource, this name
+         must match the application name in the selected gallery reference. Required.
+        :type application_name: str
+        :param properties: The VM application update properties. Is either a VmApplicationUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.hybridcompute.models.VmApplicationUpdate or
+         ~azure.mgmt.hybridcompute.types.VmApplicationUpdate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns VmApplication. The VmApplication is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.hybridcompute.models.VmApplication]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.VmApplication] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                machine_name=machine_name,
+                application_name=application_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.VmApplication, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.VmApplication].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.VmApplication](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": ["api_version", "subscription_id", "resource_group_name", "machine_name", "application_name"]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, machine_name: str, application_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_vm_applications_delete_request(
+            resource_group_name=resource_group_name,
+            machine_name=machine_name,
+            application_name=application_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": ["api_version", "subscription_id", "resource_group_name", "machine_name", "application_name"]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, machine_name: str, application_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes a VM application.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param machine_name: The name of the hybrid machine. Required.
+        :type machine_name: str
+        :param application_name: The name of the VM application. When creating the resource, this name
+         must match the application name in the selected gallery reference. Required.
+        :type application_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                machine_name=machine_name,
+                application_name=application_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01",
+        params_added_on={
+            "2026-09-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "machine_name",
+                "top",
+                "skip_token",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01"],
+    )
+    def list(
+        self,
+        resource_group_name: str,
+        machine_name: str,
+        *,
+        top: Optional[int] = None,
+        skip_token: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.VmApplication"]:
+        """Lists the VM applications installed on a hybrid machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param machine_name: The name of the hybrid machine. Required.
+        :type machine_name: str
+        :keyword top: The maximum number of results to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The continuation token for the next page of results. Default value is
+         None.
+        :paramtype skip_token: str
+        :return: An iterator like instance of VmApplication
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.hybridcompute.models.VmApplication]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VmApplication]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_vm_applications_list_request(
+                    resource_group_name=resource_group_name,
+                    machine_name=machine_name,
+                    subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.VmApplication],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class GatewaysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5463,7 +6509,7 @@ class GatewaysOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5661,7 +6707,7 @@ class PrivateLinkResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6240,7 +7286,7 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6583,7 +7629,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         )
 
 
-class NetworkProfileOperations:
+class NetworkProfileOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6673,7 +7719,7 @@ class NetworkProfileOperations:
         return deserialized  # type: ignore
 
 
-class PrivateLinkScopesOperations:
+class PrivateLinkScopesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7590,7 +8636,7 @@ class PrivateLinkScopesOperations:
         return deserialized  # type: ignore
 
 
-class ExtensionMetadataOperations:
+class ExtensionMetadataOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7792,7 +8838,7 @@ class ExtensionMetadataOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ExtensionMetadataV2Operations:
+class ExtensionMetadataV2Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7992,7 +9038,7 @@ class ExtensionMetadataV2Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SettingsOperations:
+class SettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8517,7 +9563,7 @@ class SettingsOperations:
         return deserialized  # type: ignore
 
 
-class ExtensionTypeOperations:
+class ExtensionTypeOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8635,7 +9681,7 @@ class ExtensionTypeOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ExtensionPublisherOperations:
+class ExtensionPublisherOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
