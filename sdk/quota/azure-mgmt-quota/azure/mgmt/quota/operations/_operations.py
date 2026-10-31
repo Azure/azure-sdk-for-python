@@ -7,16 +7,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
+import datetime
 from io import IOBase
 import json
 from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
+import uuid
 
-from azure.core import PipelineClient
+from azure.core import MatchConditions, PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
+    ResourceModifiedError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
     StreamClosedError,
@@ -32,14 +35,15 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import QuotaMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from .._utils.utils import prep_if_match, prep_if_none_match
+from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -50,7 +54,7 @@ def build_quota_operation_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -69,7 +73,7 @@ def build_quota_request_status_get_request(id: str, scope: str, **kwargs: Any) -
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +105,7 @@ def build_quota_request_status_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -127,11 +131,346 @@ def build_quota_request_status_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_quota_transfers_get_request(
+    target_provider: str, region: str, transfer_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/{targetProvider}/locations/{region}/providers/Microsoft.Quota/quotaTransfers/{transferName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "targetProvider": _SERIALIZER.url("target_provider", target_provider, "str"),
+        "region": _SERIALIZER.url("region", region, "str"),
+        "transferName": _SERIALIZER.url("transfer_name", transfer_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_quota_transfers_create_or_update_request(  # pylint: disable=name-too-long
+    target_provider: str, region: str, transfer_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/{targetProvider}/locations/{region}/providers/Microsoft.Quota/quotaTransfers/{transferName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "targetProvider": _SERIALIZER.url("target_provider", target_provider, "str"),
+        "region": _SERIALIZER.url("region", region, "str"),
+        "transferName": _SERIALIZER.url("transfer_name", transfer_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_quota_transfers_delete_request(
+    target_provider: str, region: str, transfer_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/{targetProvider}/locations/{region}/providers/Microsoft.Quota/quotaTransfers/{transferName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "targetProvider": _SERIALIZER.url("target_provider", target_provider, "str"),
+        "region": _SERIALIZER.url("region", region, "str"),
+        "transferName": _SERIALIZER.url("transfer_name", transfer_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_quota_transfers_list_request(
+    target_provider: str, region: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/{targetProvider}/locations/{region}/providers/Microsoft.Quota/quotaTransfers"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "targetProvider": _SERIALIZER.url("target_provider", target_provider, "str"),
+        "region": _SERIALIZER.url("region", region, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_quota_transfers_cancel_request(
+    target_provider: str, region: str, transfer_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/{targetProvider}/locations/{region}/providers/Microsoft.Quota/quotaTransfers/{transferName}/cancel"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "targetProvider": _SERIALIZER.url("target_provider", target_provider, "str"),
+        "region": _SERIALIZER.url("region", region, "str"),
+        "transferName": _SERIALIZER.url("transfer_name", transfer_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if "Repeatability-Request-ID" not in _headers:
+        _headers["Repeatability-Request-ID"] = str(uuid.uuid4())
+    if "Repeatability-First-Sent" not in _headers:
+        _headers["Repeatability-First-Sent"] = _SERIALIZER.serialize_data(
+            datetime.datetime.now(datetime.timezone.utc), "rfc-1123"
+        )
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_incoming_quota_transfers_get_request(  # pylint: disable=name-too-long
+    target_provider: str, region: str, transfer_id: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/{targetProvider}/locations/{region}/providers/Microsoft.Quota/incomingQuotaTransfers/{transferId}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "targetProvider": _SERIALIZER.url("target_provider", target_provider, "str"),
+        "region": _SERIALIZER.url("region", region, "str"),
+        "transferId": _SERIALIZER.url("transfer_id", transfer_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_incoming_quota_transfers_list_request(  # pylint: disable=name-too-long
+    target_provider: str, region: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/{targetProvider}/locations/{region}/providers/Microsoft.Quota/incomingQuotaTransfers"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "targetProvider": _SERIALIZER.url("target_provider", target_provider, "str"),
+        "region": _SERIALIZER.url("region", region, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_incoming_quota_transfers_list_by_subscription_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Quota/incomingQuotaTransfers"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_incoming_quota_transfers_approve_request(  # pylint: disable=name-too-long
+    target_provider: str,
+    region: str,
+    transfer_id: str,
+    subscription_id: str,
+    *,
+    etag: str,
+    match_condition: MatchConditions,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/{targetProvider}/locations/{region}/providers/Microsoft.Quota/incomingQuotaTransfers/{transferId}/approve"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "targetProvider": _SERIALIZER.url("target_provider", target_provider, "str"),
+        "region": _SERIALIZER.url("region", region, "str"),
+        "transferId": _SERIALIZER.url("transfer_id", transfer_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if "Repeatability-Request-ID" not in _headers:
+        _headers["Repeatability-Request-ID"] = str(uuid.uuid4())
+    if "Repeatability-First-Sent" not in _headers:
+        _headers["Repeatability-First-Sent"] = _SERIALIZER.serialize_data(
+            datetime.datetime.now(datetime.timezone.utc), "rfc-1123"
+        )
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_incoming_quota_transfers_reject_request(  # pylint: disable=name-too-long
+    target_provider: str,
+    region: str,
+    transfer_id: str,
+    subscription_id: str,
+    *,
+    etag: str,
+    match_condition: MatchConditions,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/{targetProvider}/locations/{region}/providers/Microsoft.Quota/incomingQuotaTransfers/{transferId}/reject"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "targetProvider": _SERIALIZER.url("target_provider", target_provider, "str"),
+        "region": _SERIALIZER.url("region", region, "str"),
+        "transferId": _SERIALIZER.url("transfer_id", transfer_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if "Repeatability-Request-ID" not in _headers:
+        _headers["Repeatability-Request-ID"] = str(uuid.uuid4())
+    if "Repeatability-First-Sent" not in _headers:
+        _headers["Repeatability-First-Sent"] = _SERIALIZER.serialize_data(
+            datetime.datetime.now(datetime.timezone.utc), "rfc-1123"
+        )
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["if-none-match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_group_quotas_get_request(management_group_id: str, group_quota_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -159,7 +498,7 @@ def build_group_quotas_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -187,7 +526,7 @@ def build_group_quotas_update_request(management_group_id: str, group_quota_name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -213,7 +552,7 @@ def build_group_quotas_update_request(management_group_id: str, group_quota_name
 def build_group_quotas_delete_request(management_group_id: str, group_quota_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Quota/groupQuotas/{groupQuotaName}"
     path_format_arguments = {
@@ -233,7 +572,7 @@ def build_group_quotas_list_request(management_group_id: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -259,7 +598,7 @@ def build_group_quota_limits_request_list_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -289,7 +628,7 @@ def build_group_quota_limits_request_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -320,7 +659,7 @@ def build_group_quota_limits_request_get_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -348,7 +687,7 @@ def build_group_quota_usages_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -377,7 +716,7 @@ def build_group_quota_subscriptions_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -405,7 +744,7 @@ def build_group_quota_subscriptions_create_or_update_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -433,7 +772,7 @@ def build_group_quota_subscriptions_update_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -460,7 +799,7 @@ def build_group_quota_subscriptions_delete_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Quota/groupQuotas/{groupQuotaName}/subscriptions/{subscriptionId}"
     path_format_arguments = {
@@ -483,7 +822,7 @@ def build_group_quota_subscriptions_list_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -510,7 +849,7 @@ def build_group_quota_subscription_requests_get_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -538,7 +877,7 @@ def build_group_quota_subscription_requests_list_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -565,7 +904,7 @@ def build_group_quota_limits_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -599,7 +938,7 @@ def build_group_quota_subscription_allocation_list_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -635,7 +974,7 @@ def build_group_quota_subscription_allocation_request_update_request(  # pylint:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -672,7 +1011,7 @@ def build_group_quota_subscription_allocation_request_get_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -708,7 +1047,7 @@ def build_group_quota_subscription_allocation_request_list_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -738,7 +1077,7 @@ def build_group_quota_location_settings_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -768,7 +1107,7 @@ def build_group_quota_location_settings_create_or_update_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -800,7 +1139,7 @@ def build_group_quota_location_settings_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -829,7 +1168,7 @@ def build_usages_get_request(resource_name: str, scope: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -854,7 +1193,7 @@ def build_usages_list_request(scope: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -878,7 +1217,7 @@ def build_quota_get_request(resource_name: str, scope: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -904,7 +1243,7 @@ def build_quota_create_or_update_request(resource_name: str, scope: str, **kwarg
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -932,7 +1271,7 @@ def build_quota_update_request(resource_name: str, scope: str, **kwargs: Any) ->
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -959,7 +1298,7 @@ def build_quota_list_request(scope: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -979,7 +1318,7 @@ def build_quota_list_request(scope: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class QuotaOperationOperations:
+class QuotaOperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1043,7 +1382,10 @@ class QuotaOperationOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1056,7 +1398,10 @@ class QuotaOperationOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OperationResponse], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.OperationResponse],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1072,7 +1417,10 @@ class QuotaOperationOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ExceptionResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ExceptionResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1080,7 +1428,7 @@ class QuotaOperationOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class QuotaRequestStatusOperations:
+class QuotaRequestStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1136,6 +1484,7 @@ class QuotaRequestStatusOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1150,11 +1499,14 @@ class QuotaRequestStatusOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ExceptionResponse, response)
+            error = _failsafe_deserialize(
+                _models.ExceptionResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.QuotaRequestDetails, response.json())
 
@@ -1239,7 +1591,10 @@ class QuotaRequestStatusOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1252,7 +1607,10 @@ class QuotaRequestStatusOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.QuotaRequestDetails], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.QuotaRequestDetails],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1268,7 +1626,10 @@ class QuotaRequestStatusOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ExceptionResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ExceptionResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1276,7 +1637,1748 @@ class QuotaRequestStatusOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GroupQuotasOperations:
+class QuotaTransfersOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.quota.QuotaMgmtClient`'s
+        :attr:`quota_transfers` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: QuotaMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "target_provider",
+                "region",
+                "transfer_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview"],
+    )
+    def get(self, target_provider: str, region: str, transfer_name: str, **kwargs: Any) -> _models.QuotaTransfer:
+        """Get a quota transfer.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. A transfer URI is
+         region-singular. Required.
+        :type region: str
+        :param transfer_name: The donor-chosen name segment of the quota transfer. Used as the
+         idempotency key
+         for retries on the donor side. Required.
+        :type transfer_name: str
+        :return: QuotaTransfer. The QuotaTransfer is compatible with MutableMapping
+        :rtype: ~azure.mgmt.quota.models.QuotaTransfer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.QuotaTransfer] = kwargs.pop("cls", None)
+
+        _request = build_quota_transfers_get_request(
+            target_provider=target_provider,
+            region=region,
+            transfer_name=transfer_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.QuotaTransfer, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "target_provider",
+                "region",
+                "transfer_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview"],
+    )
+    def _create_or_update_initial(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_name: str,
+        resource: Union[_models.QuotaTransfer, _types.QuotaTransfer, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_quota_transfers_create_or_update_request(
+            target_provider=target_provider,
+            region=region,
+            transfer_name=transfer_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_name: str,
+        resource: _models.QuotaTransfer,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.QuotaTransfer]:
+        """Submit a quota transfer. Idempotent on the URI: a retry with the same body returns the cached
+        outcome and the same ``transferId``; a retry with a different financial body returns 409
+        BodyMismatch.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. A transfer URI is
+         region-singular. Required.
+        :type region: str
+        :param transfer_name: The donor-chosen name segment of the quota transfer. Used as the
+         idempotency key
+         for retries on the donor side. Required.
+        :type transfer_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.quota.models.QuotaTransfer
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns QuotaTransfer. The QuotaTransfer is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.quota.models.QuotaTransfer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_name: str,
+        resource: _types.QuotaTransfer,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.QuotaTransfer]:
+        """Submit a quota transfer. Idempotent on the URI: a retry with the same body returns the cached
+        outcome and the same ``transferId``; a retry with a different financial body returns 409
+        BodyMismatch.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. A transfer URI is
+         region-singular. Required.
+        :type region: str
+        :param transfer_name: The donor-chosen name segment of the quota transfer. Used as the
+         idempotency key
+         for retries on the donor side. Required.
+        :type transfer_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.quota.types.QuotaTransfer
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns QuotaTransfer. The QuotaTransfer is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.quota.models.QuotaTransfer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.QuotaTransfer]:
+        """Submit a quota transfer. Idempotent on the URI: a retry with the same body returns the cached
+        outcome and the same ``transferId``; a retry with a different financial body returns 409
+        BodyMismatch.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. A transfer URI is
+         region-singular. Required.
+        :type region: str
+        :param transfer_name: The donor-chosen name segment of the quota transfer. Used as the
+         idempotency key
+         for retries on the donor side. Required.
+        :type transfer_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns QuotaTransfer. The QuotaTransfer is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.quota.models.QuotaTransfer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "target_provider",
+                "region",
+                "transfer_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview"],
+    )
+    def begin_create_or_update(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_name: str,
+        resource: Union[_models.QuotaTransfer, _types.QuotaTransfer, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.QuotaTransfer]:
+        """Submit a quota transfer. Idempotent on the URI: a retry with the same body returns the cached
+        outcome and the same ``transferId``; a retry with a different financial body returns 409
+        BodyMismatch.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. A transfer URI is
+         region-singular. Required.
+        :type region: str
+        :param transfer_name: The donor-chosen name segment of the quota transfer. Used as the
+         idempotency key
+         for retries on the donor side. Required.
+        :type transfer_name: str
+        :param resource: Resource create parameters. Is either a QuotaTransfer type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.quota.models.QuotaTransfer or ~azure.mgmt.quota.types.QuotaTransfer
+         or IO[bytes]
+        :return: An instance of LROPoller that returns QuotaTransfer. The QuotaTransfer is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.quota.models.QuotaTransfer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.QuotaTransfer] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                target_provider=target_provider,
+                region=region,
+                transfer_name=transfer_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.QuotaTransfer, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.QuotaTransfer].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.QuotaTransfer](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": ["api_version", "subscription_id", "target_provider", "region", "transfer_name"]
+        },
+        api_versions_list=["2026-09-01-preview"],
+    )
+    def delete(  # pylint: disable=inconsistent-return-statements
+        self, target_provider: str, region: str, transfer_name: str, **kwargs: Any
+    ) -> None:
+        """Delete a quota transfer record. Quota is not moved by delete; only the resource entry is
+        removed.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. A transfer URI is
+         region-singular. Required.
+        :type region: str
+        :param transfer_name: The donor-chosen name segment of the quota transfer. Used as the
+         idempotency key
+         for retries on the donor side. Required.
+        :type transfer_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_quota_transfers_delete_request(
+            target_provider=target_provider,
+            region=region,
+            transfer_name=transfer_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": ["api_version", "subscription_id", "target_provider", "region", "accept"]
+        },
+        api_versions_list=["2026-09-01-preview"],
+    )
+    def list(self, target_provider: str, region: str, **kwargs: Any) -> ItemPaged["_models.QuotaTransfer"]:
+        """List quota transfers at the (subscription, targetProvider, region) scope.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. A transfer URI is
+         region-singular. Required.
+        :type region: str
+        :return: An iterator like instance of QuotaTransfer
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.quota.models.QuotaTransfer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.QuotaTransfer]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_quota_transfers_list_request(
+                    target_provider=target_provider,
+                    region=region,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.QuotaTransfer],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @overload
+    def cancel(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_name: str,
+        body: Optional[_models.QuotaTransferCancelRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.QuotaTransfer:
+        """Cancel a Pending quota transfer. Synchronous. Transitions the transfer to Cancelled and returns
+        the refreshed resource envelope.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. A transfer URI is
+         region-singular. Required.
+        :type region: str
+        :param transfer_name: The donor-chosen name segment of the quota transfer. Used as the
+         idempotency key
+         for retries on the donor side. Required.
+        :type transfer_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: ~azure.mgmt.quota.models.QuotaTransferCancelRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: QuotaTransfer. The QuotaTransfer is compatible with MutableMapping
+        :rtype: ~azure.mgmt.quota.models.QuotaTransfer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def cancel(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_name: str,
+        body: Optional[_types.QuotaTransferCancelRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.QuotaTransfer:
+        """Cancel a Pending quota transfer. Synchronous. Transitions the transfer to Cancelled and returns
+        the refreshed resource envelope.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. A transfer URI is
+         region-singular. Required.
+        :type region: str
+        :param transfer_name: The donor-chosen name segment of the quota transfer. Used as the
+         idempotency key
+         for retries on the donor side. Required.
+        :type transfer_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: ~azure.mgmt.quota.types.QuotaTransferCancelRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: QuotaTransfer. The QuotaTransfer is compatible with MutableMapping
+        :rtype: ~azure.mgmt.quota.models.QuotaTransfer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def cancel(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_name: str,
+        body: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.QuotaTransfer:
+        """Cancel a Pending quota transfer. Synchronous. Transitions the transfer to Cancelled and returns
+        the refreshed resource envelope.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. A transfer URI is
+         region-singular. Required.
+        :type region: str
+        :param transfer_name: The donor-chosen name segment of the quota transfer. Used as the
+         idempotency key
+         for retries on the donor side. Required.
+        :type transfer_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: QuotaTransfer. The QuotaTransfer is compatible with MutableMapping
+        :rtype: ~azure.mgmt.quota.models.QuotaTransfer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "target_provider",
+                "region",
+                "transfer_name",
+                "repeatability_request_id",
+                "repeatability_first_sent",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview"],
+    )
+    def cancel(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_name: str,
+        body: Optional[Union[_models.QuotaTransferCancelRequest, _types.QuotaTransferCancelRequest, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> _models.QuotaTransfer:
+        """Cancel a Pending quota transfer. Synchronous. Transitions the transfer to Cancelled and returns
+        the refreshed resource envelope.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. A transfer URI is
+         region-singular. Required.
+        :type region: str
+        :param transfer_name: The donor-chosen name segment of the quota transfer. Used as the
+         idempotency key
+         for retries on the donor side. Required.
+        :type transfer_name: str
+        :param body: The content of the action request. Is either a QuotaTransferCancelRequest type or
+         a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.quota.models.QuotaTransferCancelRequest or
+         ~azure.mgmt.quota.types.QuotaTransferCancelRequest or IO[bytes]
+        :return: QuotaTransfer. The QuotaTransfer is compatible with MutableMapping
+        :rtype: ~azure.mgmt.quota.models.QuotaTransfer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
+        cls: ClsType[_models.QuotaTransfer] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if body else None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
+
+        _request = build_quota_transfers_cancel_request(
+            target_provider=target_provider,
+            region=region,
+            transfer_name=transfer_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.QuotaTransfer, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class IncomingQuotaTransfersOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.quota.QuotaMgmtClient`'s
+        :attr:`incoming_quota_transfers` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: QuotaMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "target_provider",
+                "region",
+                "transfer_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview"],
+    )
+    def get(self, target_provider: str, region: str, transfer_id: str, **kwargs: Any) -> _models.IncomingQuotaTransfer:
+        """Get an incoming quota transfer.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. Required.
+        :type region: str
+        :param transfer_id: Server-generated identifier of the transfer (matches
+         ``properties.transferId``). Required.
+        :type transfer_id: str
+        :return: IncomingQuotaTransfer. The IncomingQuotaTransfer is compatible with MutableMapping
+        :rtype: ~azure.mgmt.quota.models.IncomingQuotaTransfer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.IncomingQuotaTransfer] = kwargs.pop("cls", None)
+
+        _request = build_incoming_quota_transfers_get_request(
+            target_provider=target_provider,
+            region=region,
+            transfer_id=transfer_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.IncomingQuotaTransfer, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": ["api_version", "subscription_id", "target_provider", "region", "accept"]
+        },
+        api_versions_list=["2026-09-01-preview"],
+    )
+    def list(self, target_provider: str, region: str, **kwargs: Any) -> ItemPaged["_models.IncomingQuotaTransfer"]:
+        """List incoming quota transfers at the (subscription, targetProvider, region) scope.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. Required.
+        :type region: str
+        :return: An iterator like instance of IncomingQuotaTransfer
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.quota.models.IncomingQuotaTransfer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.IncomingQuotaTransfer]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_incoming_quota_transfers_list_request(
+                    target_provider=target_provider,
+                    region=region,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.IncomingQuotaTransfer],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={"2026-09-01-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-09-01-preview"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.IncomingQuotaTransfer"]:
+        """List incoming quota transfers across every targetProvider and region for the subscription.
+
+        :return: An iterator like instance of IncomingQuotaTransfer
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.quota.models.IncomingQuotaTransfer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.IncomingQuotaTransfer]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_incoming_quota_transfers_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.IncomingQuotaTransfer],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "target_provider",
+                "region",
+                "transfer_id",
+                "repeatability_request_id",
+                "repeatability_first_sent",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview"],
+    )
+    def _approve_initial(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_id: str,
+        body: Optional[
+            Union[_models.IncomingQuotaTransferApproveRequest, _types.IncomingQuotaTransferApproveRequest, IO[bytes]]
+        ] = None,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if body else None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
+
+        _request = build_incoming_quota_transfers_approve_request(
+            target_provider=target_provider,
+            region=region,
+            transfer_id=transfer_id,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_approve(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_id: str,
+        body: Optional[_models.IncomingQuotaTransferApproveRequest] = None,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.IncomingQuotaTransfer]:
+        """Approve a Pending incoming quota transfer. Long-running. The ``If-Match`` header value must
+        equal ``properties.sourceEtag`` returned on a prior GET; a stale value yields 412
+        SourceResourceModified.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. Required.
+        :type region: str
+        :param transfer_id: Server-generated identifier of the transfer (matches
+         ``properties.transferId``). Required.
+        :type transfer_id: str
+        :param body: The content of the action request. Default value is None.
+        :type body: ~azure.mgmt.quota.models.IncomingQuotaTransferApproveRequest
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns IncomingQuotaTransfer. The IncomingQuotaTransfer
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.quota.models.IncomingQuotaTransfer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_approve(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_id: str,
+        body: Optional[_types.IncomingQuotaTransferApproveRequest] = None,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.IncomingQuotaTransfer]:
+        """Approve a Pending incoming quota transfer. Long-running. The ``If-Match`` header value must
+        equal ``properties.sourceEtag`` returned on a prior GET; a stale value yields 412
+        SourceResourceModified.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. Required.
+        :type region: str
+        :param transfer_id: Server-generated identifier of the transfer (matches
+         ``properties.transferId``). Required.
+        :type transfer_id: str
+        :param body: The content of the action request. Default value is None.
+        :type body: ~azure.mgmt.quota.types.IncomingQuotaTransferApproveRequest
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns IncomingQuotaTransfer. The IncomingQuotaTransfer
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.quota.models.IncomingQuotaTransfer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_approve(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_id: str,
+        body: Optional[IO[bytes]] = None,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.IncomingQuotaTransfer]:
+        """Approve a Pending incoming quota transfer. Long-running. The ``If-Match`` header value must
+        equal ``properties.sourceEtag`` returned on a prior GET; a stale value yields 412
+        SourceResourceModified.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. Required.
+        :type region: str
+        :param transfer_id: Server-generated identifier of the transfer (matches
+         ``properties.transferId``). Required.
+        :type transfer_id: str
+        :param body: The content of the action request. Default value is None.
+        :type body: IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns IncomingQuotaTransfer. The IncomingQuotaTransfer
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.quota.models.IncomingQuotaTransfer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "target_provider",
+                "region",
+                "transfer_id",
+                "repeatability_request_id",
+                "repeatability_first_sent",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview"],
+    )
+    def begin_approve(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_id: str,
+        body: Optional[
+            Union[_models.IncomingQuotaTransferApproveRequest, _types.IncomingQuotaTransferApproveRequest, IO[bytes]]
+        ] = None,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> LROPoller[_models.IncomingQuotaTransfer]:
+        """Approve a Pending incoming quota transfer. Long-running. The ``If-Match`` header value must
+        equal ``properties.sourceEtag`` returned on a prior GET; a stale value yields 412
+        SourceResourceModified.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. Required.
+        :type region: str
+        :param transfer_id: Server-generated identifier of the transfer (matches
+         ``properties.transferId``). Required.
+        :type transfer_id: str
+        :param body: The content of the action request. Is either a IncomingQuotaTransferApproveRequest
+         type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.quota.models.IncomingQuotaTransferApproveRequest or
+         ~azure.mgmt.quota.types.IncomingQuotaTransferApproveRequest or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns IncomingQuotaTransfer. The IncomingQuotaTransfer
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.quota.models.IncomingQuotaTransfer]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
+        cls: ClsType[_models.IncomingQuotaTransfer] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._approve_initial(
+                target_provider=target_provider,
+                region=region,
+                transfer_id=transfer_id,
+                body=body,
+                etag=etag,
+                match_condition=match_condition,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.IncomingQuotaTransfer, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.IncomingQuotaTransfer].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.IncomingQuotaTransfer](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    def reject(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_id: str,
+        body: Optional[_models.IncomingQuotaTransferRejectRequest] = None,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.IncomingQuotaTransfer:
+        """Reject a Pending incoming quota transfer. Synchronous. The ``If-Match`` header value must equal
+        ``properties.sourceEtag`` returned on a prior GET.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. Required.
+        :type region: str
+        :param transfer_id: Server-generated identifier of the transfer (matches
+         ``properties.transferId``). Required.
+        :type transfer_id: str
+        :param body: The content of the action request. Default value is None.
+        :type body: ~azure.mgmt.quota.models.IncomingQuotaTransferRejectRequest
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: IncomingQuotaTransfer. The IncomingQuotaTransfer is compatible with MutableMapping
+        :rtype: ~azure.mgmt.quota.models.IncomingQuotaTransfer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def reject(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_id: str,
+        body: Optional[_types.IncomingQuotaTransferRejectRequest] = None,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.IncomingQuotaTransfer:
+        """Reject a Pending incoming quota transfer. Synchronous. The ``If-Match`` header value must equal
+        ``properties.sourceEtag`` returned on a prior GET.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. Required.
+        :type region: str
+        :param transfer_id: Server-generated identifier of the transfer (matches
+         ``properties.transferId``). Required.
+        :type transfer_id: str
+        :param body: The content of the action request. Default value is None.
+        :type body: ~azure.mgmt.quota.types.IncomingQuotaTransferRejectRequest
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: IncomingQuotaTransfer. The IncomingQuotaTransfer is compatible with MutableMapping
+        :rtype: ~azure.mgmt.quota.models.IncomingQuotaTransfer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def reject(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_id: str,
+        body: Optional[IO[bytes]] = None,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.IncomingQuotaTransfer:
+        """Reject a Pending incoming quota transfer. Synchronous. The ``If-Match`` header value must equal
+        ``properties.sourceEtag`` returned on a prior GET.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. Required.
+        :type region: str
+        :param transfer_id: Server-generated identifier of the transfer (matches
+         ``properties.transferId``). Required.
+        :type transfer_id: str
+        :param body: The content of the action request. Default value is None.
+        :type body: IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: IncomingQuotaTransfer. The IncomingQuotaTransfer is compatible with MutableMapping
+        :rtype: ~azure.mgmt.quota.models.IncomingQuotaTransfer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "target_provider",
+                "region",
+                "transfer_id",
+                "repeatability_request_id",
+                "repeatability_first_sent",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview"],
+    )
+    def reject(
+        self,
+        target_provider: str,
+        region: str,
+        transfer_id: str,
+        body: Optional[
+            Union[_models.IncomingQuotaTransferRejectRequest, _types.IncomingQuotaTransferRejectRequest, IO[bytes]]
+        ] = None,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> _models.IncomingQuotaTransfer:
+        """Reject a Pending incoming quota transfer. Synchronous. The ``If-Match`` header value must equal
+        ``properties.sourceEtag`` returned on a prior GET.
+
+        :param target_provider: The ARM provider namespace whose quota is being transferred (for
+         example,
+         ``Microsoft.Compute``). Required.
+        :type target_provider: str
+        :param region: The Azure region the quota transfer applies to. Required.
+        :type region: str
+        :param transfer_id: Server-generated identifier of the transfer (matches
+         ``properties.transferId``). Required.
+        :type transfer_id: str
+        :param body: The content of the action request. Is either a IncomingQuotaTransferRejectRequest
+         type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.quota.models.IncomingQuotaTransferRejectRequest or
+         ~azure.mgmt.quota.types.IncomingQuotaTransferRejectRequest or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: IncomingQuotaTransfer. The IncomingQuotaTransfer is compatible with MutableMapping
+        :rtype: ~azure.mgmt.quota.models.IncomingQuotaTransfer
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
+        cls: ClsType[_models.IncomingQuotaTransfer] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if body else None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
+
+        _request = build_incoming_quota_transfers_reject_request(
+            target_provider=target_provider,
+            region=region,
+            transfer_id=transfer_id,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.IncomingQuotaTransfer, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class GroupQuotasOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1332,6 +3434,7 @@ class GroupQuotasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1346,11 +3449,14 @@ class GroupQuotasOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GroupQuotasEntity, response.json())
 
@@ -1363,7 +3469,9 @@ class GroupQuotasOperations:
         self,
         management_group_id: str,
         group_quota_name: str,
-        group_quota_put_request_body: Optional[Union[_models.GroupQuotasEntity, JSON, IO[bytes]]] = None,
+        group_quota_put_request_body: Optional[
+            Union[_models.GroupQuotasEntity, _types.GroupQuotasEntity, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1405,6 +3513,7 @@ class GroupQuotasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1418,7 +3527,10 @@ class GroupQuotasOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1429,7 +3541,7 @@ class GroupQuotasOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1476,7 +3588,7 @@ class GroupQuotasOperations:
         self,
         management_group_id: str,
         group_quota_name: str,
-        group_quota_put_request_body: Optional[JSON] = None,
+        group_quota_put_request_body: Optional[_types.GroupQuotasEntity] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1496,7 +3608,7 @@ class GroupQuotasOperations:
         :type group_quota_name: str
         :param group_quota_put_request_body: The GroupQuota body details for creation or update of a
          GroupQuota entity. Default value is None.
-        :type group_quota_put_request_body: JSON
+        :type group_quota_put_request_body: ~azure.mgmt.quota.types.GroupQuotasEntity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1546,7 +3658,9 @@ class GroupQuotasOperations:
         self,
         management_group_id: str,
         group_quota_name: str,
-        group_quota_put_request_body: Optional[Union[_models.GroupQuotasEntity, JSON, IO[bytes]]] = None,
+        group_quota_put_request_body: Optional[
+            Union[_models.GroupQuotasEntity, _types.GroupQuotasEntity, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> LROPoller[_models.GroupQuotasEntity]:
         """Creates a new GroupQuota for the name passed. A RequestId will be returned by the Service. The
@@ -1563,10 +3677,10 @@ class GroupQuotasOperations:
          context tenantId/MgId. Required.
         :type group_quota_name: str
         :param group_quota_put_request_body: The GroupQuota body details for creation or update of a
-         GroupQuota entity. Is one of the following types: GroupQuotasEntity, JSON, IO[bytes] Default
-         value is None.
-        :type group_quota_put_request_body: ~azure.mgmt.quota.models.GroupQuotasEntity or JSON or
-         IO[bytes]
+         GroupQuota entity. Is either a GroupQuotasEntity type or a IO[bytes] type. Default value is
+         None.
+        :type group_quota_put_request_body: ~azure.mgmt.quota.models.GroupQuotasEntity or
+         ~azure.mgmt.quota.types.GroupQuotasEntity or IO[bytes]
         :return: An instance of LROPoller that returns GroupQuotasEntity. The GroupQuotasEntity is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.quota.models.GroupQuotasEntity]
@@ -1629,7 +3743,9 @@ class GroupQuotasOperations:
         self,
         management_group_id: str,
         group_quota_name: str,
-        group_quotas_patch_request_body: Optional[Union[_models.GroupQuotasEntityPatch, JSON, IO[bytes]]] = None,
+        group_quotas_patch_request_body: Optional[
+            Union[_models.GroupQuotasEntityPatch, _types.GroupQuotasEntityPatch, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1671,6 +3787,7 @@ class GroupQuotasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1684,7 +3801,10 @@ class GroupQuotasOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1695,7 +3815,7 @@ class GroupQuotasOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1719,9 +3839,9 @@ class GroupQuotasOperations:
         <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/async-api-reference.md#asynchronous-operations>`_.
         Use the OperationsStatus URI provided in Azure-AsyncOperation header, the duration will be
         specified in retry-after header. Once the operation gets to terminal state - Succeeded |
-        Failed, then the URI will change to Get URI and full details can be checked.
-        Any change in the filters will be applicable to the future quota assignments, existing quota
-        allocated to subscriptions from the GroupQuotas remains unchanged.
+        Failed, then the URI will change to Get URI and full details can be checked. Any change in the
+        filters will be applicable to the future quota assignments, existing quota allocated to
+        subscriptions from the GroupQuotas remains unchanged.
 
         :param management_group_id: The management group ID. Required.
         :type management_group_id: str
@@ -1744,7 +3864,7 @@ class GroupQuotasOperations:
         self,
         management_group_id: str,
         group_quota_name: str,
-        group_quotas_patch_request_body: Optional[JSON] = None,
+        group_quotas_patch_request_body: Optional[_types.GroupQuotasEntityPatch] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1756,9 +3876,9 @@ class GroupQuotasOperations:
         <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/async-api-reference.md#asynchronous-operations>`_.
         Use the OperationsStatus URI provided in Azure-AsyncOperation header, the duration will be
         specified in retry-after header. Once the operation gets to terminal state - Succeeded |
-        Failed, then the URI will change to Get URI and full details can be checked.
-        Any change in the filters will be applicable to the future quota assignments, existing quota
-        allocated to subscriptions from the GroupQuotas remains unchanged.
+        Failed, then the URI will change to Get URI and full details can be checked. Any change in the
+        filters will be applicable to the future quota assignments, existing quota allocated to
+        subscriptions from the GroupQuotas remains unchanged.
 
         :param management_group_id: The management group ID. Required.
         :type management_group_id: str
@@ -1766,7 +3886,7 @@ class GroupQuotasOperations:
          context tenantId/MgId. Required.
         :type group_quota_name: str
         :param group_quotas_patch_request_body: The  GroupQuotas Patch Request. Default value is None.
-        :type group_quotas_patch_request_body: JSON
+        :type group_quotas_patch_request_body: ~azure.mgmt.quota.types.GroupQuotasEntityPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1793,9 +3913,9 @@ class GroupQuotasOperations:
         <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/async-api-reference.md#asynchronous-operations>`_.
         Use the OperationsStatus URI provided in Azure-AsyncOperation header, the duration will be
         specified in retry-after header. Once the operation gets to terminal state - Succeeded |
-        Failed, then the URI will change to Get URI and full details can be checked.
-        Any change in the filters will be applicable to the future quota assignments, existing quota
-        allocated to subscriptions from the GroupQuotas remains unchanged.
+        Failed, then the URI will change to Get URI and full details can be checked. Any change in the
+        filters will be applicable to the future quota assignments, existing quota allocated to
+        subscriptions from the GroupQuotas remains unchanged.
 
         :param management_group_id: The management group ID. Required.
         :type management_group_id: str
@@ -1818,7 +3938,9 @@ class GroupQuotasOperations:
         self,
         management_group_id: str,
         group_quota_name: str,
-        group_quotas_patch_request_body: Optional[Union[_models.GroupQuotasEntityPatch, JSON, IO[bytes]]] = None,
+        group_quotas_patch_request_body: Optional[
+            Union[_models.GroupQuotasEntityPatch, _types.GroupQuotasEntityPatch, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> LROPoller[_models.GroupQuotasEntity]:
         """Updates the GroupQuotas for the name passed. A GroupQuotas RequestId will be returned by the
@@ -1828,19 +3950,19 @@ class GroupQuotasOperations:
         <https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/async-api-reference.md#asynchronous-operations>`_.
         Use the OperationsStatus URI provided in Azure-AsyncOperation header, the duration will be
         specified in retry-after header. Once the operation gets to terminal state - Succeeded |
-        Failed, then the URI will change to Get URI and full details can be checked.
-        Any change in the filters will be applicable to the future quota assignments, existing quota
-        allocated to subscriptions from the GroupQuotas remains unchanged.
+        Failed, then the URI will change to Get URI and full details can be checked. Any change in the
+        filters will be applicable to the future quota assignments, existing quota allocated to
+        subscriptions from the GroupQuotas remains unchanged.
 
         :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param group_quota_name: The GroupQuota name. The name should be unique for the provided
          context tenantId/MgId. Required.
         :type group_quota_name: str
-        :param group_quotas_patch_request_body: The  GroupQuotas Patch Request. Is one of the following
-         types: GroupQuotasEntityPatch, JSON, IO[bytes] Default value is None.
-        :type group_quotas_patch_request_body: ~azure.mgmt.quota.models.GroupQuotasEntityPatch or JSON
-         or IO[bytes]
+        :param group_quotas_patch_request_body: The  GroupQuotas Patch Request. Is either a
+         GroupQuotasEntityPatch type or a IO[bytes] type. Default value is None.
+        :type group_quotas_patch_request_body: ~azure.mgmt.quota.models.GroupQuotasEntityPatch or
+         ~azure.mgmt.quota.types.GroupQuotasEntityPatch or IO[bytes]
         :return: An instance of LROPoller that returns GroupQuotasEntity. The GroupQuotasEntity is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.quota.models.GroupQuotasEntity]
@@ -1925,6 +4047,7 @@ class GroupQuotasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1938,7 +4061,10 @@ class GroupQuotasOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1949,7 +4075,7 @@ class GroupQuotasOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2065,7 +4191,10 @@ class GroupQuotasOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2078,7 +4207,10 @@ class GroupQuotasOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.GroupQuotasEntity], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.GroupQuotasEntity],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2094,7 +4226,10 @@ class GroupQuotasOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2102,7 +4237,7 @@ class GroupQuotasOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GroupQuotaLimitsRequestOperations:
+class GroupQuotaLimitsRequestOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2191,7 +4326,10 @@ class GroupQuotaLimitsRequestOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2204,7 +4342,10 @@ class GroupQuotaLimitsRequestOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SubmittedResourceRequestStatus], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SubmittedResourceRequestStatus],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2220,7 +4361,10 @@ class GroupQuotaLimitsRequestOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2233,7 +4377,7 @@ class GroupQuotaLimitsRequestOperations:
         group_quota_name: str,
         resource_provider_name: str,
         location: str,
-        group_quota_request: Optional[Union[_models.GroupQuotaLimitList, JSON, IO[bytes]]] = None,
+        group_quota_request: Optional[Union[_models.GroupQuotaLimitList, _types.GroupQuotaLimitList, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2277,6 +4421,7 @@ class GroupQuotaLimitsRequestOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2290,7 +4435,10 @@ class GroupQuotaLimitsRequestOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2301,7 +4449,7 @@ class GroupQuotaLimitsRequestOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2322,10 +4470,10 @@ class GroupQuotaLimitsRequestOperations:
     ) -> LROPoller[_models.GroupQuotaLimitList]:
         """Create the GroupQuota requests for a specific ResourceProvider/Location/Resource. The
         resourceName properties are specified in the request body. Only 1 resource quota can be
-        requested. Please note that patch request creates a new groupQuota request.
-        Use the polling API - OperationsStatus URI specified in Azure-AsyncOperation header field, with
-        retry-after duration in seconds to check the intermediate status. This API provides the finals
-        status with the request details and status.
+        requested. Please note that patch request creates a new groupQuota request. Use the polling API
+        - OperationsStatus URI specified in Azure-AsyncOperation header field, with retry-after
+        duration in seconds to check the intermediate status. This API provides the finals status with
+        the request details and status.
 
         :param management_group_id: The management group ID. Required.
         :type management_group_id: str
@@ -2356,17 +4504,17 @@ class GroupQuotaLimitsRequestOperations:
         group_quota_name: str,
         resource_provider_name: str,
         location: str,
-        group_quota_request: Optional[JSON] = None,
+        group_quota_request: Optional[_types.GroupQuotaLimitList] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.GroupQuotaLimitList]:
         """Create the GroupQuota requests for a specific ResourceProvider/Location/Resource. The
         resourceName properties are specified in the request body. Only 1 resource quota can be
-        requested. Please note that patch request creates a new groupQuota request.
-        Use the polling API - OperationsStatus URI specified in Azure-AsyncOperation header field, with
-        retry-after duration in seconds to check the intermediate status. This API provides the finals
-        status with the request details and status.
+        requested. Please note that patch request creates a new groupQuota request. Use the polling API
+        - OperationsStatus URI specified in Azure-AsyncOperation header field, with retry-after
+        duration in seconds to check the intermediate status. This API provides the finals status with
+        the request details and status.
 
         :param management_group_id: The management group ID. Required.
         :type management_group_id: str
@@ -2380,7 +4528,7 @@ class GroupQuotaLimitsRequestOperations:
         :type location: str
         :param group_quota_request: The GroupQuotaRequest body details for specific
          resourceProvider/location/resources. Default value is None.
-        :type group_quota_request: JSON
+        :type group_quota_request: ~azure.mgmt.quota.types.GroupQuotaLimitList
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2404,10 +4552,10 @@ class GroupQuotaLimitsRequestOperations:
     ) -> LROPoller[_models.GroupQuotaLimitList]:
         """Create the GroupQuota requests for a specific ResourceProvider/Location/Resource. The
         resourceName properties are specified in the request body. Only 1 resource quota can be
-        requested. Please note that patch request creates a new groupQuota request.
-        Use the polling API - OperationsStatus URI specified in Azure-AsyncOperation header field, with
-        retry-after duration in seconds to check the intermediate status. This API provides the finals
-        status with the request details and status.
+        requested. Please note that patch request creates a new groupQuota request. Use the polling API
+        - OperationsStatus URI specified in Azure-AsyncOperation header field, with retry-after
+        duration in seconds to check the intermediate status. This API provides the finals status with
+        the request details and status.
 
         :param management_group_id: The management group ID. Required.
         :type management_group_id: str
@@ -2438,15 +4586,15 @@ class GroupQuotaLimitsRequestOperations:
         group_quota_name: str,
         resource_provider_name: str,
         location: str,
-        group_quota_request: Optional[Union[_models.GroupQuotaLimitList, JSON, IO[bytes]]] = None,
+        group_quota_request: Optional[Union[_models.GroupQuotaLimitList, _types.GroupQuotaLimitList, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.GroupQuotaLimitList]:
         """Create the GroupQuota requests for a specific ResourceProvider/Location/Resource. The
         resourceName properties are specified in the request body. Only 1 resource quota can be
-        requested. Please note that patch request creates a new groupQuota request.
-        Use the polling API - OperationsStatus URI specified in Azure-AsyncOperation header field, with
-        retry-after duration in seconds to check the intermediate status. This API provides the finals
-        status with the request details and status.
+        requested. Please note that patch request creates a new groupQuota request. Use the polling API
+        - OperationsStatus URI specified in Azure-AsyncOperation header field, with retry-after
+        duration in seconds to check the intermediate status. This API provides the finals status with
+        the request details and status.
 
         :param management_group_id: The management group ID. Required.
         :type management_group_id: str
@@ -2459,9 +4607,10 @@ class GroupQuotaLimitsRequestOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param group_quota_request: The GroupQuotaRequest body details for specific
-         resourceProvider/location/resources. Is one of the following types: GroupQuotaLimitList, JSON,
-         IO[bytes] Default value is None.
-        :type group_quota_request: ~azure.mgmt.quota.models.GroupQuotaLimitList or JSON or IO[bytes]
+         resourceProvider/location/resources. Is either a GroupQuotaLimitList type or a IO[bytes] type.
+         Default value is None.
+        :type group_quota_request: ~azure.mgmt.quota.models.GroupQuotaLimitList or
+         ~azure.mgmt.quota.types.GroupQuotaLimitList or IO[bytes]
         :return: An instance of LROPoller that returns GroupQuotaLimitList. The GroupQuotaLimitList is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.quota.models.GroupQuotaLimitList]
@@ -2566,6 +4715,7 @@ class GroupQuotaLimitsRequestOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2580,11 +4730,14 @@ class GroupQuotaLimitsRequestOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SubmittedResourceRequestStatus, response.json())
 
@@ -2594,7 +4747,7 @@ class GroupQuotaLimitsRequestOperations:
         return deserialized  # type: ignore
 
 
-class GroupQuotaUsagesOperations:
+class GroupQuotaUsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2674,7 +4827,10 @@ class GroupQuotaUsagesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2687,7 +4843,10 @@ class GroupQuotaUsagesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ResourceUsages], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.ResourceUsages],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2703,7 +4862,10 @@ class GroupQuotaUsagesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2711,7 +4873,7 @@ class GroupQuotaUsagesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GroupQuotaSubscriptionsOperations:
+class GroupQuotaSubscriptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2769,6 +4931,7 @@ class GroupQuotaSubscriptionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2783,11 +4946,14 @@ class GroupQuotaSubscriptionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GroupQuotaSubscriptionId, response.json())
 
@@ -2825,6 +4991,7 @@ class GroupQuotaSubscriptionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2838,7 +5005,10 @@ class GroupQuotaSubscriptionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2849,7 +5019,7 @@ class GroupQuotaSubscriptionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2951,6 +5121,7 @@ class GroupQuotaSubscriptionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2964,7 +5135,10 @@ class GroupQuotaSubscriptionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2975,7 +5149,7 @@ class GroupQuotaSubscriptionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3076,6 +5250,7 @@ class GroupQuotaSubscriptionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3089,7 +5264,10 @@ class GroupQuotaSubscriptionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3100,7 +5278,7 @@ class GroupQuotaSubscriptionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3221,7 +5399,10 @@ class GroupQuotaSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3234,7 +5415,10 @@ class GroupQuotaSubscriptionsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.GroupQuotaSubscriptionId], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.GroupQuotaSubscriptionId],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3250,7 +5434,10 @@ class GroupQuotaSubscriptionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3258,7 +5445,7 @@ class GroupQuotaSubscriptionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GroupQuotaSubscriptionRequestsOperations:
+class GroupQuotaSubscriptionRequestsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3322,6 +5509,7 @@ class GroupQuotaSubscriptionRequestsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3336,11 +5524,14 @@ class GroupQuotaSubscriptionRequestsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GroupQuotaSubscriptionRequestStatus, response.json())
 
@@ -3407,7 +5598,10 @@ class GroupQuotaSubscriptionRequestsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3421,7 +5615,8 @@ class GroupQuotaSubscriptionRequestsOperations:
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.GroupQuotaSubscriptionRequestStatus], deserialized.get("value", [])
+                List[_models.GroupQuotaSubscriptionRequestStatus],
+                deserialized.get("value", []),
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -3438,7 +5633,10 @@ class GroupQuotaSubscriptionRequestsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3446,7 +5644,7 @@ class GroupQuotaSubscriptionRequestsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GroupQuotaLimitsOperations:
+class GroupQuotaLimitsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3511,6 +5709,7 @@ class GroupQuotaLimitsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3525,11 +5724,14 @@ class GroupQuotaLimitsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GroupQuotaLimitList, response.json())
 
@@ -3539,7 +5741,7 @@ class GroupQuotaLimitsOperations:
         return deserialized  # type: ignore
 
 
-class GroupQuotaSubscriptionAllocationOperations:  # pylint: disable=name-too-long
+class GroupQuotaSubscriptionAllocationOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3608,6 +5810,7 @@ class GroupQuotaSubscriptionAllocationOperations:  # pylint: disable=name-too-lo
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3622,11 +5825,14 @@ class GroupQuotaSubscriptionAllocationOperations:  # pylint: disable=name-too-lo
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SubscriptionQuotaAllocationsList, response.json())
 
@@ -3636,7 +5842,7 @@ class GroupQuotaSubscriptionAllocationOperations:  # pylint: disable=name-too-lo
         return deserialized  # type: ignore
 
 
-class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=name-too-long
+class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3659,7 +5865,9 @@ class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=name
         group_quota_name: str,
         resource_provider_name: str,
         location: str,
-        allocate_quota_request: Union[_models.SubscriptionQuotaAllocationsList, JSON, IO[bytes]],
+        allocate_quota_request: Union[
+            _models.SubscriptionQuotaAllocationsList, _types.SubscriptionQuotaAllocationsList, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3700,6 +5908,7 @@ class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=name
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3713,7 +5922,10 @@ class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=name
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3724,7 +5936,7 @@ class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=name
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3779,7 +5991,7 @@ class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=name
         group_quota_name: str,
         resource_provider_name: str,
         location: str,
-        allocate_quota_request: JSON,
+        allocate_quota_request: _types.SubscriptionQuotaAllocationsList,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3802,7 +6014,7 @@ class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=name
         :param location: The name of the Azure region. Required.
         :type location: str
         :param allocate_quota_request: Quota requests payload. Required.
-        :type allocate_quota_request: JSON
+        :type allocate_quota_request: ~azure.mgmt.quota.types.SubscriptionQuotaAllocationsList
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3861,7 +6073,9 @@ class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=name
         group_quota_name: str,
         resource_provider_name: str,
         location: str,
-        allocate_quota_request: Union[_models.SubscriptionQuotaAllocationsList, JSON, IO[bytes]],
+        allocate_quota_request: Union[
+            _models.SubscriptionQuotaAllocationsList, _types.SubscriptionQuotaAllocationsList, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.SubscriptionQuotaAllocationsList]:
         """Request to assign quota from group quota to a specific Subscription. The assign GroupQuota to
@@ -3881,10 +6095,10 @@ class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=name
         :type resource_provider_name: str
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param allocate_quota_request: Quota requests payload. Is one of the following types:
-         SubscriptionQuotaAllocationsList, JSON, IO[bytes] Required.
-        :type allocate_quota_request: ~azure.mgmt.quota.models.SubscriptionQuotaAllocationsList or JSON
-         or IO[bytes]
+        :param allocate_quota_request: Quota requests payload. Is either a
+         SubscriptionQuotaAllocationsList type or a IO[bytes] type. Required.
+        :type allocate_quota_request: ~azure.mgmt.quota.models.SubscriptionQuotaAllocationsList or
+         ~azure.mgmt.quota.types.SubscriptionQuotaAllocationsList or IO[bytes]
         :return: An instance of LROPoller that returns SubscriptionQuotaAllocationsList. The
          SubscriptionQuotaAllocationsList is compatible with MutableMapping
         :rtype:
@@ -3999,6 +6213,7 @@ class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=name
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4013,11 +6228,14 @@ class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=name
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.QuotaAllocationRequestStatus, response.json())
 
@@ -4101,7 +6319,10 @@ class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=name
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4114,7 +6335,10 @@ class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=name
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.QuotaAllocationRequestStatus], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.QuotaAllocationRequestStatus],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4130,7 +6354,10 @@ class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=name
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4138,7 +6365,7 @@ class GroupQuotaSubscriptionAllocationRequestOperations:  # pylint: disable=name
         return ItemPaged(get_next, extract_data)
 
 
-class GroupQuotaLocationSettingsOperations:
+class GroupQuotaLocationSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4204,6 +6431,7 @@ class GroupQuotaLocationSettingsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4218,11 +6446,14 @@ class GroupQuotaLocationSettingsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.GroupQuotasEnforcementStatus, response.json())
 
@@ -4237,7 +6468,9 @@ class GroupQuotaLocationSettingsOperations:
         group_quota_name: str,
         resource_provider_name: str,
         location: str,
-        location_settings: Optional[Union[_models.GroupQuotasEnforcementStatus, JSON, IO[bytes]]] = None,
+        location_settings: Optional[
+            Union[_models.GroupQuotasEnforcementStatus, _types.GroupQuotasEnforcementStatus, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4281,6 +6514,7 @@ class GroupQuotaLocationSettingsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4294,7 +6528,10 @@ class GroupQuotaLocationSettingsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4305,7 +6542,7 @@ class GroupQuotaLocationSettingsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4367,7 +6604,7 @@ class GroupQuotaLocationSettingsOperations:
         group_quota_name: str,
         resource_provider_name: str,
         location: str,
-        location_settings: Optional[JSON] = None,
+        location_settings: Optional[_types.GroupQuotasEnforcementStatus] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4398,7 +6635,7 @@ class GroupQuotaLocationSettingsOperations:
         :type location: str
         :param location_settings: The GroupQuota body details for creation or update of a GroupQuota
          entity. Default value is None.
-        :type location_settings: JSON
+        :type location_settings: ~azure.mgmt.quota.types.GroupQuotasEnforcementStatus
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4463,7 +6700,9 @@ class GroupQuotaLocationSettingsOperations:
         group_quota_name: str,
         resource_provider_name: str,
         location: str,
-        location_settings: Optional[Union[_models.GroupQuotasEnforcementStatus, JSON, IO[bytes]]] = None,
+        location_settings: Optional[
+            Union[_models.GroupQuotasEnforcementStatus, _types.GroupQuotasEnforcementStatus, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> LROPoller[_models.GroupQuotasEnforcementStatus]:
         """Enables the GroupQuotas enforcement for the resource provider and the location specified. The
@@ -4491,10 +6730,10 @@ class GroupQuotaLocationSettingsOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param location_settings: The GroupQuota body details for creation or update of a GroupQuota
-         entity. Is one of the following types: GroupQuotasEnforcementStatus, JSON, IO[bytes] Default
-         value is None.
-        :type location_settings: ~azure.mgmt.quota.models.GroupQuotasEnforcementStatus or JSON or
-         IO[bytes]
+         entity. Is either a GroupQuotasEnforcementStatus type or a IO[bytes] type. Default value is
+         None.
+        :type location_settings: ~azure.mgmt.quota.models.GroupQuotasEnforcementStatus or
+         ~azure.mgmt.quota.types.GroupQuotasEnforcementStatus or IO[bytes]
         :return: An instance of LROPoller that returns GroupQuotasEnforcementStatus. The
          GroupQuotasEnforcementStatus is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.quota.models.GroupQuotasEnforcementStatus]
@@ -4561,7 +6800,9 @@ class GroupQuotaLocationSettingsOperations:
         group_quota_name: str,
         resource_provider_name: str,
         location: str,
-        location_settings: Optional[Union[_models.GroupQuotasEnforcementStatus, JSON, IO[bytes]]] = None,
+        location_settings: Optional[
+            Union[_models.GroupQuotasEnforcementStatus, _types.GroupQuotasEnforcementStatus, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4605,6 +6846,7 @@ class GroupQuotaLocationSettingsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4618,7 +6860,10 @@ class GroupQuotaLocationSettingsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4629,7 +6874,7 @@ class GroupQuotaLocationSettingsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4691,7 +6936,7 @@ class GroupQuotaLocationSettingsOperations:
         group_quota_name: str,
         resource_provider_name: str,
         location: str,
-        location_settings: Optional[JSON] = None,
+        location_settings: Optional[_types.GroupQuotasEnforcementStatus] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4722,7 +6967,7 @@ class GroupQuotaLocationSettingsOperations:
         :type location: str
         :param location_settings: The GroupQuota body details for creation or update of a GroupQuota
          entity. Default value is None.
-        :type location_settings: JSON
+        :type location_settings: ~azure.mgmt.quota.types.GroupQuotasEnforcementStatus
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4787,7 +7032,9 @@ class GroupQuotaLocationSettingsOperations:
         group_quota_name: str,
         resource_provider_name: str,
         location: str,
-        location_settings: Optional[Union[_models.GroupQuotasEnforcementStatus, JSON, IO[bytes]]] = None,
+        location_settings: Optional[
+            Union[_models.GroupQuotasEnforcementStatus, _types.GroupQuotasEnforcementStatus, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> LROPoller[_models.GroupQuotasEnforcementStatus]:
         """Enables the GroupQuotas enforcement for the resource provider and the location specified. The
@@ -4815,10 +7062,10 @@ class GroupQuotaLocationSettingsOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param location_settings: The GroupQuota body details for creation or update of a GroupQuota
-         entity. Is one of the following types: GroupQuotasEnforcementStatus, JSON, IO[bytes] Default
-         value is None.
-        :type location_settings: ~azure.mgmt.quota.models.GroupQuotasEnforcementStatus or JSON or
-         IO[bytes]
+         entity. Is either a GroupQuotasEnforcementStatus type or a IO[bytes] type. Default value is
+         None.
+        :type location_settings: ~azure.mgmt.quota.models.GroupQuotasEnforcementStatus or
+         ~azure.mgmt.quota.types.GroupQuotasEnforcementStatus or IO[bytes]
         :return: An instance of LROPoller that returns GroupQuotasEnforcementStatus. The
          GroupQuotasEnforcementStatus is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.quota.models.GroupQuotasEnforcementStatus]
@@ -4880,7 +7127,7 @@ class GroupQuotaLocationSettingsOperations:
         )
 
 
-class UsagesOperations:
+class UsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4938,6 +7185,7 @@ class UsagesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4952,14 +7200,17 @@ class UsagesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ExceptionResponse, response)
+            error = _failsafe_deserialize(
+                _models.ExceptionResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CurrentUsagesBase, response.json())
 
@@ -5018,7 +7269,10 @@ class UsagesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5031,7 +7285,10 @@ class UsagesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CurrentUsagesBase], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CurrentUsagesBase],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5047,7 +7304,10 @@ class UsagesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ExceptionResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ExceptionResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -5055,7 +7315,7 @@ class UsagesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class QuotaOperations:
+class QuotaOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5114,6 +7374,7 @@ class QuotaOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5128,14 +7389,17 @@ class QuotaOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ExceptionResponse, response)
+            error = _failsafe_deserialize(
+                _models.ExceptionResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.CurrentQuotaLimitBase, response.json())
 
@@ -5148,7 +7412,7 @@ class QuotaOperations:
         self,
         resource_name: str,
         scope: str,
-        create_quota_request: Union[_models.CurrentQuotaLimitBase, JSON, IO[bytes]],
+        create_quota_request: Union[_models.CurrentQuotaLimitBase, _types.CurrentQuotaLimitBase, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5186,6 +7450,7 @@ class QuotaOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5199,7 +7464,10 @@ class QuotaOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ExceptionResponse, response)
+            error = _failsafe_deserialize(
+                _models.ExceptionResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5207,7 +7475,7 @@ class QuotaOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5257,7 +7525,7 @@ class QuotaOperations:
         self,
         resource_name: str,
         scope: str,
-        create_quota_request: JSON,
+        create_quota_request: _types.CurrentQuotaLimitBase,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5280,7 +7548,7 @@ class QuotaOperations:
         :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
         :type scope: str
         :param create_quota_request: Quota request payload. Required.
-        :type create_quota_request: JSON
+        :type create_quota_request: ~azure.mgmt.quota.types.CurrentQuotaLimitBase
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5333,7 +7601,7 @@ class QuotaOperations:
         self,
         resource_name: str,
         scope: str,
-        create_quota_request: Union[_models.CurrentQuotaLimitBase, JSON, IO[bytes]],
+        create_quota_request: Union[_models.CurrentQuotaLimitBase, _types.CurrentQuotaLimitBase, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.CurrentQuotaLimitBase]:
         """Create or update the quota limit for the specified resource with the requested value. To update
@@ -5353,9 +7621,10 @@ class QuotaOperations:
         :type resource_name: str
         :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
         :type scope: str
-        :param create_quota_request: Quota request payload. Is one of the following types:
-         CurrentQuotaLimitBase, JSON, IO[bytes] Required.
-        :type create_quota_request: ~azure.mgmt.quota.models.CurrentQuotaLimitBase or JSON or IO[bytes]
+        :param create_quota_request: Quota request payload. Is either a CurrentQuotaLimitBase type or a
+         IO[bytes] type. Required.
+        :type create_quota_request: ~azure.mgmt.quota.models.CurrentQuotaLimitBase or
+         ~azure.mgmt.quota.types.CurrentQuotaLimitBase or IO[bytes]
         :return: An instance of LROPoller that returns CurrentQuotaLimitBase. The CurrentQuotaLimitBase
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.quota.models.CurrentQuotaLimitBase]
@@ -5417,7 +7686,7 @@ class QuotaOperations:
         self,
         resource_name: str,
         scope: str,
-        create_quota_request: Union[_models.CurrentQuotaLimitBase, JSON, IO[bytes]],
+        create_quota_request: Union[_models.CurrentQuotaLimitBase, _types.CurrentQuotaLimitBase, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5455,6 +7724,7 @@ class QuotaOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5468,7 +7738,10 @@ class QuotaOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ExceptionResponse, response)
+            error = _failsafe_deserialize(
+                _models.ExceptionResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5477,7 +7750,7 @@ class QuotaOperations:
                 "str", response.headers.get("Azure-AsyncOperation")
             )
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5526,7 +7799,7 @@ class QuotaOperations:
         self,
         resource_name: str,
         scope: str,
-        create_quota_request: JSON,
+        create_quota_request: _types.CurrentQuotaLimitBase,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5548,7 +7821,7 @@ class QuotaOperations:
         :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
         :type scope: str
         :param create_quota_request: Quota requests payload. Required.
-        :type create_quota_request: JSON
+        :type create_quota_request: ~azure.mgmt.quota.types.CurrentQuotaLimitBase
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5600,7 +7873,7 @@ class QuotaOperations:
         self,
         resource_name: str,
         scope: str,
-        create_quota_request: Union[_models.CurrentQuotaLimitBase, JSON, IO[bytes]],
+        create_quota_request: Union[_models.CurrentQuotaLimitBase, _types.CurrentQuotaLimitBase, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.CurrentQuotaLimitBase]:
         """Update the quota limit for a specific resource to the specified value:
@@ -5619,9 +7892,10 @@ class QuotaOperations:
         :type resource_name: str
         :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
         :type scope: str
-        :param create_quota_request: Quota requests payload. Is one of the following types:
-         CurrentQuotaLimitBase, JSON, IO[bytes] Required.
-        :type create_quota_request: ~azure.mgmt.quota.models.CurrentQuotaLimitBase or JSON or IO[bytes]
+        :param create_quota_request: Quota requests payload. Is either a CurrentQuotaLimitBase type or
+         a IO[bytes] type. Required.
+        :type create_quota_request: ~azure.mgmt.quota.models.CurrentQuotaLimitBase or
+         ~azure.mgmt.quota.types.CurrentQuotaLimitBase or IO[bytes]
         :return: An instance of LROPoller that returns CurrentQuotaLimitBase. The CurrentQuotaLimitBase
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.quota.models.CurrentQuotaLimitBase]
@@ -5730,7 +8004,10 @@ class QuotaOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5743,7 +8020,10 @@ class QuotaOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.CurrentQuotaLimitBase], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.CurrentQuotaLimitBase],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5759,7 +8039,10 @@ class QuotaOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ExceptionResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ExceptionResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
