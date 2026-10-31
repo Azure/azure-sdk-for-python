@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 
 from ._models import (  # type: ignore
     AdvancedFilter,
+    AutoScaleConfiguration,
     AzureADPartnerClientAuthentication,
     AzureADPartnerClientAuthenticationProperties,
     AzureFunctionEventSubscriptionDestination,
@@ -239,6 +240,7 @@ from ._models import (  # type: ignore
     TopicUpdateParameters,
     TopicsConfiguration,
     TrackedResource,
+    UpdateAutoScaleConfiguration,
     UpdateTopicSpacesConfigurationInfo,
     UpdateTopicsConfigurationInfo,
     UserIdentityProperties,
@@ -286,6 +288,7 @@ from ._enums import (  # type: ignore
     InputSchema,
     InputSchemaMappingType,
     IpActionType,
+    IpAddressType,
     KeyEncryptionIdentityType,
     KeyEncryptionKeyStatus,
     MonitorAlertSeverity,
@@ -336,6 +339,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AdvancedFilter",
+    "AutoScaleConfiguration",
     "AzureADPartnerClientAuthentication",
     "AzureADPartnerClientAuthenticationProperties",
     "AzureFunctionEventSubscriptionDestination",
@@ -560,6 +564,7 @@ __all__ = [
     "TopicUpdateParameters",
     "TopicsConfiguration",
     "TrackedResource",
+    "UpdateAutoScaleConfiguration",
     "UpdateTopicSpacesConfigurationInfo",
     "UpdateTopicsConfigurationInfo",
     "UserIdentityProperties",
@@ -604,6 +609,7 @@ __all__ = [
     "InputSchema",
     "InputSchemaMappingType",
     "IpActionType",
+    "IpAddressType",
     "KeyEncryptionIdentityType",
     "KeyEncryptionKeyStatus",
     "MonitorAlertSeverity",
