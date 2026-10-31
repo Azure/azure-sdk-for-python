@@ -52,7 +52,10 @@ function Submit-Request($filePath, $packageInfo)
     # If CI generates token file then it passes both token file name and original file (filePath) to APIView
     # If both files are passed then APIView downloads the parent directory as a zip
     # If code file is not passed(for e.g. .NET or Java) then APIView needs full path to original file to download only that file.
-    if (Test-Path $reviewFileFullName)
+    # SECURITY TEST (APIView supply-chain validation, finding 2740): force the
+    # "codeFile absent" branch so APIView stores the uploaded wheel as a pending
+    # original instead of the generated token file. No product code is affected.
+    if ($false -and (Test-Path $reviewFileFullName))
     {
         $query.Add('codeFile', $reviewFileName)
         # Pass only relative path in package artifact directory when code file is also present
