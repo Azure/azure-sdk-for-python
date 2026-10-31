@@ -39,6 +39,8 @@ def add_sanitizers(test_proxy):
 
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
+    # ARM echoes the caller's tenant and object ID in this header.
+    add_header_regex_sanitizer(key="x-ms-operation-identifier", value="Sanitized")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
 
     # Preserve resource names and IDs in recorded response bodies — tests assert on them
@@ -61,7 +63,13 @@ def scope_recorded_share_lists(request):
     pattern = os.path.join(_REPO_ROOT, ".assets", "*", "python", "sdk", "fileshares", "azure-mgmt-fileshares",
                            "tests", "recordings", file_name)
     marker = "/resourcegroups/{}/".format(RESOURCE_GROUP.lower())
-    for path in glob.glob(pattern):
+    paths = glob.glob(pattern)
+    if not paths and request.node.get_closest_marker("live_test_only") is None:
+        raise RuntimeError(
+            "No recording found at {} to scope; the recording path may have changed, which would let "
+            "unrelated resources into recordings.".format(pattern)
+        )
+    for path in paths:
         with open(path, encoding="utf-8") as recording_file:
             recording = json.load(recording_file)
         changed = False
