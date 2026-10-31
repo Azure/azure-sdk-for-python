@@ -170,6 +170,70 @@ async def test_t21_status_as_is_in_snapshot():
 
 
 @pytest.mark.asyncio
+async def test_checkpoint_stamps_identity_for_an_unseeded_stream():
+    p = _RecordingProvider()
+    ev = _event(cp=1)
+
+    await _do_checkpoint_persist(
+        ev,
+        provider=p,
+        runtime_options=_opts(True),
+        store=True,
+        background=True,
+        context=None,
+        response_id="r1",
+        last_snapshot=None,
+        terminal_seen=False,
+        agent_reference={"type": "agent_reference", "name": "payments", "version": "22"},
+        model="gpt-4.1",
+        agent_session_id="session_456",
+        conversation_id="conversation_789",
+    )
+
+    assert p.updates == [
+        {
+            "id": "r1",
+            "response_id": "r1",
+            "object": "response",
+            "status": "in_progress",
+            "output": [],
+            "model": "m",
+            "agent_reference": {"type": "agent_reference", "name": "payments", "version": "22"},
+            "agent_session_id": "session_456",
+            "conversation": {"id": "conversation_789"},
+            "background": True,
+            "metadata": {"_internal_metadata": '{"cp":1}'},
+        }
+    ]
+
+
+@pytest.mark.asyncio
+async def test_checkpoint_preparation_failure_is_swallowed():
+    p = _RecordingProvider()
+    ev = _event()
+    generator = (value for value in [1])
+    ev.response["extension"] = {"generator": generator}
+
+    try:
+        snap = await _do_checkpoint_persist(
+            ev,
+            provider=p,
+            runtime_options=_opts(True),
+            store=True,
+            background=True,
+            context=None,
+            response_id="r1",
+            last_snapshot=b"previous",
+            terminal_seen=False,
+        )
+    finally:
+        generator.close()
+
+    assert snap == b"previous"
+    assert p.updates == []
+
+
+@pytest.mark.asyncio
 async def test_t22_failure_swallowed_and_tagged():
     from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG  # noqa: E501
 
