@@ -72,9 +72,17 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         finally:
             await self.test_db.delete_container(created_container.id)
 
+    @pytest.mark.cosmosAADQuery
     async def test_create_valid_vector_embedding_policy_async(self):
         # Using valid data types
         data_types = ["float32", "float16", "int8", "uint8"]
+        # Flat indexes provide exact ranking without approximate-index training or build waits.
+        indexing_policy = {
+            "indexingMode": "consistent",
+            "includedPaths": [{"path": "/*"}],
+            "excludedPaths": [{"path": "/vector1/*"}],
+            "vectorIndexes": [{"path": "/vector1", "type": "flat"}],
+        }
         for data_type in data_types:
             vector_embedding_policy = {
                 "vectorEmbeddings": [
@@ -85,46 +93,32 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                         "distanceFunction": "euclidean"
                     }]}
             container_id = 'vector_container_' + data_type
-            created_container = await self.test_db.create_container(
+            created_container, created_properties = await self.test_db.create_container(
                 id=container_id,
                 partition_key=PartitionKey(path="/id"),
-                vector_embedding_policy=vector_embedding_policy)
+                vector_embedding_policy=vector_embedding_policy,
+                indexing_policy=indexing_policy,
+                return_properties=True)
             try:
-                properties = await created_container.read()
-                assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
+                for properties in (created_properties, await created_container.read()):
+                    assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
+                    assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
+
+                data_container = self.data_client.get_database_client(self.test_db.id).get_container_client(container_id)
+                items, queries = get_vector_data_type_test_data(data_type)
+                for item in items:
+                    await data_container.create_item(item)
+
+                for query, parameters, expected_ids, expected_distances in queries:
+                    with self.subTest(data_type=data_type, query=query):
+                        results = [item async for item in data_container.query_items(
+                            query=query,
+                            parameters=parameters,
+                        )]
+                        assert [item["id"] for item in results] == expected_ids
+                        assert [item["distance"] for item in results] == pytest.approx(expected_distances)
             finally:
                 await self.test_db.delete_container(container_id)
-
-    @pytest.mark.cosmosAADQuery
-    async def test_vector_embedding_data_types_end_to_end_async(self):
-        vector_embedding_policy, indexing_policy, items, queries = get_vector_data_type_test_data()
-        container_id = "vector_data_types_" + str(uuid.uuid4())
-        created_container, created_properties = await self.test_db.create_container(
-            id=container_id,
-            partition_key=PartitionKey(path="/id"),
-            vector_embedding_policy=vector_embedding_policy,
-            indexing_policy=indexing_policy,
-            return_properties=True,
-        )
-        try:
-            for properties in (created_properties, await created_container.read()):
-                assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
-                assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
-
-            data_container = self.data_client.get_database_client(self.test_db.id).get_container_client(container_id)
-            for item in items:
-                await data_container.create_item(item)
-
-            for data_type, query, parameters, expected_ids, expected_distances in queries:
-                with self.subTest(data_type=data_type, query=query):
-                    results = [item async for item in data_container.query_items(
-                        query=query,
-                        parameters=parameters,
-                    )]
-                    assert [item["id"] for item in results] == expected_ids
-                    assert [item["distance"] for item in results] == pytest.approx(expected_distances)
-        finally:
-            await self.test_db.delete_container(container_id)
 
     async def test_create_vector_embedding_container_async(self):
         indexing_policy = {
