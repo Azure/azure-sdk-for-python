@@ -84,6 +84,57 @@ VectorPolicyTestData = {
     },
 }
 
+
+def get_vector_data_type_test_data():
+    cases = [
+        ("float16", [-1.5, 0.5, 2.0], ["item2", "item0", "item3", "item1"]),
+        ("float32", [-2.25, 1.25, 3.0], ["item1", "item3", "item0", "item2"]),
+        ("int8", [-8, 4, 12], ["item3", "item2", "item1", "item0"]),
+        ("uint8", [128, 192, 240], ["item0", "item1", "item2", "item3"]),
+    ]
+    vector_embedding_policy = {"vectorEmbeddings": []}
+    indexing_policy = {
+        "indexingMode": "consistent",
+        "includedPaths": [{"path": "/*"}],
+        "excludedPaths": [{"path": '/"_etag"/?'}],
+        "vectorIndexes": [],
+    }
+    items = {f"item{i}": {"id": f"item{i}"} for i in range(4)}
+    queries = []
+    for data_type, vector, ordered_ids in cases:
+        field = f"vector_{data_type}"
+        embedding = test_config.get_vector_embedding_policy(
+            distance_function="euclidean", data_type=data_type, dimensions=len(vector)
+        )["vectorEmbeddings"][0]
+        embedding["path"] = f"/{field}"
+        vector_embedding_policy["vectorEmbeddings"].append(embedding)
+        # Flat indexes provide exact ranking without approximate-index training or build waits.
+        indexing_policy["vectorIndexes"].append({"path": f"/{field}", "type": "flat"})
+        indexing_policy["excludedPaths"].append({"path": f"/{field}/*"})
+        for distance, item_id in enumerate(ordered_ids):
+            items[item_id][field] = [vector[0] + distance, *vector[1:]]
+
+        distance_expression = f"VectorDistance(c.{field}, @vector)"
+        parameters = [{"name": "@vector", "value": vector}]
+        queries.append((
+            data_type,
+            f"SELECT TOP 3 c.id, {distance_expression} AS distance "
+            f"FROM c ORDER BY {distance_expression}",
+            parameters,
+            ordered_ids[:3],
+            [0, 1, 2],
+        ))
+        queries.append((
+            data_type,
+            f"SELECT TOP 2 c.id, {distance_expression} AS distance "
+            f"FROM c WHERE c.id != @excludedId ORDER BY {distance_expression}",
+            parameters + [{"name": "@excludedId", "value": ordered_ids[0]}],
+            ordered_ids[1:3],
+            [1, 2],
+        ))
+    return vector_embedding_policy, indexing_policy, list(items.values()), queries
+
+
 @pytest.mark.cosmosSearchQuery
 class TestVectorPolicy(unittest.TestCase):
     client: CosmosClient = None
@@ -104,11 +155,7 @@ class TestVectorPolicy(unittest.TestCase):
 
         cls.client = CosmosClient(cls.host, cls.masterKey)
         cls.key_client = cls.client  # alias  -  control-plane operations stay on key-auth (Batch 17 prep)
-        # AAD data client added for parity with the key/data client setup. Not exercised
-        # here because every runnable test in this file is control-plane (vector indexing/
-        # embedding policy validation via create_container / replace_container / read).
-        # When per-test data-plane operations are added (e.g., vector similarity queries
-        # against a populated container), route those through cls.data_client.
+        # Item operations use the configured key/AAD data-plane client.
         cls.data_client = test_config.TestConfig.create_data_client()
         cls.created_database = cls.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
         cls.test_db = cls.client.create_database(test_config.unique_database_id("vector-policy"))
@@ -139,6 +186,38 @@ class TestVectorPolicy(unittest.TestCase):
                 assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
             finally:
                 self.test_db.delete_container(container_id)
+
+    @pytest.mark.cosmosAADQuery
+    def test_vector_embedding_data_types_end_to_end(self):
+        vector_embedding_policy, indexing_policy, items, queries = get_vector_data_type_test_data()
+        container_id = "vector_data_types_" + str(uuid.uuid4())
+        created_container, created_properties = self.test_db.create_container(
+            id=container_id,
+            partition_key=PartitionKey(path="/id"),
+            vector_embedding_policy=vector_embedding_policy,
+            indexing_policy=indexing_policy,
+            return_properties=True,
+        )
+        try:
+            for properties in (created_properties, created_container.read()):
+                assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
+                assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
+
+            data_container = self.data_client.get_database_client(self.test_db.id).get_container_client(container_id)
+            for item in items:
+                data_container.create_item(item)
+
+            for data_type, query, parameters, expected_ids, expected_distances in queries:
+                with self.subTest(data_type=data_type, query=query):
+                    results = list(data_container.query_items(
+                        query=query,
+                        parameters=parameters,
+                        enable_cross_partition_query=True,
+                    ))
+                    assert [item["id"] for item in results] == expected_ids
+                    assert [item["distance"] for item in results] == pytest.approx(expected_distances)
+        finally:
+            self.test_db.delete_container(container_id)
 
     @unittest.skip
     def test_create_valid_vector_indexing_policy(self):

@@ -13,7 +13,7 @@ import test_config
 from azure.cosmos import CosmosClient as CosmosSyncClient
 from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient
-from test_vector_policy import EGS_SKIP_REASON, VectorPolicyTestData
+from test_vector_policy import EGS_SKIP_REASON, VectorPolicyTestData, get_vector_data_type_test_data
 
 @pytest.mark.cosmosSearchQuery
 class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
@@ -48,9 +48,7 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
         # authorize control-plane operations.
         self.client = CosmosClient(self.host, self.masterKey)
         self.test_db = self.client.get_database_client(self.test_db.id)
-        # Data-plane (AAD): added for parity with the key/data client setup. Not
-        # exercised here because every runnable test is control-plane (vector policy
-        # validation). Route per-test data-plane ops through self.data_client when added.
+        # Item operations use the configured key/AAD data-plane client.
         self.data_client = test_config.TestConfig.create_data_client_async()
 
     async def asyncTearDown(self):
@@ -96,6 +94,37 @@ class TestVectorPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
             finally:
                 await self.test_db.delete_container(container_id)
+
+    @pytest.mark.cosmosAADQuery
+    async def test_vector_embedding_data_types_end_to_end_async(self):
+        vector_embedding_policy, indexing_policy, items, queries = get_vector_data_type_test_data()
+        container_id = "vector_data_types_" + str(uuid.uuid4())
+        created_container, created_properties = await self.test_db.create_container(
+            id=container_id,
+            partition_key=PartitionKey(path="/id"),
+            vector_embedding_policy=vector_embedding_policy,
+            indexing_policy=indexing_policy,
+            return_properties=True,
+        )
+        try:
+            for properties in (created_properties, await created_container.read()):
+                assert properties["vectorEmbeddingPolicy"] == vector_embedding_policy
+                assert properties["indexingPolicy"]["vectorIndexes"] == indexing_policy["vectorIndexes"]
+
+            data_container = self.data_client.get_database_client(self.test_db.id).get_container_client(container_id)
+            for item in items:
+                await data_container.create_item(item)
+
+            for data_type, query, parameters, expected_ids, expected_distances in queries:
+                with self.subTest(data_type=data_type, query=query):
+                    results = [item async for item in data_container.query_items(
+                        query=query,
+                        parameters=parameters,
+                    )]
+                    assert [item["id"] for item in results] == expected_ids
+                    assert [item["distance"] for item in results] == pytest.approx(expected_distances)
+        finally:
+            await self.test_db.delete_container(container_id)
 
     async def test_create_vector_embedding_container_async(self):
         indexing_policy = {
