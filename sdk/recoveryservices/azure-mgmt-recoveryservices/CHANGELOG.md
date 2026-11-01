@@ -2,7 +2,9 @@
 
 ## 4.3.0 (2026-10-30)
 
-tool can't generate changelog for this release, please update manually.
+### Other Changes
+
+  - Upgraded the service API version to 2026-11-01.
 
 ## 4.2.0 (2026-08-13)
 
