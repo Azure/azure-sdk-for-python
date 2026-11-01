@@ -118,5 +118,5 @@
         "azure.mgmt.fileshares.operations.PrivateLinkResourcesOperations.list": "Microsoft.FileShares.PrivateLinkResources.list",
         "azure.mgmt.fileshares.aio.operations.PrivateLinkResourcesOperations.list": "Microsoft.FileShares.PrivateLinkResources.list"
     },
-    "CrossLanguageVersion": "a11dd312c1cb"
+    "CrossLanguageVersion": "ab4a0e128e61"
 }

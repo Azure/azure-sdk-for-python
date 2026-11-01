@@ -49,6 +49,7 @@ def add_sanitizers(test_proxy):
     #   - AZSDK3430: $..id body key sanitizer
     remove_batch_sanitizers(["AZSDK3493", "AZSDK3430"])
 
+
 # Listing file shares by subscription returns every share in the shared test subscription. Keep only
 # this suite's resource group in recorded list responses, so recordings don't capture unrelated
 # resources' names, IDs and host names. Runs only while recording, on the test's own recording file.
@@ -60,8 +61,18 @@ def scope_recorded_share_lists(request):
     file_name = "{}{}{}.json".format(
         os.path.basename(str(request.node.fspath)), request.node.cls.__name__, request.node.name
     )
-    pattern = os.path.join(_REPO_ROOT, ".assets", "*", "python", "sdk", "fileshares", "azure-mgmt-fileshares",
-                           "tests", "recordings", file_name)
+    pattern = os.path.join(
+        _REPO_ROOT,
+        ".assets",
+        "*",
+        "python",
+        "sdk",
+        "fileshares",
+        "azure-mgmt-fileshares",
+        "tests",
+        "recordings",
+        file_name,
+    )
     marker = "/resourcegroups/{}/".format(RESOURCE_GROUP.lower())
     paths = glob.glob(pattern)
     if not paths and request.node.get_closest_marker("live_test_only") is None:
@@ -76,9 +87,11 @@ def scope_recorded_share_lists(request):
         for entry in recording.get("Entries", []):
             body = entry.get("ResponseBody")
             items = body.get("value") if isinstance(body, dict) else None
-            if entry.get("RequestMethod") != "GET" or "/providers/Microsoft.FileShares/fileShares?" not in entry.get(
-                "RequestUri", ""
-            ) or not isinstance(items, list):
+            if (
+                entry.get("RequestMethod") != "GET"
+                or "/providers/Microsoft.FileShares/fileShares?" not in entry.get("RequestUri", "")
+                or not isinstance(items, list)
+            ):
                 continue
             kept = [item for item in items if marker in str(item.get("id", "")).lower()]
             if len(kept) != len(items):
