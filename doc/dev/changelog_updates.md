@@ -86,11 +86,27 @@ If your changes don't need a changelog entry (e.g., pure documentation or test-o
 
 ## Viewing the Current Status
 
-To see a summary of all pending changes and the resulting version bumps, run from the repository root or from within a package directory:
+To see a summary of all pending changes and the resulting version bumps, run from the repository root:
 
 ```bash
+# Repository-wide status for every package
 azpysdk changelog status
 ```
+
+To limit the output to one package, pass its path explicitly:
+
+```bash
+azpysdk changelog status sdk/storage/azure-storage-blob
+```
+
+When `status` is run from within a package directory without an explicit package argument, `azpysdk` detects that package and shows its status only:
+
+```bash
+cd sdk/storage/azure-storage-blob
+azpysdk changelog status
+```
+
+To return to the repository-wide view after working in a package directory, run `azpysdk changelog status` from the repository root.
 
 ## Generating `CHANGELOG.md`
 
