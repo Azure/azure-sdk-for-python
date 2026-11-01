@@ -94,9 +94,16 @@ azpysdk changelog status
 
 ## Generating `CHANGELOG.md`
 
-To aggregate pending change entries into a package's `CHANGELOG.md`, run from within the package directory (or pass the package path explicitly):
+To aggregate pending change entries into a package's `CHANGELOG.md`, pass the package path explicitly. You can run this from the repository root or from within the package directory:
 
 ```bash
+azpysdk changelog create sdk/storage/azure-storage-blob
+```
+
+When run from within a package directory, the package argument may be omitted:
+
+```bash
+cd sdk/storage/azure-storage-blob
 azpysdk changelog create
 ```
 
