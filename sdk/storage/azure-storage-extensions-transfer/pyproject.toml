@@ -61,6 +61,8 @@ test-command = 'python -I "{project}/tests/test_wheel.py"'
 
 [tool.cibuildwheel.linux]
 archs = "x86_64 aarch64"
+environment = { MSRUSTUP_HOME = "/msrustup", CARGO_HOME = "/cargo", PATH = "/msrustup/multiplexers/bin:$PATH" }
+before-all = "dnf install -y jq && mkdir -p $MSRUSTUP_HOME/bootstrap && cd $MSRUSTUP_HOME/bootstrap && sh /project/scripts/install-msrustup.sh && cd /project && $MSRUSTUP_HOME/bootstrap/msrustup toolchain install && sh /project/scripts/configure-cargo-feed.sh"
 
 [tool.cibuildwheel.macos]
 archs = "arm64"
