@@ -116,6 +116,11 @@ $storageResources = @($standardResources | Where-Object { $_.Type -ieq 'Microsof
 if ($storageResources.Count -ne 1 -or $storageResources[0].Definition['sku']['name'] -cne 'Standard_ZRS') {
     throw 'The deployed StorageV2 SKU must match the Standard_ZRS regional preflight contract.'
 }
+$uniqueSuffix = [string] $standard['variables']['uniqueSuffix']
+if ($uniqueSuffix -cnotmatch '^\[uniqueString\(' -or $uniqueSuffix -match 'substring\(' -or
+    $uniqueSuffix -notmatch 'resourceGroup\(\)\.id' -or $uniqueSuffix -notmatch 'deploymentTimestamp') {
+    throw 'Globally unique resource names must retain the full run hash seeded by resource group and deployment timestamp.'
+}
 
 foreach ($binding in @(
     @{ Type = 'Microsoft.CognitiveServices/accounts'; Parameter = 'sharedAccountIdentityResourceId' },
