@@ -107,6 +107,9 @@ include = [
     { path = "azure_cosmos_build_metadata.py", format = "sdist" },
     { path = "api.metadata.yml", format = "sdist" },
     { path = "CHANGELOG.md", format = "sdist" },
+    { path = "doc/**/*.rst", format = "sdist" },
+    { path = "samples/**/*.py", format = "sdist" },
+    { path = "samples/**/*.md", format = "sdist" },
     { path = "rust-toolchain.toml", format = "sdist" },
     { path = "scripts/*.sh", format = "sdist" },
 ]
