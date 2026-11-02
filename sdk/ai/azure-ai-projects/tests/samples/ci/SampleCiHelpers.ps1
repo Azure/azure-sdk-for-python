@@ -427,11 +427,18 @@ function Publish-SampleFunctionApp {
         $null = Invoke-SampleAzure -Arguments @('functionapp', 'deployment', 'source', 'config-zip',
             '--name', $FunctionAppName, '--resource-group', $Plan.resourceGroup, '--subscription', $Plan.subscriptionId,
             '--src', $zipPath, '--build-remote', 'true', '--timeout', '1200') -Sensitive
-        $functions = @(Invoke-SampleAzure -Arguments @('functionapp', 'function', 'list', '--name', $FunctionAppName,
-            '--resource-group', $Plan.resourceGroup, '--subscription', $Plan.subscriptionId, '--query', '[].name') -Sensitive)
-        if (@($functions | Where-Object { ($_ -split '/')[-1] -ceq 'queue_trigger' }).Count -ne 1) {
-            throw 'The published Function App did not index queue_trigger; sample execution is disabled.'
+        for ($attempt = 1; $attempt -le 30; $attempt++) {
+            $functions = @(Invoke-SampleAzure -Arguments @('functionapp', 'function', 'list', '--name', $FunctionAppName,
+                '--resource-group', $Plan.resourceGroup, '--subscription', $Plan.subscriptionId, '--query', '[].name') -Sensitive)
+            if (@($functions | Where-Object { ($_ -split '/')[-1] -ceq 'queue_trigger' }).Count -eq 1) {
+                return
+            }
+            if ($attempt -lt 30) {
+                Write-Host ('Waiting for queue_trigger indexing after publication (check {0}/30).' -f $attempt)
+                Start-Sleep -Seconds 10
+            }
         }
+        throw 'The published Function App did not index queue_trigger after 30 checks; sample execution is disabled.'
     } finally {
         if (Test-Path -LiteralPath $zipPath) { Remove-Item -LiteralPath $zipPath -Force }
     }

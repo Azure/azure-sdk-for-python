@@ -110,7 +110,7 @@ The Function template creates a Linux **EP1** plan, a Python **3.11** Function A
 
 Before a Function selection can provision resources, admission requires preconfigured subscription-scoped Storage Blob Data Owner and Storage Queue Data Contributor grants for the Function identity, and Storage Queue Data Contributor for the project identity. Worker jobs never create these grants. The shared-identity bootstrap includes them for new sets; existing sets require a separately approved grant update.
 
-The pipeline publishes only the three handler package files and verifies that `queue_trigger` was indexed before starting the sample. The five non-secret Function outputs become sample inputs: `FUNCTION_APP_NAME`, `FUNCTION_APP_URL`, `STORAGE_INPUT_QUEUE_NAME`, `STORAGE_OUTPUT_QUEUE_NAME`, and `STORAGE_QUEUE_SERVICE_ENDPOINT`. These are sample environment variables, not provisioning configuration. No `FUNCTION_APP_KEY` is retrieved or output.
+The pipeline publishes only the three handler package files and checks for `queue_trigger` indexing up to 30 times, ten seconds apart, before starting the sample. This allows for host startup after publication; missing indexing or an Azure query error still fails provisioning. The five non-secret Function outputs become sample inputs: `FUNCTION_APP_NAME`, `FUNCTION_APP_URL`, `STORAGE_INPUT_QUEUE_NAME`, `STORAGE_OUTPUT_QUEUE_NAME`, and `STORAGE_QUEUE_SERVICE_ENDPOINT`. These are sample environment variables, not provisioning configuration. No `FUNCTION_APP_KEY` is retrieved or output.
 
 ## Safety and results
 

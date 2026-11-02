@@ -101,6 +101,10 @@ Describe 'Function code publication' {
         $script:publishedEntries = @()
         $script:publishFailure = $false
         $script:indexedFunctions = @('example-function/queue_trigger')
+        $script:indexingDelay = 0
+        $script:indexingQueries = 0
+        $script:indexingFailure = $false
+        Mock Start-Sleep {}
         Mock Invoke-SampleAzure {
             param($Arguments, $Sensitive)
             $Sensitive | Should Be $true
@@ -117,7 +121,12 @@ Describe 'Function code publication' {
                 if ($script:publishFailure) { throw 'Isolated code publication failure' }
                 return @{}
             }
-            if ($Arguments[1] -eq 'function') { return $script:indexedFunctions }
+            if ($Arguments[1] -eq 'function') {
+                $script:indexingQueries++
+                if ($script:indexingFailure) { throw 'Isolated indexing query failure' }
+                if ($script:indexingQueries -le $script:indexingDelay) { return @() }
+                return $script:indexedFunctions
+            }
             throw 'Unexpected Azure operation in isolated publication test.'
         }
     }
@@ -128,6 +137,16 @@ Describe 'Function code publication' {
         ($script:publishedEntries | Sort-Object) -join ',' | Should Be 'function_app.py,host.json,requirements.txt'
         Test-Path -LiteralPath $script:publishedZip | Should Be $false
         Assert-MockCalled Invoke-SampleAzure -Times 2 -Exactly -Scope It
+        Assert-MockCalled Start-Sleep -Times 0 -Exactly -Scope It
+    }
+
+    It 'waits for delayed indexing without republishing the code' {
+        $script:indexingDelay = 2
+        Publish-SampleFunctionApp -Plan $script:publishPlan -FunctionAppName 'example-function'
+        $script:indexingQueries | Should Be 3
+        Assert-MockCalled Invoke-SampleAzure -Times 1 -Exactly -Scope It -ParameterFilter { $Arguments[1] -eq 'deployment' }
+        Assert-MockCalled Start-Sleep -Times 2 -Exactly -Scope It -ParameterFilter { $Seconds -eq 10 }
+        Test-Path -LiteralPath $script:publishedZip | Should Be $false
     }
 
     It 'cleans up the package when code publishing fails and never queries function indexing' {
@@ -140,6 +159,16 @@ Describe 'Function code publication' {
     It 'fails before sample execution if queue_trigger was not indexed' {
         $script:indexedFunctions = @()
         { Publish-SampleFunctionApp -Plan $script:publishPlan -FunctionAppName 'example-function' } | Should Throw 'did not index queue_trigger'
+        $script:indexingQueries | Should Be 30
+        Assert-MockCalled Start-Sleep -Times 29 -Exactly -Scope It -ParameterFilter { $Seconds -eq 10 }
+        Test-Path -LiteralPath $script:publishedZip | Should Be $false
+    }
+
+    It 'propagates indexing query errors without retrying or leaking the package' {
+        $script:indexingFailure = $true
+        { Publish-SampleFunctionApp -Plan $script:publishPlan -FunctionAppName 'example-function' } | Should Throw 'Isolated indexing query failure'
+        $script:indexingQueries | Should Be 1
+        Assert-MockCalled Start-Sleep -Times 0 -Exactly -Scope It
         Test-Path -LiteralPath $script:publishedZip | Should Be $false
     }
 
