@@ -267,6 +267,8 @@
         "azure.ai.projects.models.Output": "Azure.AI.Projects.Output",
         "azure.ai.projects.models.PendingUploadRequest": "Azure.AI.Projects.PendingUploadRequest",
         "azure.ai.projects.models.PendingUploadResponse": "Azure.AI.Projects.PendingUploadResponse",
+        "azure.ai.projects.models.PipelineJob": "Azure.AI.Projects.PipelineJob",
+        "azure.ai.projects.models.PipelineJobResource": "Azure.AI.Projects.PipelineJobResource",
         "azure.ai.projects.models.ProceduralMemoryItem": "Azure.AI.Projects.ProceduralMemoryItem",
         "azure.ai.projects.models.PromoteCandidateRequest": "Azure.AI.Projects.PromoteCandidateRequest",
         "azure.ai.projects.models.PromoteCandidateResponse": "Azure.AI.Projects.PromoteCandidateResponse",
@@ -501,7 +503,13 @@
         "azure.ai.projects.operations.IndexesOperations.delete": "Azure.AI.Projects.Indexes.deleteVersion",
         "azure.ai.projects.aio.operations.IndexesOperations.delete": "Azure.AI.Projects.Indexes.deleteVersion",
         "azure.ai.projects.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion",
-        "azure.ai.projects.aio.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion"
+        "azure.ai.projects.aio.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion",
+        "azure.ai.projects.operations.PipelineJobsOperations.list": "Azure.AI.Projects.PipelineJobs.list",
+        "azure.ai.projects.aio.operations.PipelineJobsOperations.list": "Azure.AI.Projects.PipelineJobs.list",
+        "azure.ai.projects.operations.PipelineJobsOperations.get": "Azure.AI.Projects.PipelineJobs.get",
+        "azure.ai.projects.aio.operations.PipelineJobsOperations.get": "Azure.AI.Projects.PipelineJobs.get",
+        "azure.ai.projects.operations.PipelineJobsOperations.create_or_update": "Azure.AI.Projects.PipelineJobs.createOrUpdate",
+        "azure.ai.projects.aio.operations.PipelineJobsOperations.create_or_update": "Azure.AI.Projects.PipelineJobs.createOrUpdate"
     },
-    "CrossLanguageVersion": "454439a0b62a"
+    "CrossLanguageVersion": "fa3ed1607aa3"
 }

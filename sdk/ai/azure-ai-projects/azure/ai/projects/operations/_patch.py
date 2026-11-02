@@ -18,6 +18,7 @@ from ._patch_evaluation_rules import EvaluationRulesOperations
 from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_jobs import JobsOperations as BetaJobsOperations
+from ._patch_pipeline_jobs import PipelineJobsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
 from ._patch_sessions import BetaAgentsOperations
@@ -135,7 +136,7 @@ class BetaOperations(GeneratedBetaOperations):
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes create (3-step upload helper)
         self.models = BetaModelsOperations(self._client, self._config, self._serialize, self._deserialize)
-        # Replace with patched class that exposes flat CommandJob UX
+        # Replace with patched class that exposes flat CommandJob and PipelineJob UX
         self.jobs = BetaJobsOperations(self._client, self._config, self._serialize, self._deserialize)
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
@@ -165,6 +166,7 @@ __all__: List[str] = [
     "ConnectionsOperations",
     "DatasetsOperations",
     "EvaluationRulesOperations",
+    "PipelineJobsOperations",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
