@@ -5,10 +5,14 @@
 ### Features Added
 
 ### Bugs Fixed
+- Fixed an issue where a SAS generated for a file path containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
+
+## 12.27.1 (2026-10-29)
+
+### Bugs Fixed
 - Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_share_sas`,
   `generate_file_sas`, and `ShareServiceClient.get_user_delegation_key` (sync and async).
   Datetimes without timezone information continue to be treated as UTC.
-- Fixed an issue where a SAS generated for a file path containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
 - Fixed an issue where certain headers were not being properly redacted when DEBUG logging was enabled.
 
 ## 12.27.0 (2026-09-30)

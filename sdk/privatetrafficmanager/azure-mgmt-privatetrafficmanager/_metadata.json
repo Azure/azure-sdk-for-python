@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-10-01-preview",
+  "apiVersions": {
+    "Microsoft.Network": "2026-10-01-preview"
+  },
+  "commit": "a8f26800276b87560fea89b326294a60d5cb19e8",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/privatetrafficmanager/resource-manager/Microsoft.Network/PrivateTrafficManager",
+  "emitterVersion": "0.63.9",
+  "httpClientPythonVersion": "0.38.1"
+}

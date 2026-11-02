@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -46,7 +47,17 @@ def main():
                             "typeName": "DeliveryRuleHeaderActionParameters",
                             "value": "MSFT",
                         },
-                    }
+                    },
+                    {
+                        "name": "EdgeAction",
+                        "parameters": {
+                            "edgeActionReference": {
+                                "id": "/subscriptions/subid/resourcegroups/RG/providers/Microsoft.Cdn/edgeActions/edgeAction1"
+                            },
+                            "invocationPoint": "ClientResponse",
+                            "typeName": "DeliveryRuleEdgeActionParameters",
+                        },
+                    },
                 ],
                 "order": 1,
             }
@@ -55,6 +66,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-12-01/Rules_Update.json
+# x-ms-original-file: 2026-10-01/Rules_Update.json
 if __name__ == "__main__":
     main()
