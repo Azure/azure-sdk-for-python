@@ -382,6 +382,39 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(_ConfigurationProfile.ikey, "1234abcd-5678-4efa-8abc-1234567890ab")
         self.assertEqual(_ConfigurationProfile.region, "westus")
 
+    @mock.patch.dict(os.environ)
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_routing_with_instrumentation_key_is_not_hostless(self, mock_config_manager):
+        os.environ[_APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES] = "multi_endpoint_routing"
+        os.environ.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        exporter = BaseExporter(disable_offline_storage=True)
+        self.addCleanup(exporter.client.close)
+        self.assertEqual(
+            mock_config_manager.return_value.initialize.call_args.kwargs["ikey"], exporter._instrumentation_key
+        )
+        self.assertIsNone(mock_config_manager.return_value.initialize.call_args.kwargs["region"])
+
+    @mock.patch.multiple(_ConfigurationProfile, ikey="", region="")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_non_routing_global_endpoint_preserves_configuration_region(self, mock_config_manager):
+        mock_config_manager.return_value.initialize.side_effect = _ConfigurationProfile.fill
+        global_exporter = BaseExporter(
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab;"
+            "IngestionEndpoint=https://dc.services.visualstudio.com/",
+            disable_offline_storage=True,
+        )
+        self.addCleanup(global_exporter.client.close)
+        self.assertIsNone(_ConfigurationProfile.region)
+
+        regional_exporter = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+            "IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=True,
+        )
+        self.addCleanup(regional_exporter.client.close)
+        self.assertIsNone(_ConfigurationProfile.region)
+
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.tempfile.gettempdir")
     def test_constructor_no_storage_directory(self, mock_get_temp_dir):
         mock_get_temp_dir.return_value = TEST_TEMP_DIR

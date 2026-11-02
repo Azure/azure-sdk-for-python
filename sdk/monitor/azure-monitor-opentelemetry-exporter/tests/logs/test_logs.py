@@ -54,6 +54,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_FEATURE_LOCAL_STORAGE,
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys
+from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
 
 
@@ -1579,6 +1580,37 @@ class TestMultiEndpointRouting(unittest.TestCase):
         clock.return_value = 110
         self.assertEqual(exporter.export([record]), LogRecordExportResult.SUCCESS)
         self.transport.send.assert_called_once()
+
+    def test_routed_redirect_refuses_http_downgrade(self):
+        exporter = self._exporter()
+        record = self._record(endpoint="https://one.example/")
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(
+            request, 307, {"location": "http://one.example/"}
+        )
+        self.assertEqual(exporter.export([record]), LogRecordExportResult.FAILURE)
+        self.transport.send.assert_called_once()
+        route_exporter = next(iter(exporter._route_exporters.values()))
+        self.assertEqual(route_exporter.client._config.host, "https://one.example")
+
+    def test_single_connection_string_redirect_preserves_legacy_storage_lease(self):
+        exporter = self._exporter(
+            routing=False,
+            connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab;"
+            "IngestionEndpoint=https://eastus.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        assert exporter.storage is not None
+        exporter.storage.close()
+        exporter.storage = mock.Mock()
+        exporter.storage.put.return_value = StorageExportResult.LOCAL_FILE_BLOB_SUCCESS
+        self.transport.send.side_effect = lambda request, **kwargs: (
+            _Response(request, 307, {"location": "https://westus.in.applicationinsights.azure.com/"})
+            if request.url.startswith("https://eastus.")
+            else _Response(request, 429, {"Retry-After": "10"})
+        )
+        self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.FAILURE)
+        exporter.storage.put.assert_called_once()
+        self.assertEqual(exporter.storage.put.call_args.kwargs, {})
 
     def test_retry_storage_is_separate_for_authentication_modes(self):
         credential = mock.Mock(spec=["get_token"])

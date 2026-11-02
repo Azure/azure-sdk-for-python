@@ -126,7 +126,7 @@ class LocalFileStorage:
     ) -> None:
         self._path = os.path.abspath(path)
         self._capacity_path = os.path.abspath(capacity_path) if capacity_path is not None else self._path
-        self._capacity_lock = _get_capacity_lock(self._capacity_path)
+        self._capacity_lock = _get_capacity_lock(self._capacity_path) if capacity_path is not None else None
         self._max_size = max_size
         self._retention_period = retention_period
         self._write_timeout = write_timeout
@@ -243,23 +243,28 @@ class LocalFileStorage:
                         # Type conversion has been done to match the return type of this function
                         return str(get_local_storage_setup_state_exception())
                 return StorageExportResult.CLIENT_STORAGE_DISABLED
+            if self._capacity_lock is None:
+                return self._put(data, lease_period)
             with self._capacity_lock:
-                if not self._check_storage_size():
-                    return StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED
-                blob = LocalFileBlob(
-                    os.path.join(
-                        self._path,
-                        "{}-{}.blob".format(
-                            _fmt(_now()),
-                            "{:08x}".format(random.getrandbits(32)),  # thread-safe random
-                        ),
-                    )
-                )
-                if lease_period is None:
-                    lease_period = self._lease_period
-                return blob.put(data, lease_period=lease_period)
+                return self._put(data, lease_period)
         except Exception as ex:
             return str(ex)
+
+    def _put(self, data: List[Any], lease_period: Optional[int]) -> Union[StorageExportResult, str]:
+        if not self._check_storage_size():
+            return StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED
+        blob = LocalFileBlob(
+            os.path.join(
+                self._path,
+                "{}-{}.blob".format(
+                    _fmt(_now()),
+                    "{:08x}".format(random.getrandbits(32)),  # thread-safe random
+                ),
+            )
+        )
+        if lease_period is None:
+            lease_period = self._lease_period
+        return blob.put(data, lease_period=lease_period)
 
     def _check_and_set_folder_permissions(self) -> bool:
         """
@@ -327,7 +332,8 @@ class LocalFileStorage:
         return False
 
     def _check_storage_size(self) -> bool:
-        self._cleanup_expired_capacity()
+        if self._capacity_lock is not None:
+            self._cleanup_expired_capacity()
         size = 0
         # pylint: disable=unused-variable
         for dirpath, dirnames, filenames in os.walk(self._capacity_path):

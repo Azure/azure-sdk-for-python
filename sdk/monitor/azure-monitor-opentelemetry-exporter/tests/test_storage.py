@@ -410,6 +410,18 @@ class TestLocalFileStorage(unittest.TestCase):
         with LocalFileStorage(os.path.join(TEST_FOLDER, "asd3"), 1000) as stor:
             self.assertTrue(stor._check_storage_size())
 
+    @mock.patch(f"{STORAGE_MODULE}._get_capacity_lock")
+    def test_default_storage_does_not_use_shared_capacity_lock(self, capacity_lock):
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "default")) as stor:
+            self.assertIsNone(stor._capacity_lock)
+        capacity_lock.assert_not_called()
+
+    def test_default_storage_size_check_does_not_run_shared_cleanup(self):
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "default-cleanup")) as stor:
+            with mock.patch.object(stor, "_cleanup_expired_capacity") as cleanup:
+                self.assertTrue(stor._check_storage_size())
+        cleanup.assert_not_called()
+
     def test_check_storage_size_links(self):
         test_input = (1, 2, 3)
         with LocalFileStorage(os.path.join(TEST_FOLDER, "asd4"), 1000) as stor:

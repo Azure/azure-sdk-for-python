@@ -273,6 +273,7 @@ class BaseExporter:
         if not self._is_stats_exporter() and self._route is None:
             config_manager = get_configuration_manager()
             if config_manager:
+                is_hostless_routing = self._enable_multi_endpoint_routing and self._instrumentation_key is None
                 # Start the control-plane worker (idempotent) and describe this process to OneSettings
                 # so feature flags can be targeted (os/rp/attach/component/version/region/ikey).
                 config_manager.initialize(
@@ -281,8 +282,8 @@ class BaseExporter:
                     attach=_get_attach_type_name(),
                     component="ext",
                     version=ext_version,
-                    region=self._region or "",
-                    ikey=self._instrumentation_key or "",
+                    region="" if is_hostless_routing else self._region,
+                    ikey="" if is_hostless_routing else self._instrumentation_key,
                 )
                 # register_callback also replays any already-cached configuration to this callback,
                 # so a late-created exporter immediately honors an existing kill-switch. The replay is
@@ -721,11 +722,13 @@ class BaseExporter:
                             redirect_has_headers = False
                         if redirect_has_headers and url.scheme and url.netloc:  # pylint: disable=E0606
                             current_url = urlparse(self.client._config.host)  # pylint: disable=W0212
-                            # Refuse cross-origin redirects so an attacker-controlled
-                            # `Location` header cannot cause the auth policy to attach
-                            # a freshly-signed Authorization header for a foreign host
-                            # on the recursive _transmit call.
-                            if not self._is_same_registered_domain(current_url.netloc, url.netloc):
+                            is_insecure_routed_redirect = self._route is not None and url.scheme.lower() != "https"
+                            is_cross_origin_redirect = not self._is_same_registered_domain(
+                                current_url.netloc, url.netloc
+                            )
+                            # Routed endpoints are HTTPS-only. Also refuse cross-origin
+                            # redirects so auth is never attached for a foreign host.
+                            if is_insecure_routed_redirect or is_cross_origin_redirect:
                                 if not self._is_stats_exporter():
                                     if self._should_collect_customer_sdkstats():
                                         track_dropped_items(
@@ -734,7 +737,8 @@ class BaseExporter:
                                             _exception_categories.CLIENT_EXCEPTION.value,
                                         )
                                     logger.error(
-                                        "Refusing cross-origin redirect to %s://%s.",
+                                        "Refusing %s redirect to %s://%s.",
+                                        "non-HTTPS routed" if is_insecure_routed_redirect else "cross-origin",
                                         url.scheme,
                                         url.netloc,
                                     )
@@ -746,7 +750,8 @@ class BaseExporter:
                                 )  # pylint: disable=W0212
                                 # Attempt to export again
                                 result = self._transmit(envelopes, _skip_rate_limit=True)
-                                retry_after_delay_seconds = self._retry_after_delay_seconds
+                                if self._route is not None:
+                                    retry_after_delay_seconds = self._retry_after_delay_seconds
                         else:
                             if not self._is_stats_exporter():
                                 if self._should_collect_customer_sdkstats():
