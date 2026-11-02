@@ -50,6 +50,28 @@ def add_sanitizers(test_proxy):
     remove_batch_sanitizers(["AZSDK3493", "AZSDK3430"])
 
 
+_ASSETS_JSON = "sdk/fileshares/azure-mgmt-fileshares/assets.json"
+
+
+def _recordings_dir():
+    """Returns the recordings folder of this package's assets checkout, found via the test proxy breadcrumb."""
+    for breadcrumb in glob.glob(os.path.join(_REPO_ROOT, ".assets", "breadcrumb", "*.breadcrumb")):
+        with open(breadcrumb, encoding="utf-8-sig") as breadcrumb_file:
+            for line in breadcrumb_file:
+                fields = line.strip().split(";")
+                if len(fields) >= 2 and fields[0].replace("\\", "/") == _ASSETS_JSON:
+                    return os.path.join(
+                        _REPO_ROOT,
+                        ".assets",
+                        fields[1],
+                        "python",
+                        *os.path.dirname(_ASSETS_JSON).split("/"),
+                        "tests",
+                        "recordings"
+                    )
+    return None
+
+
 # Listing file shares by subscription returns every share in the shared test subscription. Keep only
 # this suite's resource group in recorded list responses, so recordings don't capture unrelated
 # resources' names, IDs and host names. Runs only while recording, on the test's own recording file.
@@ -61,43 +83,33 @@ def scope_recorded_share_lists(request):
     file_name = "{}{}{}.json".format(
         os.path.basename(str(request.node.fspath)), request.node.cls.__name__, request.node.name
     )
-    pattern = os.path.join(
-        _REPO_ROOT,
-        ".assets",
-        "*",
-        "python",
-        "sdk",
-        "fileshares",
-        "azure-mgmt-fileshares",
-        "tests",
-        "recordings",
-        file_name,
-    )
+    recordings_dir = _recordings_dir()
+    path = os.path.join(recordings_dir, file_name) if recordings_dir else None
     marker = "/resourcegroups/{}/".format(RESOURCE_GROUP.lower())
-    paths = glob.glob(pattern)
-    if not paths and request.node.get_closest_marker("live_test_only") is None:
-        raise RuntimeError(
-            "No recording found at {} to scope; the recording path may have changed, which would let "
-            "unrelated resources into recordings.".format(pattern)
-        )
-    for path in paths:
-        with open(path, encoding="utf-8") as recording_file:
-            recording = json.load(recording_file)
-        changed = False
-        for entry in recording.get("Entries", []):
-            body = entry.get("ResponseBody")
-            items = body.get("value") if isinstance(body, dict) else None
-            if (
-                entry.get("RequestMethod") != "GET"
-                or "/providers/Microsoft.FileShares/fileShares?" not in entry.get("RequestUri", "")
-                or not isinstance(items, list)
-            ):
-                continue
-            kept = [item for item in items if marker in str(item.get("id", "")).lower()]
-            if len(kept) != len(items):
-                body["value"] = kept
-                entry.get("ResponseHeaders", {}).pop("Content-Length", None)
-                changed = True
-        if changed:
-            with open(path, "w", encoding="utf-8") as recording_file:
-                json.dump(recording, recording_file, indent=2)
+    if not path or not os.path.isfile(path):
+        if request.node.get_closest_marker("live_test_only") is None:
+            raise RuntimeError(
+                "No recording found for {} in this package's assets checkout; the recording path may have "
+                "changed, which would let unrelated resources into recordings.".format(file_name)
+            )
+        return
+    with open(path, encoding="utf-8") as recording_file:
+        recording = json.load(recording_file)
+    changed = False
+    for entry in recording.get("Entries", []):
+        body = entry.get("ResponseBody")
+        items = body.get("value") if isinstance(body, dict) else None
+        if (
+            entry.get("RequestMethod") != "GET"
+            or "/providers/Microsoft.FileShares/fileShares?" not in entry.get("RequestUri", "")
+            or not isinstance(items, list)
+        ):
+            continue
+        kept = [item for item in items if marker in str(item.get("id", "")).lower()]
+        if len(kept) != len(items):
+            body["value"] = kept
+            entry.get("ResponseHeaders", {}).pop("Content-Length", None)
+            changed = True
+    if changed:
+        with open(path, "w", encoding="utf-8") as recording_file:
+            json.dump(recording, recording_file, indent=2)
