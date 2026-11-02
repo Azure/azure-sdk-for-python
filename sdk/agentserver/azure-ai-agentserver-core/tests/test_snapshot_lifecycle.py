@@ -4,7 +4,9 @@
 """Tests for the private memory snapshot lifecycle endpoints."""
 
 import asyncio
+import json
 import os
+from collections.abc import AsyncGenerator
 from types import MappingProxyType
 from unittest import mock
 
@@ -26,6 +28,8 @@ from azure.ai.agentserver.core.tasks._manager import TaskManager, set_task_manag
 
 _LIFECYCLE_TOKEN_ENV = "FOUNDRY_LIFECYCLE_TOKEN"
 _LIFECYCLE_TOKEN_HEADER = "x-foundry-lifecycle-token"
+_LIFECYCLE_ALLOW_UNAUTHENTICATED_ENV = "FOUNDRY_LIFECYCLE_ALLOW_UNAUTHENTICATED"
+_SESSION_ENV_ALLOWED_KEYS_ENV = "FOUNDRY_SESSION_ENV_ALLOWED_KEYS"
 _LIFECYCLE_TOKEN = "test-lifecycle-token"
 _LIFECYCLE_HEADERS = {_LIFECYCLE_TOKEN_HEADER: _LIFECYCLE_TOKEN}
 _LIFECYCLE_PATHS = [
@@ -42,6 +46,23 @@ def restore_process_environment():
     # Lifecycle routes are only registered when hosted or when a lifecycle
     # token is configured; tests opt in through the token.
     os.environ[_LIFECYCLE_TOKEN_ENV] = _LIFECYCLE_TOKEN
+    os.environ.pop(_LIFECYCLE_ALLOW_UNAUTHENTICATED_ENV, None)
+    allowed_test_keys = {
+        "ADDED_VALUE",
+        "CAPTURED_VALUE",
+        "CUSTOM_VALUE",
+        "FOUNDRY_AGENT_SESSION_GUID",
+        "FOUNDRY_AGENT_VERSION",
+        "REMOVED_VALUE",
+        "RESTORED_VALUE",
+        "RESTORE_VALUE",
+        "SAFE_VALUE",
+        "UPDATED_VALUE",
+        "VALUE",
+        "K" * 256,
+        *(f"CUSTOM_{index}" for index in range(256)),
+    }
+    os.environ[_SESSION_ENV_ALLOWED_KEYS_ENV] = ",".join(sorted(allowed_test_keys))
     yield
     os.environ.clear()
     os.environ.update(captured_environment)
@@ -183,12 +204,9 @@ async def test_after_restore_rejects_invalid_session_context(
     response = await client.post("/_agent/after-restore", json=payload)
 
     assert response.status_code == 400
-    assert response.json() == {
-        "error": {
-            "code": "invalid_after_restore_request",
-            "message": "The after-restore request is invalid.",
-        }
-    }
+    error = response.json()["error"]
+    assert error["code"] == "invalid_after_restore_request"
+    assert error["message"].startswith("The after-restore request is invalid:")
 
 
 @pytest.mark.asyncio
@@ -256,6 +274,31 @@ async def test_after_restore_allows_non_guid_session_value_outside_hosted_mode(
         )
 
     assert response.status_code == 200
+    assert agent.config.session_guid == "legacy-session-value"
+
+
+@pytest.mark.asyncio
+async def test_after_restore_reuses_startup_hosted_posture(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
+    agent = AgentServerHost()
+    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "hosted-after-startup")
+
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=agent),
+        base_url="http://testserver",
+        headers=_LIFECYCLE_HEADERS,
+    ) as lifecycle_client:
+        response = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(
+                overrides={"FOUNDRY_AGENT_SESSION_GUID": "legacy-session-value"},
+            ),
+        )
+
+    assert response.status_code == 200
+    assert agent.config.is_hosted is False
     assert agent.config.session_guid == "legacy-session-value"
 
 
@@ -1285,15 +1328,76 @@ async def test_lifecycle_routes_return_404_when_disabled(monkeypatch: pytest.Mon
     assert "CUSTOM_VALUE" not in os.environ
 
 
-def test_lifecycle_routes_are_registered_when_hosted_without_token(
+@pytest.mark.asyncio
+async def test_hosted_lifecycle_routes_fail_closed_without_token(
     monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
 ) -> None:
     monkeypatch.delenv(_LIFECYCLE_TOKEN_ENV, raising=False)
     monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "foundry")
 
+    with caplog.at_level("ERROR", logger="azure.ai.agentserver"):
+        agent = AgentServerHost()
+
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=agent),
+        base_url="http://testserver",
+    ) as anonymous_client:
+        response = await anonymous_client.post("/_agent/before-snapshot", json={})
+
+    assert response.status_code == 403
+    assert response.json()["error"] == {
+        "code": "lifecycle_authentication_not_configured",
+        "message": "Lifecycle authentication is required but is not configured.",
+    }
+    error_logs = [
+        record
+        for record in caplog.records
+        if "lifecycle authentication is not configured" in record.message.lower()
+    ]
+    assert len(error_logs) == 1
+
+
+@pytest.mark.asyncio
+async def test_hosted_lifecycle_routes_allow_explicit_unauthenticated_opt_out(
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    monkeypatch.delenv(_LIFECYCLE_TOKEN_ENV, raising=False)
+    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "foundry")
+    monkeypatch.setenv(_LIFECYCLE_ALLOW_UNAUTHENTICATED_ENV, "true")
+
+    with caplog.at_level("WARNING", logger="azure.ai.agentserver"):
+        agent = AgentServerHost()
+
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=agent),
+        base_url="http://testserver",
+    ) as anonymous_client:
+        response = await anonymous_client.post("/_agent/before-snapshot", json={})
+
+    assert response.status_code == 200
+    warning_logs = [
+        record for record in caplog.records if "temporary compatibility mode" in record.message.lower()
+    ]
+    assert len(warning_logs) == 1
+
+
+@pytest.mark.asyncio
+async def test_hosted_lifecycle_routes_accept_configured_token(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("FOUNDRY_HOSTING_ENVIRONMENT", "foundry")
     agent = AgentServerHost()
 
-    assert [route.path for route in agent.routes[:4]] == _LIFECYCLE_PATHS
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=agent),
+        base_url="http://testserver",
+        headers=_LIFECYCLE_HEADERS,
+    ) as lifecycle_client:
+        response = await lifecycle_client.post("/_agent/before-snapshot", json={})
+
+    assert response.status_code == 200
 
 
 @pytest.mark.asyncio
@@ -1307,6 +1411,17 @@ def test_lifecycle_routes_are_registered_when_hosted_without_token(
         "HOME",
         "PYTHONPATH",
         "PYTHONSTARTUP",
+        "BASH_ENV",
+        "ENV",
+        "PROMPT_COMMAND",
+        "NODE_OPTIONS",
+        "NODE_EXTRA_CA_CERTS",
+        "JAVA_TOOL_OPTIONS",
+        "_JAVA_OPTIONS",
+        "DOTNET_STARTUP_HOOKS",
+        "DOTNET_ADDITIONAL_DEPS",
+        "GIT_SSH_COMMAND",
+        "GIT_CONFIG_COUNT",
         "HTTPS_PROXY",
         "https_proxy",
         "ALL_PROXY",
@@ -1320,9 +1435,27 @@ def test_lifecycle_routes_are_registered_when_hosted_without_token(
         "FOUNDRY_HOSTING_ENVIRONMENT",
         "FOUNDRY_PROJECT_ENDPOINT",
         "FOUNDRY_LIFECYCLE_TOKEN",
+        "FOUNDRY_LIFECYCLE_ALLOW_UNAUTHENTICATED",
+        "FOUNDRY_SESSION_ENV_ALLOWED_KEYS",
+        "FOUNDRY_AGENT_NAME",
+        "FOUNDRY_AGENT_INSTANCE_CLIENT_ID",
+        "FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID",
+        "FOUNDRY_AGENT_TENANT_ID",
+        "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENT_ID",
+        "CONNECTIONS__CUSTOM__TENANT_ID",
         "AZURE_CLIENT_SECRET",
+        "AZURE_TENANT_ID",
+        "AZURE_FEDERATED_TOKEN_FILE",
+        "AZURE_AUTHORITY_HOST",
+        "AZURE_USERNAME",
+        "AZURE_PASSWORD",
+        "AZURE_TOKEN_CREDENTIALS",
         "MSI_ENDPOINT",
         "IDENTITY_HEADER",
+        "IMDS_ENDPOINT",
+        "AGENTSERVER_STATE_ROOT",
+        "COPILOT_CLI_PATH",
+        "TOOL_ACL_PATH",
     ],
 )
 async def test_after_restore_rejects_reserved_override_keys(
@@ -1340,9 +1473,82 @@ async def test_after_restore_rejects_reserved_override_keys(
 
     assert response.status_code == 400
     assert response.json()["error"]["code"] == "invalid_after_restore_request"
+    assert denied_key in response.json()["error"]["message"]
     assert os.environ.get(denied_key) == previous
     assert "CUSTOM_VALUE" not in os.environ
     assert agent._lifecycle.assigned_session_id is None  # pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
+async def test_after_restore_accepts_documented_and_boot_time_keys(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("AZURE_OPENAI_API_KEY", "captured")
+    monkeypatch.delenv("OTEL_RESOURCE_ATTRIBUTES", raising=False)
+    agent = AgentServerHost()
+
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=agent),
+        base_url="http://testserver",
+        headers=_LIFECYCLE_HEADERS,
+    ) as lifecycle_client:
+        response = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(
+                overrides={
+                    "AZURE_OPENAI_API_KEY": "rotated",
+                    "OTEL_RESOURCE_ATTRIBUTES": "session.id=session-1",
+                },
+            ),
+        )
+
+    assert response.status_code == 200
+    assert os.environ["AZURE_OPENAI_API_KEY"] == "rotated"
+    assert os.environ["OTEL_RESOURCE_ATTRIBUTES"] == "session.id=session-1"
+
+
+@pytest.mark.asyncio
+async def test_after_restore_rejects_unknown_new_key(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("NEVER_DECLARED_KEY", raising=False)
+    agent = AgentServerHost()
+
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=agent),
+        base_url="http://testserver",
+        headers=_LIFECYCLE_HEADERS,
+    ) as lifecycle_client:
+        response = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(overrides={"NEVER_DECLARED_KEY": "value"}),
+        )
+
+    assert response.status_code == 400
+    assert "NEVER_DECLARED_KEY" in response.json()["error"]["message"]
+    assert agent._lifecycle.assigned_session_id is None  # pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
+async def test_after_restore_accepts_platform_allowlisted_key(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv(_SESSION_ENV_ALLOWED_KEYS_ENV, "PLATFORM_SESSION_VALUE")
+    monkeypatch.delenv("PLATFORM_SESSION_VALUE", raising=False)
+    agent = AgentServerHost()
+
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=agent),
+        base_url="http://testserver",
+        headers=_LIFECYCLE_HEADERS,
+    ) as lifecycle_client:
+        response = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(overrides={"PLATFORM_SESSION_VALUE": "restored"}),
+        )
+
+    assert response.status_code == 200
+    assert os.environ["PLATFORM_SESSION_VALUE"] == "restored"
 
 
 @pytest.mark.asyncio
@@ -1359,6 +1565,7 @@ async def test_after_restore_rejects_reserved_override_keys(
         {"CUSTOM_VALUE": "has\0nul"},
         {"K" * 257: "value"},
         {"CUSTOM_VALUE": "v" * (32 * 1024 + 1)},
+        {"CUSTOM_VALUE": "é" * 20_000},
         {f"CUSTOM_{index}": "value" for index in range(257)},
     ],
 )
@@ -1382,6 +1589,59 @@ async def test_after_restore_rejects_malformed_or_oversized_overrides(
 
 
 @pytest.mark.asyncio
+async def test_after_restore_rejects_unencodable_override_before_assignment(
+    client: httpx.AsyncClient,
+    agent: AgentServerHost,
+) -> None:
+    payload = json.dumps(
+        _after_restore_payload(overrides={"CUSTOM_VALUE": "\ud800"}),
+        ensure_ascii=True,
+    ).encode("ascii")
+
+    response = await client.post(
+        "/_agent/after-restore",
+        content=payload,
+        headers={"content-type": "application/json"},
+    )
+
+    assert response.status_code == 400
+    assert "CUSTOM_VALUE" in response.json()["error"]["message"]
+    assert agent._lifecycle.assigned_session_id is None  # pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
+async def test_after_restore_rejects_oversized_implicit_session_id(
+    client: httpx.AsyncClient,
+    agent: AgentServerHost,
+) -> None:
+    response = await client.post(
+        "/_agent/after-restore",
+        json=_after_restore_payload(session_id="s" * (32 * 1024 + 1)),
+    )
+
+    assert response.status_code == 400
+    assert "FOUNDRY_AGENT_SESSION_ID" in response.json()["error"]["message"]
+    assert agent._lifecycle.assigned_session_id is None  # pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
+async def test_after_restore_rejects_oversized_total_environment(
+    client: httpx.AsyncClient,
+    agent: AgentServerHost,
+) -> None:
+    overrides = {f"CUSTOM_{index}": "v" * 1024 for index in range(256)}
+
+    response = await client.post(
+        "/_agent/after-restore",
+        json=_after_restore_payload(overrides=overrides),
+    )
+
+    assert response.status_code == 400
+    assert "too large" in response.json()["error"]["message"]
+    assert agent._lifecycle.assigned_session_id is None  # pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
 async def test_after_restore_accepts_boundary_sized_overrides(client: httpx.AsyncClient) -> None:
     key = "K" * 256
     overrides = {f"CUSTOM_{index}": "value" for index in range(255)}
@@ -1401,8 +1661,8 @@ async def test_lifecycle_routes_reject_oversized_bodies(client: httpx.AsyncClien
 
     response = await client.post(path, content=body, headers={"content-type": "application/json"})
 
-    assert response.status_code == 400
-    assert response.json()["error"]["code"].startswith("invalid_")
+    assert response.status_code == 413
+    assert response.json()["error"]["code"] == "lifecycle_request_too_large"
 
 
 @pytest.mark.asyncio
@@ -1413,4 +1673,62 @@ async def test_lifecycle_routes_reject_oversized_declared_length(client: httpx.A
         headers={"content-type": "application/json", "content-length": str(2 * 1024 * 1024)},
     )
 
-    assert response.status_code == 400
+    assert response.status_code == 413
+
+
+async def _stream_content(*chunks: bytes) -> AsyncGenerator[bytes, None]:
+    for chunk in chunks:
+        yield chunk
+
+
+@pytest.mark.asyncio
+async def test_lifecycle_routes_reject_oversized_stream_without_content_length(
+    client: httpx.AsyncClient,
+) -> None:
+    body = b'{"padding":"' + (b"p" * (1024 * 1024)) + b'"}'
+
+    response = await client.post(
+        "/_agent/before-snapshot",
+        content=_stream_content(body[:700_000], body[700_000:]),
+        headers={"content-type": "application/json"},
+    )
+
+    assert response.status_code == 413
+    assert response.json()["error"]["code"] == "lifecycle_request_too_large"
+
+
+@pytest.mark.asyncio
+async def test_lifecycle_routes_reject_stream_larger_than_declared_length(
+    client: httpx.AsyncClient,
+) -> None:
+    body = b'{"padding":"' + (b"p" * (1024 * 1024)) + b'"}'
+
+    response = await client.post(
+        "/_agent/before-snapshot",
+        content=_stream_content(body[:700_000], body[700_000:]),
+        headers={
+            "content-type": "application/json",
+            "content-length": "2",
+        },
+    )
+
+    assert response.status_code == 413
+    assert response.json()["error"]["code"] == "lifecycle_request_too_large"
+
+
+@pytest.mark.asyncio
+async def test_lifecycle_routes_accept_stream_exactly_at_body_limit(
+    client: httpx.AsyncClient,
+) -> None:
+    prefix = b'{"padding":"'
+    suffix = b'"}'
+    body = prefix + (b"p" * (1024 * 1024 - len(prefix) - len(suffix))) + suffix
+
+    response = await client.post(
+        "/_agent/before-snapshot",
+        content=_stream_content(body[:700_000], body[700_000:]),
+        headers={"content-type": "application/json"},
+    )
+
+    assert len(body) == 1024 * 1024
+    assert response.status_code == 200

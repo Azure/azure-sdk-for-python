@@ -122,9 +122,12 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
         self.ws_ping_interval = ws_ping_interval
 
     @classmethod
-    def from_env(cls) -> Self:
+    def from_env(cls, *, hosted: Optional[bool] = None) -> Self:
         """Create an ``AgentConfig`` by reading all platform environment variables.
 
+        :param hosted: Optional startup-captured hosted posture. When provided,
+            use it instead of re-reading ``FOUNDRY_HOSTING_ENVIRONMENT``.
+        :type hosted: Optional[bool]
         :return: A frozen config with resolved values.
         :rtype: AgentConfig
         """
@@ -138,7 +141,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
         else:
             agent_id = ""
 
-        is_hosted = bool(os.environ.get(_ENV_FOUNDRY_HOSTING_ENVIRONMENT, ""))
+        is_hosted = bool(os.environ.get(_ENV_FOUNDRY_HOSTING_ENVIRONMENT, "")) if hosted is None else hosted
         session_guid = os.environ.get(_ENV_FOUNDRY_AGENT_SESSION_GUID, "")
         _validate_session_guid(session_guid, is_hosted)
 

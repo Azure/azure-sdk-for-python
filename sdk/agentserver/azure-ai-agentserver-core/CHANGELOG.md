@@ -4,10 +4,15 @@
 
 ### Features Added
 
-- Added `FOUNDRY_LIFECYCLE_TOKEN`. When set, the snapshot lifecycle endpoints
-  (`/_agent/before-snapshot`, `/_agent/after-restore` and their aliases) require
-  a matching `x-foundry-lifecycle-token` request header and return `401`
-  otherwise.
+- Added `FOUNDRY_LIFECYCLE_TOKEN`. Hosted snapshot lifecycle endpoints require
+  a matching `x-foundry-lifecycle-token` request header. Hosted requests return
+  `403` when the token is not configured and `401` when the presented token
+  does not match.
+- Added `FOUNDRY_LIFECYCLE_ALLOW_UNAUTHENTICATED=true` as a temporary
+  compatibility switch for hosted platforms that have not provisioned the
+  lifecycle token.
+- Added `FOUNDRY_SESSION_ENV_ALLOWED_KEYS` for platform-declared, comma-separated
+  session environment override names.
 
 ### Breaking Changes
 
@@ -17,12 +22,14 @@
   the token.
 - `session_env_overrides` on after-restore requests are now validated as a
   whole: keys must match `^[A-Za-z_][A-Za-z0-9_]*$` and be at most 256
-  characters, values are capped at 32 KiB, at most 256 entries are accepted,
-  request bodies are capped at 1 MiB, and names that control the loader,
-  interpreter, proxy, TLS trust, telemetry, platform identity, or credentials
-  (for example `LD_*`, `PYTHON*`, `*_PROXY`, `SSL_CERT_*`, `OTEL_*`,
-  `FOUNDRY_PROJECT_*`, `AZURE_*`) are rejected. Any violation rejects the
-  request with `400` before anything is applied.
+  UTF-8 bytes, values are capped at 32 KiB of UTF-8, aggregate overrides are
+  capped at 256 KiB, at most 256 entries are accepted, and request bodies are
+  capped at 1 MiB. Names that control loaders, interpreters, process startup,
+  proxies, TLS trust, telemetry export, platform identity, or credentials are
+  rejected. Other names must be the session ID or resource attributes, have
+  existed in the startup environment, or be declared through
+  `FOUNDRY_SESSION_ENV_ALLOWED_KEYS`. Any violation rejects the request before
+  environment or session state is changed.
 
 ### Other Changes
 
