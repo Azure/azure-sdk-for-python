@@ -8,6 +8,7 @@
 from datetime import datetime
 from types import TracebackType
 from typing import Any, Dict, Optional, Union
+from azure.storage.filedatalake._shared.session import SessionProvider
 from typing_extensions import Self
 
 from azure.core import MatchConditions
@@ -42,6 +43,9 @@ class FileSystemClient(StorageAccountHostsMixin):
         *,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
+        use_session: bool = False,
+        session_provider: Optional[SessionProvider] = None,
+        session_account_name: Optional[str] = None,
         **kwargs: Any
     ) -> None: ...
     def __enter__(self) -> Self: ...
