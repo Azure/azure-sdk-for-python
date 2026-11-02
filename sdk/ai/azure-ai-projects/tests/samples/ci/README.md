@@ -106,7 +106,7 @@ Provisioning values are internal inputs, not environment-variable configuration:
 
 These values are passed directly to Bicep. [infra/sample-resources.bicepparam](infra/sample-resources.bicepparam) supplies only the existing `MCP_GITHUB_PAT` secret to the secure Bicep parameter; no names, identity IDs, model settings, or Function toggle are read from environment variables there.
 
-The Function template creates a Linux **EP1** plan, a Python **3.11** Function App with Functions host **v4**, and the `weather-input-queue` and `weather-output-queue` queues. Host storage and the queue binding use the existing Function UAMI without storage keys or connection strings. Existing app settings are preserved. Premium capacity is billable and must be available in the selected region.
+The Function template creates a Linux **EP1** plan, a Python **3.11** Function App with Functions host **v4**, and the `weather-input-queue` and `weather-output-queue` queues. Host storage and the queue binding use the existing Function UAMI without storage keys or connection strings. Each run creates a fresh app and declares its complete settings directly; reading and merging that same appsettings resource during deployment would introduce an ARM circular dependency. Premium capacity is billable and must be available in the selected region.
 
 Before a Function selection can provision resources, admission requires preconfigured subscription-scoped Storage Blob Data Owner and Storage Queue Data Contributor grants for the Function identity, and Storage Queue Data Contributor for the project identity. Worker jobs never create these grants. The shared-identity bootstrap includes them for new sets; existing sets require a separately approved grant update.
 

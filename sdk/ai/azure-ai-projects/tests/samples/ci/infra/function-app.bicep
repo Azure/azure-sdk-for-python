@@ -104,7 +104,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
 resource appSettings 'Microsoft.Web/sites/config@2023-12-01' = {
   parent: functionApp
   name: 'appsettings'
-  properties: union(list('${functionApp.id}/config/appsettings', '2023-12-01').properties, {
+  properties: {
     AzureWebJobsStorage__accountName: storage.name
     AzureWebJobsStorage__credential: 'managedidentity'
     AzureWebJobsStorage__clientId: identity.properties.clientId
@@ -117,7 +117,7 @@ resource appSettings 'Microsoft.Web/sites/config@2023-12-01' = {
     STORAGE_CONNECTION__queueServiceUri: queueServiceUri
     STORAGE_CONNECTION__credential: 'managedidentity'
     STORAGE_CONNECTION__clientId: identity.properties.clientId
-  })
+  }
 }
 
 output functionAppResourceId string = functionApp.id

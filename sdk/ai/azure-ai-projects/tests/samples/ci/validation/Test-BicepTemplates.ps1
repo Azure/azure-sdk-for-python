@@ -234,6 +234,9 @@ if ($functionSite['properties']['httpsOnly'] -ne $true -or
     throw 'The Function App must use its single existing UAMI, Linux Python runtime, HTTPS, and disabled FTP.'
 }
 $functionSettings = @($functionResources | Where-Object { $_.Type -ceq 'Microsoft.Web/sites/config' })[0].Definition
+if ($functionSettings['properties'] -isnot [System.Collections.IDictionary]) {
+    throw 'Fresh Function App settings must be declared directly, without reading the appsettings resource being deployed.'
+}
 $settingsJson = $functionSettings['properties'] | ConvertTo-Json -Depth 20 -Compress
 foreach ($setting in @('AzureWebJobsStorage__accountName', 'AzureWebJobsStorage__credential',
         'AzureWebJobsStorage__clientId', 'FUNCTIONS_EXTENSION_VERSION', 'FUNCTIONS_WORKER_RUNTIME',
@@ -242,8 +245,8 @@ foreach ($setting in @('AzureWebJobsStorage__accountName', 'AzureWebJobsStorage_
     if ($settingsJson -notmatch [regex]::Escape($setting)) { throw "Missing Function App setting '$setting'." }
 }
 if ($settingsJson -notmatch 'managedidentity' -or $settingsJson -notmatch '~4' -or
-    $settingsJson -notmatch 'union\(' -or $settingsJson -notmatch '/config/appsettings') {
-    throw 'Function settings must use managed identity and host v4 while preserving existing app settings.'
+    $settingsJson -match '(?i)\blist\w*\s*\(') {
+    throw 'Function settings must use managed identity and host v4 without a circular appsettings list operation.'
 }
 $functionNames = @($functionTemplate['outputs']['environment']['value'].Keys | Sort-Object)
 $expectedFunctionNames = @('FUNCTION_APP_NAME', 'FUNCTION_APP_URL', 'STORAGE_INPUT_QUEUE_NAME',
