@@ -31,7 +31,8 @@ $rejected = @()
 # Bicep outputs plus values the provisioning script adds; the validation endpoint is a pipeline variable and never enters state.
 $stateBindings = @(@(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $PSScriptRoot 'infra/sample-resources.bicep')) +
     @('AZURE_SUBSCRIPTION_ID', 'AZURE_TENANT_ID', 'AZURE_RESOURCE_GROUP') | Sort-Object -Unique)
-$provided = @($stateBindings + 'LLM_VALIDATION_PROJECT_ENDPOINT')
+$functionBindings = @(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $PSScriptRoot 'infra/function-app.bicep'))
+$provided = @($stateBindings + $functionBindings + 'LLM_VALIDATION_PROJECT_ENDPOINT')
 foreach ($test in @($manifest.tests)) {
     $names = @(& $scanner -SamplePath @($test.sample_path) -PackageRoot $PackageRoot)
     $unsupported = @($names | Where-Object { $_ -notin $provided })
@@ -43,6 +44,9 @@ foreach ($test in @($manifest.tests)) {
     }
 }
 $required = @($required | Sort-Object -Unique)
+if (Test-SampleFunctionRequired -Plan @{ requiredEnvironment = $required }) {
+    $stateBindings = @($stateBindings + $functionBindings | Sort-Object -Unique)
+}
 
 $null = New-Item -ItemType Directory -Path $OutputDirectory -Force
 if ($rejected.Count -gt 0) {

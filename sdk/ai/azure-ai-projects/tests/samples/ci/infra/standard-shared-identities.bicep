@@ -285,6 +285,7 @@ resource cosmosDataContributor 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAss
 
 output accountName string = account.name
 output projectName string = project.name
+output storageAccountName string = storage.name
 output projectResourceId string = project.id
 output projectEndpoint string = 'https://${account.name}.services.ai.azure.com/api/projects/${project.name}'
 output projectIdentityResourceId string = sharedProjectIdentityResourceId

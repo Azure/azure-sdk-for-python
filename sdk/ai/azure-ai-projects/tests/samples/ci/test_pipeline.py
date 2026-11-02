@@ -301,3 +301,35 @@ def test_batch_admission_retains_guards_without_querying_ado():
     helper = (directory / "SampleCiHelpers.ps1").read_text(encoding="utf-8")
     assert "function Assert-SampleCapacityLock" not in helper
     assert "pipelines/checks/configurations" not in helper
+
+
+def test_provisioning_metadata_is_passed_directly_not_through_environment_variables():
+    directory = Path(__file__).resolve().parent
+    parameters = (directory / "infra/sample-resources.bicepparam").read_text(encoding="utf-8")
+    assert parameters.startswith("using none")
+    assert parameters.count("readEnvironmentVariable(") == 1
+    assert "param mcpPat = readEnvironmentVariable('MCP_GITHUB_PAT', '')" in parameters
+    provisioning = (directory / "Invoke-SampleProvisioning.ps1").read_text(encoding="utf-8")
+    assert "SAMPLE_CI_" not in provisioning + parameters
+    assert "SetEnvironmentVariable" not in provisioning
+    assert "accountName = [string] $accounts[0].name" in provisioning
+    assert "projectName = $projectName" in provisioning
+    assert "agentName = [string] $plan.agentName" in provisioning
+    assert "'sampleModel=' + ($modelParameters | ConvertTo-Json -Compress)" in provisioning
+    assert "Invoke-SampleAzure -Arguments $sampleArguments -Sensitive" in provisioning
+
+
+def test_function_infrastructure_uses_resolved_inputs_without_a_configurable_toggle():
+    directory = Path(__file__).resolve().parent
+    provisioning = (directory / "Invoke-SampleProvisioning.ps1").read_text(encoding="utf-8")
+    template = (directory / "infra/sample-resources.bicep").read_text(encoding="utf-8")
+    parameters = (directory / "infra/sample-resources.bicepparam").read_text(encoding="utf-8")
+    assert "enableFunctionApp" not in provisioning + template + parameters
+    assert "'infra/function-app.bicep'" in provisioning
+    assert '"storageAccountName=$storageAccountName"' in provisioning
+    assert '"sharedFunctionIdentityResourceId=$($identities.function.resourceId)"' in provisioning
+    assert "$standard.properties.outputs.storageAccountName.value" in provisioning
+    assert "Test-SampleFunctionRequired -Plan $plan" in provisioning
+    assert provisioning.index("Publish-SampleFunctionApp -Plan $plan") < provisioning.index(
+        "$state['status'] = 'Ready'"
+    )

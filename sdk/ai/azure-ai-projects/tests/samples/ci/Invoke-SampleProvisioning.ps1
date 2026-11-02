@@ -34,7 +34,8 @@ if ($PSCmdlet.ParameterSetName -eq 'Admission') {
     }
     $plans = $resolvedPlans
     $identities = Get-SampleSharedIdentities -Plan $plans[0]
-    Assert-SampleSharedIdentityGrants -Plan $plans[0] -Identities $identities -RunnerPrincipalId $runner.principalId
+    $requiresFunction = @($plans | Where-Object { Test-SampleFunctionRequired -Plan $_ }).Count -gt 0
+    Assert-SampleSharedIdentityGrants -Plan $plans[0] -Identities $identities -RunnerPrincipalId $runner.principalId -RequireFunctionAccess:$requiresFunction
     Assert-SampleBatchCapacity -Plans $plans
     if ($ResolvedPlanDirectory) {
         if (Test-Path -LiteralPath $ResolvedPlanDirectory) { throw 'Resolved plan output already exists; refusing to overwrite an earlier admission.' }
@@ -49,6 +50,7 @@ if ($PSCmdlet.ParameterSetName -eq 'Admission') {
 if (-not $ConfirmProvisioning) { throw 'Provisioning is disabled by default. Use -ConfirmProvisioning only for an explicitly requested live run.' }
 $plan = Get-Content -LiteralPath $PlanPath -Raw | ConvertFrom-Json -AsHashtable
 Assert-SampleRunPlan -Plan $plan -QueueName $QueueName
+$requiresFunction = Test-SampleFunctionRequired -Plan $plan
 if ($plan.ContainsKey('identityResolution') -and $plan.identityResolution -cne 'Resolved') { throw 'Only an admitted, resolved identity plan may provision resources.' }
 if (Test-Path -LiteralPath $StatePath) { throw 'Deployment state already exists. Do not adopt or overwrite a previous attempt.' }
 Assert-SampleMcpPat
@@ -60,7 +62,9 @@ if ($exists) { throw 'The generated resource group already exists. No existing g
 
 $providers = @(Invoke-SampleAzure -Arguments @('provider', 'list', '--subscription', $subscription,
     '--query', '[].{namespace:namespace,state:registrationState}'))
-foreach ($namespace in @('Microsoft.CognitiveServices', 'Microsoft.Storage', 'Microsoft.DocumentDB', 'Microsoft.Search')) {
+$namespaces = @('Microsoft.CognitiveServices', 'Microsoft.Storage', 'Microsoft.DocumentDB', 'Microsoft.Search')
+if ($requiresFunction) { $namespaces += 'Microsoft.Web' }
+foreach ($namespace in $namespaces) {
     if (@($providers | Where-Object { $_.namespace -eq $namespace -and $_.state -eq 'Registered' }).Count -ne 1) {
         throw "Provider '$namespace' must already be registered by an administrator; nothing has been provisioned."
     }
@@ -137,37 +141,46 @@ try {
     }
     $projectName = $projectResourceId.Split('/')[-1]
 
-    $parameterEnvironment = @{
-        SAMPLE_CI_ACCOUNT_NAME = [string] $accounts[0].name
-        SAMPLE_CI_PROJECT_NAME = $projectName
-        SAMPLE_CI_AGENT_NAME = [string] $plan.agentName
-        SAMPLE_CI_MODEL_NAME = [string] $sampleModel.name
-        SAMPLE_CI_MODEL_VERSION = [string] $sampleModel.version
-        SAMPLE_CI_MODEL_SKU = [string] $sampleModel.sku
-        SAMPLE_CI_MODEL_CAPACITY = [string] $sampleModel.capacity
+    $sampleParameters = @{
+        accountName = [string] $accounts[0].name
+        projectName = $projectName
+        agentName = [string] $plan.agentName
     }
-    $originalEnvironment = @{}
-    try {
-        foreach ($entry in $parameterEnvironment.GetEnumerator()) {
-            if ([string]::IsNullOrWhiteSpace([string] $entry.Value)) {
-                throw "Missing live Bicep binding '$($entry.Key)'; placeholder parameter values must never be deployed."
-            }
-            $originalEnvironment[$entry.Key] = [Environment]::GetEnvironmentVariable($entry.Key)
-            [Environment]::SetEnvironmentVariable($entry.Key, $entry.Value)
+    $parameterArguments = @(foreach ($entry in $sampleParameters.GetEnumerator()) {
+        if ([string]::IsNullOrWhiteSpace($entry.Value)) {
+            throw "Missing live Bicep parameter '$($entry.Key)'; no sample resources were provisioned."
         }
-        # readEnvironmentVariable supplies the secret to @secure() without putting it on a command line or in a file.
-        $state['provisioningStep'] = 'SampleResources'
-        Write-Host 'Deploying the sample model and MCP connection; Azure IAM roles are preconfigured and secret-bearing output is suppressed.'
-        $sampleResources = Invoke-SampleAzure -Arguments @('deployment', 'group', 'create', '--name', 'sample-resources',
-            '--resource-group', $plan.resourceGroup, '--subscription', $subscription,
-            '--parameters', (Join-Path $PSScriptRoot 'infra/sample-resources.bicepparam')) -Sensitive
-    } finally {
-        foreach ($entry in $originalEnvironment.GetEnumerator()) {
-            [Environment]::SetEnvironmentVariable($entry.Key, $entry.Value)
-        }
-    }
+        '{0}={1}' -f $entry.Key, $entry.Value
+    })
+    $modelParameters = @{ name = $sampleModel.name; version = $sampleModel.version; sku = $sampleModel.sku; capacity = $sampleModel.capacity }
+    $parameterArguments += 'sampleModel=' + ($modelParameters | ConvertTo-Json -Compress)
+    $state['provisioningStep'] = 'SampleResources'
+    Write-Host 'Deploying the sample model and MCP connection; secret-bearing output is suppressed.'
+    $sampleArguments = @('deployment', 'group', 'create', '--name', 'sample-resources',
+        '--resource-group', $plan.resourceGroup, '--subscription', $subscription,
+        '--template-file', (Join-Path $PSScriptRoot 'infra/sample-resources.bicep'),
+        '--parameters', (Join-Path $PSScriptRoot 'infra/sample-resources.bicepparam')) + $parameterArguments
+    $sampleResources = Invoke-SampleAzure -Arguments $sampleArguments -Sensitive
     if ($sampleResources.properties.provisioningState -ne 'Succeeded') { throw 'Sample resources Bicep deployment did not succeed.' }
     $state['environment'] = $sampleResources.properties.outputs.environment.value
+    if ($requiresFunction) {
+        $storageAccountName = [string] $standard.properties.outputs.storageAccountName.value
+        if ($storageAccountName -notmatch '^[a-z0-9]{3,24}$') {
+            throw 'Standard setup did not return a valid storage account name; no Function App was provisioned.'
+        }
+        $state['provisioningStep'] = 'FunctionInfrastructure'
+        $functionResources = Invoke-SampleAzure -Arguments @('deployment', 'group', 'create', '--name', 'function-app',
+            '--resource-group', $plan.resourceGroup, '--subscription', $subscription,
+            '--template-file', (Join-Path $PSScriptRoot 'infra/function-app.bicep'), '--parameters',
+            "location=$($plan.location)", "functionAppName=func-$($plan.ownerToken.Substring(0, 20))",
+            "storageAccountName=$storageAccountName", "sharedFunctionIdentityResourceId=$($identities.function.resourceId)") -Sensitive
+        if ($functionResources.properties.provisioningState -ne 'Succeeded') { throw 'Function App infrastructure Bicep deployment did not succeed.' }
+        $functionEnvironment = $functionResources.properties.outputs.environment.value
+        $state['provisioningStep'] = 'FunctionCode'
+        Publish-SampleFunctionApp -Plan $plan -FunctionAppName ([string] $functionEnvironment.FUNCTION_APP_NAME)
+        foreach ($name in $functionEnvironment.Keys) { $state.environment[$name] = $functionEnvironment[$name] }
+        Write-Host 'Function code published and queue_trigger indexed successfully.'
+    }
     $state.environment['AZURE_SUBSCRIPTION_ID'] = $subscription
     $state.environment['AZURE_TENANT_ID'] = $runnerIdentity.tenantId
     $state.environment['AZURE_RESOURCE_GROUP'] = $plan.resourceGroup
