@@ -61,7 +61,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -117,7 +117,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -161,7 +161,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class FileSystemResource(TrackedResource):
+class FileSystemResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -216,7 +216,7 @@ class FileSystemResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class FileSystemResourceProperties(_Model):
+class FileSystemResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties specific to the Qumulo File System resource.
 
     :ivar marketplace_details: Marketplace details. Required.
@@ -306,7 +306,7 @@ class FileSystemResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileSystemResourceUpdate(_Model):
+class FileSystemResourceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the FileSystemResource.
 
     :ivar identity: The managed service identities assigned to this resource.
@@ -348,7 +348,7 @@ class FileSystemResourceUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileSystemResourceUpdateProperties(_Model):
+class FileSystemResourceUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the FileSystemResource.
 
     :ivar marketplace_details: Marketplace details.
@@ -399,7 +399,7 @@ class FileSystemResourceUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -450,7 +450,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceDetails(_Model):
+class MarketplaceDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MarketplaceDetails of Qumulo FileSystem resource.
 
     :ivar marketplace_subscription_id: Marketplace Subscription Id.
@@ -511,7 +511,7 @@ class MarketplaceDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -599,7 +599,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -681,7 +681,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class UserDetails(_Model):
+class UserDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User Details of Qumulo FileSystem resource.
 
     :ivar email: User Email. Required.

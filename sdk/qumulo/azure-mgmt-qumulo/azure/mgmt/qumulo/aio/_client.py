@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class QumuloMgmtClient:
+class QumuloMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """QumuloMgmtClient.
 
     :ivar operations: Operations operations

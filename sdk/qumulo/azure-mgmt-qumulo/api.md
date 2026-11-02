@@ -83,7 +83,7 @@ namespace azure.mgmt.qumulo.aio.operations
                 self, 
                 resource_group_name: str, 
                 file_system_name: str, 
-                resource: JSON, 
+                resource: FileSystemResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -142,7 +142,7 @@ namespace azure.mgmt.qumulo.aio.operations
                 self, 
                 resource_group_name: str, 
                 file_system_name: str, 
-                properties: JSON, 
+                properties: FileSystemResourceUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -498,7 +498,7 @@ namespace azure.mgmt.qumulo.operations
                 self, 
                 resource_group_name: str, 
                 file_system_name: str, 
-                resource: JSON, 
+                resource: FileSystemResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -557,7 +557,7 @@ namespace azure.mgmt.qumulo.operations
                 self, 
                 resource_group_name: str, 
                 file_system_name: str, 
-                properties: JSON, 
+                properties: FileSystemResourceUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -585,6 +585,144 @@ namespace azure.mgmt.qumulo.operations
 
         @distributed_trace
         def list(self, **kwargs: Any) -> ItemPaged[Operation]: ...
+
+
+namespace azure.mgmt.qumulo.types
+
+    class azure.mgmt.qumulo.types.FileSystemResource(TrackedResource):
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('FileSystemResourceProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: FileSystemResourceProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.qumulo.types.FileSystemResourceProperties(TypedDict, total=False):
+        key "adminPassword": Required[str]
+        key "availabilityZone": str
+        key "clusterLoginUrl": str
+        key "delegatedSubnetId": Required[str]
+        key "marketplaceDetails": Required[MarketplaceDetails]
+        key "performanceTier": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "storageSku": Required[str]
+        key "userDetails": Required[UserDetails]
+        adminPassword: str
+        availabilityZone: str
+        clusterLoginUrl: str
+        delegatedSubnetId: str
+        marketplaceDetails: MarketplaceDetails
+        performanceTier: str
+        privateIPs: list[str]
+        provisioningState: Union[str, ProvisioningState]
+        storageSku: str
+        userDetails: UserDetails
+
+
+    class azure.mgmt.qumulo.types.FileSystemResourceUpdate(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "properties": ForwardRef('FileSystemResourceUpdateProperties', module='types')
+        identity: ManagedServiceIdentity
+        properties: FileSystemResourceUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.qumulo.types.FileSystemResourceUpdateProperties(TypedDict, total=False):
+        key "delegatedSubnetId": str
+        key "marketplaceDetails": ForwardRef('MarketplaceDetails', module='types')
+        key "performanceTier": str
+        key "userDetails": ForwardRef('UserDetails', module='types')
+        delegatedSubnetId: str
+        marketplaceDetails: MarketplaceDetails
+        performanceTier: str
+        userDetails: UserDetails
+
+
+    class azure.mgmt.qumulo.types.ManagedServiceIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Required[Union[str, ManagedServiceIdentityType]]
+        principalId: str
+        tenantId: str
+        type: Union[str, ManagedServiceIdentityType]
+        userAssignedIdentities: dict[str, UserAssignedIdentity]
+
+
+    class azure.mgmt.qumulo.types.MarketplaceDetails(TypedDict, total=False):
+        key "marketplaceSubscriptionId": str
+        key "marketplaceSubscriptionStatus": Union[str, MarketplaceSubscriptionStatus]
+        key "offerId": Required[str]
+        key "planId": Required[str]
+        key "publisherId": str
+        key "termUnit": str
+        marketplaceSubscriptionId: str
+        marketplaceSubscriptionStatus: Union[str, MarketplaceSubscriptionStatus]
+        offerId: str
+        planId: str
+        publisherId: str
+        termUnit: str
+
+
+    class azure.mgmt.qumulo.types.Resource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.qumulo.types.SystemData(TypedDict, total=False):
+        key "createdAt": str
+        key "createdBy": str
+        key "createdByType": Union[str, CreatedByType]
+        key "lastModifiedAt": str
+        key "lastModifiedBy": str
+        key "lastModifiedByType": Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
+
+
+    class azure.mgmt.qumulo.types.TrackedResource(Resource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.qumulo.types.UserAssignedIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        clientId: str
+        principalId: str
+
+
+    class azure.mgmt.qumulo.types.UserDetails(TypedDict, total=False):
+        key "email": Required[str]
+        email: str
 
 
 ```

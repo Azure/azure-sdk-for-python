@@ -38,5 +38,5 @@
         "azure.mgmt.qumulo.operations.FileSystemsOperations.list_by_subscription": "Qumulo.Storage.FileSystems.listBySubscription",
         "azure.mgmt.qumulo.aio.operations.FileSystemsOperations.list_by_subscription": "Qumulo.Storage.FileSystems.listBySubscription"
     },
-    "CrossLanguageVersion": "404f02c74a8c"
+    "CrossLanguageVersion": "589ff4f473df"
 }
