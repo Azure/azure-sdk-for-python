@@ -249,6 +249,10 @@ rejected with `401`. Hosted environments require the token and return `403`
 when it is not configured. `FOUNDRY_LIFECYCLE_ALLOW_UNAUTHENTICATED=true`
 temporarily permits unauthenticated hosted lifecycle calls for platforms that
 have not yet provisioned a token; it should be removed after token provisioning.
+Before upgrading a hosted deployment to this beta, provision
+`FOUNDRY_LIFECYCLE_TOKEN` and send the matching header, or explicitly enable
+the temporary compatibility setting.
+
 Outside a hosted environment the routes are not registered unless the token is
 configured. All four routes are processed by the framework, including restore
 validation and environment and configuration hydration. Registering application
@@ -278,12 +282,18 @@ rejects attempts to reuse a restored process for a different session.
 `session_env_overrides` are validated as a whole before anything is applied:
 keys must be valid environment variable names, UTF-8 entry and aggregate sizes
 are bounded, and names that control the loader, interpreter, proxy, TLS trust,
-telemetry export, platform identity, or credentials are rejected. A key is
-accepted only when it is `FOUNDRY_AGENT_SESSION_ID`,
+telemetry export, or platform identity are rejected. Proxy names ending in
+`_PROXY` are denied case-insensitively, as are credential-bearing names
+containing `KEY`, `SECRET`, `TOKEN`, `PASSWORD`, `CREDENTIAL`, or
+`CONNECTION_STRING`. A key is accepted only when it is
+`FOUNDRY_AGENT_SESSION_ID`, `FOUNDRY_AGENT_SESSION_GUID`,
 `OTEL_RESOURCE_ATTRIBUTES`, present in the process environment when the server
 starts, or named in the startup-captured comma-separated
 `FOUNDRY_SESSION_ENV_ALLOWED_KEYS` platform setting. Denied keys take precedence
-over these allow rules.
+over these allow rules. Before upgrading, hosted platforms must declare every
+additional session-scoped key that may be absent at process startup through
+`FOUNDRY_SESSION_ENV_ALLOWED_KEYS`; otherwise a restore carrying that key is
+rejected with `400`, including when unauthenticated compatibility mode is used.
 
 Protocol-specific hosts can override the protected `_before_snapshot` and
 `_after_restore` methods to extend the lifecycle before application callbacks

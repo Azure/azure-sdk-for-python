@@ -20,16 +20,23 @@
   running in a Foundry-hosted environment and `FOUNDRY_LIFECYCLE_TOKEN` is not
   set. Local or self-hosted deployments that rely on the endpoints must set
   the token.
+- Before upgrading a hosted deployment to the `2.3.1b1` beta, provision
+  `FOUNDRY_LIFECYCLE_TOKEN` and send the matching lifecycle header, or explicitly
+  set `FOUNDRY_LIFECYCLE_ALLOW_UNAUTHENTICATED=true` for temporary compatibility.
 - `session_env_overrides` on after-restore requests are now validated as a
   whole: keys must match `^[A-Za-z_][A-Za-z0-9_]*$` and be at most 256
   UTF-8 bytes, values are capped at 32 KiB of UTF-8, aggregate overrides are
   capped at 256 KiB, at most 256 entries are accepted, and request bodies are
   capped at 1 MiB. Names that control loaders, interpreters, process startup,
-  proxies, TLS trust, telemetry export, platform identity, or credentials are
-  rejected. Other names must be the session ID or resource attributes, have
-  existed in the startup environment, or be declared through
-  `FOUNDRY_SESSION_ENV_ALLOWED_KEYS`. Any violation rejects the request before
-  environment or session state is changed.
+  proxies, TLS trust, telemetry export, or platform identity are rejected.
+  Proxy names ending in `_PROXY` are denied case-insensitively, as are
+  credential-bearing names containing `KEY`, `SECRET`, `TOKEN`, `PASSWORD`,
+  `CREDENTIAL`, or `CONNECTION_STRING`. Other names must be a session ID or
+  GUID, resource attributes, have existed in the startup environment, or be
+  declared through `FOUNDRY_SESSION_ENV_ALLOWED_KEYS`. Hosted platforms must
+  declare every additional session-scoped key that can be absent at startup
+  before upgrading. Any violation rejects the request before environment or
+  session state is changed.
 
 ### Bugs Fixed
 

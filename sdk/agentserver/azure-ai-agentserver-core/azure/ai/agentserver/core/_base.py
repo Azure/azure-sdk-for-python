@@ -108,6 +108,7 @@ _DENIED_ENV_KEYS = frozenset(
         "AZURE_USERNAME",
         "AZURE_PASSWORD",
         "AZURE_TOKEN_CREDENTIALS",
+        "AZURE_AI_PROJECT_ENDPOINT",
         "FOUNDRY_AGENT_NAME",
         "FOUNDRY_AGENT_ID",
         "FOUNDRY_AGENT_INSTANCE_CLIENT_ID",
@@ -154,6 +155,14 @@ _DENIED_CONNECTION_IDENTITY_SUFFIXES = (
     "__USERNAME",
     "__PASSWORD",
 )
+_DENIED_CREDENTIAL_KEY_FRAGMENTS = (
+    "KEY",
+    "SECRET",
+    "TOKEN",
+    "PASSWORD",
+    "CREDENTIAL",
+    "CONNECTION_STRING",
+)
 
 
 def _is_denied_env_key(key: str) -> bool:
@@ -168,6 +177,8 @@ def _is_denied_env_key(key: str) -> bool:
     return (
         upper in _DENIED_ENV_KEYS
         or upper.startswith(_DENIED_ENV_KEY_PREFIXES)
+        or upper.endswith("_PROXY")
+        or any(fragment in upper for fragment in _DENIED_CREDENTIAL_KEY_FRAGMENTS)
         or (
             upper.startswith("CONNECTIONS__")
             and upper.endswith(_DENIED_CONNECTION_IDENTITY_SUFFIXES)
@@ -492,7 +503,7 @@ class AgentServerHost(Starlette):
         self._lifecycle_allowed_env_keys: frozenset[str] = (
             frozenset(os.environ)
             | frozenset(platform_allowed_keys)
-            | frozenset({_SESSION_ID_ENV, "OTEL_RESOURCE_ATTRIBUTES"})
+            | frozenset({_SESSION_ID_ENV, _SESSION_GUID_ENV, "OTEL_RESOURCE_ATTRIBUTES"})
         )
         self._lifecycle_routes_enabled: bool = self._lifecycle_is_hosted or self._lifecycle_token is not None
 

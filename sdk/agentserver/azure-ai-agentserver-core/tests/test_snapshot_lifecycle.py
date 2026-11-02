@@ -51,7 +51,6 @@ def restore_process_environment():
         "ADDED_VALUE",
         "CAPTURED_VALUE",
         "CUSTOM_VALUE",
-        "FOUNDRY_AGENT_SESSION_GUID",
         "FOUNDRY_AGENT_VERSION",
         "REMOVED_VALUE",
         "RESTORED_VALUE",
@@ -1426,6 +1425,7 @@ async def test_hosted_lifecycle_routes_accept_configured_token(
         "https_proxy",
         "ALL_PROXY",
         "NO_PROXY",
+        "FTP_PROXY",
         "SSL_CERT_FILE",
         "SSL_CERT_DIR",
         "REQUESTS_CA_BUNDLE",
@@ -1434,6 +1434,7 @@ async def test_hosted_lifecycle_routes_accept_configured_token(
         "APPLICATIONINSIGHTS_CONNECTION_STRING",
         "FOUNDRY_HOSTING_ENVIRONMENT",
         "FOUNDRY_PROJECT_ENDPOINT",
+        "AZURE_AI_PROJECT_ENDPOINT",
         "FOUNDRY_LIFECYCLE_TOKEN",
         "FOUNDRY_LIFECYCLE_ALLOW_UNAUTHENTICATED",
         "FOUNDRY_SESSION_ENV_ALLOWED_KEYS",
@@ -1444,6 +1445,11 @@ async def test_hosted_lifecycle_routes_accept_configured_token(
         "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENT_ID",
         "CONNECTIONS__CUSTOM__TENANT_ID",
         "AZURE_CLIENT_SECRET",
+        "AZURE_OPENAI_API_KEY",
+        "SERVICE_SECRET",
+        "ACCESS_TOKEN",
+        "DATABASE_PASSWORD",
+        "APP_CREDENTIAL",
         "AZURE_TENANT_ID",
         "AZURE_FEDERATED_TOKEN_FILE",
         "AZURE_AUTHORITY_HOST",
@@ -1480,10 +1486,48 @@ async def test_after_restore_rejects_reserved_override_keys(
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "denied_key",
+    [
+        "AZURE_AI_PROJECT_ENDPOINT",
+        "FTP_PROXY",
+        "ftp_proxy",
+        "AZURE_OPENAI_API_KEY",
+        "SERVICE_SECRET",
+        "ACCESS_TOKEN",
+        "DATABASE_PASSWORD",
+        "APP_CREDENTIAL",
+        "APPLICATIONINSIGHTS_CONNECTION_STRING",
+    ],
+)
+async def test_after_restore_rejects_reserved_key_present_at_startup(
+    monkeypatch: pytest.MonkeyPatch,
+    denied_key: str,
+) -> None:
+    monkeypatch.setenv(denied_key, "captured")
+    agent = AgentServerHost()
+
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=agent),
+        base_url="http://testserver",
+        headers=_LIFECYCLE_HEADERS,
+    ) as lifecycle_client:
+        response = await lifecycle_client.post(
+            "/_agent/after-restore",
+            json=_after_restore_payload(overrides={denied_key: "replaced"}),
+        )
+
+    assert response.status_code == 400
+    assert denied_key in response.json()["error"]["message"]
+    assert os.environ[denied_key] == "captured"
+    assert agent._lifecycle.assigned_session_id is None  # pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
 async def test_after_restore_accepts_documented_and_boot_time_keys(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setenv("AZURE_OPENAI_API_KEY", "captured")
+    monkeypatch.setenv("MODEL_DEPLOYMENT_NAME", "captured")
     monkeypatch.delenv("OTEL_RESOURCE_ATTRIBUTES", raising=False)
     agent = AgentServerHost()
 
@@ -1496,14 +1540,14 @@ async def test_after_restore_accepts_documented_and_boot_time_keys(
             "/_agent/after-restore",
             json=_after_restore_payload(
                 overrides={
-                    "AZURE_OPENAI_API_KEY": "rotated",
+                    "MODEL_DEPLOYMENT_NAME": "rotated",
                     "OTEL_RESOURCE_ATTRIBUTES": "session.id=session-1",
                 },
             ),
         )
 
     assert response.status_code == 200
-    assert os.environ["AZURE_OPENAI_API_KEY"] == "rotated"
+    assert os.environ["MODEL_DEPLOYMENT_NAME"] == "rotated"
     assert os.environ["OTEL_RESOURCE_ATTRIBUTES"] == "session.id=session-1"
 
 
