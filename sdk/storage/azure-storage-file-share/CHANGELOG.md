@@ -8,7 +8,7 @@
 ### Features Added
 - Added support for FileId-based clients via `ShareClient`'s `get_file_client_by_file_id` and
 `get_directory_client_by_file_id` APIs, and a new `get_file_links` API to `ShareFileClient` that returns the hard links
-to a file (FileId-based clients and `NFS` protocol only).
+to a file (FileId-based clients only).
 - Added `creation_time` property to `ShareProperties`, which returns the time the share was created.
 
 ### Bugs Fixed
