@@ -396,6 +396,10 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 yield
             finally:
                 self._task_manager_stopping = True
+                manager = self._task_manager
+                if manager is not None and self._lifecycle.pending_rollback is not None:
+                    # Protocol shutdown can wake workers before serialized manager cleanup.
+                    manager._preserve_tasks_for_shutdown()  # pylint: disable=protected-access
                 logger.info(
                     "AgentServerHost shutting down (graceful timeout=%ss)",
                     self._graceful_shutdown_timeout,
@@ -595,12 +599,8 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 )  # pylint: disable=import-outside-toplevel
 
                 manager = self._task_manager
-                if preserve_recoverable_tasks:
+                if preserve_recoverable_tasks or self._lifecycle.pending_rollback is not None:
                     await manager.shutdown(wait_for_workers=True, preserve_recoverable_tasks=True)
-                elif self._lifecycle.pending_rollback is not None:
-                    # A restore may still roll configuration back, so cancelled workers must
-                    # finish their cleanup under the binding they started with.
-                    await manager.shutdown(wait_for_workers=True)
                 else:
                     await manager.shutdown()
                 _clear_task_manager(manager)

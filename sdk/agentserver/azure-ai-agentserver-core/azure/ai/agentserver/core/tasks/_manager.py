@@ -1050,8 +1050,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
     async def _begin_shutdown(self, preserve_recoverable_tasks: bool) -> set[asyncio.Task[Any]]:
         if asyncio.current_task() in self._active_admissions:
             raise RuntimeError("Cannot shut down a TaskManager from an in-flight submission")
-        self._preserve_recoverable_tasks_on_shutdown |= preserve_recoverable_tasks
-        retained = self._retain_shutdown_workers() if self._preserve_recoverable_tasks_on_shutdown else set()
+        retained = (
+            self._preserve_tasks_for_shutdown()
+            if preserve_recoverable_tasks or self._preserve_recoverable_tasks_on_shutdown
+            else set()
+        )
         self._shutdown_event.set()
         await self._admissions_drained.wait()
         if self._preserve_recoverable_tasks_on_shutdown:
@@ -1074,6 +1077,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 future.set_exception(TaskDeferred())
         self._pending_steering_futures.clear()
         self._active_generation_future.clear()
+
+    def _preserve_tasks_for_shutdown(self) -> set[asyncio.Task[Any]]:
+        """Retain accepted work before shutdown can wake or cancel its workers.
+
+        :return: Retained worker tasks.
+        :rtype: set[asyncio.Task]
+        """
+        self._preserve_recoverable_tasks_on_shutdown = True
+        return self._retain_shutdown_workers()
 
     def _signal_shutdown(self) -> None:
         """Interrupt blocked recovery reads without waiting for serialized cleanup."""

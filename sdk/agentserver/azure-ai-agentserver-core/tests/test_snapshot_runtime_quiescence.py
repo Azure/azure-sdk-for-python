@@ -441,16 +441,31 @@ async def test_host_shutdown_interrupts_blocked_initial_recovery_list(provider_f
 
 
 @pytest.mark.asyncio
-async def test_host_teardown_joins_workers_while_restore_rollback_is_pending(provider_factory):
+@pytest.mark.parametrize("task_kind", ["one_shot", "multi_turn"])
+@pytest.mark.parametrize("cooperative", [False, True])
+async def test_host_teardown_joins_workers_while_restore_rollback_is_pending(provider_factory, task_kind, cooperative):
+    provider, _ = provider_factory
     app = host()
-    started, cleanup_started, release_cleanup, release_restore, hosted, stop = (asyncio.Event() for _ in range(6))
+    started, cleanup_started, release_cleanup, release_restore, hosted, stop, recovered = (
+        asyncio.Event() for _ in range(7)
+    )
     observed = {}
+    runs, restores = [], []
+    saved_input = {"value": "original-input", "session_id": "session-1"}
+    decorate = task if task_kind == "one_shot" else multi_turn_task
 
-    @task(name="teardown_overlap_job")
-    async def job(ctx: TaskContext[str]) -> str:
+    @decorate(name="teardown_overlap_job")
+    async def job(ctx: TaskContext[dict]) -> dict:
+        if ctx.entry_mode == "recovered":
+            observed["recovered_input"] = ctx.input
+            recovered.set()
+            return ctx.input
         observed["start"] = app.config.session_id
         started.set()
         try:
+            if cooperative:
+                await ctx.shutdown.wait()
+                raise asyncio.CancelledError
             await asyncio.Event().wait()
         except asyncio.CancelledError:
             cleanup_started.set()
@@ -459,12 +474,27 @@ async def test_host_teardown_joins_workers_while_restore_rollback_is_pending(pro
             raise
         return ctx.input
 
+    if cooperative:
+        app._graceful_shutdown_timeout = 10
+
+        @app.shutdown_handler
+        async def shutdown():
+            if len(restores) != 1:
+                return
+            manager = get_task_manager()
+            worker = manager._active_tasks["teardown-overlap"].execution_task
+            manager._signal_shutdown()
+            # Protocol shutdown can finish a worker before serialized manager cleanup begins.
+            await worker
+
     @app.after_restore_handler
     async def initialize(context):
-        await job.start(task_id="teardown-overlap", input=context.session_id)
-        await asyncio.wait_for(started.wait(), 10)
-        await release_restore.wait()
-        raise RuntimeError("fail restore after submitting work")
+        restores.append(context.restore_id)
+        if len(restores) == 1:
+            runs.append(await job.start(task_id="teardown-overlap", input=saved_input))
+            await asyncio.wait_for(started.wait(), 10)
+            await release_restore.wait()
+            raise RuntimeError("fail restore after submitting work")
 
     # Enter and leave the lifespan in one task, as an ASGI server does.
     async def run_host():
@@ -490,6 +520,21 @@ async def test_host_teardown_joins_workers_while_restore_rollback_is_pending(pro
             assert (await asyncio.wait_for(restore, 10)).status_code == 500
         assert observed == {"start": "session-1", "cleanup": "session-1"}
         assert app.config.session_id == ""
+        stored = await provider.get("teardown-overlap")
+        assert stored is not None
+        assert stored.status == "in_progress"
+        assert stored.payload["input"] == saved_input
+        with pytest.raises(TaskDeferred):
+            await runs[0].result()
+        async with app.router.lifespan_context(app), client(app) as http:
+            response = await http.post("/_agent/after-restore", json=payload(restore_id="restore-2"))
+            assert response.status_code == 200, response.text
+            await asyncio.wait_for(recovered.wait(), 10)
+            active = get_task_manager()._active_tasks.get("teardown-overlap")
+            if active is not None:
+                await asyncio.wait_for(asyncio.shield(active.execution_task), 10)
+            assert observed["recovered_input"] == saved_input
+            assert restores == ["restore-1", "restore-2"]
     finally:
         release_cleanup.set()
         release_restore.set()

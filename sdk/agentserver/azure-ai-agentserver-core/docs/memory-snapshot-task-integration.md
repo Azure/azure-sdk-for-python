@@ -288,9 +288,12 @@ drains, avoiding a scanner-cancellation deadlock. Host shutdown signals the
 already-created manager before waiting for the serialized manager lock, so an
 initial recovery read blocked inside after-restore activation is interrupted
 instead of holding cleanup behind that lock. Ordinary host teardown stays
-non-joining, except while a restore rollback is pending: then it waits for the
-cancelled workers so their cleanup cannot see configuration reverted by the
-later rollback. Accepted provider creates,
+non-joining, except while a restore rollback is pending: then it preserves
+unfinished task records and inputs and waits for cancelled workers so their
+cleanup cannot see configuration reverted by the later rollback. Preservation
+and worker retention are established before protocol shutdown callbacks or the
+early manager signal can wake cooperative workers, allowing restore retry to
+recover the original accepted work. Accepted provider creates,
 claims and other mutations still settle before worker/lease cleanup.
 The gate applies only once TaskManager shutdown begins, not as a new HTTP
 admission policy or a capture-time launch queue. Explicit cancellation of an

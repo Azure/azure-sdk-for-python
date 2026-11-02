@@ -28,7 +28,9 @@
   manager lock, so a blocked after-restore recovery read cannot stall cleanup.
 - Wait for cancelled task workers during host teardown while a restore rollback is
   still pending, so their async cleanup cannot observe session or provider
-  configuration reverted underneath it. Ordinary shutdown otherwise stays non-joining.
+  configuration reverted underneath it. Preserve unfinished records and inputs
+  before shutdown wakes workers, so a failed restore can recover them on retry.
+  Ordinary shutdown otherwise stays non-joining.
 - Keep the lease instance consistent with live task workers and accepted
   submissions across compatible in-place restores with a new restore ID.
   Idle runtimes without owned task work still rotate their lease instance.
