@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 """Offline checks for the on-demand pipeline's automatic live-run flow."""
 
+import json
 from pathlib import Path
 
 import pytest
@@ -333,3 +334,32 @@ def test_function_infrastructure_uses_resolved_inputs_without_a_configurable_tog
     assert provisioning.index("Publish-SampleFunctionApp -Plan $plan") < provisioning.index(
         "$state['status'] = 'Ready'"
     )
+
+
+@pytest.mark.parametrize(
+    "target, role_id",
+    [
+        ("function", "b7e6dc6d-f1e8-4753-8033-0f276bb0955b"),
+        ("function", "974c5e8b-45b9-4653-ba55-5f855dd0fb88"),
+        ("project", "974c5e8b-45b9-4653-ba55-5f855dd0fb88"),
+    ],
+)
+def test_shared_identity_bootstrap_preconfigures_function_storage_permissions(target, role_id):
+    path = Path(__file__).resolve().parent.parent / "shared-identities/infra/IdentityConfiguration.json"
+    configuration = json.loads(path.read_text(encoding="utf-8"))
+    matches = [
+        grant
+        for grant in configuration["roleAssignments"]
+        if grant["target"] == target and grant["roleDefinitionId"] == role_id
+    ]
+    assert len(matches) == 1
+    assert "condition" not in matches[0]
+    assert "conditionVersion" not in matches[0]
+    conditioned_owner = [
+        grant
+        for grant in configuration["roleAssignments"]
+        if grant["target"] == "project" and grant["roleDefinitionId"] == "b7e6dc6d-f1e8-4753-8033-0f276bb0955b"
+    ]
+    assert len(conditioned_owner) == 1
+    assert "*-azureml-agent" in conditioned_owner[0]["condition"]
+    assert conditioned_owner[0]["conditionVersion"] == "2.0"
