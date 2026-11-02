@@ -1,6 +1,6 @@
 # Release History
 
-## 2.3.1 (Unreleased)
+## 2.3.1b1 (Unreleased)
 
 ### Features Added
 
@@ -30,6 +30,12 @@
   existed in the startup environment, or be declared through
   `FOUNDRY_SESSION_ENV_ALLOWED_KEYS`. Any violation rejects the request before
   environment or session state is changed.
+
+### Bugs Fixed
+
+- Preserve explicit Agent Card name and version attributes on spans emitted
+  by the `Azure.AI.AgentServer.A2A` instrumentation scope. Other spans retain
+  the existing Foundry deployment identity enrichment.
 
 ### Other Changes
 

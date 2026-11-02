@@ -401,6 +401,7 @@
     "prevsnapshot",
     "prompty",
     "pschema",
+    "pscustomobject",
     "PSECRET",
     "pstn",
     "pydantic",

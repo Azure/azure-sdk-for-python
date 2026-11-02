@@ -26,6 +26,7 @@ words:
   - BYOK
   - cand
   - caplog
+  - capsys
   - caresp
   - cchain
   - configurators
@@ -115,6 +116,10 @@ words:
   - xapitoken
   - xhigh
 ignorePaths:
+  - sdk/agentserver/azure-ai-agentserver-a2a/**/*.csv
+  - sdk/agentserver/azure-ai-agentserver-a2a/**/*.json
+  - sdk/agentserver/azure-ai-agentserver-a2a/**/*.rst
+  - sdk/agentserver/azure-ai-agentserver-a2a/samples/**
   - sdk/agentserver/azure-ai-agentserver-activity/**/*.csv
   - sdk/agentserver/azure-ai-agentserver-activity/**/*.json
   - sdk/agentserver/azure-ai-agentserver-activity/**/*.rst
