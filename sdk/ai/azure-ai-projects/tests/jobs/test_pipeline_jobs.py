@@ -235,6 +235,19 @@ def _assert_requests(requests: list[HttpRequest], kind: str, expected: dict[str,
     assert JobType.PIPELINE == "Pipeline"
 
 
+def _assert_pipeline_jobs_requests(requests: list[HttpRequest], expected: dict[str, Any]) -> None:
+    assert len(requests) == 3
+    assert [request.method for request in requests] == ["PUT", "GET", "GET"]
+    for request in requests:
+        assert request.headers["Foundry-Features"] == "Jobs=V1Preview"
+        assert parse_qs(urlparse(request.url).query)["api-version"] == ["2026-01-15-preview"]
+    assert urlparse(requests[0].url).path.endswith("/pipeline_jobs/pipeline")
+    assert urlparse(requests[1].url).path.endswith("/pipeline_jobs/pipeline")
+    assert urlparse(requests[2].url).path.endswith("/pipeline_jobs")
+    assert "jobType" not in parse_qs(urlparse(requests[2].url).query)
+    assert json.loads(requests[0].body) == {"properties": expected}
+
+
 def _inline_pipeline() -> tuple[PipelineJob, CommandJob]:
     command = CommandJob(
         command="echo hello ${{inputs.name}}",
@@ -301,8 +314,8 @@ def _uploaded_code(name: str, version: str) -> DatasetVersion:
 def _assert_two_code_request(request: HttpRequest, code_uris: dict[str, str]) -> None:
     assert request.method == "PUT"
     assert request.headers["Foundry-Features"] == "Jobs=V1Preview"
-    assert request.headers["x-ms-foundry-job-route"] == "execution"
     assert parse_qs(urlparse(request.url).query)["api-version"] == ["2026-01-15-preview"]
+    assert urlparse(request.url).path.endswith("/pipeline_jobs/two-code")
     resources = {
         "instance_count": 1,
         "instance_type": "Singularity.D4_v3",
@@ -368,7 +381,7 @@ def test_jobs_sync_create_from_command_node() -> None:
     transport = _Transport([_response("Pipeline")])
 
     with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
-        _assert_job(client.beta.jobs.create_or_update("pipeline", pipeline), "Pipeline")
+        _assert_job(client.pipeline_jobs.create_or_update("pipeline", pipeline), "Pipeline")
 
     assert len(transport.requests) == 1
     _assert_inline_request(transport.requests[0])
@@ -386,7 +399,7 @@ async def test_jobs_async_create_from_command_node() -> None:
     async with AsyncAIProjectClient(
         endpoint=_ENDPOINT, credential=_AsyncCredential(), transport=transport  # type: ignore[arg-type]
     ) as client:
-        _assert_job(await client.beta.jobs.create_or_update("pipeline", pipeline), "Pipeline")
+        _assert_job(await client.pipeline_jobs.create_or_update("pipeline", pipeline), "Pipeline")
 
     assert len(transport.requests) == 1
     _assert_inline_request(transport.requests[0])
@@ -406,7 +419,7 @@ def test_jobs_sync_create_from_mapping_with_command_node() -> None:
 
     transport = _Transport([_response("Pipeline")])
     with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
-        _assert_job(client.beta.jobs.create_or_update("pipeline", pipeline), "Pipeline")
+        _assert_job(client.pipeline_jobs.create_or_update("pipeline", pipeline), "Pipeline")
 
     assert len(transport.requests) == 1
     _assert_inline_request(transport.requests[0])
@@ -490,7 +503,7 @@ def test_pipeline_converts_value_bound_uri_folder_input() -> None:
         transport=transport,  # type: ignore[arg-type]
     ) as client:
         _assert_job(
-            client.beta.jobs.create_or_update("folder-handoff", pipeline),
+            client.pipeline_jobs.create_or_update("folder-handoff", pipeline),
             "Pipeline",
         )
 
@@ -519,13 +532,12 @@ def test_pipeline_uploads_both_local_code_folders(tmp_path: Path, monkeypatch: p
         return _uploaded_code(name, version)
 
     with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
-        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
-        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "upload_folder", upload_folder)
         _assert_job(
-            client.beta.jobs.create_or_update(
+            client.pipeline_jobs.create_or_update(
                 "two-code",
                 pipeline,
-                headers={"x-ms-foundry-job-route": "execution"},
             ),
             "Pipeline",
         )
@@ -561,13 +573,12 @@ async def test_pipeline_uploads_both_local_code_folders_async(tmp_path: Path, mo
     async with AsyncAIProjectClient(
         endpoint=_ENDPOINT, credential=_AsyncCredential(), transport=transport  # type: ignore[arg-type]
     ) as client:
-        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
-        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "upload_folder", upload_folder)
         _assert_job(
-            await client.beta.jobs.create_or_update(
+            await client.pipeline_jobs.create_or_update(
                 "two-code",
                 pipeline,
-                headers={"x-ms-foundry-job-route": "execution"},
             ),
             "Pipeline",
         )
@@ -597,10 +608,10 @@ def test_pipeline_does_not_submit_when_code_upload_fails(tmp_path: Path, monkeyp
         raise RuntimeError("upload failed")
 
     with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
-        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
-        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "upload_folder", upload_folder)
         with pytest.raises(RuntimeError, match="upload failed"):
-            client.beta.jobs.create_or_update("two-code", pipeline)
+            client.pipeline_jobs.create_or_update("two-code", pipeline)
 
     assert transport.requests == []
 
@@ -678,6 +689,43 @@ async def test_jobs_async_create_get_and_list(kind: str) -> None:
     _assert_requests(transport.requests, kind, expected)
 
 
+def test_pipeline_jobs_sync_create_get_and_list() -> None:
+    job, expected = _job("Pipeline")
+    transport = _Transport([_response("Pipeline"), _response("Pipeline"), {"value": [_response("Pipeline")]}])
+
+    with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
+        _assert_job(client.pipeline_jobs.create_or_update("pipeline", job), "Pipeline")  # type: ignore[arg-type]
+        _assert_job(client.pipeline_jobs.get("pipeline"), "Pipeline")
+        listed = list(client.pipeline_jobs.list())
+        assert len(listed) == 1
+        _assert_job(listed[0], "Pipeline")
+
+        with pytest.raises(TypeError, match="PipelineJob"):
+            client.pipeline_jobs.create_or_update("command", _job("Command")[0])  # type: ignore[arg-type]
+
+    _assert_pipeline_jobs_requests(transport.requests, expected)
+
+
+@pytest.mark.asyncio
+async def test_pipeline_jobs_async_create_get_and_list() -> None:
+    job, expected = _job("Pipeline")
+    transport = _AsyncTransport([_response("Pipeline"), _response("Pipeline"), {"value": [_response("Pipeline")]}])
+
+    async with AsyncAIProjectClient(
+        endpoint=_ENDPOINT, credential=_AsyncCredential(), transport=transport  # type: ignore[arg-type]
+    ) as client:
+        _assert_job(await client.pipeline_jobs.create_or_update("pipeline", job), "Pipeline")  # type: ignore[arg-type]
+        _assert_job(await client.pipeline_jobs.get("pipeline"), "Pipeline")
+        listed = [item async for item in client.pipeline_jobs.list()]
+        assert len(listed) == 1
+        _assert_job(listed[0], "Pipeline")
+
+        with pytest.raises(TypeError, match="PipelineJob"):
+            await client.pipeline_jobs.create_or_update("command", _job("Command")[0])  # type: ignore[arg-type]
+
+    _assert_pipeline_jobs_requests(transport.requests, expected)
+
+
 def _dsl_job(monkeypatch: pytest.MonkeyPatch) -> PipelineJob:
     monkeypatch.setenv("JOB_COMPUTE_ID", _COMPUTE)
     monkeypatch.setenv("JOB_ENVIRONMENT_IMAGE", "example.azurecr.io/train:latest")
@@ -706,9 +754,8 @@ def _dsl_code_paths(job: PipelineJob) -> dict[str, Path]:
 def _assert_dsl_request(request: HttpRequest, uploaded: dict[str, str]) -> None:
     assert request.method == "PUT"
     assert request.headers["Foundry-Features"] == "Jobs=V1Preview"
-    assert request.headers["x-ms-foundry-job-route"] == "execution"
     assert parse_qs(urlparse(request.url).query)["api-version"] == ["2026-01-15-preview"]
-    assert re.fullmatch(r"/api/projects/fake-project/jobs/pipeline-[0-9a-f]{32}", urlparse(request.url).path)
+    assert re.fullmatch(r"/api/projects/fake-project/pipeline_jobs/pipeline-[0-9a-f]{32}", urlparse(request.url).path)
     resources = {
         "instance_count": 1,
         "instance_type": "Singularity.D4_v3",
@@ -823,11 +870,9 @@ def test_dsl_sync_uploads_code_and_cleans_after_submission(monkeypatch: pytest.M
         return _uploaded_code(name, version)
 
     with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
-        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
-        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
-        created = client.beta.jobs.create_or_update(
-            job, experiment_name="pipeline_samples", headers={"x-ms-foundry-job-route": "execution"}
-        )
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "upload_folder", upload_folder)
+        created = client.pipeline_jobs.create_or_update(job, experiment_name="pipeline_samples")
 
     assert isinstance(created, PipelineJob)
     assert job.experiment_name == "pipeline_samples"
@@ -858,11 +903,9 @@ async def test_dsl_async_uploads_code_and_cleans_after_submission(monkeypatch: p
     async with AsyncAIProjectClient(
         endpoint=_ENDPOINT, credential=_AsyncCredential(), transport=transport  # type: ignore[arg-type]
     ) as client:
-        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
-        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
-        created = await client.beta.jobs.create_or_update(
-            job, experiment_name="pipeline_samples", headers={"x-ms-foundry-job-route": "execution"}
-        )
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "upload_folder", upload_folder)
+        created = await client.pipeline_jobs.create_or_update(job, experiment_name="pipeline_samples")
 
     assert isinstance(created, PipelineJob)
     assert len(uploads) == 2
@@ -888,10 +931,10 @@ def test_dsl_upload_failure_cleans_code_without_put(monkeypatch: pytest.MonkeyPa
         return _uploaded_code(name, version)
 
     with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
-        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
-        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "upload_folder", upload_folder)
         with pytest.raises(RuntimeError, match="upload failed"):
-            client.beta.jobs.create_or_update(job)
+            client.pipeline_jobs.create_or_update(job)
 
     assert len(uploads) == 2
     assert transport.requests == []
@@ -917,10 +960,10 @@ async def test_dsl_async_upload_failure_cleans_code_without_put(monkeypatch: pyt
     async with AsyncAIProjectClient(
         endpoint=_ENDPOINT, credential=_AsyncCredential(), transport=transport  # type: ignore[arg-type]
     ) as client:
-        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
-        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "upload_folder", upload_folder)
         with pytest.raises(RuntimeError, match="upload failed"):
-            await client.beta.jobs.create_or_update(job)
+            await client.pipeline_jobs.create_or_update(job)
 
     assert len(uploads) == 2
     assert transport.requests == []
@@ -1192,11 +1235,9 @@ def test_dsl_source_sync_uploads_shared_snapshot_once(monkeypatch: pytest.Monkey
         return _uploaded_code(name, version)
 
     with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
-        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
-        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
-        client.beta.jobs.create_or_update(
-            job, experiment_name="pipeline_samples", headers={"x-ms-foundry-job-route": "execution"}
-        )
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "upload_folder", upload_folder)
+        client.pipeline_jobs.create_or_update(job, experiment_name="pipeline_samples")
 
     assert len(uploads) == 1
     assert uploads[0][1] == str(snapshot)
@@ -1225,11 +1266,9 @@ async def test_dsl_source_async_uploads_shared_snapshot_once(monkeypatch: pytest
     async with AsyncAIProjectClient(
         endpoint=_ENDPOINT, credential=_AsyncCredential(), transport=transport  # type: ignore[arg-type]
     ) as client:
-        monkeypatch.setattr(client.beta.jobs._datasets, "get", missing_asset)
-        monkeypatch.setattr(client.beta.jobs._datasets, "upload_folder", upload_folder)
-        await client.beta.jobs.create_or_update(
-            job, experiment_name="pipeline_samples", headers={"x-ms-foundry-job-route": "execution"}
-        )
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "get", missing_asset)
+        monkeypatch.setattr(client.pipeline_jobs._datasets, "upload_folder", upload_folder)
+        await client.pipeline_jobs.create_or_update(job, experiment_name="pipeline_samples")
 
     assert uploads == [str(snapshot)]
     assert not snapshot.exists()
@@ -1404,16 +1443,16 @@ def test_jobs_sync_job_only_names_are_unique() -> None:
     job = PipelineJob(compute_id=_COMPUTE, jobs={})
     transport = _Transport([_response("Pipeline"), _response("Pipeline")])
     with AIProjectClient(endpoint=_ENDPOINT, credential=_Credential(), transport=transport) as client:  # type: ignore[arg-type]
-        client.beta.jobs.create_or_update(job)
-        client.beta.jobs.create_or_update(job)
+        client.pipeline_jobs.create_or_update(job)
+        client.pipeline_jobs.create_or_update(job)
         with pytest.raises(TypeError, match="one PipelineJob"):
-            client.beta.jobs.create_or_update("missing-job")
+            client.pipeline_jobs.create_or_update("missing-job")
         with pytest.raises(TypeError, match="A job cannot be supplied"):
-            client.beta.jobs.create_or_update(job, job)
+            client.pipeline_jobs.create_or_update(job, job)
 
     paths = [urlparse(request.url).path for request in transport.requests]
     assert len(paths) == len(set(paths)) == 2
-    assert all(re.fullmatch(r"/api/projects/fake-project/jobs/pipeline-[0-9a-f]{32}", path) for path in paths)
+    assert all(re.fullmatch(r"/api/projects/fake-project/pipeline_jobs/pipeline-[0-9a-f]{32}", path) for path in paths)
 
 
 @pytest.mark.asyncio
@@ -1423,9 +1462,9 @@ async def test_jobs_async_job_only_names_are_unique() -> None:
     async with AsyncAIProjectClient(
         endpoint=_ENDPOINT, credential=_AsyncCredential(), transport=transport  # type: ignore[arg-type]
     ) as client:
-        await client.beta.jobs.create_or_update(job)
-        await client.beta.jobs.create_or_update(job)
+        await client.pipeline_jobs.create_or_update(job)
+        await client.pipeline_jobs.create_or_update(job)
 
     paths = [urlparse(request.url).path for request in transport.requests]
     assert len(paths) == len(set(paths)) == 2
-    assert all(re.fullmatch(r"/api/projects/fake-project/jobs/pipeline-[0-9a-f]{32}", path) for path in paths)
+    assert all(re.fullmatch(r"/api/projects/fake-project/pipeline_jobs/pipeline-[0-9a-f]{32}", path) for path in paths)

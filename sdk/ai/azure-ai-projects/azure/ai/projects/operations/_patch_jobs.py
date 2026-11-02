@@ -150,7 +150,7 @@ class JobsOperations(_GeneratedJobsOps):
                 existing = self._datasets.get(name=dataset_name, version=version)
                 if existing and existing.id:
                     _logger.debug(
-                        "[JobsOperations] Reusing existing dataset '%s' v%s.",
+                        "[JobAssetResolver] Reusing existing dataset '%s' v%s.",
                         dataset_name,
                         version,
                     )
@@ -161,7 +161,7 @@ class JobsOperations(_GeneratedJobsOps):
             result: DatasetVersion
             if local_path.is_dir():
                 _logger.debug(
-                    "[JobsOperations] Uploading folder '%s' as dataset '%s' v%s.",
+                    "[JobAssetResolver] Uploading folder '%s' as dataset '%s' v%s.",
                     local_path,
                     dataset_name,
                     version,
@@ -175,7 +175,7 @@ class JobsOperations(_GeneratedJobsOps):
                 )
             else:
                 _logger.debug(
-                    "[JobsOperations] Uploading file '%s' as dataset '%s' v%s.",
+                    "[JobAssetResolver] Uploading file '%s' as dataset '%s' v%s.",
                     local_path,
                     dataset_name,
                     version,
@@ -185,18 +185,18 @@ class JobsOperations(_GeneratedJobsOps):
                 )
             if not result.id:
                 raise ValueError(f"Dataset upload succeeded but the service did not return a URI for '{local_path}'.")
-            _logger.debug("[JobsOperations] Resolved '%s' → '%s'.", uri, result.data_uri)
+            _logger.debug("[JobAssetResolver] Resolved '%s' to dataset '%s'.", uri, result.id)
             return result.id
 
         parsed = urlparse(uri)
         if parsed.scheme and not parsed.netloc:
             raw = uri[len("azureai:") :] if uri.startswith("azureai:") else uri
             ds_name, ds_version = raw.split(":", 1)
-            _logger.debug("[JobsOperations] Resolving name:version '%s' to dataset URI.", uri)
+            _logger.debug("[JobAssetResolver] Resolving name:version '%s' to a dataset URI.", uri)
             result = self._datasets.get(name=ds_name, version=ds_version)
             if not result.id:
                 raise ValueError(f"Dataset '{uri}' was fetched but the service did not return a URI.")
-            _logger.debug("[JobsOperations] Resolved '%s' → '%s'.", uri, result.data_uri)
+            _logger.debug("[JobAssetResolver] Resolved '%s' to dataset '%s'.", uri, result.id)
             return result.id
 
         # Already a datastore / remote URI — pass through unchanged.
@@ -263,9 +263,19 @@ class JobsOperations(_GeneratedJobsOps):
                     continue
                 code = component["code"]
                 if code not in resolved_code:
+                    _logger.debug(
+                        "[PipelineJobCode] Resolving code for PipelineJob '%s', node '%s'.",
+                        name,
+                        node_name,
+                    )
                     resolved_code[code] = self._resolve_asset_uri(code, f"{name}-{node_name}-code")
                 component["code"] = resolved_code[code]
         finally:
+            _logger.debug(
+                "[PipelineJobCode] Cleaning %d staged code directory item(s) for PipelineJob '%s'.",
+                len(job._component_code_dirs),
+                name,
+            )
             for directory in job._component_code_dirs:
                 directory.cleanup()
             job._component_code_dirs.clear()

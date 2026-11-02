@@ -55,10 +55,9 @@ def main() -> None:
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as client,
     ):
-        created = client.beta.jobs.create_or_update(
+        created = client.pipeline_jobs.create_or_update(
             name=job_name,
             job=job,
-            headers={"x-ms-foundry-job-route": "execution"},
         )
         print(f"Submitted {created.name}: {created.id} (status: {created.status})")
 
