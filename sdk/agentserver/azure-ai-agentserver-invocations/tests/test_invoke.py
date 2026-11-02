@@ -5,13 +5,14 @@
 import asyncio
 import json
 import uuid
-from importlib.metadata import requires
+from importlib.metadata import requires, version
 from urllib.parse import unquote
 
 import pytest
 import httpx
 from opentelemetry import context as otel_context
 from packaging.requirements import Requirement
+from packaging.version import Version
 from starlette.requests import Request
 from starlette.responses import JSONResponse, StreamingResponse
 
@@ -28,7 +29,13 @@ from azure.ai.agentserver.invocations import _invocation
 def test_original_subject_core_dependency_floor():
     requirements = (Requirement(value) for value in requires("azure-ai-agentserver-invocations") or [])
     core = next(value for value in requirements if value.name == "azure-ai-agentserver-core")
-    assert "2.3.0b2" in core.specifier
+    package_version = Version(version("azure-ai-agentserver-invocations"))
+    if package_version.pre and package_version.pre[0] == "a":
+        assert core.specifier.contains(Version(version("azure-ai-agentserver-core")), prereleases=True)
+    else:
+        assert "2.3.0" in core.specifier
+    assert "2.3.0b3" not in core.specifier
+    assert "2.3.0b2" not in core.specifier
     assert "2.3.0b1" not in core.specifier
     assert "2.1.0" not in core.specifier
     assert callable(FoundryAgentRequestContext.model_attribution_headers)

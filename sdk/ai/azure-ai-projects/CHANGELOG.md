@@ -1,5 +1,31 @@
 # Release History
 
+## 2.11.0 (Unreleased)
+
+### Features Added
+
+* Added generated GPT Live configuration, delegation, session, and event models, plus persisted conversation, item, and audio REST operations under `beta.voice_agents.live_conversations`.
+* Added `VoiceAgentLiveSessionResource` and `VoiceAgentLiveDelegationItem` so Live lifecycle and delegation events preserve effective Foundry-managed ownership and resolved agent versions.
+* Added outbound telephony campaign operations under `beta.voice_agents.campaigns`, including scheduling, cancellation, recipient validation, and progress tracking.
+* Added SIP telephony bindings and shared `PhoneNumber`, `TeamsAddress`, and `SipAddress` models for telephony sources, recipients, and transfer targets.
+* Added delegate and inline subagent configurations, handoff policies and voice adaptation, and handoff lifecycle event models.
+* Added system-tool models for DTMF and SMS collection, language detection, sending DTMF and SMS, and call transfer, with collection-status and tool-argument events.
+* Added `VoiceAgentDefinition.post_call` configuration for routine and Event Grid destinations.
+
+### Breaking Changes
+
+Breaking changes in beta classes:
+
+* OpenAI TypeSpec 1.32 generates `Tool`-prefixed names for several existing tool classes. Use `ToolMcpTool` and `ToolCustomToolParam` where a `Tool` subtype is required; `MCPTool` and `CustomToolParam` are now standalone models.
+* Replaced telephony transfer-destination models with shared `TelephonyAddress` subtypes. Transfer destinations now use a `type` discriminator, with `phone_number` replacing `pstn`.
+* Removed `TelephonyBindingStatus` and the binding `status` update field. `UpdateTelephonyBindingRequest` now updates binding configuration, including labels, connections, phone numbers, and SIP caller restrictions.
+* Removed the provider-specific telephony binding request classes and outbound call-job request, destination, and fixed-interval retry-policy models. Use the generated binding-operation parameters and campaign, recipient, and address models.
+* Replaced the `VoiceAgentSubagentConfig` model with `VoiceAgentDelegateSubagentConfig` and `VoiceAgentInlineSubagentConfig`.
+
+### Sample updates
+
+* Updated existing agent-tool and evaluation samples to use the generated `Tool`-prefixed models.
+
 ## 2.10.0 (2026-10-30)
 
 ### Features Added
@@ -10,19 +36,12 @@
 * Added `VoiceAgentNoiseReductionType.AZURE_DEEP_NOISE_SUPPRESSION_HEADSET` and `VoiceAgentNoiseReductionType.AZURE_PERSONAL_NOISE_SUPPRESSION` for local voice activity detection without changing recognition audio.
 * Added `AgentEndpointProtocol.VOICE_CONVERSATION_ENGINE` for hosted text agents used as Voice Agent conversation engines. Hosted agents must declare this protocol with version `1.0.0`; `invocations_ws` does not substitute for it.
 * Added optional `HostedAgentDefinition.enable_memory_snapshot` to start hosted-agent sessions from a snapshot of the initialized process instead of starting the process from its image.
-* Added image-generation model options `gpt-image-2.5-sunburst`, `gpt-image-2.5-sunburst-2026-09-08`, `gpt-image-2.5-flare`, and `gpt-image-2.5-flare-2026-09-08`, with `xhigh` and `max` quality options for these models.
-* Added generated GPT Live configuration and event models from OpenAI TypeSpec 1.32, including Decisions, expanded Responses tools, and audio fixtures.
-* Added `VoiceAgentLiveSessionResource` and `VoiceAgentLiveDelegationItem` so Live lifecycle and delegation events preserve effective Foundry-managed ownership and resolved agent versions.
-* Added persisted Live conversation, item, and audio REST operations under `beta.voice_agents.live_conversations`.
-
-### Breaking Changes
-
-* Renamed preview Live transport event models from `LiveTransportAnswered`, `LiveTransportFailed`, and `LiveTransportRinging` to `LiveServerEventLiveTransportAnswered`, `LiveServerEventLiveTransportFailed`, and `LiveServerEventLiveTransportRinging`. Their wire event types are unchanged.
-* OpenAI TypeSpec 1.32 generates `Tool`-prefixed names for several existing tool classes. Use `ToolMcpTool` and `ToolCustomToolParam` where a `Tool` subtype is required; `MCPTool` and `CustomToolParam` are now standalone models.
+* Added known `ImageGenTool.model` values `gpt-image-2.5-sunburst`, `gpt-image-2.5-sunburst-2026-09-08`, `gpt-image-2.5-flare`, and `gpt-image-2.5-flare-2026-09-08`, with `xhigh` and `max` quality options for these models.
 
 ### Bugs Fixed
 
 * Fixed tracing to record `temperature=0` and `top_p=0` instead of omitting these valid values.
+* Fixed `SimulationSeedDataGenerationJobConfiguration` to expose the service-required `max_samples` property and constructor argument. Updated the simulation-seed evaluation sample to pass this argument directly instead of using the mapping workaround.
 
 ## 2.9.0 (2026-10-16)
 
