@@ -26,6 +26,9 @@
   before scanner cancellation while accepted creates and claims settle safely.
   Host shutdown signals an activating manager before waiting for the serialized
   manager lock, so a blocked after-restore recovery read cannot stall cleanup.
+- Wait for cancelled task workers during host teardown while a restore rollback is
+  still pending, so their async cleanup cannot observe session or provider
+  configuration reverted underneath it. Ordinary shutdown otherwise stays non-joining.
 - Keep the lease instance consistent with live task workers and accepted
   submissions across compatible in-place restores with a new restore ID.
   Idle runtimes without owned task work still rotate their lease instance.

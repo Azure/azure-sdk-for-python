@@ -597,6 +597,10 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 manager = self._task_manager
                 if preserve_recoverable_tasks:
                     await manager.shutdown(wait_for_workers=True, preserve_recoverable_tasks=True)
+                elif self._lifecycle.pending_rollback is not None:
+                    # A restore may still roll configuration back, so cancelled workers must
+                    # finish their cleanup under the binding they started with.
+                    await manager.shutdown(wait_for_workers=True)
                 else:
                     await manager.shutdown()
                 _clear_task_manager(manager)

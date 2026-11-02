@@ -287,7 +287,10 @@ Recovery LIST reads observe shutdown and cancel/join their read before admission
 drains, avoiding a scanner-cancellation deadlock. Host shutdown signals the
 already-created manager before waiting for the serialized manager lock, so an
 initial recovery read blocked inside after-restore activation is interrupted
-instead of holding cleanup behind that lock. Accepted provider creates,
+instead of holding cleanup behind that lock. Ordinary host teardown stays
+non-joining, except while a restore rollback is pending: then it waits for the
+cancelled workers so their cleanup cannot see configuration reverted by the
+later rollback. Accepted provider creates,
 claims and other mutations still settle before worker/lease cleanup.
 The gate applies only once TaskManager shutdown begins, not as a new HTTP
 admission policy or a capture-time launch queue. Explicit cancellation of an

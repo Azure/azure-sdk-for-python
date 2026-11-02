@@ -441,6 +441,64 @@ async def test_host_shutdown_interrupts_blocked_initial_recovery_list(provider_f
 
 
 @pytest.mark.asyncio
+async def test_host_teardown_joins_workers_while_restore_rollback_is_pending(provider_factory):
+    app = host()
+    started, cleanup_started, release_cleanup, release_restore, hosted, stop = (asyncio.Event() for _ in range(6))
+    observed = {}
+
+    @task(name="teardown_overlap_job")
+    async def job(ctx: TaskContext[str]) -> str:
+        observed["start"] = app.config.session_id
+        started.set()
+        try:
+            await asyncio.Event().wait()
+        except asyncio.CancelledError:
+            cleanup_started.set()
+            await release_cleanup.wait()
+            observed["cleanup"] = app.config.session_id
+            raise
+        return ctx.input
+
+    @app.after_restore_handler
+    async def initialize(context):
+        await job.start(task_id="teardown-overlap", input=context.session_id)
+        await asyncio.wait_for(started.wait(), 2)
+        await release_restore.wait()
+        raise RuntimeError("fail restore after submitting work")
+
+    # Enter and leave the lifespan in one task, as an ASGI server does.
+    async def run_host():
+        async with app.router.lifespan_context(app):
+            hosted.set()
+            await stop.wait()
+
+    host_task = asyncio.create_task(run_host())
+    restore = None
+    try:
+        await asyncio.wait_for(hosted.wait(), 2)
+        async with client(app) as http:
+            restore = asyncio.create_task(http.post("/_agent/after-restore", json=payload()))
+            await asyncio.wait_for(started.wait(), 2)
+            stop.set()
+            await asyncio.wait_for(cleanup_started.wait(), 2)
+            await asyncio.sleep(0.1)
+            # Teardown must not return while a cancelled worker still cleans up under the restored binding.
+            assert not host_task.done()
+            release_cleanup.set()
+            await asyncio.wait_for(host_task, 2)
+            release_restore.set()
+            assert (await asyncio.wait_for(restore, 2)).status_code == 500
+        assert observed == {"start": "session-1", "cleanup": "session-1"}
+        assert app.config.session_id == ""
+    finally:
+        release_cleanup.set()
+        release_restore.set()
+        stop.set()
+        pending = [task_ for task_ in (host_task, restore) if task_ is not None]
+        await asyncio.wait_for(asyncio.gather(*pending, return_exceptions=True), 2)
+
+
+@pytest.mark.asyncio
 @pytest.mark.parametrize("inner_id", ["outer", "inner"])
 async def test_task_registration_admission_cleans_up_nested_failure(provider_factory, inner_id):
     provider, _ = provider_factory
