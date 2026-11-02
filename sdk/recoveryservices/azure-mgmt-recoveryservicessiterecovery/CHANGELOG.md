@@ -1,6 +1,6 @@
 # Release History
 
-## 2.1.0 (2026-10-30)
+## 3.0.0 (2026-10-30)
 
 ### Features Added
 
@@ -34,6 +34,10 @@
   - Added enum `IPVersion`
   - Added enum `RecoveryNetworkConfigAutoSyncPolicy`
   - Added model `UpdateConfidentialDiskEncryptionInfo`
+
+### Breaking Changes
+
+  - Model `A2AProtectedItemDetail` changed type of its property `vm_managed_disks` from `list[A2AVmManagedDiskInputDetails]` to `list[A2AClusterVmManagedDiskInputDetails]`
 
 ## 2.0.0 (2026-06-25)
 
