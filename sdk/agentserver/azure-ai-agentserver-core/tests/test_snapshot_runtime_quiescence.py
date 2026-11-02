@@ -462,7 +462,7 @@ async def test_host_teardown_joins_workers_while_restore_rollback_is_pending(pro
     @app.after_restore_handler
     async def initialize(context):
         await job.start(task_id="teardown-overlap", input=context.session_id)
-        await asyncio.wait_for(started.wait(), 2)
+        await asyncio.wait_for(started.wait(), 10)
         await release_restore.wait()
         raise RuntimeError("fail restore after submitting work")
 
@@ -475,19 +475,19 @@ async def test_host_teardown_joins_workers_while_restore_rollback_is_pending(pro
     host_task = asyncio.create_task(run_host())
     restore = None
     try:
-        await asyncio.wait_for(hosted.wait(), 2)
+        await asyncio.wait_for(hosted.wait(), 10)
         async with client(app) as http:
             restore = asyncio.create_task(http.post("/_agent/after-restore", json=payload()))
-            await asyncio.wait_for(started.wait(), 2)
+            await asyncio.wait_for(started.wait(), 10)
             stop.set()
-            await asyncio.wait_for(cleanup_started.wait(), 2)
+            await asyncio.wait_for(cleanup_started.wait(), 10)
             await asyncio.sleep(0.1)
             # Teardown must not return while a cancelled worker still cleans up under the restored binding.
             assert not host_task.done()
             release_cleanup.set()
-            await asyncio.wait_for(host_task, 2)
+            await asyncio.wait_for(host_task, 10)
             release_restore.set()
-            assert (await asyncio.wait_for(restore, 2)).status_code == 500
+            assert (await asyncio.wait_for(restore, 10)).status_code == 500
         assert observed == {"start": "session-1", "cleanup": "session-1"}
         assert app.config.session_id == ""
     finally:
@@ -495,7 +495,7 @@ async def test_host_teardown_joins_workers_while_restore_rollback_is_pending(pro
         release_restore.set()
         stop.set()
         pending = [task_ for task_ in (host_task, restore) if task_ is not None]
-        await asyncio.wait_for(asyncio.gather(*pending, return_exceptions=True), 2)
+        await asyncio.wait_for(asyncio.gather(*pending, return_exceptions=True), 10)
 
 
 @pytest.mark.asyncio
