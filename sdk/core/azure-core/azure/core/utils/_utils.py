@@ -37,7 +37,7 @@ def _convert_to_isoformat(date_time):
     else:
         timestamp = date_time[:-6]
         sign, offset = date_time[-6], date_time[-5:]
-        delta = int(sign + offset[:1]) * 60 + int(sign + offset[-2:])
+        delta = int(sign + offset[:2]) * 60 + int(sign + offset[-2:])
 
     check_decimal = timestamp.split(".")
     if len(check_decimal) > 1:
