@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # mypy: disable-error-code="attr-defined"
 
+import copy
 import logging
 from typing import Any, cast, Dict, Optional, Tuple, TYPE_CHECKING, Union
 
@@ -156,6 +157,9 @@ class AsyncStorageAccountHostsMixin(object):
                 sub_kwargs.pop("sdk_moniker", None)
                 sub_kwargs["transport"] = AsyncTransportWrapper(transport)
                 sub_kwargs["logging_body"] = False
+                if sub_kwargs.get("retry_policy") is not None:
+                    sub_kwargs["retry_policy"] = copy.copy(sub_kwargs["retry_policy"])
+                sub_kwargs.pop("_additional_pipeline_policies", None)
                 session_provider = ContainerSessionProvider(
                     f"{self.scheme}://{self.primary_hostname}".replace(".dfs.", ".blob.", 1),
                     cast(AsyncTokenCredential, credential),

@@ -399,9 +399,5 @@ class ShareFileClient(StorageAccountHostsMixin):
     def get_symlink(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
     @distributed_trace
     def get_file_links(
-        self,
-        *,
-        lease: Optional[Union[ShareLeaseClient, str]] = None,
-        timeout: Optional[int] = None,
-        **kwargs: Any
+        self, *, lease: Optional[Union[ShareLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> List[HardLink]: ...

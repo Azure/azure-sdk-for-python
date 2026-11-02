@@ -137,8 +137,7 @@ class ContainerSessionProvider:
 
         if not hasattr(credential, "get_token"):
             raise TypeError(
-                f"ContainerSessionProvider requires an AsyncTokenCredential; "
-                f"received {type(credential).__name__}."
+                f"ContainerSessionProvider requires an AsyncTokenCredential; " f"received {type(credential).__name__}."
             )
         self._client = BlobServiceClient(_to_service_url(service_url), credential=credential, **kwargs)
         self._cache = AsyncSessionCache()

@@ -427,6 +427,7 @@ class AsyncStorageSessionPolicy(AsyncHTTPPolicy):
             bearer = request.context.get(SESSION_BEARER_AUTH_KEY)
             if bearer:
                 request.http_request.headers["Authorization"] = bearer
+                await response.http_response.close()
                 return await self.next.send(request)
 
         return response

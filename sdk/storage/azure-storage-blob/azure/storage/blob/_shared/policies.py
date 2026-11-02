@@ -1089,6 +1089,7 @@ class StorageSessionPolicy(HTTPPolicy):
             bearer = request.context.get(SESSION_BEARER_AUTH_KEY)
             if bearer:
                 request.http_request.headers["Authorization"] = bearer
+                response.http_response.close()
                 return self.next.send(request)
             return response
 

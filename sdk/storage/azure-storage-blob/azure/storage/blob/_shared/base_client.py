@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import copy
 import logging
 import uuid
 from typing import (
@@ -347,6 +348,9 @@ class StorageAccountHostsMixin(object):
                 sub_kwargs.pop("sdk_moniker", None)
                 sub_kwargs["transport"] = transport
                 sub_kwargs["logging_body"] = False
+                if sub_kwargs.get("retry_policy") is not None:
+                    sub_kwargs["retry_policy"] = copy.copy(sub_kwargs["retry_policy"])
+                sub_kwargs.pop("_additional_pipeline_policies", None)
                 session_provider = ContainerSessionProvider(
                     f"{self.scheme}://{self.primary_hostname}",
                     cast(TokenCredential, credential),
