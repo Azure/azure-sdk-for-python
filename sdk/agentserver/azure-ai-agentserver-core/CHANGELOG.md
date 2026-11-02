@@ -62,6 +62,9 @@
 - Keep the lease instance stable on same-restore retries, retain worker and
   lease handles until workers finish, and defer steering execution during
   rollback while keeping queued input eligible for recovery.
+- Preserve explicit Agent Card name and version attributes on spans emitted
+  by the `Azure.AI.AgentServer.A2A` instrumentation scope. Other spans retain
+  the existing Foundry deployment identity enrichment.
 
 ## 2.3.0 (2026-10-29)
 
