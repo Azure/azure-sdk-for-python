@@ -16,7 +16,7 @@ to a small host declaration. The container contract itself remains mandatory.
 ### Install the package
 
 ```bash
-pip install azure-ai-agentserver-a2a
+python -m pip install "azure-ai-agentserver-a2a==1.0.0b1"
 ```
 
 ### Build and install an alpha
