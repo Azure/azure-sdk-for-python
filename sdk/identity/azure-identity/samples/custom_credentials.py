@@ -7,9 +7,10 @@
 import time
 from typing import Optional, Union
 
+import msal
+
 from azure.core.credentials import AccessToken
 from azure.identity import AuthenticationRequiredError, AzureAuthorityHosts
-import msal
 
 
 class StaticTokenCredential(object):
@@ -30,7 +31,14 @@ class StaticTokenCredential(object):
     def get_token(
         self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
     ) -> AccessToken:
-        """get_token is the only method a credential must implement"""
+        """Get an access token for the requested scopes.
+
+        :param str scopes: desired scopes for the access token.
+        :keyword str claims: additional claims required in the token request.
+        :keyword str tenant_id: optional tenant to include in the token request.
+        :return: An access token with the requested scopes.
+        :rtype: ~azure.core.credentials.AccessToken
+        """
 
         return self._token
 
@@ -46,13 +54,20 @@ class MsalTokenCredential(object):
     def get_token(
         self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
     ) -> AccessToken:
-        """get_token is the only method a credential must implement"""
+        """Get an access token for the requested scopes.
+
+        :param str scopes: desired scopes for the access token.
+        :keyword str claims: additional claims required in the token request.
+        :keyword str tenant_id: optional tenant to include in the token request.
+        :return: An access token with the requested scopes.
+        :rtype: ~azure.core.credentials.AccessToken
+        """
 
         now = int(time.time())
         result = self._app.acquire_token_interactive(list(scopes), claims=claims, tenant_id=tenant_id, **kwargs)
 
         try:
             return AccessToken(result["access_token"], now + int(result["expires_in"]))
-        except:
+        except Exception as ex:
             print("\nFailed to get a valid access token")
-            raise AuthenticationRequiredError(scopes)
+            raise AuthenticationRequiredError(scopes) from ex
