@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (2026-11-01)
+## 1.0.0b2 (2026-11-01)
 
 ### Features Added
 
@@ -33,7 +33,11 @@
   - Added model `UserAssignedIdentity`
   - Operation group `FileSharesOperations` added method `get_redundancy_conversion_status`
   - Operation group `FileSharesOperations` added method `start_redundancy_conversion`
-  - Operation group `InformationalOperationsOperations` added parameter `content_type` in method `get_limits`
+  - Operation group `InformationalOperationsOperations` added parameter `body` and keyword-only parameter `content_type` in method `get_limits`
+
+### Other Changes
+
+  - Dropped support for Python 3.9; the minimum supported version is now Python 3.10.
 
 ## 1.0.0b1 (2026-05-06)
 
