@@ -87,7 +87,7 @@ parameters:
   - name: EnvVars
     type: object
     default: {}
-  # Rust setup applies only to wheel jobs, not source-installing test or documentation jobs.
+  # Rust setup applies to wheel, documentation, and analysis jobs, not test jobs.
   - name: InstallMsRustToolchain
     type: boolean
     default: false

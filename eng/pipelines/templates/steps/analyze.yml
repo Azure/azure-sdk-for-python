@@ -7,6 +7,7 @@ parameters:
   VerifyAutorest: false
   GenerateApiReviewForManualOnly: false
   DevFeedName: 'public/azure-sdk-for-python'
+  EnvVars: {}
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
@@ -91,6 +92,7 @@ steps:
     inputs:
      scriptPath: 'eng/scripts/dispatch_checks.py'
      arguments: '"$(TargetingString)" --disable-compatibility-filter --service=${{parameters.ServiceDirectory}} --checks="verifysdist" ${{ parameters.AdditionalTestArgs }}'
+    env: ${{ parameters.EnvVars }}
 
   - task: PythonScript@0
     displayName: 'Verify whl'
@@ -110,11 +112,13 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+      EnvVars: ${{ parameters.EnvVars }}
 
   - template: run_pylint.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+      EnvVars: ${{ parameters.EnvVars }}
 
   - template: run_black.yml
     parameters:
@@ -143,6 +147,7 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+      EnvVars: ${{ parameters.EnvVars }}
 
   - template: /eng/common/pipelines/templates/steps/create-apiview-revision.yml
     parameters:

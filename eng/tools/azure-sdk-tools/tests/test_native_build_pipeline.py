@@ -140,6 +140,57 @@ def test_documentation_forwards_host_rust_configuration():
     }
 
 
+@pytest.mark.parametrize("enabled", [False, True])
+def test_analyze_rust_setup_and_source_check_credentials_are_opt_in(enabled):
+    jobs = load_template("jobs/ci.yml")
+    analyze_job = next(job for job in jobs["jobs"] if job.get("job") == "Analyze")
+    steps = []
+    for step in analyze_job["steps"]:
+        if RUST_GATE in step:
+            if enabled:
+                steps.extend(step[RUST_GATE])
+        else:
+            steps.append(step)
+
+    installs = [step for step in steps if step.get("template", "").endswith("install-msrust-toolchain.yml")]
+    assert len(installs) == int(enabled)
+    analyze_call = next(step for step in steps if step.get("template", "").endswith("/analyze.yml"))
+    environment = {}
+    for key, value in analyze_call["parameters"]["EnvVars"].items():
+        if key == RUST_GATE:
+            if enabled:
+                environment.update(value)
+        else:
+            environment[key] = value
+    if enabled:
+        assert installs[0]["parameters"] == {
+            "ToolchainFeed": "${{ parameters.MsRustToolchainFeed }}",
+            "WorkingDirectory": "${{ parameters.MsRustWorkingDirectory }}",
+        }
+        assert steps.index(installs[0]) < steps.index(analyze_call)
+        assert environment == {
+            "MSRUSTUP_ACCESS_TOKEN": "$(System.AccessToken)",
+            "MSRUSTUP_FEED_URL": "$(MSRUSTUP_FEED_URL)",
+            "CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN": "$(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)",
+            "CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER": (
+                "$(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)"
+            ),
+        }
+
+    analyze = load_template("steps/analyze.yml")
+    assert analyze["parameters"]["EnvVars"] == {}
+    verify_sdist = next(step for step in analyze["steps"] if step.get("displayName") == "Verify sdist")
+    assert verify_sdist["env"] == "${{ parameters.EnvVars }}"
+    for template_name in ("run_pyright.yml", "run_pylint.yml", "run_breaking_changes.yml"):
+        call = next(step for step in analyze["steps"] if step.get("template", "").endswith(template_name))
+        assert call["parameters"]["EnvVars"] == "${{ parameters.EnvVars }}"
+        template = load_template(f"steps/{template_name}")
+        assert template["parameters"]["EnvVars"] == {}
+        assert all(step["env"] == "${{ parameters.EnvVars }}" for step in template["steps"])
+    if not enabled:
+        assert environment == {}
+
+
 @pytest.mark.parametrize("wheel_count", [0, 1, 5])
 @pytest.mark.parametrize("existing_namespaces", [False, True])
 def test_namespace_properties_accept_platform_wheels(tmp_path, wheel_count, existing_namespaces):
