@@ -702,6 +702,7 @@ class TestBaseExporter(unittest.TestCase):
                 if base.storage is not None:
                     clean_folder(base.storage._path)
         finally:
+            manager.shutdown()
             Singleton._instances.pop(_ConfigurationManager, None)
 
     def test_late_exporter_empty_cache_leaves_storage_active(self):
@@ -728,6 +729,7 @@ class TestBaseExporter(unittest.TestCase):
                 if base.storage is not None:
                     clean_folder(base.storage._path)
         finally:
+            manager.shutdown()
             Singleton._instances.pop(_ConfigurationManager, None)
 
     def test_normal_exporter_includes_http_logging_policy(self):
