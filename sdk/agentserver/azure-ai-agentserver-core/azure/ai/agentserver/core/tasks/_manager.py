@@ -18,6 +18,7 @@ from collections.abc import Awaitable, Callable, Iterator, Mapping
 from contextlib import contextmanager
 from contextvars import ContextVar
 from typing import Any, TypeVar
+from weakref import WeakValueDictionary
 
 from .._config import AgentConfig
 from .._request_context import (
@@ -188,7 +189,7 @@ def _parse_turn_started_at(value: Any) -> float | None:
 
 
 def _resolve_queued_steerers_on_terminal(
-    pending_steering_futures: dict[str, list["asyncio.Future[Any]"]],
+    pending_steering_futures: dict[str, list["asyncio.Future[Any] | None"]],
     task_id: str,
     *,
     current_status: str,
@@ -207,7 +208,7 @@ def _resolve_queued_steerers_on_terminal(
 
     :param pending_steering_futures: Per-task list of pending steerer
         futures (mutated in-place — emptied for the given ``task_id``).
-    :type pending_steering_futures: dict[str, list[asyncio.Future[Any]]]
+    :type pending_steering_futures: dict[str, list[asyncio.Future[Any] | None]]
     :param task_id: The task whose queued steerers should be resolved.
     :type task_id: str
     :keyword current_status: Status string to carry on
@@ -218,7 +219,7 @@ def _resolve_queued_steerers_on_terminal(
 
     queued = pending_steering_futures.pop(task_id, [])
     for fut in queued:
-        if not fut.done():
+        if fut is not None and not fut.done():
             fut.set_exception(TaskConflictError(task_id, current_status))
 
 
@@ -470,7 +471,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         self._shutdown_event = shutdown_event or asyncio.Event()
         self._shutdown_grace_seconds = shutdown_grace_seconds
         self._active_generation_future: dict[str, asyncio.Future[Any]] = {}
-        self._pending_steering_futures: dict[str, list[asyncio.Future[Any]]] = {}
+        self._pending_steering_futures: dict[str, list[asyncio.Future[Any] | None]] = {}
+        self._task_admission_locks: WeakValueDictionary[str, asyncio.Lock] = WeakValueDictionary()
         #   Layer 2: periodic recovery scan task. Created
         # at startup() time; cancelled at shutdown().
         self._periodic_recovery_task: asyncio.Task[None] | None = None
@@ -675,31 +677,38 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 raise RuntimeError("Task list did not converge after retryable conflict") from exc
             raise translated from exc
 
-    def _register_steering_future(self, task_id: str) -> asyncio.Future[Any]:
+    def _register_steering_future(self, task_id: str, pending_count: int) -> asyncio.Future[Any]:
         """Create and register a future for a queued steering input.
 
         Must be called BEFORE ``_append_steering_input()`` to avoid a race
         where the drain pops the queue before the future exists.
+        Recovered inputs and committed appends whose callers were cancelled
+        have no local future; their slots remain as ``None``.
 
         :param task_id: The task identifier.
         :type task_id: str
+        :param pending_count: Number of inputs already queued in the store.
+        :type pending_count: int
         :return: The registered future.
         :rtype: asyncio.Future[Any]
         """
         loop = asyncio.get_running_loop()
         future: asyncio.Future[Any] = loop.create_future()
-        if task_id not in self._pending_steering_futures:
-            self._pending_steering_futures[task_id] = []
-        self._pending_steering_futures[task_id].append(future)
+        pending = self._pending_steering_futures.setdefault(task_id, [])
+        while len(pending) > pending_count and pending[-1] is None:
+            pending.pop()
+        if len(pending) > pending_count:
+            detail = f"Local steering futures exceed the persisted queue for task {task_id!r}"
+            raise RuntimeError(detail)
+        pending.extend([None] * (pending_count - len(pending)))
+        pending.append(future)
         return future
 
-    async def _cancel_queued_steering_input(  # pylint: disable=unused-argument
+    async def _cancel_queued_steering_input(
         self,
         *,
         task_id: str,
         future: asyncio.Future[Any],
-        input_id: str | None,
-        input_val: Any,
     ) -> None:
         """Remove a queued steering input from the chain's pending queue.
 
@@ -712,81 +721,70 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         :keyword task_id: The chain task identifier.
         :keyword future: The queued steerer's result_future.
-        :keyword input_id: The input_id of the queued slot (used for the
-            future-list cleanup; the queue entry itself is identified by
-            ``input_val``).
-        :keyword input_val: The raw queued value used to identify which
-            ``pending_inputs`` entry to remove.
         """
         from ._attachments import _is_ref, _ref_key  # pylint: disable=import-outside-toplevel
         from ._exceptions import TaskCancelled  # pylint: disable=import-outside-toplevel
 
-        async with self._get_task_write_lock(task_id):
-            try:
-                task_info = await self._provider_get_tracked(task_id)
-            except Exception:  # pylint: disable=broad-exception-caught
-                task_info = None
-            if task_info is None or not task_info.payload:
-                # Chain already gone — just resolve the future.
+        async with self._get_task_admission_lock(task_id), self._get_task_write_lock(task_id):
+            pending_list = self._pending_steering_futures.get(task_id, [])
+            if future not in pending_list:
                 if not future.done():
                     future.set_exception(TaskCancelled())
+                return
+            index = pending_list.index(future)
+
+            def finish_cancel() -> None:
+                pending_list.pop(index)
+                if not pending_list:
+                    self._pending_steering_futures.pop(task_id, None)
+                if not future.done():
+                    future.set_exception(TaskCancelled())
+
+            task_info = await self._provider_get_tracked(task_id)
+            if task_info is None or not task_info.payload:
+                finish_cancel()
                 return
             steering = dict(task_info.payload.get("steering") or {})
             pending = list(steering.get("pending_inputs") or [])
             attachments_patch: dict[str, Any] = {}
-            # Drop the first queue entry whose raw value matches ``input_val``.
-            removed = False
-            new_pending: list[Any] = []
-            for entry in pending:
-                if not removed:
-                    raw = entry
-                    if _is_ref(entry):
-                        # For ref-shaped entries, resolve via attachment to
-                        # compare against input_val. If the attachment is
-                        # missing, fall back to ref identity (unlikely).
-                        key = _ref_key(entry)
-                        raw = (task_info.attachments or {}).get(key, entry)
-                    if raw == input_val:
-                        removed = True
-                        if _is_ref(entry):
-                            attachments_patch[_ref_key(entry)] = None
-                        continue
-                new_pending.append(entry)
-            if not removed:
-                # Queue entry already drained or never landed; just resolve.
-                if not future.done():
-                    future.set_exception(TaskCancelled())
+            if index >= len(pending):
+                finish_cancel()
                 return
-            steering["pending_inputs"] = new_pending
-            steering["cancel_requested"] = len(new_pending) > 0
+            entry = pending.pop(index)
+            if _is_ref(entry):
+                attachments_patch[_ref_key(entry)] = None
+            steering["pending_inputs"] = pending
+            steering["cancel_requested"] = bool(pending)
             payload_patch: dict[str, Any] = {"steering": steering}
-            try:
-                # Spec 031 / FR-005a+b: the outer lock is already held, so use
-                # the lock-held update primitive (avoids re-entrant lock
-                # acquisition) which carries the tracked ``if_match`` — no blind
-                # writes (SOT §25.1). ``task_info`` was read inside this same
-                # lock above, so the tracked etag is current.
-                await self._provider_update_lock_held(
+            lease_kwargs: dict[str, Any] = {}
+            if task_info.status == "in_progress":
+                lease_kwargs = self._lease_ext_kwargs(task_id)
+            # Keep both locks until a committed removal has updated its local future.
+            patch_task = asyncio.create_task(
+                self._provider_update_lock_held(
                     task_id,
                     TaskPatchRequest(
                         payload=payload_patch,
                         attachments=attachments_patch or None,
-                        **self._lease_ext_kwargs(task_id),
+                        **lease_kwargs,
                     ),
                 )
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning(
-                    "Failed to remove queued steering input from task %s; "
-                    "future will still be resolved with TaskCancelled",
-                    task_id,
-                    exc_info=True,
-                )
-        # Remove the future from the registered pending list and resolve it.
-        pending_list = self._pending_steering_futures.get(task_id) or []
-        if future in pending_list:
-            pending_list.remove(future)
-        if not future.done():
-            future.set_exception(TaskCancelled())
+            )
+            cancelled = False
+            while True:
+                try:
+                    updated = await asyncio.shield(patch_task)
+                    break
+                except asyncio.CancelledError:
+                    cancelled = True
+                    if patch_task.done():
+                        updated = patch_task.result()
+                        break
+            if updated is None:
+                raise TaskNotFound(task_id)
+            finish_cancel()
+            if cancelled:
+                raise asyncio.CancelledError()
 
     async def startup(self) -> None:
         """Initialize the manager and recover stale tasks.
@@ -1267,7 +1265,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
     # Resume happens via .start()/.run() against a suspended task; the lifecycle
     # state machine in _lifecycle_start_inner handles the resume transition.
 
-    async def get_active_run(self, task_id: str) -> TaskRun[Any] | None:  # pylint: disable=too-many-return-statements
+    async def get_active_run(self, task_id: str) -> TaskRun[Any] | None:
         """Return a TaskRun handle for an active (in-progress) task.
 
         : consults the store, not only
@@ -1284,6 +1282,12 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     or ``None`` if not active / terminal / evicted.
                 :rtype: TaskRun[Any] | None
         """
+        async with self._get_task_admission_lock(task_id):
+            return await self._get_active_run_under_admission(task_id)
+
+    async def _get_active_run_under_admission(  # pylint: disable=too-many-return-statements
+        self, task_id: str
+    ) -> TaskRun[Any] | None:
         # Fast path: locally-tracked active execution.
         active = self._active_tasks.get(task_id)
         if active is not None:
@@ -1410,7 +1414,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             ),
         )
 
-    async def _start_existing_task(  # pylint: disable=too-many-locals,too-many-statements
+    async def _start_existing_task(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
         self,
         *,
         fn: Callable[..., Awaitable[Any]],
@@ -1421,6 +1425,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         input_type: type[Any] | None = None,
         opts: TaskOptions | None = None,
         retry: RetryPolicy | None = None,
+        _resume_queued: bool = False,
+        _resume_payload: dict[str, Any] | None = None,
+        _resume_attachments: dict[str, Any] | None = None,
     ) -> TaskRun[Any]:
         """Transition an existing task to in_progress and execute it.
 
@@ -1443,6 +1450,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :paramtype opts: TaskOptions | None
         :keyword retry: Retry policy.
         :paramtype retry: RetryPolicy | None
+        :keyword _resume_queued: Atomically claim the queued head of an
+            interrupted run-completion handoff.
+        :paramtype _resume_queued: bool
+        :keyword _resume_payload: New input metadata to admit with the lease claim.
+        :paramtype _resume_payload: dict[str, Any] | None
+        :keyword _resume_attachments: Input attachments to admit with the lease claim.
+        :paramtype _resume_attachments: dict[str, Any] | None
         :return: A TaskRun handle.
         :rtype: TaskRun[Any]
         """
@@ -1481,13 +1495,34 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # same status onto a record that already carries it.
         needs_status_flip = task_info.status != "in_progress"
         needs_turn_start_write = bool(turn_start_payload)
-        if not needs_status_flip and not needs_turn_start_write:
+        updated_info: TaskInfo | None
+        if _resume_queued:
+            promotion = self._prepare_steering_input(task_info)
+            if promotion is None:
+                raise TaskConflictError(task_id, task_info.status)
+            queued_payload, queued_attachments = promotion
+            queued_payload["steering"]["drain_in_progress"] = False
+            updated_info = await self._provider_update_locked(
+                task_id,
+                TaskPatchRequest(
+                    status="in_progress",
+                    payload=queued_payload,
+                    attachments=queued_attachments or None,
+                    lease_owner=self._lease_owner,
+                    lease_instance_id=self._instance_id,
+                    lease_duration_seconds=lease_duration,
+                    if_match=task_info.etag or None,
+                ),
+            )
+            if updated_info is None:
+                raise TaskNotFound(task_id)
+        elif not needs_status_flip and not needs_turn_start_write:
             # No-op PATCH would be sent — skip it. The reclaim has
             # already established our lease; nothing else to write.
             # The in-memory ``task_info`` already reflects the
             # post-reclaim state we observed when ``_reclaim_one``
             # returned, so the re-fetch is also unnecessary.
-            updated_info: TaskInfo | None = task_info
+            updated_info = task_info
         else:
             # PATCH returns the full updated TaskInfo -- no follow-up
             # GET needed. (Saves one network round-trip per call.)
@@ -1498,7 +1533,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     lease_owner=self._lease_owner,
                     lease_instance_id=self._instance_id,
                     lease_duration_seconds=lease_duration,
-                    payload=turn_start_payload if turn_start_payload else None,
+                    payload={**turn_start_payload, **(_resume_payload or {})} or None,
+                    attachments=_resume_attachments,
+                    if_match=task_info.etag or None,
                 ),
             )
             if updated_info is None:
@@ -1543,7 +1580,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # continuation of a steered turn. Sticky-True is avoided
         # because pending_inputs / generation > 0 alone do NOT imply
         # this entry was constructed by the drain.
-        is_steered_turn = bool(steering.get("drain_in_progress"))
+        is_steered_turn = _resume_queued or bool(steering.get("drain_in_progress"))
 
         # For steerable recovery with drain_in_progress, use active_input
         if entry_mode == "recovered" and steering.get("drain_in_progress") and "active_input" in steering:
@@ -1580,7 +1617,22 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         )
 
         loop = asyncio.get_running_loop()
-        result_future: asyncio.Future[Any] = loop.create_future()
+        steering_futures = self._pending_steering_futures.get(task_id, [])
+        queued_future = steering_futures.pop(0) if _resume_queued and steering_futures else None
+        claimed_queued_input = _resume_queued
+        if entry_mode == "recovered" and not _resume_queued:
+            pending_count = len(steering.get("pending_inputs") or [])
+            while len(steering_futures) > pending_count and steering_futures[-1] is None:
+                steering_futures.pop()
+            if len(steering_futures) > pending_count:
+                if len(steering_futures) != pending_count + 1:
+                    raise RuntimeError(f"Local steering futures are misaligned for task {task_id!r}")
+                # The queued claim committed, but its reply failed before binding the caller.
+                queued_future = steering_futures.pop(0)
+                claimed_queued_input = True
+        result_future = queued_future if queued_future is not None else loop.create_future()
+        if claimed_queued_input:
+            self._active_generation_future[task_id] = result_future
 
         renewal_cancel = asyncio.Event()
 
@@ -1654,6 +1706,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             opts=resolved_opts,
             retry=retry,
         )
+        if _resume_queued:
+            active._pending_input_count = len(steering.get("pending_inputs") or [])
         self._active_tasks[task_id] = active
 
         return TaskRun(
@@ -2108,12 +2162,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     # Multi-turn path: try drain promotes queued head as a
                     # new turn.
                     try:
-                        new_ctx = await self._try_drain_steering(
-                            task_id=task_id,
-                            ctx=ctx,
-                            opts=opts,
-                            result_future=current_result_future,
-                        )
+                        async with self._get_task_admission_lock(task_id):
+                            new_ctx = await self._try_drain_steering(
+                                task_id=task_id,
+                                ctx=ctx,
+                                opts=opts,
+                                result_future=current_result_future,
+                            )
                         if new_ctx is not None:
                             ctx = new_ctx
                             attempt = 0
@@ -2206,12 +2261,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     if opts.steerable:
                         await asyncio.sleep(0)
                         try:
-                            new_ctx = await self._try_drain_steering(
-                                task_id=task_id,
-                                ctx=ctx,
-                                opts=opts,
-                                result_future=current_result_future,
-                            )
+                            async with self._get_task_admission_lock(task_id):
+                                new_ctx = await self._try_drain_steering(
+                                    task_id=task_id,
+                                    ctx=ctx,
+                                    opts=opts,
+                                    result_future=current_result_future,
+                                )
                             if new_ctx is not None:
                                 ctx = new_ctx
                                 attempt = 0
@@ -2330,12 +2386,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                     # ctx.entry_mode="resumed" per the existing _try_drain_steering
                     # mechanics. If no queued steerers, chain remains suspended.
                     try:
-                        new_ctx = await self._try_drain_steering(
-                            task_id=task_id,
-                            ctx=ctx,
-                            opts=opts,
-                            result_future=current_result_future,
-                        )
+                        async with self._get_task_admission_lock(task_id):
+                            new_ctx = await self._try_drain_steering(
+                                task_id=task_id,
+                                ctx=ctx,
+                                opts=opts,
+                                result_future=current_result_future,
+                            )
                         if new_ctx is not None:
                             # Queued head promoted; new turn dispatching.
                             # _execute_task continues into next attempt with new ctx.
@@ -2373,7 +2430,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
     ) -> TaskContext[Any] | None:
         """Check for pending steering inputs and drain the next one.
 
-        Called BEFORE persisting suspend/complete to avoid lease/status conflicts.
+        Called under the admission lock after the previous turn's outcome
+        has been persisted.
         Returns a new ``TaskContext`` if a drain occurred, or ``None`` if no
         pending inputs exist.
 
@@ -2411,52 +2469,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             if task_info is None:
                 return None
 
-            payload = dict(task_info.payload) if task_info.payload else {}
-            steering = dict(payload.get("steering", {}))
-            pending = list(steering.get("pending_inputs", []))
-
-            if not pending:
+            promotion = self._prepare_steering_input(task_info)
+            if promotion is None:
                 return None
-
-            # Pop the next input from the queue.: the entry may be
-            # either a raw inline value (≤ 20 KiB at append) or a ref slot
-            # pointing into ``task_info.attachments``. Resolve uniformly via
-            # ``_read_input_value``; if it was a ref, the same drain PATCH
-            # MUST also delete the attachment (C-9 /).
-            next_entry = pending.pop(0)
-            attachments_patch: dict[str, Any] = {}
-            if _is_ref(next_entry):
-                attachments_patch[_ref_key(next_entry)] = None
-            next_input_raw = _read_input_value(next_entry, task_info.attachments)
-
-            # Admission and recovery must see the promoted turn as the current input.
-            input_mode, input_value = _resolve_input_storage(
-                next_input_raw,
-                threshold_bytes=_INPUT_THRESHOLD_BYTES,
-                key_for_attachment=_FUNCTION_INPUT_KEY,
-                task_id=task_id,
-            )
-            payload["input"] = input_value
-            if input_mode == "attachment":
-                attachments_patch[_FUNCTION_INPUT_KEY] = next_input_raw
-
-            # Update steering state. (: previous_input is
-            # no longer mirrored into _steering; only the active input + queue
-            # state need to survive a crash mid-drain.)
-            steering["active_input"] = next_input_raw
-            steering["pending_inputs"] = pending
-            #   SOT: internal
-            # _steering["generation"] writes removed. The drain transition
-            # IS the generation advance — no separate counter needed.
-            steering["cancel_requested"] = len(pending) > 0
-            steering["drain_in_progress"] = True
-            #: the steering drain re-entry is a NEW
-            # turn-start boundary — write a fresh _turn_started_at so the
-            # respawned watchdog computes a full per-turn budget.
-            payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
-            payload["steering"] = steering
-            # SOT §11/§20: the framework does not write payload["output"];
-            # no clear is needed at the drain transition.
+            payload, attachments_patch = promotion
+            steering = payload["steering"]
+            pending = steering["pending_inputs"]
+            next_input_raw = steering["active_input"]
 
             try:
                 etag = getattr(task_info, "etag", None) or None
@@ -2604,6 +2623,44 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             task_id,
         )
         return new_ctx
+
+    @staticmethod
+    def _prepare_steering_input(task_info: TaskInfo) -> tuple[dict[str, Any], dict[str, Any]] | None:
+        """Build one atomic queued-input promotion for live or recovered drains.
+
+        :param task_info: The versioned task snapshot to claim.
+        :type task_info: TaskInfo
+        :return: Payload and attachment changes, or None when the queue is empty.
+        :rtype: tuple[dict[str, Any], dict[str, Any]] | None
+        """
+        payload = dict(task_info.payload or {})
+        steering = dict(payload.get("steering") or {})
+        pending = list(steering.get("pending_inputs") or [])
+        if not pending:
+            return None
+        entry = pending.pop(0)
+        attachments: dict[str, Any] = {}
+        if _is_ref(entry):
+            attachments[_ref_key(entry)] = None
+        next_input = _read_input_value(entry, task_info.attachments)
+        input_mode, input_value = _resolve_input_storage(
+            next_input,
+            threshold_bytes=_INPUT_THRESHOLD_BYTES,
+            key_for_attachment=_FUNCTION_INPUT_KEY,
+            task_id=task_info.id,
+        )
+        payload["input"] = input_value
+        if input_mode == "attachment":
+            attachments[_FUNCTION_INPUT_KEY] = next_input
+        steering.update(
+            active_input=next_input,
+            pending_inputs=pending,
+            cancel_requested=bool(pending),
+            drain_in_progress=True,
+        )
+        payload.update(steering=steering, retry_attempt=0)
+        payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
+        return payload, attachments
 
     async def _handle_multi_turn_success(  # pylint: disable=unused-argument
         self,
@@ -3016,9 +3073,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
     async def _recover_stale_tasks(self) -> None:
         """Recover stale in-progress tasks from previous instances."""
-        agent_name = self._config.agent_name or "default"
-        session_id = self._config.session_id or "local"
-
         try:
             #   / C-FLT-1 — scope the recovery scan to
             # framework-owned tasks via source_type. Tasks created by
@@ -3026,8 +3080,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             # lease_owner) triple MUST NOT be enumerated by the
             # framework's reclaim path.
             stale_tasks = await self._provider.list(
-                agent_name=agent_name,
-                session_id=session_id,
+                agent_name=self._config.agent_name or "default",
+                session_id=self._config.session_id or "local",
                 status="in_progress",
                 lease_owner=self._lease_owner,
                 source_type=_SOURCE_TYPE,
@@ -3038,107 +3092,169 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             return
 
         for task_info in stale_tasks:
-            # Check owning-host authorization before any recovery writes.
-            if task_info.id in self._active_tasks or not self._recovery_is_authorized(
-                self._find_resume_callback_name(task_info)
-            ):
-                continue
-
-            # (Spec 038) One-time legacy cleanup: delete pre-schema tasks
-            # (no payload.schema_version) instead of recovering them.
-            if await self._delete_if_pre_schema_legacy(task_info):
-                continue
-
-            #  — opportunistic orphan attachment cleanup. If a prior
-            # lifetime crashed between a steering-append attachment PATCH
-            # and the queue update (cannot happen in the happy path
-            # because Phase 4 makes them a single atomic PATCH, but
-            # defense-in-depth is cheap), delete any
-            # ``_steering_input_*`` attachment that no live ref in
-            # ``pending_inputs`` references.
-            try:
-                refreshed = await self._steering_cleanup_orphan_attachments(task_info)
-                if refreshed is not None:
-                    # Cleanup wrote — adopt the post-cleanup record so the
-                    # reclaim below carries the current etag (else reclaim
-                    # 412s on the stale scan etag and recovery is skipped).
-                    task_info = refreshed
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning(
-                    "Orphan attachment cleanup failed for %s",
-                    task_info.id,
-                    exc_info=True,
-                )
-
-            # Reclaim the lease with our new instance ID
-            try:
-                #   / C-LSE-2 — both reclaim sites
-                # (inline AND cold-start/periodic) carry if_match. On
-                # 412, ABANDON per §25.3 — another process beat us;
-                # let the next scan re-evaluate.
-                #
-                # Route through _reclaim_one so the reclaim takes the
-                # per-task write lock AND refreshes the tracked etag from
-                # the post-reclaim record. Adopt that record as task_info
-                # so (a) the lease-renewal heartbeat's tracked etag
-                # matches the store — otherwise its first tick sends the
-                # stale pre-reclaim etag, 412s, and recovery is cancelled
-                # as "lost ownership" ~one lease-half-life in — and (b)
-                # _start_existing_task sees the post-reclaim lease
-                # generation/instance.
-                reclaimed_info = await self._reclaim_one(task_info)
-                if reclaimed_info is not None:
-                    task_info = reclaimed_info
-                logger.info(
-                    "Reclaimed stale task %s (generation will increment)",
-                    task_info.id,
-                )
-            except _HostedConflict as exc:
-                translated = _translate_hosted_conflict(exc, task_id=task_info.id)
-                if translated is None or getattr(translated, "current_status", None) == "in_progress":
-                    logger.info(
-                        "Reclaim conflict for task %s — another process beat us; letting next scan re-evaluate.",
-                        task_info.id,
-                    )
+            async with self._get_task_admission_lock(task_info.id):
+                # Check owning-host authorization before any recovery writes.
+                if task_info.id in self._active_tasks or not self._recovery_is_authorized(
+                    self._find_resume_callback_name(task_info)
+                ):
                     continue
-                logger.warning("Failed to reclaim task %s", task_info.id, exc_info=True)
-                continue
-            except (EtagConflict, ValueError) as exc:
-                # 412 ABANDON for reclaim per §25.3.
-                if isinstance(exc, ValueError) and "etag" not in str(exc).lower():
-                    logger.warning("Failed to reclaim task %s", task_info.id, exc_info=True)
-                    continue
-                logger.info(
-                    "Reclaim 412 for task %s — another process beat us; "
-                    "letting next scan re-evaluate (/ §25.3 ABANDON).",
-                    task_info.id,
-                )
-                continue
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning("Failed to reclaim task %s", task_info.id, exc_info=True)
-                continue
 
-            # Find resume callback and dispatch
-            fn = self._find_resume_callback(task_info)
-            if fn is not None:
+                # (Spec 038) One-time legacy cleanup: delete pre-schema tasks
+                # (no payload.schema_version) instead of recovering them.
+                if await self._delete_if_pre_schema_legacy(task_info):
+                    continue
+
+                #  — opportunistic orphan attachment cleanup. If a prior
+                # lifetime crashed between a steering-append attachment PATCH
+                # and the queue update (cannot happen in the happy path
+                # because Phase 4 makes them a single atomic PATCH, but
+                # defense-in-depth is cheap), delete any
+                # ``_steering_input_*`` attachment that no live ref in
+                # ``pending_inputs`` references.
                 try:
-                    # Look up stored opts for resumed-task configuration.
-                    fn_name = (task_info.source or {}).get("name", "")
-                    opts = self._resume_opts.get(fn_name)
-                    await self._start_existing_task(
-                        fn=fn,
-                        fn_name=task_info.agent_name,
-                        task_info=task_info,
-                        entry_mode="recovered",
-                        opts=opts,
-                    )
-                    logger.info("Recovered task %s is now active", task_info.id)
+                    refreshed = await self._steering_cleanup_orphan_attachments(task_info)
+                    if refreshed is not None:
+                        # Cleanup wrote — adopt the post-cleanup record so the
+                        # reclaim below carries the current etag (else reclaim
+                        # 412s on the stale scan etag and recovery is skipped).
+                        task_info = refreshed
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning(
-                        "Failed to resume recovered task %s",
+                        "Orphan attachment cleanup failed for %s",
                         task_info.id,
                         exc_info=True,
                     )
+
+                # Reclaim the lease with our new instance ID
+                try:
+                    #   / C-LSE-2 — both reclaim sites
+                    # (inline AND cold-start/periodic) carry if_match. On
+                    # 412, ABANDON per §25.3 — another process beat us;
+                    # let the next scan re-evaluate.
+                    #
+                    # Route through _reclaim_one so the reclaim takes the
+                    # per-task write lock AND refreshes the tracked etag from
+                    # the post-reclaim record. Adopt that record as task_info
+                    # so (a) the lease-renewal heartbeat's tracked etag
+                    # matches the store — otherwise its first tick sends the
+                    # stale pre-reclaim etag, 412s, and recovery is cancelled
+                    # as "lost ownership" ~one lease-half-life in — and (b)
+                    # _start_existing_task sees the post-reclaim lease
+                    # generation/instance.
+                    reclaimed_info = await self._reclaim_one(task_info)
+                    if reclaimed_info is not None:
+                        task_info = reclaimed_info
+                    logger.info(
+                        "Reclaimed stale task %s (generation will increment)",
+                        task_info.id,
+                    )
+                except _HostedConflict as exc:
+                    translated = _translate_hosted_conflict(exc, task_id=task_info.id)
+                    if translated is None or getattr(translated, "current_status", None) == "in_progress":
+                        logger.info(
+                            "Reclaim conflict for task %s — another process beat us; letting next scan re-evaluate.",
+                            task_info.id,
+                        )
+                        continue
+                    logger.warning("Failed to reclaim task %s", task_info.id, exc_info=True)
+                    continue
+                except (EtagConflict, ValueError) as exc:
+                    # 412 ABANDON for reclaim per §25.3.
+                    if isinstance(exc, ValueError) and "etag" not in str(exc).lower():
+                        logger.warning("Failed to reclaim task %s", task_info.id, exc_info=True)
+                        continue
+                    logger.info(
+                        "Reclaim 412 for task %s — another process beat us; "
+                        "letting next scan re-evaluate (/ §25.3 ABANDON).",
+                        task_info.id,
+                    )
+                    continue
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Failed to reclaim task %s", task_info.id, exc_info=True)
+                    continue
+
+                # Find resume callback and dispatch
+                fn = self._find_resume_callback(task_info)
+                if fn is not None:
+                    try:
+                        # Look up stored opts for resumed-task configuration.
+                        fn_name = (task_info.source or {}).get("name", "")
+                        opts = self._resume_opts.get(fn_name)
+                        await self._start_existing_task(
+                            fn=fn,
+                            fn_name=task_info.agent_name,
+                            task_info=task_info,
+                            entry_mode="recovered",
+                            opts=opts,
+                        )
+                        logger.info("Recovered task %s is now active", task_info.id)
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        logger.warning(
+                            "Failed to resume recovered task %s",
+                            task_info.id,
+                            exc_info=True,
+                        )
+
+        await self._recover_queued_steering_tasks()
+
+    async def _recover_queued_steering_tasks(self) -> None:
+        """Resume admitted input stranded after a completed multi-turn handler."""
+        from ._decorator import _extract_generic_args  # pylint: disable=import-outside-toplevel
+
+        if not any(
+            opts._is_multi_turn and opts.steerable and self._recovery_is_authorized(name)
+            for name, opts in self._resume_opts.items()
+        ):
+            return
+        try:
+            suspended = await self._provider.list(
+                agent_name=self._config.agent_name or "default",
+                session_id=self._config.session_id or "local",
+                status="suspended",
+                source_type=_SOURCE_TYPE,
+                limit=None,
+            )
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.warning("Failed to query completed steering handoffs for recovery", exc_info=True)
+            return
+        for info in suspended:
+            async with self._get_task_admission_lock(info.id):
+                name = self._find_resume_callback_name(info)
+                opts = self._resume_opts.get(name) if name is not None else None
+                if (
+                    opts is None
+                    or not opts._is_multi_turn
+                    or not opts.steerable
+                    or not self._recovery_is_authorized(name)
+                ):
+                    continue
+                if (
+                    info.id in self._active_tasks
+                    or info.status != "suspended"
+                    or info.suspension_reason != "run_completion"
+                    or _SCHEMA_VERSION_KEY not in (info.payload or {})
+                    or not ((info.payload or {}).get("steering") or {}).get("pending_inputs")
+                ):
+                    continue
+                fn = self._find_resume_callback(info)
+                if fn is None:
+                    continue
+                try:
+                    input_type, _ = _extract_generic_args(fn)
+                    await self._start_existing_task(
+                        fn=fn,
+                        fn_name=name or "",
+                        task_info=info,
+                        entry_mode="resumed",
+                        input_type=input_type,
+                        opts=opts,
+                        retry=opts.retry,
+                        _resume_queued=True,
+                    )
+                except (EtagConflict, TaskConflictError):
+                    logger.info("Queued steering recovery claim lost a race for task %s", info.id)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Failed to recover queued steering input for task %s", info.id, exc_info=True)
 
     def _find_resume_callback(self, task_info: TaskInfo) -> Callable[..., Any] | None:
         """Find a registered resume callback for a task.
@@ -3202,6 +3318,23 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
     # --------------------------------------------------------------- #
     #  — Per-task write queue + etag tracking
     # --------------------------------------------------------------- #
+
+    def _get_task_admission_lock(self, task_id: str) -> asyncio.Lock:
+        """Serialize starts, recovery and draining within the single manager.
+
+        Separate from the write lock because admission also performs writes.
+        Weak values retain a lock while it is held or awaited, not forever.
+
+        :param task_id: The task being admitted.
+        :type task_id: str
+        :return: The per-task admission lock.
+        :rtype: asyncio.Lock
+        """
+        lock = self._task_admission_locks.get(task_id)
+        if lock is None:
+            lock = asyncio.Lock()
+            self._task_admission_locks[task_id] = lock
+        return lock
 
     def _get_task_write_lock(self, task_id: str) -> asyncio.Lock:
         """/ C-WQ-1 — return the per-task write lock.
@@ -3448,6 +3581,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                         prior_lease_owner=prior_lease_owner,
                         prior_lease_instance=prior_lease_instance,
                         cached_expiry_count=cached_expiry_count,
+                        patch=patch,
                     )
                     if decision == "abandon_lease_lost":
                         raise TaskConflictError(task_id, "in_progress") from exc
@@ -3469,6 +3603,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                         prior_lease_owner=prior_lease_owner,
                         prior_lease_instance=prior_lease_instance,
                         cached_expiry_count=cached_expiry_count,
+                        patch=patch,
                     )
                     if decision == "abandon_lease_lost":
                         raise TaskConflictError(task_id, "in_progress") from exc
@@ -3488,6 +3623,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                             prior_lease_owner=prior_lease_owner,
                             prior_lease_instance=prior_lease_instance,
                             cached_expiry_count=cached_expiry_count,
+                            patch=patch,
                         )
                         if decision == "abandon_lease_lost":
                             raise TaskConflictError(task_id, "in_progress") from exc
@@ -3517,6 +3653,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         prior_lease_owner: str | None,
         prior_lease_instance: str | None,
         cached_expiry_count: int,
+        patch: TaskPatchRequest | None = None,
     ) -> str:
         """— decide what to do after a terminal-write 412.
 
@@ -3548,6 +3685,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :paramtype prior_lease_instance: str | None
         :keyword cached_expiry_count: The cached prior lease expiry count.
         :paramtype cached_expiry_count: int
+        :keyword patch: Suspension PATCH whose steering must retain admitted inputs.
+        :paramtype patch: TaskPatchRequest | None
         :return: One of ``"abandon_lease_lost"``, ``"abandon_already_terminal"``,
             or ``"retry"``.
         :rtype: str
@@ -3575,6 +3714,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             or fresh.lease.instance_id != (prior_lease_instance or self._instance_id)
         ):
             return "abandon_lease_lost"
+        if patch is not None and patch.status == "suspended" and patch.suspension_reason == "run_completion":
+            payload = dict(patch.payload or {})
+            steering = dict((fresh.payload or {}).get("steering") or {})
+            if steering:
+                steering["active_input"] = None
+                payload["steering"] = steering
+            else:
+                payload.pop("steering", None)
+            patch.payload = payload
         # Branch (c): retry.
         return "retry"
 

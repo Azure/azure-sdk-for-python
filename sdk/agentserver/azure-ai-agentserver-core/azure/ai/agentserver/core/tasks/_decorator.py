@@ -931,7 +931,9 @@ class Task(Generic[Input, Output]):
             # the caller is not the active owner of the task (the
             # ``_lease_ext_kwargs`` helper returns ``{}`` in that
             # case, so the wire format is unchanged).
-            lease_kwargs = manager._lease_ext_kwargs(task_id)  # pylint: disable=protected-access
+            lease_kwargs = (
+                manager._lease_ext_kwargs(task_id) if task_info.status == "in_progress" else {}
+            )  # pylint: disable=protected-access
             try:
                 await manager.provider.update(
                     task_id,
@@ -969,13 +971,65 @@ class Task(Generic[Input, Output]):
 
         raise RuntimeError(f"Failed to append steering input after {max_retries} retries")
 
+    async def _queue_steering_start(
+        self,
+        manager: Any,
+        *,
+        task_id: str,
+        input_val: Any,
+        existing: Any,
+        input_id: str | None,
+        if_last_input_id: str | None,
+    ) -> TaskRun[Output]:
+        """Admit a queued input and bind its local result handle.
+
+        :param manager: The single task manager.
+        :type manager: Any
+        :keyword task_id: The task receiving the input.
+        :paramtype task_id: str
+        :keyword input_val: The input to append.
+        :paramtype input_val: Any
+        :keyword existing: The current task snapshot.
+        :paramtype existing: Any
+        :keyword input_id: The caller's optional input identifier.
+        :paramtype input_id: str | None
+        :keyword if_last_input_id: The acceptance precondition.
+        :paramtype if_last_input_id: str | None
+        :return: A handle for this queued input.
+        :rtype: TaskRun[Output]
+        """
+        # pylint: disable=protected-access
+        steering = (existing.payload or {}).get("steering") or {}
+        pending_count = len(steering.get("pending_inputs") or [])
+        future = manager._register_steering_future(task_id, pending_count)
+        try:
+            await self._append_steering_input(
+                manager,
+                task_id=task_id,
+                input_val=input_val,
+                existing=existing,
+                input_id=input_id,
+                if_last_input_id=if_last_input_id,
+            )
+        except BaseException:
+            pending = manager._pending_steering_futures.get(task_id, [])
+            if future in pending:
+                # The append may have committed before its response was cancelled.
+                pending[pending.index(future)] = None
+            future.cancel()
+            raise
+        active = manager._active_tasks.get(task_id)
+        if active:
+            active.context.cancel.set()
+        # pylint: enable=protected-access
+        return self._create_steering_ack_run(manager, task_id, future, input_id=input_id)
+
     def _create_steering_ack_run(
         self,
         manager: Any,
         task_id: str,
         future: Any,
         input_id: str | None = None,
-        input_val: Any = None,
     ) -> TaskRun[Output]:
         """Create a TaskRun for a queued steering input.
 
@@ -987,9 +1041,6 @@ class Task(Generic[Input, Output]):
         :type future: Any
         :param input_id: The input_id stamped on the queued input (if any).
         :type input_id: str | None
-        :param input_val: The raw queued input value (used to identify the
-            slot when ``cancel()`` is invoked on the returned handle).
-        :type input_val: Any
         :return: A :class:`TaskRun` whose result resolves with the queued turn.
         :rtype: TaskRun[Output]
         """
@@ -998,8 +1049,6 @@ class Task(Generic[Input, Output]):
             await manager._cancel_queued_steering_input(  # pylint: disable=protected-access
                 task_id=task_id,
                 future=future,
-                input_id=input_id,
-                input_val=input_val,
             )
 
         return TaskRun(
@@ -1043,6 +1092,7 @@ class Task(Generic[Input, Output]):
         from ._exceptions import (  # pylint: disable=import-outside-toplevel
             TaskConflictError,
         )
+        from ._manager import get_task_manager  # pylint: disable=import-outside-toplevel
 
         #: orphan-sandbox eviction at scheduling
         # entry points MUST surface as TaskConflictError(current_status=
@@ -1050,12 +1100,21 @@ class Task(Generic[Input, Output]):
         # per Invariant 1. Operator-facing WARNING logs (in _manager.py
         # and _lease.py) are the only differentiator.
         try:
-            return await self._lifecycle_start_inner(
-                task_id=task_id,
-                input=input,
-                input_id=input_id,
-                if_last_input_id=if_last_input_id,
-            )
+            manager = get_task_manager()
+            active = manager._active_tasks.get(task_id)  # pylint: disable=protected-access
+            if active is not None and not self._opts.steerable and active.result_future.done():
+                info = await manager._provider_get_tracked(task_id)  # pylint: disable=protected-access
+                if info is not None and info.status == "suspended":
+                    # Let the previous caller observe its outcome before cleanup,
+                    # without holding the admission lock needed by that cleanup.
+                    await asyncio.shield(active.execution_task)
+            async with manager._get_task_admission_lock(task_id):  # pylint: disable=protected-access
+                return await self._lifecycle_start_inner(
+                    task_id=task_id,
+                    input=input,
+                    input_id=input_id,
+                    if_last_input_id=if_last_input_id,
+                )
         except _HostedConflict as exc:
             translated = _translate_hosted_conflict(exc, task_id=task_id)
             if translated is None:
@@ -1096,6 +1155,7 @@ class Task(Generic[Input, Output]):
         :rtype: TaskRun[Output]
         """
         from ._exceptions import (  # pylint: disable=import-outside-toplevel
+            EtagConflict,
             TaskConflictError,
         )
         from ._manager import (  # pylint: disable=import-outside-toplevel
@@ -1150,8 +1210,19 @@ class Task(Generic[Input, Output]):
                 initial_payload_extras=_build_framework_extras(input_id),
             )
 
+        active_locally = manager._active_tasks.get(task_id) is not None  # pylint: disable=protected-access
         if existing.status == "suspended":
-            # Resume — patch input onto task, then start.
+            if active_locally and not self._opts.steerable:
+                raise TaskConflictError(task_id, "suspended")
+            if (
+                not active_locally
+                and self._opts.steerable
+                and ((existing.payload or {}).get("steering") or {}).get("pending_inputs")
+            ):
+                raise TaskConflictError(task_id, "suspended")
+
+        if existing.status == "suspended" and not active_locally:
+            # Admit input, status and lease together.
             #  Etag-protected retry loop so concurrent
             # suspended-resume POSTs race safely instead of silently
             # overwriting each other.
@@ -1164,9 +1235,6 @@ class Task(Generic[Input, Output]):
                 _FUNCTION_INPUT_KEY,
                 _INPUT_THRESHOLD_BYTES,
                 _resolve_input_storage,
-            )
-            from ._models import (  # pylint: disable=import-outside-toplevel
-                TaskPatchRequest,
             )
 
             #  — promotion: route the resume input through the
@@ -1186,29 +1254,26 @@ class Task(Generic[Input, Output]):
             max_resume_retries = 5
             current_info = existing
             for _attempt in range(max_resume_retries):
-                etag = getattr(current_info, "etag", None) or None
+                if current_info.status != "suspended":
+                    raise TaskConflictError(task_id, current_info.status)
                 # Build the resume patch: input + (optionally) advance the
                 # framework-managed last_input_id slot (flat layout).
                 resume_payload: dict[str, Any] = {"input": input_value}
                 if input_id is not None:
                     resume_payload[_LAST_INPUT_ID_PAYLOAD_KEY] = input_id
                 try:
-                    # PATCH returns the updated TaskInfo -- capture it
-                    # to skip the post-patch refetch below.
-                    #   /  — route through the
-                    # manager's per-task write queue so the etag cache
-                    # is refreshed from the response (otherwise the
-                    # subsequent _start_existing_task PATCH would carry
-                    # a stale if_match and 412 against itself).
-                    updated_info = await manager._provider_update_locked(  # pylint: disable=protected-access
-                        task_id,
-                        TaskPatchRequest(
-                            payload=resume_payload,
-                            attachments=attachments_patch,
-                            if_match=etag,
-                        ),
+                    return await manager._start_existing_task(  # pylint: disable=protected-access
+                        fn=self._fn,
+                        fn_name=self.name,
+                        task_info=current_info,
+                        entry_mode="resumed",
+                        input_val=input,
+                        input_type=self._input_type,
+                        opts=self._opts,
+                        retry=resolved_retry,
+                        _resume_payload=resume_payload,
+                        _resume_attachments=attachments_patch,
                     )
-                    break
                 except _HostedConflict as exc:
                     translated = _translate_hosted_conflict(exc, task_id=task_id)
                     if translated is not None:
@@ -1223,7 +1288,7 @@ class Task(Generic[Input, Output]):
                         if_last_input_id=if_last_input_id,
                     )
                     current_info = refreshed
-                except (ValueError, _TransportClassifiedError) as exc:
+                except (EtagConflict, ValueError, _TransportClassifiedError) as exc:
                     # Etag conflict -- re-fetch, re-check precondition, retry.
                     # Local provider raises ValueError; hosted task store
                     # raises TransportClassifiedError with classification=
@@ -1233,6 +1298,8 @@ class Task(Generic[Input, Output]):
                         isinstance(exc, _TransportClassifiedError)
                         and getattr(exc, "classification", None) != "conflict"
                     ):
+                        raise
+                    if isinstance(exc, ValueError) and "etag" not in str(exc).lower():
                         raise
                     refreshed = await manager._provider_get_tracked(task_id)  # pylint: disable=protected-access
                     if refreshed is None:
@@ -1247,26 +1314,11 @@ class Task(Generic[Input, Output]):
                         if_last_input_id=if_last_input_id,
                     )
                     current_info = refreshed
-            else:
-                raise RuntimeError(
-                    f"Failed to apply suspended-resume input patch after "
-                    f"{max_resume_retries} retries (task {task_id!r})"
-                )
-            # PATCH already returned the updated TaskInfo -- no GET needed.
-            if updated_info is None:
-                raise RuntimeError(f"Task {task_id!r} disappeared after input patch")
-            return await manager._start_existing_task(  # pylint: disable=protected-access
-                fn=self._fn,
-                fn_name=self.name,
-                task_info=updated_info,
-                entry_mode="resumed",
-                input_val=input,
-                input_type=self._input_type,
-                opts=self._opts,
-                retry=resolved_retry,
+            raise RuntimeError(
+                f"Failed to apply suspended-resume input patch after "
+                f"{max_resume_retries} retries (task {task_id!r})"
             )
-
-        if existing.status == "in_progress":
+        if existing.status == "in_progress" or (existing.status == "suspended" and active_locally):
             #   Layer 3 +: consult the lease
             # state to decide recovery vs. conflict. The legacy
             # _LEGACY_INPROCESS_STALE_THRESHOLD_SECONDS wall-clock
@@ -1279,7 +1331,6 @@ class Task(Generic[Input, Output]):
                 _lease_is_dead,
             )
 
-            active_locally = manager._active_tasks.get(task_id) is not None  # pylint: disable=protected-access
             lease_dead = _lease_is_dead(
                 existing,
                 this_lease_owner=manager._lease_owner,  # pylint: disable=protected-access
@@ -1329,10 +1380,7 @@ class Task(Generic[Input, Output]):
                     retry=resolved_retry,
                 )
             if self._opts.steerable:
-                # Steering path: append input to queue, signal cancel, return ack
-                # pylint: disable=protected-access
-                ack_future = manager._register_steering_future(task_id)
-                await self._append_steering_input(
+                return await self._queue_steering_start(
                     manager,
                     task_id=task_id,
                     input_val=input,
@@ -1340,12 +1388,6 @@ class Task(Generic[Input, Output]):
                     input_id=input_id,
                     if_last_input_id=if_last_input_id,
                 )
-                # Set cancel on in-memory context if task runs in this process
-                active = manager._active_tasks.get(task_id)
-                # pylint: enable=protected-access
-                if active:
-                    active.context.cancel.set()
-                return self._create_steering_ack_run(manager, task_id, ack_future, input_id=input_id, input_val=input)
             raise TaskConflictError(task_id, "in_progress")
 
         # completed (or any other terminal status)
@@ -1753,39 +1795,40 @@ class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
         except RuntimeError:
             return  # no manager -> nothing to delete
 
-        # 1. Resolve any active in-process caller's future with TaskCancelled.
-        active = getattr(mgr, "_active_tasks", {}).get(task_id)
-        if active is not None:
-            fut = getattr(active, "result_future", None)
-            if fut is not None and not fut.done():
-                fut.set_exception(TaskCancelled())
-            # Signal the handler's cancel event so the running coroutine
-            # winds down cooperatively.
-            cancel_evt = getattr(active.context, "cancel", None)
-            if cancel_evt is not None:
-                cancel_evt.set()
-            # Force-cancel the running execution_task so handlers blocked
-            # on awaits that don't check ctx.cancel still exit.
-            exec_task = getattr(active, "execution_task", None)
-            if exec_task is not None and not exec_task.done():
-                exec_task.cancel()
+        async with mgr._get_task_admission_lock(task_id):  # pylint: disable=protected-access
+            # 1. Resolve any active in-process caller's future with TaskCancelled.
+            active = getattr(mgr, "_active_tasks", {}).get(task_id)
+            if active is not None:
+                fut = getattr(active, "result_future", None)
+                if fut is not None and not fut.done():
+                    fut.set_exception(TaskCancelled())
+                # Signal the handler's cancel event so the running coroutine
+                # winds down cooperatively.
+                cancel_evt = getattr(active.context, "cancel", None)
+                if cancel_evt is not None:
+                    cancel_evt.set()
+                # Force-cancel the running execution_task so handlers blocked
+                # on awaits that don't check ctx.cancel still exit.
+                exec_task = getattr(active, "execution_task", None)
+                if exec_task is not None and not exec_task.done():
+                    exec_task.cancel()
 
-        # 2. Resolve all queued steerer futures with TaskCancelled.
-        pending = getattr(mgr, "_pending_steering_futures", {}).pop(task_id, [])
-        for queued_fut in pending:
-            if not queued_fut.done():
-                queued_fut.set_exception(TaskCancelled())
+            # 2. Resolve all queued steerer futures with TaskCancelled.
+            pending = getattr(mgr, "_pending_steering_futures", {}).pop(task_id, [])
+            for queued_fut in pending:
+                if queued_fut is not None and not queued_fut.done():
+                    queued_fut.set_exception(TaskCancelled())
 
-        # 3. Force-delete the record (idempotent — only swallow the
-        # "already-gone" classes).
-        provider = getattr(mgr, "_provider", None)
-        if provider is not None:
-            from ._exceptions_internal import TaskNotFound  # pylint: disable=import-outside-toplevel
+            # 3. Force-delete the record (idempotent — only swallow the
+            # "already-gone" classes).
+            provider = getattr(mgr, "_provider", None)
+            if provider is not None:
+                from ._exceptions_internal import TaskNotFound  # pylint: disable=import-outside-toplevel
 
-            try:
-                await provider.delete(task_id, force=True)
-            except TaskNotFound:
-                pass  # idempotent: already gone
+                try:
+                    await provider.delete(task_id, force=True)
+                except TaskNotFound:
+                    pass  # idempotent: already gone
 
 
 @overload

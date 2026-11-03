@@ -492,6 +492,14 @@ Container shutdown sets `ctx.shutdown` (an `asyncio.Event`) AND
 `exit_for_recovery()` is only meaningful during shutdown; calling
 it outside that context is a programming error.
 
+For steerable multi-turn tasks, startup and periodic recovery also resume
+queued input if the previous turn finished successfully but its handoff to
+the next input was interrupted. The completed turn is not replayed: the
+queued head starts a new turn with `ctx.entry_mode == "resumed"` and
+`ctx.is_steered_turn == True`. Suspended tasks without queued input remain
+idle. This recovery requires a running task manager; it does not itself wake
+a stopped hosted worker.
+
 ### 4.12 Multi-turn chain deletion
 
 ```python
