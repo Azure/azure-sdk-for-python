@@ -29,7 +29,7 @@ class TestMonitorManagementPredictiveMetricOperations(AzureMgmtRecordedTestCase)
             metric_namespace="str",
             metric_name="str",
             aggregation="str",
-            api_version="2022-10-01",
+            api_version="2025-09-01-preview",
         )
 
         # please add some check logic here by yourself
