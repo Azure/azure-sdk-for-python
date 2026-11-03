@@ -238,9 +238,7 @@ class TestDecisionBatchPersistence:
     )
     def test_failed_metadata_keeps_only_a_known_error_kind(self, kind, kept):
         error = EvaluationException("synthetic failure", properties={"decision_model": {"error_kind": kind}})
-        assert _decision_error_metadata(error)["properties"] == {
-            "decision_model": {"error_kind": kind} if kept else {}
-        }
+        assert _decision_error_metadata(error)["properties"] == {"decision_model": {"error_kind": kind} if kept else {}}
 
     @pytest.mark.parametrize(
         "detail,max_request_bytes,kind,message",
