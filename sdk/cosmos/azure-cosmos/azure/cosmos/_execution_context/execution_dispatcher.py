@@ -25,6 +25,7 @@ Cosmos database service.
 
 import json
 import os
+import re
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos._execution_context import endpoint_component, multi_execution_aggregator
 from azure.cosmos._execution_context import non_streaming_order_by_aggregator, hybrid_search_aggregator
@@ -32,10 +33,22 @@ from azure.cosmos._execution_context.base_execution_context import _QueryExecuti
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
-from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
+from azure.cosmos.http_constants import ResourceType, StatusCodes, SubStatusCodes
+from azure.cosmos._query_aggregate_utils import _extract_query_text
 from .._constants import _Constants as Constants
 
 # pylint: disable=protected-access
+
+_SQL_NON_CODE = re.compile(r"""'(?:[^'\\]|\\.|'')*'|"(?:[^"\\]|\\.|"")*"|--[^\r\n]*|/\*[\s\S]*?\*/""")
+_ORDER_BY_RANK = re.compile(r"\bORDER\s+BY\s+RANK\b", re.IGNORECASE)
+
+
+def _is_order_by_rank_query(query):
+    query_text = _extract_query_text(query)
+    if query_text is None:
+        return False
+    # Ignore literals and comments without losing token boundaries between SQL keywords.
+    return _ORDER_BY_RANK.search(_SQL_NON_CODE.sub(" ", query_text)) is not None
 
 
 def _is_partitioned_execution_info(e):
@@ -93,9 +106,13 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         self._response_hook = response_hook
         self._raw_response_hook = raw_response_hook
         self._fetched_query_plan = False
+        self._query_plan_required = (
+            resource_type == ResourceType.Document
+            and "partitionKey" in options
+            and _is_order_by_rank_query(query)
+        )
 
     def _create_execution_context_with_query_plan(self):
-        self._fetched_query_plan = True
         query_to_use = self._query if self._query is not None else "Select * from root r"
         query_plan = self._client._GetQueryPlanThroughGateway(
             query_to_use,
@@ -111,6 +128,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
                 query_execution_info._query_execution_info['parameters'] = params
 
         self._execution_context = self._create_pipelined_execution_context(query_execution_info)
+        self._fetched_query_plan = True
 
     def __next__(self):
         """Returns the next query result.
@@ -120,6 +138,9 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :raises StopIteration: If no more result is left.
 
         """
+        # A scoped RANK query can succeed without ranking on the direct service path.
+        if self._query_plan_required and not self._fetched_query_plan:
+            self._create_execution_context_with_query_plan()
         try:
             return next(self._execution_context)
         except CosmosHttpResponseError as e:
@@ -139,6 +160,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :return: List of results.
         :rtype: list
         """
+        if self._query_plan_required and not self._fetched_query_plan:
+            self._create_execution_context_with_query_plan()
         try:
             return self._execution_context.fetch_next_block()
         except CosmosHttpResponseError as e:
