@@ -41,9 +41,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -69,9 +69,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -82,10 +82,10 @@ class ActionDependency(TypedDict, total=False):
     :vartype type: Union[str, "ActionDependencyType"]
     :ivar name: Name of the action this depends on. Required.
     :vartype name: str
-    :ivar on_action_lifecycle: The lifecycle state of the dependency action that triggers this
-     action to start. Known values are: "AnyTerminal", "Start", "Running", "Success", "Failure", and
+    :ivar onActionLifecycle: The lifecycle state of the dependency action that triggers this action
+     to start. Known values are: "AnyTerminal", "Start", "Running", "Success", "Failure", and
      "Skipped".
-    :vartype on_action_lifecycle: Union[str, "ActionLifecycle"]
+    :vartype onActionLifecycle: Union[str, "ActionLifecycle"]
     """
 
     type: Required[Union[str, "ActionDependencyType"]]
@@ -108,9 +108,9 @@ class Capability(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of a capability resource.
     :vartype properties: "CapabilityProperties"
     """
@@ -124,18 +124,18 @@ class CapabilityProperties(TypedDict, total=False):
 
     :ivar publisher: String of the Publisher that this Capability extends.
     :vartype publisher: str
-    :ivar target_type: String of the Target Type that this Capability extends.
-    :vartype target_type: str
+    :ivar targetType: String of the Target Type that this Capability extends.
+    :vartype targetType: str
     :ivar description: Localized string of the description.
     :vartype description: str
-    :ivar parameters_schema: URL to retrieve JSON schema of the Capability parameters.
-    :vartype parameters_schema: str
+    :ivar parametersSchema: URL to retrieve JSON schema of the Capability parameters.
+    :vartype parametersSchema: str
     :ivar urn: String of the URN for this Capability Type.
     :vartype urn: str
-    :ivar provisioning_state: Resource provisioning state. Not currently in use because resource is
+    :ivar provisioningState: Resource provisioning state. Not currently in use because resource is
      created synchronously. Known values are: "Succeeded", "Failed", "Canceled", "Creating",
      "Updating", "Deleting", and "Running".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     publisher: str
@@ -216,11 +216,11 @@ class ChaosTargetQuerySelector(TypedDict, total=False):
     :ivar filter: Model that represents available filter types that can be applied to a targets
      list.
     :vartype filter: "ChaosTargetFilter"
-    :ivar query_string: Azure Resource Graph (ARG) Query Language query for target resources.
+    :ivar queryString: Azure Resource Graph (ARG) Query Language query for target resources.
      Required.
-    :vartype query_string: str
-    :ivar subscription_ids: Subscription id list to scope resource query. Required.
-    :vartype subscription_ids: list[str]
+    :vartype queryString: str
+    :ivar subscriptionIds: Subscription id list to scope resource query. Required.
+    :vartype subscriptionIds: list[str]
     :ivar type: Enum of the selector type. Required. Query selector type.
     :vartype type: Literal[SelectorType.QUERY]
     """
@@ -278,9 +278,9 @@ class Connection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of the connection.
     :vartype properties: "ConnectionProperties"
     """
@@ -297,41 +297,39 @@ class ConnectionProperties(TypedDict, total=False):
     validated by the service per kind.
 
     :ivar kind: The kind of connection, indicating the actor type authorized to reach the Chaos
-     Studio data plane for the workspace and target. Required. Known values are: "AksExtension",
-     "ChaosAgent", and "Csfi".
+     Studio data plane for the workspace and target. Required. Known values are: "AksExtension" and
+     "ChaosAgent".
     :vartype kind: Union[str, "ConnectionKind"]
-    :ivar target_resource_id: The fully qualified Azure resource ID of the target resource this
+    :ivar targetResourceId: The fully qualified Azure resource ID of the target resource this
      connection is established with. Required.
-    :vartype target_resource_id: str
-    :ivar principal_id: The Microsoft Entra principal (object) ID of the identity used by the
+    :vartype targetResourceId: str
+    :ivar principalId: The Microsoft Entra principal (object) ID of the identity used by the
      connection.
-    :vartype principal_id: str
-    :ivar tenant_id: The Microsoft Entra tenant ID that the connection identity belongs to.
-    :vartype tenant_id: str
-    :ivar certificate_subject_name: The subject name of the certificate used to authenticate the
+    :vartype principalId: str
+    :ivar tenantId: The Microsoft Entra tenant ID that the connection identity belongs to.
+    :vartype tenantId: str
+    :ivar certificateSubjectName: The subject name of the certificate used to authenticate the
      connection.
-    :vartype certificate_subject_name: str
-    :ivar certificate_issuer: The issuer of the certificate used to authenticate the connection.
-    :vartype certificate_issuer: str
-    :ivar dsts_principal: The dSTS principal name used to authenticate the connection.
-    :vartype dsts_principal: str
-    :ivar data_plane_endpoint: The regional Chaos Studio data-plane endpoint assigned to this
+    :vartype certificateSubjectName: str
+    :ivar certificateIssuer: The issuer of the certificate used to authenticate the connection.
+    :vartype certificateIssuer: str
+    :ivar dataPlaneEndpoint: The regional Chaos Studio data-plane endpoint assigned to this
      connection. Clients and agents use this endpoint to reach the Chaos Studio data plane for the
      connection.
-    :vartype data_plane_endpoint: str
+    :vartype dataPlaneEndpoint: str
     :ivar status: The current status of the connection. Known values are: "Pending", "Connected",
      "Disconnected", and "Revoked".
     :vartype status: Union[str, "ConnectionStatus"]
-    :ivar provisioning_state: The most recent provisioning state for the connection resource. Known
+    :ivar provisioningState: The most recent provisioning state for the connection resource. Known
      values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting", and
      "Running".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     kind: Required[Union[str, "ConnectionKind"]]
     """The kind of connection, indicating the actor type authorized to reach the Chaos Studio data
-     plane for the workspace and target. Required. Known values are: \"AksExtension\",
-     \"ChaosAgent\", and \"Csfi\"."""
+     plane for the workspace and target. Required. Known values are: \"AksExtension\" and
+     \"ChaosAgent\"."""
     targetResourceId: Required[str]
     """The fully qualified Azure resource ID of the target resource this connection is established
      with. Required."""
@@ -343,8 +341,6 @@ class ConnectionProperties(TypedDict, total=False):
     """The subject name of the certificate used to authenticate the connection."""
     certificateIssuer: str
     """The issuer of the certificate used to authenticate the connection."""
-    dstsPrincipal: str
-    """The dSTS principal name used to authenticate the connection."""
     dataPlaneEndpoint: str
     """The regional Chaos Studio data-plane endpoint assigned to this connection. Clients and agents
      use this endpoint to reach the Chaos Studio data plane for the connection."""
@@ -366,8 +362,8 @@ class ContinuousAction(TypedDict, total=False):
     :vartype duration: str
     :ivar parameters: List of key value pairs. Required.
     :vartype parameters: list["KeyValuePair"]
-    :ivar selector_id: String that represents a selector. Required.
-    :vartype selector_id: str
+    :ivar selectorId: String that represents a selector. Required.
+    :vartype selectorId: str
     :ivar type: Enum that discriminates between action models. Required. CONTINUOUS.
     :vartype type: Literal[ExperimentActionType.CONTINUOUS]
     """
@@ -387,11 +383,11 @@ class ContinuousAction(TypedDict, total=False):
 class CustomerDataStorageProperties(TypedDict, total=False):
     """Model that represents the Customer Managed Storage for an Experiment.
 
-    :ivar storage_account_resource_id: Azure Resource ID of the Storage account to use for Customer
+    :ivar storageAccountResourceId: Azure Resource ID of the Storage account to use for Customer
      Data storage.
-    :vartype storage_account_resource_id: str
-    :ivar blob_container_name: Name of the Azure Blob Storage container to use or create.
-    :vartype blob_container_name: str
+    :vartype storageAccountResourceId: str
+    :ivar blobContainerName: Name of the Azure Blob Storage container to use or create.
+    :vartype blobContainerName: str
     """
 
     storageAccountResourceId: str
@@ -426,8 +422,8 @@ class DiscreteAction(TypedDict, total=False):
     :vartype name: str
     :ivar parameters: List of key value pairs. Required.
     :vartype parameters: list["KeyValuePair"]
-    :ivar selector_id: String that represents a selector. Required.
-    :vartype selector_id: str
+    :ivar selectorId: String that represents a selector. Required.
+    :vartype selectorId: str
     :ivar type: Enum that discriminates between action models. Required. DISCRETE.
     :vartype type: Literal[ExperimentActionType.DISCRETE]
     """
@@ -453,9 +449,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -479,9 +475,9 @@ class Experiment(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -501,17 +497,17 @@ class Experiment(TrackedResource):
 class ExperimentProperties(TypedDict, total=False):
     """Model that represents the Experiment properties model.
 
-    :ivar provisioning_state: Most recent provisioning state for the given experiment resource.
+    :ivar provisioningState: Most recent provisioning state for the given experiment resource.
      Known values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting", and
      "Running".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     :ivar steps: List of steps. Required.
     :vartype steps: list["ChaosExperimentStep"]
     :ivar selectors: List of selectors. Required.
     :vartype selectors: list["ChaosTargetSelector"]
-    :ivar customer_data_storage: Optional customer-managed Storage account where Experiment schema
+    :ivar customerDataStorage: Optional customer-managed Storage account where Experiment schema
      will be stored.
-    :vartype customer_data_storage: "CustomerDataStorageProperties"
+    :vartype customerDataStorage: "CustomerDataStorageProperties"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -544,8 +540,8 @@ class ExperimentUpdate(TypedDict, total=False):
 class ExternalResource(TypedDict, total=False):
     """Model that represents an external resource reference.
 
-    :ivar resource_id: The resource ID of the external resource.
-    :vartype resource_id: str
+    :ivar resourceId: The resource ID of the external resource.
+    :vartype resourceId: str
     """
 
     resourceId: str
@@ -555,9 +551,9 @@ class ExternalResource(TypedDict, total=False):
 class FixResourcePermissionsRequest(TypedDict, total=False):
     """Request body for fixing resource permissions.
 
-    :ivar what_if: Optional value that indicates whether to run a "dry run" of fixing resource
+    :ivar whatIf: Optional value that indicates whether to run a "dry run" of fixing resource
      permissions.
-    :vartype what_if: bool
+    :vartype whatIf: bool
     """
 
     whatIf: bool
@@ -582,17 +578,17 @@ class KeyValuePair(TypedDict, total=False):
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -619,9 +615,9 @@ class PrivateAccess(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -648,16 +644,16 @@ class PrivateAccessPatch(TypedDict, total=False):
 class PrivateAccessProperties(TypedDict, total=False):
     """The properties of a private access resource.
 
-    :ivar provisioning_state: Most recent provisioning state for the given privateAccess resource.
+    :ivar provisioningState: Most recent provisioning state for the given privateAccess resource.
      Known values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting", and
      "Running".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar private_endpoint_connections: A readonly collection of private endpoint connection.
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar privateEndpointConnections: A readonly collection of private endpoint connection.
      Currently only one endpoint connection is supported.
-    :vartype private_endpoint_connections: list["PrivateEndpointConnection"]
-    :ivar public_network_access: Public Network Access Control for PrivateAccess resource. Known
+    :vartype privateEndpointConnections: list["PrivateEndpointConnection"]
+    :ivar publicNetworkAccess: Public Network Access Control for PrivateAccess resource. Known
      values are: "Enabled" and "Disabled".
-    :vartype public_network_access: Union[str, "PublicNetworkAccessOption"]
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccessOption"]
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -694,9 +690,9 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Resource properties.
     :vartype properties: "PrivateEndpointConnectionProperties"
     """
@@ -708,17 +704,17 @@ class PrivateEndpointConnection(ProxyResource):
 class PrivateEndpointConnectionProperties(TypedDict, total=False):
     """Properties of the private endpoint connection.
 
-    :ivar group_ids: The group ids for the private endpoint resource.
-    :vartype group_ids: list[str]
-    :ivar private_endpoint: The private endpoint resource.
-    :vartype private_endpoint: "PrivateEndpoint"
-    :ivar private_link_service_connection_state: A collection of information about the state of the
+    :ivar groupIds: The group ids for the private endpoint resource.
+    :vartype groupIds: list[str]
+    :ivar privateEndpoint: The private endpoint resource.
+    :vartype privateEndpoint: "PrivateEndpoint"
+    :ivar privateLinkServiceConnectionState: A collection of information about the state of the
      connection between service consumer and provider. Required.
-    :vartype private_link_service_connection_state: "PrivateLinkServiceConnectionState"
-    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
+    :vartype privateLinkServiceConnectionState: "PrivateLinkServiceConnectionState"
+    :ivar provisioningState: The provisioning state of the private endpoint connection resource.
      Known values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting", and
      "Running".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
+    :vartype provisioningState: Union[str, "ProvisioningState"]
     """
 
     groupIds: list[str]
@@ -743,9 +739,9 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
     :vartype status: Union[str, "PrivateEndpointServiceConnectionStatus"]
     :ivar description: The reason for approval/rejection of the connection.
     :vartype description: str
-    :ivar actions_required: A message indicating if changes on the service provider require any
+    :ivar actionsRequired: A message indicating if changes on the service provider require any
      updates on the consumer.
-    :vartype actions_required: str
+    :vartype actionsRequired: str
     """
 
     status: Union[str, "PrivateEndpointServiceConnectionStatus"]
@@ -760,12 +756,12 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
 class Recommendation(TypedDict, total=False):
     """Model that represents a scenario recommendation.
 
-    :ivar recommendation_status: The recommendation status. Required. Known values are:
+    :ivar recommendationStatus: The recommendation status. Required. Known values are:
      "NotEvaluated", "Recommended", "NotApplicable", "Evaluating", "EvaluationFailed", and
      "EvaluationCancelled".
-    :vartype recommendation_status: Union[str, "RecommendationStatus"]
-    :ivar evaluation_run_at: The UTC time when the recommendation was evaluated.
-    :vartype evaluation_run_at: str
+    :vartype recommendationStatus: Union[str, "RecommendationStatus"]
+    :ivar evaluationRunAt: The UTC time when the recommendation was evaluated.
+    :vartype evaluationRunAt: str
     """
 
     recommendationStatus: Required[Union[str, "RecommendationStatus"]]
@@ -815,12 +811,11 @@ class ResourceTargetingCriteria(TypedDict, total=False):
      When set, ``locations`` must also be set on the same side (zone IDs are only meaningful within
      a region).
     :vartype zones: list[str]
-    :ivar physical_zones: Array of physical datacenter zone identifiers in ``{region}-az{N}``
-     format
+    :ivar physicalZones: Array of physical datacenter zone identifiers in ``{region}-az{N}`` format
      (e.g., "westus2-az1"). Resolved to logical zones per-subscription at execution time.
 
      Mutually exclusive with ``zones`` — set one or the other, not both.
-    :vartype physical_zones: list[str]
+    :vartype physicalZones: list[str]
     :ivar types: Array of Azure resource type strings (e.g., "Microsoft.Compute/virtualMachines").
      Case-insensitive equality. Supports trailing wildcard (e.g., "Microsoft.Compute/*").
     :vartype types: list[str]
@@ -861,8 +856,8 @@ class RunAfter(TypedDict, total=False):
     :ivar behavior: Defines how multiple dependencies are evaluated. Known values are: "Any",
      "All", and "AtLeastOne".
     :vartype behavior: Union[str, "RunAfterBehavior"]
-    :ivar items_property: Array of action dependencies. Required.
-    :vartype items_property: list["ActionDependency"]
+    :ivar items: Array of action dependencies. Required.
+    :vartype items: list["ActionDependency"]
     """
 
     behavior: Union[str, "RunAfterBehavior"]
@@ -883,9 +878,9 @@ class Scenario(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of scenario.
     :vartype properties: "ScenarioProperties"
     """
@@ -899,9 +894,9 @@ class ScenarioAction(TypedDict, total=False):
 
     :ivar name: Unique name for the action. Required.
     :vartype name: str
-    :ivar action_id: Identifier of the action and version (e.g., "microsoft-compute-shutdown/1.0").
+    :ivar actionId: Identifier of the action and version (e.g., "microsoft-compute-shutdown/1.0").
      Required.
-    :vartype action_id: str
+    :vartype actionId: str
     :ivar description: Human-readable description of what this action does.
     :vartype description: str
     :ivar duration: ISO 8601 duration for how long the action runs (e.g., PT30M for 30 minutes).
@@ -909,16 +904,16 @@ class ScenarioAction(TypedDict, total=False):
     :vartype duration: str
     :ivar parameters: Action-specific parameter values.
     :vartype parameters: list["KeyValuePair"]
-    :ivar run_after: Action dependencies that control when this action starts.
-    :vartype run_after: "RunAfter"
-    :ivar wait_before: ISO 8601 duration to wait before action starts (e.g., PT30S for 30 seconds).
+    :ivar runAfter: Action dependencies that control when this action starts.
+    :vartype runAfter: "RunAfter"
+    :ivar waitBefore: ISO 8601 duration to wait before action starts (e.g., PT30S for 30 seconds).
      Supports template macro syntax.
-    :vartype wait_before: str
+    :vartype waitBefore: str
     :ivar timeout: ISO 8601 duration for maximum action execution time. Supports template macro
      syntax.
     :vartype timeout: str
-    :ivar external_resource: External resource reference for the action.
-    :vartype external_resource: "ExternalResource"
+    :ivar externalResource: External resource reference for the action.
+    :vartype externalResource: "ExternalResource"
     """
 
     name: Required[str]
@@ -954,9 +949,9 @@ class ScenarioConfiguration(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of scenario definition.
     :vartype properties: "ScenarioConfigurationProperties"
     """
@@ -968,16 +963,16 @@ class ScenarioConfiguration(ProxyResource):
 class ScenarioConfigurationProperties(TypedDict, total=False):
     """Model that represents the properties of the scenario configuration.
 
-    :ivar scenario_id: Resource ID of the scenario this configuration applies to. Required.
-    :vartype scenario_id: str
+    :ivar scenarioId: Resource ID of the scenario this configuration applies to. Required.
+    :vartype scenarioId: str
     :ivar parameters: Runtime parameter values for the scenario. Keys must match parameter names
      defined in the scenario.
     :vartype parameters: list["KeyValuePair"]
-    :ivar provisioning_state: Most recent provisioning state for the given scenario resource. Known
+    :ivar provisioningState: Most recent provisioning state for the given scenario resource. Known
      values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting", and
      "Running".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar resource_targeting: Unified resource targeting policy that controls which discovered
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar resourceTargeting: Unified resource targeting policy that controls which discovered
      resources participate
      in fault injection. Replaces the separate ``exclusions`` and ``filters`` properties with
      symmetric include/exclude criteria.
@@ -987,7 +982,7 @@ class ScenarioConfigurationProperties(TypedDict, total=False):
      When include and exclude conflict on the same resource, exclude wins.
 
      Null or omitted means all discovered resources participate (no targeting constraints).
-    :vartype resource_targeting: "ResourceTargeting"
+    :vartype resourceTargeting: "ResourceTargeting"
     """
 
     scenarioId: Required[str]
@@ -1043,13 +1038,13 @@ class ScenarioParameter(TypedDict, total=False):
 class ScenarioProperties(TypedDict, total=False):
     """Model that represents the properties of the scenario.
 
-    :ivar provisioning_state: Most recent provisioning state for the given scenario resource. Known
+    :ivar provisioningState: Most recent provisioning state for the given scenario resource. Known
      values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting", and
      "Running".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar created_from: Resource ID of the template version this scenario was created from
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar createdFrom: Resource ID of the template version this scenario was created from
      (optional).
-    :vartype created_from: str
+    :vartype createdFrom: str
     :ivar version: Version of the scenario.
     :vartype version: str
     :ivar description: Description of what this scenario does (optional).
@@ -1083,20 +1078,20 @@ class ScenarioProperties(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -1126,9 +1121,9 @@ class Target(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of the target resource. Required.
     :vartype properties: dict[str, Any]
     :ivar location: Azure resource location.
@@ -1159,10 +1154,10 @@ class TargetReference(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -1182,9 +1177,9 @@ class Workspace(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1204,13 +1199,13 @@ class Workspace(TrackedResource):
 class WorkspaceProperties(TypedDict, total=False):
     """Model that represents the Workspace properties model.
 
-    :ivar provisioning_state: Most recent provisioning state for the given Workspace resource.
-     Known values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting", and
+    :ivar provisioningState: Most recent provisioning state for the given Workspace resource. Known
+     values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", "Deleting", and
      "Running".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar communication_endpoint: The communication endpoint used to connect and communicate with
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar communicationEndpoint: The communication endpoint used to connect and communicate with
      the workspace for fault-injection orchestration.
-    :vartype communication_endpoint: str
+    :vartype communicationEndpoint: str
     :ivar scopes: The intended workspace-level resource scope to be used by child scenarios.
      Required.
     :vartype scopes: list[str]

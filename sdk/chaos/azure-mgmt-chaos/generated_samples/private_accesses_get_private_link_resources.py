@@ -34,7 +34,8 @@ def main():
         resource_group_name="myResourceGroup",
         private_access_name="myPrivateAccess",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
 # x-ms-original-file: 2026-08-01-preview/PrivateAccesses_GetPrivateLinkResources.json

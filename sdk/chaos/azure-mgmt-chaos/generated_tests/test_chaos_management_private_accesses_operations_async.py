@@ -135,11 +135,11 @@ class TestChaosManagementPrivateAccessesOperationsAsync(AzureMgmtRecordedTestCas
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_private_accesses_get_private_link_resources(self, resource_group):
-        response = await self.client.private_accesses.get_private_link_resources(
+        response = self.client.private_accesses.get_private_link_resources(
             resource_group_name=resource_group.name,
             private_access_name="str",
         )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 

@@ -48,7 +48,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ChaosManagementClient:  # pylint: disable=too-many-instance-attributes
+class ChaosManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Chaos Management Client.
 
     :ivar capabilities: CapabilitiesOperations operations

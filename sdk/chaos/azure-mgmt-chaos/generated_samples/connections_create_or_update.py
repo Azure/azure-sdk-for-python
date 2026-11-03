@@ -38,9 +38,9 @@ def main():
         resource={
             "properties": {
                 "kind": "AksExtension",
-                "principalId": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
-                "targetResourceId": "/subscriptions/6b052e15-03d3-4f17-b2e1-be7f07588291/resourceGroups/exampleRG/providers/Microsoft.ContainerService/managedClusters/exampleCluster",
-                "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+                "principalId": "00000000-0000-0000-0000-000000000000",
+                "targetResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/exampleRG/providers/Microsoft.ContainerService/managedClusters/exampleCluster",
+                "tenantId": "00000000-0000-0000-0000-000000000000",
             }
         },
     )

@@ -132,7 +132,7 @@ class TestChaosManagementPrivateAccessesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             private_access_name="str",
         )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
