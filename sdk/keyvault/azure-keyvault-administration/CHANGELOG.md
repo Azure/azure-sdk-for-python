@@ -1,10 +1,21 @@
 # Release History
 
-## 4.8.0b3 (Unreleased)
+## 4.8.0b3 (2026-09-30)
 
 ### Features Added
 
-### Breaking Changes
+- Added support for service API version `2026-07-01-preview` [#48963](https://github.com/Azure/azure-sdk-for-python/pull/48963)
+- Added EKM proxy private endpoint management to `KeyVaultEkmClient`. The client now exposes
+  `begin_create_ekm_private_endpoint`, `begin_delete_ekm_private_endpoint`, `get_ekm_private_endpoint`,
+  `list_ekm_private_endpoints`, and `get_ekm_private_endpoint_operation_status`.
+- Added `KeyVaultEkmPrivateEndpoint`, `KeyVaultEkmPrivateEndpointConnectionState`,
+  `KeyVaultEkmPrivateEndpointProperties`, and `KeyVaultEkmPrivateEndpointOperation` models, along with the
+  `KeyVaultEkmConnectivityMode`, `KeyVaultEkmPrivateEndpointConnectionStatus`,
+  `KeyVaultEkmPrivateEndpointOperationStatus`, `KeyVaultEkmPrivateEndpointOperationType`, and
+  `KeyVaultEkmPrivateEndpointProvisioningState` enums.
+- Added a `connectivity_mode` keyword argument and attribute to `KeyVaultEkmConnection`. Set this to
+  `KeyVaultEkmConnectivityMode.PRIVATE_ENDPOINT` to reach the EKM proxy through an EKM proxy private endpoint, in which
+  case `host` is the name of the private endpoint instead of a DNS name or IP address.
 
 ### Bugs Fixed
 
@@ -23,6 +34,8 @@
 - Fixed a bug in the challenge authentication policy where the authentication challenge was cached before the challenge resource was verified. The challenge is now cached only after resource verification succeeds [#48710](https://github.com/Azure/azure-sdk-for-python/pull/48710).
 
 ### Other Changes
+
+- Key Vault API version `2026-07-01-preview` is now the default.
 
 ## 4.8.0b2 (2026-07-08)
 
