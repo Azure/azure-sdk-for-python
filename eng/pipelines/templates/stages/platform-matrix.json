@@ -57,6 +57,17 @@
           "TestSamples": "false"
         }
       }
+    },
+    {
+      "Config": {
+        "Ubuntu2404_315": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.15",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false"
+        }
+      }
     }
   ]
 }
