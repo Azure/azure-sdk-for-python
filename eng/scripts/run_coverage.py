@@ -36,10 +36,16 @@ if __name__ == "__main__":
         required=True,
     )
 
+    parser.add_argument(
+        "--coverage-file",
+        dest="coverage_file",
+        help="The coverage data file to read. Defaults to <target_package>/.coverage.",
+    )
+
     args = parser.parse_args()
     pkg_details = ParsedSetup.from_path(args.target_package)
 
-    possible_coverage_file = os.path.join(args.target_package, ".coverage")
+    possible_coverage_file = args.coverage_file or os.path.join(args.target_package, ".coverage")
 
     if os.path.exists(possible_coverage_file):
         total_coverage = get_total_coverage(possible_coverage_file, coveragerc_file, pkg_details.name, args.repo_root)
@@ -73,5 +79,4 @@ if __name__ == "__main__":
                         f"Coverage for {pkg_details.name} is below the threshold of {cov_threshold:.2f}% (actual: {total_coverage:.2f}%)"
                     )
                     exit(1)
-
 
