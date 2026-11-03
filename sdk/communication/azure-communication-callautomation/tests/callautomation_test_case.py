@@ -128,16 +128,16 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
                     unique_id = self._unique_key_gen(caller, receiver)
                     key = self._event_key_gen("IncomingCall")
                     print("EventRegistration(IncomingCall):" + key)
-                    self.event_store[key] = mapper
-                    self.event_to_save[key] = mapper
+                    self.event_store.setdefault(key, []).append(mapper)
+                    self.event_to_save.setdefault(key, []).append(mapper)
                 else:
                     if isinstance(mapper, list):
                         mapper = mapper[0]
                     if mapper["type"]:
                         key = self._event_key_gen(mapper["type"].split(".")[-1])
                         print("EventRegistration:" + key)
-                        self.event_store[key] = mapper
-                        self.event_to_save[key] = mapper
+                        self.event_store.setdefault(key, []).append(mapper)
+                        self.event_to_save.setdefault(key, []).append(mapper)
                 service_bus_receiver.complete_message(msg)
             time.sleep(1)
         return
@@ -148,7 +148,10 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             file_path = self._get_test_event_file_name()
             try:
                 with open(file_path, "r") as json_file:
-                    self.event_store = json.load(json_file)
+                    loaded_events = json.load(json_file)
+                self.event_store = {
+                    key: value if isinstance(value, list) else [value] for key, value in loaded_events.items()
+                }
             except IOError as e:
                 raise SystemExit(f"File write operation failed: {e}")
 
@@ -168,8 +171,11 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         key = self._event_key_gen(event_type)
         time_out_time = datetime.now() + wait_time
         while datetime.now() < time_out_time:
-            popped_event = self.event_store.pop(key, None)
-            if popped_event is not None:
+            events = self.event_store.get(key)
+            if events:
+                popped_event = events.pop(0)
+                if not events:
+                    self.event_store.pop(key, None)
                 print(f"Matching Event Found [{key}]")
                 return popped_event
             time.sleep(1)
@@ -318,8 +324,10 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             pass
 
     def redact_by_key(self, data: Dict[str, Dict[str, any]], keys_to_redact: List[str]) -> Dict[str, Dict[str, any]]:
-        for _, inner_dict in data.items():
-            for key in keys_to_redact:
-                if key in inner_dict:
-                    inner_dict[key] = "REDACTED"
+        for _, value in data.items():
+            events = value if isinstance(value, list) else [value]
+            for inner_dict in events:
+                for key in keys_to_redact:
+                    if key in inner_dict:
+                        inner_dict[key] = "REDACTED"
         return data

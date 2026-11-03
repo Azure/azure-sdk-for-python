@@ -113,7 +113,7 @@ class RouterWorkerSamplesAsync(object):
         # [END create_worker_async]
 
     async def create_worker_w_limit_concurrent_offers(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         worker_id = self._worker_id
         # [START create_worker_w_limit_concurrent_offers_async]
         from azure.communication.jobrouter.aio import JobRouterClient
@@ -169,7 +169,7 @@ class RouterWorkerSamplesAsync(object):
         # 5. Increase capacityCostPerJob for channel `WebChatEscalated` to 50
 
         async with router_client:
-            updated_router_worker: RouterWorker = await router_client.upsert_worker(
+            updated_router_worker: RouterWorker = await router_client.upsert_worker(  # type: ignore[call-overload]
                 worker_id,
                 queues=["worker-q-3"],
                 channels=[RouterChannel(channel_id="WebChatEscalated", capacity_cost_per_job=50)],
@@ -202,7 +202,7 @@ class RouterWorkerSamplesAsync(object):
         router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
 
         async with router_client:
-            router_worker = await router_client.upsert_worker(worker_id, available_for_offers=True)
+            router_worker = await router_client.upsert_worker(worker_id, available_for_offers=True)  # type: ignore[call-overload]
 
             print(
                 f"Successfully registered router worker with id: {router_worker.id} with status: {router_worker.state}"
@@ -218,7 +218,7 @@ class RouterWorkerSamplesAsync(object):
         router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
 
         async with router_client:
-            router_worker = await router_client.upsert_worker(worker_id, available_for_offers=False)
+            router_worker = await router_client.upsert_worker(worker_id, available_for_offers=False)  # type: ignore[call-overload]
 
             print(
                 f"Successfully de-registered router worker with id: {router_worker.id} "
