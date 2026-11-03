@@ -13,7 +13,7 @@ from uuid import UUID
 
 import yaml
 
-from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
+from azure.ai.ml._azure_environments import _get_default_cloud_name, _get_storage_endpoint_from_metadata
 from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
 from azure.ai.ml.entities._credentials import AadCredentialConfiguration, NoneCredentialConfiguration
 from azure.ai.ml.entities._data.resolved_data_path import ResolvedDataPath
@@ -62,7 +62,7 @@ def _relative_path(path: str, *, normalize: bool = False) -> str:
     return "" if path == "." else path.rstrip("/")
 
 
-def _storage_uri(store: Datastore, path: str) -> str:
+def _storage_uri(store: Datastore, path: str, *, cloud: str) -> str:
     encoded_path = quote(path, safe="/*")
     if isinstance(store, OneLakeDatastore):
         endpoint = store.endpoint or "https://onelake.dfs.fabric.microsoft.com"
@@ -83,7 +83,7 @@ def _storage_uri(store: Datastore, path: str) -> str:
         artifact_path = _relative_path(item + ("/" + subpath if separator else ""))
         base = "abfss://{}@{}/{}".format(quote(workspace, safe=""), parsed.netloc, quote(artifact_path, safe="/"))
     elif isinstance(store, (AzureBlobDatastore, AzureDataLakeGen2Datastore)):
-        endpoint = store.endpoint or _get_storage_endpoint_from_metadata()
+        endpoint = store.endpoint or _get_storage_endpoint_from_metadata(cloud)
         if not endpoint:
             raise _invalid("Storage endpoint suffix is missing from datastore and cloud metadata.")
         if isinstance(store, AzureBlobDatastore):
@@ -96,9 +96,12 @@ def _storage_uri(store: Datastore, path: str) -> str:
 
 
 class _DataPathResolver:
-    def __init__(self, datastore_operations: "DatastoreOperations", follow_mltable: bool):
+    def __init__(
+        self, datastore_operations: "DatastoreOperations", follow_mltable: bool, *, cloud: Optional[str] = None
+    ):
         self._operations = datastore_operations
         self._follow_mltable = follow_mltable
+        self._cloud = cloud or _get_default_cloud_name()
         self._stores: Dict[str, Datastore] = {}
         self._definitions: Dict[Tuple[str, str, bool], Optional[Dict[str, Any]]] = {}
         self._remaining_paths = _MAX_RESOLVED_PATHS
@@ -135,7 +138,7 @@ class _DataPathResolver:
         ancestors = ancestors or set()
         self._consume_path()
         store = self._get_datastore(uri.datastore)
-        result = ResolvedDataPath(uri=_storage_uri(store, relative), path_type=path_type)
+        result = ResolvedDataPath(uri=_storage_uri(store, relative, cloud=self._cloud), path_type=path_type)
         module_logger.info("Resolved datastore path using %s metadata.", type(store).__name__)
 
         # Discovery is intentionally limited to Blob-backed MLTable definitions.
@@ -207,7 +210,7 @@ class _DataPathResolver:
         return self._definitions[key]
 
     def _download_definition(self, store: AzureBlobDatastore, path: str, *, folder: bool) -> Optional[Dict[str, Any]]:
-        trusted_endpoint = _get_storage_endpoint_from_metadata()
+        trusted_endpoint = _get_storage_endpoint_from_metadata(self._cloud)
         endpoint = store.endpoint or trusted_endpoint
         if (
             not trusted_endpoint

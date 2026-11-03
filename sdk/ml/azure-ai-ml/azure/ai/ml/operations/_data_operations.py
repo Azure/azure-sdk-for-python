@@ -20,6 +20,7 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG,
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
+from azure.ai.ml._azure_environments import _get_default_cloud_name
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient042023_preview
 from azure.ai.ml._restclient.arm_ml_service.models import DataContainer, DataVersionBase, ListViewType
@@ -125,6 +126,7 @@ class DataOperations(_ScopeDependentOperations):
         self._datastore_operation = datastore_operations
         self._service_client = service_client
         self._registry_service_client = kwargs.pop("registry_service_client", None)
+        self._cloud = kwargs.pop("cloud", None) or _get_default_cloud_name()
         self._init_kwargs = kwargs
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
         self._all_operations: OperationsContainer = kwargs.pop("all_operations")
@@ -168,7 +170,7 @@ class DataOperations(_ScopeDependentOperations):
                 :language: python
                 :dedent: 4
         """
-        return _DataPathResolver(self._datastore_operation, follow_mltable).resolve(path)
+        return _DataPathResolver(self._datastore_operation, follow_mltable, cloud=self._cloud).resolve(path)
 
     @monitor_with_activity(ops_logger, "Data.List", ActivityType.PUBLICAPI)
     def list(

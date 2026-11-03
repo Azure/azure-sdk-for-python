@@ -7,6 +7,7 @@ from unittest.mock import Mock, patch
 import pytest
 import yaml
 
+from azure.ai.ml import MLClient
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils._data_path_resolver import _DataPathResolver, _MAX_DEFINITION_BYTES
 from azure.ai.ml.entities import (
@@ -17,6 +18,7 @@ from azure.ai.ml.entities import (
     OneLakeDatastore,
 )
 from azure.ai.ml.entities._datastore.one_lake import LakeHouseArtifact
+from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
 from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.operations import DataOperations
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
@@ -281,6 +283,38 @@ def test_authenticated_discovery_uses_configured_cloud(operations, blob_storage,
     with patch("azure.ai.ml._utils._data_path_resolver._get_storage_endpoint_from_metadata", return_value=endpoint):
         _DataPathResolver(operations, True).resolve("azureml://datastores/blob/paths/folder/")
     assert blob_storage[1].call_args.args[0] == f"https://account.blob.{endpoint}"
+
+
+@pytest.mark.parametrize(
+    "clouds",
+    [
+        [("AzureUSGovernment", "core.usgovcloudapi.net"), ("AzureCloud", "core.windows.net")],
+        [("AzureCloud", "core.windows.net"), ("AzureUSGovernment", "core.usgovcloudapi.net")],
+        [("AzureChinaCloud", "core.chinacloudapi.cn"), ("AzureCloud", "core.windows.net")],
+    ],
+)
+@pytest.mark.parametrize("explicit_endpoint", [True, False])
+def test_resolution_uses_owning_client_cloud(monkeypatch, blob_storage, clouds, explicit_endpoint):
+    monkeypatch.setenv(AZUREML_CLOUD_ENV_NAME, "AzureCloud")
+    clients = [
+        MLClient(Mock(), "sub", "rg", "ws", cloud=cloud, enable_telemetry=False, show_progress=False)
+        for cloud, _ in clouds
+    ]
+    blob_storage[0]["root/MLTable"] = b"paths:\n- folder: azureml://datastores/gen2/paths/data"
+    for client, (_, endpoint) in zip(clients, clouds):
+        stores = {
+            "blob": AzureBlobDatastore(name="blob", account_name="account", container_name="container"),
+            "gen2": AzureDataLakeGen2Datastore(name="gen2", account_name="account", filesystem="filesystem"),
+        }
+        stores["blob"].endpoint = endpoint if explicit_endpoint else None
+        stores["gen2"].endpoint = None
+        with patch.object(client.datastores, "get", side_effect=lambda name: stores[name]):
+            result = client.data.resolve_path("azureml://datastores/blob/paths/root/")
+            metadata_only = client.data.resolve_path("azureml://datastores/blob/paths/data.csv", follow_mltable=False)
+        assert result.uri == f"https://account.blob.{endpoint}/container/root"
+        assert result.sources[0].uri == f"abfss://filesystem@account.dfs.{endpoint}/data"
+        assert metadata_only.uri == f"https://account.blob.{endpoint}/container/data.csv"
+        assert blob_storage[1].call_args.args[0] == f"https://account.blob.{endpoint}"
 
 
 @pytest.mark.parametrize("follow_mltable", [False, True])
