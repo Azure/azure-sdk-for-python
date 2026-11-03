@@ -88,7 +88,7 @@ To verify repeatability, wait for all queues to pass and finish verified cleanup
 | `test-id` | `*test_samples_async.py::*[sample_agent_mcp_with_project_connection_async]` |
 | `test-id` | `sample_agent_basic;sample_agent_mcp_with_project_connection` (OR) |
 
-`*` and `?` are wildcards; brackets in pytest IDs are literal. Matching is case-insensitive, slash-normalized and deduplicated. Semicolons/newlines separate OR patterns. Zero matches fail; selection never falls back to all tests. Harness exclusions remain excluded. A selected sample that needs an environment variable nothing supplies is rejected during planning, before any resource is created: it is logged as an error and skipped, the other samples still run, and the run fails at the end in `ReportRejectedSamples`. Supported sample inputs come from the root `environment` output in [infra/main.bicep](infra/main.bicep), `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`, `AZURE_RESOURCE_GROUP`, and the pipeline-supplied `LLM_VALIDATION_PROJECT_ENDPOINT`. Every active queue's plan saves the complete provisioned input names as `environmentBindings`, which `run_samples.py` enforces. A queue whose samples were all rejected gets no worker.
+`*` and `?` are wildcards; brackets in pytest IDs are literal. Matching is case-insensitive, slash-normalized and deduplicated. Semicolons/newlines separate OR patterns. Zero matches fail; selection never falls back to all tests. Harness exclusions remain excluded. A selected sample that needs an environment variable nothing supplies is rejected during planning, before any resource is created: it is logged as an error and skipped, the other samples still run, and the run fails at the end in `ReportRejectedSamples`. Supported sample inputs come from the root `environment` output in [infra/main.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/main.bicep), `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`, `AZURE_RESOURCE_GROUP`, and the pipeline-supplied `LLM_VALIDATION_PROJECT_ENDPOINT`. Every active queue's plan saves the complete provisioned input names as `environmentBindings`, which `run_samples.py` enforces. A queue whose samples were all rejected gets no worker.
 
 ## Shared provisioning and language adapters
 
@@ -98,15 +98,15 @@ Go, or Python tests. The Azure resources always deploy as one complete bundle.
 
 | Layer | Entry points |
 | --- | --- |
-| Shared offline planning | [New-ResourceDeploymentPlan.ps1](New-ResourceDeploymentPlan.ps1) |
-| Shared admission and deployment | [Invoke-ResourceProvisioning.ps1](Invoke-ResourceProvisioning.ps1), [SampleCiHelpers.ps1](SampleCiHelpers.ps1) |
-| Shared cleanup | [Remove-SampleResources.ps1](Remove-SampleResources.ps1) |
-| Python-only selection and admission adapter | [New-SampleDeploymentPlan.ps1](New-SampleDeploymentPlan.ps1), [Invoke-SampleProvisioning.ps1](Invoke-SampleProvisioning.ps1), [PythonSampleCiHelpers.ps1](PythonSampleCiHelpers.ps1) |
-| Python-only execution | [select_samples.py](select_samples.py), [run_samples.py](run_samples.py), [sample_ci_attachments.py](sample_ci_attachments.py) |
+| Shared offline planning | [New-ResourceDeploymentPlan.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/New-ResourceDeploymentPlan.ps1) |
+| Shared admission and deployment | [Invoke-ResourceProvisioning.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/Invoke-ResourceProvisioning.ps1), [SampleCiHelpers.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/SampleCiHelpers.ps1) |
+| Shared cleanup | [Remove-SampleResources.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/Remove-SampleResources.ps1) |
+| Python-only selection and admission adapter | [New-SampleDeploymentPlan.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/New-SampleDeploymentPlan.ps1), [Invoke-SampleProvisioning.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/Invoke-SampleProvisioning.ps1), [PythonSampleCiHelpers.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/PythonSampleCiHelpers.ps1) |
+| Python-only execution | [select_samples.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/select_samples.py), [run_samples.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/run_samples.py), [sample_ci_attachments.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/sample_ci_attachments.py) |
 
 ### Adding resources without editing PowerShell
 
-1. Add a Bicep resource or module to [infra/main.bicep](infra/main.bicep).
+1. Add a Bicep resource or module to [infra/main.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/main.bicep).
    Declare module dependencies using Bicep inputs/outputs, not script-side deployment steps.
    Do not add a sample-selection condition.
 2. Expose its non-secret test inputs as explicit uppercase keys in the root
@@ -140,8 +140,8 @@ its Python handler is a test dependency, not a dependency on the Python SDK test
 
 ### Calling from another SDK language
 
-Distribute the shared scripts, the complete [infra](infra) directory, and
-[function_app](function_app) together at a pinned revision; keep their relative layout.
+Distribute the shared scripts, the complete [infra](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra) directory, and
+[function_app](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/tests/samples/ci/function_app) together at a pinned revision; keep their relative layout.
 The shared entry points require PowerShell 7.2+, Azure CLI with Bicep, and the existing
 authorized service-principal context. They do not authenticate on behalf of the caller.
 Function remote build uses the packaged handler requirements.
@@ -184,7 +184,7 @@ for reuse; cross-language test execution still needs its own adapter and live va
 
 ## Function App integration
 
-[infra/function-app.bicep](infra/function-app.bicep) translates the Function App infrastructure from the `foundry-project-pool` provisioning script. The pipeline always deploys it and publishes [function_app](function_app) for every active queue, even when no selected sample uses Function or queue bindings. There is no Function enable/disable parameter.
+[infra/function-app.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/function-app.bicep) translates the Function App infrastructure from the `foundry-project-pool` provisioning script. The pipeline always deploys it and publishes [function_app](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/tests/samples/ci/function_app) for every active queue, even when no selected sample uses Function or queue bindings. There is no Function enable/disable parameter.
 
 The sample query selects tests, not infrastructure. Every active queue receives the same resource bundle, environment bindings and prerequisite grant checks. Planning still validates each selected sample's required environment-variable names and rejects unsupported samples; that validation never adds or removes resources.
 
@@ -198,7 +198,7 @@ Provisioning values are internal inputs, not environment-variable configuration:
 | `storageAccountName` | Standard setup's storage output. |
 | `sharedFunctionIdentityResourceId` | Function UAMI in the admitted shared identity set. |
 
-These values are passed directly to Bicep. [infra/sample-resources.bicepparam](infra/sample-resources.bicepparam) supplies only the existing `MCP_GITHUB_PAT` secret to the secure Bicep parameter; no names, identity IDs, model settings, or Function toggle are read from environment variables there.
+These values are passed directly to Bicep. [infra/sample-resources.bicepparam](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/sample-resources.bicepparam) supplies only the existing `MCP_GITHUB_PAT` secret to the secure Bicep parameter; no names, identity IDs, model settings, or Function toggle are read from environment variables there.
 
 The Function template creates a Linux **EP1** plan, a Python **3.11** Function App with Functions host **v4**, and the `weather-input-queue` and `weather-output-queue` queues. Host storage and the queue binding use the existing Function UAMI without storage keys or connection strings. Each run creates a fresh app and declares its complete settings directly; reading and merging that same appsettings resource during deployment would introduce an ARM circular dependency. Premium capacity is billable for every active queue, regardless of sample selection, and must be available in the selected region.
 
@@ -206,7 +206,7 @@ Before any queue can provision resources, admission and worker preflight require
 
 The pipeline publishes only the three handler package files and checks for `queue_trigger` indexing up to 30 times, ten seconds apart, before starting the sample. This allows for host startup after publication; missing indexing or an Azure query error still fails provisioning. The five non-secret Function outputs become sample inputs: `FUNCTION_APP_NAME`, `FUNCTION_APP_URL`, `STORAGE_INPUT_QUEUE_NAME`, `STORAGE_OUTPUT_QUEUE_NAME`, and `STORAGE_QUEUE_SERVICE_ENDPOINT`. These are sample environment variables, not provisioning configuration. No `FUNCTION_APP_KEY` is retrieved or output.
 
-The package's [pytest environment hook](../../conftest.py) registers these Function inputs
+The package's [pytest environment hook](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/conftest.py) registers these Function inputs
 from the runner's binding-name metadata, just like any other provisioned resource.
 Both hyphenated and underscored CLI spellings are accepted. No Function-specific option
 mapping or sanitized playback default is needed. Explicit CLI values are copied to the
