@@ -3,19 +3,17 @@
 # ---------------------------------------------------------
 
 import asyncio
-import inspect
 import re
-import threading
 
 from logging import Logger
 from os import PathLike
 from pathlib import Path
-from typing import Any, AsyncGenerator, Dict, Final, List, Mapping, Optional, Sequence, Tuple, Union, cast
+from typing import Any, AsyncGenerator, Awaitable, Dict, Final, List, Mapping, Optional, Sequence, Tuple, Union, cast
 
-from openai import AsyncAzureOpenAI, AsyncOpenAI, AuthenticationError, NotGiven, OpenAIError
+from openai import AsyncAzureOpenAI, AsyncOpenAI, NotGiven, OpenAIError
+from openai.lib.azure import AsyncAzureADTokenProvider
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.exceptions import ClientAuthenticationError
 
 from azure.ai.evaluation._exceptions import ErrorTarget
 from azure.ai.evaluation._constants import DefaultOpenEncoding, TokenScope
@@ -43,7 +41,6 @@ from azure.ai.evaluation._legacy.prompty._utils import (
 from azure.ai.evaluation._constants import DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
 from azure.ai.evaluation._legacy._common._logging import get_logger
 from azure.ai.evaluation._legacy._common._async_token_provider import AsyncAzureTokenProvider
-from azure.ai.evaluation._legacy._common._token_cache import TOKENS, describe_credential_failure, is_async_credential
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 
 PROMPTY_EXTENSION: Final[str] = ".prompty"
@@ -299,7 +296,6 @@ class AsyncPrompty:
         default_headers = {"User-Agent": UserAgentSingleton().value}
 
         api_client: Union[AsyncAzureOpenAI, AsyncOpenAI, AsyncByoProjectResponsesClient]
-        token_provider: Optional[_ReusedTokenProvider] = None
         if is_byo:
             # BYO judge model (connection/deployment): route chat.completions through the Foundry
             # Responses API, which resolves the connection and auth (API key / managed identity / OAuth2).
@@ -315,15 +311,15 @@ class AsyncPrompty:
         else:
             connection = Connection.parse_from_config(configuration)
             if isinstance(connection, AzureOpenAIConnection):
-                if not connection.api_key:
-                    token_provider = self.get_token_provider(self._token_credential)
                 api_client = AsyncAzureOpenAI(
                     azure_endpoint=connection.azure_endpoint,
                     api_key=connection.api_key,
                     azure_deployment=connection.azure_deployment,
                     api_version=connection.api_version,
                     max_retries=max_retries,
-                    azure_ad_token_provider=token_provider,
+                    azure_ad_token_provider=(
+                        self.get_token_provider(self._token_credential) if not connection.api_key else None
+                    ),
                     default_headers=default_headers,
                 )
             elif isinstance(connection, OpenAIConnection):
@@ -339,17 +335,11 @@ class AsyncPrompty:
                     f"'{type(connection).__name__}' is not a supported connection type.", target=ErrorTarget.EVAL_RUN
                 )
 
-        try:
-            response: OpenAIChatResponseType = await self._send_with_retries(
-                api_client=api_client,
-                params=params,
-                timeout=timeout,
-            )
-        except WrappedOpenAIError as error:
-            if token_provider is not None and isinstance(error.__cause__, AuthenticationError):
-                # A rejected token is not reused.
-                token_provider.discard()
-            raise
+        response: OpenAIChatResponseType = await self._send_with_retries(
+            api_client=api_client,
+            params=params,
+            timeout=timeout,
+        )
 
         return await format_llm_response(
             response=response,
@@ -441,75 +431,18 @@ class AsyncPrompty:
                 retry += 1
 
     @staticmethod
-    def get_token_provider(cred: Union[TokenCredential, AsyncTokenCredential]) -> "_ReusedTokenProvider":
+    def get_token_provider(cred: Union[TokenCredential, AsyncTokenCredential]) -> AsyncAzureADTokenProvider:
         """Get the token provider for the prompty.
 
         :param Union[TokenCredential, AsyncTokenCredential] cred: The Azure authentication credential.
-        :return: A token provider for the chat client that reuses the credential's token.
-        :rtype: _ReusedTokenProvider
+        :return: The token provider if a credential is provided, otherwise None.
+        :rtype: Optional[AsyncAzureADTokenProvider]
         """
-        return _ReusedTokenProvider(cred, TokenScope.COGNITIVE_SERVICES_MANAGEMENT)
 
+        async def _wrapper() -> str:
+            token = cred.get_token(TokenScope.COGNITIVE_SERVICES_MANAGEMENT)
+            if isinstance(token, Awaitable):
+                token = await token
+            return token.token
 
-class _ReusedTokenProvider:
-    """Supply a credential's token to a chat client, reusing it until shortly before it expires.
-
-    Concurrent requests that share a synchronous credential wait for one token request, on a worker thread so the
-    event loop is not blocked. An asynchronous credential, one whose ``get_token`` is a coroutine function or that
-    implements ``AsyncTokenCredential`` but not the synchronous context manager protocol, is asked on the caller's
-    event loop instead; a plain ``get_token`` that needs the running loop must therefore belong to an
-    ``AsyncTokenCredential``. The default token provider is represented by the synchronous credential it creates. The
-    request that made a failed token request raises the credential's error. When that failure was an authentication
-    failure, requests that waited on it raise a ``ClientAuthenticationError`` with the same message instead of each
-    requesting a token again; after any other failure, each waiting request makes its own attempt. A token the service
-    rejected is discarded, and an acquisition that began before the rejection is not stored.
-    """
-
-    def __init__(self, credential: Union[TokenCredential, AsyncTokenCredential], scope: str) -> None:
-        self._credential = credential
-        self._scope = scope
-        self._source: Any = credential
-        self._token: Optional[str] = None
-
-    async def __call__(self) -> str:
-        credential: Any = self._credential
-        if isinstance(credential, AsyncAzureTokenProvider):
-            # Its tokens come from a synchronous credential, so concurrent requests can share one token request.
-            credential = await credential.get_credential()
-        self._source = credential
-        token = TOKENS.cached(credential, self._scope)
-        if token is None:
-            # An acquisition that begins before a service rejects a token may return that token; the generation it
-            # began under lets the cache refuse it.
-            generation = TOKENS.generation(credential, self._scope)
-            if is_async_credential(credential):
-                # An asynchronous credential's token request may need this event loop.
-                token = credential.get_token(self._scope)
-                if inspect.isawaitable(token):
-                    token = await token
-                TOKENS.store(credential, self._scope, token, generation)
-            else:
-                abandoned = threading.Event()
-                try:
-                    # A request waiting for another request's token holds a default-executor thread while it waits;
-                    # past the executor's size, further requests queue for a thread before they reach the cache.
-                    token = await asyncio.to_thread(
-                        TOKENS.fetch,
-                        credential,
-                        self._scope,
-                        abandoned=abandoned,
-                        describe_failure=describe_credential_failure,
-                        failure_type=ClientAuthenticationError,
-                    )
-                finally:
-                    abandoned.set()
-                if inspect.isawaitable(token):
-                    token = await token
-                    TOKENS.store(credential, self._scope, token, generation)
-        self._token = token.token
-        return self._token
-
-    def discard(self) -> None:
-        """Stop reusing the token this provider last supplied, which the service rejected."""
-        if self._token is not None:
-            TOKENS.discard(self._source, self._scope, self._token)
+        return _wrapper
