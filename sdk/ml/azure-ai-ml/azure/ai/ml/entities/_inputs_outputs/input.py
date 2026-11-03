@@ -43,6 +43,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     :keyword path_on_compute: The access path of the data input for compute
     :paramtype path_on_compute: Optional[str]
     :keyword default: The default value of the input. If a default is set, the input data will be optional.
+        For the asset-backed types 'uri_file', 'uri_folder' and 'mltable', the default must be a string asset or
+        path reference, eg: 'azureml:my_data_asset:1'.
     :paramtype default: Union[str, int, float, bool]
     :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
         execution will fail.
@@ -93,6 +95,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         type: str,
         path: Optional[str] = None,
         mode: Optional[str] = None,
+        default: Optional[str] = None,
         optional: Optional[bool] = None,
         description: Optional[str] = None,
         **kwargs: Any,
@@ -289,6 +292,15 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         """
         return isinstance(self.type, list)
 
+    @property
+    def _supports_asset_default(self) -> bool:
+        """Whether this non-primitive input supports an asset/path reference string as default value.
+
+        :return: True if the input type is an asset-backed type supporting default value.
+        :rtype: bool
+        """
+        return not self._multiple_types and self.type in IOConstants.ASSET_TYPES_SUPPORTING_DEFAULT
+
     def _is_literal(self) -> bool:
         """Whether this input is a literal
 
@@ -373,8 +385,19 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         msg_prefix = f"Default value of Input {name}"
 
         if not self._is_primitive_type and default_value is not None:
-            msg = f"{msg_prefix}cannot be set: Non-primitive type Input has no default value."
-            raise UserErrorException(msg)
+            if not self._supports_asset_default:
+                msg = f"{msg_prefix}cannot be set: Non-primitive type Input has no default value."
+                raise UserErrorException(msg)
+            # Asset-backed inputs accept an asset/path reference string as default value,
+            # eg: "azureml:my_data_asset:1"; it is kept as-is on serialization.
+            if not isinstance(default_value, str):
+                msg = (
+                    f"{msg_prefix}cannot be set: default value of {self.type!r} Input must be a string "
+                    f"asset or path reference, got '{default_value}', type = {type(default_value)!r}."
+                )
+                raise UserErrorException(msg)
+            self.default = default_value
+            return
         if isinstance(default_value, float) and not math.isfinite(default_value):
             # Since nan/inf cannot be stored in the backend, just ignore them.
             # logger.warning("Float default value %r is not allowed, ignored." % default_value)
