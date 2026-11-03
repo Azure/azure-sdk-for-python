@@ -1,8 +1,9 @@
 # Release History
 
-## 12.27.0b1 (Unreleased)
+## 12.27.0b1 (2026-11-04)
 
 ### Breaking Changes
+- Custom transports that use legacy `azure-core` Request/Response types will no longer be supported and may now cause errors if used. Please ensure custom transports are utilizing types from `azure.core.rest`.
 - Changed the default `max_single_get_size` from 32 MiB to 4 MiB. This means the initial download request will now be 4 MiB rather than 32 MiB which may result in more requests than previous versions depending on file size. This also means some file downloads may use parallel requests when they were not previously, if `max_concurrency` is set greater than 1. To restore the previous behavior, pass `max_single_get_size = 32 * 1024 * 1024` when constructing the client.
 
 ### Features Added
@@ -13,7 +14,7 @@
 
 ### Other Changes
 - Content-Type for append_data has changed from application/json to octet-stream
-- Dropped support for legacy transports
+- Migrated generated code to use the new TypeSpec generator.
 
 ## 12.26.1 (2026-10-29)
 
