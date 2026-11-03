@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -36,8 +37,19 @@ def main():
         custom_domain_name="domain1",
         custom_domain={
             "properties": {
-                "azureDnsZone": {"id": ""},
                 "hostName": "www.someDomain.net",
+                "mtlsSettings": {
+                    "allowedFqdns": ["foo.contoso.com"],
+                    "scenario": "ClientCertificateRequiredAndValidated",
+                    "secrets": [
+                        {
+                            "id": "/subscriptions/subid/resourcegroups/RG/providers/Microsoft.Cdn/profiles/profile1/secrets/name1"
+                        },
+                        {
+                            "id": "/subscriptions/subid/resourcegroups/RG/providers/Microsoft.Cdn/profiles/profile1/secrets/name2"
+                        },
+                    ],
+                },
                 "tlsSettings": {
                     "certificateType": "ManagedCertificate",
                     "cipherSuiteSetType": "Customized",
@@ -46,8 +58,6 @@ def main():
                         "cipherSuiteSetForTls13": ["TLS_AES_128_GCM_SHA256", "TLS_AES_256_GCM_SHA384"],
                     },
                     "minimumTlsVersion": "TLS12",
-                    "serverTlsGroupPolicy": "Custom",
-                    "serverTlsGroups": ["X25519MLKEM768", "SecP256r1MLKEM768", "X25519", "prime256v1"],
                 },
             }
         },
@@ -55,6 +65,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-01/AFDCustomDomains_Create.json
+# x-ms-original-file: 2026-09-01-preview/AFDCustomDomains_Create.json
 if __name__ == "__main__":
     main()

@@ -7,6 +7,7 @@ namespace azure.mgmt.cdn
         afd_origin_groups: AFDOriginGroupsOperations
         afd_origins: AFDOriginsOperations
         afd_profiles: AFDProfilesOperations
+        auth_policies: AuthPoliciesOperations
         custom_domains: CustomDomainsOperations
         edge_nodes: EdgeNodesOperations
         endpoints: EndpointsOperations
@@ -166,6 +167,7 @@ namespace azure.mgmt.cdn.aio
         afd_origin_groups: AFDOriginGroupsOperations
         afd_origins: AFDOriginsOperations
         afd_profiles: AFDProfilesOperations
+        auth_policies: AuthPoliciesOperations
         custom_domains: CustomDomainsOperations
         edge_nodes: EdgeNodesOperations
         endpoints: EndpointsOperations
@@ -1002,6 +1004,116 @@ namespace azure.mgmt.cdn.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> ValidateSecretOutput: ...
+
+
+    class azure.mgmt.cdn.aio.operations.AuthPoliciesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                resource: AuthPolicy, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AuthPolicy]: ...
+
+        @overload
+        async def begin_create(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                resource: AuthPolicy, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AuthPolicy]: ...
+
+        @overload
+        async def begin_create(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AuthPolicy]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'profile_name', 'auth_policy_name']}, api_versions_list=['2026-09-01-preview'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                properties: AuthPolicyUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AuthPolicy]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                properties: AuthPolicyUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AuthPolicy]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AuthPolicy]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'profile_name', 'auth_policy_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                **kwargs: Any
+            ) -> AuthPolicy: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'profile_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        def list_by_profile(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AuthPolicy]: ...
 
 
     class azure.mgmt.cdn.aio.operations.CustomDomainsOperations:
@@ -3046,6 +3158,11 @@ namespace azure.mgmt.cdn.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.cdn.models.AFDRouteGrpcState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DISABLED = "Disabled"
+        ENABLED = "Enabled"
+
+
     class azure.mgmt.cdn.models.AFDStateProperties(_Model):
         deployment_status: Optional[Union[str, DeploymentStatus]]
         provisioning_state: Optional[Union[str, AfdProvisioningState]]
@@ -3189,8 +3306,220 @@ namespace azure.mgmt.cdn.models
         STANDARD = "Standard"
 
 
+    class azure.mgmt.cdn.models.AfdUrlSigningAction(DeliveryRuleAction, discriminator='AfdUrlSigning'):
+        name: Literal[DeliveryRuleActionEnum.AFD_URL_SIGNING]
+        parameters: AfdUrlSigningActionParameters
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                parameters: AfdUrlSigningActionParameters
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cdn.models.AfdUrlSigningActionParameters(_Model):
+        algorithm: Optional[Union[str, Algorithm]]
+        key_group_reference: ResourceReference
+        parameter_name_override: Optional[list[UrlSigningParamIdentifier]]
+        type_name: Union[str, TypeName]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                algorithm: Optional[Union[str, Algorithm]] = ..., 
+                key_group_reference: ResourceReference, 
+                parameter_name_override: Optional[list[UrlSigningParamIdentifier]] = ..., 
+                type_name: Union[str, TypeName]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.cdn.models.Algorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         SHA256 = "SHA256"
+
+
+    class azure.mgmt.cdn.models.AuthLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        HEADER = "Header"
+
+
+    class azure.mgmt.cdn.models.AuthPolicy(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[AuthPolicyProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[AuthPolicyProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cdn.models.AuthPolicyAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BLOCK = "Block"
+        LOG = "Log"
+
+
+    class azure.mgmt.cdn.models.AuthPolicyAssociation(_Model):
+        domains: Optional[list[AuthPolicyDomainReference]]
+        is_profile_level: Optional[bool]
+        routes: Optional[list[AuthPolicyRouteReference]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                domains: Optional[list[AuthPolicyDomainReference]] = ..., 
+                is_profile_level: Optional[bool] = ..., 
+                routes: Optional[list[AuthPolicyRouteReference]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cdn.models.AuthPolicyConfig(_Model):
+        identity_provider: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity_provider: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cdn.models.AuthPolicyConfigIdentityProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ENTRA_ID = "EntraID"
+
+
+    class azure.mgmt.cdn.models.AuthPolicyDomainReference(_Model):
+        id: str
+        is_active: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cdn.models.AuthPolicyEntraIDConfig(AuthPolicyConfig, discriminator='EntraID'):
+        audiences: list[str]
+        auth_location: Optional[Union[str, AuthLocation]]
+        auth_location_selector: Optional[str]
+        identity_provider: Literal[AuthPolicyConfigIdentityProvider.ENTRA_ID]
+        issuer: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                audiences: list[str], 
+                auth_location: Optional[Union[str, AuthLocation]] = ..., 
+                auth_location_selector: Optional[str] = ..., 
+                issuer: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cdn.models.AuthPolicyProperties(AFDStateProperties):
+        action: Optional[Union[str, AuthPolicyAction]]
+        associations: AuthPolicyAssociation
+        auth_configs: list[AuthPolicyConfig]
+        deployment_status: Union[str, DeploymentStatus]
+        forward_token_to_origin: Optional[bool]
+        provisioning_state: Union[str, AfdProvisioningState]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                action: Optional[Union[str, AuthPolicyAction]] = ..., 
+                associations: AuthPolicyAssociation, 
+                auth_configs: list[AuthPolicyConfig], 
+                forward_token_to_origin: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cdn.models.AuthPolicyRouteReference(_Model):
+        id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cdn.models.AuthPolicyUpdateParameters(_Model):
+        properties: Optional[AuthPolicyUpdatePropertiesParameters]
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[AuthPolicyUpdatePropertiesParameters] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.cdn.models.AuthPolicyUpdatePropertiesParameters(_Model):
+        action: Optional[Union[str, AuthPolicyAction]]
+        associations: Optional[AuthPolicyAssociation]
+        auth_configs: Optional[list[AuthPolicyConfig]]
+        forward_token_to_origin: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                action: Optional[Union[str, AuthPolicyAction]] = ..., 
+                associations: Optional[AuthPolicyAssociation] = ..., 
+                auth_configs: Optional[list[AuthPolicyConfig]] = ..., 
+                forward_token_to_origin: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.cdn.models.AutoGeneratedDomainNameLabelScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3368,6 +3697,22 @@ namespace azure.mgmt.cdn.models
                 key: str, 
                 value: Any
             ) -> None: ...
+
+
+    class azure.mgmt.cdn.models.CapacityDistributionSettingsParameters(_Model):
+        capacity_conscious_threshold: Optional[int]
+        distribution_type: Optional[Union[str, DistributionType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                capacity_conscious_threshold: Optional[int] = ..., 
+                distribution_type: Optional[Union[str, DistributionType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.cdn.models.CdnCertificateSourceParameters(CertificateSourceParameters, discriminator='CdnCertificateSourceParameters'):
@@ -4247,6 +4592,7 @@ namespace azure.mgmt.cdn.models
 
 
     class azure.mgmt.cdn.models.DeliveryRuleActionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AFD_URL_SIGNING = "AfdUrlSigning"
         CACHE_EXPIRATION = "CacheExpiration"
         CACHE_KEY_QUERY_STRING = "CacheKeyQueryString"
         EDGE_ACTION = "EdgeAction"
@@ -4741,6 +5087,11 @@ namespace azure.mgmt.cdn.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.cdn.models.DistributionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DYNAMIC_WEIGHTS = "DynamicWeights"
+        STATIC_WEIGHTS = "StaticWeights"
 
 
     class azure.mgmt.cdn.models.DomainValidationProperties(_Model):
@@ -5317,6 +5668,7 @@ namespace azure.mgmt.cdn.models
 
     class azure.mgmt.cdn.models.LoadBalancingSettingsParameters(_Model):
         additional_latency_in_milliseconds: Optional[int]
+        capacity_distribution_settings: Optional[CapacityDistributionSettingsParameters]
         sample_size: Optional[int]
         successful_samples_required: Optional[int]
 
@@ -5325,6 +5677,7 @@ namespace azure.mgmt.cdn.models
                 self, 
                 *, 
                 additional_latency_in_milliseconds: Optional[int] = ..., 
+                capacity_distribution_settings: Optional[CapacityDistributionSettingsParameters] = ..., 
                 sample_size: Optional[int] = ..., 
                 successful_samples_required: Optional[int] = ...
             ) -> None: ...
@@ -6318,6 +6671,7 @@ namespace azure.mgmt.cdn.models
 
 
     class azure.mgmt.cdn.models.ProbeProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        GRPC = "Grpc"
         HTTP = "Http"
         HTTPS = "Https"
         NOT_SET = "NotSet"
@@ -7089,6 +7443,7 @@ namespace azure.mgmt.cdn.models
         enabled_state: Optional[Union[str, EnabledState]]
         endpoint_name: Optional[str]
         forwarding_protocol: Optional[Union[str, ForwardingProtocol]]
+        grpc_state: Optional[Union[str, AFDRouteGrpcState]]
         https_redirect: Optional[Union[str, HttpsRedirect]]
         link_to_default_domain: Optional[Union[str, LinkToDefaultDomain]]
         origin_group: Optional[ResourceReference]
@@ -7106,6 +7461,7 @@ namespace azure.mgmt.cdn.models
                 custom_domains: Optional[list[ActivatedResourceReference]] = ..., 
                 enabled_state: Optional[Union[str, EnabledState]] = ..., 
                 forwarding_protocol: Optional[Union[str, ForwardingProtocol]] = ..., 
+                grpc_state: Optional[Union[str, AFDRouteGrpcState]] = ..., 
                 https_redirect: Optional[Union[str, HttpsRedirect]] = ..., 
                 link_to_default_domain: Optional[Union[str, LinkToDefaultDomain]] = ..., 
                 origin_group: Optional[ResourceReference] = ..., 
@@ -7147,6 +7503,7 @@ namespace azure.mgmt.cdn.models
         enabled_state: Optional[Union[str, EnabledState]]
         endpoint_name: Optional[str]
         forwarding_protocol: Optional[Union[str, ForwardingProtocol]]
+        grpc_state: Optional[Union[str, AFDRouteGrpcState]]
         https_redirect: Optional[Union[str, HttpsRedirect]]
         link_to_default_domain: Optional[Union[str, LinkToDefaultDomain]]
         origin_group: Optional[ResourceReference]
@@ -7163,6 +7520,7 @@ namespace azure.mgmt.cdn.models
                 custom_domains: Optional[list[ActivatedResourceReference]] = ..., 
                 enabled_state: Optional[Union[str, EnabledState]] = ..., 
                 forwarding_protocol: Optional[Union[str, ForwardingProtocol]] = ..., 
+                grpc_state: Optional[Union[str, AFDRouteGrpcState]] = ..., 
                 https_redirect: Optional[Union[str, HttpsRedirect]] = ..., 
                 link_to_default_domain: Optional[Union[str, LinkToDefaultDomain]] = ..., 
                 origin_group: Optional[ResourceReference] = ..., 
@@ -7787,6 +8145,10 @@ namespace azure.mgmt.cdn.models
         UPPERCASE = "Uppercase"
         URL_DECODE = "UrlDecode"
         URL_ENCODE = "UrlEncode"
+
+
+    class azure.mgmt.cdn.models.TypeName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DELIVERY_RULE_AFD_URL_SIGNING_ACTION_PARAMETERS = "DeliveryRuleAfdUrlSigningActionParameters"
 
 
     class azure.mgmt.cdn.models.UpdateRule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -9030,6 +9392,116 @@ namespace azure.mgmt.cdn.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> ValidateSecretOutput: ...
+
+
+    class azure.mgmt.cdn.operations.AuthPoliciesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                resource: AuthPolicy, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AuthPolicy]: ...
+
+        @overload
+        def begin_create(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                resource: AuthPolicy, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AuthPolicy]: ...
+
+        @overload
+        def begin_create(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AuthPolicy]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'profile_name', 'auth_policy_name']}, api_versions_list=['2026-09-01-preview'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                properties: AuthPolicyUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AuthPolicy]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                properties: AuthPolicyUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AuthPolicy]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AuthPolicy]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'profile_name', 'auth_policy_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                auth_policy_name: str, 
+                **kwargs: Any
+            ) -> AuthPolicy: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-09-01-preview', params_added_on={'2026-09-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'profile_name', 'accept']}, api_versions_list=['2026-09-01-preview'])
+        def list_by_profile(
+                self, 
+                resource_group_name: str, 
+                profile_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[AuthPolicy]: ...
 
 
     class azure.mgmt.cdn.operations.CustomDomainsOperations:
@@ -10896,6 +11368,115 @@ namespace azure.mgmt.cdn.types
         type: Literal[SecretType.MTLS_CERTIFICATE_CHAIN]
 
 
+    class azure.mgmt.cdn.types.AfdUrlSigningAction(TypedDict, total=False):
+        key "name": Required[Literal[DeliveryRuleActionEnum.AFD_URL_SIGNING]]
+        key "parameters": Required[AfdUrlSigningActionParameters]
+        name: Literal[DeliveryRuleActionEnum.AFD_URL_SIGNING]
+        parameters: AfdUrlSigningActionParameters
+
+
+    class azure.mgmt.cdn.types.AfdUrlSigningActionParameters(TypedDict, total=False):
+        key "algorithm": Union[str, Algorithm]
+        key "keyGroupReference": Required[ResourceReference]
+        key "typeName": Required[Union[str, TypeName]]
+        algorithm: Union[str, Algorithm]
+        keyGroupReference: ResourceReference
+        parameterNameOverride: list[UrlSigningParamIdentifier]
+        typeName: Union[str, TypeName]
+
+
+    class azure.mgmt.cdn.types.AuthPolicy(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('AuthPolicyProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: AuthPolicyProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.cdn.types.AuthPolicyAssociation(TypedDict, total=False):
+        key "isProfileLevel": bool
+        domains: list[AuthPolicyDomainReference]
+        isProfileLevel: bool
+        routes: list[AuthPolicyRouteReference]
+
+
+    class azure.mgmt.cdn.types.AuthPolicyConfig(TypedDict, total=False):
+        key "audiences": Required[list[str]]
+        key "authLocation": Union[str, AuthLocation]
+        key "authLocationSelector": str
+        key "identityProvider": Required[Literal[AuthPolicyConfigIdentityProvider.ENTRA_ID]]
+        key "issuer": Required[str]
+        audiences: list[str]
+        authLocation: Union[str, AuthLocation]
+        authLocationSelector: str
+        identityProvider: Literal[AuthPolicyConfigIdentityProvider.ENTRA_ID]
+        issuer: str
+
+
+    class azure.mgmt.cdn.types.AuthPolicyConfigIdentityProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ENTRA_ID = "EntraID"
+
+
+    class azure.mgmt.cdn.types.AuthPolicyDomainReference(TypedDict, total=False):
+        key "id": Required[str]
+        key "isActive": bool
+        id: str
+        isActive: bool
+
+
+    class azure.mgmt.cdn.types.AuthPolicyEntraIDConfig(TypedDict, total=False):
+        key "audiences": Required[list[str]]
+        key "authLocation": Union[str, AuthLocation]
+        key "authLocationSelector": str
+        key "identityProvider": Required[Literal[AuthPolicyConfigIdentityProvider.ENTRA_ID]]
+        key "issuer": Required[str]
+        audiences: list[str]
+        authLocation: Union[str, AuthLocation]
+        authLocationSelector: str
+        identityProvider: Literal[AuthPolicyConfigIdentityProvider.ENTRA_ID]
+        issuer: str
+
+
+    class azure.mgmt.cdn.types.AuthPolicyProperties(AFDStateProperties):
+        key "action": Union[str, AuthPolicyAction]
+        key "associations": Required[AuthPolicyAssociation]
+        key "authConfigs": Required[list[AuthPolicyConfig]]
+        key "deploymentStatus": Union[str, DeploymentStatus]
+        key "forwardTokenToOrigin": bool
+        key "provisioningState": Union[str, AfdProvisioningState]
+        action: Union[str, AuthPolicyAction]
+        associations: AuthPolicyAssociation
+        authConfigs: list[AuthPolicyConfig]
+        deploymentStatus: Union[str, DeploymentStatus]
+        forwardTokenToOrigin: bool
+        provisioningState: Union[str, AfdProvisioningState]
+
+
+    class azure.mgmt.cdn.types.AuthPolicyRouteReference(TypedDict, total=False):
+        key "id": Required[str]
+        id: str
+
+
+    class azure.mgmt.cdn.types.AuthPolicyUpdateParameters(TypedDict, total=False):
+        key "properties": ForwardRef('AuthPolicyUpdatePropertiesParameters', module='types')
+        properties: AuthPolicyUpdatePropertiesParameters
+
+
+    class azure.mgmt.cdn.types.AuthPolicyUpdatePropertiesParameters(TypedDict, total=False):
+        key "action": Union[str, AuthPolicyAction]
+        key "associations": ForwardRef('AuthPolicyAssociation', module='types')
+        key "forwardTokenToOrigin": bool
+        action: Union[str, AuthPolicyAction]
+        associations: AuthPolicyAssociation
+        authConfigs: list[AuthPolicyConfig]
+        forwardTokenToOrigin: bool
+
+
     class azure.mgmt.cdn.types.AzureFirstPartyManagedCertificateParameters(TypedDict, total=False):
         key "certificateAuthority": str
         key "expirationDate": str
@@ -10961,6 +11542,13 @@ namespace azure.mgmt.cdn.types
     class azure.mgmt.cdn.types.CanMigrateParameters(TypedDict, total=False):
         key "classicResourceReference": Required[ResourceReference]
         classicResourceReference: ResourceReference
+
+
+    class azure.mgmt.cdn.types.CapacityDistributionSettingsParameters(TypedDict, total=False):
+        key "capacityConsciousThreshold": int
+        key "distributionType": Union[str, DistributionType]
+        capacityConsciousThreshold: int
+        distributionType: Union[str, DistributionType]
 
 
     class azure.mgmt.cdn.types.CdnCertificateSourceParameters(TypedDict, total=False):
@@ -11248,6 +11836,7 @@ namespace azure.mgmt.cdn.types
 
 
     class azure.mgmt.cdn.types.DeliveryRuleActionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AFD_URL_SIGNING = "AfdUrlSigning"
         CACHE_EXPIRATION = "CacheExpiration"
         CACHE_KEY_QUERY_STRING = "CacheKeyQueryString"
         EDGE_ACTION = "EdgeAction"
@@ -11692,9 +12281,11 @@ namespace azure.mgmt.cdn.types
 
     class azure.mgmt.cdn.types.LoadBalancingSettingsParameters(TypedDict, total=False):
         key "additionalLatencyInMilliseconds": int
+        key "capacityDistributionSettings": ForwardRef('CapacityDistributionSettingsParameters', module='types')
         key "sampleSize": int
         key "successfulSamplesRequired": int
         additionalLatencyInMilliseconds: int
+        capacityDistributionSettings: CapacityDistributionSettingsParameters
         sampleSize: int
         successfulSamplesRequired: int
 
@@ -12241,6 +12832,7 @@ namespace azure.mgmt.cdn.types
         key "enabledState": Union[str, EnabledState]
         key "endpointName": str
         key "forwardingProtocol": Union[str, ForwardingProtocol]
+        key "grpcState": Union[str, AFDRouteGrpcState]
         key "httpsRedirect": Union[str, HttpsRedirect]
         key "linkToDefaultDomain": Union[str, LinkToDefaultDomain]
         key "originGroup": ForwardRef('ResourceReference', module='types')
@@ -12252,6 +12844,7 @@ namespace azure.mgmt.cdn.types
         enabledState: Union[str, EnabledState]
         endpointName: str
         forwardingProtocol: Union[str, ForwardingProtocol]
+        grpcState: Union[str, AFDRouteGrpcState]
         httpsRedirect: Union[str, HttpsRedirect]
         linkToDefaultDomain: Union[str, LinkToDefaultDomain]
         originGroup: ResourceReference
@@ -12272,6 +12865,7 @@ namespace azure.mgmt.cdn.types
         key "enabledState": Union[str, EnabledState]
         key "endpointName": str
         key "forwardingProtocol": Union[str, ForwardingProtocol]
+        key "grpcState": Union[str, AFDRouteGrpcState]
         key "httpsRedirect": Union[str, HttpsRedirect]
         key "linkToDefaultDomain": Union[str, LinkToDefaultDomain]
         key "originGroup": ForwardRef('ResourceReference', module='types')
@@ -12281,6 +12875,7 @@ namespace azure.mgmt.cdn.types
         enabledState: Union[str, EnabledState]
         endpointName: str
         forwardingProtocol: Union[str, ForwardingProtocol]
+        grpcState: Union[str, AFDRouteGrpcState]
         httpsRedirect: Union[str, HttpsRedirect]
         linkToDefaultDomain: Union[str, LinkToDefaultDomain]
         originGroup: ResourceReference

@@ -42,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-01/AFDProfiles_CheckEndpointNameAvailability.json
+# x-ms-original-file: 2026-09-01-preview/AFDProfiles_CheckEndpointNameAvailability.json
 if __name__ == "__main__":
     main()

@@ -49,8 +49,14 @@ def main():
                                 },
                             ],
                             "patternsToMatch": ["/*"],
+                            "routes": [
+                                {
+                                    "id": "/subscriptions/subid/resourcegroups/RG/providers/Microsoft.Cdn/profiles/profile1/afdendpoints/endpoint1/routes/route1"
+                                }
+                            ],
                         }
                     ],
+                    "isProfileLevel": False,
                     "type": "WebApplicationFirewall",
                     "wafPolicy": {
                         "id": "/subscriptions/subid/resourcegroups/RG/providers/Microsoft.Network/frontdoorwebapplicationfirewallpolicies/wafTest"
@@ -62,6 +68,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-01/SecurityPolicies_Patch.json
+# x-ms-original-file: 2026-09-01-preview/SecurityPolicies_Patch.json
 if __name__ == "__main__":
     main()

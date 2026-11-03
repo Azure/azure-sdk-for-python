@@ -1,5 +1,35 @@
 # Release History
 
+## 14.2.0b1 (2026-11-03)
+
+### Features Added
+
+  - Client `CdnManagementClient` added operation group `auth_policies`
+  - Enum `DeliveryRuleActionEnum` added member `AFD_URL_SIGNING`
+  - Model `LoadBalancingSettingsParameters` added property `capacity_distribution_settings`
+  - Enum `ProbeProtocol` added member `GRPC`
+  - Model `RouteProperties` added property `grpc_state`
+  - Model `RouteUpdatePropertiesParameters` added property `grpc_state`
+  - Added enum `AFDRouteGrpcState`
+  - Added model `AfdUrlSigningAction`
+  - Added model `AfdUrlSigningActionParameters`
+  - Added enum `AuthLocation`
+  - Added model `AuthPolicy`
+  - Added enum `AuthPolicyAction`
+  - Added model `AuthPolicyAssociation`
+  - Added model `AuthPolicyConfig`
+  - Added enum `AuthPolicyConfigIdentityProvider`
+  - Added model `AuthPolicyDomainReference`
+  - Added model `AuthPolicyEntraIDConfig`
+  - Added model `AuthPolicyProperties`
+  - Added model `AuthPolicyRouteReference`
+  - Added model `AuthPolicyUpdateParameters`
+  - Added model `AuthPolicyUpdatePropertiesParameters`
+  - Added model `CapacityDistributionSettingsParameters`
+  - Added enum `DistributionType`
+  - Added enum `TypeName`
+  - Added operation group `AuthPoliciesOperations`
+
 ## 14.1.0 (2026-10-27)
 
 ### Features Added

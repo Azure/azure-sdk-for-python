@@ -52,6 +52,10 @@ def main():
                 },
                 "loadBalancingSettings": {
                     "additionalLatencyInMilliseconds": 1000,
+                    "capacityDistributionSettings": {
+                        "capacityConsciousThreshold": 80,
+                        "distributionType": "StaticWeights",
+                    },
                     "sampleSize": 3,
                     "successfulSamplesRequired": 3,
                 },
@@ -62,6 +66,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-01/AFDOriginGroups_Update.json
+# x-ms-original-file: 2026-09-01-preview/AFDOriginGroups_Update.json
 if __name__ == "__main__":
     main()

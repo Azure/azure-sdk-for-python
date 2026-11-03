@@ -52,6 +52,7 @@ def main():
                 ],
                 "enabledState": "Enabled",
                 "forwardingProtocol": "MatchRequest",
+                "grpcState": "Enabled",
                 "httpsRedirect": "Enabled",
                 "linkToDefaultDomain": "Enabled",
                 "originGroup": {
@@ -71,6 +72,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-01/Routes_Update.json
+# x-ms-original-file: 2026-09-01-preview/Routes_Update.json
 if __name__ == "__main__":
     main()

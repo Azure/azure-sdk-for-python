@@ -13,6 +13,7 @@ from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overlo
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
+    AuthPolicyConfigIdentityProvider,
     CertificateSource,
     CertificateSourceParametersType,
     DeliveryRuleActionEnum,
@@ -1777,6 +1778,542 @@ class AFDStateProperties(_Model):
     """Known values are: \"NotStarted\", \"InProgress\", \"Succeeded\", and \"Failed\"."""
 
 
+class DeliveryRuleAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An action for the delivery rule.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AfdUrlSigningAction, DeliveryRuleCacheExpirationAction, DeliveryRuleCacheKeyQueryStringAction,
+    EdgeAction, DeliveryRuleRequestHeaderAction, DeliveryRuleResponseHeaderAction,
+    OriginGroupOverrideAction, DeliveryRuleRouteConfigurationOverrideAction, UrlRedirectAction,
+    UrlRewriteAction, UrlSigningAction
+
+    :ivar name: The name of the action for the delivery rule. Required. Known values are:
+     "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
+     "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride", "RouteConfigurationOverride",
+     "EdgeAction", and "AfdUrlSigning".
+    :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    name: str = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])
+    """The name of the action for the delivery rule. Required. Known values are: \"CacheExpiration\",
+     \"CacheKeyQueryString\", \"ModifyRequestHeader\", \"ModifyResponseHeader\", \"UrlRedirect\",
+     \"UrlRewrite\", \"UrlSigning\", \"OriginGroupOverride\", \"RouteConfigurationOverride\",
+     \"EdgeAction\", and \"AfdUrlSigning\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AfdUrlSigningAction(
+    DeliveryRuleAction, discriminator="AfdUrlSigning"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines the url signing action for the delivery rule.
+
+    :ivar parameters: Defines the parameters for the action. Required.
+    :vartype parameters: ~azure.mgmt.cdn.models.AfdUrlSigningActionParameters
+    :ivar name: The name of the action for the delivery rule. Required. AFD_URL_SIGNING.
+    :vartype name: str or ~azure.mgmt.cdn.models.AFD_URL_SIGNING
+    """
+
+    parameters: "_models.AfdUrlSigningActionParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines the parameters for the action. Required."""
+    name: Literal[DeliveryRuleActionEnum.AFD_URL_SIGNING] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The name of the action for the delivery rule. Required. AFD_URL_SIGNING."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        parameters: "_models.AfdUrlSigningActionParameters",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.name = DeliveryRuleActionEnum.AFD_URL_SIGNING  # type: ignore
+
+
+class AfdUrlSigningActionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines the parameters for the Url Signing action.
+
+    :ivar type_name: Required. "DeliveryRuleAfdUrlSigningActionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.TypeName
+    :ivar key_group_reference: Resource reference to the Azure Key Vault secret. Expected to be in
+     format of
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/keyGroups/{keyGroupName}.
+     Required.
+    :vartype key_group_reference: ~azure.mgmt.cdn.models.ResourceReference
+    :ivar algorithm: Algorithm to use for URL signing. "SHA256"
+    :vartype algorithm: str or ~azure.mgmt.cdn.models.Algorithm
+    :ivar parameter_name_override: Defines which query string parameters in the url to be
+     considered for expires, key id etc.
+    :vartype parameter_name_override: list[~azure.mgmt.cdn.models.UrlSigningParamIdentifier]
+    """
+
+    type_name: Union[str, "_models.TypeName"] = rest_field(
+        name="typeName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. \"DeliveryRuleAfdUrlSigningActionParameters\""""
+    key_group_reference: "_models.ResourceReference" = rest_field(
+        name="keyGroupReference", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource reference to the Azure Key Vault secret. Expected to be in format of
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/keyGroups/{keyGroupName}.
+     Required."""
+    algorithm: Optional[Union[str, "_models.Algorithm"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Algorithm to use for URL signing. \"SHA256\""""
+    parameter_name_override: Optional[list["_models.UrlSigningParamIdentifier"]] = rest_field(
+        name="parameterNameOverride", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines which query string parameters in the url to be considered for expires, key id etc."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type_name: Union[str, "_models.TypeName"],
+        key_group_reference: "_models.ResourceReference",
+        algorithm: Optional[Union[str, "_models.Algorithm"]] = None,
+        parameter_name_override: Optional[list["_models.UrlSigningParamIdentifier"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AuthPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An authorization policy that maps authorization configurations to profile, domain, or route
+    associations.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cdn.models.SystemData
+    :ivar properties: Properties required to create an authorization policy.
+    :vartype properties: ~azure.mgmt.cdn.models.AuthPolicyProperties
+    """
+
+    properties: Optional["_models.AuthPolicyProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties required to create an authorization policy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AuthPolicyProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AuthPolicyAssociation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Resource associations for an authorization policy.
+
+    :ivar is_profile_level: Indicates whether the policy is associated at the profile level. When
+     omitted during creation, the service defaults this value to false.
+    :vartype is_profile_level: bool
+    :ivar domains: Domains associated with the authorization policy.
+    :vartype domains: list[~azure.mgmt.cdn.models.AuthPolicyDomainReference]
+    :ivar routes: Routes associated with the authorization policy.
+    :vartype routes: list[~azure.mgmt.cdn.models.AuthPolicyRouteReference]
+    """
+
+    is_profile_level: Optional[bool] = rest_field(
+        name="isProfileLevel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether the policy is associated at the profile level. When omitted during creation,
+     the service defaults this value to false."""
+    domains: Optional[list["_models.AuthPolicyDomainReference"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Domains associated with the authorization policy."""
+    routes: Optional[list["_models.AuthPolicyRouteReference"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Routes associated with the authorization policy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        is_profile_level: Optional[bool] = None,
+        domains: Optional[list["_models.AuthPolicyDomainReference"]] = None,
+        routes: Optional[list["_models.AuthPolicyRouteReference"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AuthPolicyConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Authorization configuration parameters.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AuthPolicyEntraIDConfig
+
+    :ivar identity_provider: Identity provider used by the authorization configuration. Required.
+     "EntraID"
+    :vartype identity_provider: str or ~azure.mgmt.cdn.models.AuthPolicyConfigIdentityProvider
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    identity_provider: str = rest_discriminator(
+        name="identityProvider", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Identity provider used by the authorization configuration. Required. \"EntraID\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity_provider: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AuthPolicyDomainReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Reference to a domain associated with an authorization policy.
+
+    :ivar id: Resource ID of the custom domain or Azure Front Door endpoint. Required.
+    :vartype id: str
+    :ivar is_active: Whether the resource is active or inactive.
+    :vartype is_active: bool
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource ID of the custom domain or Azure Front Door endpoint. Required."""
+    is_active: Optional[bool] = rest_field(name="isActive", visibility=["read"])
+    """Whether the resource is active or inactive."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AuthPolicyEntraIDConfig(
+    AuthPolicyConfig, discriminator="EntraID"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Microsoft Entra ID authorization policy configuration.
+
+    :ivar identity_provider: Identity provider used by the authorization configuration. Required.
+     Microsoft Entra ID.
+    :vartype identity_provider: str or ~azure.mgmt.cdn.models.ENTRA_ID
+    :ivar issuer: Issuer or authority for the identity provider to validate. Required.
+    :vartype issuer: str
+    :ivar audiences: Audiences to validate. Required.
+    :vartype audiences: list[str]
+    :ivar auth_location: Location of the authorization value in the HTTP request. Only Header is
+     supported. "Header"
+    :vartype auth_location: str or ~azure.mgmt.cdn.models.AuthLocation
+    :ivar auth_location_selector: Selector within the authorization location used to find the
+     identity.
+    :vartype auth_location_selector: str
+    """
+
+    identity_provider: Literal[AuthPolicyConfigIdentityProvider.ENTRA_ID] = rest_discriminator(name="identityProvider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Identity provider used by the authorization configuration. Required. Microsoft Entra ID."""
+    issuer: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Issuer or authority for the identity provider to validate. Required."""
+    audiences: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Audiences to validate. Required."""
+    auth_location: Optional[Union[str, "_models.AuthLocation"]] = rest_field(
+        name="authLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Location of the authorization value in the HTTP request. Only Header is supported. \"Header\""""
+    auth_location_selector: Optional[str] = rest_field(
+        name="authLocationSelector", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Selector within the authorization location used to find the identity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        issuer: str,
+        audiences: list[str],
+        auth_location: Optional[Union[str, "_models.AuthLocation"]] = None,
+        auth_location_selector: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.identity_provider = AuthPolicyConfigIdentityProvider.ENTRA_ID  # type: ignore
+
+
+class AuthPolicyProperties(AFDStateProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of the authorization policy.
+
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    :ivar auth_configs: Authorization configurations for the policy. Required.
+    :vartype auth_configs: list[~azure.mgmt.cdn.models.AuthPolicyConfig]
+    :ivar associations: Resource associations for the authorization policy. Required.
+    :vartype associations: ~azure.mgmt.cdn.models.AuthPolicyAssociation
+    :ivar action: Action to apply when authorization fails. Known values are: "Block" and "Log".
+    :vartype action: str or ~azure.mgmt.cdn.models.AuthPolicyAction
+    :ivar forward_token_to_origin: Whether to forward the authentication token to the origin.
+     Defaults to true.
+    :vartype forward_token_to_origin: bool
+    """
+
+    auth_configs: list["_models.AuthPolicyConfig"] = rest_field(
+        name="authConfigs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Authorization configurations for the policy. Required."""
+    associations: "_models.AuthPolicyAssociation" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource associations for the authorization policy. Required."""
+    action: Optional[Union[str, "_models.AuthPolicyAction"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Action to apply when authorization fails. Known values are: \"Block\" and \"Log\"."""
+    forward_token_to_origin: Optional[bool] = rest_field(
+        name="forwardTokenToOrigin", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to forward the authentication token to the origin. Defaults to true."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        auth_configs: list["_models.AuthPolicyConfig"],
+        associations: "_models.AuthPolicyAssociation",
+        action: Optional[Union[str, "_models.AuthPolicyAction"]] = None,
+        forward_token_to_origin: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AuthPolicyRouteReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Reference to a route associated with an authorization policy.
+
+    :ivar id: Resource ID of the Azure Front Door route. Required.
+    :vartype id: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource ID of the Azure Front Door route. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AuthPolicyUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for updating an authorization policy.
+
+    :ivar properties: Properties to update on the authorization policy.
+    :vartype properties: ~azure.mgmt.cdn.models.AuthPolicyUpdatePropertiesParameters
+    """
+
+    properties: Optional["_models.AuthPolicyUpdatePropertiesParameters"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties to update on the authorization policy."""
+
+    __flattened_items = ["auth_configs", "associations", "action", "forward_token_to_origin"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AuthPolicyUpdatePropertiesParameters"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class AuthPolicyUpdatePropertiesParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Writable properties of an authorization policy.
+
+    :ivar auth_configs: Authorization configurations for the policy.
+    :vartype auth_configs: list[~azure.mgmt.cdn.models.AuthPolicyConfig]
+    :ivar associations: Resource associations for the authorization policy.
+    :vartype associations: ~azure.mgmt.cdn.models.AuthPolicyAssociation
+    :ivar action: Action to apply when authorization fails. Known values are: "Block" and "Log".
+    :vartype action: str or ~azure.mgmt.cdn.models.AuthPolicyAction
+    :ivar forward_token_to_origin: Whether to forward the authentication token to the origin. When
+     omitted, the existing value is unchanged.
+    :vartype forward_token_to_origin: bool
+    """
+
+    auth_configs: Optional[list["_models.AuthPolicyConfig"]] = rest_field(
+        name="authConfigs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Authorization configurations for the policy."""
+    associations: Optional["_models.AuthPolicyAssociation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource associations for the authorization policy."""
+    action: Optional[Union[str, "_models.AuthPolicyAction"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Action to apply when authorization fails. Known values are: \"Block\" and \"Log\"."""
+    forward_token_to_origin: Optional[bool] = rest_field(
+        name="forwardTokenToOrigin", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to forward the authentication token to the origin. When omitted, the existing value is
+     unchanged."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        auth_configs: Optional[list["_models.AuthPolicyConfig"]] = None,
+        associations: Optional["_models.AuthPolicyAssociation"] = None,
+        action: Optional[Union[str, "_models.AuthPolicyAction"]] = None,
+        forward_token_to_origin: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AzureFirstPartyManagedCertificateParameters(
     SecretParameters, discriminator="AzureFirstPartyManagedCertificate"
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
@@ -2260,6 +2797,47 @@ class CanMigrateResult(_Model):  # pylint: disable=docstring-keyword-should-matc
             setattr(self.properties, key, value)
         else:
             super().__setattr__(key, value)
+
+
+class CapacityDistributionSettingsParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Capacity based round-robin load balancing settings for a backend pool.
+
+    :ivar capacity_conscious_threshold: Threshold at which additional backends are added for
+     capacity based load balancing. Default is 80 percent.
+    :vartype capacity_conscious_threshold: int
+    :ivar distribution_type: Type of distribution used in capacity based load balancing. Known
+     values are: "StaticWeights" and "DynamicWeights".
+    :vartype distribution_type: str or ~azure.mgmt.cdn.models.DistributionType
+    """
+
+    capacity_conscious_threshold: Optional[int] = rest_field(
+        name="capacityConsciousThreshold", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Threshold at which additional backends are added for capacity based load balancing. Default is
+     80 percent."""
+    distribution_type: Optional[Union[str, "_models.DistributionType"]] = rest_field(
+        name="distributionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of distribution used in capacity based load balancing. Known values are: \"StaticWeights\"
+     and \"DynamicWeights\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        capacity_conscious_threshold: Optional[int] = None,
+        distribution_type: Optional[Union[str, "_models.DistributionType"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class CertificateSourceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -4367,47 +4945,6 @@ class DeliveryRule(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         super().__init__(*args, **kwargs)
 
 
-class DeliveryRuleAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An action for the delivery rule.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    DeliveryRuleCacheExpirationAction, DeliveryRuleCacheKeyQueryStringAction, EdgeAction,
-    DeliveryRuleRequestHeaderAction, DeliveryRuleResponseHeaderAction, OriginGroupOverrideAction,
-    DeliveryRuleRouteConfigurationOverrideAction, UrlRedirectAction, UrlRewriteAction,
-    UrlSigningAction
-
-    :ivar name: The name of the action for the delivery rule. Required. Known values are:
-     "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
-     "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride", "RouteConfigurationOverride",
-     and "EdgeAction".
-    :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    name: str = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])
-    """The name of the action for the delivery rule. Required. Known values are: \"CacheExpiration\",
-     \"CacheKeyQueryString\", \"ModifyRequestHeader\", \"ModifyResponseHeader\", \"UrlRedirect\",
-     \"UrlRewrite\", \"UrlSigning\", \"OriginGroupOverride\", \"RouteConfigurationOverride\", and
-     \"EdgeAction\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class DeliveryRuleCacheExpirationAction(
     DeliveryRuleAction, discriminator="CacheExpiration"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -6280,8 +6817,8 @@ class HealthProbeParameters(_Model):  # pylint: disable=docstring-keyword-should
     :ivar probe_request_type: The type of health probe request that is made. Known values are:
      "NotSet", "GET", and "HEAD".
     :vartype probe_request_type: str or ~azure.mgmt.cdn.models.HealthProbeRequestType
-    :ivar probe_protocol: Protocol to use for health probe. Known values are: "NotSet", "Http", and
-     "Https".
+    :ivar probe_protocol: Protocol to use for health probe. Known values are: "NotSet", "Http",
+     "Https", and "Grpc".
     :vartype probe_protocol: str or ~azure.mgmt.cdn.models.ProbeProtocol
     :ivar probe_interval_in_seconds: The number of seconds between health probes.Default is 240sec.
     :vartype probe_interval_in_seconds: int
@@ -6297,7 +6834,8 @@ class HealthProbeParameters(_Model):  # pylint: disable=docstring-keyword-should
     probe_protocol: Optional[Union[str, "_models.ProbeProtocol"]] = rest_field(
         name="probeProtocol", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Protocol to use for health probe. Known values are: \"NotSet\", \"Http\", and \"Https\"."""
+    """Protocol to use for health probe. Known values are: \"NotSet\", \"Http\", \"Https\", and
+     \"Grpc\"."""
     probe_interval_in_seconds: Optional[int] = rest_field(
         name="probeIntervalInSeconds", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6730,6 +7268,9 @@ class LoadBalancingSettingsParameters(_Model):  # pylint: disable=docstring-keyw
     :ivar additional_latency_in_milliseconds: The additional latency in milliseconds for probes to
      fall into the lowest latency bucket.
     :vartype additional_latency_in_milliseconds: int
+    :ivar capacity_distribution_settings: Capacity based round-robin load balancing settings.
+    :vartype capacity_distribution_settings:
+     ~azure.mgmt.cdn.models.CapacityDistributionSettingsParameters
     """
 
     sample_size: Optional[int] = rest_field(
@@ -6744,6 +7285,10 @@ class LoadBalancingSettingsParameters(_Model):  # pylint: disable=docstring-keyw
         name="additionalLatencyInMilliseconds", visibility=["read", "create", "update", "delete", "query"]
     )
     """The additional latency in milliseconds for probes to fall into the lowest latency bucket."""
+    capacity_distribution_settings: Optional["_models.CapacityDistributionSettingsParameters"] = rest_field(
+        name="capacityDistributionSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Capacity based round-robin load balancing settings."""
 
     @overload
     def __init__(
@@ -6752,6 +7297,7 @@ class LoadBalancingSettingsParameters(_Model):  # pylint: disable=docstring-keyw
         sample_size: Optional[int] = None,
         successful_samples_required: Optional[int] = None,
         additional_latency_in_milliseconds: Optional[int] = None,
+        capacity_distribution_settings: Optional["_models.CapacityDistributionSettingsParameters"] = None,
     ) -> None: ...
 
     @overload
@@ -10240,6 +10786,7 @@ class Route(ProxyResource):  # pylint: disable=docstring-keyword-should-match-ke
         "link_to_default_domain",
         "https_redirect",
         "enabled_state",
+        "grpc_state",
         "provisioning_state",
         "deployment_status",
     ]
@@ -10363,6 +10910,9 @@ class RouteProperties(_Model):  # pylint: disable=docstring-keyword-should-match
     :ivar enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
      'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    :ivar grpc_state: Whether or not gRPC is enabled on this route. Permitted values are 'Enabled'
+     or 'Disabled'. Known values are: "Enabled" and "Disabled".
+    :vartype grpc_state: str or ~azure.mgmt.cdn.models.AFDRouteGrpcState
     :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
      "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
@@ -10424,6 +10974,11 @@ class RouteProperties(_Model):  # pylint: disable=docstring-keyword-should-match
     )
     """Whether to enable use of this rule. Permitted values are 'Enabled' or 'Disabled'. Known values
      are: \"Enabled\" and \"Disabled\"."""
+    grpc_state: Optional[Union[str, "_models.AFDRouteGrpcState"]] = rest_field(
+        name="grpcState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether or not gRPC is enabled on this route. Permitted values are 'Enabled' or 'Disabled'.
+     Known values are: \"Enabled\" and \"Disabled\"."""
     provisioning_state: Optional[Union[str, "_models.AfdProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -10449,6 +11004,7 @@ class RouteProperties(_Model):  # pylint: disable=docstring-keyword-should-match
         link_to_default_domain: Optional[Union[str, "_models.LinkToDefaultDomain"]] = None,
         https_redirect: Optional[Union[str, "_models.HttpsRedirect"]] = None,
         enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
+        grpc_state: Optional[Union[str, "_models.AFDRouteGrpcState"]] = None,
     ) -> None: ...
 
     @overload
@@ -10487,6 +11043,7 @@ class RouteUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should
         "link_to_default_domain",
         "https_redirect",
         "enabled_state",
+        "grpc_state",
     ]
 
     @overload
@@ -10559,6 +11116,9 @@ class RouteUpdatePropertiesParameters(_Model):  # pylint: disable=docstring-keyw
     :ivar enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
      'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    :ivar grpc_state: Whether or not gRPC is enabled on this route. Permitted values are 'Enabled'
+     or 'Disabled'. Known values are: "Enabled" and "Disabled".
+    :vartype grpc_state: str or ~azure.mgmt.cdn.models.AFDRouteGrpcState
     """
 
     endpoint_name: Optional[str] = rest_field(name="endpointName", visibility=["read"])
@@ -10614,6 +11174,11 @@ class RouteUpdatePropertiesParameters(_Model):  # pylint: disable=docstring-keyw
     )
     """Whether to enable use of this rule. Permitted values are 'Enabled' or 'Disabled'. Known values
      are: \"Enabled\" and \"Disabled\"."""
+    grpc_state: Optional[Union[str, "_models.AFDRouteGrpcState"]] = rest_field(
+        name="grpcState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether or not gRPC is enabled on this route. Permitted values are 'Enabled' or 'Disabled'.
+     Known values are: \"Enabled\" and \"Disabled\"."""
 
     @overload
     def __init__(
@@ -10630,6 +11195,7 @@ class RouteUpdatePropertiesParameters(_Model):  # pylint: disable=docstring-keyw
         link_to_default_domain: Optional[Union[str, "_models.LinkToDefaultDomain"]] = None,
         https_redirect: Optional[Union[str, "_models.HttpsRedirect"]] = None,
         enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
+        grpc_state: Optional[Union[str, "_models.AFDRouteGrpcState"]] = None,
     ) -> None: ...
 
     @overload

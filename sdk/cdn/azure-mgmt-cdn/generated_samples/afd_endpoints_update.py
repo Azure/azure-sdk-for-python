@@ -34,11 +34,11 @@ def main():
         resource_group_name="RG",
         profile_name="profile1",
         endpoint_name="endpoint1",
-        endpoint_update_properties={"properties": {"enabledState": "Enabled"}, "tags": {}},
+        endpoint_update_properties={"properties": {"enabledState": "Enabled", "enforceMtls": "Disabled"}, "tags": {}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-10-01/AFDEndpoints_Update.json
+# x-ms-original-file: 2026-09-01-preview/AFDEndpoints_Update.json
 if __name__ == "__main__":
     main()

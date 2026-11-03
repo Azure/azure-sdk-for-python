@@ -41,6 +41,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-01/CheckEndpointNameAvailability.json
+# x-ms-original-file: 2026-09-01-preview/CheckEndpointNameAvailability.json
 if __name__ == "__main__":
     main()

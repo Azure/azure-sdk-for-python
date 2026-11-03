@@ -35,7 +35,7 @@ def main():
         resource_group_name="RG",
         profile_name="profile1",
         endpoint_name="endpoint1",
-        origin_group_name="origingroup1",
+        origin_group_name="originGroup1",
         origin_group={
             "properties": {
                 "healthProbeSettings": {
@@ -59,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-01/OriginGroups_Create.json
+# x-ms-original-file: 2026-09-01-preview/OriginGroups_Create.json
 if __name__ == "__main__":
     main()

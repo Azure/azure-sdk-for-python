@@ -21,6 +21,7 @@ from ._operations import RoutesOperations  # type: ignore
 from ._operations import RuleSetsOperations  # type: ignore
 from ._operations import RulesOperations  # type: ignore
 from ._operations import SecurityPoliciesOperations  # type: ignore
+from ._operations import AuthPoliciesOperations  # type: ignore
 from ._operations import SecretsOperations  # type: ignore
 from ._operations import EndpointsOperations  # type: ignore
 from ._operations import OriginsOperations  # type: ignore
@@ -49,6 +50,7 @@ __all__ = [
     "RuleSetsOperations",
     "RulesOperations",
     "SecurityPoliciesOperations",
+    "AuthPoliciesOperations",
     "SecretsOperations",
     "EndpointsOperations",
     "OriginsOperations",

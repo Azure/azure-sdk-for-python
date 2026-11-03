@@ -25,6 +25,7 @@ from .operations import (
     AFDOriginGroupsOperations,
     AFDOriginsOperations,
     AFDProfilesOperations,
+    AuthPoliciesOperations,
     CustomDomainsOperations,
     EdgeNodesOperations,
     EndpointsOperations,
@@ -78,6 +79,8 @@ class CdnManagementClient(
     :vartype rules: azure.mgmt.cdn.aio.operations.RulesOperations
     :ivar security_policies: SecurityPoliciesOperations operations
     :vartype security_policies: azure.mgmt.cdn.aio.operations.SecurityPoliciesOperations
+    :ivar auth_policies: AuthPoliciesOperations operations
+    :vartype auth_policies: azure.mgmt.cdn.aio.operations.AuthPoliciesOperations
     :ivar secrets: SecretsOperations operations
     :vartype secrets: azure.mgmt.cdn.aio.operations.SecretsOperations
     :ivar endpoints: EndpointsOperations operations
@@ -111,9 +114,10 @@ class CdnManagementClient(
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-10-01"
-     and None. Default value is None. If not set, the operation's default API version will be used.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-09-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -181,6 +185,7 @@ class CdnManagementClient(
         self.security_policies = SecurityPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.auth_policies = AuthPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.secrets = SecretsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.endpoints = EndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.origins = OriginsOperations(self._client, self._config, self._serialize, self._deserialize)

@@ -43,7 +43,7 @@ def main():
                         "name": "EdgeAction",
                         "parameters": {
                             "edgeActionReference": {
-                                "id": "/subscriptions/subid/resourcegroups/RG/providers/Microsoft.Cdn/edgeActions/edgeAction1"
+                                "id": "/subscriptions/subid/resourceGroups/RG/providers/Microsoft.Cdn/edgeActions/edgeAction1"
                             },
                             "invocationPoint": "ClientResponse",
                             "typeName": "DeliveryRuleEdgeActionParameters",
@@ -68,6 +68,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-01/Rules_Create_EdgeAction.json
+# x-ms-original-file: 2026-09-01-preview/Rules_Create_EdgeAction.json
 if __name__ == "__main__":
     main()

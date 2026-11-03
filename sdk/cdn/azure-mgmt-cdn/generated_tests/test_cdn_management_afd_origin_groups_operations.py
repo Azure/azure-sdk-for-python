@@ -56,6 +56,7 @@ class TestCdnManagementAFDOriginGroupsOperations(AzureMgmtRecordedTestCase):
                     },
                     "loadBalancingSettings": {
                         "additionalLatencyInMilliseconds": 0,
+                        "capacityDistributionSettings": {"capacityConsciousThreshold": 0, "distributionType": "str"},
                         "sampleSize": 0,
                         "successfulSamplesRequired": 0,
                     },
@@ -102,6 +103,7 @@ class TestCdnManagementAFDOriginGroupsOperations(AzureMgmtRecordedTestCase):
                     },
                     "loadBalancingSettings": {
                         "additionalLatencyInMilliseconds": 0,
+                        "capacityDistributionSettings": {"capacityConsciousThreshold": 0, "distributionType": "str"},
                         "sampleSize": 0,
                         "successfulSamplesRequired": 0,
                     },

@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-01/AFDOrigins_Create_OriginHostname.json
+# x-ms-original-file: 2026-09-01-preview/AFDOrigins_Create_OriginHostname.json
 if __name__ == "__main__":
     main()

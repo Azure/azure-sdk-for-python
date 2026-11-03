@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-01/AFDOrigins_Update_CustomCertificateSubject.json
+# x-ms-original-file: 2026-09-01-preview/AFDOrigins_Update_CustomCertificateSubject.json
 if __name__ == "__main__":
     main()
