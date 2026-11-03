@@ -91,7 +91,7 @@ Describe 'Offline deployment-plan defaults' {
     It 'deploys and publishes the Function App outside sample-selection conditions' {
         $tokens = $null
         $parseErrors = $null
-        $path = (Resolve-Path (Join-Path $PSScriptRoot '../Invoke-SampleProvisioning.ps1')).Path
+        $path = (Resolve-Path (Join-Path $PSScriptRoot '../Invoke-ResourceProvisioning.ps1')).Path
         $ast = [System.Management.Automation.Language.Parser]::ParseFile($path, [ref] $tokens, [ref] $parseErrors)
         $parseErrors.Count | Should Be 0
         $commands = @($ast.FindAll({
@@ -99,7 +99,7 @@ Describe 'Offline deployment-plan defaults' {
             $node -is [System.Management.Automation.Language.CommandAst] -and (
                 $node.GetCommandName() -eq 'Publish-SampleFunctionApp' -or
                 ($node.GetCommandName() -eq 'Invoke-SampleAzure' -and
-                    $node.Extent.Text.Contains("'infra/function-app.bicep'"))
+                    $node.Extent.Text.Contains('-Arguments $bundleArguments'))
             )
         }, $true))
         $commands.Count | Should Be 2

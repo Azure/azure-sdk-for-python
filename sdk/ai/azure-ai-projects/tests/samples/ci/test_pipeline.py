@@ -203,7 +203,7 @@ def test_internal_plan_only_collects_and_plans_without_test_framework_bootstrap(
 
 def test_provisioning_uses_shared_variant_without_worker_iam_writes():
     directory = Path(__file__).resolve().parent
-    source = (directory / "Invoke-SampleProvisioning.ps1").read_text(encoding="utf-8")
+    source = (directory / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
     assert source.index("Get-SampleSharedIdentities -Plan $plan") < source.index("$state = @{")
     assert source.index("Assert-SampleSharedIdentityGrants -Plan $plan") < source.index("$state = @{")
     assert source.index("Set-Content -LiteralPath $StatePath") < source.index("@('deployment', 'sub', 'create')")
@@ -212,7 +212,9 @@ def test_provisioning_uses_shared_variant_without_worker_iam_writes():
     assert "function Get-SampleStandardTemplate" in helper
     assert "SHA256]::HashData($bytes)" in helper
     assert "checksum mismatch" in helper
-    assert "infra/standard-shared-identities.bicep" in source
+    assert "infra/main.bicep" in source
+    root = (directory / "infra/main.bicep").read_text(encoding="utf-8")
+    assert "'./standard-shared-identities.bicep'" in root
     for name in ("sample-resources.bicep", "standard-shared-identities.bicep"):
         assert "'Microsoft.Authorization/roleAssignments@" not in (directory / "infra" / name).read_text(
             encoding="utf-8"
@@ -221,11 +223,11 @@ def test_provisioning_uses_shared_variant_without_worker_iam_writes():
 
 def test_subscription_is_not_derived_from_the_service_connection_default():
     directory = Path(__file__).resolve().parent
-    source = (directory / "Invoke-SampleProvisioning.ps1").read_text(encoding="utf-8")
+    source = (directory / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
     assert "$subscription = [string] $account.id" not in source
     assert "Set-SampleSubscriptionContext -Plan $plan" in source
     assert "$subscription = Get-SampleSubscriptionId" in source
-    plan = (directory / "New-SampleDeploymentPlan.ps1").read_text(encoding="utf-8")
+    plan = (directory / "New-ResourceDeploymentPlan.ps1").read_text(encoding="utf-8")
     assert "subscriptionId = $subscription" in plan
     cleanup = (directory / "Remove-SampleResources.ps1").read_text(encoding="utf-8")
     assert "$state['subscriptionId'] -ine $state.plan.subscriptionId" in cleanup
@@ -234,10 +236,10 @@ def test_subscription_is_not_derived_from_the_service_connection_default():
 
 def test_tenant_is_required_from_environment_and_bound_to_plan_and_cleanup():
     directory = Path(__file__).resolve().parent
-    plan = (directory / "New-SampleDeploymentPlan.ps1").read_text(encoding="utf-8")
+    plan = (directory / "New-ResourceDeploymentPlan.ps1").read_text(encoding="utf-8")
     assert "$tenant = Get-SampleTenantId" in plan
     assert "tenantId = $tenant" in plan
-    provisioning = (directory / "Invoke-SampleProvisioning.ps1").read_text(encoding="utf-8")
+    provisioning = (directory / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
     assert "tenantId = $runnerIdentity.tenantId" in provisioning
     assert "$state.environment['AZURE_TENANT_ID'] = $runnerIdentity.tenantId" in provisioning
     cleanup = (directory / "Remove-SampleResources.ps1").read_text(encoding="utf-8")
@@ -289,7 +291,7 @@ def test_round_robin_workers_are_isolated_without_an_environment_dependency(pipe
 
 def test_batch_admission_retains_guards_without_querying_ado():
     directory = Path(__file__).resolve().parent
-    source = (directory / "Invoke-SampleProvisioning.ps1").read_text(encoding="utf-8")
+    source = (directory / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
     admission = source.split("if (-not $ConfirmProvisioning)", 1)[0]
     for guard in (
         "Set-SampleSubscriptionContext",
@@ -310,29 +312,32 @@ def test_provisioning_metadata_is_passed_directly_not_through_environment_variab
     assert parameters.startswith("using none")
     assert parameters.count("readEnvironmentVariable(") == 1
     assert "param mcpPat = readEnvironmentVariable('MCP_GITHUB_PAT', '')" in parameters
-    provisioning = (directory / "Invoke-SampleProvisioning.ps1").read_text(encoding="utf-8")
+    provisioning = (directory / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
     assert "SAMPLE_CI_" not in provisioning + parameters
     assert "SetEnvironmentVariable" not in provisioning
-    assert "accountName = [string] $accounts[0].name" in provisioning
-    assert "projectName = $projectName" in provisioning
-    assert "agentName = [string] $plan.agentName" in provisioning
+    assert '"agentName=$($plan.agentName)"' in provisioning
     assert "'sampleModel=' + ($modelParameters | ConvertTo-Json -Compress)" in provisioning
-    assert "Invoke-SampleAzure -Arguments $sampleArguments -Sensitive" in provisioning
+    assert "Invoke-SampleAzure -Arguments $bundleArguments -Sensitive" in provisioning
+    root = (directory / "infra/main.bicep").read_text(encoding="utf-8")
+    assert "accountName: standard.outputs.accountName" in root
+    assert "projectName: standard.outputs.projectName" in root
 
 
 def test_function_infrastructure_is_always_provisioned_using_resolved_inputs():
     directory = Path(__file__).resolve().parent
-    provisioning = (directory / "Invoke-SampleProvisioning.ps1").read_text(encoding="utf-8")
+    provisioning = (directory / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
     template = (directory / "infra/sample-resources.bicep").read_text(encoding="utf-8")
     parameters = (directory / "infra/sample-resources.bicepparam").read_text(encoding="utf-8")
     assert "enableFunctionApp" not in provisioning + template + parameters
-    assert "'infra/function-app.bicep'" in provisioning
-    assert '"storageAccountName=$storageAccountName"' in provisioning
+    root = (directory / "infra/main.bicep").read_text(encoding="utf-8")
+    assert "'./function-app.bicep'" in root
+    assert "storageAccountName: standard.outputs.storageAccountName" in root
     assert '"sharedFunctionIdentityResourceId=$($identities.function.resourceId)"' in provisioning
-    assert "$standard.properties.outputs.storageAccountName.value" in provisioning
     assert "Test-SampleFunctionRequired" not in provisioning
     assert "$requiresFunction" not in provisioning
-    assert "'Microsoft.Web'" in provisioning.split("foreach ($namespace", 1)[0]
+    prerequisites = json.loads((directory / "infra/prerequisites.json").read_text(encoding="utf-8"))
+    assert "Microsoft.Web" in prerequisites["providers"]
+    assert "$namespaces = (Get-SamplePrerequisites).providers" in provisioning
     grant_checks = [
         line.strip()
         for line in provisioning.splitlines()
@@ -347,6 +352,32 @@ def test_function_infrastructure_is_always_provisioned_using_resolved_inputs():
     assert provisioning.index("Publish-SampleFunctionApp -Plan $plan") < provisioning.index(
         "$state['status'] = 'Ready'"
     )
+
+
+def test_shared_provisioning_has_no_python_planning_dependency():
+    directory = Path(__file__).resolve().parent
+    for name in (
+        "New-ResourceDeploymentPlan.ps1",
+        "Invoke-ResourceProvisioning.ps1",
+        "SampleCiHelpers.ps1",
+        "Remove-SampleResources.ps1",
+    ):
+        source = (directory / name).read_text(encoding="utf-8")
+        for dependency in (
+            "selectedTests",
+            "requiredEnvironment",
+            "node_id",
+            "PackageRoot",
+            "PythonSampleCiHelpers.ps1",
+        ):
+            assert dependency not in source
+    adapter = (directory / "Invoke-SampleProvisioning.ps1").read_text(encoding="utf-8")
+    assert "Assert-PythonSamplePartition -Plans $plans" in adapter
+    assert "'Invoke-ResourceProvisioning.ps1') @PSBoundParameters" in adapter
+    plan = (directory / "New-SampleDeploymentPlan.ps1").read_text(encoding="utf-8")
+    assert "'New-ResourceDeploymentPlan.ps1')" in plan
+    assert "Get-SampleEnvironmentNames" in plan
+    assert "function-app.bicep" not in plan
 
 
 @pytest.mark.parametrize(

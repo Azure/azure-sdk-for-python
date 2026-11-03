@@ -3,6 +3,7 @@
 #Requires -Version 7.2
 
 . (Join-Path $PSScriptRoot '../SampleCiHelpers.ps1')
+. (Join-Path $PSScriptRoot '../PythonSampleCiHelpers.ps1')
 
 function Invoke-QueueTestEnvironment {
     param([Parameter(Mandatory)] [scriptblock] $Test)
@@ -554,6 +555,18 @@ Describe 'Aggregate four-queue capacity admission' {
         }
     }
 
+    It 'admits infrastructure plans with no Python test metadata' {
+        Invoke-QueueTestEnvironment {
+            $plans = @(New-OfflineQueuePlans -OutputDirectory (Join-Path $TestDrive 'language-neutral-capacity'))
+            foreach ($plan in $plans) {
+                $plan.Remove('selectedTests')
+                $plan.Remove('requiredEnvironment')
+            }
+            @(Assert-SampleBatchCapacity -Plans $plans).Count | Should Be 0
+            Assert-MockCalled Invoke-SampleAzure -Times 4 -Exactly -Scope It
+        }
+    }
+
     It 'rejects empty or repeated queue selections before contacting Azure: <Mode>' -TestCases @(
         @{ Mode = 'empty' }, @{ Mode = 'repeat' }
     ) {
@@ -562,7 +575,7 @@ Describe 'Aggregate four-queue capacity admission' {
             $plans = @(New-OfflineQueuePlans -OutputDirectory (Join-Path $TestDrive 'invalid-shards'))
             if ($Mode -eq 'empty') { $plans[1].selectedTests = @() }
             else { $plans[1].selectedTests = $plans[0].selectedTests }
-            { Assert-SampleBatchCapacity -Plans $plans } | Should Throw 'unique test nodes'
+            { Assert-PythonSamplePartition -Plans $plans } | Should Throw 'unique test nodes'
             Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
             $script:queueAzureCalls.Count | Should Be 0
         }

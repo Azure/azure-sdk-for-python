@@ -88,7 +88,93 @@ To verify repeatability, wait for all queues to pass and finish verified cleanup
 | `test-id` | `*test_samples_async.py::*[sample_agent_mcp_with_project_connection_async]` |
 | `test-id` | `sample_agent_basic;sample_agent_mcp_with_project_connection` (OR) |
 
-`*` and `?` are wildcards; brackets in pytest IDs are literal. Matching is case-insensitive, slash-normalized and deduplicated. Semicolons/newlines separate OR patterns. Zero matches fail; selection never falls back to all tests. Harness exclusions remain excluded. A selected sample that needs an environment variable nothing supplies is rejected during planning, before any resource is created: it is logged as an error and skipped, the other samples still run, and the run fails at the end in `ReportRejectedSamples`. Supported sample inputs come from the `environment` output in [infra/sample-resources.bicep](infra/sample-resources.bicep), all five [Function outputs](infra/function-app.bicep), `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`, `AZURE_RESOURCE_GROUP`, and the pipeline-supplied `LLM_VALIDATION_PROJECT_ENDPOINT`. Every active queue's plan saves the complete provisioned input names as `environmentBindings`, which `run_samples.py` enforces. A queue whose samples were all rejected gets no worker.
+`*` and `?` are wildcards; brackets in pytest IDs are literal. Matching is case-insensitive, slash-normalized and deduplicated. Semicolons/newlines separate OR patterns. Zero matches fail; selection never falls back to all tests. Harness exclusions remain excluded. A selected sample that needs an environment variable nothing supplies is rejected during planning, before any resource is created: it is logged as an error and skipped, the other samples still run, and the run fails at the end in `ReportRejectedSamples`. Supported sample inputs come from the root `environment` output in [infra/main.bicep](infra/main.bicep), `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`, `AZURE_RESOURCE_GROUP`, and the pipeline-supplied `LLM_VALIDATION_PROJECT_ENDPOINT`. Every active queue's plan saves the complete provisioned input names as `environmentBindings`, which `run_samples.py` enforces. A queue whose samples were all rejected gets no worker.
+
+## Shared provisioning and language adapters
+
+The infrastructure entry points have no dependency on Python, pytest, sample paths, or
+sample queries. They can prepare the same environment for .NET, Java, JavaScript/TypeScript,
+Go, or Python tests. The Azure resources always deploy as one complete bundle.
+
+| Layer | Entry points |
+| --- | --- |
+| Shared offline planning | [New-ResourceDeploymentPlan.ps1](New-ResourceDeploymentPlan.ps1) |
+| Shared admission and deployment | [Invoke-ResourceProvisioning.ps1](Invoke-ResourceProvisioning.ps1), [SampleCiHelpers.ps1](SampleCiHelpers.ps1) |
+| Shared cleanup | [Remove-SampleResources.ps1](Remove-SampleResources.ps1) |
+| Python-only selection and admission adapter | [New-SampleDeploymentPlan.ps1](New-SampleDeploymentPlan.ps1), [Invoke-SampleProvisioning.ps1](Invoke-SampleProvisioning.ps1), [PythonSampleCiHelpers.ps1](PythonSampleCiHelpers.ps1) |
+| Python-only execution | [select_samples.py](select_samples.py), [run_samples.py](run_samples.py), [sample_ci_attachments.py](sample_ci_attachments.py) |
+
+### Adding resources without editing PowerShell
+
+1. Add a Bicep resource or module to [infra/main.bicep](infra/main.bicep).
+   Declare module dependencies using Bicep inputs/outputs, not script-side deployment steps.
+   Do not add a sample-selection condition.
+2. Expose its non-secret test inputs as explicit uppercase keys in the root
+   `output environment object = { ... }` block. Offline planning discovers these keys
+   without an Azure login or Bicep compiler. Keep one key per line, using the existing
+   format; computed keys and an output built with `union(...)` are not supported.
+   The compiled-template check verifies that discovered keys match actual ARM outputs.
+3. If a new provider or extra unconditional subscription-scoped grant is required, add
+   it to [infra/prerequisites.json](infra/prerequisites.json). Workers verify grants
+   for the existing project/account/search/function identities; they never create them.
+   An administrator must separately approve and configure any new bootstrap grant.
+   The existing baseline project grants and conditioned Blob Owner grant remain mandatory.
+4. Run the offline regression suites and Bicep checker below, then validate live.
+
+No PowerShell changes are needed for ordinary ARM resources and their environment
+outputs. The Python runner also registers new output names as pytest options automatically:
+it passes only the validated binding **names** through
+`AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES`; values still use the existing CLI options.
+Outside that runner, existing CLI behavior and playback defaults are unchanged.
+
+This is not a generic imperative-task framework. Code publication, data-plane initialization,
+specialized quota/readiness checks, new identity types, or secret delivery may still need
+reviewed scripts. The shared Function publisher is such an explicit post-deployment step;
+its Python handler is a test dependency, not a dependency on the Python SDK test harness.
+
+### Calling from another SDK language
+
+Distribute the shared scripts, the complete [infra](infra) directory, and
+[function_app](function_app) together at a pinned revision; keep their relative layout.
+The shared entry points require PowerShell 7.2+, Azure CLI with Bicep, and the existing
+authorized service-principal context. They do not authenticate on behalf of the caller.
+Function remote build uses the packaged handler requirements.
+
+For example, after setting `AZURE_SUBSCRIPTION_ID` and `AZURE_TENANT_ID`:
+
+```powershell
+# Offline: no manifest or Python package is required.
+.\New-ResourceDeploymentPlan.ps1 -OutputDirectory .\plans\q1 -QueueName q1 `
+    -IdentityResourceGroup '<existing-identity-rg>' -DefinitionId 8392 -BuildId 12345 -JobAttempt 1
+
+# Read-only admission; workers must use the resolved plan it writes.
+.\Invoke-ResourceProvisioning.ps1 -BatchPlanDirectory .\plans -ResolvedPlanDirectory .\resolved
+
+# Billable deployment; MCP_GITHUB_PAT must be supplied securely in this process's environment.
+.\Invoke-ResourceProvisioning.ps1 -PlanPath .\resolved\q1\deployment-plan.json `
+    -StatePath .\results\q1\deployment-state.json -QueueName q1 -ConfirmProvisioning
+```
+
+The schema-version-1 JSON plan contains numeric run identifiers, queue `q1` through `q4`,
+fresh ownership metadata, model configuration, identity resolution, and `environmentBindings`.
+The shared planner creates it; callers should not invent resource names or identity bindings.
+If running under Azure DevOps, use the actual definition/build/attempt IDs; runtime ownership
+checks reject identifiers from another run. Other CI systems must supply equivalent numeric IDs.
+
+After deployment, require state `status=Ready`, then load the state's `environment`
+object into the language-specific test process. All bindings are nonempty strings;
+only declared non-secret names are accepted. Supply any external validation configuration
+separately. Shared admission does not inspect language-specific test metadata; each adapter
+must validate its own test partition before calling admission.
+
+In the caller's `finally`/always-run cleanup step, invoke:
+
+```powershell
+.\Remove-SampleResources.ps1 -StatePath .\results\q1\deployment-state.json -QueueName q1 -ConfirmCleanup
+```
+
+A non-Python adapter and pipeline are not shipped here. The shared interface is prepared
+for reuse; cross-language test execution still needs its own adapter and live validation.
 
 ## Function App integration
 
@@ -100,7 +186,7 @@ Provisioning values are internal inputs, not environment-variable configuration:
 
 | Input | Source |
 | --- | --- |
-| Account and project names | Verified resources created by Standard setup. |
+| Account and project names | Standard module outputs wired directly to dependent modules by the root Bicep template. |
 | Agent name | Generated run plan. |
 | Model settings | Run plan and validated regional model catalog. |
 | `storageAccountName` | Standard setup's storage output. |
@@ -134,10 +220,10 @@ Provisioning can incur standing charges. Agent loss, hard termination or Azure e
 
 | Runtime file | Responsibility |
 | --- | --- |
-| [New-SampleDeploymentPlan.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/New-SampleDeploymentPlan.ps1) | Fresh queue-bound plan, explicit targets and required-input checks. |
-| [Invoke-SampleProvisioning.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/Invoke-SampleProvisioning.ps1) | Read-only batch admission, local Bicep deployment, state and inventory. |
+| [New-SampleDeploymentPlan.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/New-SampleDeploymentPlan.ps1) | Python compatibility checks and test metadata added to a shared infrastructure plan. |
+| [Invoke-SampleProvisioning.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/Invoke-SampleProvisioning.ps1) | Python partition validation and delegation to the shared provisioner; preserves existing pipeline calls. |
 | [Remove-SampleResources.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/Remove-SampleResources.ps1) | Exact queue/ownership-checked cleanup. |
-| [SampleCiHelpers.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/SampleCiHelpers.ps1) | Shared identity/grant, nonempty/disjoint selection, quota and error-handling guards. |
+| [SampleCiHelpers.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/SampleCiHelpers.ps1) | Language-neutral identity/grant, ownership, output, quota and error-handling guards. |
 | [select_samples.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/select_samples.py), [run_samples.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/run_samples.py) | Real sample collection/selection and live pytest invocation. |
 | [sample_ci_attachments.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/sample_ci_attachments.py) | Sanitized shared-log attachments and captured report publication. |
 
@@ -147,5 +233,5 @@ Retained Python unit tests live in this directory; mocked PowerShell tests and [
 
 - With dotenv/live execution disabled, run the Python tests using `--confcutdir=tests/samples/ci` to avoid parent service fixtures.
 - Run all PowerShell `*.Tests.ps1` files under validation using **Pester 4.10.1**. The suites isolate Azure calls and cover identity resource-group resolution, metadata checks and exact grants. On-demand pipeline agents do not need Pester.
-- The Bicep checker compiles the three worker templates, the Function App template, and the secret-only parameter file with an empty PAT. It checks Function hosting defaults, identity-based settings and non-secret outputs, and rejects Azure IAM writes in all four templates. Its optional `StandardTemplatePath` input also verifies and compiles the 14 unchanged cached official sources.
+- The Bicep checker compiles the root bundle, its three modules, the resource-group template, and the secret-only parameter file with an empty PAT. It checks unconditional modules, provider prerequisites, environment-contract parity, Function hosting defaults, identity-based settings and non-secret outputs, and rejects Azure IAM writes including nested deployments. Its optional `StandardTemplatePath` input also verifies and compiles the 14 unchanged cached official sources.
 - Use the repository Black configuration, PowerShell syntax checks and `git diff --check`. Real harness collection must use `PYTHON_DOTENV_DISABLED=true` and fictional target IDs and must not execute samples.

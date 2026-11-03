@@ -20,19 +20,14 @@ param(
 
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'SampleCiHelpers.ps1')
-$subscription = Get-SampleSubscriptionId
-$tenant = Get-SampleTenantId
-$identityGroup = Get-SampleIdentityResourceGroup -Name $IdentityResourceGroup
+. (Join-Path $PSScriptRoot 'PythonSampleCiHelpers.ps1')
 $manifest = Read-SampleManifest -Path $SelectionManifest -PackageRoot $PackageRoot
 $scanner = Join-Path $PackageRoot '.github/skills/azure-ai-projects-record-sample/scripts/GetSampleRequiredEnvironmentVariables.ps1'
 $required = @()
 $runnable = @()
 $rejected = @()
 # Bicep outputs plus values the provisioning script adds; the validation endpoint is a pipeline variable and never enters state.
-$functionBindings = @(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $PSScriptRoot 'infra/function-app.bicep'))
-$stateBindings = @(@(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $PSScriptRoot 'infra/sample-resources.bicep')) +
-    $functionBindings +
-    @('AZURE_SUBSCRIPTION_ID', 'AZURE_TENANT_ID', 'AZURE_RESOURCE_GROUP') | Sort-Object -Unique)
+$stateBindings = @(Get-SampleEnvironmentNames)
 $provided = @($stateBindings + 'LLM_VALIDATION_PROJECT_ENDPOINT')
 # Validate test compatibility only; selection never changes the resource bundle or its bindings.
 foreach ($test in @($manifest.tests)) {
@@ -60,36 +55,19 @@ if ($runnable.Count -eq 0) {
     return
 }
 
-$ownerToken = [guid]::NewGuid().ToString('N')
-$plan = @{
-    schemaVersion = 1
-    definitionId = $DefinitionId
-    buildId = $BuildId
-    jobAttempt = $JobAttempt
-    queueName = $QueueName
-    ownerToken = $ownerToken
-    subscriptionId = $subscription
-    tenantId = $tenant
-    resourceGroup = 'azsdk-samples-{0}-{1}-{2}-{3}-{4}' -f $DefinitionId, $BuildId, $QueueName, $JobAttempt, $ownerToken.Substring(0, 8)
-    identityResourceGroup = $identityGroup
-    identityResolution = 'Pending'
-    sharedIdentities = @{}
-    location = ''
-    accountPrefix = 'sdk' + $ownerToken.Substring(0, 6)
-    agentName = 'sample-' + $ownerToken.Substring(0, 12)
-    deploymentTimestamp = [DateTime]::UtcNow.ToString('yyyyMMddHHmmss')
-    expiresUtc = [DateTime]::UtcNow.AddDays(1).ToString('o')
-    sampleModel = @{ name = $ModelName; version = $ModelVersion; sku = $ModelSku; capacity = $ModelCapacity }
-    requiredEnvironment = $required
-    environmentBindings = $stateBindings
-    selectedTests = @($runnable)
-}
+# The Python adapter adds test metadata; the shared planner has no knowledge of pytest or sample paths.
+& (Join-Path $PSScriptRoot 'New-ResourceDeploymentPlan.ps1') -OutputDirectory $OutputDirectory -QueueName $QueueName `
+    -IdentityResourceGroup $IdentityResourceGroup -ModelName $ModelName -ModelVersion $ModelVersion `
+    -ModelSku $ModelSku -ModelCapacity $ModelCapacity -DefinitionId $DefinitionId -BuildId $BuildId -JobAttempt $JobAttempt
+$plan = Get-Content -LiteralPath (Join-Path $OutputDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
+$plan['requiredEnvironment'] = $required
+$plan['selectedTests'] = @($runnable)
 Assert-SampleRunPlan -Plan $plan -QueueName $QueueName
 $plan | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $OutputDirectory 'deployment-plan.json') -Encoding utf8
 
 Write-Host 'DRY RUN: no Azure resources, role assignments, or project connections were changed.'
-Write-Host ('Target subscription from AZURE_SUBSCRIPTION_ID: {0}.' -f $subscription)
-Write-Host ('Target tenant from AZURE_TENANT_ID: {0}.' -f $tenant)
+Write-Host ('Target subscription from AZURE_SUBSCRIPTION_ID: {0}.' -f $plan.subscriptionId)
+Write-Host ('Target tenant from AZURE_TENANT_ID: {0}.' -f $plan.tenantId)
 Write-Host ('Shared identity resource group: {0}. Managed identities are looked up there by their -project-/-account-/-search-/-function- names before provisioning.' -f $plan.identityResourceGroup)
 Write-Host ('New resource group: {0}; identity resource IDs and region will be resolved by read-only admission.' -f $plan.resourceGroup)
 Write-Host ('Test queue: {0}. Local shared-identity Standard variant: new account/project, Storage, Cosmos DB, Search and capability hosts.' -f $QueueName)

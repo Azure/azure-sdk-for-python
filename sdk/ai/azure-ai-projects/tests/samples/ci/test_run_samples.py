@@ -309,6 +309,9 @@ def test_external_validation_endpoint_is_env_only_in_real_runner_invocation(tmp_
     assert environment["AZURE_TEST_USE_CLI_AUTH"] == "true"
     assert environment["AZURE_TOKEN_CREDENTIALS"] == "AzureCliCredential"
     assert environment["PYTHON_DOTENV_DISABLED"] == "true"
+    assert set(json.loads(environment["AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES"])) == set(
+        state["plan"]["environmentBindings"]
+    )
     assert "MCP_GITHUB_PAT" not in environment
     assert "SYSTEM_ACCESSTOKEN" not in environment
     assert all(endpoint not in argument and "llm-validation-project-endpoint" not in argument for argument in command)

@@ -44,7 +44,7 @@ Describe 'Provisioning rejects ineligible regions before mutation' {
                     }
                     if ($args[0] -eq 'group' -and $args[1] -eq 'exists') { return 'false' }
                     if ($args[0] -eq 'provider' -and $args[1] -eq 'list') {
-                        return (ConvertTo-Json -InputObject @('Microsoft.CognitiveServices', 'Microsoft.Storage', 'Microsoft.DocumentDB', 'Microsoft.Search' |
+                        return (ConvertTo-Json -InputObject @('Microsoft.CognitiveServices', 'Microsoft.Storage', 'Microsoft.DocumentDB', 'Microsoft.Search', 'Microsoft.Web' |
                             ForEach-Object { @{ namespace = $_; state = 'Registered' } }))
                     }
                     if ($args[0] -eq 'rest' -and $args[2] -eq 'get') {

@@ -3,9 +3,11 @@
 """Offline regression of CLI-mode conftest configuration without loading service fixtures."""
 
 import ast
+import json
 import os
 from pathlib import Path
 import sys
+import re
 from types import SimpleNamespace
 
 import pytest
@@ -13,6 +15,7 @@ import pytest
 
 @pytest.fixture(autouse=True)
 def isolated_configuration_environment(monkeypatch):
+    monkeypatch.delenv("AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES", raising=False)
     monkeypatch.setenv("FOUNDRY_MODEL_NAME", "fixture-model")
     monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", "fixture-endpoint")
 
@@ -30,12 +33,15 @@ def load_cli_environment_hooks():
         )
         or (
             isinstance(node, ast.FunctionDef)
-            and node.name in {"_has_cli_env_options", "pytest_addoption", "pytest_configure"}
+            and node.name
+            in {"_get_ci_environment_options", "_has_cli_env_options", "pytest_addoption", "pytest_configure"}
         )
     ]
     namespace = {
         "os": os,
         "sys": sys,
+        "json": json,
+        "re": re,
         "_CLI_ENV_MODE": True,
         "_SERVICE_PREPARER_DEFAULTS": {
             "llm_validation_project_endpoint": "https://sanitized.services.ai.azure.com/api/projects/sanitized",
@@ -44,6 +50,23 @@ def load_cli_environment_hooks():
     }
     exec(compile(ast.Module(body=hooks, type_ignores=[]), str(path), "exec"), namespace)
     return namespace
+
+
+def test_future_resource_binding_is_registered_without_a_python_option_mapping(monkeypatch):
+    monkeypatch.setenv("AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES", '["NEW_RESOURCE_ENDPOINT"]')
+    hooks = load_cli_environment_hooks()
+    parser = pytest.Parser(_ispytest=True)
+    hooks["pytest_addoption"](parser)
+    options = vars(parser.parse(["--new-resource-endpoint=https://example.invalid/new"]))
+    hooks["pytest_configure"](SimpleNamespace(getoption=options.get))
+    assert os.environ["NEW_RESOURCE_ENDPOINT"] == "https://example.invalid/new"
+
+
+@pytest.mark.parametrize("names", ['["ACCESS_TOKEN"]', '["lowercase"]', '{"NAME": "value"}', "[123]", "not-json"])
+def test_invalid_dynamic_option_names_fail_explicitly(monkeypatch, names):
+    monkeypatch.setenv("AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES", names)
+    with pytest.raises(ValueError):
+        load_cli_environment_hooks()
 
 
 def configure_cli_environment(values):

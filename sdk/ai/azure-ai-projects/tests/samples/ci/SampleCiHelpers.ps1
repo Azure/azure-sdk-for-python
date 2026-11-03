@@ -62,27 +62,6 @@ function Get-SampleStandardTemplate {
     return (Join-Path $OutputDirectory 'main.bicep')
 }
 
-function Read-SampleManifest {
-    param([Parameter(Mandatory)] [string] $Path, [Parameter(Mandatory)] [string] $PackageRoot)
-
-    $manifest = Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json -AsHashtable
-    if ($manifest['schemaVersion'] -ne 1 -or @($manifest['tests']).Count -eq 0) {
-        throw 'The sample manifest is empty or has an unsupported schema.'
-    }
-    foreach ($test in $manifest.tests) {
-        if ($test['node_id'] -notmatch '^tests/samples/test_samples(?:_async)?\.py::TestSamples(?:Async)?::\w+\[[^\r\n]+\]$') {
-            throw 'Manifest contains a node outside the sync/async sample test harness.'
-        }
-        $samplePath = [IO.Path]::GetFullPath((Join-Path $PackageRoot $test.sample_path))
-        $sampleRoot = [IO.Path]::GetFullPath((Join-Path $PackageRoot 'samples')) + [IO.Path]::DirectorySeparatorChar
-        if (-not $samplePath.StartsWith($sampleRoot, [StringComparison]::OrdinalIgnoreCase) -or
-            -not (Test-Path -LiteralPath $samplePath -PathType Leaf)) {
-            throw 'Manifest sample path must identify an existing file under samples/.'
-        }
-    }
-    return $manifest
-}
-
 function Get-SampleBicepEnvironmentNames {
     param([Parameter(Mandatory)] [string] $BicepPath)
 
@@ -95,6 +74,47 @@ function Get-SampleBicepEnvironmentNames {
     }
     if ($names.Count -eq 0) { throw "Cannot read the 'environment' output names from '$BicepPath'." }
     return $names
+}
+
+function Get-SampleEnvironmentNames {
+    $names = @(@(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $PSScriptRoot 'infra/main.bicep')) +
+        @('AZURE_SUBSCRIPTION_ID', 'AZURE_TENANT_ID', 'AZURE_RESOURCE_GROUP') | Sort-Object -Unique)
+    if (@($names | Where-Object { $_ -match '(^|_)(PAT|SECRET|KEY|TOKEN|PASSWORD|CREDENTIALS?)(_|$)' }).Count -gt 0) {
+        throw 'Infrastructure environment outputs must not contain secret-looking bindings.'
+    }
+    return $names
+}
+
+function Assert-SampleEnvironment {
+    param([Parameter(Mandatory)] [System.Collections.IDictionary] $Environment,
+        [Parameter(Mandatory)] [string[]] $Names)
+
+    $unexpected = @($Environment.Keys | Where-Object { $_ -cnotin $Names })
+    $missing = @($Names | Where-Object {
+        -not $Environment.Contains($_) -or $Environment[$_] -isnot [string] -or [string]::IsNullOrWhiteSpace($Environment[$_])
+    })
+    if ($unexpected.Count -gt 0 -or $missing.Count -gt 0 -or
+        @($Names | Where-Object { $_ -cnotmatch '^[A-Z][A-Z0-9_]*$' -or
+            $_ -match '(^|_)(PAT|SECRET|KEY|TOKEN|PASSWORD|CREDENTIALS?)(_|$)' }).Count -gt 0) {
+        throw 'Deployment outputs must match the declared non-secret environment bindings; values were suppressed.'
+    }
+}
+
+function Get-SamplePrerequisites {
+    $configuration = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'infra/prerequisites.json') -Raw | ConvertFrom-Json -AsHashtable
+    if ($configuration['schemaVersion'] -ne 1 -or @($configuration['providers']).Count -eq 0 -or
+        $configuration['identityGrants'] -isnot [System.Collections.IList]) {
+        throw 'Invalid infrastructure prerequisite configuration.'
+    }
+    foreach ($namespace in $configuration.providers) {
+        if ($namespace -cnotmatch '^Microsoft\.[A-Za-z0-9]+$') { throw 'Invalid prerequisite provider namespace.' }
+    }
+    foreach ($grant in $configuration.identityGrants) {
+        if ($grant['purpose'] -cnotin @('project', 'account', 'search', 'function') -or
+            $grant['role'] -notmatch '^[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}$' -or
+            [string]::IsNullOrWhiteSpace($grant['name'])) { throw 'Invalid prerequisite identity grant.' }
+    }
+    return $configuration
 }
 
 function Get-SampleSubscriptionId {
@@ -459,19 +479,15 @@ function Assert-SampleSharedIdentityGrants {
         -not $_['properties']['condition']
     })
     if ($callerAccess.Count -ne 1) { throw 'Preconfigure the pipeline Foundry User grant; workers never create Azure IAM assignments.' }
-    foreach ($grant in @(
-        @{ Purpose = 'function'; Role = 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'; Name = 'Storage Blob Data Owner' },
-        @{ Purpose = 'function'; Role = '974c5e8b-45b9-4653-ba55-5f855dd0fb88'; Name = 'Storage Queue Data Contributor' },
-        @{ Purpose = 'project'; Role = '974c5e8b-45b9-4653-ba55-5f855dd0fb88'; Name = 'Storage Queue Data Contributor' }
-    )) {
+    foreach ($grant in (Get-SamplePrerequisites).identityGrants) {
         $matching = @($assignments | Where-Object {
-            $_['properties']['principalId'] -ieq $Identities[$grant.Purpose].principalId -and
+            $_['properties']['principalId'] -ieq $Identities[$grant.purpose].principalId -and
             $_['properties']['scope'] -ieq $scope -and
-            $_['properties']['roleDefinitionId'] -ieq "$scope/providers/Microsoft.Authorization/roleDefinitions/$($grant.Role)" -and
+            $_['properties']['roleDefinitionId'] -ieq "$scope/providers/Microsoft.Authorization/roleDefinitions/$($grant.role)" -and
             -not $_['properties']['condition']
         })
         if ($matching.Count -ne 1) {
-            throw "Preconfigure $($grant.Name) for the shared $($grant.Purpose) identity at the subscription scope before provisioning; no resources were changed."
+            throw "Preconfigure $($grant.name) for the shared $($grant.purpose) identity at the subscription scope before provisioning; no resources were changed."
         }
     }
 }
@@ -484,14 +500,8 @@ function Assert-SampleBatchCapacity {
         throw 'A test batch must contain one to four distinct queue plans.'
     }
     $first = $Plans[0]
-    $nodes = @()
     foreach ($plan in $Plans) {
         Assert-SampleRunPlan -Plan $plan -QueueName $plan.queueName
-        $selected = @($plan['selectedTests'] | Where-Object { $null -ne $_ })
-        if ($selected.Count -eq 0 -or @($selected | Where-Object { [string]::IsNullOrWhiteSpace($_['node_id']) }).Count -gt 0) {
-            throw 'Each test queue must contain a nonempty selection of unique test nodes.'
-        }
-        $nodes += @($selected | ForEach-Object { $_['node_id'] })
         foreach ($key in @('subscriptionId', 'tenantId', 'definitionId', 'buildId', 'location', 'identityResourceGroup')) {
             if ($plan[$key] -cne $first[$key]) { throw 'Test queues must share one explicit target and pipeline run.' }
         }
@@ -509,9 +519,6 @@ function Assert-SampleBatchCapacity {
                 if ($plan.sampleModel[$key] -cne $first.sampleModel[$key]) { throw 'Test queues must use the same sample model configuration.' }
             }
         }
-    }
-    if (@($nodes | Sort-Object -Unique -CaseSensitive).Count -ne $nodes.Count) {
-        throw 'Test queues must partition unique test nodes without repeats.'
     }
     $leftovers = @(Invoke-SampleAzure -Arguments @('group', 'list', '--subscription', $first.subscriptionId,
         '--query', "[?tags.purpose=='azure-ai-projects-sample-ci'].{id:id,name:name}" ) -Sensitive)
