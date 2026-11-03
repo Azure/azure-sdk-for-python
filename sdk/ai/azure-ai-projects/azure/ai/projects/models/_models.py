@@ -152,7 +152,7 @@ class _CreateAgentVersionFromCodeMetadata(_Model):  # pylint: disable=docstring-
     """Set of 16 key-value pairs that can be attached to an object. This can be
      useful for storing additional information about the object in a structured
      format, and querying for objects via API or the dashboard.
-     
+
      Keys are strings with a maximum length of 64 characters. Values are strings
      with a maximum length of 512 characters."""
     definition: "_models.HostedAgentDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4548,7 +4548,7 @@ class AgentVersionDetails(_Model):  # pylint: disable=docstring-keyword-should-m
     """Set of 16 key-value pairs that can be attached to an object. This can be
      useful for storing additional information about the object in a structured
      format, and querying for objects via API or the dashboard.
-     
+
      Keys are strings with a maximum length of 64 characters. Values are strings
      with a maximum length of 512 characters. Required."""
     object: Literal[AgentObjectType.AGENT_VERSION] = rest_field(
@@ -6789,22 +6789,22 @@ class ClusterInsightResult(_Model):  # pylint: disable=docstring-keyword-should-
         visibility=["read", "create", "update", "delete", "query"]
     )
     """  Optional mapping of IDs to 2D coordinates used by the UX for visualization.
-     
+
        The map keys are string identifiers (for example, a cluster id or a sample id)
        and the values are the coordinates and visual size for rendering on a 2D chart.
-     
+
        This property is omitted unless the client requests coordinates (for example,
        by passing ``includeCoordinates=true`` as a query parameter).
-     
+
        Example:
-     
+
      .. code-block::
-     
+
         {
           \"cluster-1\": { \"x\": 12, \"y\": 34, \"size\": 8 },
           \"sample-123\": { \"x\": 18, \"y\": 22, \"size\": 4 }
         }
-     
+
        Coordinates are intended only for client-side visualization and do not
        modify the canonical insights results."""
 
@@ -7137,7 +7137,7 @@ class ComparisonFilter(_Model):  # pylint: disable=docstring-keyword-should-matc
     )
     """Specifies the comparison operator: ``eq``, ``ne``, ``gt``, ``gte``, ``lt``, ``lte``, ``in``,
       ``nin``.
- 
+
       * `eq`: equals
       * `ne`: not equal
       * `gt`: greater than
@@ -18689,7 +18689,7 @@ class MCPTool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword
       is deprecated for models released after September 1, 2026. Use ``server_url`` to connect to a
       remote MCP server, or ``tunnel_id`` to connect through a Secure MCP Tunnel. Currently supported
       ``connector_id`` values are:
- 
+
       * Dropbox: `connector_dropbox`
       * Gmail: `connector_gmail`
       * Google Calendar: `connector_googlecalendar`
@@ -18866,7 +18866,7 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):  # pylint: disable=docst
       is deprecated for models released after September 1, 2026. Use ``server_url`` to connect to a
       remote MCP server, or ``tunnel_id`` to connect through a Secure MCP Tunnel. Currently supported
       ``connector_id`` values are:
- 
+
       * Dropbox: `connector_dropbox`
       * Gmail: `connector_gmail`
       * Google Calendar: `connector_googlecalendar`
@@ -28319,16 +28319,22 @@ class SimulationSeedDataGenerationJobConfiguration(
     :ivar type: The data generation job type, which is SimulationSeed for this model. Required.
      Simulation seed for evaluation scenarios.
     :vartype type: str or ~azure.ai.projects.models.SIMULATION_SEED
+    :ivar max_samples: Maximum number of samples to generate, up to service-defined limits.
+     Required.
+    :vartype max_samples: int
     """
 
     type: Literal[DataGenerationJobType.SIMULATION_SEED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The data generation job type, which is SimulationSeed for this model. Required. Simulation seed
      for evaluation scenarios."""
+    max_samples: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of samples to generate, up to service-defined limits. Required."""
 
     @overload
     def __init__(
         self,
         *,
+        max_samples: int,
         train_split: Optional[float] = None,
         model_options: Optional["_models.DataGenerationModelOptions"] = None,
     ) -> None: ...
@@ -31222,7 +31228,7 @@ class ToolboxVersionObject(_Model):  # pylint: disable=docstring-keyword-should-
     """Set of 16 key-value pairs that can be attached to an object. This can be
      useful for storing additional information about the object in a structured
      format, and querying for objects via API or the dashboard.
-     
+
      Keys are strings with a maximum length of 64 characters. Values are strings
      with a maximum length of 512 characters. Required."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -31338,9 +31344,9 @@ class ToolChoiceAllowed(
     tools: list[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required. A list of tool definitions that the model should be allowed to call. For the
      Responses API, the list of tool definitions might look like:
-     
+
      .. code-block:: json
-     
+
         [
           { \"type\": \"function\", \"name\": \"get_weather\" },
           { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
@@ -32525,7 +32531,7 @@ class ToolMcpTool(Tool, discriminator="mcp"):  # pylint: disable=docstring-keywo
       is deprecated for models released after September 1, 2026. Use ``server_url`` to connect to a
       remote MCP server, or ``tunnel_id`` to connect through a Secure MCP Tunnel. Currently supported
       ``connector_id`` values are:
- 
+
       * Dropbox: `connector_dropbox`
       * Gmail: `connector_gmail`
       * Google Calendar: `connector_googlecalendar`

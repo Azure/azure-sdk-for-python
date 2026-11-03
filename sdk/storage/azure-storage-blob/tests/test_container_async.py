@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -16,6 +17,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage import LogCaptured
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
+from test_helpers import CaptureAuthHeader, _find_session_policy
 
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
@@ -37,6 +39,7 @@ from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
 )
+from azure.storage.blob._shared.session_async import ContainerSessionProvider
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = "acontainer"
@@ -1142,7 +1145,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs():
+        async for b in container.list_blobs(response_format="xml"):
             blobs.append(b.name)
 
         assert blobs, ["blob1", "blob2"]
@@ -1162,7 +1165,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await blob_client.set_standard_blob_tier(StandardBlobTier.Hot)
 
         # Act
-        async for blob_properties in container.list_blobs():
+        async for blob_properties in container.list_blobs(response_format="xml"):
             if blob_properties.name == blob_client.blob_name:
                 assert blob_properties.rehydrate_priority == "Standard"
 
@@ -1180,7 +1183,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(data, standard_blob_tier=StandardBlobTier.Cold)
 
         # Act
-        async for blob_properties in container.list_blobs():
+        async for blob_properties in container.list_blobs(response_format="xml"):
             if blob_properties.name == blob_client.blob_name:
                 assert blob_properties.blob_tier == "Cold"
 
@@ -1200,7 +1203,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs():
+        async for b in container.list_blobs(response_format="xml"):
             blobs.append(b)
 
         # Assert
@@ -1231,7 +1234,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await container.get_blob_client("blob4").upload_blob(data, overwrite=True)
 
         # Act
-        blobs_list = container.list_blobs()
+        blobs_list = container.list_blobs(response_format="xml")
         number_of_blobs_with_policy = 0
         async for blob in blobs_list:
             if blob.object_replication_source_properties:
@@ -1255,7 +1258,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         resp = []
-        async for b in container.list_blobs():
+        async for b in container.list_blobs(response_format="xml"):
             resp.append(b)
         # Assert
         assert resp is not None
@@ -1285,7 +1288,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         resp = []
-        async for b in container.list_blobs(name_starts_with="blob_a"):
+        async for b in container.list_blobs(name_starts_with="blob_a", response_format="xml"):
             resp.append(b)
 
         # Assert
@@ -1313,7 +1316,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await c3.upload_blob(data)
 
         # Act
-        generator = container.list_blobs(results_per_page=2).by_page()
+        generator = container.list_blobs(results_per_page=2, response_format="xml").by_page()
         blobs = []
         async for b in await generator.__anext__():
             blobs.append(b)
@@ -1340,7 +1343,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs(include="snapshots"):
+        async for b in container.list_blobs(include="snapshots", response_format="xml"):
             blobs.append(b)
 
         # Assert
@@ -1369,7 +1372,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs(include="metadata"):
+        async for b in container.list_blobs(include="metadata", response_format="xml"):
             blobs.append(b)
 
         # Assert
@@ -1416,7 +1419,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # include deletedwithversions will give you all alive root blobs
         # and the deleted root blobs when versioning is on.
-        async for blob in container.list_blobs(include=["deletedwithversions"]):
+        async for blob in container.list_blobs(include=["deletedwithversions"], response_format="xml"):
             blobs.append(blob)
         downloaded_root_content = await (await blob1.download_blob(version_id=root_version_id)).readall()
         downloaded_original_content = await (await blob1.download_blob(version_id=version_id_1)).readall()
@@ -1450,7 +1453,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs(include="uncommittedblobs"):
+        async for b in container.list_blobs(include="uncommittedblobs", response_format="xml"):
             blobs.append(b)
 
         # Assert
@@ -1477,7 +1480,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs(include="copy"):
+        async for b in container.list_blobs(include="copy", response_format="xml"):
             blobs.append(b)
 
         # Assert
@@ -1521,7 +1524,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         resp = []
-        async for w in container.walk_blobs():
+        async for w in container.walk_blobs(response_format="xml"):
             resp.append(w)
 
         # Assert
@@ -1896,7 +1899,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await container.get_blob_client("blob2").upload_blob(data, overwrite=True)
         await container.get_blob_client("blob3").upload_blob(data, overwrite=True)
 
-        blobs = await self._to_list(container.list_blobs(include="snapshots"))
+        blobs = await self._to_list(container.list_blobs(include="snapshots", response_format="xml"))
         assert len(blobs) == 4  # 3 blobs + 1 snapshot
 
         # Act
@@ -1909,7 +1912,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             assert parts_list[1].status_code == 404  # There was no snapshot
             assert parts_list[2].status_code == 404  # There was no snapshot
 
-            blobs = await self._to_list(container.list_blobs(include="snapshots"))
+            blobs = await self._to_list(container.list_blobs(include="snapshots", response_format="xml"))
             assert len(blobs) == 3  # 3 blobs
 
     @pytest.mark.live_test_only
@@ -2144,7 +2147,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
                     blob_list.append(b.name)
 
         # Act
-        await recursive_walk(container.walk_blobs())
+        await recursive_walk(container.walk_blobs(response_format="xml"))
 
         # Assert
         assert len(blob_list) == 4
@@ -2171,7 +2174,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         prefix_list = await self._to_list(
-            container.walk_blobs(name_starts_with="a", delimiter="/", include=["versions"])
+            container.walk_blobs(name_starts_with="a", delimiter="/", include=["versions"], response_format="xml")
         )
 
         # Assert
@@ -2197,7 +2200,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         resp = []
-        async for w in container.walk_blobs():
+        async for w in container.walk_blobs(response_format="xml"):
             resp.append(w)
 
         # Assert
@@ -2221,7 +2224,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs(include=["snapshots", "metadata"]):
+        async for b in container.list_blobs(include=["snapshots", "metadata"], response_format="xml"):
             blobs.append(b)
 
         # Assert
@@ -2468,11 +2471,11 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         all_blobs = []
-        async for b in container.list_blob_names():
+        async for b in container.list_blob_names(response_format="xml"):
             all_blobs.append(b)
 
         test_blobs = []
-        async for b in container.list_blob_names(name_starts_with="test"):
+        async for b in container.list_blob_names(name_starts_with="test", response_format="xml"):
             test_blobs.append(b)
 
         # Assert
@@ -2498,7 +2501,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await container.get_blob_client("blob3").upload_blob(data, overwrite=True)
 
         # Act
-        blob_pages = container.list_blob_names(results_per_page=2).by_page()
+        blob_pages = container.list_blob_names(results_per_page=2, response_format="xml").by_page()
         items_on_page1 = []
         async for b in await blob_pages.__anext__():
             items_on_page1.append(b)
@@ -2625,7 +2628,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blobs = []
-        async for b in container.list_blobs(name_starts_with="a/", start_from="a/blob2"):
+        async for b in container.list_blobs(name_starts_with="a/", start_from="a/blob2", response_format="xml"):
             blobs.append(b.name)
 
         # Assert
@@ -2658,8 +2661,190 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
                     blobs.append(b.name)
 
         # Act
-        await recursive_walk(container.walk_blobs(name_starts_with="a/", start_from="a/b/", delimiter="/"))
+        await recursive_walk(
+            container.walk_blobs(name_starts_with="a/", start_from="a/b/", delimiter="/", response_format="xml")
+        )
 
         # Assert
         assert blobs is not None
         assert blobs == ["a/b/blob2", "a/b/blob3", "a/b/blob4", "a/blob1"]
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_create_session(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        credential = self.get_credential(BlobServiceClient, is_async=True)
+        capture_auth_header = CaptureAuthHeader()
+
+        async with BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=credential,
+            use_session=True,
+            api_version="2026-10-06",
+        ) as service:
+            policy = _find_session_policy(service._pipeline, "AsyncStorageSessionPolicy")
+            cache = policy._session_provider._cache._entry
+            container1_name = self.get_resource_name("utcontainer1")
+            container1 = service.get_container_client(container1_name)
+            try:
+                await container1.create_container()
+            except ResourceExistsError:
+                pass
+
+            blob1_name, blob1_data = self.get_resource_name("blob1"), b"abc123"
+            await container1.upload_blob(
+                blob1_name, blob1_data, overwrite=True, raw_response_hook=capture_auth_header.hook("c1_upload")
+            )
+            assert capture_auth_header["c1_upload"].startswith("Bearer ")
+
+            blob1_actual = await (
+                await container1.download_blob(blob1_name, raw_response_hook=capture_auth_header.hook("c1_download"))
+            ).readall()
+            assert blob1_data == blob1_actual
+            assert capture_auth_header["c1_download"].startswith("Session ")
+            session1 = cache[container1_name]
+            # Recorded expiration is stale so pinning it to a future time to test caching
+            session1.expires_at = datetime.now(session1.expires_at.tzinfo) + timedelta(hours=1)
+
+            container2_name = self.get_resource_name("utcontainer2")
+            container2 = service.get_container_client(container2_name)
+            try:
+                await container2.create_container()
+            except ResourceExistsError:
+                pass
+
+            blob2_name, blob2_data = self.get_resource_name("blob2"), b"def456"
+            await container2.upload_blob(
+                blob2_name, blob2_data, overwrite=True, raw_response_hook=capture_auth_header.hook("c2_upload")
+            )
+            assert capture_auth_header["c2_upload"].startswith("Bearer ")
+
+            blob2_actual = await (
+                await container2.download_blob(blob2_name, raw_response_hook=capture_auth_header.hook("c2_download"))
+            ).readall()
+            assert blob2_data == blob2_actual
+            assert capture_auth_header["c2_download"].startswith("Session ")
+            session2 = cache[container2_name]
+            session2.expires_at = datetime.now(session2.expires_at.tzinfo) + timedelta(hours=1)
+
+            assert session1 is not session2
+
+            blob1_actual = await (
+                await container1.download_blob(blob1_name, raw_response_hook=capture_auth_header.hook("c1_download2"))
+            ).readall()
+            assert blob1_data == blob1_actual
+            assert capture_auth_header["c1_download2"].startswith("Session ")
+            assert cache[container1_name] is session1
+
+            blob2_actual = await (
+                await container2.download_blob(blob2_name, raw_response_hook=capture_auth_header.hook("c2_download2"))
+            ).readall()
+            assert blob2_data == blob2_actual
+            assert capture_auth_header["c2_download2"].startswith("Session ")
+            assert cache[container2_name] is session2
+
+            session1.expires_at = datetime.fromtimestamp(0, tz=session1.expires_at.tzinfo)
+
+            blob1_actual = await (
+                await container1.download_blob(blob1_name, raw_response_hook=capture_auth_header.hook("c1_download3"))
+            ).readall()
+            assert blob1_data == blob1_actual
+            assert capture_auth_header["c1_download3"].startswith("Session ")
+            assert cache[container1_name] is not session1
+            assert cache[container1_name] is not session2
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_sessions_disabled(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        credential = self.get_credential(BlobServiceClient, is_async=True)
+        capture_auth_header = CaptureAuthHeader()
+
+        async with BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=credential,
+            use_session=False,
+            api_version="2026-10-06",
+        ) as service:
+            container = service.get_container_client(self.get_resource_name("utcontainer"))
+            try:
+                await container.create_container()
+            except ResourceExistsError:
+                pass
+
+            blob_name, blob_data = self.get_resource_name("blob"), b"abc123"
+            await container.upload_blob(
+                blob_name, blob_data, overwrite=True, raw_response_hook=capture_auth_header.hook("upload")
+            )
+            assert capture_auth_header["upload"].startswith("Bearer ")
+
+            blob_actual = await (
+                await container.download_blob(blob_name, raw_response_hook=capture_auth_header.hook("download"))
+            ).readall()
+            assert blob_data == blob_actual
+            assert capture_auth_header["download"].startswith("Bearer ")
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_create_session_with_session_provider(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        credential = self.get_credential(BlobServiceClient, is_async=True)
+        capture_auth_header = CaptureAuthHeader()
+        account_url = self.account_url(storage_account_name, "blob")
+
+        async with (
+            ContainerSessionProvider(account_url, credential, api_version="2026-10-06") as session_provider,
+            BlobServiceClient(
+                account_url,
+                credential=credential,
+                use_session=True,
+                session_provider=session_provider,
+                api_version="2026-10-06",
+            ) as service1,
+            BlobServiceClient(
+                account_url,
+                credential=credential,
+                use_session=True,
+                session_provider=session_provider,
+                api_version="2026-10-06",
+            ) as service2,
+        ):
+            cache = session_provider._cache._entry
+
+            assert (
+                _find_session_policy(service1._pipeline, "AsyncStorageSessionPolicy")._session_provider
+                is session_provider
+            )
+            assert (
+                _find_session_policy(service2._pipeline, "AsyncStorageSessionPolicy")._session_provider
+                is session_provider
+            )
+
+            container_name = self.get_resource_name("utcontainer")
+            container1 = service1.get_container_client(container_name)
+            try:
+                await container1.create_container()
+            except ResourceExistsError:
+                pass
+
+            blob_name, blob_data = self.get_resource_name("blob"), b"abc123"
+            await container1.upload_blob(blob_name, blob_data, overwrite=True)
+
+            blob_actual = await (
+                await container1.download_blob(blob_name, raw_response_hook=capture_auth_header.hook("c1_download"))
+            ).readall()
+            assert blob_data == blob_actual
+            assert capture_auth_header["c1_download"].startswith("Session ")
+            session = cache[container_name]
+            session.expires_at = datetime.now(session.expires_at.tzinfo) + timedelta(hours=1)
+
+            container2 = service2.get_container_client(container_name)
+            blob_actual = await (
+                await container2.download_blob(blob_name, raw_response_hook=capture_auth_header.hook("c2_download"))
+            ).readall()
+            assert blob_data == blob_actual
+            assert capture_auth_header["c2_download"].startswith("Session ")
+            assert cache[container_name] is session
