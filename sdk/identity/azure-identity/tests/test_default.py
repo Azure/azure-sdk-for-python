@@ -85,6 +85,39 @@ def test_iterates_only_once(get_token_method):
         assert getattr(successful_credential, get_token_method).call_count == n + 1
 
 
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+@pytest.mark.parametrize("options", [None, {}, {"claims": "claims", "tenant_id": "tenant", "enable_cae": True}])
+def test_cached_credential_without_get_token_info(get_token_method, options):
+    unavailable_credential = Mock(
+        spec_set=["get_token"], get_token=Mock(side_effect=CredentialUnavailableError(message="unavailable"))
+    )
+    successful_credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("token", 42)))
+    credential = DefaultAzureCredential()
+    credential.credentials = (unavailable_credential, successful_credential)
+
+    getattr(credential, get_token_method)("scope")
+    token_info = credential.get_token_info("scope", "other-scope", options=options)
+
+    assert isinstance(token_info, AccessTokenInfo)
+    assert token_info.token == "token"
+    assert token_info.expires_on == 42
+    successful_credential.get_token.assert_called_with("scope", "other-scope", **(options or {}))
+    assert successful_credential.get_token.call_count == 2
+    unavailable_credential.get_token.assert_called_once()
+
+
+def test_cached_credential_without_get_token_info_rejects_pop():
+    successful_credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("token", 42)))
+    credential = DefaultAzureCredential()
+    credential.credentials = (successful_credential,)
+    credential.get_token("scope")
+
+    with pytest.raises(CredentialUnavailableError, match="Proof of possession arguments are not supported"):
+        credential.get_token_info("scope", options={"pop": True})  # type: ignore
+
+    successful_credential.get_token.assert_called_once()
+
+
 @pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
 def test_authority(authority):
     """the credential should accept authority configuration by keyword argument or environment"""
