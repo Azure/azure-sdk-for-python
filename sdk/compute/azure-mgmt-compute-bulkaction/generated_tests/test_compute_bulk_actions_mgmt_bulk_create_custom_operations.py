@@ -49,6 +49,7 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
             location="str",
             name="str",
             resource={
+                "extendedLocation": {"name": "str", "type": "str"},
                 "id": "str",
                 "identity": {
                     "type": "str",
@@ -57,6 +58,7 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "name": "str",
+                "placement": {"excludeZones": ["str"], "includeZones": ["str"], "zonePlacementPolicy": "str"},
                 "plan": {"name": "str", "product": "str", "publisher": "str", "promotionCode": "str", "version": "str"},
                 "properties": {
                     "capacity": 0,
@@ -75,8 +77,10 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
                                     }
                                 ]
                             },
+                            "billingProfile": {"maxPrice": 0.0},
                             "capacityReservation": {"capacityReservationGroup": {"id": "str"}},
                             "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
+                            "evictionPolicy": "str",
                             "extensionsTimeBudget": "str",
                             "hardwareProfile": {
                                 "vmSize": "str",
@@ -189,6 +193,7 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
                                     "winRM": {"listeners": [{"certificateUrl": "str", "protocol": "str"}]},
                                 },
                             },
+                            "priority": "str",
                             "scheduledEventsPolicy": {
                                 "allInstancesDown": {"automaticallyApprove": bool},
                                 "scheduledEventsAdditionalPublishingTargets": {
@@ -321,7 +326,6 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
                             }
                         ],
                     },
-                    "priorityProfile": {"evictionPolicy": "str", "maxPricePerVM": 0.0, "type": "str"},
                     "capacityType": "str",
                     "createdTime": "2020-02-20 00:00:00",
                     "executionParameters": {
@@ -334,10 +338,10 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
                         "retryPolicy": {"onFailureAction": "str", "retryCount": 0, "retryWindowInMinutes": 0},
                         "verifyVmAgentHealth": bool,
                     },
-                    "minCapacity": 0,
                     "overridesProfile": {
                         "overrides": [
                             {
+                                "extendedLocation": {"name": "str", "type": "str"},
                                 "extensions": [
                                     {
                                         "name": "str",
@@ -365,6 +369,11 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
                                     "type": "str",
                                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                                 },
+                                "placement": {
+                                    "excludeZones": ["str"],
+                                    "includeZones": ["str"],
+                                    "zonePlacementPolicy": "str",
+                                },
                                 "plan": {
                                     "name": "str",
                                     "product": "str",
@@ -388,8 +397,10 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
                                             }
                                         ]
                                     },
+                                    "billingProfile": {"maxPrice": 0.0},
                                     "capacityReservation": {"capacityReservationGroup": {"id": "str"}},
                                     "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
+                                    "evictionPolicy": "str",
                                     "extensionsTimeBudget": "str",
                                     "hardwareProfile": {
                                         "vmSize": "str",
@@ -506,6 +517,7 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
                                             "winRM": {"listeners": [{"certificateUrl": "str", "protocol": "str"}]},
                                         },
                                     },
+                                    "priority": "str",
                                     "scheduledEventsPolicy": {
                                         "allInstancesDown": {"automaticallyApprove": bool},
                                         "scheduledEventsAdditionalPublishingTargets": {
@@ -621,11 +633,11 @@ class TestComputeBulkActionsMgmtBulkCreateCustomOperations(AzureMgmtRecordedTest
                                         }
                                     ],
                                 },
+                                "zone": "str",
                             }
                         ],
                         "virtualMachineNamePrefix": "str",
                     },
-                    "partialFulfillmentPolicy": {"fulfilledCapacity": 0, "mode": "str", "reason": "str"},
                     "provisioningState": "str",
                     "resources": [{"virtualMachineInfo": {"name": "str", "vmSize": "str", "zone": "str"}}],
                 },

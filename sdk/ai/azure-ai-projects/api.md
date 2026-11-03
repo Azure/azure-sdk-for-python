@@ -654,6 +654,7 @@ namespace azure.ai.projects.aio.operations
                 extra_headers: Optional[Mapping[str, str]] = ..., 
                 extra_query: Optional[Mapping[str, str]] = ..., 
                 structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
                 **kwargs: Any
             ) -> AsyncBetaRealtimeConnectionManager: ...
 
@@ -698,6 +699,7 @@ namespace azure.ai.projects.aio.operations
                 extra_headers: Optional[Mapping[str, str]] = ..., 
                 extra_query: Optional[Mapping[str, str]] = ..., 
                 structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -3514,6 +3516,7 @@ namespace azure.ai.projects.models
         MCP = "mcp"
         RESPONSES = "responses"
         VOICE = "voice"
+        VOICE_CONVERSATION_ENGINE = "voice_conversation_engine"
 
 
     class azure.ai.projects.models.AgentEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discriminator='agent'):
@@ -4482,6 +4485,8 @@ namespace azure.ai.projects.models
                 **kwargs: Any
             ) -> AgentOptimizationLROPoller: ...
 
+        def status(self) -> str: ...
+
 
     class azure.ai.projects.models.AgentOptimizationModelConfiguration(_Model):
         model: str
@@ -5093,6 +5098,8 @@ namespace azure.ai.projects.models
                 continuation_token: str, 
                 **kwargs: Any
             ) -> AsyncAgentOptimizationLROPoller: ...
+
+        def status(self) -> str: ...
 
 
     class azure.ai.projects.models.AsyncDatasetGenerationLROPoller(AsyncLROPoller[DataGenerationJobResult]):
@@ -6256,11 +6263,11 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.CreateTeamsPhoneExtensionTelephonyBindingRequest(CreateTelephonyBindingRequest, discriminator='teams_phone_extension'):
+    class azure.ai.projects.models.CreateTeamsPhoneExtensibilityTelephonyBindingRequest(CreateTelephonyBindingRequest, discriminator='teams_phone_extensibility'):
         connection_name: str
         label: str
         phone_number: Optional[str]
-        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSION]
+        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY]
         resource_account_object_id: str
 
         @overload
@@ -8334,6 +8341,7 @@ namespace azure.ai.projects.models
         code_configuration: Optional[CodeConfiguration]
         container_configuration: Optional[ContainerConfiguration]
         cpu: str
+        enable_memory_snapshot: Optional[bool]
         environment_variables: Optional[dict[str, str]]
         kind: Literal[AgentKind.HOSTED]
         memory: str
@@ -8349,6 +8357,7 @@ namespace azure.ai.projects.models
                 code_configuration: Optional[CodeConfiguration] = ..., 
                 container_configuration: Optional[ContainerConfiguration] = ..., 
                 cpu: str, 
+                enable_memory_snapshot: Optional[bool] = ..., 
                 environment_variables: Optional[dict[str, str]] = ..., 
                 memory: str, 
                 protocol_versions: Optional[list[ProtocolVersionRecord]] = ..., 
@@ -9426,6 +9435,71 @@ namespace azure.ai.projects.models
         PERSONAL = "Personal"
         SHARED = "Shared"
         TENANT = "Tenant"
+
+
+    class azure.ai.projects.models.MicrosoftCopilotBuiltInTool(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FILESYSTEM_READ = "filesystem_read"
+        FILESYSTEM_WRITE = "filesystem_write"
+        SHELL = "shell"
+        SUBAGENTS = "subagents"
+        WEB = "web"
+
+
+    class azure.ai.projects.models.MicrosoftCopilotHarness(AgentHarness, discriminator='microsoft_copilot_preview'):
+        type: Literal["microsoft_copilot_preview"]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.MicrosoftCopilotToolsetConfig(_Model):
+        enabled: Optional[bool]
+        name: Union[str, MicrosoftCopilotBuiltInTool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                enabled: Optional[bool] = ..., 
+                name: Union[str, MicrosoftCopilotBuiltInTool]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.MicrosoftCopilotToolsetDefaultConfig(_Model):
+        enabled: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                enabled: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.MicrosoftCopilotToolsetPreview(Tool, discriminator='microsoft_copilot_toolset_preview'):
+        configs: Optional[list[MicrosoftCopilotToolsetConfig]]
+        default_config: Optional[MicrosoftCopilotToolsetDefaultConfig]
+        type: Literal[ToolType.MICROSOFT_COPILOT_TOOLSET_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                configs: Optional[list[MicrosoftCopilotToolsetConfig]] = ..., 
+                default_config: Optional[MicrosoftCopilotToolsetDefaultConfig] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.MicrosoftFabricPreviewTool(Tool, discriminator='fabric_dataagent_preview'):
@@ -12946,6 +13020,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.SimulationSeedDataGenerationJobConfiguration(DataGenerationJobConfiguration, discriminator='simulation_seed'):
+        max_samples: int
         model_options: DataGenerationModelOptions
         train_split: float
         type: Literal[DataGenerationJobType.SIMULATION_SEED]
@@ -12954,6 +13029,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
+                max_samples: int, 
                 model_options: Optional[DataGenerationModelOptions] = ..., 
                 train_split: Optional[float] = ...
             ) -> None: ...
@@ -13293,13 +13369,13 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.TeamsPhoneExtensionTelephonyBinding(TelephonyBinding, discriminator='teams_phone_extension'):
+    class azure.ai.projects.models.TeamsPhoneExtensibilityTelephonyBinding(TelephonyBinding, discriminator='teams_phone_extensibility'):
         connection_name: str
         id: str
         incoming_call_url: str
         label: str
         phone_number: Optional[str]
-        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSION]
+        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY]
         resource_account_object_id: str
         status: Union[str, TelephonyBindingStatus]
 
@@ -13320,14 +13396,14 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.TeamsPhoneExtensionTelephonyBindingListItem(TelephonyBindingListItem, discriminator='teams_phone_extension'):
+    class azure.ai.projects.models.TeamsPhoneExtensibilityTelephonyBindingListItem(TelephonyBindingListItem, discriminator='teams_phone_extensibility'):
         connection_name: str
         etag: str
         id: str
         incoming_call_url: str
         label: str
         phone_number: Optional[str]
-        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSION]
+        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY]
         resource_account_object_id: str
         status: Union[str, TelephonyBindingStatus]
 
@@ -13735,7 +13811,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.TelephonyCallLifecycleEventSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         GATEWAY = "gateway"
-        TEAMS_PHONE_EXTENSION = "teams_phone_extension"
+        TEAMS_PHONE_EXTENSIBILITY = "teams_phone_extensibility"
         TWILIO = "twilio"
         VOICE_AGENT = "voice_agent"
 
@@ -13997,7 +14073,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.TelephonyProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        TEAMS_PHONE_EXTENSION = "teams_phone_extension"
+        TEAMS_PHONE_EXTENSIBILITY = "teams_phone_extensibility"
         TWILIO = "twilio"
 
 
@@ -14452,6 +14528,7 @@ namespace azure.ai.projects.models
         LOCAL_SHELL = "local_shell"
         MCP = "mcp"
         MEMORY_SEARCH_PREVIEW = "memory_search_preview"
+        MICROSOFT_COPILOT_TOOLSET_PREVIEW = "microsoft_copilot_toolset_preview"
         NAMESPACE = "namespace"
         OPENAPI = "openapi"
         PROGRAMMATIC_TOOL_CALLING = "programmatic_tool_calling"
@@ -15643,6 +15720,7 @@ namespace azure.ai.projects.models
         output_modalities: Optional[list[Union[str, VoiceOutputModality]]]
         parallel_tool_calls: Optional[bool]
         rai_config: RaiConfig
+        soundscape: Optional[VoiceAgentSoundscapeConfig]
         store: Optional[bool]
         structured_inputs: Optional[dict[str, StructuredInputDefinition]]
         subagent_config: Optional[VoiceAgentSubagentConfig]
@@ -15666,6 +15744,7 @@ namespace azure.ai.projects.models
                 output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ..., 
                 parallel_tool_calls: Optional[bool] = ..., 
                 rai_config: Optional[RaiConfig] = ..., 
+                soundscape: Optional[VoiceAgentSoundscapeConfig] = ..., 
                 store: Optional[bool] = ..., 
                 structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ..., 
                 subagent_config: Optional[VoiceAgentSubagentConfig] = ..., 
@@ -15788,6 +15867,7 @@ namespace azure.ai.projects.models
         languages: Optional[list[str]]
         model: Union[str, VoiceAgentInputTranscriptionModel]
         phrase_list: Optional[list[str]]
+        profanity_filter: Optional[Union[str, VoiceAgentProfanityFilterMode]]
         prompt: Optional[str]
 
         @overload
@@ -15801,6 +15881,7 @@ namespace azure.ai.projects.models
                 languages: Optional[list[str]] = ..., 
                 model: Union[str, VoiceAgentInputTranscriptionModel], 
                 phrase_list: Optional[list[str]] = ..., 
+                profanity_filter: Optional[Union[str, VoiceAgentProfanityFilterMode]] = ..., 
                 prompt: Optional[str] = ...
             ) -> None: ...
 
@@ -15810,6 +15891,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AZURE_SPEECH = "azure-speech"
+        AZURE_SPEECH_STREAMING = "azure-speech-streaming"
         GPT4_O_MINI_TRANSCRIBE = "gpt-4o-mini-transcribe"
         GPT4_O_TRANSCRIBE = "gpt-4o-transcribe"
         GPT4_O_TRANSCRIBE_DIARIZE = "gpt-4o-transcribe-diarize"
@@ -15936,22 +16018,30 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AZURE_DEEP_NOISE_SUPPRESSION = "azure_deep_noise_suppression"
+        AZURE_DEEP_NOISE_SUPPRESSION_HEADSET = "azure_deep_noise_suppression_headset"
+        AZURE_PERSONAL_NOISE_SUPPRESSION = "azure_personal_noise_suppression"
         FAR_FIELD = "far_field"
         NEAR_FIELD = "near_field"
 
 
-    class azure.ai.projects.models.VoiceAgentRealtimeResponse(VoiceAgentRealtimeResponseBase):
+    class azure.ai.projects.models.VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MASKED = "masked"
+        REMOVED = "removed"
+        UNFILTERED = "unfiltered"
+
+
+    class azure.ai.projects.models.VoiceAgentRealtimeResponse(_Model):
         audio: Optional[VoiceResponseAudio]
-        conversation_id: str
-        id: str
-        max_output_tokens: Union[int, str]
-        metadata: Metadata
-        object: str
+        conversation_id: Optional[str]
+        id: Optional[str]
+        max_output_tokens: Optional[Union[int, Literal["inf"]]]
+        metadata: Optional[Metadata]
+        object: Optional[Literal["response"]]
         output: Optional[list[RealtimeConversationItem]]
-        output_modalities: Union[list[str, str]]
-        status: Union[str, str, str, str, str]
-        status_details: RealtimeResponseStatusDetails
-        usage: RealtimeResponseUsage
+        output_modalities: Optional[list[Literal["text", "audio"]]]
+        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]]
+        status_details: Optional[RealtimeResponseStatusDetails]
+        usage: Optional[RealtimeResponseUsage]
 
         @overload
         def __init__(
@@ -15964,36 +16054,6 @@ namespace azure.ai.projects.models
                 metadata: Optional[Metadata] = ..., 
                 object: Optional[Literal[response]] = ..., 
                 output: Optional[list[RealtimeConversationItem]] = ..., 
-                output_modalities: Optional[list[Literal[text, audio]]] = ..., 
-                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
-                status_details: Optional[RealtimeResponseStatusDetails] = ..., 
-                usage: Optional[RealtimeResponseUsage] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.VoiceAgentRealtimeResponseBase(_Model):
-        conversation_id: Optional[str]
-        id: Optional[str]
-        max_output_tokens: Optional[Union[int, Literal["inf"]]]
-        metadata: Optional[Metadata]
-        object: Optional[Literal["response"]]
-        output_modalities: Optional[list[Literal["text", "audio"]]]
-        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]]
-        status_details: Optional[RealtimeResponseStatusDetails]
-        usage: Optional[RealtimeResponseUsage]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                conversation_id: Optional[str] = ..., 
-                id: Optional[str] = ..., 
-                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
-                metadata: Optional[Metadata] = ..., 
-                object: Optional[Literal[response]] = ..., 
                 output_modalities: Optional[list[Literal[text, audio]]] = ..., 
                 status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
                 status_details: Optional[RealtimeResponseStatusDetails] = ..., 
@@ -16606,6 +16666,87 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentSoundscapeConfig(_Model):
+        background: Optional[VoiceAgentSoundscapeTrackConfig]
+        closing: Optional[VoiceAgentSoundscapeTrackConfig]
+        opening: Optional[VoiceAgentSoundscapeTrackConfig]
+        transfer: Optional[VoiceAgentSoundscapeTrackConfig]
+        working: Optional[VoiceAgentSoundscapeWorkingTrackConfig]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                background: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
+                closing: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
+                opening: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
+                transfer: Optional[VoiceAgentSoundscapeTrackConfig] = ..., 
+                working: Optional[VoiceAgentSoundscapeWorkingTrackConfig] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSoundscapeSound(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BUSY_STREET = "busy_street"
+        CALL_CENTER = "call_center"
+        DING1 = "ding1"
+        DING2 = "ding2"
+        OFFICE = "office"
+        PEOPLE_TALKING = "people_talking"
+        STREET_AND_METRO_STATION = "street_and_metro_station"
+
+
+    class azure.ai.projects.models.VoiceAgentSoundscapeSourceConfig(_Model):
+        name: Union[str, VoiceAgentSoundscapeSound]
+        type: Literal["built_in"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Union[str, VoiceAgentSoundscapeSound]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSoundscapeTrackConfig(_Model):
+        gain: Optional[float]
+        source: VoiceAgentSoundscapeSourceConfig
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                gain: Optional[float] = ..., 
+                source: VoiceAgentSoundscapeSourceConfig
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSoundscapeWorkingTrackConfig(_Model):
+        delay_ms: Optional[timedelta]
+        gain: Optional[float]
+        source: VoiceAgentSoundscapeSourceConfig
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                delay_ms: Optional[timedelta] = ..., 
+                gain: Optional[float] = ..., 
+                source: VoiceAgentSoundscapeSourceConfig
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentStaticInterimResponseConfig(VoiceAgentInterimResponseConfig, discriminator='static_interim_response'):
         latency_threshold_ms: timedelta
         texts: Optional[list[str]]
@@ -16812,6 +16953,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        WEBRTC = "webrtc"
+        WEBSOCKET = "websocket"
 
 
     class azure.ai.projects.models.VoiceAgentTurnDetectionConfig(_Model):
@@ -17030,21 +17176,21 @@ namespace azure.ai.projects.models
             ) -> None: ...
 
 
-    class azure.ai.projects.models.VoiceResponse(VoiceResponseBase):
+    class azure.ai.projects.models.VoiceResponse(_Model):
         audio: Optional[VoiceResponseAudio]
         completed_at: Optional[datetime]
-        conversation_id: str
+        conversation_id: Optional[str]
         created_at: Optional[datetime]
-        id: str
-        max_output_tokens: Union[int, str]
-        metadata: Optional[dict[str, str]]
-        object: str
+        id: Optional[str]
+        max_output_tokens: Optional[Union[int, Literal["inf"]]]
+        metadata: Optional[Metadata]
+        object: Optional[Literal["response"]]
         output: Optional[list[RealtimeConversationItem]]
-        output_modalities: Union[list[str, str]]
-        status: Union[str, str, str, str, str]
-        status_details: RealtimeResponseStatusDetails
+        output_modalities: Optional[list[Literal["text", "audio"]]]
+        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]]
+        status_details: Optional[RealtimeResponseStatusDetails]
         temperature: Optional[float]
-        usage: RealtimeResponseUsage
+        usage: Optional[RealtimeResponseUsage]
 
         @overload
         def __init__(
@@ -17052,11 +17198,11 @@ namespace azure.ai.projects.models
                 *, 
                 audio: Optional[VoiceResponseAudio] = ..., 
                 completed_at: Optional[datetime] = ..., 
-                conversation_id: str, 
+                conversation_id: Optional[str] = ..., 
                 created_at: Optional[datetime] = ..., 
-                id: str, 
+                id: Optional[str] = ..., 
                 max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
-                metadata: Optional[dict[str, str]] = ..., 
+                metadata: Optional[Metadata] = ..., 
                 object: Optional[Literal[response]] = ..., 
                 output: Optional[list[RealtimeConversationItem]] = ..., 
                 output_modalities: Optional[list[Literal[text, audio]]] = ..., 
@@ -17098,30 +17244,6 @@ namespace azure.ai.projects.models
                 voice: Optional[str] = ..., 
                 voice_locale: Optional[str] = ..., 
                 voice_type: Optional[Union[str, VoiceType]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.VoiceResponseBase(_Model):
-        max_output_tokens: Optional[Union[int, Literal["inf"]]]
-        object: Optional[Literal["response"]]
-        output_modalities: Optional[list[Literal["text", "audio"]]]
-        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]]
-        status_details: Optional[RealtimeResponseStatusDetails]
-        usage: Optional[RealtimeResponseUsage]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                max_output_tokens: Optional[Union[int, Literal[inf]]] = ..., 
-                object: Optional[Literal[response]] = ..., 
-                output_modalities: Optional[list[Literal[text, audio]]] = ..., 
-                status: Optional[Literal[completed, cancelled, failed, incomplete, in_progress]] = ..., 
-                status_details: Optional[RealtimeResponseStatusDetails] = ..., 
-                usage: Optional[RealtimeResponseUsage] = ...
             ) -> None: ...
 
         @overload
@@ -18867,6 +18989,7 @@ namespace azure.ai.projects.operations
                 extra_headers: Optional[Mapping[str, str]] = ..., 
                 extra_query: Optional[Mapping[str, str]] = ..., 
                 structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
                 **kwargs: Any
             ) -> BetaRealtimeConnectionManager: ...
 
@@ -18911,6 +19034,7 @@ namespace azure.ai.projects.operations
                 extra_headers: Optional[Mapping[str, str]] = ..., 
                 extra_query: Optional[Mapping[str, str]] = ..., 
                 structured_inputs: Optional[Mapping[str, Any]] = ..., 
+                transport: Optional[Union[str, VoiceAgentTransport]] = ..., 
                 **kwargs: Any
             ) -> None: ...
 

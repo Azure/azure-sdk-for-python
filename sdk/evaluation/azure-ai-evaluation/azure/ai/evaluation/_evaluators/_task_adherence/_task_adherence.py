@@ -10,6 +10,8 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy, with_probability_threshold
+from azure.ai.evaluation._evaluators._common._model_runners import is_decision_model_config
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
 from ..._common.utils import (
     reformat_conversation_history,
@@ -37,9 +39,14 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     The evaluation includes step-by-step reasoning and a pass/fail score result.
 
 
-    :param model_config: Configuration for the Azure OpenAI model.
+    :param model_config: Configuration for the Azure OpenAI model, or a decision model configuration with
+        ``type="decision"``, ``azure_endpoint`` and ``azure_deployment``.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :keyword probability_threshold: The decision model probability, in [0, 1], at or above which the score is 1.
+        Defaults to 0.75 and overrides ``probability_threshold`` in a decision ``model_config``. Chat models
+        ignore it with a warning.
+    :paramtype probability_threshold: Optional[float]
 
     .. admonition:: Example:
 
@@ -63,8 +70,11 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "task_adherence.prompty"
+    _DECISION_FILE = "task_adherence.decision.yaml"
     _RESULT_KEY = "task_adherence"
     _OPTIONAL_PARAMS = ["tool_definitions"]
+    _supports_decision_models = True
+    _binary_decision = True
 
     _DEFAULT_TASK_ADHERENCE_SCORE = 0
 
@@ -74,7 +84,15 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=_DEFAULT_TASK_ADHERENCE_SCORE, credential=None, **kwargs):
+    def __init__(
+        self,
+        model_config,
+        *,
+        threshold=_DEFAULT_TASK_ADHERENCE_SCORE,
+        credential=None,
+        probability_threshold=None,
+        **kwargs,
+    ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold  # to be removed in favor of _threshold
@@ -82,13 +100,22 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Initialize input validator
         self._validator = ToolDefinitionsValidator(error_target=ErrorTarget.TASK_ADHERENCE_EVALUATOR)
 
+        if is_decision_model_config(model_config):
+            # Decision results report the requested threshold, as the catalog evaluator does. Chat results keep the
+            # threshold they reported before.
+            kwargs["threshold"] = threshold
         super().__init__(
-            model_config=model_config,
+            model_config=with_probability_threshold(model_config, probability_threshold, type(self).__name__),
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             credential=credential,
             _higher_is_better=True,
             **kwargs,
+        )
+        self._decision = (
+            rubric_strategy(self, os.path.join(current_dir, self._DECISION_FILE), ErrorTarget.TASK_ADHERENCE_EVALUATOR)
+            if self._uses_decision_model
+            else None
         )
 
     @overload
@@ -235,6 +262,10 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             "response": assistant_response,
             "tool_calls": tool_calls,
         }
+
+        if self._uses_decision_model:
+            state = {key: value for key, value in prompty_input.items() if value is not None}
+            return await self._decision.evaluate(state)
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **prompty_input)
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)

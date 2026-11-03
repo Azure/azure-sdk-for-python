@@ -237,9 +237,9 @@ class ExclusionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum for the status of the resource in the goal."""
 
     EXCLUDED = "Excluded"
-    """Resource is not included in the goals."""
+    """The resource is excluded from the goals."""
     INCLUDED = "Included"
-    """Resource is excluded from the goals."""
+    """The resource is included in the goals."""
 
 
 class ExecutionReadinessState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -300,20 +300,6 @@ class ForceInclusionAndUpdate(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disable ForceInclusionAndUpdate."""
 
 
-class GoalAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported type of goal assignment."""
-
-    RESILIENCY = "Resiliency"
-    """Resiliency goal assignment type."""
-
-
-class GoalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported type of goal."""
-
-    RESILIENCY = "Resiliency"
-    """Resiliency goal type."""
-
-
 class HAStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HA Status."""
 
@@ -330,19 +316,6 @@ class InitialConfig(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Initial config pending."""
     COMPLETE = "Complete"
     """Initial config complete."""
-
-
-class IsoDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ISO 8601 duration formats."""
-
-    PT15_M = "PT15M"
-    """15 minutes."""
-    PT1_H = "PT1H"
-    """1 hour."""
-    PT4_H = "PT4H"
-    """4 hours."""
-    PT24_H = "PT24H"
-    """24 hours."""
 
 
 class JobResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -416,17 +389,6 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """User assigned managed identity."""
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
     """System and user assigned managed identity."""
-
-
-class MembershipType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Membership type of the service group to resource."""
-
-    DIRECT = "Direct"
-    """Resource is direct member of service group."""
-    THROUGH_SUBSCRIPTION = "ThroughSubscription"
-    """Resource is member of service group through subscription."""
-    THROUGH_RESOURCE_GROUP = "ThroughResourceGroup"
-    """Resource is member of service group through resource group."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -591,26 +553,6 @@ class RelativeResourceCompositionState(str, Enum, metaclass=CaseInsensitiveEnumM
     """Resources out of sync."""
 
 
-class RequirementSelected(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum for the requirement status of the resource in the goal."""
-
-    NOT_REQUIRED = "NotRequired"
-    """The resource is not required for the specified goal."""
-    REQUIRED = "Required"
-    """The resource is required for the specified goal."""
-
-
-class ResilienceHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """enum for Resilience health status."""
-
-    NOT_EVALUATED = "NotEvaluated"
-    """Resource is not evaluated."""
-    UNHEALTHY = "Unhealthy"
-    """Resource is Unhealthy."""
-    HEALTHY = "Healthy"
-    """Resource is Healthy."""
-
-
 class ResourceFeasibilityReviewStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Outcome of a resource feasibility review for a recovery resource."""
 
@@ -688,7 +630,7 @@ class ResourceTypeCategories(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A state type that indicates qualification of a resource for an operation."""
 
     AZURE_SITE_RECOVERY_VMS_PRESENT = "AzureSiteRecoveryVMsPresent"
-    """Indicates that alteast one Azure Site Recovery VMs are present."""
+    """Indicates that at least one Azure Site Recovery VM is present."""
 
 
 class SliType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -729,22 +671,9 @@ class TestFailoverState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """he resource is in test failover cleanup pending state."""
 
 
-class UnifiedResilienceItemRequirementSelected(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum for the requirement status of the resource in the goal."""
-
-    NOT_REQUIRED = "NotRequired"
-    """The resource is not required for the specified goal."""
-    REQUIRED = "Required"
-    """The resource is required for the specified goal."""
-    NOT_SELECTED = "NotSelected"
-    """The resource is not selected for the specified goal."""
-
-
 class UsagePlanType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of usage plan."""
 
-    BASIC = "Basic"
-    """Basic usage plan with restricted functionality without any charges."""
     STANDARD = "Standard"
     """Standard usage plan with comprehensive functionality and usage based charges."""
 
@@ -762,6 +691,6 @@ class VMPresent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum for VM presence."""
 
     PRESENT = "Present"
-    """Atleast one VM Present."""
+    """At least one VM is present."""
     ABSENT = "Absent"
     """No VM present."""

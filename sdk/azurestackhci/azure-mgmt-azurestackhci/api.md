@@ -3,13 +3,26 @@ namespace azure.mgmt.azurestackhci
 
     class azure.mgmt.azurestackhci.AzureStackHCIClient: implements ContextManager 
         arc_settings: ArcSettingsOperations
+        cluster_jobs: ClusterJobsOperations
         clusters: ClustersOperations
         deployment_settings: DeploymentSettingsOperations
         edge_device_jobs: EdgeDeviceJobsOperations
         edge_devices: EdgeDevicesOperations
+        edge_machine_deployment_settings: EdgeMachineDeploymentSettingsOperations
+        edge_machine_disk_jobs: EdgeMachineDiskJobsOperations
+        edge_machine_disk_privileged_jobs: EdgeMachineDiskPrivilegedJobsOperations
+        edge_machine_disks: EdgeMachineDisksOperations
+        edge_machine_jobs: EdgeMachineJobsOperations
+        edge_machine_network_adapter_jobs: EdgeMachineNetworkAdapterJobsOperations
+        edge_machine_network_adapters: EdgeMachineNetworkAdaptersOperations
+        edge_machine_security_settings_operations: EdgeMachineSecuritySettingsOperationsOperations
+        edge_machine_volumes: EdgeMachineVolumesOperations
+        edge_machines: EdgeMachinesOperations
         extensions: ExtensionsOperations
         offers: OffersOperations
         operations: Operations
+        os_images: OsImagesOperations
+        ownership_vouchers: OwnershipVouchersOperations
         security_settings: SecuritySettingsOperations
         skus: SkusOperations
         update_runs: UpdateRunsOperations
@@ -45,13 +58,26 @@ namespace azure.mgmt.azurestackhci.aio
 
     class azure.mgmt.azurestackhci.aio.AzureStackHCIClient: implements AsyncContextManager 
         arc_settings: ArcSettingsOperations
+        cluster_jobs: ClusterJobsOperations
         clusters: ClustersOperations
         deployment_settings: DeploymentSettingsOperations
         edge_device_jobs: EdgeDeviceJobsOperations
         edge_devices: EdgeDevicesOperations
+        edge_machine_deployment_settings: EdgeMachineDeploymentSettingsOperations
+        edge_machine_disk_jobs: EdgeMachineDiskJobsOperations
+        edge_machine_disk_privileged_jobs: EdgeMachineDiskPrivilegedJobsOperations
+        edge_machine_disks: EdgeMachineDisksOperations
+        edge_machine_jobs: EdgeMachineJobsOperations
+        edge_machine_network_adapter_jobs: EdgeMachineNetworkAdapterJobsOperations
+        edge_machine_network_adapters: EdgeMachineNetworkAdaptersOperations
+        edge_machine_security_settings_operations: EdgeMachineSecuritySettingsOperationsOperations
+        edge_machine_volumes: EdgeMachineVolumesOperations
+        edge_machines: EdgeMachinesOperations
         extensions: ExtensionsOperations
         offers: OffersOperations
         operations: Operations
+        os_images: OsImagesOperations
+        ownership_vouchers: OwnershipVouchersOperations
         security_settings: SecuritySettingsOperations
         skus: SkusOperations
         update_runs: UpdateRunsOperations
@@ -262,6 +288,80 @@ namespace azure.mgmt.azurestackhci.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> ArcSetting: ...
+
+
+    class azure.mgmt.azurestackhci.aio.operations.ClusterJobsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                jobs_name: str, 
+                resource: ClusterJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ClusterJob]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                jobs_name: str, 
+                resource: ClusterJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ClusterJob]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                jobs_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ClusterJob]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'jobs_name']}, api_versions_list=['2026-10-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                jobs_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'jobs_name', 'accept']}, api_versions_list=['2026-10-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                jobs_name: str, 
+                **kwargs: Any
+            ) -> ClusterJob: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[ClusterJob]: ...
 
 
     class azure.mgmt.azurestackhci.aio.operations.ClustersOperations:
@@ -778,6 +878,800 @@ namespace azure.mgmt.azurestackhci.aio.operations
             ) -> AsyncItemPaged[EdgeDevice]: ...
 
 
+    class azure.mgmt.azurestackhci.aio.operations.EdgeMachineDeploymentSettingsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                deployment_setting_name: str, 
+                resource: EdgeMachineDeploymentSetting, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineDeploymentSetting]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                deployment_setting_name: str, 
+                resource: EdgeMachineDeploymentSetting, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineDeploymentSetting]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                deployment_setting_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineDeploymentSetting]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'deployment_setting_name']}, api_versions_list=['2026-10-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                deployment_setting_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'deployment_setting_name', 'accept']}, api_versions_list=['2026-10-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                deployment_setting_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineDeploymentSetting: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list_by_edge_machine(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[EdgeMachineDeploymentSetting]: ...
+
+
+    class azure.mgmt.azurestackhci.aio.operations.EdgeMachineDiskJobsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                job_name: str, 
+                resource: EdgeMachineDiskJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineDiskJob]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                job_name: str, 
+                resource: EdgeMachineDiskJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineDiskJob]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                job_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineDiskJob]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name', 'job_name']}, api_versions_list=['2026-10-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name', 'job_name', 'accept']}, api_versions_list=['2026-10-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineDiskJob: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[EdgeMachineDiskJob]: ...
+
+
+    class azure.mgmt.azurestackhci.aio.operations.EdgeMachineDiskPrivilegedJobsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                privileged_job_name: str, 
+                resource: EdgeMachineDiskPrivilegedJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineDiskPrivilegedJob]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                privileged_job_name: str, 
+                resource: EdgeMachineDiskPrivilegedJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineDiskPrivilegedJob]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                privileged_job_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineDiskPrivilegedJob]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name', 'privileged_job_name']}, api_versions_list=['2026-10-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                privileged_job_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name', 'privileged_job_name', 'accept']}, api_versions_list=['2026-10-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                privileged_job_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineDiskPrivilegedJob: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[EdgeMachineDiskPrivilegedJob]: ...
+
+
+    class azure.mgmt.azurestackhci.aio.operations.EdgeMachineDisksOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                resource: EdgeMachineDisk, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineDisk]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                resource: EdgeMachineDisk, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineDisk]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineDisk]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name']}, api_versions_list=['2026-10-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name', 'accept']}, api_versions_list=['2026-10-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineDisk: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[EdgeMachineDisk]: ...
+
+
+    class azure.mgmt.azurestackhci.aio.operations.EdgeMachineJobsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                jobs_name: str, 
+                resource: EdgeMachineJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineJob]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                jobs_name: str, 
+                resource: EdgeMachineJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineJob]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                jobs_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineJob]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'jobs_name']}, api_versions_list=['2026-10-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                jobs_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'jobs_name', 'accept']}, api_versions_list=['2026-10-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                jobs_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineJob: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[EdgeMachineJob]: ...
+
+
+    class azure.mgmt.azurestackhci.aio.operations.EdgeMachineNetworkAdapterJobsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                network_adapter_name: str, 
+                job_name: str, 
+                resource: EdgeMachineNetworkAdapterJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineNetworkAdapterJob]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                network_adapter_name: str, 
+                job_name: str, 
+                resource: EdgeMachineNetworkAdapterJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineNetworkAdapterJob]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                network_adapter_name: str, 
+                job_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineNetworkAdapterJob]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'network_adapter_name', 'job_name']}, api_versions_list=['2026-10-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                network_adapter_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'network_adapter_name', 'job_name', 'accept']}, api_versions_list=['2026-10-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                network_adapter_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineNetworkAdapterJob: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'network_adapter_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                network_adapter_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[EdgeMachineNetworkAdapterJob]: ...
+
+
+    class azure.mgmt.azurestackhci.aio.operations.EdgeMachineNetworkAdaptersOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'network_adapter_name', 'accept']}, api_versions_list=['2026-10-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                network_adapter_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineNetworkAdapter: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[EdgeMachineNetworkAdapter]: ...
+
+
+    class azure.mgmt.azurestackhci.aio.operations.EdgeMachineSecuritySettingsOperationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                security_settings_name: str, 
+                resource: EdgeMachineSecuritySettings, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineSecuritySettings]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                security_settings_name: str, 
+                resource: EdgeMachineSecuritySettings, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineSecuritySettings]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                security_settings_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineSecuritySettings]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'security_settings_name']}, api_versions_list=['2026-10-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                security_settings_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'security_settings_name', 'accept']}, api_versions_list=['2026-10-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                security_settings_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineSecuritySettings: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list_by_edge_machine(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[EdgeMachineSecuritySettings]: ...
+
+
+    class azure.mgmt.azurestackhci.aio.operations.EdgeMachineVolumesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                volume_name: str, 
+                resource: EdgeMachineVolume, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineVolume]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                volume_name: str, 
+                resource: EdgeMachineVolume, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineVolume]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                volume_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineVolume]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'volume_name']}, api_versions_list=['2026-10-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                volume_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'volume_name', 'accept']}, api_versions_list=['2026-10-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                volume_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineVolume: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[EdgeMachineVolume]: ...
+
+
+    class azure.mgmt.azurestackhci.aio.operations.EdgeMachinesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                resource: EdgeMachine, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachine]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                resource: EdgeMachine, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachine]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachine]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name']}, api_versions_list=['2026-10-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name']}, api_versions_list=['2026-10-01'])
+        async def begin_refresh_applicable_updates(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name']}, api_versions_list=['2026-10-01'])
+        async def begin_refresh_security_settings(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                properties: EdgeMachinePatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachine]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                properties: EdgeMachinePatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachine]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachine]: ...
+
+        @overload
+        async def begin_validate(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                body: EdgeMachineValidateRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineValidateResponse]: ...
+
+        @overload
+        async def begin_validate(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                body: EdgeMachineValidateRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineValidateResponse]: ...
+
+        @overload
+        async def begin_validate(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EdgeMachineValidateResponse]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'accept']}, api_versions_list=['2026-10-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachine: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[EdgeMachine]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-10-01'])
+        def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[EdgeMachine]: ...
+
+
     class azure.mgmt.azurestackhci.aio.operations.ExtensionsOperations:
 
         def __init__(
@@ -987,6 +1881,74 @@ namespace azure.mgmt.azurestackhci.aio.operations
         def list(self, **kwargs: Any) -> AsyncItemPaged[Operation]: ...
 
 
+    class azure.mgmt.azurestackhci.aio.operations.OsImagesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'location', 'os_image_name', 'accept']}, api_versions_list=['2026-10-01'])
+        async def get(
+                self, 
+                location: str, 
+                os_image_name: str, 
+                **kwargs: Any
+            ) -> OsImage: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-10-01'])
+        def list_by_subscription_location_resource(
+                self, 
+                location: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[OsImage]: ...
+
+
+    class azure.mgmt.azurestackhci.aio.operations.OwnershipVouchersOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def validate(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                validation_request: ValidateOwnershipVouchersRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ValidateOwnershipVouchersResponse: ...
+
+        @overload
+        async def validate(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                validation_request: ValidateOwnershipVouchersRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ValidateOwnershipVouchersResponse: ...
+
+        @overload
+        async def validate(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                validation_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ValidateOwnershipVouchersResponse: ...
+
+
     class azure.mgmt.azurestackhci.aio.operations.SecuritySettingsOperations:
 
         def __init__(
@@ -1178,7 +2140,7 @@ namespace azure.mgmt.azurestackhci.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-04-30'])
+        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-04-30', '2026-10-01'])
         async def begin_check_health(
                 self, 
                 resource_group_name: str, 
@@ -1313,7 +2275,7 @@ namespace azure.mgmt.azurestackhci.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'update_name']}, api_versions_list=['2026-04-30'])
+        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'update_name']}, api_versions_list=['2026-04-30', '2026-10-01'])
         async def begin_prepare(
                 self, 
                 resource_group_name: str, 
@@ -1409,6 +2371,50 @@ namespace azure.mgmt.azurestackhci.models
 
     class azure.mgmt.azurestackhci.models.ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         INTERNAL = "Internal"
+
+
+    class azure.mgmt.azurestackhci.models.AddServerJobServerDetails(_Model):
+        host_ipv4_address: str
+        local_availability_zone_name: Optional[str]
+        server_name: str
+        server_resource_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                host_ipv4_address: str, 
+                local_availability_zone_name: Optional[str] = ..., 
+                server_name: str, 
+                server_resource_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.ApplyConfigurationNetworkAdapterJobProperties(EdgeMachineNetworkAdapterJobProperties, discriminator='ApplyConfiguration'):
+        deployment_mode: Union[str, DeploymentMode]
+        end_time_utc: datetime
+        error: ErrorDetail
+        job_id: str
+        job_type: Literal[NetworkAdapterJobType.APPLY_CONFIGURATION]
+        provisioning_state: Union[str, ProvisioningState]
+        reported_properties: NetworkAdapterJobReportedProperties
+        start_time_utc: datetime
+        status: Union[str, JobStatus]
+        target_configuration: NetworkAdapterConfiguration
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                target_configuration: NetworkAdapterConfiguration
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.azurestackhci.models.ArcConnectivityProperties(_Model):
@@ -1577,6 +2583,11 @@ namespace azure.mgmt.azurestackhci.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.azurestackhci.models.Architecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AMD64 = "amd64"
+        ARM64 = "arm64"
+
+
     class azure.mgmt.azurestackhci.models.AssemblyInfo(_Model):
         package_version: Optional[str]
         payload: Optional[list[AssemblyInfoPayload]]
@@ -1587,6 +2598,14 @@ namespace azure.mgmt.azurestackhci.models
         hash: Optional[str]
         identifier: Optional[str]
         url: Optional[str]
+
+
+    class azure.mgmt.azurestackhci.models.AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        OPEN = "Open"
+        WPA2_ENTERPRISE = "WPA2-Enterprise"
+        WPA2_PERSONAL = "WPA2-Personal"
+        WPA3_ENTERPRISE = "WPA3-Enterprise"
+        WPA3_PERSONAL = "WPA3-Personal"
 
 
     class azure.mgmt.azurestackhci.models.AvailabilityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1697,6 +2716,46 @@ namespace azure.mgmt.azurestackhci.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.azurestackhci.models.ClusterJob(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[ClusterJobProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[ClusterJobProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.ClusterJobProperties(_Model):
+        deployment_mode: Optional[Union[str, DeploymentMode]]
+        end_time_utc: Optional[datetime]
+        job_id: Optional[str]
+        job_type: str
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        reported_properties: Optional[JobReportedProperties]
+        start_time_utc: Optional[datetime]
+        status: Optional[Union[str, JobStatus]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                job_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.azurestackhci.models.ClusterNode(_Model):
         core_count: Optional[float]
         ehc_resource_id: Optional[str]
@@ -1795,6 +2854,7 @@ namespace azure.mgmt.azurestackhci.models
         remote_support_properties: Optional[RemoteSupportProperties]
         reported_properties: Optional[ClusterReportedProperties]
         resource_provider_object_id: Optional[str]
+        sdn_properties: Optional[ClusterSdnProperties]
         secrets_locations: Optional[list[SecretsLocationDetails]]
         service_endpoint: Optional[str]
         software_assurance_properties: Optional[SoftwareAssuranceProperties]
@@ -1849,6 +2909,13 @@ namespace azure.mgmt.azurestackhci.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.azurestackhci.models.ClusterSdnProperties(_Model):
+        sdn_api_address: Optional[str]
+        sdn_domain_name: Optional[str]
+        sdn_integration_intent: Optional[Union[str, SdnIntegrationIntent]]
+        sdn_status: Optional[Union[str, SdnStatus]]
+
+
     class azure.mgmt.azurestackhci.models.ComplianceAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         APPLY_AND_AUTO_CORRECT = "ApplyAndAutoCorrect"
         AUDIT = "Audit"
@@ -1860,6 +2927,15 @@ namespace azure.mgmt.azurestackhci.models
         PENDING = "Pending"
 
 
+    class azure.mgmt.azurestackhci.models.ConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUTHENTICATION_FAILED = "AuthenticationFailed"
+        CONNECTED = "Connected"
+        CONNECTING = "Connecting"
+        DISCONNECTED = "Disconnected"
+        DISCONNECTING = "Disconnecting"
+        NOT_CONFIGURED = "NotConfigured"
+
+
     class azure.mgmt.azurestackhci.models.ConnectivityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CONNECTED = "Connected"
         DISCONNECTED = "Disconnected"
@@ -1867,6 +2943,35 @@ namespace azure.mgmt.azurestackhci.models
         NOT_SPECIFIED = "NotSpecified"
         NOT_YET_REGISTERED = "NotYetRegistered"
         PARTIALLY_CONNECTED = "PartiallyConnected"
+
+
+    class azure.mgmt.azurestackhci.models.CreateVolumeJobProperties(EdgeMachineDiskJobProperties, discriminator='CreateVolume'):
+        created_volume_id: Optional[str]
+        deployment_mode: Union[str, DeploymentMode]
+        end_time_utc: datetime
+        error: ErrorDetail
+        file_system: Optional[Union[str, DiskFileSystemType]]
+        job_id: str
+        job_type: Literal[DiskJobType.CREATE_VOLUME]
+        path: str
+        provisioning_state: Union[str, ProvisioningState]
+        reported_properties: DiskJobReportedProperties
+        size_in_bytes: str
+        start_time_utc: datetime
+        status: Union[str, JobStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                file_system: Optional[Union[str, DiskFileSystemType]] = ..., 
+                path: str, 
+                size_in_bytes: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.azurestackhci.models.CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1879,6 +2984,32 @@ namespace azure.mgmt.azurestackhci.models
     class azure.mgmt.azurestackhci.models.DefaultExtensionDetails(_Model):
         category: Optional[str]
         consent_time: Optional[datetime]
+
+
+    class azure.mgmt.azurestackhci.models.DeleteVolumeJobProperties(EdgeMachineDiskPrivilegedJobProperties, discriminator='DeleteVolume'):
+        confirm_deletion: Optional[bool]
+        deployment_mode: Union[str, DeploymentMode]
+        end_time_utc: datetime
+        error: ErrorDetail
+        job_id: str
+        job_type: Literal[PrivilegedJobType.DELETE_VOLUME]
+        provisioning_state: Union[str, ProvisioningState]
+        reported_properties: DiskJobReportedProperties
+        start_time_utc: datetime
+        status: Union[str, JobStatus]
+        volume_path: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                confirm_deletion: Optional[bool] = ..., 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                volume_path: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.azurestackhci.models.DeploymentCluster(_Model):
@@ -2180,11 +3311,15 @@ namespace azure.mgmt.azurestackhci.models
 
 
     class azure.mgmt.azurestackhci.models.DeploymentStep(_Model):
+        additional_data: Optional[list[Metadata]]
         description: Optional[str]
         end_time_utc: Optional[str]
+        error: Optional[ErrorDetail]
         exception: Optional[list[str]]
         full_step_index: Optional[str]
         name: Optional[str]
+        percent_complete: Optional[int]
+        recommended_steps: Optional[list[str]]
         start_time_utc: Optional[str]
         status: Optional[str]
         steps: Optional[list[DeploymentStep]]
@@ -2235,6 +3370,128 @@ namespace azure.mgmt.azurestackhci.models
         OFF = "Off"
 
 
+    class azure.mgmt.azurestackhci.models.DiskActionStatus(_Model):
+        status: Optional[str]
+        steps: Optional[list[DiskDeploymentStep]]
+
+
+    class azure.mgmt.azurestackhci.models.DiskConfiguration(_Model):
+        volumes: Optional[list[DiskVolumeConfiguration]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                volumes: Optional[list[DiskVolumeConfiguration]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.DiskDeploymentStep(_Model):
+        description: Optional[str]
+        end_time_utc: Optional[str]
+        exception: Optional[list[str]]
+        full_step_index: Optional[str]
+        name: Optional[str]
+        start_time_utc: Optional[str]
+        status: Optional[str]
+        steps: Optional[list[DiskDeploymentStep]]
+
+
+    class azure.mgmt.azurestackhci.models.DiskFileSystemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        EXT4 = "ext4"
+        FAT = "fat"
+        FAT32 = "fat32"
+        NTFS = "NTFS"
+        RE_FS = "ReFS"
+        VFAT = "vfat"
+        XFS = "xfs"
+
+
+    class azure.mgmt.azurestackhci.models.DiskJobReportedProperties(_Model):
+        deployment_status: Optional[DiskActionStatus]
+        percent_complete: Optional[int]
+        validation_status: Optional[DiskActionStatus]
+
+
+    class azure.mgmt.azurestackhci.models.DiskJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CREATE_VOLUME = "CreateVolume"
+        SYNC_CONFIGURATION = "SyncConfiguration"
+
+
+    class azure.mgmt.azurestackhci.models.DiskReportedProperties(_Model):
+        bus_location: Optional[str]
+        disk_name: Optional[str]
+        disk_type: Optional[Union[str, DiskType]]
+        firmware_version: Optional[str]
+        is_supported: Optional[bool]
+        manufacturer: Optional[str]
+        model: Optional[str]
+        serial_number: Optional[str]
+        size_in_bytes: Optional[str]
+        state: Optional[Union[str, DiskState]]
+        storage_type: Optional[Union[str, DiskStorageType]]
+        unallocated_size_in_bytes: Optional[str]
+        volumes: Optional[list[DiskVolumeReportedProperties]]
+
+
+    class azure.mgmt.azurestackhci.models.DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FAILED = "Failed"
+        MISSING = "Missing"
+        OFFLINE = "Offline"
+        ONLINE = "Online"
+        UNKNOWN = "Unknown"
+
+
+    class azure.mgmt.azurestackhci.models.DiskStorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        S2_D = "S2D"
+        SAN = "SAN"
+
+
+    class azure.mgmt.azurestackhci.models.DiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        HDD = "HDD"
+        NV_ME = "NVMe"
+        OTHER = "Other"
+        SATA = "SATA"
+        SCM = "SCM"
+        SSD = "SSD"
+        UNKNOWN = "Unknown"
+        VIRTUAL = "Virtual"
+
+
+    class azure.mgmt.azurestackhci.models.DiskVolumeConfiguration(_Model):
+        file_system: Optional[Union[str, DiskFileSystemType]]
+        path: str
+        size_in_bytes: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                file_system: Optional[Union[str, DiskFileSystemType]] = ..., 
+                path: str, 
+                size_in_bytes: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.DiskVolumeReportedProperties(_Model):
+        file_system: Optional[str]
+        is_boot: Optional[bool]
+        name: Optional[str]
+        offset_in_bytes: Optional[int]
+        partition_id: Optional[str]
+        partition_number: Optional[int]
+        path: Optional[str]
+        resource_name: Optional[str]
+        size_in_bytes: Optional[str]
+        size_remaining_in_bytes: Optional[str]
+
+
     class azure.mgmt.azurestackhci.models.DnsServerConfig(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         USE_DNS_SERVER = "UseDnsServer"
         USE_FORWARDER = "UseForwarder"
@@ -2254,6 +3511,80 @@ namespace azure.mgmt.azurestackhci.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.DownloadOsJobProperties(EdgeMachineJobProperties, discriminator='DownloadOs'):
+        deployment_mode: Union[str, DeploymentMode]
+        download_request: DownloadRequest
+        end_time_utc: datetime
+        error: ErrorDetail
+        job_id: str
+        job_type: Literal[EdgeMachineJobType.DOWNLOAD_OS]
+        provisioning_state: Union[str, ProvisioningState]
+        reported_properties: Optional[ProvisionOsReportedProperties]
+        start_time_utc: datetime
+        status: Union[str, JobStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                download_request: DownloadRequest, 
+                reported_properties: Optional[ProvisionOsReportedProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.DownloadOsProfile(_Model):
+        gpg_pub_key: Optional[str]
+        image_hash: Optional[str]
+        os_image_location: Optional[str]
+        os_name: Optional[str]
+        os_type: Optional[str]
+        os_version: Optional[str]
+        vsr_version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                gpg_pub_key: Optional[str] = ..., 
+                image_hash: Optional[str] = ..., 
+                os_image_location: Optional[str] = ..., 
+                os_name: Optional[str] = ..., 
+                os_type: Optional[str] = ..., 
+                os_version: Optional[str] = ..., 
+                vsr_version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.DownloadRequest(_Model):
+        os_profile: DownloadOsProfile
+        target: Union[str, ProvisioningOsType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                os_profile: DownloadOsProfile, 
+                target: Union[str, ProvisioningOsType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EAPMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        EAP_FAST = "EAP-FAST"
+        EAP_TLS = "EAP-TLS"
+        EAP_TTLS = "EAP-TTLS"
+        PEAP = "PEAP"
 
 
     class azure.mgmt.azurestackhci.models.EceActionStatus(_Model):
@@ -2286,8 +3617,10 @@ namespace azure.mgmt.azurestackhci.models
 
     class azure.mgmt.azurestackhci.models.EceSecrets(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AZURE_STACK_LCM_USER_CREDENTIAL = "AzureStackLCMUserCredential"
+        CHAP_CREDENTIAL = "chapCredential"
         DEFAULT_ARB_APPLICATION = "DefaultARBApplication"
         LOCAL_ADMIN_CREDENTIAL = "LocalAdminCredential"
+        MUTUAL_CHAP_CREDENTIAL = "mutualChapCredential"
         WITNESS_STORAGE_KEY = "WitnessStorageKey"
 
 
@@ -2353,6 +3686,703 @@ namespace azure.mgmt.azurestackhci.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachine(TrackedResource):
+        id: str
+        identity: Optional[ManagedServiceIdentity]
+        location: str
+        name: str
+        properties: Optional[EdgeMachineProperties]
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                location: str, 
+                properties: Optional[EdgeMachineProperties] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineAdapterPropertyOverrides(_Model):
+        jumbo_packet: Optional[str]
+        network_direct: Optional[str]
+        network_direct_technology: Optional[str]
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineCollectLogJobProperties(EdgeMachineJobProperties, discriminator='CollectLog'):
+        deployment_mode: Union[str, DeploymentMode]
+        end_time_utc: datetime
+        error: ErrorDetail
+        from_date: datetime
+        job_id: str
+        job_type: Literal[EdgeMachineJobType.COLLECT_LOG]
+        last_log_generated: Optional[datetime]
+        provisioning_state: Union[str, ProvisioningState]
+        reported_properties: Optional[EdgeMachineCollectLogJobReportedProperties]
+        start_time_utc: datetime
+        status: Union[str, JobStatus]
+        to_date: datetime
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                from_date: datetime, 
+                to_date: datetime
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineCollectLogJobReportedProperties(_Model):
+        deployment_status: Optional[EceActionStatus]
+        log_collection_session_details: Optional[list[LogCollectionJobSession]]
+        percent_complete: Optional[int]
+        validation_status: Optional[EceActionStatus]
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineConnectivityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CONNECTED = "Connected"
+        DISCONNECTED = "Disconnected"
+        NOT_SPECIFIED = "NotSpecified"
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineDeploymentConfiguration(_Model):
+        scale_units: list[EdgeMachineScaleUnits]
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                scale_units: list[EdgeMachineScaleUnits], 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineDeploymentData(_Model):
+        i_scsi_config: Optional[IscsiConfig]
+        secrets: Optional[list[EceDeploymentSecrets]]
+        storage_type: Union[str, NodeStorageType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                i_scsi_config: Optional[IscsiConfig] = ..., 
+                secrets: Optional[list[EceDeploymentSecrets]] = ..., 
+                storage_type: Union[str, NodeStorageType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineDeploymentSetting(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[EdgeMachineDeploymentSettingProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[EdgeMachineDeploymentSettingProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineDeploymentSettingProperties(_Model):
+        deployment_configuration: EdgeMachineDeploymentConfiguration
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        reported_properties: Optional[EceReportedProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_configuration: EdgeMachineDeploymentConfiguration
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineDisk(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[EdgeMachineDiskProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[EdgeMachineDiskProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineDiskJob(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[EdgeMachineDiskJobProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[EdgeMachineDiskJobProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineDiskJobProperties(_Model):
+        deployment_mode: Optional[Union[str, DeploymentMode]]
+        end_time_utc: Optional[datetime]
+        error: Optional[ErrorDetail]
+        job_id: Optional[str]
+        job_type: str
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        reported_properties: Optional[DiskJobReportedProperties]
+        start_time_utc: Optional[datetime]
+        status: Optional[Union[str, JobStatus]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                job_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineDiskPrivilegedJob(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[EdgeMachineDiskPrivilegedJobProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[EdgeMachineDiskPrivilegedJobProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineDiskPrivilegedJobProperties(_Model):
+        deployment_mode: Optional[Union[str, DeploymentMode]]
+        end_time_utc: Optional[datetime]
+        error: Optional[ErrorDetail]
+        job_id: Optional[str]
+        job_type: str
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        reported_properties: Optional[DiskJobReportedProperties]
+        start_time_utc: Optional[datetime]
+        status: Optional[Union[str, JobStatus]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                job_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineDiskProperties(_Model):
+        disk_configuration: Optional[DiskConfiguration]
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        reported_properties: Optional[DiskReportedProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                disk_configuration: Optional[DiskConfiguration] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineHostNetwork(_Model):
+        enable_storage_auto_ip: Optional[bool]
+        intents: Optional[list[EdgeMachineHostNetworkIntent]]
+        storage_connectivity_switchless: Optional[bool]
+        storage_networks: Optional[list[EdgeMachineStorageNetwork]]
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineHostNetworkIntent(_Model):
+        adapter_property_overrides: Optional[EdgeMachineAdapterPropertyOverrides]
+        intent_adapters: Optional[list[str]]
+        intent_name: Optional[str]
+        intent_type: Optional[int]
+        is_compute_intent_set: Optional[bool]
+        is_management_intent_set: Optional[bool]
+        is_network_intent_type: Optional[bool]
+        is_only_storage: Optional[bool]
+        is_only_stretch: Optional[bool]
+        is_storage_intent_set: Optional[bool]
+        is_stretch_intent_set: Optional[bool]
+        override_adapter_property: Optional[bool]
+        override_qos_policy: Optional[bool]
+        override_virtual_switch_configuration: Optional[bool]
+        qos_policy_overrides: Optional[QosPolicyOverrides]
+        scope: Optional[int]
+        virtual_switch_configuration_overrides: Optional[EdgeMachineVirtualSwitchConfigurationOverrides]
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineJob(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[EdgeMachineJobProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[EdgeMachineJobProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineJobProperties(_Model):
+        deployment_mode: Optional[Union[str, DeploymentMode]]
+        end_time_utc: Optional[datetime]
+        error: Optional[ErrorDetail]
+        job_id: Optional[str]
+        job_type: str
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        start_time_utc: Optional[datetime]
+        status: Optional[Union[str, JobStatus]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                job_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        COLLECT_LOG = "CollectLog"
+        DOWNLOAD_OS = "DownloadOs"
+        PROVISION_OS = "ProvisionOs"
+        REMOTE_SUPPORT = "RemoteSupport"
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEDICATED = "Dedicated"
+        STANDARD = "Standard"
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineLifecycleStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AWAITING_CONNECTION = "AwaitingConnection"
+        CREATING = "Creating"
+        DELETING = "Deleting"
+        FAILED = "Failed"
+        INSTALLING_OS = "InstallingOs"
+        PROVISIONED = "Provisioned"
+        PROVISIONING = "Provisioning"
+        READY_FOR_OS = "ReadyForOs"
+        RESETTING_OS = "ResettingOs"
+        UPDATING_OS = "UpdatingOs"
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineNetworkAdapter(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[EdgeMachineNetworkAdapterProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[EdgeMachineNetworkAdapterProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineNetworkAdapterJob(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[EdgeMachineNetworkAdapterJobProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[EdgeMachineNetworkAdapterJobProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineNetworkAdapterJobProperties(_Model):
+        deployment_mode: Optional[Union[str, DeploymentMode]]
+        end_time_utc: Optional[datetime]
+        error: Optional[ErrorDetail]
+        job_id: Optional[str]
+        job_type: str
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        reported_properties: Optional[NetworkAdapterJobReportedProperties]
+        start_time_utc: Optional[datetime]
+        status: Optional[Union[str, JobStatus]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                job_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineNetworkAdapterProperties(_Model):
+        network_configuration: Optional[NetworkAdapterConfiguration]
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        reported_properties: Optional[NetworkAdapterReportedProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                network_configuration: Optional[NetworkAdapterConfiguration] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineNetworkProfile(_Model):
+        host_network: Optional[EdgeMachineHostNetwork]
+        nic_details: Optional[list[EdgeMachineNicDetail]]
+        sdn_properties: Optional[SdnProperties]
+        switch_details: Optional[list[SwitchDetail]]
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineNicDetail(_Model):
+        adapter_name: Optional[str]
+        component_id: Optional[str]
+        default_gateway: Optional[str]
+        default_isolation_id: Optional[str]
+        dns_servers: Optional[list[str]]
+        driver_version: Optional[str]
+        interface_description: Optional[str]
+        ip4_address: Optional[str]
+        mac_address: Optional[str]
+        nic_status: Optional[str]
+        nic_type: Optional[str]
+        rdma_capability: Optional[Union[str, RdmaCapability]]
+        slot: Optional[str]
+        subnet_mask: Optional[str]
+        switch_name: Optional[str]
+        vlan_id: Optional[str]
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachinePatch(_Model):
+        identity: Optional[ManagedServiceIdentity]
+        tags: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineProperties(_Model):
+        arc_gateway_resource_id: Optional[str]
+        arc_machine_resource_group_id: Optional[str]
+        arc_machine_resource_id: Optional[str]
+        claimed_by: Optional[str]
+        cloud_id: Optional[str]
+        connectivity_status: Optional[Union[str, EdgeMachineConnectivityStatus]]
+        device_pool_resource_id: Optional[str]
+        edge_machine_kind: Optional[Union[str, EdgeMachineKind]]
+        last_sync_timestamp: Optional[datetime]
+        lifecycle_details: Optional[LifecycleDetails]
+        machine_state: Optional[Union[str, EdgeMachineState]]
+        operation_details: Optional[list[OperationDetail]]
+        ownership_voucher_details: Optional[OwnershipVoucherDetails]
+        provisioning_details: Optional[ProvisioningDetails]
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        reported_properties: Optional[EdgeMachineReportedProperties]
+        site_details: Optional[SiteDetails]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                arc_gateway_resource_id: Optional[str] = ..., 
+                arc_machine_resource_group_id: Optional[str] = ..., 
+                arc_machine_resource_id: Optional[str] = ..., 
+                edge_machine_kind: Optional[Union[str, EdgeMachineKind]] = ..., 
+                ownership_voucher_details: Optional[OwnershipVoucherDetails] = ..., 
+                provisioning_details: Optional[ProvisioningDetails] = ..., 
+                site_details: Optional[SiteDetails] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineRemoteSupportJobProperties(EdgeMachineJobProperties, discriminator='RemoteSupport'):
+        access_level: Union[str, RemoteSupportAccessLevel]
+        deployment_mode: Union[str, DeploymentMode]
+        end_time_utc: datetime
+        error: ErrorDetail
+        expiration_timestamp: datetime
+        job_id: str
+        job_type: Literal[EdgeMachineJobType.REMOTE_SUPPORT]
+        provisioning_state: Union[str, ProvisioningState]
+        reported_properties: Optional[EdgeMachineRemoteSupportJobReportedProperties]
+        start_time_utc: datetime
+        status: Union[str, JobStatus]
+        type: Union[str, RemoteSupportType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                access_level: Union[str, RemoteSupportAccessLevel], 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                expiration_timestamp: datetime, 
+                type: Union[str, RemoteSupportType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineRemoteSupportJobReportedProperties(_Model):
+        deployment_status: Optional[EceActionStatus]
+        node_settings: Optional[EdgeMachineRemoteSupportNodeSettings]
+        percent_complete: Optional[int]
+        session_details: Optional[list[RemoteSupportSession]]
+        validation_status: Optional[EceActionStatus]
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineRemoteSupportNodeSettings(_Model):
+        connection_error_message: Optional[str]
+        connection_status: Optional[str]
+        created_at: Optional[datetime]
+        state: Optional[str]
+        updated_at: Optional[datetime]
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineReportedProperties(_Model):
+        extension_profile: Optional[ExtensionProfile]
+        hardware_profile: Optional[HardwareProfile]
+        last_updated: Optional[datetime]
+        network_profile: Optional[EdgeMachineNetworkProfile]
+        os_profile: Optional[OsProfile]
+        sbe_deployment_package_info: Optional[SbeDeploymentPackageInfo]
+        storage_initiators: Optional[list[StorageInitiator]]
+        storage_profile: Optional[StorageProfile]
+        workload_inventory: Optional[list[EdgeMachineWorkloadInventoryItem]]
+        workload_inventory_last_updated: Optional[datetime]
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineScaleUnits(_Model):
+        deployment_data: EdgeMachineDeploymentData
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_data: EdgeMachineDeploymentData
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineSecurityComplianceStatus(_Model):
+        encryption_at_rest_status: Optional[Union[str, ComplianceStatus]]
+        fips_status: Optional[Union[str, ComplianceStatus]]
+        se_linux_policy_status: Optional[Union[str, ComplianceStatus]]
+        secure_boot_status: Optional[Union[str, ComplianceStatus]]
+        security_baseline_status: Optional[Union[str, ComplianceStatus]]
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineSecurityProperties(_Model):
+        last_sync_timestamp: Optional[datetime]
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        registration_timestamp: Optional[datetime]
+        security_compliance_status: Optional[EdgeMachineSecurityComplianceStatus]
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineSecuritySettings(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[EdgeMachineSecurityProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[EdgeMachineSecurityProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CREATED = "Created"
+        FAILED = "Failed"
+        PREPARING = "Preparing"
+        PURPOSED = "Purposed"
+        REGISTERING = "Registering"
+        RESETTING = "Resetting"
+        TRANSITIONING = "Transitioning"
+        UNPURPOSED = "Unpurposed"
+        UPDATING = "Updating"
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineStorageAdapterIpInfo(_Model):
+        ipv4_address: Optional[str]
+        physical_node: Optional[str]
+        subnet_mask: Optional[str]
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineStorageNetwork(_Model):
+        name: Optional[str]
+        network_adapter_name: Optional[str]
+        storage_adapter_ip_info: Optional[list[EdgeMachineStorageAdapterIpInfo]]
+        storage_vlan_id: Optional[str]
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineValidateRequest(_Model):
+        additional_info: Optional[str]
+        edge_machine_ids: list[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                additional_info: Optional[str] = ..., 
+                edge_machine_ids: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineValidateResponse(_Model):
+        status: Optional[str]
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineVirtualSwitchConfigurationOverrides(_Model):
+        enable_iov: Optional[str]
+        load_balancing_algorithm: Optional[str]
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineVolume(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[EdgeMachineVolumeProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[EdgeMachineVolumeProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineVolumeProperties(_Model):
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        reported_properties: Optional[VolumeReportedProperties]
+        volume_configuration: Optional[VolumeConfiguration]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                volume_configuration: Optional[VolumeConfiguration] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.EdgeMachineWorkloadInventoryItem(_Model):
+        memory_in_bytes: Optional[str]
+        name: Optional[str]
+        resource_id: Optional[str]
+        state: Optional[str]
+        virtual_processor_count: Optional[str]
+        workload_id: Optional[str]
+        workload_type: Optional[str]
 
 
     class azure.mgmt.azurestackhci.models.ErrorAdditionalInfo(_Model):
@@ -2603,10 +4633,68 @@ namespace azure.mgmt.azurestackhci.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.azurestackhci.models.ForcePushNetworkAdapterJobProperties(EdgeMachineNetworkAdapterJobProperties, discriminator='ForcePush'):
+        deployment_mode: Union[str, DeploymentMode]
+        end_time_utc: datetime
+        error: ErrorDetail
+        job_id: str
+        job_type: Literal[NetworkAdapterJobType.FORCE_PUSH]
+        provisioning_state: Union[str, ProvisioningState]
+        reported_properties: NetworkAdapterJobReportedProperties
+        start_time_utc: datetime
+        status: Union[str, JobStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.azurestackhci.models.HardwareClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         LARGE = "Large"
         MEDIUM = "Medium"
         SMALL = "Small"
+
+
+    class azure.mgmt.azurestackhci.models.HardwareProfile(_Model):
+        architecture: Optional[Union[str, Architecture]]
+        cpu_cores: Optional[int]
+        cpu_sockets: Optional[int]
+        manufacturer: Optional[str]
+        memory_capacity_in_gb: Optional[int]
+        model: Optional[str]
+        processor_type: Optional[str]
+        serial_number: Optional[str]
+
+
+    class azure.mgmt.azurestackhci.models.HciAddServerJobProperties(ClusterJobProperties, discriminator='AddServer'):
+        add_server_job_server_details: list[AddServerJobServerDetails]
+        deployment_mode: Union[str, DeploymentMode]
+        end_time_utc: datetime
+        job_id: str
+        job_type: Literal[HciJobType.ADD_SERVER]
+        provisioning_state: Union[str, ProvisioningState]
+        reported_properties: JobReportedProperties
+        secrets: Optional[list[EceDeploymentSecrets]]
+        start_time_utc: datetime
+        status: Union[str, JobStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                add_server_job_server_details: list[AddServerJobServerDetails], 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                secrets: Optional[list[EceDeploymentSecrets]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.azurestackhci.models.HciCollectLogJobProperties(HciEdgeDeviceJobProperties, discriminator='CollectLog'):
@@ -2629,6 +4717,31 @@ namespace azure.mgmt.azurestackhci.models
                 deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
                 from_date: datetime, 
                 to_date: datetime
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.HciConfigureSdnIntegrationJobProperties(ClusterJobProperties, discriminator='ConfigureSdnIntegration'):
+        deployment_mode: Union[str, DeploymentMode]
+        end_time_utc: datetime
+        job_id: str
+        job_type: Literal[HciJobType.CONFIGURE_SDN_INTEGRATION]
+        provisioning_state: Union[str, ProvisioningState]
+        reported_properties: JobReportedProperties
+        sdn_integration_intent: Union[str, SdnIntegrationIntent]
+        sdn_prefix: Optional[str]
+        start_time_utc: datetime
+        status: Union[str, JobStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                sdn_integration_intent: Union[str, SdnIntegrationIntent], 
+                sdn_prefix: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -2779,9 +4892,16 @@ namespace azure.mgmt.azurestackhci.models
         processor_type: Optional[str]
 
 
+    class azure.mgmt.azurestackhci.models.HciJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ADD_SERVER = "AddServer"
+        CONFIGURE_SDN_INTEGRATION = "ConfigureSdnIntegration"
+        REPAIR_SERVER = "RepairServer"
+
+
     class azure.mgmt.azurestackhci.models.HciNetworkProfile(_Model):
         host_network: Optional[HciEdgeDeviceHostNetwork]
         nic_details: Optional[list[HciNicDetail]]
+        sdn_properties: Optional[SdnProperties]
         switch_details: Optional[list[SwitchDetail]]
 
 
@@ -2830,6 +4950,31 @@ namespace azure.mgmt.azurestackhci.models
                 deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
                 expiration_timestamp: datetime, 
                 type: Union[str, RemoteSupportType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.HciRepairServerJobProperties(ClusterJobProperties, discriminator='RepairServer'):
+        deployment_mode: Union[str, DeploymentMode]
+        end_time_utc: datetime
+        job_id: str
+        job_type: Literal[HciJobType.REPAIR_SERVER]
+        provisioning_state: Union[str, ProvisioningState]
+        repair_server_job_server_details: list[RepairServerJobServerDetails]
+        reported_properties: JobReportedProperties
+        secrets: Optional[list[EceDeploymentSecrets]]
+        start_time_utc: datetime
+        status: Union[str, JobStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                repair_server_job_server_details: list[RepairServerJobServerDetails], 
+                secrets: Optional[list[EceDeploymentSecrets]] = ...
             ) -> None: ...
 
         @overload
@@ -2901,6 +5046,37 @@ namespace azure.mgmt.azurestackhci.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.azurestackhci.models.InterfaceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DOWN = "down"
+        UP = "up"
+
+
+    class azure.mgmt.azurestackhci.models.IpAddressRange(_Model):
+        end_ip: str
+        start_ip: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                end_ip: str, 
+                start_ip: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.IpAssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUTOMATIC = "Automatic"
+        MANUAL = "Manual"
+
+
+    class azure.mgmt.azurestackhci.models.IpInterfaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DHCP = "Dhcp"
+        STATIC = "Static"
+
+
     class azure.mgmt.azurestackhci.models.IpPools(_Model):
         ending_address: Optional[str]
         starting_address: Optional[str]
@@ -2917,10 +5093,124 @@ namespace azure.mgmt.azurestackhci.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.azurestackhci.models.IscsiAdapterIPConfig(_Model):
+        address_prefix: Optional[str]
+        network_adapter_name: Optional[str]
+        target_portal_addresses: Optional[list[IscsiTargetPortalAddress]]
+        vlan_id: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                address_prefix: Optional[str] = ..., 
+                network_adapter_name: Optional[str] = ..., 
+                target_portal_addresses: Optional[list[IscsiTargetPortalAddress]] = ..., 
+                vlan_id: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.IscsiAdapterProperties(_Model):
+        bandwidth_percentage_iscsi: Optional[int]
+        jumbo_packet: Optional[int]
+        priority_value8021_action_iscsi: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                bandwidth_percentage_iscsi: Optional[int] = ..., 
+                jumbo_packet: Optional[int] = ..., 
+                priority_value8021_action_iscsi: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.IscsiChapSettings(_Model):
+        chap_type: Optional[Union[str, IscsiChapType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                chap_type: Optional[Union[str, IscsiChapType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.IscsiChapType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BIDIRECTIONAL = "Bidirectional"
+        NO_CHAP = "NoChap"
+        ONE_WAY = "OneWay"
+
+
+    class azure.mgmt.azurestackhci.models.IscsiConfig(_Model):
+        chap_settings: Optional[IscsiChapSettings]
+        i_scsi_network_config: Optional[IscsiNetworkConfig]
+        initiator_iqn: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                chap_settings: Optional[IscsiChapSettings] = ..., 
+                i_scsi_network_config: Optional[IscsiNetworkConfig] = ..., 
+                initiator_iqn: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.IscsiNetworkConfig(_Model):
+        adapter_ip_config: Optional[list[IscsiAdapterIPConfig]]
+        adapter_properties: Optional[IscsiAdapterProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                adapter_ip_config: Optional[list[IscsiAdapterIPConfig]] = ..., 
+                adapter_properties: Optional[IscsiAdapterProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.IscsiTargetPortalAddress(_Model):
+        ip_address: Optional[str]
+        next_hop: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                ip_address: Optional[str] = ..., 
+                next_hop: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.azurestackhci.models.IsolatedVmAttestationConfiguration(_Model):
         attestation_resource_id: Optional[str]
         attestation_service_endpoint: Optional[str]
         relying_party_service_endpoint: Optional[str]
+
+
+    class azure.mgmt.azurestackhci.models.JobReportedProperties(_Model):
+        deployment_status: Optional[EceActionStatus]
+        percent_complete: Optional[int]
+        validation_status: Optional[EceActionStatus]
 
 
     class azure.mgmt.azurestackhci.models.JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2936,6 +5226,37 @@ namespace azure.mgmt.azurestackhci.models
         VALIDATION_FAILED = "ValidationFailed"
         VALIDATION_IN_PROGRESS = "ValidationInProgress"
         VALIDATION_SUCCESS = "ValidationSuccess"
+
+
+    class azure.mgmt.azurestackhci.models.LifecycleDetails(_Model):
+        lifecycle_stages: list[LifecycleStage]
+        lifecycle_status: Optional[LifecycleStatus]
+
+
+    class azure.mgmt.azurestackhci.models.LifecycleOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        COMPLETED = "Completed"
+        FAILED = "Failed"
+        IN_PROGRESS = "InProgress"
+        NOT_STARTED = "NotStarted"
+
+
+    class azure.mgmt.azurestackhci.models.LifecycleStage(_Model):
+        description: str
+        end_time_utc: Optional[datetime]
+        error: Optional[ErrorDetail]
+        last_updated_utc: Optional[datetime]
+        name: str
+        start_time_utc: Optional[datetime]
+        status: Union[str, LifecycleOperationStatus]
+        sub_stages: Optional[list[LifecycleStage]]
+
+
+    class azure.mgmt.azurestackhci.models.LifecycleStatus(_Model):
+        last_updated_utc: datetime
+        message: Optional[str]
+        recommended_steps: Optional[list[str]]
+        stage: Optional[str]
+        status: Union[str, EdgeMachineLifecycleStatus]
 
 
     class azure.mgmt.azurestackhci.models.LocalAvailabilityZones(_Model):
@@ -3061,6 +5382,181 @@ namespace azure.mgmt.azurestackhci.models
         USER_ASSIGNED = "UserAssigned"
 
 
+    class azure.mgmt.azurestackhci.models.Metadata(_Model):
+        key: str
+        value: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                key: str, 
+                value: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.NetworkAdapter(_Model):
+        adapter_name: Optional[str]
+        dns_address_array: Optional[list[str]]
+        gateway: Optional[str]
+        ip_address: Optional[str]
+        ip_address_range: Optional[IpAddressRange]
+        ip_assignment_type: Union[str, IpAssignmentType]
+        mac_address: Optional[str]
+        subnet_mask: Optional[str]
+        vlan_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                adapter_name: Optional[str] = ..., 
+                dns_address_array: Optional[list[str]] = ..., 
+                gateway: Optional[str] = ..., 
+                ip_address: Optional[str] = ..., 
+                ip_address_range: Optional[IpAddressRange] = ..., 
+                ip_assignment_type: Union[str, IpAssignmentType], 
+                mac_address: Optional[str] = ..., 
+                subnet_mask: Optional[str] = ..., 
+                vlan_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.NetworkAdapterActionStatus(_Model):
+        status: Optional[str]
+        steps: Optional[list[NetworkAdapterDeploymentStep]]
+
+
+    class azure.mgmt.azurestackhci.models.NetworkAdapterConfiguration(_Model):
+        adapter_name: Optional[str]
+        default_gateway: Optional[str]
+        dns_servers: Optional[list[str]]
+        interface_state: Optional[Union[str, InterfaceState]]
+        ip4_address: Optional[str]
+        ip_interface_type: Optional[Union[str, IpInterfaceType]]
+        subnet_mask: Optional[str]
+        vlan_id: Optional[int]
+        wifi_configuration: Optional[WifiConfigurationDesiredProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                adapter_name: Optional[str] = ..., 
+                default_gateway: Optional[str] = ..., 
+                dns_servers: Optional[list[str]] = ..., 
+                interface_state: Optional[Union[str, InterfaceState]] = ..., 
+                ip4_address: Optional[str] = ..., 
+                ip_interface_type: Optional[Union[str, IpInterfaceType]] = ..., 
+                subnet_mask: Optional[str] = ..., 
+                vlan_id: Optional[int] = ..., 
+                wifi_configuration: Optional[WifiConfigurationDesiredProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.NetworkAdapterDeploymentStep(_Model):
+        description: Optional[str]
+        end_time_utc: Optional[str]
+        exception: Optional[list[str]]
+        full_step_index: Optional[str]
+        name: Optional[str]
+        start_time_utc: Optional[str]
+        status: Optional[str]
+        steps: Optional[list[NetworkAdapterDeploymentStep]]
+
+
+    class azure.mgmt.azurestackhci.models.NetworkAdapterJobReportedProperties(_Model):
+        deployment_status: Optional[NetworkAdapterActionStatus]
+        percent_complete: Optional[int]
+        validation_status: Optional[NetworkAdapterActionStatus]
+
+
+    class azure.mgmt.azurestackhci.models.NetworkAdapterJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APPLY_CONFIGURATION = "ApplyConfiguration"
+        FORCE_PUSH = "ForcePush"
+        SYNC_CONFIGURATION = "SyncConfiguration"
+
+
+    class azure.mgmt.azurestackhci.models.NetworkAdapterOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FAILED = "Failed"
+        IN_PROGRESS = "InProgress"
+        SUCCEEDED = "Succeeded"
+
+
+    class azure.mgmt.azurestackhci.models.NetworkAdapterProvisioningStatus(_Model):
+        operation_id: Optional[str]
+        status: Optional[Union[str, NetworkAdapterOperationStatus]]
+
+
+    class azure.mgmt.azurestackhci.models.NetworkAdapterReportedProperties(_Model):
+        adapter_name: Optional[str]
+        component_id: Optional[str]
+        default_gateway: Optional[str]
+        default_isolation_id: Optional[str]
+        dns_servers: Optional[list[str]]
+        driver_version: Optional[str]
+        interface_description: Optional[str]
+        interface_speed: Optional[int]
+        interface_state: Optional[Union[str, InterfaceState]]
+        interface_type: Optional[Union[str, NetworkInterfaceType]]
+        ip4_address: Optional[str]
+        ip_interface_type: Optional[Union[str, IpInterfaceType]]
+        mac_address: Optional[str]
+        management_interface: Optional[bool]
+        network_adapter_status: Optional[NetworkAdapterStatus]
+        nic_status: Optional[str]
+        nic_type: Optional[str]
+        rdma_capability: Optional[Union[str, RdmaCapability]]
+        slot: Optional[str]
+        subnet_mask: Optional[str]
+        switch_name: Optional[str]
+        vlan_id: Optional[int]
+        wifi_configuration: Optional[WifiConfigurationReportedProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                adapter_name: Optional[str] = ..., 
+                default_gateway: Optional[str] = ..., 
+                dns_servers: Optional[list[str]] = ..., 
+                ip4_address: Optional[str] = ..., 
+                subnet_mask: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.NetworkAdapterStatus(_Model):
+        error_code: Optional[str]
+        error_message: Optional[str]
+        provisioning_status: Optional[NetworkAdapterProvisioningStatus]
+
+
+    class azure.mgmt.azurestackhci.models.NetworkConfiguration(_Model):
+        network_adapters: Optional[list[NetworkAdapter]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                network_adapters: Optional[list[NetworkAdapter]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.azurestackhci.models.NetworkController(_Model):
         mac_address_pool_start: Optional[str]
         mac_address_pool_stop: Optional[str]
@@ -3077,6 +5573,11 @@ namespace azure.mgmt.azurestackhci.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.NetworkInterfaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ETH = "Eth"
+        WIFI = "wifi"
 
 
     class azure.mgmt.azurestackhci.models.NextBillingModel(_Model):
@@ -3168,6 +5669,19 @@ namespace azure.mgmt.azurestackhci.models
         UPDATING = "Updating"
 
 
+    class azure.mgmt.azurestackhci.models.NodeStorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        S2_D = "S2D"
+        SAN_FC = "SANFC"
+        SAN_ISCSI = "SANISCSI"
+
+
+    class azure.mgmt.azurestackhci.models.OSOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PROVISION = "Provision"
+        RESET = "Reset"
+        RE_IMAGE = "ReImage"
+        UPDATE = "Update"
+
+
     class azure.mgmt.azurestackhci.models.Observability(_Model):
         episodic_data_upload: Optional[bool]
         eu_location: Optional[bool]
@@ -3238,6 +5752,32 @@ namespace azure.mgmt.azurestackhci.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.azurestackhci.models.OnboardingConfiguration(_Model):
+        arc_virtual_machine_id: Optional[str]
+        location: Optional[str]
+        resource_id: Optional[str]
+        tenant_id: Optional[str]
+        type: Optional[Union[str, OnboardingResourceType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                arc_virtual_machine_id: Optional[str] = ..., 
+                location: Optional[str] = ..., 
+                resource_id: Optional[str] = ..., 
+                tenant_id: Optional[str] = ..., 
+                type: Optional[Union[str, OnboardingResourceType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.OnboardingResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        HYBRID_COMPUTE_MACHINE = "HybridComputeMachine"
+
+
     class azure.mgmt.azurestackhci.models.Operation(_Model):
         action_type: Optional[Union[str, ActionType]]
         display: Optional[OperationDisplay]
@@ -3254,6 +5794,16 @@ namespace azure.mgmt.azurestackhci.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.OperationDetail(_Model):
+        description: Optional[str]
+        error: Optional[ErrorDetail]
+        id: Optional[str]
+        name: Optional[str]
+        resource_id: Optional[str]
+        status: Optional[str]
+        type: Optional[str]
 
 
     class azure.mgmt.azurestackhci.models.OperationDisplay(_Model):
@@ -3288,10 +5838,147 @@ namespace azure.mgmt.azurestackhci.models
         USER_SYSTEM = "user,system"
 
 
+    class azure.mgmt.azurestackhci.models.OsImage(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[OsImageProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[OsImageProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.OsImageProperties(_Model):
+        architecture: Optional[Union[str, Architecture]]
+        composed_image_iso_hash: Optional[str]
+        composed_image_iso_url: Optional[str]
+        composed_image_version: Optional[str]
+        solution_type: Optional[Union[str, SolutionType]]
+        validated_solution_recipe_version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                architecture: Optional[Union[str, Architecture]] = ..., 
+                composed_image_iso_hash: Optional[str] = ..., 
+                composed_image_iso_url: Optional[str] = ..., 
+                composed_image_version: Optional[str] = ..., 
+                solution_type: Optional[Union[str, SolutionType]] = ..., 
+                validated_solution_recipe_version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.OsProfile(_Model):
+        assembly_version: Optional[str]
+        base_image_version: Optional[str]
+        boot_type: Optional[str]
+        build_number: Optional[str]
+        image_version: Optional[str]
+        os_sku: Optional[str]
+        os_type: Optional[str]
+        os_version: Optional[str]
+
+
+    class azure.mgmt.azurestackhci.models.OsProvisionProfile(_Model):
+        gpg_pub_key: Optional[str]
+        image_hash: Optional[str]
+        operation_type: Optional[Union[str, OSOperationType]]
+        os_image_location: Optional[str]
+        os_name: Optional[str]
+        os_type: Optional[str]
+        os_version: Optional[str]
+        vsr_version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                gpg_pub_key: Optional[str] = ..., 
+                image_hash: Optional[str] = ..., 
+                operation_type: Optional[Union[str, OSOperationType]] = ..., 
+                os_image_location: Optional[str] = ..., 
+                os_name: Optional[str] = ..., 
+                os_type: Optional[str] = ..., 
+                os_version: Optional[str] = ..., 
+                vsr_version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.azurestackhci.models.OverprovisioningRatio(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ONE = "1"
         TWO = "2"
         ZERO = "0"
+
+
+    class azure.mgmt.azurestackhci.models.OwnerKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MICROSOFT_MANAGED = "MicrosoftManaged"
+
+
+    class azure.mgmt.azurestackhci.models.OwnershipVoucherDetails(_Model):
+        owner_key_type: Union[str, OwnerKeyType]
+        ownership_voucher: str
+        validation_details: Optional[OwnershipVoucherValidationDetails]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                owner_key_type: Union[str, OwnerKeyType], 
+                ownership_voucher: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.OwnershipVoucherValidationDetails(_Model):
+        architecture: Optional[Union[str, Architecture]]
+        azure_machine_id: Optional[str]
+        error: Optional[ErrorDetail]
+        id: Optional[str]
+        manufacturer: Optional[str]
+        model_name: Optional[str]
+        serial_number: Optional[str]
+        validation_status: Optional[Union[str, OwnershipVoucherValidationStatus]]
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                architecture: Optional[Union[str, Architecture]] = ..., 
+                azure_machine_id: Optional[str] = ..., 
+                error: Optional[ErrorDetail] = ..., 
+                id: Optional[str] = ..., 
+                manufacturer: Optional[str] = ..., 
+                model_name: Optional[str] = ..., 
+                serial_number: Optional[str] = ..., 
+                validation_status: Optional[Union[str, OwnershipVoucherValidationStatus]] = ..., 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.OwnershipVoucherValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INVALID = "Invalid"
+        VALID = "Valid"
 
 
     class azure.mgmt.azurestackhci.models.PackageVersionInfo(_Model):
@@ -3424,6 +6111,86 @@ namespace azure.mgmt.azurestackhci.models
                 *, 
                 key: Optional[str] = ..., 
                 value: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.PrivilegedJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DELETE_VOLUME = "DeleteVolume"
+
+
+    class azure.mgmt.azurestackhci.models.ProvisionOsJobProperties(EdgeMachineJobProperties, discriminator='ProvisionOs'):
+        deployment_mode: Union[str, DeploymentMode]
+        end_time_utc: datetime
+        error: ErrorDetail
+        job_id: str
+        job_type: Literal[EdgeMachineJobType.PROVISION_OS]
+        provisioning_request: ProvisioningRequest
+        provisioning_state: Union[str, ProvisioningState]
+        reported_properties: Optional[ProvisionOsReportedProperties]
+        start_time_utc: datetime
+        status: Union[str, JobStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                provisioning_request: ProvisioningRequest, 
+                reported_properties: Optional[ProvisionOsReportedProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.ProvisionOsReportedProperties(_Model):
+        deployment_status: Optional[EceActionStatus]
+        percent_complete: Optional[int]
+        validation_status: Optional[EceActionStatus]
+
+
+    class azure.mgmt.azurestackhci.models.ProvisioningDetails(_Model):
+        os_profile: OsProvisionProfile
+        user_details: Optional[list[UserDetails]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                os_profile: OsProvisionProfile, 
+                user_details: Optional[list[UserDetails]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.ProvisioningOsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_LINUX = "AzureLinux"
+        HCI = "HCI"
+
+
+    class azure.mgmt.azurestackhci.models.ProvisioningRequest(_Model):
+        custom_configuration: Optional[str]
+        device_configuration: Optional[TargetDeviceConfiguration]
+        onboarding_configuration: Optional[OnboardingConfiguration]
+        os_profile: OsProvisionProfile
+        target: Union[str, ProvisioningOsType]
+        user_details: Optional[list[UserDetails]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                custom_configuration: Optional[str] = ..., 
+                device_configuration: Optional[TargetDeviceConfiguration] = ..., 
+                onboarding_configuration: Optional[OnboardingConfiguration] = ..., 
+                os_profile: OsProvisionProfile, 
+                target: Union[str, ProvisioningOsType], 
+                user_details: Optional[list[UserDetails]] = ...
             ) -> None: ...
 
         @overload
@@ -3622,10 +6389,31 @@ namespace azure.mgmt.azurestackhci.models
         REVOKE = "Revoke"
 
 
+    class azure.mgmt.azurestackhci.models.RepairServerJobServerDetails(_Model):
+        server_name: str
+        server_resource_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                server_name: str, 
+                server_resource_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.azurestackhci.models.ReportedProperties(_Model):
         device_state: Optional[Union[str, DeviceState]]
         extension_profile: Optional[ExtensionProfile]
         last_sync_timestamp: Optional[datetime]
+
+
+    class azure.mgmt.azurestackhci.models.ResolutionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCEPT_REPORTED = "AcceptReported"
+        APPLY_DESIRED = "ApplyDesired"
 
 
     class azure.mgmt.azurestackhci.models.Resource(_Model):
@@ -3815,6 +6603,28 @@ namespace azure.mgmt.azurestackhci.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.azurestackhci.models.SdnIntegrationIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DISABLE = "Disable"
+        ENABLE = "Enable"
+
+
+    class azure.mgmt.azurestackhci.models.SdnProperties(_Model):
+        sdn_api_address: Optional[str]
+        sdn_domain_name: Optional[str]
+        sdn_status: Optional[Union[str, SdnStatus]]
+
+
+    class azure.mgmt.azurestackhci.models.SdnStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DISABLED = "Disabled"
+        ENABLED = "Enabled"
+        UNKNOWN = "Unknown"
+
+
+    class azure.mgmt.azurestackhci.models.SecretType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        KEY_VAULT = "KeyVault"
+        SSH_PUB_KEY = "SshPubKey"
+
+
     class azure.mgmt.azurestackhci.models.SecretsLocationDetails(_Model):
         secrets_location: str
         secrets_type: Union[str, SecretsType]
@@ -3928,6 +6738,22 @@ namespace azure.mgmt.azurestackhci.models
         HIDDEN = "Hidden"
         INFORMATIONAL = "Informational"
         WARNING = "Warning"
+
+
+    class azure.mgmt.azurestackhci.models.SiteDetails(_Model):
+        device_configuration: Optional[TargetDeviceConfiguration]
+        site_resource_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                device_configuration: Optional[TargetDeviceConfiguration] = ..., 
+                site_resource_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.azurestackhci.models.Sku(ProxyResource):
@@ -4051,6 +6877,11 @@ namespace azure.mgmt.azurestackhci.models
         ENABLED = "Enabled"
 
 
+    class azure.mgmt.azurestackhci.models.SolutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_LINUX = "AzureLinux"
+        HCI = "HCI"
+
+
     class azure.mgmt.azurestackhci.models.State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ADDITIONAL_CONTENT_REQUIRED = "AdditionalContentRequired"
         DOWNLOADING = "Downloading"
@@ -4146,6 +6977,39 @@ namespace azure.mgmt.azurestackhci.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.azurestackhci.models.StorageConfiguration(_Model):
+        partition_size: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                partition_size: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.StorageInitiator(_Model):
+        ethernet_adapter_mac_address: Optional[str]
+        ethernet_adapter_name: Optional[str]
+        initiator_identifier: str
+        initiator_type: Union[str, StorageInitiatorType]
+        operational_status: Optional[str]
+        port_world_wide_name: Optional[str]
+
+
+    class azure.mgmt.azurestackhci.models.StorageInitiatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FIBRE_CHANNEL = "FibreChannel"
+        I_SCSI = "iSCSI"
+        UNKNOWN = "Unknown"
+
+
+    class azure.mgmt.azurestackhci.models.StorageProfile(_Model):
+        poolable_disks_count: Optional[int]
+
+
     class azure.mgmt.azurestackhci.models.StorageS2dConfig(_Model):
         overprovisioning_ratio: Optional[Union[str, OverprovisioningRatio]]
         volume_type: Optional[Union[str, VolumeType]]
@@ -4196,6 +7060,54 @@ namespace azure.mgmt.azurestackhci.models
         switch_id: Optional[str]
 
 
+    class azure.mgmt.azurestackhci.models.SyncConfigurationJobProperties(EdgeMachineDiskJobProperties, discriminator='SyncConfiguration'):
+        deployment_mode: Union[str, DeploymentMode]
+        end_time_utc: datetime
+        error: ErrorDetail
+        job_id: str
+        job_type: Literal[DiskJobType.SYNC_CONFIGURATION]
+        provisioning_state: Union[str, ProvisioningState]
+        reported_properties: DiskJobReportedProperties
+        resolution_strategy: Union[str, ResolutionStrategy]
+        start_time_utc: datetime
+        status: Union[str, JobStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                resolution_strategy: Union[str, ResolutionStrategy]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.SyncConfigurationNetworkAdapterJobProperties(EdgeMachineNetworkAdapterJobProperties, discriminator='SyncConfiguration'):
+        deployment_mode: Union[str, DeploymentMode]
+        end_time_utc: datetime
+        error: ErrorDetail
+        job_id: str
+        job_type: Literal[NetworkAdapterJobType.SYNC_CONFIGURATION]
+        provisioning_state: Union[str, ProvisioningState]
+        reported_properties: NetworkAdapterJobReportedProperties
+        resolution_strategy: Union[str, ResolutionStrategy]
+        start_time_utc: datetime
+        status: Union[str, JobStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_mode: Optional[Union[str, DeploymentMode]] = ..., 
+                resolution_strategy: Union[str, ResolutionStrategy]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.azurestackhci.models.SystemData(_Model):
         created_at: Optional[datetime]
         created_by: Optional[str]
@@ -4214,6 +7126,46 @@ namespace azure.mgmt.azurestackhci.models
                 last_modified_at: Optional[datetime] = ..., 
                 last_modified_by: Optional[str] = ..., 
                 last_modified_by_type: Optional[Union[str, CreatedByType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.TargetDeviceConfiguration(_Model):
+        host_name: Optional[str]
+        network: Optional[NetworkConfiguration]
+        storage: Optional[StorageConfiguration]
+        time: Optional[TimeConfiguration]
+        web_proxy: Optional[WebProxyConfiguration]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                host_name: Optional[str] = ..., 
+                network: Optional[NetworkConfiguration] = ..., 
+                storage: Optional[StorageConfiguration] = ..., 
+                time: Optional[TimeConfiguration] = ..., 
+                web_proxy: Optional[WebProxyConfiguration] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.TimeConfiguration(_Model):
+        primary_time_server: Optional[str]
+        secondary_time_server: Optional[str]
+        time_zone: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                primary_time_server: Optional[str] = ..., 
+                secondary_time_server: Optional[str] = ..., 
+                time_zone: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -4508,6 +7460,54 @@ namespace azure.mgmt.azurestackhci.models
         principal_id: Optional[str]
 
 
+    class azure.mgmt.azurestackhci.models.UserDetails(_Model):
+        secret_location: Optional[str]
+        secret_type: Union[str, SecretType]
+        ssh_pub_key: Optional[list[str]]
+        user_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                secret_location: Optional[str] = ..., 
+                secret_type: Union[str, SecretType], 
+                ssh_pub_key: Optional[list[str]] = ..., 
+                user_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.ValidateOwnershipVouchersRequest(_Model):
+        ownership_voucher_details: list[OwnershipVoucherDetails]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                ownership_voucher_details: list[OwnershipVoucherDetails]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.ValidateOwnershipVouchersResponse(_Model):
+        ownership_voucher_validation_details: list[OwnershipVoucherValidationDetails]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                ownership_voucher_validation_details: list[OwnershipVoucherValidationDetails]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.azurestackhci.models.ValidateRequest(_Model):
         additional_info: Optional[str]
         edge_device_ids: list[str]
@@ -4706,9 +7706,122 @@ namespace azure.mgmt.azurestackhci.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.azurestackhci.models.VolumeConfiguration(_Model):
+        reserved: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                reserved: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.VolumeReportedProperties(_Model):
+        file_system: Optional[str]
+        is_boot: Optional[bool]
+        name: Optional[str]
+        offset_in_bytes: Optional[int]
+        parent_disk_id: Optional[str]
+        partition_id: Optional[str]
+        path: Optional[str]
+        size_in_bytes: Optional[str]
+        size_remaining_in_bytes: Optional[str]
+
+
     class azure.mgmt.azurestackhci.models.VolumeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FIXED = "Fixed"
         THIN_PROVISIONED = "ThinProvisioned"
+
+
+    class azure.mgmt.azurestackhci.models.WebProxyConfiguration(_Model):
+        bypass_list: Optional[list[str]]
+        connection_uri: Optional[str]
+        port: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                bypass_list: Optional[list[str]] = ..., 
+                connection_uri: Optional[str] = ..., 
+                port: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.WifiConfigurationDesiredProperties(_Model):
+        authentication_type: Optional[Union[str, AuthenticationType]]
+        eap_method: Optional[Union[str, EAPMethod]]
+        ssid: Optional[str]
+        username: Optional[str]
+        wifi_secret: Optional[WifiSecret]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                authentication_type: Optional[Union[str, AuthenticationType]] = ..., 
+                eap_method: Optional[Union[str, EAPMethod]] = ..., 
+                ssid: Optional[str] = ..., 
+                username: Optional[str] = ..., 
+                wifi_secret: Optional[WifiSecret] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.WifiConfigurationReportedProperties(_Model):
+        authentication_type: Optional[Union[str, AuthenticationType]]
+        connection_state: Optional[Union[str, ConnectionState]]
+        eap_method: Optional[Union[str, EAPMethod]]
+        last_successful_connection_timestamp: Optional[str]
+        signal_strength: Optional[int]
+        ssid: Optional[str]
+        username: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                authentication_type: Optional[Union[str, AuthenticationType]] = ..., 
+                eap_method: Optional[Union[str, EAPMethod]] = ..., 
+                ssid: Optional[str] = ..., 
+                username: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.WifiSecret(_Model):
+        secret_location: Optional[str]
+        secret_name: Optional[str]
+        secret_type: Optional[Union[str, WifiSecretType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                secret_location: Optional[str] = ..., 
+                secret_name: Optional[str] = ..., 
+                secret_type: Optional[Union[str, WifiSecretType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.azurestackhci.models.WifiSecretType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        WI_FI_CA_CERTIFICATE = "WiFiCACertificate"
+        WI_FI_CERTIFICATE = "WiFiCertificate"
+        WI_FI_PASSWORD = "WiFiPassword"
 
 
     class azure.mgmt.azurestackhci.models.WindowsServerSubscription(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4895,6 +8008,80 @@ namespace azure.mgmt.azurestackhci.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> ArcSetting: ...
+
+
+    class azure.mgmt.azurestackhci.operations.ClusterJobsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                jobs_name: str, 
+                resource: ClusterJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ClusterJob]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                jobs_name: str, 
+                resource: ClusterJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ClusterJob]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                jobs_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[ClusterJob]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'jobs_name']}, api_versions_list=['2026-10-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                jobs_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'jobs_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                jobs_name: str, 
+                **kwargs: Any
+            ) -> ClusterJob: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[ClusterJob]: ...
 
 
     class azure.mgmt.azurestackhci.operations.ClustersOperations:
@@ -5411,6 +8598,800 @@ namespace azure.mgmt.azurestackhci.operations
             ) -> ItemPaged[EdgeDevice]: ...
 
 
+    class azure.mgmt.azurestackhci.operations.EdgeMachineDeploymentSettingsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                deployment_setting_name: str, 
+                resource: EdgeMachineDeploymentSetting, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineDeploymentSetting]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                deployment_setting_name: str, 
+                resource: EdgeMachineDeploymentSetting, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineDeploymentSetting]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                deployment_setting_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineDeploymentSetting]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'deployment_setting_name']}, api_versions_list=['2026-10-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                deployment_setting_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'deployment_setting_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                deployment_setting_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineDeploymentSetting: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list_by_edge_machine(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[EdgeMachineDeploymentSetting]: ...
+
+
+    class azure.mgmt.azurestackhci.operations.EdgeMachineDiskJobsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                job_name: str, 
+                resource: EdgeMachineDiskJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineDiskJob]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                job_name: str, 
+                resource: EdgeMachineDiskJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineDiskJob]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                job_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineDiskJob]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name', 'job_name']}, api_versions_list=['2026-10-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name', 'job_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineDiskJob: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[EdgeMachineDiskJob]: ...
+
+
+    class azure.mgmt.azurestackhci.operations.EdgeMachineDiskPrivilegedJobsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                privileged_job_name: str, 
+                resource: EdgeMachineDiskPrivilegedJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineDiskPrivilegedJob]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                privileged_job_name: str, 
+                resource: EdgeMachineDiskPrivilegedJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineDiskPrivilegedJob]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                privileged_job_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineDiskPrivilegedJob]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name', 'privileged_job_name']}, api_versions_list=['2026-10-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                privileged_job_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name', 'privileged_job_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                privileged_job_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineDiskPrivilegedJob: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[EdgeMachineDiskPrivilegedJob]: ...
+
+
+    class azure.mgmt.azurestackhci.operations.EdgeMachineDisksOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                resource: EdgeMachineDisk, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineDisk]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                resource: EdgeMachineDisk, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineDisk]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineDisk]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name']}, api_versions_list=['2026-10-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'disk_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                disk_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineDisk: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[EdgeMachineDisk]: ...
+
+
+    class azure.mgmt.azurestackhci.operations.EdgeMachineJobsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                jobs_name: str, 
+                resource: EdgeMachineJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineJob]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                jobs_name: str, 
+                resource: EdgeMachineJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineJob]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                jobs_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineJob]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'jobs_name']}, api_versions_list=['2026-10-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                jobs_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'jobs_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                jobs_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineJob: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[EdgeMachineJob]: ...
+
+
+    class azure.mgmt.azurestackhci.operations.EdgeMachineNetworkAdapterJobsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                network_adapter_name: str, 
+                job_name: str, 
+                resource: EdgeMachineNetworkAdapterJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineNetworkAdapterJob]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                network_adapter_name: str, 
+                job_name: str, 
+                resource: EdgeMachineNetworkAdapterJob, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineNetworkAdapterJob]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                network_adapter_name: str, 
+                job_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineNetworkAdapterJob]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'network_adapter_name', 'job_name']}, api_versions_list=['2026-10-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                network_adapter_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'network_adapter_name', 'job_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                network_adapter_name: str, 
+                job_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineNetworkAdapterJob: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'network_adapter_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                network_adapter_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[EdgeMachineNetworkAdapterJob]: ...
+
+
+    class azure.mgmt.azurestackhci.operations.EdgeMachineNetworkAdaptersOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'network_adapter_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                network_adapter_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineNetworkAdapter: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[EdgeMachineNetworkAdapter]: ...
+
+
+    class azure.mgmt.azurestackhci.operations.EdgeMachineSecuritySettingsOperationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                security_settings_name: str, 
+                resource: EdgeMachineSecuritySettings, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineSecuritySettings]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                security_settings_name: str, 
+                resource: EdgeMachineSecuritySettings, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineSecuritySettings]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                security_settings_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineSecuritySettings]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'security_settings_name']}, api_versions_list=['2026-10-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                security_settings_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'security_settings_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                security_settings_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineSecuritySettings: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list_by_edge_machine(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[EdgeMachineSecuritySettings]: ...
+
+
+    class azure.mgmt.azurestackhci.operations.EdgeMachineVolumesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                volume_name: str, 
+                resource: EdgeMachineVolume, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineVolume]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                volume_name: str, 
+                resource: EdgeMachineVolume, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineVolume]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                volume_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineVolume]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'volume_name']}, api_versions_list=['2026-10-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                volume_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'volume_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                volume_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachineVolume: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[EdgeMachineVolume]: ...
+
+
+    class azure.mgmt.azurestackhci.operations.EdgeMachinesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                resource: EdgeMachine, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachine]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                resource: EdgeMachine, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachine]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachine]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name']}, api_versions_list=['2026-10-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name']}, api_versions_list=['2026-10-01'])
+        def begin_refresh_applicable_updates(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name']}, api_versions_list=['2026-10-01'])
+        def begin_refresh_security_settings(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                properties: EdgeMachinePatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachine]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                properties: EdgeMachinePatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachine]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachine]: ...
+
+        @overload
+        def begin_validate(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                body: EdgeMachineValidateRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineValidateResponse]: ...
+
+        @overload
+        def begin_validate(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                body: EdgeMachineValidateRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineValidateResponse]: ...
+
+        @overload
+        def begin_validate(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[EdgeMachineValidateResponse]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'edge_machine_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                edge_machine_name: str, 
+                **kwargs: Any
+            ) -> EdgeMachine: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[EdgeMachine]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-10-01'])
+        def list_by_subscription(self, **kwargs: Any) -> ItemPaged[EdgeMachine]: ...
+
+
     class azure.mgmt.azurestackhci.operations.ExtensionsOperations:
 
         def __init__(
@@ -5620,6 +9601,74 @@ namespace azure.mgmt.azurestackhci.operations
         def list(self, **kwargs: Any) -> ItemPaged[Operation]: ...
 
 
+    class azure.mgmt.azurestackhci.operations.OsImagesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'location', 'os_image_name', 'accept']}, api_versions_list=['2026-10-01'])
+        def get(
+                self, 
+                location: str, 
+                os_image_name: str, 
+                **kwargs: Any
+            ) -> OsImage: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01', params_added_on={'2026-10-01': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-10-01'])
+        def list_by_subscription_location_resource(
+                self, 
+                location: str, 
+                **kwargs: Any
+            ) -> ItemPaged[OsImage]: ...
+
+
+    class azure.mgmt.azurestackhci.operations.OwnershipVouchersOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def validate(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                validation_request: ValidateOwnershipVouchersRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ValidateOwnershipVouchersResponse: ...
+
+        @overload
+        def validate(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                validation_request: ValidateOwnershipVouchersRequest, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ValidateOwnershipVouchersResponse: ...
+
+        @overload
+        def validate(
+                self, 
+                resource_group_name: str, 
+                location: str, 
+                validation_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ValidateOwnershipVouchersResponse: ...
+
+
     class azure.mgmt.azurestackhci.operations.SecuritySettingsOperations:
 
         def __init__(
@@ -5811,7 +9860,7 @@ namespace azure.mgmt.azurestackhci.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-04-30'])
+        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-04-30', '2026-10-01'])
         def begin_check_health(
                 self, 
                 resource_group_name: str, 
@@ -5946,7 +9995,7 @@ namespace azure.mgmt.azurestackhci.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'update_name']}, api_versions_list=['2026-04-30'])
+        @api_version_validation(method_added_on='2026-04-30', params_added_on={'2026-04-30': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'update_name']}, api_versions_list=['2026-04-30', '2026-10-01'])
         def begin_prepare(
                 self, 
                 resource_group_name: str, 
@@ -6035,11 +10084,44 @@ namespace azure.mgmt.azurestackhci.operations
 
 namespace azure.mgmt.azurestackhci.types
 
+    class azure.mgmt.azurestackhci.types.AddServerJobServerDetails(TypedDict, total=False):
+        key "hostIpv4Address": Required[str]
+        key "localAvailabilityZoneName": str
+        key "serverName": Required[str]
+        key "serverResourceId": Required[str]
+        hostIpv4Address: str
+        localAvailabilityZoneName: str
+        serverName: str
+        serverResourceId: str
+
+
+    class azure.mgmt.azurestackhci.types.ApplyConfigurationNetworkAdapterJobProperties(TypedDict, total=False):
+        key "deploymentMode": Union[str, DeploymentMode]
+        key "endTimeUtc": str
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "jobId": str
+        key "jobType": Required[Literal[NetworkAdapterJobType.APPLY_CONFIGURATION]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('NetworkAdapterJobReportedProperties', module='types')
+        key "startTimeUtc": str
+        key "status": Union[str, JobStatus]
+        key "targetConfiguration": Required[NetworkAdapterConfiguration]
+        deploymentMode: Union[str, DeploymentMode]
+        endTimeUtc: str
+        error: ErrorDetail
+        jobId: str
+        jobType: Literal[NetworkAdapterJobType.APPLY_CONFIGURATION]
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: NetworkAdapterJobReportedProperties
+        startTimeUtc: str
+        status: Union[str, JobStatus]
+        targetConfiguration: NetworkAdapterConfiguration
+
+
     class azure.mgmt.azurestackhci.types.ArcConnectivityProperties(TypedDict, total=False):
         key "enabled": bool
         enabled: bool
         serviceConfigurations: list[ServiceConfiguration]
-        service_configurations: list[ServiceConfiguration]
 
 
     class azure.mgmt.azurestackhci.types.ArcSetting(ProxyResource):
@@ -6051,7 +10133,7 @@ namespace azure.mgmt.azurestackhci.types
         id: str
         name: str
         properties: ArcSettingProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6064,18 +10146,16 @@ namespace azure.mgmt.azurestackhci.types
         key "arcServicePrincipalObjectId": str
         key "connectivityProperties": ForwardRef('ArcConnectivityProperties', module='types')
         key "provisioningState": Union[str, ProvisioningState]
-        aggregate_state: Union[str, ArcSettingAggregateState]
-        arc_application_client_id: str
-        arc_application_object_id: str
-        arc_application_tenant_id: str
-        arc_instance_resource_group: str
-        arc_service_principal_object_id: str
-        connectivity_properties: ArcConnectivityProperties
+        aggregateState: Union[str, ArcSettingAggregateState]
+        arcApplicationClientId: str
+        arcApplicationObjectId: str
+        arcApplicationTenantId: str
+        arcInstanceResourceGroup: str
+        arcServicePrincipalObjectId: str
+        connectivityProperties: ArcConnectivityProperties
         defaultExtensions: list[DefaultExtensionDetails]
-        default_extensions: list[DefaultExtensionDetails]
         perNodeDetails: list[PerNodeState]
-        per_node_details: list[PerNodeState]
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.azurestackhci.types.ArcSettingsPatch(TypedDict, total=False):
@@ -6086,12 +10166,12 @@ namespace azure.mgmt.azurestackhci.types
 
     class azure.mgmt.azurestackhci.types.ArcSettingsPatchProperties(TypedDict, total=False):
         key "connectivityProperties": ForwardRef('ArcConnectivityProperties', module='types')
-        connectivity_properties: ArcConnectivityProperties
+        connectivityProperties: ArcConnectivityProperties
 
 
     class azure.mgmt.azurestackhci.types.AssemblyInfo(TypedDict, total=False):
         key "packageVersion": str
-        package_version: str
+        packageVersion: str
         payload: list[AssemblyInfoPayload]
 
 
@@ -6100,7 +10180,7 @@ namespace azure.mgmt.azurestackhci.types
         key "hash": str
         key "identifier": str
         key "url": str
-        file_name: str
+        fileName: str
         hash: str
         identifier: str
         url: str
@@ -6108,7 +10188,7 @@ namespace azure.mgmt.azurestackhci.types
 
     class azure.mgmt.azurestackhci.types.CheckUpdatesRequest(TypedDict, total=False):
         key "updateName": str
-        update_name: str
+        updateName: str
 
 
     class azure.mgmt.azurestackhci.types.Cluster(TrackedResource):
@@ -6126,21 +10206,34 @@ namespace azure.mgmt.azurestackhci.types
         location: str
         name: str
         properties: ClusterProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
 
     class azure.mgmt.azurestackhci.types.ClusterBillingProperties(TypedDict, total=False):
         key "nextBillingModel": ForwardRef('NextBillingModel', module='types')
-        next_billing_model: NextBillingModel
+        nextBillingModel: NextBillingModel
 
 
     class azure.mgmt.azurestackhci.types.ClusterDesiredProperties(TypedDict, total=False):
         key "diagnosticLevel": Union[str, DiagnosticLevel]
         key "windowsServerSubscription": Union[str, WindowsServerSubscription]
-        diagnostic_level: Union[str, DiagnosticLevel]
-        windows_server_subscription: Union[str, WindowsServerSubscription]
+        diagnosticLevel: Union[str, DiagnosticLevel]
+        windowsServerSubscription: Union[str, WindowsServerSubscription]
+
+
+    class azure.mgmt.azurestackhci.types.ClusterJob(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ClusterJobProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: ClusterJobProperties
+        systemData: SystemData
+        type: str
 
 
     class azure.mgmt.azurestackhci.types.ClusterNode(TypedDict, total=False):
@@ -6159,21 +10252,21 @@ namespace azure.mgmt.azurestackhci.types
         key "osVersion": str
         key "serialNumber": str
         key "windowsServerSubscription": Union[str, WindowsServerSubscription]
-        core_count: float
-        ehc_resource_id: str
+        coreCount: float
+        ehcResourceId: str
         id: float
-        last_licensing_timestamp: str
+        lastLicensingTimestamp: str
         manufacturer: str
-        memory_in_gi_b: float
+        memoryInGiB: float
         model: str
         name: str
-        node_type: Union[str, ClusterNodeType]
-        oem_activation: Union[str, OemActivation]
-        os_display_version: str
-        os_name: str
-        os_version: str
-        serial_number: str
-        windows_server_subscription: Union[str, WindowsServerSubscription]
+        nodeType: Union[str, ClusterNodeType]
+        oemActivation: Union[str, OemActivation]
+        osDisplayVersion: str
+        osName: str
+        osVersion: str
+        serialNumber: str
+        windowsServerSubscription: Union[str, WindowsServerSubscription]
 
 
     class azure.mgmt.azurestackhci.types.ClusterPatch(TypedDict, total=False):
@@ -6189,10 +10282,10 @@ namespace azure.mgmt.azurestackhci.types
         key "aadTenantId": str
         key "cloudManagementEndpoint": str
         key "desiredProperties": ForwardRef('ClusterDesiredProperties', module='types')
-        aad_client_id: str
-        aad_tenant_id: str
-        cloud_management_endpoint: str
-        desired_properties: ClusterDesiredProperties
+        aadClientId: str
+        aadTenantId: str
+        cloudManagementEndpoint: str
+        desiredProperties: ClusterDesiredProperties
 
 
     class azure.mgmt.azurestackhci.types.ClusterProperties(TypedDict, total=False):
@@ -6218,42 +10311,42 @@ namespace azure.mgmt.azurestackhci.types
         key "remoteSupportProperties": ForwardRef('RemoteSupportProperties', module='types')
         key "reportedProperties": ForwardRef('ClusterReportedProperties', module='types')
         key "resourceProviderObjectId": str
+        key "sdnProperties": ForwardRef('ClusterSdnProperties', module='types')
         key "serviceEndpoint": str
         key "softwareAssuranceProperties": ForwardRef('SoftwareAssuranceProperties', module='types')
         key "status": Union[str, Status]
         key "storageType": Union[str, StorageType]
         key "trialDaysRemaining": float
-        aad_application_object_id: str
-        aad_client_id: str
-        aad_service_principal_object_id: str
-        aad_tenant_id: str
-        billing_model: str
-        billing_properties: ClusterBillingProperties
-        cloud_id: str
-        cloud_management_endpoint: str
-        cluster_pattern: Union[str, ClusterPattern]
-        connectivity_status: Union[str, ConnectivityStatus]
-        desired_properties: ClusterDesiredProperties
-        identity_provider: Union[str, IdentityProvider]
-        is_management_cluster: bool
-        isolated_vm_attestation_configuration: IsolatedVmAttestationConfiguration
-        last_billing_timestamp: str
-        last_sync_timestamp: str
+        aadApplicationObjectId: str
+        aadClientId: str
+        aadServicePrincipalObjectId: str
+        aadTenantId: str
+        billingModel: str
+        billingProperties: ClusterBillingProperties
+        cloudId: str
+        cloudManagementEndpoint: str
+        clusterPattern: Union[str, ClusterPattern]
+        connectivityStatus: Union[str, ConnectivityStatus]
+        desiredProperties: ClusterDesiredProperties
+        identityProvider: Union[str, IdentityProvider]
+        isManagementCluster: bool
+        isolatedVmAttestationConfiguration: IsolatedVmAttestationConfiguration
+        lastBillingTimestamp: str
+        lastSyncTimestamp: str
         localAvailabilityZones: list[LocalAvailabilityZones]
-        local_availability_zones: list[LocalAvailabilityZones]
-        log_collection_properties: LogCollectionProperties
-        provisioning_state: Union[str, ProvisioningState]
-        registration_timestamp: str
-        remote_support_properties: RemoteSupportProperties
-        reported_properties: ClusterReportedProperties
-        resource_provider_object_id: str
+        logCollectionProperties: LogCollectionProperties
+        provisioningState: Union[str, ProvisioningState]
+        registrationTimestamp: str
+        remoteSupportProperties: RemoteSupportProperties
+        reportedProperties: ClusterReportedProperties
+        resourceProviderObjectId: str
+        sdnProperties: ClusterSdnProperties
         secretsLocations: list[SecretsLocationDetails]
-        secrets_locations: list[SecretsLocationDetails]
-        service_endpoint: str
-        software_assurance_properties: SoftwareAssuranceProperties
+        serviceEndpoint: str
+        softwareAssuranceProperties: SoftwareAssuranceProperties
         status: Union[str, Status]
-        storage_type: Union[str, StorageType]
-        trial_days_remaining: float
+        storageType: Union[str, StorageType]
+        trialDaysRemaining: float
 
 
     class azure.mgmt.azurestackhci.types.ClusterReportedProperties(TypedDict, total=False):
@@ -6268,27 +10361,91 @@ namespace azure.mgmt.azurestackhci.types
         key "manufacturer": str
         key "msiExpirationTimeStamp": str
         key "oemActivation": Union[str, OemActivation]
-        cluster_id: str
-        cluster_name: str
-        cluster_type: Union[str, ClusterNodeType]
-        cluster_version: str
-        diagnostic_level: Union[str, DiagnosticLevel]
-        hardware_class: Union[str, HardwareClass]
-        imds_attestation: Union[str, ImdsAttestation]
-        last_updated: str
+        clusterId: str
+        clusterName: str
+        clusterType: Union[str, ClusterNodeType]
+        clusterVersion: str
+        diagnosticLevel: Union[str, DiagnosticLevel]
+        hardwareClass: Union[str, HardwareClass]
+        imdsAttestation: Union[str, ImdsAttestation]
+        lastUpdated: str
         manufacturer: str
-        msi_expiration_time_stamp: str
+        msiExpirationTimeStamp: str
         nodes: list[ClusterNode]
-        oem_activation: Union[str, OemActivation]
+        oemActivation: Union[str, OemActivation]
         supportedCapabilities: list[str]
-        supported_capabilities: list[str]
+
+
+    class azure.mgmt.azurestackhci.types.ClusterSdnProperties(TypedDict, total=False):
+        key "sdnApiAddress": str
+        key "sdnDomainName": str
+        key "sdnIntegrationIntent": Union[str, SdnIntegrationIntent]
+        key "sdnStatus": Union[str, SdnStatus]
+        sdnApiAddress: str
+        sdnDomainName: str
+        sdnIntegrationIntent: Union[str, SdnIntegrationIntent]
+        sdnStatus: Union[str, SdnStatus]
+
+
+    class azure.mgmt.azurestackhci.types.CreateVolumeJobProperties(TypedDict, total=False):
+        key "createdVolumeId": str
+        key "deploymentMode": Union[str, DeploymentMode]
+        key "endTimeUtc": str
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "fileSystem": Union[str, DiskFileSystemType]
+        key "jobId": str
+        key "jobType": Required[Literal[DiskJobType.CREATE_VOLUME]]
+        key "path": Required[str]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('DiskJobReportedProperties', module='types')
+        key "sizeInBytes": Required[str]
+        key "startTimeUtc": str
+        key "status": Union[str, JobStatus]
+        createdVolumeId: str
+        deploymentMode: Union[str, DeploymentMode]
+        endTimeUtc: str
+        error: ErrorDetail
+        fileSystem: Union[str, DiskFileSystemType]
+        jobId: str
+        jobType: Literal[DiskJobType.CREATE_VOLUME]
+        path: str
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: DiskJobReportedProperties
+        sizeInBytes: str
+        startTimeUtc: str
+        status: Union[str, JobStatus]
 
 
     class azure.mgmt.azurestackhci.types.DefaultExtensionDetails(TypedDict, total=False):
         key "category": str
         key "consentTime": str
         category: str
-        consent_time: str
+        consentTime: str
+
+
+    class azure.mgmt.azurestackhci.types.DeleteVolumeJobProperties(TypedDict, total=False):
+        key "confirmDeletion": bool
+        key "deploymentMode": Union[str, DeploymentMode]
+        key "endTimeUtc": str
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "jobId": str
+        key "jobType": Required[Literal[PrivilegedJobType.DELETE_VOLUME]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('DiskJobReportedProperties', module='types')
+        key "startTimeUtc": str
+        key "status": Union[str, JobStatus]
+        key "volumePath": Required[str]
+        confirmDeletion: bool
+        deploymentMode: Union[str, DeploymentMode]
+        endTimeUtc: str
+        error: ErrorDetail
+        jobId: str
+        jobType: Literal[PrivilegedJobType.DELETE_VOLUME]
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: DiskJobReportedProperties
+        startTimeUtc: str
+        status: Union[str, JobStatus]
+        volumePath: str
 
 
     class azure.mgmt.azurestackhci.types.DeploymentCluster(TypedDict, total=False):
@@ -6299,19 +10456,19 @@ namespace azure.mgmt.azurestackhci.types
         key "name": str
         key "witnessPath": str
         key "witnessType": str
-        azure_service_endpoint: str
-        cloud_account_name: str
-        cluster_pattern: Union[str, ClusterPattern]
-        hardware_class: Union[str, HardwareClass]
+        azureServiceEndpoint: str
+        cloudAccountName: str
+        clusterPattern: Union[str, ClusterPattern]
+        hardwareClass: Union[str, HardwareClass]
         name: str
-        witness_path: str
-        witness_type: str
+        witnessPath: str
+        witnessType: str
 
 
     class azure.mgmt.azurestackhci.types.DeploymentConfiguration(TypedDict, total=False):
         key "scaleUnits": Required[list[ScaleUnits]]
         key "version": str
-        scale_units: list[ScaleUnits]
+        scaleUnits: list[ScaleUnits]
         version: str
 
 
@@ -6330,26 +10487,23 @@ namespace azure.mgmt.azurestackhci.types
         key "secretsLocation": str
         key "securitySettings": ForwardRef('DeploymentSecuritySettings', module='types')
         key "storage": ForwardRef('Storage', module='types')
-        adou_path: str
-        assembly_info: AssemblyInfo
+        adouPath: str
+        assemblyInfo: AssemblyInfo
         cluster: DeploymentCluster
-        domain_fqdn: str
-        host_network: DeploymentSettingHostNetwork
-        identity_provider: Union[str, IdentityProvider]
+        domainFqdn: str
+        hostNetwork: DeploymentSettingHostNetwork
+        identityProvider: Union[str, IdentityProvider]
         infrastructureNetwork: list[InfrastructureNetwork]
-        infrastructure_network: list[InfrastructureNetwork]
-        is_management_cluster: bool
+        isManagementCluster: bool
         localAvailabilityZones: list[LocalAvailabilityZones]
-        local_availability_zones: list[LocalAvailabilityZones]
-        naming_prefix: str
+        namingPrefix: str
         observability: Observability
-        optional_services: OptionalServices
+        optionalServices: OptionalServices
         physicalNodes: list[PhysicalNodes]
-        physical_nodes: list[PhysicalNodes]
-        sdn_integration: SdnIntegration
+        sdnIntegration: SdnIntegration
         secrets: list[EceDeploymentSecrets]
-        secrets_location: str
-        security_settings: DeploymentSecuritySettings
+        secretsLocation: str
+        securitySettings: DeploymentSecuritySettings
         storage: Storage
 
 
@@ -6364,16 +10518,16 @@ namespace azure.mgmt.azurestackhci.types
         key "smbClusterEncryption": bool
         key "smbSigningEnforced": bool
         key "wdacEnforced": bool
-        bitlocker_boot_volume: bool
-        bitlocker_data_volumes: bool
-        credential_guard_enforced: bool
-        drift_control_enforced: bool
-        drtm_protection: bool
-        hvci_protection: bool
-        side_channel_mitigation_enforced: bool
-        smb_cluster_encryption: bool
-        smb_signing_enforced: bool
-        wdac_enforced: bool
+        bitlockerBootVolume: bool
+        bitlockerDataVolumes: bool
+        credentialGuardEnforced: bool
+        driftControlEnforced: bool
+        drtmProtection: bool
+        hvciProtection: bool
+        sideChannelMitigationEnforced: bool
+        smbClusterEncryption: bool
+        smbSigningEnforced: bool
+        wdacEnforced: bool
 
 
     class azure.mgmt.azurestackhci.types.DeploymentSetting(ProxyResource):
@@ -6385,7 +10539,7 @@ namespace azure.mgmt.azurestackhci.types
         id: str
         name: str
         properties: DeploymentSettingsProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6393,21 +10547,20 @@ namespace azure.mgmt.azurestackhci.types
         key "jumboPacket": str
         key "networkDirect": str
         key "networkDirectTechnology": str
-        jumbo_packet: str
-        network_direct: str
-        network_direct_technology: str
+        jumboPacket: str
+        networkDirect: str
+        networkDirectTechnology: str
 
 
     class azure.mgmt.azurestackhci.types.DeploymentSettingHostNetwork(TypedDict, total=False):
         key "enableStorageAutoIp": bool
         key "sanNetworks": ForwardRef('SanNetworks', module='types')
         key "storageConnectivitySwitchless": bool
-        enable_storage_auto_ip: bool
+        enableStorageAutoIp: bool
         intents: list[DeploymentSettingIntents]
-        san_networks: SanNetworks
+        sanNetworks: SanNetworks
+        storageConnectivitySwitchless: bool
         storageNetworks: list[DeploymentSettingStorageNetworks]
-        storage_connectivity_switchless: bool
-        storage_networks: list[DeploymentSettingStorageNetworks]
 
 
     class azure.mgmt.azurestackhci.types.DeploymentSettingIntents(TypedDict, total=False):
@@ -6419,24 +10572,23 @@ namespace azure.mgmt.azurestackhci.types
         key "qosPolicyOverrides": ForwardRef('QosPolicyOverrides', module='types')
         key "virtualSwitchConfigurationOverrides": ForwardRef('DeploymentSettingVirtualSwitchConfigurationOverrides', module='types')
         adapter: list[str]
-        adapter_property_overrides: DeploymentSettingAdapterPropertyOverrides
+        adapterPropertyOverrides: DeploymentSettingAdapterPropertyOverrides
         name: str
-        override_adapter_property: bool
-        override_qos_policy: bool
-        override_virtual_switch_configuration: bool
-        qos_policy_overrides: QosPolicyOverrides
+        overrideAdapterProperty: bool
+        overrideQosPolicy: bool
+        overrideVirtualSwitchConfiguration: bool
+        qosPolicyOverrides: QosPolicyOverrides
         trafficType: list[str]
-        traffic_type: list[str]
-        virtual_switch_configuration_overrides: DeploymentSettingVirtualSwitchConfigurationOverrides
+        virtualSwitchConfigurationOverrides: DeploymentSettingVirtualSwitchConfigurationOverrides
 
 
     class azure.mgmt.azurestackhci.types.DeploymentSettingStorageAdapterIPInfo(TypedDict, total=False):
         key "ipv4Address": str
         key "physicalNode": str
         key "subnetMask": str
-        ipv4_address: str
-        physical_node: str
-        subnet_mask: str
+        ipv4Address: str
+        physicalNode: str
+        subnetMask: str
 
 
     class azure.mgmt.azurestackhci.types.DeploymentSettingStorageNetworks(TypedDict, total=False):
@@ -6444,17 +10596,16 @@ namespace azure.mgmt.azurestackhci.types
         key "networkAdapterName": str
         key "vlanId": str
         name: str
-        network_adapter_name: str
+        networkAdapterName: str
         storageAdapterIPInfo: list[DeploymentSettingStorageAdapterIPInfo]
-        storage_adapter_ip_info: list[DeploymentSettingStorageAdapterIPInfo]
-        vlan_id: str
+        vlanId: str
 
 
     class azure.mgmt.azurestackhci.types.DeploymentSettingVirtualSwitchConfigurationOverrides(TypedDict, total=False):
         key "enableIov": str
         key "loadBalancingAlgorithm": str
-        enable_iov: str
-        load_balancing_algorithm: str
+        enableIov: str
+        loadBalancingAlgorithm: str
 
 
     class azure.mgmt.azurestackhci.types.DeploymentSettingsProperties(TypedDict, total=False):
@@ -6464,15 +10615,58 @@ namespace azure.mgmt.azurestackhci.types
         key "operationType": Union[str, OperationType]
         key "provisioningState": Union[str, ProvisioningState]
         key "reportedProperties": ForwardRef('EceReportedProperties', module='types')
-        arc_node_resource_ids: list[str]
-        deployment_configuration: DeploymentConfiguration
-        deployment_mode: Union[str, DeploymentMode]
-        operation_type: Union[str, OperationType]
-        provisioning_state: Union[str, ProvisioningState]
-        reported_properties: EceReportedProperties
+        arcNodeResourceIds: list[str]
+        deploymentConfiguration: DeploymentConfiguration
+        deploymentMode: Union[str, DeploymentMode]
+        operationType: Union[str, OperationType]
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: EceReportedProperties
 
 
     class azure.mgmt.azurestackhci.types.DeploymentStep(TypedDict, total=False):
+        key "description": str
+        key "endTimeUtc": str
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "fullStepIndex": str
+        key "name": str
+        key "percentComplete": int
+        key "startTimeUtc": str
+        key "status": str
+        additionalData: list[Metadata]
+        description: str
+        endTimeUtc: str
+        error: ErrorDetail
+        exception: list[str]
+        fullStepIndex: str
+        name: str
+        percentComplete: int
+        recommendedSteps: list[str]
+        startTimeUtc: str
+        status: str
+        steps: list[DeploymentStep]
+
+
+    class azure.mgmt.azurestackhci.types.DeviceConfiguration(TypedDict, total=False):
+        key "deviceMetadata": str
+        deviceMetadata: str
+        nicDetails: list[NicDetail]
+
+
+    class azure.mgmt.azurestackhci.types.DeviceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        HCI = "HCI"
+
+
+    class azure.mgmt.azurestackhci.types.DiskActionStatus(TypedDict, total=False):
+        key "status": str
+        status: str
+        steps: list[DiskDeploymentStep]
+
+
+    class azure.mgmt.azurestackhci.types.DiskConfiguration(TypedDict, total=False):
+        volumes: list[DiskVolumeConfiguration]
+
+
+    class azure.mgmt.azurestackhci.types.DiskDeploymentStep(TypedDict, total=False):
         key "description": str
         key "endTimeUtc": str
         key "fullStepIndex": str
@@ -6480,31 +10674,140 @@ namespace azure.mgmt.azurestackhci.types
         key "startTimeUtc": str
         key "status": str
         description: str
-        end_time_utc: str
+        endTimeUtc: str
         exception: list[str]
-        full_step_index: str
+        fullStepIndex: str
         name: str
-        start_time_utc: str
+        startTimeUtc: str
         status: str
-        steps: list[DeploymentStep]
+        steps: list[DiskDeploymentStep]
 
 
-    class azure.mgmt.azurestackhci.types.DeviceConfiguration(TypedDict, total=False):
-        key "deviceMetadata": str
-        device_metadata: str
-        nicDetails: list[NicDetail]
-        nic_details: list[NicDetail]
+    class azure.mgmt.azurestackhci.types.DiskJobReportedProperties(TypedDict, total=False):
+        key "deploymentStatus": ForwardRef('DiskActionStatus', module='types')
+        key "percentComplete": int
+        key "validationStatus": ForwardRef('DiskActionStatus', module='types')
+        deploymentStatus: DiskActionStatus
+        percentComplete: int
+        validationStatus: DiskActionStatus
 
 
-    class azure.mgmt.azurestackhci.types.DeviceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        HCI = "HCI"
+    class azure.mgmt.azurestackhci.types.DiskJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CREATE_VOLUME = "CreateVolume"
+        SYNC_CONFIGURATION = "SyncConfiguration"
+
+
+    class azure.mgmt.azurestackhci.types.DiskReportedProperties(TypedDict, total=False):
+        key "busLocation": str
+        key "diskName": str
+        key "diskType": Union[str, DiskType]
+        key "firmwareVersion": str
+        key "isSupported": bool
+        key "manufacturer": str
+        key "model": str
+        key "serialNumber": str
+        key "sizeInBytes": str
+        key "state": Union[str, DiskState]
+        key "storageType": Union[str, DiskStorageType]
+        key "unallocatedSizeInBytes": str
+        busLocation: str
+        diskName: str
+        diskType: Union[str, DiskType]
+        firmwareVersion: str
+        isSupported: bool
+        manufacturer: str
+        model: str
+        serialNumber: str
+        sizeInBytes: str
+        state: Union[str, DiskState]
+        storageType: Union[str, DiskStorageType]
+        unallocatedSizeInBytes: str
+        volumes: list[DiskVolumeReportedProperties]
+
+
+    class azure.mgmt.azurestackhci.types.DiskVolumeConfiguration(TypedDict, total=False):
+        key "fileSystem": Union[str, DiskFileSystemType]
+        key "path": Required[str]
+        key "sizeInBytes": Required[str]
+        fileSystem: Union[str, DiskFileSystemType]
+        path: str
+        sizeInBytes: str
+
+
+    class azure.mgmt.azurestackhci.types.DiskVolumeReportedProperties(TypedDict, total=False):
+        key "fileSystem": str
+        key "isBoot": bool
+        key "name": str
+        key "offsetInBytes": int
+        key "partitionId": str
+        key "partitionNumber": int
+        key "path": str
+        key "resourceName": str
+        key "sizeInBytes": str
+        key "sizeRemainingInBytes": str
+        fileSystem: str
+        isBoot: bool
+        name: str
+        offsetInBytes: int
+        partitionId: str
+        partitionNumber: int
+        path: str
+        resourceName: str
+        sizeInBytes: str
+        sizeRemainingInBytes: str
 
 
     class azure.mgmt.azurestackhci.types.DnsZones(TypedDict, total=False):
         key "dnsZoneName": str
         dnsForwarder: list[str]
-        dns_forwarder: list[str]
-        dns_zone_name: str
+        dnsZoneName: str
+
+
+    class azure.mgmt.azurestackhci.types.DownloadOsJobProperties(TypedDict, total=False):
+        key "deploymentMode": Union[str, DeploymentMode]
+        key "downloadRequest": Required[DownloadRequest]
+        key "endTimeUtc": str
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "jobId": str
+        key "jobType": Required[Literal[EdgeMachineJobType.DOWNLOAD_OS]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('ProvisionOsReportedProperties', module='types')
+        key "startTimeUtc": str
+        key "status": Union[str, JobStatus]
+        deploymentMode: Union[str, DeploymentMode]
+        downloadRequest: DownloadRequest
+        endTimeUtc: str
+        error: ErrorDetail
+        jobId: str
+        jobType: Literal[EdgeMachineJobType.DOWNLOAD_OS]
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: ProvisionOsReportedProperties
+        startTimeUtc: str
+        status: Union[str, JobStatus]
+
+
+    class azure.mgmt.azurestackhci.types.DownloadOsProfile(TypedDict, total=False):
+        key "gpgPubKey": str
+        key "imageHash": str
+        key "osImageLocation": str
+        key "osName": str
+        key "osType": str
+        key "osVersion": str
+        key "vsrVersion": str
+        gpgPubKey: str
+        imageHash: str
+        osImageLocation: str
+        osName: str
+        osType: str
+        osVersion: str
+        vsrVersion: str
+
+
+    class azure.mgmt.azurestackhci.types.DownloadRequest(TypedDict, total=False):
+        key "osProfile": Required[DownloadOsProfile]
+        key "target": Required[Union[str, ProvisioningOsType]]
+        osProfile: DownloadOsProfile
+        target: Union[str, ProvisioningOsType]
 
 
     class azure.mgmt.azurestackhci.types.EceActionStatus(TypedDict, total=False):
@@ -6517,16 +10820,16 @@ namespace azure.mgmt.azurestackhci.types
         key "eceSecretName": Union[str, EceSecrets]
         key "secretLocation": str
         key "secretName": str
-        ece_secret_name: Union[str, EceSecrets]
-        secret_location: str
-        secret_name: str
+        eceSecretName: Union[str, EceSecrets]
+        secretLocation: str
+        secretName: str
 
 
     class azure.mgmt.azurestackhci.types.EceReportedProperties(TypedDict, total=False):
         key "deploymentStatus": ForwardRef('EceActionStatus', module='types')
         key "validationStatus": ForwardRef('EceActionStatus', module='types')
-        deployment_status: EceActionStatus
-        validation_status: EceActionStatus
+        deploymentStatus: EceActionStatus
+        validationStatus: EceActionStatus
 
 
     class azure.mgmt.azurestackhci.types.EdgeDevice(TypedDict, total=False):
@@ -6540,7 +10843,7 @@ namespace azure.mgmt.azurestackhci.types
         kind: Literal[DeviceKind.HCI]
         name: str
         properties: HciEdgeDeviceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6552,10 +10855,10 @@ namespace azure.mgmt.azurestackhci.types
         key "sizeInBytes": str
         key "type": str
         id: str
-        is_supported: bool
+        isSupported: bool
         manufacturer: str
         model: str
-        size_in_bytes: str
+        sizeInBytes: str
         type: str
 
 
@@ -6570,7 +10873,7 @@ namespace azure.mgmt.azurestackhci.types
         kind: Literal[EdgeDeviceKind.HCI]
         name: str
         properties: HciEdgeDeviceJobProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6581,8 +10884,550 @@ namespace azure.mgmt.azurestackhci.types
     class azure.mgmt.azurestackhci.types.EdgeDeviceProperties(TypedDict, total=False):
         key "deviceConfiguration": ForwardRef('DeviceConfiguration', module='types')
         key "provisioningState": Union[str, ProvisioningState]
-        device_configuration: DeviceConfiguration
-        provisioning_state: Union[str, ProvisioningState]
+        deviceConfiguration: DeviceConfiguration
+        provisioningState: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachine(TrackedResource):
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('EdgeMachineProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: EdgeMachineProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineAdapterPropertyOverrides(TypedDict, total=False):
+        key "jumboPacket": str
+        key "networkDirect": str
+        key "networkDirectTechnology": str
+        jumboPacket: str
+        networkDirect: str
+        networkDirectTechnology: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineCollectLogJobProperties(TypedDict, total=False):
+        key "deploymentMode": Union[str, DeploymentMode]
+        key "endTimeUtc": str
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "fromDate": Required[str]
+        key "jobId": str
+        key "jobType": Required[Literal[EdgeMachineJobType.COLLECT_LOG]]
+        key "lastLogGenerated": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('EdgeMachineCollectLogJobReportedProperties', module='types')
+        key "startTimeUtc": str
+        key "status": Union[str, JobStatus]
+        key "toDate": Required[str]
+        deploymentMode: Union[str, DeploymentMode]
+        endTimeUtc: str
+        error: ErrorDetail
+        fromDate: str
+        jobId: str
+        jobType: Literal[EdgeMachineJobType.COLLECT_LOG]
+        lastLogGenerated: str
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: EdgeMachineCollectLogJobReportedProperties
+        startTimeUtc: str
+        status: Union[str, JobStatus]
+        toDate: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineCollectLogJobReportedProperties(TypedDict, total=False):
+        key "deploymentStatus": ForwardRef('EceActionStatus', module='types')
+        key "percentComplete": int
+        key "validationStatus": ForwardRef('EceActionStatus', module='types')
+        deploymentStatus: EceActionStatus
+        logCollectionSessionDetails: list[LogCollectionJobSession]
+        percentComplete: int
+        validationStatus: EceActionStatus
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineDeploymentConfiguration(TypedDict, total=False):
+        key "scaleUnits": Required[list[EdgeMachineScaleUnits]]
+        key "version": str
+        scaleUnits: list[EdgeMachineScaleUnits]
+        version: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineDeploymentData(TypedDict, total=False):
+        key "iScsiConfig": ForwardRef('IscsiConfig', module='types')
+        key "storageType": Required[Union[str, NodeStorageType]]
+        iScsiConfig: IscsiConfig
+        secrets: list[EceDeploymentSecrets]
+        storageType: Union[str, NodeStorageType]
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineDeploymentSetting(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('EdgeMachineDeploymentSettingProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: EdgeMachineDeploymentSettingProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineDeploymentSettingProperties(TypedDict, total=False):
+        key "deploymentConfiguration": Required[EdgeMachineDeploymentConfiguration]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('EceReportedProperties', module='types')
+        deploymentConfiguration: EdgeMachineDeploymentConfiguration
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: EceReportedProperties
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineDisk(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('EdgeMachineDiskProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: EdgeMachineDiskProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineDiskJob(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('EdgeMachineDiskJobProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: EdgeMachineDiskJobProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineDiskPrivilegedJob(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('EdgeMachineDiskPrivilegedJobProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: EdgeMachineDiskPrivilegedJobProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineDiskPrivilegedJobProperties(TypedDict, total=False):
+        key "confirmDeletion": bool
+        key "deploymentMode": Union[str, DeploymentMode]
+        key "endTimeUtc": str
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "jobId": str
+        key "jobType": Required[Literal[PrivilegedJobType.DELETE_VOLUME]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('DiskJobReportedProperties', module='types')
+        key "startTimeUtc": str
+        key "status": Union[str, JobStatus]
+        key "volumePath": Required[str]
+        confirmDeletion: bool
+        deploymentMode: Union[str, DeploymentMode]
+        endTimeUtc: str
+        error: ErrorDetail
+        jobId: str
+        jobType: Literal[PrivilegedJobType.DELETE_VOLUME]
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: DiskJobReportedProperties
+        startTimeUtc: str
+        status: Union[str, JobStatus]
+        volumePath: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineDiskProperties(TypedDict, total=False):
+        key "diskConfiguration": ForwardRef('DiskConfiguration', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('DiskReportedProperties', module='types')
+        diskConfiguration: DiskConfiguration
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: DiskReportedProperties
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineHostNetwork(TypedDict, total=False):
+        key "enableStorageAutoIp": bool
+        key "storageConnectivitySwitchless": bool
+        enableStorageAutoIp: bool
+        intents: list[EdgeMachineHostNetworkIntent]
+        storageConnectivitySwitchless: bool
+        storageNetworks: list[EdgeMachineStorageNetwork]
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineHostNetworkIntent(TypedDict, total=False):
+        key "adapterPropertyOverrides": ForwardRef('EdgeMachineAdapterPropertyOverrides', module='types')
+        key "intentName": str
+        key "intentType": int
+        key "isComputeIntentSet": bool
+        key "isManagementIntentSet": bool
+        key "isNetworkIntentType": bool
+        key "isOnlyStorage": bool
+        key "isOnlyStretch": bool
+        key "isStorageIntentSet": bool
+        key "isStretchIntentSet": bool
+        key "overrideAdapterProperty": bool
+        key "overrideQosPolicy": bool
+        key "overrideVirtualSwitchConfiguration": bool
+        key "qosPolicyOverrides": ForwardRef('QosPolicyOverrides', module='types')
+        key "scope": int
+        key "virtualSwitchConfigurationOverrides": ForwardRef('EdgeMachineVirtualSwitchConfigurationOverrides', module='types')
+        adapterPropertyOverrides: EdgeMachineAdapterPropertyOverrides
+        intentAdapters: list[str]
+        intentName: str
+        intentType: int
+        isComputeIntentSet: bool
+        isManagementIntentSet: bool
+        isNetworkIntentType: bool
+        isOnlyStorage: bool
+        isOnlyStretch: bool
+        isStorageIntentSet: bool
+        isStretchIntentSet: bool
+        overrideAdapterProperty: bool
+        overrideQosPolicy: bool
+        overrideVirtualSwitchConfiguration: bool
+        qosPolicyOverrides: QosPolicyOverrides
+        scope: int
+        virtualSwitchConfigurationOverrides: EdgeMachineVirtualSwitchConfigurationOverrides
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineJob(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('EdgeMachineJobProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: EdgeMachineJobProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        COLLECT_LOG = "CollectLog"
+        DOWNLOAD_OS = "DownloadOs"
+        PROVISION_OS = "ProvisionOs"
+        REMOTE_SUPPORT = "RemoteSupport"
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineNetworkAdapterJob(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('EdgeMachineNetworkAdapterJobProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: EdgeMachineNetworkAdapterJobProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineNetworkProfile(TypedDict, total=False):
+        key "hostNetwork": ForwardRef('EdgeMachineHostNetwork', module='types')
+        key "sdnProperties": ForwardRef('SdnProperties', module='types')
+        hostNetwork: EdgeMachineHostNetwork
+        nicDetails: list[EdgeMachineNicDetail]
+        sdnProperties: SdnProperties
+        switchDetails: list[SwitchDetail]
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineNicDetail(TypedDict, total=False):
+        key "adapterName": str
+        key "componentId": str
+        key "defaultGateway": str
+        key "defaultIsolationId": str
+        key "driverVersion": str
+        key "interfaceDescription": str
+        key "ip4Address": str
+        key "macAddress": str
+        key "nicStatus": str
+        key "nicType": str
+        key "rdmaCapability": Union[str, RdmaCapability]
+        key "slot": str
+        key "subnetMask": str
+        key "switchName": str
+        key "vlanId": str
+        adapterName: str
+        componentId: str
+        defaultGateway: str
+        defaultIsolationId: str
+        dnsServers: list[str]
+        driverVersion: str
+        interfaceDescription: str
+        ip4Address: str
+        macAddress: str
+        nicStatus: str
+        nicType: str
+        rdmaCapability: Union[str, RdmaCapability]
+        slot: str
+        subnetMask: str
+        switchName: str
+        vlanId: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachinePatch(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        identity: ManagedServiceIdentity
+        tags: dict[str, str]
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineProperties(TypedDict, total=False):
+        key "arcGatewayResourceId": str
+        key "arcMachineResourceGroupId": str
+        key "arcMachineResourceId": str
+        key "claimedBy": str
+        key "cloudId": str
+        key "connectivityStatus": Union[str, EdgeMachineConnectivityStatus]
+        key "devicePoolResourceId": str
+        key "edgeMachineKind": Union[str, EdgeMachineKind]
+        key "lastSyncTimestamp": str
+        key "lifecycleDetails": ForwardRef('LifecycleDetails', module='types')
+        key "machineState": Union[str, EdgeMachineState]
+        key "ownershipVoucherDetails": ForwardRef('OwnershipVoucherDetails', module='types')
+        key "provisioningDetails": ForwardRef('ProvisioningDetails', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('EdgeMachineReportedProperties', module='types')
+        key "siteDetails": ForwardRef('SiteDetails', module='types')
+        arcGatewayResourceId: str
+        arcMachineResourceGroupId: str
+        arcMachineResourceId: str
+        claimedBy: str
+        cloudId: str
+        connectivityStatus: Union[str, EdgeMachineConnectivityStatus]
+        devicePoolResourceId: str
+        edgeMachineKind: Union[str, EdgeMachineKind]
+        lastSyncTimestamp: str
+        lifecycleDetails: LifecycleDetails
+        machineState: Union[str, EdgeMachineState]
+        operationDetails: list[OperationDetail]
+        ownershipVoucherDetails: OwnershipVoucherDetails
+        provisioningDetails: ProvisioningDetails
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: EdgeMachineReportedProperties
+        siteDetails: SiteDetails
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineRemoteSupportJobProperties(TypedDict, total=False):
+        key "accessLevel": Required[Union[str, RemoteSupportAccessLevel]]
+        key "deploymentMode": Union[str, DeploymentMode]
+        key "endTimeUtc": str
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "expirationTimestamp": Required[str]
+        key "jobId": str
+        key "jobType": Required[Literal[EdgeMachineJobType.REMOTE_SUPPORT]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('EdgeMachineRemoteSupportJobReportedProperties', module='types')
+        key "startTimeUtc": str
+        key "status": Union[str, JobStatus]
+        key "type": Required[Union[str, RemoteSupportType]]
+        accessLevel: Union[str, RemoteSupportAccessLevel]
+        deploymentMode: Union[str, DeploymentMode]
+        endTimeUtc: str
+        error: ErrorDetail
+        expirationTimestamp: str
+        jobId: str
+        jobType: Literal[EdgeMachineJobType.REMOTE_SUPPORT]
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: EdgeMachineRemoteSupportJobReportedProperties
+        startTimeUtc: str
+        status: Union[str, JobStatus]
+        type: Union[str, RemoteSupportType]
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineRemoteSupportJobReportedProperties(TypedDict, total=False):
+        key "deploymentStatus": ForwardRef('EceActionStatus', module='types')
+        key "nodeSettings": ForwardRef('EdgeMachineRemoteSupportNodeSettings', module='types')
+        key "percentComplete": int
+        key "validationStatus": ForwardRef('EceActionStatus', module='types')
+        deploymentStatus: EceActionStatus
+        nodeSettings: EdgeMachineRemoteSupportNodeSettings
+        percentComplete: int
+        sessionDetails: list[RemoteSupportSession]
+        validationStatus: EceActionStatus
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineRemoteSupportNodeSettings(TypedDict, total=False):
+        key "connectionErrorMessage": str
+        key "connectionStatus": str
+        key "createdAt": str
+        key "state": str
+        key "updatedAt": str
+        connectionErrorMessage: str
+        connectionStatus: str
+        createdAt: str
+        state: str
+        updatedAt: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineReportedProperties(TypedDict, total=False):
+        key "extensionProfile": ForwardRef('ExtensionProfile', module='types')
+        key "hardwareProfile": ForwardRef('HardwareProfile', module='types')
+        key "lastUpdated": str
+        key "networkProfile": ForwardRef('EdgeMachineNetworkProfile', module='types')
+        key "osProfile": ForwardRef('OsProfile', module='types')
+        key "sbeDeploymentPackageInfo": ForwardRef('SbeDeploymentPackageInfo', module='types')
+        key "storageProfile": ForwardRef('StorageProfile', module='types')
+        key "workloadInventoryLastUpdated": str
+        extensionProfile: ExtensionProfile
+        hardwareProfile: HardwareProfile
+        lastUpdated: str
+        networkProfile: EdgeMachineNetworkProfile
+        osProfile: OsProfile
+        sbeDeploymentPackageInfo: SbeDeploymentPackageInfo
+        storageInitiators: list[StorageInitiator]
+        storageProfile: StorageProfile
+        workloadInventory: list[EdgeMachineWorkloadInventoryItem]
+        workloadInventoryLastUpdated: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineScaleUnits(TypedDict, total=False):
+        key "deploymentData": Required[EdgeMachineDeploymentData]
+        deploymentData: EdgeMachineDeploymentData
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineSecurityComplianceStatus(TypedDict, total=False):
+        key "encryptionAtRestStatus": Union[str, ComplianceStatus]
+        key "fipsStatus": Union[str, ComplianceStatus]
+        key "seLinuxPolicyStatus": Union[str, ComplianceStatus]
+        key "secureBootStatus": Union[str, ComplianceStatus]
+        key "securityBaselineStatus": Union[str, ComplianceStatus]
+        encryptionAtRestStatus: Union[str, ComplianceStatus]
+        fipsStatus: Union[str, ComplianceStatus]
+        seLinuxPolicyStatus: Union[str, ComplianceStatus]
+        secureBootStatus: Union[str, ComplianceStatus]
+        securityBaselineStatus: Union[str, ComplianceStatus]
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineSecurityProperties(TypedDict, total=False):
+        key "lastSyncTimestamp": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "registrationTimestamp": str
+        key "securityComplianceStatus": ForwardRef('EdgeMachineSecurityComplianceStatus', module='types')
+        lastSyncTimestamp: str
+        provisioningState: Union[str, ProvisioningState]
+        registrationTimestamp: str
+        securityComplianceStatus: EdgeMachineSecurityComplianceStatus
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineSecuritySettings(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('EdgeMachineSecurityProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: EdgeMachineSecurityProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineStorageAdapterIpInfo(TypedDict, total=False):
+        key "ipv4Address": str
+        key "physicalNode": str
+        key "subnetMask": str
+        ipv4Address: str
+        physicalNode: str
+        subnetMask: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineStorageNetwork(TypedDict, total=False):
+        key "name": str
+        key "networkAdapterName": str
+        key "storageVlanId": str
+        name: str
+        networkAdapterName: str
+        storageAdapterIPInfo: list[EdgeMachineStorageAdapterIpInfo]
+        storageVlanId: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineValidateRequest(TypedDict, total=False):
+        key "additionalInfo": str
+        key "edgeMachineIds": Required[list[str]]
+        additionalInfo: str
+        edgeMachineIds: list[str]
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineVirtualSwitchConfigurationOverrides(TypedDict, total=False):
+        key "enableIov": str
+        key "loadBalancingAlgorithm": str
+        enableIov: str
+        loadBalancingAlgorithm: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineVolume(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('EdgeMachineVolumeProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: EdgeMachineVolumeProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineVolumeProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('VolumeReportedProperties', module='types')
+        key "volumeConfiguration": ForwardRef('VolumeConfiguration', module='types')
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: VolumeReportedProperties
+        volumeConfiguration: VolumeConfiguration
+
+
+    class azure.mgmt.azurestackhci.types.EdgeMachineWorkloadInventoryItem(TypedDict, total=False):
+        key "memoryInBytes": str
+        key "name": str
+        key "resourceId": str
+        key "state": str
+        key "virtualProcessorCount": str
+        key "workloadId": str
+        key "workloadType": str
+        memoryInBytes: str
+        name: str
+        resourceId: str
+        state: str
+        virtualProcessorCount: str
+        workloadId: str
+        workloadType: str
+
+
+    class azure.mgmt.azurestackhci.types.ErrorAdditionalInfo(TypedDict, total=False):
+        key "info": Any
+        key "type": str
+        info: Any
+        type: str
+
+
+    class azure.mgmt.azurestackhci.types.ErrorDetail(TypedDict, total=False):
+        key "code": str
+        key "message": str
+        key "target": str
+        additionalInfo: list[ErrorAdditionalInfo]
+        code: str
+        details: list[ErrorDetail]
+        message: str
+        target: str
 
 
     class azure.mgmt.azurestackhci.types.Extension(ProxyResource):
@@ -6594,7 +11439,7 @@ namespace azure.mgmt.azurestackhci.types
         id: str
         name: str
         properties: ExtensionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6606,7 +11451,7 @@ namespace azure.mgmt.azurestackhci.types
         name: str
         status: ExtensionInstanceViewStatus
         type: str
-        type_handler_version: str
+        typeHandlerVersion: str
 
 
     class azure.mgmt.azurestackhci.types.ExtensionInstanceViewStatus(TypedDict, total=False):
@@ -6616,7 +11461,7 @@ namespace azure.mgmt.azurestackhci.types
         key "message": str
         key "time": str
         code: str
-        display_status: str
+        displayStatus: str
         level: Union[str, StatusLevelTypes]
         message: str
         time: str
@@ -6631,14 +11476,14 @@ namespace azure.mgmt.azurestackhci.types
         key "settings": Any
         key "type": str
         key "typeHandlerVersion": str
-        auto_upgrade_minor_version: bool
-        enable_automatic_upgrade: bool
-        force_update_tag: str
-        protected_settings: Any
+        autoUpgradeMinorVersion: bool
+        enableAutomaticUpgrade: bool
+        forceUpdateTag: str
+        protectedSettings: Any
         publisher: str
         settings: Any
         type: str
-        type_handler_version: str
+        typeHandlerVersion: str
 
 
     class azure.mgmt.azurestackhci.types.ExtensionPatch(TypedDict, total=False):
@@ -6651,15 +11496,15 @@ namespace azure.mgmt.azurestackhci.types
         key "protectedSettings": Any
         key "settings": Any
         key "typeHandlerVersion": str
-        enable_automatic_upgrade: bool
-        protected_settings: Any
+        enableAutomaticUpgrade: bool
+        protectedSettings: Any
         settings: Any
-        type_handler_version: str
+        typeHandlerVersion: str
 
 
     class azure.mgmt.azurestackhci.types.ExtensionPatchProperties(TypedDict, total=False):
         key "extensionParameters": ForwardRef('ExtensionPatchParameters', module='types')
-        extension_parameters: ExtensionPatchParameters
+        extensionParameters: ExtensionPatchParameters
 
 
     class azure.mgmt.azurestackhci.types.ExtensionProfile(TypedDict, total=False):
@@ -6671,12 +11516,11 @@ namespace azure.mgmt.azurestackhci.types
         key "extensionParameters": ForwardRef('ExtensionParameters', module='types')
         key "managedBy": Union[str, ExtensionManagedBy]
         key "provisioningState": Union[str, ProvisioningState]
-        aggregate_state: Union[str, ExtensionAggregateState]
-        extension_parameters: ExtensionParameters
-        managed_by: Union[str, ExtensionManagedBy]
+        aggregateState: Union[str, ExtensionAggregateState]
+        extensionParameters: ExtensionParameters
+        managedBy: Union[str, ExtensionManagedBy]
         perNodeExtensionDetails: list[PerNodeExtensionState]
-        per_node_extension_details: list[PerNodeExtensionState]
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
 
 
     class azure.mgmt.azurestackhci.types.ExtensionResource(Resource):
@@ -6686,13 +11530,75 @@ namespace azure.mgmt.azurestackhci.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.azurestackhci.types.ExtensionUpgradeParameters(TypedDict, total=False):
         key "targetVersion": str
-        target_version: str
+        targetVersion: str
+
+
+    class azure.mgmt.azurestackhci.types.ForcePushNetworkAdapterJobProperties(TypedDict, total=False):
+        key "deploymentMode": Union[str, DeploymentMode]
+        key "endTimeUtc": str
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "jobId": str
+        key "jobType": Required[Literal[NetworkAdapterJobType.FORCE_PUSH]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('NetworkAdapterJobReportedProperties', module='types')
+        key "startTimeUtc": str
+        key "status": Union[str, JobStatus]
+        deploymentMode: Union[str, DeploymentMode]
+        endTimeUtc: str
+        error: ErrorDetail
+        jobId: str
+        jobType: Literal[NetworkAdapterJobType.FORCE_PUSH]
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: NetworkAdapterJobReportedProperties
+        startTimeUtc: str
+        status: Union[str, JobStatus]
+
+
+    class azure.mgmt.azurestackhci.types.HardwareProfile(TypedDict, total=False):
+        key "architecture": Union[str, Architecture]
+        key "cpuCores": int
+        key "cpuSockets": int
+        key "manufacturer": str
+        key "memoryCapacityInGb": int
+        key "model": str
+        key "processorType": str
+        key "serialNumber": str
+        architecture: Union[str, Architecture]
+        cpuCores: int
+        cpuSockets: int
+        manufacturer: str
+        memoryCapacityInGb: int
+        model: str
+        processorType: str
+        serialNumber: str
+
+
+    class azure.mgmt.azurestackhci.types.HciAddServerJobProperties(TypedDict, total=False):
+        key "addServerJobServerDetails": Required[list[AddServerJobServerDetails]]
+        key "deploymentMode": Union[str, DeploymentMode]
+        key "endTimeUtc": str
+        key "jobId": str
+        key "jobType": Required[Literal[HciJobType.ADD_SERVER]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('JobReportedProperties', module='types')
+        key "startTimeUtc": str
+        key "status": Union[str, JobStatus]
+        addServerJobServerDetails: list[AddServerJobServerDetails]
+        deploymentMode: Union[str, DeploymentMode]
+        endTimeUtc: str
+        jobId: str
+        jobType: Literal[HciJobType.ADD_SERVER]
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: JobReportedProperties
+        secrets: list[EceDeploymentSecrets]
+        startTimeUtc: str
+        status: Union[str, JobStatus]
 
 
     class azure.mgmt.azurestackhci.types.HciCollectLogJobProperties(TypedDict, total=False):
@@ -6707,17 +11613,40 @@ namespace azure.mgmt.azurestackhci.types
         key "startTimeUtc": str
         key "status": Union[str, JobStatus]
         key "toDate": Required[str]
-        deployment_mode: Union[str, DeploymentMode]
-        end_time_utc: str
-        from_date: str
-        job_id: str
-        job_type: Literal[HciEdgeDeviceJobType.COLLECT_LOG]
-        last_log_generated: str
-        provisioning_state: Union[str, ProvisioningState]
-        reported_properties: LogCollectionReportedProperties
-        start_time_utc: str
+        deploymentMode: Union[str, DeploymentMode]
+        endTimeUtc: str
+        fromDate: str
+        jobId: str
+        jobType: Literal[HciEdgeDeviceJobType.COLLECT_LOG]
+        lastLogGenerated: str
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: LogCollectionReportedProperties
+        startTimeUtc: str
         status: Union[str, JobStatus]
-        to_date: str
+        toDate: str
+
+
+    class azure.mgmt.azurestackhci.types.HciConfigureSdnIntegrationJobProperties(TypedDict, total=False):
+        key "deploymentMode": Union[str, DeploymentMode]
+        key "endTimeUtc": str
+        key "jobId": str
+        key "jobType": Required[Literal[HciJobType.CONFIGURE_SDN_INTEGRATION]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('JobReportedProperties', module='types')
+        key "sdnIntegrationIntent": Required[Union[str, SdnIntegrationIntent]]
+        key "sdnPrefix": str
+        key "startTimeUtc": str
+        key "status": Union[str, JobStatus]
+        deploymentMode: Union[str, DeploymentMode]
+        endTimeUtc: str
+        jobId: str
+        jobType: Literal[HciJobType.CONFIGURE_SDN_INTEGRATION]
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: JobReportedProperties
+        sdnIntegrationIntent: Union[str, SdnIntegrationIntent]
+        sdnPrefix: str
+        startTimeUtc: str
+        status: Union[str, JobStatus]
 
 
     class azure.mgmt.azurestackhci.types.HciEdgeDevice(TypedDict, total=False):
@@ -6731,7 +11660,7 @@ namespace azure.mgmt.azurestackhci.types
         kind: Literal[DeviceKind.HCI]
         name: str
         properties: HciEdgeDeviceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6739,9 +11668,9 @@ namespace azure.mgmt.azurestackhci.types
         key "jumboPacket": str
         key "networkDirect": str
         key "networkDirectTechnology": str
-        jumbo_packet: str
-        network_direct: str
-        network_direct_technology: str
+        jumboPacket: str
+        networkDirect: str
+        networkDirectTechnology: str
 
 
     class azure.mgmt.azurestackhci.types.HciEdgeDeviceArcExtension(TypedDict, total=False):
@@ -6751,22 +11680,20 @@ namespace azure.mgmt.azurestackhci.types
         key "state": Union[str, ArcExtensionState]
         key "typeHandlerVersion": str
         errorDetails: list[HciValidationFailureDetail]
-        error_details: list[HciValidationFailureDetail]
-        extension_name: str
-        extension_resource_id: str
-        managed_by: Union[str, ExtensionManagedBy]
+        extensionName: str
+        extensionResourceId: str
+        managedBy: Union[str, ExtensionManagedBy]
         state: Union[str, ArcExtensionState]
-        type_handler_version: str
+        typeHandlerVersion: str
 
 
     class azure.mgmt.azurestackhci.types.HciEdgeDeviceHostNetwork(TypedDict, total=False):
         key "enableStorageAutoIp": bool
         key "storageConnectivitySwitchless": bool
-        enable_storage_auto_ip: bool
+        enableStorageAutoIp: bool
         intents: list[HciEdgeDeviceIntents]
+        storageConnectivitySwitchless: bool
         storageNetworks: list[HciEdgeDeviceStorageNetworks]
-        storage_connectivity_switchless: bool
-        storage_networks: list[HciEdgeDeviceStorageNetworks]
 
 
     class azure.mgmt.azurestackhci.types.HciEdgeDeviceIntents(TypedDict, total=False):
@@ -6786,24 +11713,23 @@ namespace azure.mgmt.azurestackhci.types
         key "qosPolicyOverrides": ForwardRef('QosPolicyOverrides', module='types')
         key "scope": int
         key "virtualSwitchConfigurationOverrides": ForwardRef('HciEdgeDeviceVirtualSwitchConfigurationOverrides', module='types')
-        adapter_property_overrides: HciEdgeDeviceAdapterPropertyOverrides
+        adapterPropertyOverrides: HciEdgeDeviceAdapterPropertyOverrides
         intentAdapters: list[str]
-        intent_adapters: list[str]
-        intent_name: str
-        intent_type: int
-        is_compute_intent_set: bool
-        is_management_intent_set: bool
-        is_network_intent_type: bool
-        is_only_storage: bool
-        is_only_stretch: bool
-        is_storage_intent_set: bool
-        is_stretch_intent_set: bool
-        override_adapter_property: bool
-        override_qos_policy: bool
-        override_virtual_switch_configuration: bool
-        qos_policy_overrides: QosPolicyOverrides
+        intentName: str
+        intentType: int
+        isComputeIntentSet: bool
+        isManagementIntentSet: bool
+        isNetworkIntentType: bool
+        isOnlyStorage: bool
+        isOnlyStretch: bool
+        isStorageIntentSet: bool
+        isStretchIntentSet: bool
+        overrideAdapterProperty: bool
+        overrideQosPolicy: bool
+        overrideVirtualSwitchConfiguration: bool
+        qosPolicyOverrides: QosPolicyOverrides
         scope: int
-        virtual_switch_configuration_overrides: HciEdgeDeviceVirtualSwitchConfigurationOverrides
+        virtualSwitchConfigurationOverrides: HciEdgeDeviceVirtualSwitchConfigurationOverrides
 
 
     class azure.mgmt.azurestackhci.types.HciEdgeDeviceJob(TypedDict, total=False):
@@ -6817,7 +11743,7 @@ namespace azure.mgmt.azurestackhci.types
         kind: Literal[EdgeDeviceKind.HCI]
         name: str
         properties: HciEdgeDeviceJobProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -6830,18 +11756,18 @@ namespace azure.mgmt.azurestackhci.types
         key "deviceConfiguration": ForwardRef('DeviceConfiguration', module='types')
         key "provisioningState": Union[str, ProvisioningState]
         key "reportedProperties": ForwardRef('HciReportedProperties', module='types')
-        device_configuration: DeviceConfiguration
-        provisioning_state: Union[str, ProvisioningState]
-        reported_properties: HciReportedProperties
+        deviceConfiguration: DeviceConfiguration
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: HciReportedProperties
 
 
     class azure.mgmt.azurestackhci.types.HciEdgeDeviceStorageAdapterIPInfo(TypedDict, total=False):
         key "ipv4Address": str
         key "physicalNode": str
         key "subnetMask": str
-        ipv4_address: str
-        physical_node: str
-        subnet_mask: str
+        ipv4Address: str
+        physicalNode: str
+        subnetMask: str
 
 
     class azure.mgmt.azurestackhci.types.HciEdgeDeviceStorageNetworks(TypedDict, total=False):
@@ -6849,31 +11775,36 @@ namespace azure.mgmt.azurestackhci.types
         key "networkAdapterName": str
         key "storageVlanId": str
         name: str
-        network_adapter_name: str
+        networkAdapterName: str
         storageAdapterIPInfo: list[HciEdgeDeviceStorageAdapterIPInfo]
-        storage_adapter_ip_info: list[HciEdgeDeviceStorageAdapterIPInfo]
-        storage_vlan_id: str
+        storageVlanId: str
 
 
     class azure.mgmt.azurestackhci.types.HciEdgeDeviceVirtualSwitchConfigurationOverrides(TypedDict, total=False):
         key "enableIov": str
         key "loadBalancingAlgorithm": str
-        enable_iov: str
-        load_balancing_algorithm: str
+        enableIov: str
+        loadBalancingAlgorithm: str
 
 
     class azure.mgmt.azurestackhci.types.HciHardwareProfile(TypedDict, total=False):
         key "processorType": str
-        processor_type: str
+        processorType: str
+
+
+    class azure.mgmt.azurestackhci.types.HciJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ADD_SERVER = "AddServer"
+        CONFIGURE_SDN_INTEGRATION = "ConfigureSdnIntegration"
+        REPAIR_SERVER = "RepairServer"
 
 
     class azure.mgmt.azurestackhci.types.HciNetworkProfile(TypedDict, total=False):
         key "hostNetwork": ForwardRef('HciEdgeDeviceHostNetwork', module='types')
-        host_network: HciEdgeDeviceHostNetwork
+        key "sdnProperties": ForwardRef('SdnProperties', module='types')
+        hostNetwork: HciEdgeDeviceHostNetwork
         nicDetails: list[HciNicDetail]
-        nic_details: list[HciNicDetail]
+        sdnProperties: SdnProperties
         switchDetails: list[SwitchDetail]
-        switch_details: list[SwitchDetail]
 
 
     class azure.mgmt.azurestackhci.types.HciNicDetail(TypedDict, total=False):
@@ -6892,30 +11823,29 @@ namespace azure.mgmt.azurestackhci.types
         key "subnetMask": str
         key "switchName": str
         key "vlanId": str
-        adapter_name: str
-        component_id: str
-        default_gateway: str
-        default_isolation_id: str
+        adapterName: str
+        componentId: str
+        defaultGateway: str
+        defaultIsolationId: str
         dnsServers: list[str]
-        dns_servers: list[str]
-        driver_version: str
-        interface_description: str
-        ip4_address: str
-        mac_address: str
-        nic_status: str
-        nic_type: str
-        rdma_capability: Union[str, RdmaCapability]
+        driverVersion: str
+        interfaceDescription: str
+        ip4Address: str
+        macAddress: str
+        nicStatus: str
+        nicType: str
+        rdmaCapability: Union[str, RdmaCapability]
         slot: str
-        subnet_mask: str
-        switch_name: str
-        vlan_id: str
+        subnetMask: str
+        switchName: str
+        vlanId: str
 
 
     class azure.mgmt.azurestackhci.types.HciOsProfile(TypedDict, total=False):
         key "assemblyVersion": str
         key "bootType": str
-        assembly_version: str
-        boot_type: str
+        assemblyVersion: str
+        bootType: str
 
 
     class azure.mgmt.azurestackhci.types.HciRemoteSupportJobProperties(TypedDict, total=False):
@@ -6930,17 +11860,39 @@ namespace azure.mgmt.azurestackhci.types
         key "startTimeUtc": str
         key "status": Union[str, JobStatus]
         key "type": Required[Union[str, RemoteSupportType]]
-        access_level: Union[str, RemoteSupportAccessLevel]
-        deployment_mode: Union[str, DeploymentMode]
-        end_time_utc: str
-        expiration_timestamp: str
-        job_id: str
-        job_type: Literal[HciEdgeDeviceJobType.REMOTE_SUPPORT]
-        provisioning_state: Union[str, ProvisioningState]
-        reported_properties: RemoteSupportJobReportedProperties
-        start_time_utc: str
+        accessLevel: Union[str, RemoteSupportAccessLevel]
+        deploymentMode: Union[str, DeploymentMode]
+        endTimeUtc: str
+        expirationTimestamp: str
+        jobId: str
+        jobType: Literal[HciEdgeDeviceJobType.REMOTE_SUPPORT]
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: RemoteSupportJobReportedProperties
+        startTimeUtc: str
         status: Union[str, JobStatus]
         type: Union[str, RemoteSupportType]
+
+
+    class azure.mgmt.azurestackhci.types.HciRepairServerJobProperties(TypedDict, total=False):
+        key "deploymentMode": Union[str, DeploymentMode]
+        key "endTimeUtc": str
+        key "jobId": str
+        key "jobType": Required[Literal[HciJobType.REPAIR_SERVER]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "repairServerJobServerDetails": Required[list[RepairServerJobServerDetails]]
+        key "reportedProperties": ForwardRef('JobReportedProperties', module='types')
+        key "startTimeUtc": str
+        key "status": Union[str, JobStatus]
+        deploymentMode: Union[str, DeploymentMode]
+        endTimeUtc: str
+        jobId: str
+        jobType: Literal[HciJobType.REPAIR_SERVER]
+        provisioningState: Union[str, ProvisioningState]
+        repairServerJobServerDetails: list[RepairServerJobServerDetails]
+        reportedProperties: JobReportedProperties
+        secrets: list[EceDeploymentSecrets]
+        startTimeUtc: str
+        status: Union[str, JobStatus]
 
 
     class azure.mgmt.azurestackhci.types.HciReportedProperties(ReportedProperties):
@@ -6952,20 +11904,20 @@ namespace azure.mgmt.azurestackhci.types
         key "osProfile": ForwardRef('HciOsProfile', module='types')
         key "sbeDeploymentPackageInfo": ForwardRef('SbeDeploymentPackageInfo', module='types')
         key "storageProfile": ForwardRef('HciStorageProfile', module='types')
-        device_state: Union[str, DeviceState]
-        extension_profile: ExtensionProfile
-        hardware_profile: HciHardwareProfile
-        last_sync_timestamp: str
-        network_profile: HciNetworkProfile
-        os_profile: HciOsProfile
-        sbe_deployment_package_info: SbeDeploymentPackageInfo
-        storage_profile: HciStorageProfile
+        deviceState: Union[str, DeviceState]
+        extensionProfile: ExtensionProfile
+        hardwareProfile: HciHardwareProfile
+        lastSyncTimestamp: str
+        networkProfile: HciNetworkProfile
+        osProfile: HciOsProfile
+        sbeDeploymentPackageInfo: SbeDeploymentPackageInfo
+        storageProfile: HciStorageProfile
 
 
     class azure.mgmt.azurestackhci.types.HciStorageProfile(TypedDict, total=False):
         key "poolableDisksCount": int
         disks: list[EdgeDeviceDisks]
-        poolable_disks_count: int
+        poolableDisksCount: int
 
 
     class azure.mgmt.azurestackhci.types.HciValidationFailureDetail(TypedDict, total=False):
@@ -6978,45 +11930,141 @@ namespace azure.mgmt.azurestackhci.types
         key "gateway": str
         key "subnetMask": str
         key "useDhcp": bool
+        dnsServerConfig: Union[str, DnsServerConfig]
         dnsServers: list[str]
         dnsZones: list[DnsZones]
-        dns_server_config: Union[str, DnsServerConfig]
-        dns_servers: list[str]
-        dns_zones: list[DnsZones]
         gateway: str
         ipPools: list[IpPools]
-        ip_pools: list[IpPools]
-        subnet_mask: str
-        use_dhcp: bool
+        subnetMask: str
+        useDhcp: bool
+
+
+    class azure.mgmt.azurestackhci.types.IpAddressRange(TypedDict, total=False):
+        key "endIp": Required[str]
+        key "startIp": Required[str]
+        endIp: str
+        startIp: str
 
 
     class azure.mgmt.azurestackhci.types.IpPools(TypedDict, total=False):
         key "endingAddress": str
         key "startingAddress": str
-        ending_address: str
-        starting_address: str
+        endingAddress: str
+        startingAddress: str
+
+
+    class azure.mgmt.azurestackhci.types.IscsiAdapterIPConfig(TypedDict, total=False):
+        key "addressPrefix": str
+        key "networkAdapterName": str
+        key "vlanId": int
+        addressPrefix: str
+        networkAdapterName: str
+        targetPortalAddresses: list[IscsiTargetPortalAddress]
+        vlanId: int
+
+
+    class azure.mgmt.azurestackhci.types.IscsiAdapterProperties(TypedDict, total=False):
+        key "bandwidthPercentageIscsi": int
+        key "jumboPacket": int
+        key "priorityValue8021ActionIscsi": int
+        bandwidthPercentageIscsi: int
+        jumboPacket: int
+        priorityValue8021ActionIscsi: int
+
+
+    class azure.mgmt.azurestackhci.types.IscsiChapSettings(TypedDict, total=False):
+        key "chapType": Union[str, IscsiChapType]
+        chapType: Union[str, IscsiChapType]
+
+
+    class azure.mgmt.azurestackhci.types.IscsiConfig(TypedDict, total=False):
+        key "chapSettings": ForwardRef('IscsiChapSettings', module='types')
+        key "iScsiNetworkConfig": ForwardRef('IscsiNetworkConfig', module='types')
+        key "initiatorIqn": str
+        chapSettings: IscsiChapSettings
+        iScsiNetworkConfig: IscsiNetworkConfig
+        initiatorIqn: str
+
+
+    class azure.mgmt.azurestackhci.types.IscsiNetworkConfig(TypedDict, total=False):
+        key "adapterProperties": ForwardRef('IscsiAdapterProperties', module='types')
+        adapterIPConfig: list[IscsiAdapterIPConfig]
+        adapterProperties: IscsiAdapterProperties
+
+
+    class azure.mgmt.azurestackhci.types.IscsiTargetPortalAddress(TypedDict, total=False):
+        key "ipAddress": str
+        key "nextHop": str
+        ipAddress: str
+        nextHop: str
 
 
     class azure.mgmt.azurestackhci.types.IsolatedVmAttestationConfiguration(TypedDict, total=False):
         key "attestationResourceId": str
         key "attestationServiceEndpoint": str
         key "relyingPartyServiceEndpoint": str
-        attestation_resource_id: str
-        attestation_service_endpoint: str
-        relying_party_service_endpoint: str
+        attestationResourceId: str
+        attestationServiceEndpoint: str
+        relyingPartyServiceEndpoint: str
+
+
+    class azure.mgmt.azurestackhci.types.JobReportedProperties(TypedDict, total=False):
+        key "deploymentStatus": ForwardRef('EceActionStatus', module='types')
+        key "percentComplete": int
+        key "validationStatus": ForwardRef('EceActionStatus', module='types')
+        deploymentStatus: EceActionStatus
+        percentComplete: int
+        validationStatus: EceActionStatus
+
+
+    class azure.mgmt.azurestackhci.types.LifecycleDetails(TypedDict, total=False):
+        key "lifecycleStages": Required[list[LifecycleStage]]
+        key "lifecycleStatus": ForwardRef('LifecycleStatus', module='types')
+        lifecycleStages: list[LifecycleStage]
+        lifecycleStatus: LifecycleStatus
+
+
+    class azure.mgmt.azurestackhci.types.LifecycleStage(TypedDict, total=False):
+        key "description": Required[str]
+        key "endTimeUtc": str
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "lastUpdatedUtc": str
+        key "name": Required[str]
+        key "startTimeUtc": str
+        key "status": Required[Union[str, LifecycleOperationStatus]]
+        description: str
+        endTimeUtc: str
+        error: ErrorDetail
+        lastUpdatedUtc: str
+        name: str
+        startTimeUtc: str
+        status: Union[str, LifecycleOperationStatus]
+        subStages: list[LifecycleStage]
+
+
+    class azure.mgmt.azurestackhci.types.LifecycleStatus(TypedDict, total=False):
+        key "lastUpdatedUtc": Required[str]
+        key "message": str
+        key "stage": str
+        key "status": Required[Union[str, EdgeMachineLifecycleStatus]]
+        lastUpdatedUtc: str
+        message: str
+        recommendedSteps: list[str]
+        stage: str
+        status: Union[str, EdgeMachineLifecycleStatus]
 
 
     class azure.mgmt.azurestackhci.types.LocalAvailabilityZones(TypedDict, total=False):
         key "localAvailabilityZoneName": str
-        local_availability_zone_name: str
+        localAvailabilityZoneName: str
         nodes: list[str]
 
 
     class azure.mgmt.azurestackhci.types.LogCollectionError(TypedDict, total=False):
         key "errorCode": str
         key "errorMessage": str
-        error_code: str
-        error_message: str
+        errorCode: str
+        errorMessage: str
 
 
     class azure.mgmt.azurestackhci.types.LogCollectionJobSession(TypedDict, total=False):
@@ -7026,34 +12074,32 @@ namespace azure.mgmt.azurestackhci.types
         key "startTime": str
         key "status": Union[str, DeviceLogCollectionStatus]
         key "timeCollected": str
-        correlation_id: str
-        end_time: str
-        log_size: int
-        start_time: str
+        correlationId: str
+        endTime: str
+        logSize: int
+        startTime: str
         status: Union[str, DeviceLogCollectionStatus]
-        time_collected: str
+        timeCollected: str
 
 
     class azure.mgmt.azurestackhci.types.LogCollectionProperties(TypedDict, total=False):
         key "fromDate": str
         key "lastLogGenerated": str
         key "toDate": str
-        from_date: str
-        last_log_generated: str
+        fromDate: str
+        lastLogGenerated: str
         logCollectionSessionDetails: list[LogCollectionSession]
-        log_collection_session_details: list[LogCollectionSession]
-        to_date: str
+        toDate: str
 
 
     class azure.mgmt.azurestackhci.types.LogCollectionReportedProperties(TypedDict, total=False):
         key "deploymentStatus": ForwardRef('EceActionStatus', module='types')
         key "percentComplete": int
         key "validationStatus": ForwardRef('EceActionStatus', module='types')
-        deployment_status: EceActionStatus
+        deploymentStatus: EceActionStatus
         logCollectionSessionDetails: list[LogCollectionJobSession]
-        log_collection_session_details: list[LogCollectionJobSession]
-        percent_complete: int
-        validation_status: EceActionStatus
+        percentComplete: int
+        validationStatus: EceActionStatus
 
 
     class azure.mgmt.azurestackhci.types.LogCollectionRequest(TypedDict, total=False):
@@ -7064,8 +12110,8 @@ namespace azure.mgmt.azurestackhci.types
     class azure.mgmt.azurestackhci.types.LogCollectionRequestProperties(TypedDict, total=False):
         key "fromDate": Required[str]
         key "toDate": Required[str]
-        from_date: str
-        to_date: str
+        fromDate: str
+        toDate: str
 
 
     class azure.mgmt.azurestackhci.types.LogCollectionSession(TypedDict, total=False):
@@ -7078,44 +12124,131 @@ namespace azure.mgmt.azurestackhci.types
         key "logSize": int
         key "logStartTime": str
         key "timeCollected": str
-        correlation_id: str
-        end_time_collected: str
-        log_collection_error: LogCollectionError
-        log_collection_job_type: Union[str, LogCollectionJobType]
-        log_collection_status: Union[str, LogCollectionStatus]
-        log_end_time: str
-        log_size: int
-        log_start_time: str
-        time_collected: str
+        correlationId: str
+        endTimeCollected: str
+        logCollectionError: LogCollectionError
+        logCollectionJobType: Union[str, LogCollectionJobType]
+        logCollectionStatus: Union[str, LogCollectionStatus]
+        logEndTime: str
+        logSize: int
+        logStartTime: str
+        timeCollected: str
 
 
     class azure.mgmt.azurestackhci.types.ManagedServiceIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
+
+
+    class azure.mgmt.azurestackhci.types.Metadata(TypedDict, total=False):
+        key "key": Required[str]
+        key "value": Required[str]
+        key: str
+        value: str
+
+
+    class azure.mgmt.azurestackhci.types.NetworkAdapter(TypedDict, total=False):
+        key "adapterName": str
+        key "gateway": str
+        key "ipAddress": str
+        key "ipAddressRange": ForwardRef('IpAddressRange', module='types')
+        key "ipAssignmentType": Required[Union[str, IpAssignmentType]]
+        key "macAddress": str
+        key "subnetMask": str
+        key "vlanId": str
+        adapterName: str
+        dnsAddressArray: list[str]
+        gateway: str
+        ipAddress: str
+        ipAddressRange: IpAddressRange
+        ipAssignmentType: Union[str, IpAssignmentType]
+        macAddress: str
+        subnetMask: str
+        vlanId: str
+
+
+    class azure.mgmt.azurestackhci.types.NetworkAdapterActionStatus(TypedDict, total=False):
+        key "status": str
+        status: str
+        steps: list[NetworkAdapterDeploymentStep]
+
+
+    class azure.mgmt.azurestackhci.types.NetworkAdapterConfiguration(TypedDict, total=False):
+        key "adapterName": str
+        key "defaultGateway": str
+        key "interfaceState": Union[str, InterfaceState]
+        key "ip4Address": str
+        key "ipInterfaceType": Union[str, IpInterfaceType]
+        key "subnetMask": str
+        key "vlanId": int
+        key "wifiConfiguration": ForwardRef('WifiConfigurationDesiredProperties', module='types')
+        adapterName: str
+        defaultGateway: str
+        dnsServers: list[str]
+        interfaceState: Union[str, InterfaceState]
+        ip4Address: str
+        ipInterfaceType: Union[str, IpInterfaceType]
+        subnetMask: str
+        vlanId: int
+        wifiConfiguration: WifiConfigurationDesiredProperties
+
+
+    class azure.mgmt.azurestackhci.types.NetworkAdapterDeploymentStep(TypedDict, total=False):
+        key "description": str
+        key "endTimeUtc": str
+        key "fullStepIndex": str
+        key "name": str
+        key "startTimeUtc": str
+        key "status": str
+        description: str
+        endTimeUtc: str
+        exception: list[str]
+        fullStepIndex: str
+        name: str
+        startTimeUtc: str
+        status: str
+        steps: list[NetworkAdapterDeploymentStep]
+
+
+    class azure.mgmt.azurestackhci.types.NetworkAdapterJobReportedProperties(TypedDict, total=False):
+        key "deploymentStatus": ForwardRef('NetworkAdapterActionStatus', module='types')
+        key "percentComplete": int
+        key "validationStatus": ForwardRef('NetworkAdapterActionStatus', module='types')
+        deploymentStatus: NetworkAdapterActionStatus
+        percentComplete: int
+        validationStatus: NetworkAdapterActionStatus
+
+
+    class azure.mgmt.azurestackhci.types.NetworkAdapterJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APPLY_CONFIGURATION = "ApplyConfiguration"
+        FORCE_PUSH = "ForcePush"
+        SYNC_CONFIGURATION = "SyncConfiguration"
+
+
+    class azure.mgmt.azurestackhci.types.NetworkConfiguration(TypedDict, total=False):
+        networkAdapters: list[NetworkAdapter]
 
 
     class azure.mgmt.azurestackhci.types.NetworkController(TypedDict, total=False):
         key "macAddressPoolStart": str
         key "macAddressPoolStop": str
         key "networkVirtualizationEnabled": bool
-        mac_address_pool_start: str
-        mac_address_pool_stop: str
-        network_virtualization_enabled: bool
+        macAddressPoolStart: str
+        macAddressPoolStop: str
+        networkVirtualizationEnabled: bool
 
 
     class azure.mgmt.azurestackhci.types.NextBillingModel(TypedDict, total=False):
         key "billingModel": str
         key "trialDaysRemaining": float
-        billing_model: str
+        billingModel: str
         capabilitiesEnabled: list[str]
-        capabilities_enabled: list[str]
-        trial_days_remaining: float
+        trialDaysRemaining: float
 
 
     class azure.mgmt.azurestackhci.types.NicDetail(TypedDict, total=False):
@@ -7127,38 +12260,135 @@ namespace azure.mgmt.azurestackhci.types
         key "interfaceDescription": str
         key "ip4Address": str
         key "subnetMask": str
-        adapter_name: str
-        component_id: str
-        default_gateway: str
-        default_isolation_id: str
+        adapterName: str
+        componentId: str
+        defaultGateway: str
+        defaultIsolationId: str
         dnsServers: list[str]
-        dns_servers: list[str]
-        driver_version: str
-        interface_description: str
-        ip4_address: str
-        subnet_mask: str
+        driverVersion: str
+        interfaceDescription: str
+        ip4Address: str
+        subnetMask: str
 
 
     class azure.mgmt.azurestackhci.types.Observability(TypedDict, total=False):
         key "episodicDataUpload": bool
         key "euLocation": bool
         key "streamingDataClient": bool
-        episodic_data_upload: bool
-        eu_location: bool
-        streaming_data_client: bool
+        episodicDataUpload: bool
+        euLocation: bool
+        streamingDataClient: bool
+
+
+    class azure.mgmt.azurestackhci.types.OnboardingConfiguration(TypedDict, total=False):
+        key "arcVirtualMachineId": str
+        key "location": str
+        key "resourceId": str
+        key "tenantId": str
+        key "type": Union[str, OnboardingResourceType]
+        arcVirtualMachineId: str
+        location: str
+        resourceId: str
+        tenantId: str
+        type: Union[str, OnboardingResourceType]
+
+
+    class azure.mgmt.azurestackhci.types.OperationDetail(TypedDict, total=False):
+        key "description": str
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "id": str
+        key "name": str
+        key "resourceId": str
+        key "status": str
+        key "type": str
+        description: str
+        error: ErrorDetail
+        id: str
+        name: str
+        resourceId: str
+        status: str
+        type: str
 
 
     class azure.mgmt.azurestackhci.types.OptionalServices(TypedDict, total=False):
         key "customLocation": str
-        custom_location: str
+        customLocation: str
+
+
+    class azure.mgmt.azurestackhci.types.OsProfile(TypedDict, total=False):
+        key "assemblyVersion": str
+        key "baseImageVersion": str
+        key "bootType": str
+        key "buildNumber": str
+        key "imageVersion": str
+        key "osSku": str
+        key "osType": str
+        key "osVersion": str
+        assemblyVersion: str
+        baseImageVersion: str
+        bootType: str
+        buildNumber: str
+        imageVersion: str
+        osSku: str
+        osType: str
+        osVersion: str
+
+
+    class azure.mgmt.azurestackhci.types.OsProvisionProfile(TypedDict, total=False):
+        key "gpgPubKey": str
+        key "imageHash": str
+        key "operationType": Union[str, OSOperationType]
+        key "osImageLocation": str
+        key "osName": str
+        key "osType": str
+        key "osVersion": str
+        key "vsrVersion": str
+        gpgPubKey: str
+        imageHash: str
+        operationType: Union[str, OSOperationType]
+        osImageLocation: str
+        osName: str
+        osType: str
+        osVersion: str
+        vsrVersion: str
+
+
+    class azure.mgmt.azurestackhci.types.OwnershipVoucherDetails(TypedDict, total=False):
+        key "ownerKeyType": Required[Union[str, OwnerKeyType]]
+        key "ownershipVoucher": Required[str]
+        key "validationDetails": ForwardRef('OwnershipVoucherValidationDetails', module='types')
+        ownerKeyType: Union[str, OwnerKeyType]
+        ownershipVoucher: str
+        validationDetails: OwnershipVoucherValidationDetails
+
+
+    class azure.mgmt.azurestackhci.types.OwnershipVoucherValidationDetails(TypedDict, total=False):
+        key "architecture": Union[str, Architecture]
+        key "azureMachineId": str
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "id": str
+        key "manufacturer": str
+        key "modelName": str
+        key "serialNumber": str
+        key "validationStatus": Union[str, OwnershipVoucherValidationStatus]
+        key "version": str
+        architecture: Union[str, Architecture]
+        azureMachineId: str
+        error: ErrorDetail
+        id: str
+        manufacturer: str
+        modelName: str
+        serialNumber: str
+        validationStatus: Union[str, OwnershipVoucherValidationStatus]
+        version: str
 
 
     class azure.mgmt.azurestackhci.types.PackageVersionInfo(TypedDict, total=False):
         key "lastUpdated": str
         key "packageType": str
         key "version": str
-        last_updated: str
-        package_type: str
+        lastUpdated: str
+        packageType: str
         version: str
 
 
@@ -7169,10 +12399,10 @@ namespace azure.mgmt.azurestackhci.types
         key "state": Union[str, NodeExtensionState]
         key "typeHandlerVersion": str
         extension: str
-        instance_view: ExtensionInstanceView
+        instanceView: ExtensionInstanceView
         name: str
         state: Union[str, NodeExtensionState]
-        type_handler_version: str
+        typeHandlerVersion: str
 
 
     class azure.mgmt.azurestackhci.types.PerNodeRemoteSupportSession(TypedDict, total=False):
@@ -7182,12 +12412,12 @@ namespace azure.mgmt.azurestackhci.types
         key "sessionEndTime": str
         key "sessionStartTime": str
         key "transcriptLocation": str
-        access_level: Union[str, AccessLevel]
+        accessLevel: Union[str, AccessLevel]
         duration: int
-        node_name: str
-        session_end_time: str
-        session_start_time: str
-        transcript_location: str
+        nodeName: str
+        sessionEndTime: str
+        sessionStartTime: str
+        transcriptLocation: str
 
 
     class azure.mgmt.azurestackhci.types.PerNodeState(TypedDict, total=False):
@@ -7195,8 +12425,8 @@ namespace azure.mgmt.azurestackhci.types
         key "arcNodeServicePrincipalObjectId": str
         key "name": str
         key "state": Union[str, NodeArcState]
-        arc_instance: str
-        arc_node_service_principal_object_id: str
+        arcInstance: str
+        arcNodeServicePrincipalObjectId: str
         name: str
         state: Union[str, NodeArcState]
 
@@ -7204,7 +12434,7 @@ namespace azure.mgmt.azurestackhci.types
     class azure.mgmt.azurestackhci.types.PhysicalNodes(TypedDict, total=False):
         key "ipv4Address": str
         key "name": str
-        ipv4_address: str
+        ipv4Address: str
         name: str
 
 
@@ -7224,19 +12454,19 @@ namespace azure.mgmt.azurestackhci.types
         key "targetResourceType": str
         key "timestamp": str
         key "title": str
-        additional_data: str
+        additionalData: str
         description: str
-        display_name: str
-        health_check_source: str
-        health_check_tags: Any
+        displayName: str
+        healthCheckSource: str
+        healthCheckTags: Any
         name: str
         remediation: str
         severity: Union[str, Severity]
         status: Union[str, Status]
         tags: PrecheckResultTags
-        target_resource_id: str
-        target_resource_name: str
-        target_resource_type: str
+        targetResourceID: str
+        targetResourceName: str
+        targetResourceType: str
         timestamp: str
         title: str
 
@@ -7248,6 +12478,62 @@ namespace azure.mgmt.azurestackhci.types
         value: str
 
 
+    class azure.mgmt.azurestackhci.types.PrivilegedJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DELETE_VOLUME = "DeleteVolume"
+
+
+    class azure.mgmt.azurestackhci.types.ProvisionOsJobProperties(TypedDict, total=False):
+        key "deploymentMode": Union[str, DeploymentMode]
+        key "endTimeUtc": str
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "jobId": str
+        key "jobType": Required[Literal[EdgeMachineJobType.PROVISION_OS]]
+        key "provisioningRequest": Required[ProvisioningRequest]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('ProvisionOsReportedProperties', module='types')
+        key "startTimeUtc": str
+        key "status": Union[str, JobStatus]
+        deploymentMode: Union[str, DeploymentMode]
+        endTimeUtc: str
+        error: ErrorDetail
+        jobId: str
+        jobType: Literal[EdgeMachineJobType.PROVISION_OS]
+        provisioningRequest: ProvisioningRequest
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: ProvisionOsReportedProperties
+        startTimeUtc: str
+        status: Union[str, JobStatus]
+
+
+    class azure.mgmt.azurestackhci.types.ProvisionOsReportedProperties(TypedDict, total=False):
+        key "deploymentStatus": ForwardRef('EceActionStatus', module='types')
+        key "percentComplete": int
+        key "validationStatus": ForwardRef('EceActionStatus', module='types')
+        deploymentStatus: EceActionStatus
+        percentComplete: int
+        validationStatus: EceActionStatus
+
+
+    class azure.mgmt.azurestackhci.types.ProvisioningDetails(TypedDict, total=False):
+        key "osProfile": Required[OsProvisionProfile]
+        osProfile: OsProvisionProfile
+        userDetails: list[UserDetails]
+
+
+    class azure.mgmt.azurestackhci.types.ProvisioningRequest(TypedDict, total=False):
+        key "customConfiguration": str
+        key "deviceConfiguration": ForwardRef('TargetDeviceConfiguration', module='types')
+        key "onboardingConfiguration": ForwardRef('OnboardingConfiguration', module='types')
+        key "osProfile": Required[OsProvisionProfile]
+        key "target": Required[Union[str, ProvisioningOsType]]
+        customConfiguration: str
+        deviceConfiguration: TargetDeviceConfiguration
+        onboardingConfiguration: OnboardingConfiguration
+        osProfile: OsProvisionProfile
+        target: Union[str, ProvisioningOsType]
+        userDetails: list[UserDetails]
+
+
     class azure.mgmt.azurestackhci.types.ProxyResource(Resource):
         key "id": str
         key "name": str
@@ -7255,7 +12541,7 @@ namespace azure.mgmt.azurestackhci.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7263,9 +12549,9 @@ namespace azure.mgmt.azurestackhci.types
         key "bandwidthPercentage_SMB": str
         key "priorityValue8021Action_Cluster": str
         key "priorityValue8021Action_SMB": str
-        bandwidth_percentage_smb: str
-        priority_value8021_action_cluster: str
-        priority_value8021_action_smb: str
+        bandwidthPercentage_SMB: str
+        priorityValue8021Action_Cluster: str
+        priorityValue8021Action_SMB: str
 
 
     class azure.mgmt.azurestackhci.types.RawCertificateData(TypedDict, total=False):
@@ -7279,7 +12565,6 @@ namespace azure.mgmt.azurestackhci.types
 
     class azure.mgmt.azurestackhci.types.ReconcileArcSettingsRequestProperties(TypedDict, total=False):
         clusterNodes: list[str]
-        cluster_nodes: list[str]
 
 
     class azure.mgmt.azurestackhci.types.RemoteSupportJobNodeSettings(TypedDict, total=False):
@@ -7288,11 +12573,11 @@ namespace azure.mgmt.azurestackhci.types
         key "createdAt": str
         key "state": str
         key "updatedAt": str
-        connection_error_message: str
-        connection_status: str
-        created_at: str
+        connectionErrorMessage: str
+        connectionStatus: str
+        createdAt: str
         state: str
-        updated_at: str
+        updatedAt: str
 
 
     class azure.mgmt.azurestackhci.types.RemoteSupportJobReportedProperties(TypedDict, total=False):
@@ -7300,12 +12585,11 @@ namespace azure.mgmt.azurestackhci.types
         key "nodeSettings": ForwardRef('RemoteSupportJobNodeSettings', module='types')
         key "percentComplete": int
         key "validationStatus": ForwardRef('EceActionStatus', module='types')
-        deployment_status: EceActionStatus
-        node_settings: RemoteSupportJobNodeSettings
-        percent_complete: int
+        deploymentStatus: EceActionStatus
+        nodeSettings: RemoteSupportJobNodeSettings
+        percentComplete: int
         sessionDetails: list[RemoteSupportSession]
-        session_details: list[RemoteSupportSession]
-        validation_status: EceActionStatus
+        validationStatus: EceActionStatus
 
 
     class azure.mgmt.azurestackhci.types.RemoteSupportNodeSettings(TypedDict, total=False):
@@ -7316,13 +12600,13 @@ namespace azure.mgmt.azurestackhci.types
         key "state": str
         key "transcriptLocation": str
         key "updatedAt": str
-        arc_resource_id: str
-        connection_error_message: str
-        connection_status: str
-        created_at: str
+        arcResourceId: str
+        connectionErrorMessage: str
+        connectionStatus: str
+        createdAt: str
         state: str
-        transcript_location: str
-        updated_at: str
+        transcriptLocation: str
+        updatedAt: str
 
 
     class azure.mgmt.azurestackhci.types.RemoteSupportProperties(TypedDict, total=False):
@@ -7330,14 +12614,12 @@ namespace azure.mgmt.azurestackhci.types
         key "expirationTimeStamp": str
         key "remoteSupportProvisioningState": Union[str, RemoteSupportProvisioningState]
         key "remoteSupportType": Union[str, RemoteSupportType]
-        access_level: Union[str, AccessLevel]
-        expiration_time_stamp: str
+        accessLevel: Union[str, AccessLevel]
+        expirationTimeStamp: str
         remoteSupportNodeSettings: list[RemoteSupportNodeSettings]
+        remoteSupportProvisioningState: Union[str, RemoteSupportProvisioningState]
         remoteSupportSessionDetails: list[PerNodeRemoteSupportSession]
-        remote_support_node_settings: list[RemoteSupportNodeSettings]
-        remote_support_provisioning_state: Union[str, RemoteSupportProvisioningState]
-        remote_support_session_details: list[PerNodeRemoteSupportSession]
-        remote_support_type: Union[str, RemoteSupportType]
+        remoteSupportType: Union[str, RemoteSupportType]
 
 
     class azure.mgmt.azurestackhci.types.RemoteSupportRequest(TypedDict, total=False):
@@ -7349,9 +12631,9 @@ namespace azure.mgmt.azurestackhci.types
         key "accessLevel": Union[str, AccessLevel]
         key "expirationTimeStamp": str
         key "remoteSupportType": Union[str, RemoteSupportType]
-        access_level: Union[str, AccessLevel]
-        expiration_time_stamp: str
-        remote_support_type: Union[str, RemoteSupportType]
+        accessLevel: Union[str, AccessLevel]
+        expirationTimeStamp: str
+        remoteSupportType: Union[str, RemoteSupportType]
 
 
     class azure.mgmt.azurestackhci.types.RemoteSupportSession(TypedDict, total=False):
@@ -7360,20 +12642,27 @@ namespace azure.mgmt.azurestackhci.types
         key "sessionId": str
         key "sessionStartTime": str
         key "transcriptLocation": str
-        access_level: Union[str, RemoteSupportAccessLevel]
-        session_end_time: str
-        session_id: str
-        session_start_time: str
-        transcript_location: str
+        accessLevel: Union[str, RemoteSupportAccessLevel]
+        sessionEndTime: str
+        sessionId: str
+        sessionStartTime: str
+        transcriptLocation: str
+
+
+    class azure.mgmt.azurestackhci.types.RepairServerJobServerDetails(TypedDict, total=False):
+        key "serverName": Required[str]
+        key "serverResourceId": Required[str]
+        serverName: str
+        serverResourceId: str
 
 
     class azure.mgmt.azurestackhci.types.ReportedProperties(TypedDict, total=False):
         key "deviceState": Union[str, DeviceState]
         key "extensionProfile": ForwardRef('ExtensionProfile', module='types')
         key "lastSyncTimestamp": str
-        device_state: Union[str, DeviceState]
-        extension_profile: ExtensionProfile
-        last_sync_timestamp: str
+        deviceState: Union[str, DeviceState]
+        extensionProfile: ExtensionProfile
+        lastSyncTimestamp: str
 
 
     class azure.mgmt.azurestackhci.types.Resource(TypedDict, total=False):
@@ -7383,7 +12672,7 @@ namespace azure.mgmt.azurestackhci.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7392,10 +12681,10 @@ namespace azure.mgmt.azurestackhci.types
         key "name": str
         key "networkAdapterName": str
         key "vlanId": int
-        address_prefix: str
+        addressPrefix: str
         name: str
-        network_adapter_name: str
-        vlan_id: int
+        networkAdapterName: str
+        vlanId: int
 
 
     class azure.mgmt.azurestackhci.types.SanAdapterProperties(TypedDict, total=False):
@@ -7403,31 +12692,30 @@ namespace azure.mgmt.azurestackhci.types
         key "jumboPacket": int
         key "priorityValue8021ActionCluster": int
         key "priorityValue8021ActionSmb": int
-        bandwidth_percentage_smb: int
-        jumbo_packet: int
-        priority_value8021_action_cluster: int
-        priority_value8021_action_smb: int
+        bandwidthPercentageSmb: int
+        jumboPacket: int
+        priorityValue8021ActionCluster: int
+        priorityValue8021ActionSmb: int
 
 
     class azure.mgmt.azurestackhci.types.SanClusterNetworkConfig(TypedDict, total=False):
         key "adapterProperties": ForwardRef('SanAdapterProperties', module='types')
         adapterIPConfig: list[SanAdapterIPConfig]
-        adapter_ip_config: list[SanAdapterIPConfig]
-        adapter_properties: SanAdapterProperties
+        adapterProperties: SanAdapterProperties
 
 
     class azure.mgmt.azurestackhci.types.SanNetworks(TypedDict, total=False):
         key "clusterNetworkConfig": ForwardRef('SanClusterNetworkConfig', module='types')
-        cluster_network_config: SanClusterNetworkConfig
+        clusterNetworkConfig: SanClusterNetworkConfig
 
 
     class azure.mgmt.azurestackhci.types.SbeCredentials(TypedDict, total=False):
         key "eceSecretName": str
         key "secretLocation": str
         key "secretName": str
-        ece_secret_name: str
-        secret_location: str
-        secret_name: str
+        eceSecretName: str
+        secretLocation: str
+        secretName: str
 
 
     class azure.mgmt.azurestackhci.types.SbeDeploymentInfo(TypedDict, total=False):
@@ -7438,8 +12726,8 @@ namespace azure.mgmt.azurestackhci.types
         key "version": str
         family: str
         publisher: str
-        sbe_manifest_creation_date: str
-        sbe_manifest_source: str
+        sbeManifestCreationDate: str
+        sbeManifestSource: str
         version: str
 
 
@@ -7449,16 +12737,14 @@ namespace azure.mgmt.azurestackhci.types
         key "sbeManifest": str
         code: str
         message: str
-        sbe_manifest: str
+        sbeManifest: str
 
 
     class azure.mgmt.azurestackhci.types.SbePartnerInfo(TypedDict, total=False):
         key "sbeDeploymentInfo": ForwardRef('SbeDeploymentInfo', module='types')
         credentialList: list[SbeCredentials]
-        credential_list: list[SbeCredentials]
         partnerProperties: list[SbePartnerProperties]
-        partner_properties: list[SbePartnerProperties]
-        sbe_deployment_info: SbeDeploymentInfo
+        sbeDeploymentInfo: SbeDeploymentInfo
 
 
     class azure.mgmt.azurestackhci.types.SbePartnerProperties(TypedDict, total=False):
@@ -7471,20 +12757,29 @@ namespace azure.mgmt.azurestackhci.types
     class azure.mgmt.azurestackhci.types.ScaleUnits(TypedDict, total=False):
         key "deploymentData": Required[DeploymentData]
         key "sbePartnerInfo": ForwardRef('SbePartnerInfo', module='types')
-        deployment_data: DeploymentData
-        sbe_partner_info: SbePartnerInfo
+        deploymentData: DeploymentData
+        sbePartnerInfo: SbePartnerInfo
 
 
     class azure.mgmt.azurestackhci.types.SdnIntegration(TypedDict, total=False):
         key "networkController": ForwardRef('NetworkController', module='types')
-        network_controller: NetworkController
+        networkController: NetworkController
+
+
+    class azure.mgmt.azurestackhci.types.SdnProperties(TypedDict, total=False):
+        key "sdnApiAddress": str
+        key "sdnDomainName": str
+        key "sdnStatus": Union[str, SdnStatus]
+        sdnApiAddress: str
+        sdnDomainName: str
+        sdnStatus: Union[str, SdnStatus]
 
 
     class azure.mgmt.azurestackhci.types.SecretsLocationDetails(TypedDict, total=False):
         key "secretsLocation": Required[str]
         key "secretsType": Required[Union[str, SecretsType]]
-        secrets_location: str
-        secrets_type: Union[str, SecretsType]
+        secretsLocation: str
+        secretsType: Union[str, SecretsType]
 
 
     class azure.mgmt.azurestackhci.types.SecretsLocationsChangeRequest(TypedDict, total=False):
@@ -7497,11 +12792,11 @@ namespace azure.mgmt.azurestackhci.types
         key "lastUpdated": str
         key "securedCoreCompliance": Union[str, ComplianceStatus]
         key "wdacCompliance": Union[str, ComplianceStatus]
-        data_at_rest_encrypted: Union[str, ComplianceStatus]
-        data_in_transit_protected: Union[str, ComplianceStatus]
-        last_updated: str
-        secured_core_compliance: Union[str, ComplianceStatus]
-        wdac_compliance: Union[str, ComplianceStatus]
+        dataAtRestEncrypted: Union[str, ComplianceStatus]
+        dataInTransitProtected: Union[str, ComplianceStatus]
+        lastUpdated: str
+        securedCoreCompliance: Union[str, ComplianceStatus]
+        wdacCompliance: Union[str, ComplianceStatus]
 
 
     class azure.mgmt.azurestackhci.types.SecurityProperties(TypedDict, total=False):
@@ -7510,11 +12805,11 @@ namespace azure.mgmt.azurestackhci.types
         key "securityComplianceStatus": ForwardRef('SecurityComplianceStatus', module='types')
         key "smbEncryptionForIntraClusterTrafficComplianceAssignment": Union[str, ComplianceAssignmentType]
         key "wdacComplianceAssignment": Union[str, ComplianceAssignmentType]
-        provisioning_state: Union[str, ProvisioningState]
-        secured_core_compliance_assignment: Union[str, ComplianceAssignmentType]
-        security_compliance_status: SecurityComplianceStatus
-        smb_encryption_for_intra_cluster_traffic_compliance_assignment: Union[str, ComplianceAssignmentType]
-        wdac_compliance_assignment: Union[str, ComplianceAssignmentType]
+        provisioningState: Union[str, ProvisioningState]
+        securedCoreComplianceAssignment: Union[str, ComplianceAssignmentType]
+        securityComplianceStatus: SecurityComplianceStatus
+        smbEncryptionForIntraClusterTrafficComplianceAssignment: Union[str, ComplianceAssignmentType]
+        wdacComplianceAssignment: Union[str, ComplianceAssignmentType]
 
 
     class azure.mgmt.azurestackhci.types.SecuritySetting(ProxyResource):
@@ -7526,7 +12821,7 @@ namespace azure.mgmt.azurestackhci.types
         id: str
         name: str
         properties: SecurityProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7534,7 +12829,14 @@ namespace azure.mgmt.azurestackhci.types
         key "port": Required[int]
         key "serviceName": Required[Union[str, ServiceName]]
         port: int
-        service_name: Union[str, ServiceName]
+        serviceName: Union[str, ServiceName]
+
+
+    class azure.mgmt.azurestackhci.types.SiteDetails(TypedDict, total=False):
+        key "deviceConfiguration": ForwardRef('TargetDeviceConfiguration', module='types')
+        key "siteResourceId": Required[str]
+        deviceConfiguration: TargetDeviceConfiguration
+        siteResourceId: str
 
 
     class azure.mgmt.azurestackhci.types.SoftwareAssuranceChangeRequest(TypedDict, total=False):
@@ -7544,16 +12846,16 @@ namespace azure.mgmt.azurestackhci.types
 
     class azure.mgmt.azurestackhci.types.SoftwareAssuranceChangeRequestProperties(TypedDict, total=False):
         key "softwareAssuranceIntent": Union[str, SoftwareAssuranceIntent]
-        software_assurance_intent: Union[str, SoftwareAssuranceIntent]
+        softwareAssuranceIntent: Union[str, SoftwareAssuranceIntent]
 
 
     class azure.mgmt.azurestackhci.types.SoftwareAssuranceProperties(TypedDict, total=False):
         key "lastUpdated": str
         key "softwareAssuranceIntent": Union[str, SoftwareAssuranceIntent]
         key "softwareAssuranceStatus": Union[str, SoftwareAssuranceStatus]
-        last_updated: str
-        software_assurance_intent: Union[str, SoftwareAssuranceIntent]
-        software_assurance_status: Union[str, SoftwareAssuranceStatus]
+        lastUpdated: str
+        softwareAssuranceIntent: Union[str, SoftwareAssuranceIntent]
+        softwareAssuranceStatus: Union[str, SoftwareAssuranceStatus]
 
 
     class azure.mgmt.azurestackhci.types.Step(TypedDict, total=False):
@@ -7566,12 +12868,12 @@ namespace azure.mgmt.azurestackhci.types
         key "startTimeUtc": str
         key "status": str
         description: str
-        end_time_utc: str
-        error_message: str
-        expected_execution_time: str
-        last_updated_time_utc: str
+        endTimeUtc: str
+        errorMessage: str
+        expectedExecutionTime: str
+        lastUpdatedTimeUtc: str
         name: str
-        start_time_utc: str
+        startTimeUtc: str
         status: str
         steps: list[Step]
 
@@ -7581,41 +12883,112 @@ namespace azure.mgmt.azurestackhci.types
         key "s2d": ForwardRef('StorageS2dConfig', module='types')
         key "san": ForwardRef('StorageSanConfig', module='types')
         key "storageType": Union[str, StorageType]
-        configuration_mode: str
-        s2_d: StorageS2dConfig
+        configurationMode: str
+        s2d: StorageS2dConfig
         san: StorageSanConfig
-        storage_type: Union[str, StorageType]
+        storageType: Union[str, StorageType]
+
+
+    class azure.mgmt.azurestackhci.types.StorageConfiguration(TypedDict, total=False):
+        key "partitionSize": str
+        partitionSize: str
+
+
+    class azure.mgmt.azurestackhci.types.StorageInitiator(TypedDict, total=False):
+        key "ethernetAdapterMacAddress": str
+        key "ethernetAdapterName": str
+        key "initiatorIdentifier": Required[str]
+        key "initiatorType": Required[Union[str, StorageInitiatorType]]
+        key "operationalStatus": str
+        key "portWorldWideName": str
+        ethernetAdapterMacAddress: str
+        ethernetAdapterName: str
+        initiatorIdentifier: str
+        initiatorType: Union[str, StorageInitiatorType]
+        operationalStatus: str
+        portWorldWideName: str
+
+
+    class azure.mgmt.azurestackhci.types.StorageProfile(TypedDict, total=False):
+        key "poolableDisksCount": int
+        poolableDisksCount: int
 
 
     class azure.mgmt.azurestackhci.types.StorageS2dConfig(TypedDict, total=False):
         key "overprovisioningRatio": Union[str, OverprovisioningRatio]
         key "volumeType": Union[str, VolumeType]
-        overprovisioning_ratio: Union[str, OverprovisioningRatio]
-        volume_type: Union[str, VolumeType]
+        overprovisioningRatio: Union[str, OverprovisioningRatio]
+        volumeType: Union[str, VolumeType]
 
 
     class azure.mgmt.azurestackhci.types.StorageSanConfig(TypedDict, total=False):
         key "infraPerfLunId": str
         key "infraVolLunId": str
-        infra_perf_lun_id: str
-        infra_vol_lun_id: str
+        infraPerfLunId: str
+        infraVolLunId: str
 
 
     class azure.mgmt.azurestackhci.types.SwitchDetail(TypedDict, total=False):
         key "switchName": str
         key "switchType": str
         extensions: list[SwitchExtension]
-        switch_name: str
-        switch_type: str
+        switchName: str
+        switchType: str
 
 
     class azure.mgmt.azurestackhci.types.SwitchExtension(TypedDict, total=False):
         key "extensionEnabled": bool
         key "extensionName": str
         key "switchId": str
-        extension_enabled: bool
-        extension_name: str
-        switch_id: str
+        extensionEnabled: bool
+        extensionName: str
+        switchId: str
+
+
+    class azure.mgmt.azurestackhci.types.SyncConfigurationJobProperties(TypedDict, total=False):
+        key "deploymentMode": Union[str, DeploymentMode]
+        key "endTimeUtc": str
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "jobId": str
+        key "jobType": Required[Literal[DiskJobType.SYNC_CONFIGURATION]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('DiskJobReportedProperties', module='types')
+        key "resolutionStrategy": Required[Union[str, ResolutionStrategy]]
+        key "startTimeUtc": str
+        key "status": Union[str, JobStatus]
+        deploymentMode: Union[str, DeploymentMode]
+        endTimeUtc: str
+        error: ErrorDetail
+        jobId: str
+        jobType: Literal[DiskJobType.SYNC_CONFIGURATION]
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: DiskJobReportedProperties
+        resolutionStrategy: Union[str, ResolutionStrategy]
+        startTimeUtc: str
+        status: Union[str, JobStatus]
+
+
+    class azure.mgmt.azurestackhci.types.SyncConfigurationNetworkAdapterJobProperties(TypedDict, total=False):
+        key "deploymentMode": Union[str, DeploymentMode]
+        key "endTimeUtc": str
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "jobId": str
+        key "jobType": Required[Literal[NetworkAdapterJobType.SYNC_CONFIGURATION]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "reportedProperties": ForwardRef('NetworkAdapterJobReportedProperties', module='types')
+        key "resolutionStrategy": Required[Union[str, ResolutionStrategy]]
+        key "startTimeUtc": str
+        key "status": Union[str, JobStatus]
+        deploymentMode: Union[str, DeploymentMode]
+        endTimeUtc: str
+        error: ErrorDetail
+        jobId: str
+        jobType: Literal[NetworkAdapterJobType.SYNC_CONFIGURATION]
+        provisioningState: Union[str, ProvisioningState]
+        reportedProperties: NetworkAdapterJobReportedProperties
+        resolutionStrategy: Union[str, ResolutionStrategy]
+        startTimeUtc: str
+        status: Union[str, JobStatus]
 
 
     class azure.mgmt.azurestackhci.types.SystemData(TypedDict, total=False):
@@ -7625,12 +12998,34 @@ namespace azure.mgmt.azurestackhci.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
+
+
+    class azure.mgmt.azurestackhci.types.TargetDeviceConfiguration(TypedDict, total=False):
+        key "hostName": str
+        key "network": ForwardRef('NetworkConfiguration', module='types')
+        key "storage": ForwardRef('StorageConfiguration', module='types')
+        key "time": ForwardRef('TimeConfiguration', module='types')
+        key "webProxy": ForwardRef('WebProxyConfiguration', module='types')
+        hostName: str
+        network: NetworkConfiguration
+        storage: StorageConfiguration
+        time: TimeConfiguration
+        webProxy: WebProxyConfiguration
+
+
+    class azure.mgmt.azurestackhci.types.TimeConfiguration(TypedDict, total=False):
+        key "primaryTimeServer": str
+        key "secondaryTimeServer": str
+        key "timeZone": str
+        primaryTimeServer: str
+        secondaryTimeServer: str
+        timeZone: str
 
 
     class azure.mgmt.azurestackhci.types.TrackedResource(Resource):
@@ -7642,7 +13037,7 @@ namespace azure.mgmt.azurestackhci.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -7658,7 +13053,7 @@ namespace azure.mgmt.azurestackhci.types
         location: str
         name: str
         properties: UpdateProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7666,8 +13061,8 @@ namespace azure.mgmt.azurestackhci.types
         key "packageName": str
         key "updateType": str
         key "version": str
-        package_name: str
-        update_type: str
+        packageName: str
+        updateType: str
         version: str
 
 
@@ -7690,28 +13085,26 @@ namespace azure.mgmt.azurestackhci.types
         key "state": Union[str, State]
         key "updateStateProperties": ForwardRef('UpdateStateProperties', module='types')
         key "version": str
-        additional_properties: str
-        availability_type: Union[str, AvailabilityType]
+        additionalProperties: str
+        availabilityType: Union[str, AvailabilityType]
         componentVersions: list[PackageVersionInfo]
-        component_versions: list[PackageVersionInfo]
         description: str
-        display_name: str
+        displayName: str
+        healthCheckDate: str
         healthCheckResult: list[PrecheckResult]
-        health_check_date: str
-        health_check_result: list[PrecheckResult]
-        health_state: Union[str, HealthState]
-        installed_date: str
-        min_sbe_version_required: str
-        package_path: str
-        package_size_in_mb: float
-        package_type: str
+        healthState: Union[str, HealthState]
+        installedDate: str
+        minSbeVersionRequired: str
+        packagePath: str
+        packageSizeInMb: float
+        packageType: str
         prerequisites: list[UpdatePrerequisite]
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
         publisher: str
-        reboot_required: Union[str, RebootRequirement]
-        release_link: str
+        rebootRequired: Union[str, RebootRequirement]
+        releaseLink: str
         state: Union[str, State]
-        update_state_properties: UpdateStateProperties
+        updateStateProperties: UpdateStateProperties
         version: str
 
 
@@ -7726,7 +13119,7 @@ namespace azure.mgmt.azurestackhci.types
         location: str
         name: str
         properties: UpdateRunProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7738,18 +13131,18 @@ namespace azure.mgmt.azurestackhci.types
         key "state": Union[str, UpdateRunPropertiesState]
         key "timeStarted": str
         duration: str
-        last_updated_time: str
+        lastUpdatedTime: str
         progress: Step
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
         state: Union[str, UpdateRunPropertiesState]
-        time_started: str
+        timeStarted: str
 
 
     class azure.mgmt.azurestackhci.types.UpdateStateProperties(TypedDict, total=False):
         key "notifyMessage": str
         key "progressPercentage": float
-        notify_message: str
-        progress_percentage: float
+        notifyMessage: str
+        progressPercentage: float
 
 
     class azure.mgmt.azurestackhci.types.UpdateSummaries(ProxyResource):
@@ -7763,7 +13156,7 @@ namespace azure.mgmt.azurestackhci.types
         location: str
         name: str
         properties: UpdateSummariesProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -7779,20 +13172,18 @@ namespace azure.mgmt.azurestackhci.types
         key "oemFamily": str
         key "provisioningState": Union[str, ProvisioningState]
         key "state": Union[str, UpdateSummariesPropertiesState]
-        current_oem_version: str
-        current_sbe_version: str
-        current_version: str
-        hardware_model: str
+        currentOemVersion: str
+        currentSbeVersion: str
+        currentVersion: str
+        hardwareModel: str
+        healthCheckDate: str
         healthCheckResult: list[PrecheckResult]
-        health_check_date: str
-        health_check_result: list[PrecheckResult]
-        health_state: Union[str, HealthState]
-        last_checked: str
-        last_updated: str
-        oem_family: str
+        healthState: Union[str, HealthState]
+        lastChecked: str
+        lastUpdated: str
+        oemFamily: str
         packageVersions: list[PackageVersionInfo]
-        package_versions: list[PackageVersionInfo]
-        provisioning_state: Union[str, ProvisioningState]
+        provisioningState: Union[str, ProvisioningState]
         state: Union[str, UpdateSummariesPropertiesState]
 
 
@@ -7804,15 +13195,86 @@ namespace azure.mgmt.azurestackhci.types
     class azure.mgmt.azurestackhci.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
+
+
+    class azure.mgmt.azurestackhci.types.UserDetails(TypedDict, total=False):
+        key "secretLocation": str
+        key "secretType": Required[Union[str, SecretType]]
+        key "userName": Required[str]
+        secretLocation: str
+        secretType: Union[str, SecretType]
+        sshPubKey: list[str]
+        userName: str
+
+
+    class azure.mgmt.azurestackhci.types.ValidateOwnershipVouchersRequest(TypedDict, total=False):
+        key "ownershipVoucherDetails": Required[list[OwnershipVoucherDetails]]
+        ownershipVoucherDetails: list[OwnershipVoucherDetails]
 
 
     class azure.mgmt.azurestackhci.types.ValidateRequest(TypedDict, total=False):
         key "additionalInfo": str
         key "edgeDeviceIds": Required[list[str]]
-        additional_info: str
-        edge_device_ids: list[str]
+        additionalInfo: str
+        edgeDeviceIds: list[str]
+
+
+    class azure.mgmt.azurestackhci.types.VolumeConfiguration(TypedDict, total=False):
+        key "reserved": str
+        reserved: str
+
+
+    class azure.mgmt.azurestackhci.types.VolumeReportedProperties(TypedDict, total=False):
+        key "fileSystem": str
+        key "isBoot": bool
+        key "name": str
+        key "offsetInBytes": int
+        key "parentDiskId": str
+        key "partitionId": str
+        key "path": str
+        key "sizeInBytes": str
+        key "sizeRemainingInBytes": str
+        fileSystem: str
+        isBoot: bool
+        name: str
+        offsetInBytes: int
+        parentDiskId: str
+        partitionId: str
+        path: str
+        sizeInBytes: str
+        sizeRemainingInBytes: str
+
+
+    class azure.mgmt.azurestackhci.types.WebProxyConfiguration(TypedDict, total=False):
+        key "connectionUri": str
+        key "port": str
+        bypassList: list[str]
+        connectionUri: str
+        port: str
+
+
+    class azure.mgmt.azurestackhci.types.WifiConfigurationDesiredProperties(TypedDict, total=False):
+        key "authenticationType": Union[str, AuthenticationType]
+        key "eapMethod": Union[str, EAPMethod]
+        key "ssid": str
+        key "username": str
+        key "wifiSecret": ForwardRef('WifiSecret', module='types')
+        authenticationType: Union[str, AuthenticationType]
+        eapMethod: Union[str, EAPMethod]
+        ssid: str
+        username: str
+        wifiSecret: WifiSecret
+
+
+    class azure.mgmt.azurestackhci.types.WifiSecret(TypedDict, total=False):
+        key "secretLocation": str
+        key "secretName": str
+        key "secretType": Union[str, WifiSecretType]
+        secretLocation: str
+        secretName: str
+        secretType: Union[str, WifiSecretType]
 
 
 ```

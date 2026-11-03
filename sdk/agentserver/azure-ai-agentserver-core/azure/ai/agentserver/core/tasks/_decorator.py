@@ -20,7 +20,9 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import inspect
 import logging as _logging
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, Iterator
+from contextlib import contextmanager
+from contextvars import ContextVar
 from datetime import timedelta
 from typing import (
     TYPE_CHECKING,
@@ -34,10 +36,9 @@ from typing import (
 
 import re
 
-from azure.ai.agentserver.core._experimental import experimental
-
 from ._client import TransportClassifiedError as _TransportClassifiedError
 from ._context import TaskContext
+from ._exceptions import TaskManagerNotInitialized
 from ._exceptions_internal import _HostedConflict, _translate_hosted_conflict
 from ._retry import RetryPolicy
 from ._run import TaskRun
@@ -144,6 +145,23 @@ _logger = _logging.getLogger("azure.ai.agentserver.tasks")
 # Global registry of resilient task descriptors for recovery purposes.
 # Populated at import time when @task decorates a function.
 _REGISTERED_DESCRIPTORS: list[tuple[str, Callable[..., Any], "TaskOptions"]] = []
+# Recognize protocol identities even when their callbacks are not owned locally.
+_HOST_BOUND_TASK_NAMES: set[str] = set()
+_host_bound_registration: ContextVar[bool] = ContextVar("host_bound_task_registration", default=False)
+
+
+@contextmanager
+def _host_bound_task_registration() -> Iterator[None]:
+    """Require explicit owning-host registration for protocol task callbacks.
+
+    :return: Registration scope for protocol-owned task definitions.
+    :rtype: Iterator[None]
+    """
+    token = _host_bound_registration.set(True)
+    try:
+        yield
+    finally:
+        _host_bound_registration.reset(token)
 
 
 def _strip_reserved_tags(tags: dict[str, str]) -> dict[str, str]:
@@ -417,6 +435,7 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         "retry",
         "steerable",
         "_is_multi_turn",  #  — True when wrapped by @multi_turn_task
+        "_requires_host_registration",
     )
 
     def __init__(
@@ -438,6 +457,7 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         self.retry = retry
         self.steerable = steerable
         self._is_multi_turn = _is_multi_turn
+        self._requires_host_registration = _host_bound_registration.get()
 
     def __repr__(self) -> str:
         return (
@@ -447,7 +467,6 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         )
 
 
-@experimental
 class Task(Generic[Input, Output]):
     """A decorated resilient task function. Not callable directly.
 
@@ -475,14 +494,20 @@ class Task(Generic[Input, Output]):
         self._output_type = output_type
         self.name = opts.name
         # Register for recovery — manager picks these up at startup
+        if opts._requires_host_registration:
+            _HOST_BOUND_TASK_NAMES.add(opts.name)
         _REGISTERED_DESCRIPTORS.append((opts.name, fn, opts))
+        if opts._requires_host_registration:
+            return
         #  — if a TaskManager is already initialised (decorators
         # declared after startup, e.g. in tests), eagerly push into its
         # resume tables so _recover_stale_tasks / get_active_run can pick
         # up the multi-turn opts (_is_multi_turn).
         try:
-            from ._manager import _manager as _live_manager  # pylint: disable=import-outside-toplevel
-        except ImportError:  # pragma: no cover
+            from ._manager import get_task_manager  # pylint: disable=import-outside-toplevel
+
+            _live_manager = get_task_manager()
+        except (ImportError, TaskManagerNotInitialized):
             _live_manager = None  # type: ignore[assignment]
         if _live_manager is not None:
             try:
@@ -1351,7 +1376,6 @@ def task(
 ]: ...
 
 
-@experimental
 def task(
     fn: Callable[..., Any] | None = None,
     *,
@@ -1556,7 +1580,6 @@ def _validate_multi_turn_task_kwargs(**kwargs: Any) -> None:
         )
 
 
-@experimental
 class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
     """A decorated multi-turn resilient task chain.
 
@@ -1791,7 +1814,6 @@ def multi_turn_task(
 ]: ...
 
 
-@experimental
 def multi_turn_task(
     fn: Callable[..., Any] | None = None,
     *,
@@ -1804,28 +1826,28 @@ def multi_turn_task(
 ) -> Any:
     """Decorator producing a multi-turn resilient chain.
 
-        Multi-turn chains accept inputs across many turns against the same
-        ``task_id``. The handler's ``return X`` is the implicit-suspend
-        signal — there is no ``ctx.suspend``. The chain stays
-        alive across handler raises.
+    Multi-turn chains accept inputs across many turns against the same
+    ``task_id``. The handler's ``return X`` is the implicit-suspend
+    signal — there is no ``ctx.suspend``. The chain stays
+    alive across handler raises.
 
-        :param fn: The handler to decorate (parameterized form only; the bare
-            ``@multi_turn_task`` form is rejected because it cannot supply a
-            ``name``).
-        :type fn: Callable[..., Any] | None
-        :keyword name: **Required** stable chain-identity anchor (no
-            function-derived default; omitting it raises ``ValueError``).
-        :keyword title: Static human-readable string. Callable-factory form is
-            not supported.
-        :keyword timeout: Per-turn cooperative timeout. Defaults to 1 day when
-            unset; 7 days is a hard ceiling (larger/negative rejected at
-            decoration). This is a per-turn cap, not a chain-lifetime bound.
-        :keyword retry: Default retry policy.
-        :keyword steerable: When True, ``start()`` against an in-flight chain
-            queues the new input instead of raising ``TaskConflictError``.
-        :return: A :class:`MultiTurnTask` instance (distinct public class from
-            :class:`Task`).
-        :rtype: Any
+    :param fn: The handler to decorate (parameterized form only; the bare
+        ``@multi_turn_task`` form is rejected because it cannot supply a
+        ``name``).
+    :type fn: Callable[..., Any] | None
+    :keyword name: **Required** stable chain-identity anchor (no
+        function-derived default; omitting it raises ``ValueError``).
+    :keyword title: Static human-readable string. Callable-factory form is
+        not supported.
+    :keyword timeout: Per-turn cooperative timeout. Defaults to 1 day when
+        unset; 7 days is a hard ceiling (larger/negative rejected at
+        decoration). This is a per-turn cap, not a chain-lifetime bound.
+    :keyword retry: Default retry policy.
+    :keyword steerable: When True, ``start()`` against an in-flight chain
+        queues the new input instead of raising ``TaskConflictError``.
+    :return: A :class:`MultiTurnTask` instance (distinct public class from
+        :class:`Task`).
+    :rtype: Any
     """
     #  — reject unknown kwargs at decoration time
     _validate_multi_turn_task_kwargs(**_extra_kwargs)

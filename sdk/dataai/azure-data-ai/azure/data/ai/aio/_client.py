@@ -38,7 +38,7 @@ class InferenceClient(_InferenceClientOperationsMixin):  # pylint: disable=docst
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
      ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-09-01-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-10-30" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str

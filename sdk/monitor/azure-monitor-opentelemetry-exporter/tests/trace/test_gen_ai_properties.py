@@ -66,6 +66,21 @@ class TestGenAIProperties(unittest.TestCase):
         properties = _convert_span_to_envelope(span).data.base_data.properties
         self.assertEqual(properties, {"custom.value": "unchanged"})
 
+    def test_array_serialization_preserves_increased_message_limit(self):
+        message = "a" * (256 * 1024 + 1)
+        attributes = {key: ["stop", "length"] for key in _ARRAY_ATTRIBUTES}
+        attributes.update({"gen_ai.input.messages": message, "gen_ai.output.messages": message})
+        span = self._make_span(attributes)
+        for increase_limit in (False, True):
+            with self.subTest(increase_limit=increase_limit):
+                properties = _convert_span_to_envelope(
+                    span, increase_truncation_limit=increase_limit
+                ).data.base_data.properties
+                for key in _ARRAY_ATTRIBUTES:
+                    self.assertEqual(json.loads(properties[key]), ["stop", "length"])
+                for key in ("gen_ai.input.messages", "gen_ai.output.messages"):
+                    self.assertEqual(properties[key], message if increase_limit else message[: 256 * 1024])
+
     def test_json_at_property_length_limit_is_readable(self):
         # Include the JSON wrapper and escapes in the exporter's 8192-character limit.
         for value in ("a" * 8188, '"' * 4094, "\\" * 4094, "\n" * 4094, "終" * 8188):

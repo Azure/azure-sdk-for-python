@@ -340,9 +340,18 @@ history-id lookup; it is a prefetch optimization, not recovery state.
 
 The boundary is **fail-closed**: the object is JSON-serializable by
 construction (no runtime object references — those live in a separate
-process-local cache keyed by `response_id` and are never serialized), and a
-malformed/incomplete persisted input fails the recovered task deterministically
-rather than re-invoking the handler with partial state.
+process-local cache keyed by caller-scoped response incarnation and are never
+serialized), and malformed/incomplete persisted input is never re-invoked with
+partial state. `user_id_key` MUST be `str | None` before platform-context or key
+construction; an empty string is an identified partition, while missing/`None`
+legacy values remain anonymous. Invalid values MUST NOT be converted to `None`.
+When the partition is malformed, response settlement requires original
+process-local references bound to the matching task-run, input ID, and private
+incarnation, plus current-input/deletion checks. Task IDs and input hashes alone
+cannot recover the user partition. Without independent proof, only the malformed
+input is settled, with an explicit warning and no response/replay/reference
+mutation; an existing envelope may remain `in_progress` pending operator repair
+or an authenticated caller action.
 
 > **Port note.** Oversized input (e.g. a large input-item array) rides the core
 > resilient-task primitive's attachment-spill — the responses layer does not shard

@@ -20,6 +20,8 @@ from typing import Optional
 
 from typing_extensions import Self
 
+from ._constants import Constants
+
 # ======================================================================
 # Environment variable keys (internal — users access values via AgentConfig)
 # ======================================================================
@@ -42,8 +44,14 @@ _ENV_SSE_KEEPALIVE_INTERVAL = "SSE_KEEPALIVE_INTERVAL"
 _ENV_WS_KEEPALIVE_INTERVAL = "WS_KEEPALIVE_INTERVAL"
 
 _DEFAULT_PORT = 8088
-_DEFAULT_SSE_KEEPALIVE_INTERVAL = 0
 _DEFAULT_WS_PING_INTERVAL = 0.0
+
+
+def _validate_session_guid(session_guid: str, is_hosted: bool) -> None:
+    if is_hosted and session_guid and re.fullmatch(r"[0-9a-f]{32}", session_guid) is None:
+        raise ValueError(
+            "FOUNDRY_AGENT_SESSION_GUID must be a 32-character lowercase hexadecimal GUID"
+        )
 
 
 # ======================================================================
@@ -132,10 +140,7 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
 
         is_hosted = bool(os.environ.get(_ENV_FOUNDRY_HOSTING_ENVIRONMENT, ""))
         session_guid = os.environ.get(_ENV_FOUNDRY_AGENT_SESSION_GUID, "")
-        if is_hosted and session_guid and re.fullmatch(r"[0-9a-f]{32}", session_guid) is None:
-            raise ValueError(
-                "FOUNDRY_AGENT_SESSION_GUID must be a 32-character lowercase hexadecimal GUID"
-            )
+        _validate_session_guid(session_guid, is_hosted)
 
         return cls(
             agent_name=agent_name,
@@ -441,7 +446,7 @@ def resolve_sse_keepalive_interval(interval: Optional[int] = None) -> int:
     """Resolve the SSE keep-alive interval from argument, env var, or default.
 
     Resolution order: explicit *interval* → ``SSE_KEEPALIVE_INTERVAL`` env var
-    → ``0`` (seconds).  A value of ``0`` disables keep-alive.
+    → ``15`` (seconds).  A value of ``0`` disables keep-alive.
 
     :param interval: Explicitly requested interval in seconds, or None.
     :type interval: Optional[int]
@@ -453,7 +458,7 @@ def resolve_sse_keepalive_interval(interval: Optional[int] = None) -> int:
     env_val = _parse_int_env(_ENV_SSE_KEEPALIVE_INTERVAL)
     if env_val is not None:
         return max(0, env_val)
-    return _DEFAULT_SSE_KEEPALIVE_INTERVAL
+    return Constants.DEFAULT_SSE_KEEPALIVE_INTERVAL
 
 
 def resolve_otlp_endpoint() -> Optional[str]:

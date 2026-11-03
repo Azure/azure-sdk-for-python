@@ -18,13 +18,13 @@ from urllib.parse import urlsplit
 from azure.storage.blob.aio import ContainerClient
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.polling import AsyncNoPolling, AsyncPollingMethod
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._operations import DatasetsOperations as DatasetsOperationsGenerated
 from ... import models as _models
 from ..._utils.model_base import _deserialize
+from ..._utils.polling import AsyncAIProjectsLROBasePolling
 from ...models import AsyncDatasetGenerationLROPoller
 from ...models._patch import (
     _DATA_GENERATION_JOBS_FEATURE_HEADER,
@@ -145,7 +145,7 @@ class _DatasetsOperationsWithGeneration(DatasetsOperationsGenerated):
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
-                AsyncLROBasePolling(
+                AsyncAIProjectsLROBasePolling(
                     lro_delay, path_format_arguments=path_format_arguments, headers=polling_headers, **kwargs
                 ),
             )

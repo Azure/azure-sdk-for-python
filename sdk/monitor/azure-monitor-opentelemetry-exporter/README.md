@@ -139,6 +139,20 @@ All configuration options can be passed through the constructors of exporters th
 * `storage_directory`: Storage directory in which to store retry files. Defaults to `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
 * `credential`: Token credential, such as ManagedIdentityCredential or ClientSecretCredential, used for [Azure Active Directory (AAD) authentication][aad_for_ai_docs]. Defaults to None. See [samples][exporter_samples] for examples. The credential will be automatically created from the `APPLICATIONINSIGHTS_AUTHENTICATION_STRING` environment variable if not explicitly passed in. See [documentation][aad_env_var_docs] for more.
 
+### Experimental features
+
+Use the `APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES` environment variable to opt in to named experimental
+features. Set it before constructing any exporter or calling `configure_azure_monitor()`.
+
+```powershell
+$env:APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES = "gen_ai_input_output_limit_increase"
+```
+
+Separate multiple feature names with commas. Names are case-insensitive; surrounding whitespace is
+ignored. Unset or empty values enable no experimental features. Unknown names are ignored with a warning.
+The selection is shared across exporters in the same Python interpreter and cannot be changed after
+the first exporter is constructed. Experimental features may change or be removed in future releases.
+
 ## Examples
 
 ### Logging (experimental)
@@ -630,6 +644,18 @@ For all applications set up with OpenTelemetry SDK and Azure Monitor exporters, 
 ## Troubleshooting
 
 The exporter raises exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#azure-core-library-exceptions).
+
+### Custom properties truncation
+
+Span, span event, and log record attributes are exported as custom properties. Values are truncated to the following lengths (in characters):
+
+| Attributes | Max length |
+| --- | --- |
+| `gen_ai.input.messages`, `gen_ai.output.messages` | 256 KiB (`256 * 1024`); 4 MiB (`4 * 1024 * 1024`) when the `gen_ai_input_output_limit_increase` [experimental feature](#experimental-features) is enabled |
+| `gen_ai.system_instructions`, `gen_ai.tool.definitions`, `gen_ai.tool.call.arguments`, `gen_ai.tool.call.result`, `gen_ai.evaluation.explanation` | 256 KiB (`256 * 1024`) |
+| All other attributes | 8 KiB (`8 * 1024`) |
+
+When the `gen_ai_input_output_limit_increase` experimental feature is enabled, GenAI messages with multimodal content (for example, base64-encoded images or audio) can produce large telemetry items. If you capture such content, consider increasing the exporter `timeout` and `storage_max_size` settings, reducing the batch processor's `max_export_batch_size`, or bounding attribute size at the source with `OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT`.
 
 ## Next steps
 

@@ -17,21 +17,37 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ActivateSaaSParameterRequest(_Model):
+class ActivateSaaSParameterRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SaaS guid for Activate and Validate SaaS Resource.
 
-    :ivar saa_s_guid: SaaS guid for Activate and Validate SaaS Resource. Required.
-    :vartype saa_s_guid: str
+    :ivar saas_guid: SaaS guid for Activate and Validate SaaS Resource. Required.
+    :vartype saas_guid: str
+    :ivar publisher_id: Optional publisher identifier.
+    :vartype publisher_id: str
+    :ivar activate_saa_s_request_param: Optional activation request parameters containing user and
+     company details.
+    :vartype activate_saa_s_request_param:
+     ~azure.mgmt.commvaultcontentstore.models.ActivateSaaSRequestParam
     """
 
-    saa_s_guid: str = rest_field(name="saaSGuid", visibility=["read", "create", "update", "delete", "query"])
+    saas_guid: str = rest_field(name="saasGuid", visibility=["read", "create", "update", "delete", "query"])
     """SaaS guid for Activate and Validate SaaS Resource. Required."""
+    publisher_id: Optional[str] = rest_field(
+        name="publisherId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional publisher identifier."""
+    activate_saa_s_request_param: Optional["_models.ActivateSaaSRequestParam"] = rest_field(
+        name="activateSaaSRequestParam", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional activation request parameters containing user and company details."""
 
     @overload
     def __init__(
         self,
         *,
-        saa_s_guid: str,
+        saas_guid: str,
+        publisher_id: Optional[str] = None,
+        activate_saa_s_request_param: Optional["_models.ActivateSaaSRequestParam"] = None,
     ) -> None: ...
 
     @overload
@@ -45,7 +61,47 @@ class ActivateSaaSParameterRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupOptions(_Model):
+class ActivateSaaSRequestParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Optional activate SaaS request parameters.
+
+    :ivar saas_resource_id: Optional Marketplace SaaS resource identifier.
+    :vartype saas_resource_id: str
+    :ivar user: Optional user details.
+    :vartype user: ~azure.mgmt.commvaultcontentstore.models.UserDetails
+    :ivar company: Optional company details.
+    :vartype company: ~azure.mgmt.commvaultcontentstore.models.CompanyProfile
+    """
+
+    saas_resource_id: Optional[str] = rest_field(
+        name="saasResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional Marketplace SaaS resource identifier."""
+    user: Optional["_models.UserDetails"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional user details."""
+    company: Optional["_models.CompanyProfile"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional company details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        saas_resource_id: Optional[str] = None,
+        user: Optional["_models.UserDetails"] = None,
+        company: Optional["_models.CompanyProfile"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BackupOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The backup options for the VM backup.
 
     :ivar backup_level: Indicates whether to stop backup or not for the VM. Known values are:
@@ -101,7 +157,7 @@ class BackupOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupProtectionGroupRequest(_Model):
+class BackupProtectionGroupRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of BackupProtectionGroupRequest.
 
     :ivar vm_list: The vm list details. Required.
@@ -177,7 +233,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -221,7 +277,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class CloudAccount(TrackedResource):
+class CloudAccount(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Commvault Cloud Account Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -275,7 +331,7 @@ class CloudAccount(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class CloudAccountProperties(_Model):
+class CloudAccountProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties specific to Commvault Cloud Account resource.
 
     :ivar marketplace: Marketplace details of the resource. Required.
@@ -288,14 +344,12 @@ class CloudAccountProperties(_Model):
      ~azure.mgmt.commvaultcontentstore.models.ResourceProvisioningState
     :ivar sso_url: SSO URL for the Commvault Cloud Account.
     :vartype sso_url: str
-    :ivar backup_admin_on_cca_create: The backup administrator principal provided during CCA
-     create. Required on create (enforced by backend), ignored on update.
-    :vartype backup_admin_on_cca_create: ~azure.mgmt.commvaultcontentstore.models.EntityInfo
-    :ivar multi_person_authorization_on_cca_create: The multi-person authorization (MPA)
-     administrator principal provided during CCA create. Required on create (enforced by backend),
-     ignored on update.
-    :vartype multi_person_authorization_on_cca_create:
-     ~azure.mgmt.commvaultcontentstore.models.EntityInfo
+    :ivar company: Optional company details for the cloud account.
+    :vartype company: ~azure.mgmt.commvaultcontentstore.models.CompanyProfile
+    :ivar role_assignments_on_cca_create: Role assignments to provision during CCA creation. Each
+     entry maps a Commvault role to its assigned Entra principals.
+    :vartype role_assignments_on_cca_create:
+     list[~azure.mgmt.commvaultcontentstore.models.RoleAssignment]
     """
 
     marketplace: "_models.MarketplaceDetails" = rest_field(visibility=["read", "create", "update"])
@@ -309,16 +363,13 @@ class CloudAccountProperties(_Model):
      \"Canceled\"."""
     sso_url: Optional[str] = rest_field(name="ssoUrl", visibility=["read"])
     """SSO URL for the Commvault Cloud Account."""
-    backup_admin_on_cca_create: Optional["_models.EntityInfo"] = rest_field(
-        name="backupAdminOnCcaCreate", visibility=["create"]
+    company: Optional["_models.CompanyProfile"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional company details for the cloud account."""
+    role_assignments_on_cca_create: Optional[list["_models.RoleAssignment"]] = rest_field(
+        name="roleAssignmentsOnCcaCreate", visibility=["create"]
     )
-    """The backup administrator principal provided during CCA create. Required on create (enforced by
-     backend), ignored on update."""
-    multi_person_authorization_on_cca_create: Optional["_models.EntityInfo"] = rest_field(
-        name="multiPersonAuthorizationOnCcaCreate", visibility=["create"]
-    )
-    """The multi-person authorization (MPA) administrator principal provided during CCA create.
-     Required on create (enforced by backend), ignored on update."""
+    """Role assignments to provision during CCA creation. Each entry maps a Commvault role to its
+     assigned Entra principals."""
 
     @overload
     def __init__(
@@ -326,83 +377,8 @@ class CloudAccountProperties(_Model):
         *,
         marketplace: "_models.MarketplaceDetails",
         user: "_models.UserDetails",
-        backup_admin_on_cca_create: Optional["_models.EntityInfo"] = None,
-        multi_person_authorization_on_cca_create: Optional["_models.EntityInfo"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CloudAccountUpdate(_Model):
-    """The type used for update operations of the CloudAccount.
-
-    :ivar identity: The managed service identities assigned to this resource.
-    :vartype identity: ~azure.mgmt.commvaultcontentstore.models.ManagedServiceIdentity
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.commvaultcontentstore.models.CloudAccountUpdateProperties
-    """
-
-    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The managed service identities assigned to this resource."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    properties: Optional["_models.CloudAccountUpdateProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        identity: Optional["_models.ManagedServiceIdentity"] = None,
-        tags: Optional[dict[str, str]] = None,
-        properties: Optional["_models.CloudAccountUpdateProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CloudAccountUpdateProperties(_Model):
-    """The updatable properties of the CloudAccount.
-
-    :ivar marketplace: Marketplace details of the resource.
-    :vartype marketplace: ~azure.mgmt.commvaultcontentstore.models.MarketplaceDetails
-    :ivar user: Details of the user.
-    :vartype user: ~azure.mgmt.commvaultcontentstore.models.UserDetails
-    """
-
-    marketplace: Optional["_models.MarketplaceDetails"] = rest_field(visibility=["read", "create", "update"])
-    """Marketplace details of the resource."""
-    user: Optional["_models.UserDetails"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Details of the user."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        marketplace: Optional["_models.MarketplaceDetails"] = None,
-        user: Optional["_models.UserDetails"] = None,
+        company: Optional["_models.CompanyProfile"] = None,
+        role_assignments_on_cca_create: Optional[list["_models.RoleAssignment"]] = None,
     ) -> None: ...
 
     @overload
@@ -433,7 +409,7 @@ class ProxyResource(Resource):
     """
 
 
-class CommvaultPlan(ProxyResource):
+class CommvaultPlan(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Commvault Plan Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -474,7 +450,74 @@ class CommvaultPlan(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class CountProtectedItemsRequest(_Model):
+class CompanyProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Optional company profile information.
+
+    :ivar job_title: Job title.
+    :vartype job_title: str
+    :ivar company_name: Company name.
+    :vartype company_name: str
+    :ivar website: Company website.
+    :vartype website: str
+    :ivar street: Street address.
+    :vartype street: str
+    :ivar city: City of the company address.
+    :vartype city: str
+    :ivar country: Country of the company address.
+    :vartype country: str
+    :ivar postal_code: Postal code.
+    :vartype postal_code: str
+    :ivar state: State or province of the company address.
+    :vartype state: str
+    """
+
+    job_title: Optional[str] = rest_field(name="jobTitle", visibility=["read", "create", "update", "delete", "query"])
+    """Job title."""
+    company_name: Optional[str] = rest_field(
+        name="companyName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Company name."""
+    website: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Company website."""
+    street: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Street address."""
+    city: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """City of the company address."""
+    country: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Country of the company address."""
+    postal_code: Optional[str] = rest_field(
+        name="postalCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Postal code."""
+    state: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """State or province of the company address."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        job_title: Optional[str] = None,
+        company_name: Optional[str] = None,
+        website: Optional[str] = None,
+        street: Optional[str] = None,
+        city: Optional[str] = None,
+        country: Optional[str] = None,
+        postal_code: Optional[str] = None,
+        state: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CountProtectedItemsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to count protected items for the provided CCA resource IDs across subscriptions.
 
     :ivar resource_ids: The list of CCA resource IDs. Required.
@@ -502,7 +545,7 @@ class CountProtectedItemsRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CountProtectedItemsResponse(_Model):
+class CountProtectedItemsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for count protected items operation.
 
     :ivar count: The count of protected items. Required.
@@ -530,7 +573,7 @@ class CountProtectedItemsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EntityInfo(_Model):
+class EntityInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about an Entra entity (user or group) assigned to a role.
 
     :ivar id: The unique identifier (UUID) of the Entra entity.
@@ -616,7 +659,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -644,7 +687,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedRetentionTime(_Model):
+class ExtendedRetentionTime(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Extended Retention Time.
 
     :ivar retention_time: Retention time for Extended Retention. Known values are: "monthly" and
@@ -693,7 +736,7 @@ class ExtendedRetentionTime(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LatestLinkedSaaSResponse(_Model):
+class LatestLinkedSaaSResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response of get latest linked SaaS resource operation.
 
     :ivar saa_s_resource_id: SaaS resource id.
@@ -730,7 +773,7 @@ class LatestLinkedSaaSResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -782,7 +825,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceDetails(_Model):
+class MarketplaceDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Marketplace details for an organization.
 
     :ivar subscription_id: Azure subscription id for the the marketplace offer is purchased from.
@@ -835,7 +878,7 @@ class MarketplaceDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OfferDetails(_Model):
+class OfferDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Offer details for the marketplace that is selected by the user.
 
     :ivar publisher_id: Publisher Id for the marketplace offer. Required.
@@ -888,7 +931,7 @@ class OfferDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -976,7 +1019,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PlanProperties(_Model):
+class PlanProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of Commvault Plan.
 
     :ivar location: Location of the Commvault Plan. Required.
@@ -1028,7 +1071,7 @@ class PlanProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProtectedItem(ProxyResource):
+class ProtectedItem(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -1097,7 +1140,7 @@ class ProtectedItemProperties(_Model):
     """The GUID of VM. Required."""
 
 
-class ProtectionGroup(ProxyResource):
+class ProtectionGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Commvault Plan Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1138,7 +1181,7 @@ class ProtectionGroup(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionGroupProperties(_Model):
+class ProtectionGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of Commvault Protection Group.
 
     :ivar data_source_type: The datasource type of Commvault Protection Group. Required. Default
@@ -1148,12 +1191,13 @@ class ProtectionGroupProperties(_Model):
     :vartype plan: str
     :ivar resources: The resources to be protected under Protection Group. Required.
     :vartype resources: ~azure.mgmt.commvaultcontentstore.models.ProtectionGroupResources
-    :ivar protection_status: The protection group schedule. Known values are: "all", "protected",
-     "not_protected", "pending", "backed_up_with_error", and "discovered".
+    :ivar protection_status: The protection group schedule. Required. Known values are: "all",
+     "protected", "not_protected", "pending", "backed_up_with_error", and "discovered".
     :vartype protection_status: str or ~azure.mgmt.commvaultcontentstore.models.ProtectionStatus
     :ivar number_of_protected_items: The number of ProtectedItems under the Protection Group.
+     Required.
     :vartype number_of_protected_items: int
-    :ivar last_back_up_time: The Commvault Protection Group backup time.
+    :ivar last_back_up_time: The Commvault Protection Group backup time. Required.
     :vartype last_back_up_time: int
     :ivar backup_activity_status: The backup activity status indicating if backup is enabled or not
      on the protection group.
@@ -1170,15 +1214,13 @@ class ProtectionGroupProperties(_Model):
     """The Commvault Plan to be associated with the Protection Group. Required."""
     resources: "_models.ProtectionGroupResources" = rest_field(visibility=["read", "create", "update"])
     """The resources to be protected under Protection Group. Required."""
-    protection_status: Optional[Union[str, "_models.ProtectionStatus"]] = rest_field(
-        name="protectionStatus", visibility=["read"]
-    )
-    """The protection group schedule. Known values are: \"all\", \"protected\", \"not_protected\",
-     \"pending\", \"backed_up_with_error\", and \"discovered\"."""
-    number_of_protected_items: Optional[int] = rest_field(name="numberOfProtectedItems", visibility=["read"])
-    """The number of ProtectedItems under the Protection Group."""
-    last_back_up_time: Optional[int] = rest_field(name="lastBackUpTime", visibility=["read"])
-    """The Commvault Protection Group backup time."""
+    protection_status: Union[str, "_models.ProtectionStatus"] = rest_field(name="protectionStatus", visibility=["read"])
+    """The protection group schedule. Required. Known values are: \"all\", \"protected\",
+     \"not_protected\", \"pending\", \"backed_up_with_error\", and \"discovered\"."""
+    number_of_protected_items: int = rest_field(name="numberOfProtectedItems", visibility=["read"])
+    """The number of ProtectedItems under the Protection Group. Required."""
+    last_back_up_time: int = rest_field(name="lastBackUpTime", visibility=["read"])
+    """The Commvault Protection Group backup time. Required."""
     backup_activity_status: Optional[str] = rest_field(name="backupActivityStatus", visibility=["read"])
     """The backup activity status indicating if backup is enabled or not on the protection group."""
     provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
@@ -1207,7 +1249,7 @@ class ProtectionGroupProperties(_Model):
         self.data_source_type: Literal["AzureVM"] = "AzureVM"
 
 
-class ProtectionGroupResources(_Model):
+class ProtectionGroupResources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resources to be protected under Protection Group.
 
     :ivar manual: The items to be protected under Protection Group.
@@ -1243,7 +1285,7 @@ class ProtectionGroupResources(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionGroupResourcesMatchRules(_Model):
+class ProtectionGroupResourcesMatchRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ProtectionGroupResourcesMatchRules.
 
     :ivar rules: rules to match. Required.
@@ -1287,7 +1329,7 @@ class RestorePoints(_Model):
     """The Commvault Protected Item Restore points. Required."""
 
 
-class RestoreProtectionItemRequest(_Model):
+class RestoreProtectionItemRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of RestoreProtectionItemRequest.
 
     :ivar in_place_restore: Check whether inplace or out of place restore. Required.
@@ -1350,7 +1392,7 @@ class RestoreProtectionItemResponse(_Model):
     """The jobIds returned from Commvault. Required."""
 
 
-class Retention(_Model):
+class Retention(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Commvault Plan Retention Model.
 
     :ivar number_of_snapshots: Number of Snapshots.
@@ -1378,32 +1420,30 @@ class Retention(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoleAssignment(_Model):
+class RoleAssignment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A role assignment mapping a Commvault role to one or more Entra entities (users or groups).
 
-    :ivar role_name: The name of the Commvault role. Known values are: "BackupAdmin",
+    :ivar role_name: The name of the Commvault role. Required. Known values are: "BackupAdmin",
      "BackupOperator", "BackupUser", "SecurityAdmin", and "MultiPersonAuthorization".
     :vartype role_name: str or ~azure.mgmt.commvaultcontentstore.models.RoleName
-    :ivar entities: The Entra entities (users or groups) assigned to this role.
+    :ivar entities: The Entra entities (users or groups) assigned to this role. Required.
     :vartype entities: list[~azure.mgmt.commvaultcontentstore.models.EntityInfo]
     """
 
-    role_name: Optional[Union[str, "_models.RoleName"]] = rest_field(
+    role_name: Union[str, "_models.RoleName"] = rest_field(
         name="roleName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The name of the Commvault role. Known values are: \"BackupAdmin\", \"BackupOperator\",
-     \"BackupUser\", \"SecurityAdmin\", and \"MultiPersonAuthorization\"."""
-    entities: Optional[list["_models.EntityInfo"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Entra entities (users or groups) assigned to this role."""
+    """The name of the Commvault role. Required. Known values are: \"BackupAdmin\",
+     \"BackupOperator\", \"BackupUser\", \"SecurityAdmin\", and \"MultiPersonAuthorization\"."""
+    entities: list["_models.EntityInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Entra entities (users or groups) assigned to this role. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        role_name: Optional[Union[str, "_models.RoleName"]] = None,
-        entities: Optional[list["_models.EntityInfo"]] = None,
+        role_name: Union[str, "_models.RoleName"],
+        entities: list["_models.EntityInfo"],
     ) -> None: ...
 
     @overload
@@ -1417,7 +1457,7 @@ class RoleAssignment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoleMapping(ProxyResource):
+class RoleMapping(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Commvault Role Mapping Resource. Singleton per Cloud Account - maps Entra security groups to
     Commvault roles for RBAC enforcement.
 
@@ -1459,7 +1499,7 @@ class RoleMapping(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RoleMappingProperties(_Model):
+class RoleMappingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of Commvault Role Mapping.
 
     :ivar roles: The list of role assignments mapping roles to Entra entities (users and groups).
@@ -1498,7 +1538,7 @@ class RoleMappingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Rule(_Model):
+class Rule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The rules to match resources.
 
     :ivar property: property of the rule. Required. Known values are: "resourceGroup", "name",
@@ -1540,7 +1580,7 @@ class Rule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SaaSData(_Model):
+class SaaSData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SaaS-related data properties.
 
     :ivar saa_s_resource_id: SaaS resource id.
@@ -1570,7 +1610,7 @@ class SaaSData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SaaSResourceDetailsResponse(ProxyResource):
+class SaaSResourceDetailsResponse(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Marketplace SaaS resource details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1611,7 +1651,7 @@ class SaaSResourceDetailsResponse(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class Schedule(_Model):
+class Schedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Commvault Plan Schedule Model.
 
     :ivar backup_type: Type of Backup. Required. Known values are: "INCREMENTAL", "FULL", and
@@ -1707,7 +1747,7 @@ class Schedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StopBackupProtectionGroupRequest(_Model):
+class StopBackupProtectionGroupRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of StopBackupProtectionGroupRequest.
 
     :ivar reason: The reason for stopping the backup. Required.
@@ -1740,7 +1780,7 @@ class StopBackupProtectionGroupRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Storage(ProxyResource):
+class Storage(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Commvault Storage Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1781,7 +1821,7 @@ class Storage(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class StoragePlan(_Model):
+class StoragePlan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of Commvault Storage Plan.
 
     :ivar name: The name of the Storage resource. Required.
@@ -1865,7 +1905,7 @@ class StoragePlan(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageProperties(_Model):
+class StorageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of Commvault Storage.
 
     :ivar location: Location of the Commvault Storage. Required.
@@ -1881,6 +1921,10 @@ class StorageProperties(_Model):
      "Failed", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.commvaultcontentstore.models.ResourceProvisioningState
+    :ivar compliance_lock_status: The compliance lock status of the storage. Known values are:
+     "Enabled", "DisablementPending", and "Disabled".
+    :vartype compliance_lock_status: str or
+     ~azure.mgmt.commvaultcontentstore.models.ComplianceLockStatus
     """
 
     location: str = rest_field(visibility=["read", "create"])
@@ -1900,6 +1944,11 @@ class StorageProperties(_Model):
     )
     """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", and
      \"Canceled\"."""
+    compliance_lock_status: Optional[Union[str, "_models.ComplianceLockStatus"]] = rest_field(
+        name="complianceLockStatus", visibility=["read"]
+    )
+    """The compliance lock status of the storage. Known values are: \"Enabled\",
+     \"DisablementPending\", and \"Disabled\"."""
 
     @overload
     def __init__(
@@ -1922,7 +1971,7 @@ class StorageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -2004,7 +2053,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class UserDetails(_Model):
+class UserDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User details for an organization.
 
     :ivar first_name: First name of the user.
@@ -2056,7 +2105,7 @@ class UserDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VmDestinationInfo(_Model):
+class VmDestinationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of VmDestinationInfo.
 
     :ivar vm_info_list: List of information on VMs. Required.
@@ -2084,7 +2133,7 @@ class VmDestinationInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VmInfo(_Model):
+class VmInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of information of a VM.
 
     :ivar source_vm_guid: The GUID of VM to be restored. Required.
@@ -2162,7 +2211,7 @@ class VmInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VmListItem(_Model):
+class VmListItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The VM list item for backup.
 
     :ivar vm_guid: The GUID of the VM to backup. Required.
@@ -2190,7 +2239,7 @@ class VmListItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VmTag(_Model):
+class VmTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of VMTag for Restore Request.
 
     :ivar name: The name of VM tag. Required.

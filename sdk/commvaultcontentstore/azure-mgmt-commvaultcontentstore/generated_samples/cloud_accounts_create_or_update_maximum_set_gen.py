@@ -38,10 +38,15 @@ def main():
             "identity": {"type": "None", "userAssignedIdentities": {}},
             "location": "sxzmmidsfbba",
             "properties": {
-                "backupAdminOnCcaCreate": {
-                    "displayName": "Tenant Admins",
-                    "entityType": "Group",
-                    "id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                "company": {
+                    "city": "Redmond",
+                    "companyName": "Contoso",
+                    "country": "USA",
+                    "jobTitle": "Backup Administrator",
+                    "postalCode": "98052",
+                    "state": "WA",
+                    "street": "1 Microsoft Way",
+                    "website": "https://www.contoso.com",
                 },
                 "marketplace": {
                     "offerDetails": {
@@ -56,11 +61,53 @@ def main():
                     "subscriptionId": "tblwyuznrazgchhfczgtlaifwamndt",
                     "subscriptionStatus": "PendingFulfillmentStart",
                 },
-                "multiPersonAuthorizationOnCcaCreate": {
-                    "displayName": "John Smith",
-                    "entityType": "User",
-                    "id": "11111111-2222-3333-4444-555555555555",
-                },
+                "roleAssignmentsOnCcaCreate": [
+                    {
+                        "entities": [
+                            {
+                                "displayName": "Tenant Admins",
+                                "entityType": "Group",
+                                "id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                            }
+                        ],
+                        "roleName": "BackupAdmin",
+                    },
+                    {
+                        "entities": [
+                            {
+                                "displayName": "Backup Users SG",
+                                "entityType": "Group",
+                                "id": "22222222-3333-4444-5555-666666666666",
+                            },
+                            {
+                                "displayName": "Jane Doe",
+                                "entityType": "User",
+                                "id": "33333333-4444-5555-6666-777777777777",
+                            },
+                        ],
+                        "roleName": "BackupUser",
+                    },
+                    {
+                        "entities": [
+                            {
+                                "displayName": "Ops Team",
+                                "entityType": "Group",
+                                "id": "44444444-5555-6666-7777-888888888888",
+                            }
+                        ],
+                        "roleName": "BackupOperator",
+                    },
+                    {
+                        "entities": [
+                            {
+                                "displayName": "MPA Approvers",
+                                "entityType": "Group",
+                                "id": "11111111-2222-3333-4444-555555555555",
+                            }
+                        ],
+                        "roleName": "MultiPersonAuthorization",
+                    },
+                ],
                 "user": {
                     "emailAddress": "user@example.com",
                     "firstName": "mpiviyooskqkyjqqpgnkderu",
@@ -75,6 +122,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-03-preview/CloudAccounts_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-09-30/CloudAccounts_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

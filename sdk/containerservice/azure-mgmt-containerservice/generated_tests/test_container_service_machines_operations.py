@@ -139,6 +139,7 @@ class TestContainerServiceMachinesOperations(AzureMgmtRecordedTestCase):
                         "ipAddresses": [{"family": "str", "ip": "str"}],
                         "nodePublicIPPrefixID": "str",
                         "nodePublicIPTags": [{"ipTagType": "str", "tag": "str"}],
+                        "podIPAllocationMode": "str",
                         "podSubnetID": "str",
                         "vnetSubnetID": "str",
                     },

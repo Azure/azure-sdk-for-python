@@ -42,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-03-preview/ProtectedItemsOperationGroup_CountByProtectionGroups_MinimumSet_Gen.json
+# x-ms-original-file: 2026-09-30/ProtectedItemsOperationGroup_CountByProtectionGroups_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

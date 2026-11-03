@@ -38,7 +38,6 @@ Usage::
 import asyncio
 
 from azure.ai.agentserver.core.storage import FoundryStateStore
-from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -52,12 +51,6 @@ options = ResponsesServerOptions(
     steerable_conversations=False,
 )
 app = ResponsesAgentServerHost(options=options)
-
-# Explicitly opt into resilient-task startup recovery, for parity with the
-# invocations resilient samples. The Responses framework already registers its
-# internal durable tasks at host construction (so recovery runs regardless);
-# this call just makes the opt-in intent explicit.
-set_resilient_tasks_enabled(True)
 
 
 @app.response_handler
@@ -74,15 +67,8 @@ async def handler(
     )
     async with store:
         item = await store.get_item("state")
-        state = (
-            dict(item.value)
-            if item is not None and isinstance(item.value, dict)
-            else {}
-        )
-        if (
-            state.get("terminated")
-            and state.get("last_response_id") != context.response_id
-        ):
+        state = dict(item.value) if item is not None and isinstance(item.value, dict) else {}
+        if state.get("terminated") and state.get("last_response_id") != context.response_id:
             state = {}
         if state.get("last_response_id") == context.response_id:
             turn_count = int(state.get("turn_count", 1))
@@ -91,9 +77,7 @@ async def handler(
 
         # Explicit session termination
         if input_text.strip().lower() == "done":
-            if state.get("last_response_id") == context.response_id and state.get(
-                "terminated"
-            ):
+            if state.get("last_response_id") == context.response_id and state.get("terminated"):
                 completed_turns = int(state.get("completed_turns", 0))
             else:
                 completed_turns = max(turn_count - 1, 0)

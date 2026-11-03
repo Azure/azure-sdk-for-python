@@ -24,6 +24,7 @@ if TYPE_CHECKING:
         DiskDetachOptionTypes,
         DomainNameLabelScopeTypes,
         EvictionPolicy,
+        ExtendedLocationType,
         IPVersions,
         Language,
         LinuxPatchAssessmentMode,
@@ -38,8 +39,6 @@ if TYPE_CHECKING:
         NetworkInterfaceAuxiliarySku,
         NotificationType,
         OperatingSystemTypes,
-        PartialFulfillmentMode,
-        PartialFulfillmentReason,
         PriorityType,
         ProtocolTypes,
         ProvisioningState,
@@ -61,6 +60,7 @@ if TYPE_CHECKING:
         WindowsPatchAssessmentMode,
         WindowsVMGuestPatchAutomaticByPlatformRebootSetting,
         WindowsVMGuestPatchMode,
+        ZonePlacementPolicyType,
     )
 
 
@@ -170,6 +170,29 @@ class ApplicationProfile(TypedDict, total=False):
 
     galleryApplications: list["VMGalleryApplication"]
     """Specifies the gallery applications that should be made available to the VM."""
+
+
+class BillingProfile(TypedDict, total=False):
+    """Specifies the billing related details of the Azure Spot virtual machines.
+
+    :ivar maxPrice: Specifies the maximum price, in US Dollars, you are willing to pay per hour for
+     each Azure Spot virtual machine. This price is compared with the current Azure Spot price for
+     the virtual machine size at create time, and the operation only succeeds if maxPrice is greater
+     than the current Azure Spot price. It is also used to evict a virtual machine if the current
+     Azure Spot price rises above it after creation. Possible values are any decimal value greater
+     than zero, or -1 to indicate the default price is up-to on-demand and the virtual machine
+     should not be evicted for price reasons. The default is -1 when not provided.
+    :vartype maxPrice: float
+    """
+
+    maxPrice: float
+    """Specifies the maximum price, in US Dollars, you are willing to pay per hour for each Azure Spot
+     virtual machine. This price is compared with the current Azure Spot price for the virtual
+     machine size at create time, and the operation only succeeds if maxPrice is greater than the
+     current Azure Spot price. It is also used to evict a virtual machine if the current Azure Spot
+     price rises above it after creation. Possible values are any decimal value greater than zero,
+     or -1 to indicate the default price is up-to on-demand and the virtual machine should not be
+     evicted for price reasons. The default is -1 when not provided."""
 
 
 class BootDiagnostics(TypedDict, total=False):
@@ -326,6 +349,18 @@ class BulkactionVMProperties(TypedDict, total=False):
     :vartype applicationProfile: "ApplicationProfile"
     :ivar vmExtensions: Virtual Machine Extensions Array to be applied to the Virtual Machines.
     :vartype vmExtensions: list["BulkactionVMExtension"]
+    :ivar priority: Specifies the priority for the virtual machines. Mirrors the priority property
+     on Microsoft.Compute/virtualMachines. Known values are: "Regular" and "Spot".
+    :vartype priority: Union[str, "PriorityType"]
+    :ivar billingProfile: Specifies the billing related details of the Azure Spot virtual machines.
+     Mirrors the billingProfile property on Microsoft.Compute/virtualMachines. Only applies when
+     priority is Spot.
+    :vartype billingProfile: "BillingProfile"
+    :ivar evictionPolicy: Specifies the eviction policy for the Azure Spot virtual machines. Both
+     Deallocate and Delete are supported. Mirrors the evictionPolicy property on
+     Microsoft.Compute/virtualMachines. Only applies when priority is Spot. Known values are:
+     "Delete" and "Deallocate".
+    :vartype evictionPolicy: Union[str, "EvictionPolicy"]
     """
 
     scheduledEventsPolicy: "ScheduledEventsPolicy"
@@ -372,6 +407,17 @@ class BulkactionVMProperties(TypedDict, total=False):
     """Specifies the gallery applications that should be made available to the VM."""
     vmExtensions: list["BulkactionVMExtension"]
     """Virtual Machine Extensions Array to be applied to the Virtual Machines."""
+    priority: Union[str, "PriorityType"]
+    """Specifies the priority for the virtual machines. Mirrors the priority property on
+     Microsoft.Compute/virtualMachines. Known values are: \"Regular\" and \"Spot\"."""
+    billingProfile: "BillingProfile"
+    """Specifies the billing related details of the Azure Spot virtual machines. Mirrors the
+     billingProfile property on Microsoft.Compute/virtualMachines. Only applies when priority is
+     Spot."""
+    evictionPolicy: Union[str, "EvictionPolicy"]
+    """Specifies the eviction policy for the Azure Spot virtual machines. Both Deallocate and Delete
+     are supported. Mirrors the evictionPolicy property on Microsoft.Compute/virtualMachines. Only
+     applies when priority is Spot. Known values are: \"Delete\" and \"Deallocate\"."""
 
 
 class BulkCreateCustomOverride(TypedDict, total=False):
@@ -380,6 +426,17 @@ class BulkCreateCustomOverride(TypedDict, total=False):
     :ivar virtualMachineName: ARM VM name for this VM. Optional; when omitted the name is generated
      from the prefix as {prefix}_{index}.
     :vartype virtualMachineName: str
+    :ivar zone: The availability zone this VM is created in. Overrides the operation-level zones
+     for this VM only. A null value does not override, so the VM is placed using the operation-level
+     zones; an empty value does override and deploys this VM as a regional (non-zonal) VM.
+    :vartype zone: str
+    :ivar extendedLocation: The extended location this VM is created in. Overrides the
+     operation-level extendedLocation for this VM only; when omitted the VM inherits the
+     operation-level extendedLocation.
+    :vartype extendedLocation: "ExtendedLocation"
+    :ivar placement: The placement constraints applied to this VM. Overrides the operation-level
+     placement for this VM only; when omitted the VM inherits the operation-level placement.
+    :vartype placement: "Placement"
     :ivar virtualMachineProfile: VM profile, the same shape as operation-level
      ComputeProfile.virtualMachineProfile. Overrides the operation-level VM profile.
     :vartype virtualMachineProfile: "BulkactionVMProperties"
@@ -397,6 +454,16 @@ class BulkCreateCustomOverride(TypedDict, total=False):
     virtualMachineName: str
     """ARM VM name for this VM. Optional; when omitted the name is generated from the prefix as
      {prefix}_{index}."""
+    zone: str
+    """The availability zone this VM is created in. Overrides the operation-level zones for this VM
+     only. A null value does not override, so the VM is placed using the operation-level zones; an
+     empty value does override and deploys this VM as a regional (non-zonal) VM."""
+    extendedLocation: "ExtendedLocation"
+    """The extended location this VM is created in. Overrides the operation-level extendedLocation for
+     this VM only; when omitted the VM inherits the operation-level extendedLocation."""
+    placement: "Placement"
+    """The placement constraints applied to this VM. Overrides the operation-level placement for this
+     VM only; when omitted the VM inherits the operation-level placement."""
     virtualMachineProfile: "BulkactionVMProperties"
     """VM profile, the same shape as operation-level ComputeProfile.virtualMachineProfile. Overrides
      the operation-level VM profile."""
@@ -433,27 +500,6 @@ class BulkCreateCustomOverridesProfile(TypedDict, total=False):
      index i."""
 
 
-class BulkCreateCustomPriorityProfile(TypedDict, total=False):
-    """Configuration options for Regular or Spot instances in BulkCreateCustom.
-
-    :ivar type: The priority type for VM allocation. Known values are: "Regular" and "Spot".
-    :vartype type: Union[str, "PriorityType"]
-    :ivar maxPricePerVM: Price per hour of each Spot VM will never exceed this.
-    :vartype maxPricePerVM: float
-    :ivar evictionPolicy: Eviction Policy to follow when evicting Spot VMs. Known values are:
-     "Delete" and "Deallocate".
-    :vartype evictionPolicy: Union[str, "EvictionPolicy"]
-    """
-
-    type: Union[str, "PriorityType"]
-    """The priority type for VM allocation. Known values are: \"Regular\" and \"Spot\"."""
-    maxPricePerVM: float
-    """Price per hour of each Spot VM will never exceed this."""
-    evictionPolicy: Union[str, "EvictionPolicy"]
-    """Eviction Policy to follow when evicting Spot VMs. Known values are: \"Delete\" and
-     \"Deallocate\"."""
-
-
 class BulkCreateCustomProperties(TypedDict, total=False):
     """Details of the BulkCreateCustom.
 
@@ -467,23 +513,8 @@ class BulkCreateCustomProperties(TypedDict, total=False):
     :ivar capacityType: Specifies capacity type for launching instances. It can be in terms of VMs
      or vCPUs. Known values are: "VM" and "VCpu".
     :vartype capacityType: Union[str, "CapacityType"]
-    :ivar minCapacity: The minimum capacity, expressed in units specified by capacityType, that
-     Azure must be able to allocate for the request to proceed. If Azure cannot allocate at least
-     this capacity with high confidence, the request is rejected with 409 Conflict
-     (InsufficientCapacity) and no VMs are created. Otherwise, Azure allocates as much capacity as
-     possible, up to the requested capacity. Must be greater than 0, less than capacity, and
-     requires partialFulfillmentPolicy.mode to be Enabled.
-    :vartype minCapacity: int
-    :ivar partialFulfillmentPolicy: Controls how partial fulfillment is handled for a
-     BulkCreateCustom request. When enabled, Azure creates only the VMs or vCPUs it has high
-     confidence can be successfully allocated, instead of attempting the entire request and
-     potentially returning allocation failures.
-    :vartype partialFulfillmentPolicy: "PartialFulfillmentPolicy"
     :ivar resources: The virtual machine resources resolved for the operation.
     :vartype resources: list["BulkCreateCustomResource"]
-    :ivar priorityProfile: Configuration Options for Regular or Spot instances in BulkCreateCustom.
-     Required.
-    :vartype priorityProfile: "BulkCreateCustomPriorityProfile"
     :ivar computeProfile: Compute Profile to configure the Virtual Machines. Required.
     :vartype computeProfile: "ComputeProfile"
     :ivar overridesProfile: Per-VM overrides and the shared name prefix, specified when the
@@ -504,21 +535,8 @@ class BulkCreateCustomProperties(TypedDict, total=False):
     capacityType: Union[str, "CapacityType"]
     """Specifies capacity type for launching instances. It can be in terms of VMs or vCPUs. Known
      values are: \"VM\" and \"VCpu\"."""
-    minCapacity: int
-    """The minimum capacity, expressed in units specified by capacityType, that Azure must be able to
-     allocate for the request to proceed. If Azure cannot allocate at least this capacity with high
-     confidence, the request is rejected with 409 Conflict (InsufficientCapacity) and no VMs are
-     created. Otherwise, Azure allocates as much capacity as possible, up to the requested capacity.
-     Must be greater than 0, less than capacity, and requires partialFulfillmentPolicy.mode to be
-     Enabled."""
-    partialFulfillmentPolicy: "PartialFulfillmentPolicy"
-    """Controls how partial fulfillment is handled for a BulkCreateCustom request. When enabled, Azure
-     creates only the VMs or vCPUs it has high confidence can be successfully allocated, instead of
-     attempting the entire request and potentially returning allocation failures."""
     resources: list["BulkCreateCustomResource"]
     """The virtual machine resources resolved for the operation."""
-    priorityProfile: Required["BulkCreateCustomPriorityProfile"]
-    """Configuration Options for Regular or Spot instances in BulkCreateCustom. Required."""
     computeProfile: Required["ComputeProfile"]
     """Compute Profile to configure the Virtual Machines. Required."""
     overridesProfile: "BulkCreateCustomOverridesProfile"
@@ -571,21 +589,6 @@ class BulkCreateProperties(TypedDict, total=False):
     :ivar capacityType: Specifies capacity type for launching instances. It can be in terms of VMs
      or vCPUs. Known values are: "VM" and "VCpu".
     :vartype capacityType: Union[str, "CapacityType"]
-    :ivar minCapacity: The minimum capacity, expressed in units specified by capacityType, that
-     Azure must be able to allocate for the request to proceed. If Azure cannot allocate at least
-     this capacity with high confidence, the request is rejected with 409 Conflict
-     (InsufficientCapacity) and no VMs are created. Otherwise, Azure allocates as much capacity as
-     possible, up to the requested capacity. Must be greater than 0, less than capacity, and
-     requires partialFulfillmentPolicy.mode to be Enabled.
-    :vartype minCapacity: int
-    :ivar partialFulfillmentPolicy: Controls how partial fulfillment is handled for a BulkCreate
-     request. When enabled, Azure creates only the VMs or vCPUs it has high confidence can be
-     successfully allocated, instead of attempting the entire request and potentially returning
-     allocation failures.
-    :vartype partialFulfillmentPolicy: "PartialFulfillmentPolicy"
-    :ivar priorityProfile: Configuration Options for Regular or Spot instances in BulkCreate.
-     Required.
-    :vartype priorityProfile: "PriorityProfile"
     :ivar computeProfile: Compute Profile to configure the Virtual Machines. Applied uniformly to
      every virtual machine created by the operation. Required.
     :vartype computeProfile: "ComputeProfile"
@@ -604,19 +607,6 @@ class BulkCreateProperties(TypedDict, total=False):
     capacityType: Union[str, "CapacityType"]
     """Specifies capacity type for launching instances. It can be in terms of VMs or vCPUs. Known
      values are: \"VM\" and \"VCpu\"."""
-    minCapacity: int
-    """The minimum capacity, expressed in units specified by capacityType, that Azure must be able to
-     allocate for the request to proceed. If Azure cannot allocate at least this capacity with high
-     confidence, the request is rejected with 409 Conflict (InsufficientCapacity) and no VMs are
-     created. Otherwise, Azure allocates as much capacity as possible, up to the requested capacity.
-     Must be greater than 0, less than capacity, and requires partialFulfillmentPolicy.mode to be
-     Enabled."""
-    partialFulfillmentPolicy: "PartialFulfillmentPolicy"
-    """Controls how partial fulfillment is handled for a BulkCreate request. When enabled, Azure
-     creates only the VMs or vCPUs it has high confidence can be successfully allocated, instead of
-     attempting the entire request and potentially returning allocation failures."""
-    priorityProfile: Required["PriorityProfile"]
-    """Configuration Options for Regular or Spot instances in BulkCreate. Required."""
     computeProfile: Required["ComputeProfile"]
     """Compute Profile to configure the Virtual Machines. Applied uniformly to every virtual machine
      created by the operation. Required."""
@@ -625,7 +615,7 @@ class BulkCreateProperties(TypedDict, total=False):
 
 
 class CancelOccurrenceRequest(TypedDict, total=False):
-    """Request body for canceling a scheduled action occurrence.
+    """Request body for canceling a recurring bulk action occurrence.
 
     :ivar resourceIds: The resources for which operations should be canceled. An empty array
      cancels all operations for all resources for the occurrence. Required.
@@ -813,7 +803,7 @@ class DataDisk(TypedDict, total=False):
 
 
 class DelayRequest(TypedDict, total=False):
-    """Request body for delaying a scheduled action occurrence.
+    """Request body for delaying a recurring bulk action occurrence.
 
     :ivar delay: The new date and time for the occurrence, including the UTC offset. Required.
     :vartype delay: str
@@ -1085,6 +1075,23 @@ class ExecutionParameters(TypedDict, total=False):
      in the operation's capacityRecommendation response."""
     additionalCreateParameters: dict[str, Any]
     """Additional configuration for Create."""
+
+
+class ExtendedLocation(TypedDict, total=False):
+    """The complex type of the extended location.
+
+    :ivar name: The name of the extended location. Required.
+    :vartype name: str
+    :ivar type: The type of the extended location. Required. Known values are: "EdgeZone" and
+     "CustomLocation".
+    :vartype type: Union[str, "ExtendedLocationType"]
+    """
+
+    name: Required[str]
+    """The name of the extended location. Required."""
+    type: Required[Union[str, "ExtendedLocationType"]]
+    """The type of the extended location. Required. Known values are: \"EdgeZone\" and
+     \"CustomLocation\"."""
 
 
 class Resource(TypedDict, total=False):
@@ -1415,6 +1422,12 @@ class LocationBasedBulkCreate(ProxyResource):
     :vartype properties: "BulkCreateProperties"
     :ivar zones: Zones in which the BulkCreate is available.
     :vartype zones: list[str]
+    :ivar extendedLocation: The extended location of the virtual machines created by the BulkCreate
+     operation.
+    :vartype extendedLocation: "ExtendedLocation"
+    :ivar placement: The availability zone placement constraints applied to the virtual machines
+     created by the BulkCreate operation.
+    :vartype placement: "Placement"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: The managed service identities assigned to this resource.
@@ -1427,6 +1440,11 @@ class LocationBasedBulkCreate(ProxyResource):
     """The resource-specific properties for this resource."""
     zones: list[str]
     """Zones in which the BulkCreate is available."""
+    extendedLocation: "ExtendedLocation"
+    """The extended location of the virtual machines created by the BulkCreate operation."""
+    placement: "Placement"
+    """The availability zone placement constraints applied to the virtual machines created by the
+     BulkCreate operation."""
     tags: dict[str, str]
     """Resource tags."""
     identity: "ManagedServiceIdentity"
@@ -1453,6 +1471,12 @@ class LocationBasedBulkCreateCustom(ProxyResource):
     :vartype properties: "BulkCreateCustomProperties"
     :ivar zones: Zones in which the BulkCreateCustom is available.
     :vartype zones: list[str]
+    :ivar extendedLocation: The extended location of the virtual machines created by the
+     BulkCreateCustom operation.
+    :vartype extendedLocation: "ExtendedLocation"
+    :ivar placement: The availability zone placement constraints applied to the virtual machines
+     created by the BulkCreateCustom operation.
+    :vartype placement: "Placement"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: The managed service identities assigned to this resource.
@@ -1465,6 +1489,11 @@ class LocationBasedBulkCreateCustom(ProxyResource):
     """The resource-specific properties for this resource."""
     zones: list[str]
     """Zones in which the BulkCreateCustom is available."""
+    extendedLocation: "ExtendedLocation"
+    """The extended location of the virtual machines created by the BulkCreateCustom operation."""
+    placement: "Placement"
+    """The availability zone placement constraints applied to the virtual machines created by the
+     BulkCreateCustom operation."""
     tags: dict[str, str]
     """Resource tags."""
     identity: "ManagedServiceIdentity"
@@ -1589,7 +1618,7 @@ class NetworkProfile(TypedDict, total=False):
 
 
 class NotificationProperties(TypedDict, total=False):
-    """Settings for notifications about upcoming scheduled action operations.
+    """Settings for notifications about upcoming recurring bulk action operations.
 
     :ivar destination: The notification destination. For email notifications, specify a valid email
      address. Required.
@@ -1875,43 +1904,6 @@ class OSProfileProvisioningData(TypedDict, total=False):
      65,535 bytes. Do not include secrets or passwords."""
 
 
-class PartialFulfillmentPolicy(TypedDict, total=False):
-    """Controls how partial fulfillment is handled for a BulkCreateCustom request. When enabled, Azure
-    creates only the VMs or vCPUs it has high confidence can be successfully allocated, instead of
-    attempting the entire request and potentially returning allocation failures.
-
-    :ivar fulfilledCapacity: The amount of capacity that was actually attempted, expressed in the
-     units specified by capacityType. When partial fulfillment is enabled, this value can be less
-     than the requested capacity.
-    :vartype fulfilledCapacity: int
-    :ivar mode: Specifies whether partial fulfillment is allowed. When Enabled, Azure creates as
-     many VMs as it has high confidence can be successfully allocated. When Disabled, Azure attempts
-     to create all requested VMs, which may result into allocation failures. Known values are:
-     "Enabled" and "Disabled".
-    :vartype mode: Union[str, "PartialFulfillmentMode"]
-    :ivar reason: Indicates why the fulfilled capacity is less than the requested capacity.
-     Possible values include InsufficientCapacity and InsufficientQuota. Returned only in the create
-     response when partial fulfillment is enabled and the request cannot be fully satisfied. Known
-     values are: "InsufficientCapacity", "InsufficientQuota", and "None".
-    :vartype reason: Union[str, "PartialFulfillmentReason"]
-    """
-
-    fulfilledCapacity: int
-    """The amount of capacity that was actually attempted, expressed in the units specified by
-     capacityType. When partial fulfillment is enabled, this value can be less than the requested
-     capacity."""
-    mode: Union[str, "PartialFulfillmentMode"]
-    """Specifies whether partial fulfillment is allowed. When Enabled, Azure creates as many VMs as it
-     has high confidence can be successfully allocated. When Disabled, Azure attempts to create all
-     requested VMs, which may result into allocation failures. Known values are: \"Enabled\" and
-     \"Disabled\"."""
-    reason: Union[str, "PartialFulfillmentReason"]
-    """Indicates why the fulfilled capacity is less than the requested capacity. Possible values
-     include InsufficientCapacity and InsufficientQuota. Returned only in the create response when
-     partial fulfillment is enabled and the request cannot be fully satisfied. Known values are:
-     \"InsufficientCapacity\", \"InsufficientQuota\", and \"None\"."""
-
-
 class PatchSettings(TypedDict, total=False):
     """Specifies settings related to VM Guest Patching on Windows.
 
@@ -1967,6 +1959,28 @@ class PatchSettings(TypedDict, total=False):
      Windows."""
 
 
+class Placement(TypedDict, total=False):
+    """The customer-defined constraints for virtual machine placement.
+
+    :ivar zonePlacementPolicy: The policy used to select an availability zone. Known values are:
+     "Any" and "Auto".
+    :vartype zonePlacementPolicy: Union[str, "ZonePlacementPolicyType"]
+    :ivar includeZones: The availability zones that Bulk Actions can select. When omitted, Bulk
+     Actions can consider any supported zone in the region.
+    :vartype includeZones: list[str]
+    :ivar excludeZones: The availability zones that Bulk Actions must not select.
+    :vartype excludeZones: list[str]
+    """
+
+    zonePlacementPolicy: Union[str, "ZonePlacementPolicyType"]
+    """The policy used to select an availability zone. Known values are: \"Any\" and \"Auto\"."""
+    includeZones: list[str]
+    """The availability zones that Bulk Actions can select. When omitted, Bulk Actions can consider
+     any supported zone in the region."""
+    excludeZones: list[str]
+    """The availability zones that Bulk Actions must not select."""
+
+
 class Plan(TypedDict, total=False):
     """Plan for the resource.
 
@@ -1997,28 +2011,6 @@ class Plan(TypedDict, total=False):
      product/artifact."""
     version: str
     """The version of the desired product/artifact."""
-
-
-class PriorityProfile(TypedDict, total=False):
-    """The priority and allocation preferences for virtual machines.
-
-    :ivar type: The priority type for virtual machine allocation. Known values are: "Regular" and
-     "Spot".
-    :vartype type: Union[str, "PriorityType"]
-    :ivar maxPricePerVM: The maximum hourly price, in US dollars, for each Spot virtual machine.
-    :vartype maxPricePerVM: float
-    :ivar evictionPolicy: The action applied to a Spot virtual machine when Azure evicts it. Known
-     values are: "Delete" and "Deallocate".
-    :vartype evictionPolicy: Union[str, "EvictionPolicy"]
-    """
-
-    type: Union[str, "PriorityType"]
-    """The priority type for virtual machine allocation. Known values are: \"Regular\" and \"Spot\"."""
-    maxPricePerVM: float
-    """The maximum hourly price, in US dollars, for each Spot virtual machine."""
-    evictionPolicy: Union[str, "EvictionPolicy"]
-    """The action applied to a Spot virtual machine when Azure evicts it. Known values are: \"Delete\"
-     and \"Deallocate\"."""
 
 
 class ProxyAgentSettings(TypedDict, total=False):
@@ -2116,18 +2108,18 @@ class ReimageResourceOverride(TypedDict, total=False):
 
 
 class ResourceAttachRequest(TypedDict, total=False):
-    """Resources to attach to a scheduled action.
+    """Resources to attach to a recurring bulk action.
 
-    :ivar resources: The list of resources to attach to the scheduled action. Required.
+    :ivar resources: The list of resources to attach to the recurring bulk action. Required.
     :vartype resources: list["ScheduledActionResourceInput"]
     """
 
     resources: Required[list["ScheduledActionResourceInput"]]
-    """The list of resources to attach to the scheduled action. Required."""
+    """The list of resources to attach to the recurring bulk action. Required."""
 
 
 class ResourceDetachRequest(TypedDict, total=False):
-    """Resources to remove from a scheduled action.
+    """Resources to remove from a recurring bulk action.
 
     :ivar resources: The Azure resource IDs of the resources to remove. Required.
     :vartype resources: list[str]
@@ -2138,7 +2130,7 @@ class ResourceDetachRequest(TypedDict, total=False):
 
 
 class ResourcePatchRequest(TypedDict, total=False):
-    """Resource-specific settings to update in a scheduled action.
+    """Resource-specific settings to update in a recurring bulk action.
 
     :ivar resources: The resources and notification settings to update. Required.
     :vartype resources: list["ScheduledActionResourceInput"]
@@ -2234,7 +2226,7 @@ class TrackedResource(Resource):
 
 
 class ScheduledAction(TrackedResource):
-    """A recurring action that operates on specified compute resources.
+    """A recurring bulk action that operates on specified compute resources.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -2260,7 +2252,7 @@ class ScheduledAction(TrackedResource):
 
 
 class ScheduledActionProperties(TypedDict, total=False):
-    """Configuration and status of a scheduled action.
+    """Configuration and status of a recurring bulk action.
 
     :ivar resourceType: The type of compute resource targeted by the action. Required. Known values
      are: "VirtualMachine" and "VirtualMachineScaleSet".
@@ -2276,11 +2268,12 @@ class ScheduledActionProperties(TypedDict, total=False):
     :vartype endTime: str
     :ivar schedule: The recurring schedule. Required.
     :vartype schedule: "ScheduledActionsSchedule"
-    :ivar notificationSettings: Notification settings that apply to the scheduled action. Required.
+    :ivar notificationSettings: Notification settings that apply to the recurring bulk action.
+     Required.
     :vartype notificationSettings: list["NotificationProperties"]
     :ivar disabled: Indicates whether new occurrences are disabled.
     :vartype disabled: bool
-    :ivar provisioningState: Read-only. The provisioning state of the scheduled action. Known
+    :ivar provisioningState: Read-only. The provisioning state of the recurring bulk action. Known
      values are: "Succeeded", "Failed", "Canceled", "Deleting", and "Updating".
     :vartype provisioningState: Union[str, "ScheduledActionsProvisioningState"]
     """
@@ -2298,16 +2291,16 @@ class ScheduledActionProperties(TypedDict, total=False):
     schedule: Required["ScheduledActionsSchedule"]
     """The recurring schedule. Required."""
     notificationSettings: Required[list["NotificationProperties"]]
-    """Notification settings that apply to the scheduled action. Required."""
+    """Notification settings that apply to the recurring bulk action. Required."""
     disabled: bool
     """Indicates whether new occurrences are disabled."""
     provisioningState: Union[str, "ScheduledActionsProvisioningState"]
-    """Read-only. The provisioning state of the scheduled action. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"Deleting\", and \"Updating\"."""
+    """Read-only. The provisioning state of the recurring bulk action. Known values are:
+     \"Succeeded\", \"Failed\", \"Canceled\", \"Deleting\", and \"Updating\"."""
 
 
 class ScheduledActionResourceInput(TypedDict, total=False):
-    """A compute resource to add to or update in a scheduled action.
+    """A compute resource to add to or update in a recurring bulk action.
 
     :ivar resourceId: The Azure resource ID of the targeted virtual machine. Required.
     :vartype resourceId: str
@@ -2322,7 +2315,7 @@ class ScheduledActionResourceInput(TypedDict, total=False):
 
 
 class ScheduledActionsExecutionParameters(TypedDict, total=False):
-    """Settings that control how the scheduled action operation is executed.
+    """Settings that control how the recurring bulk action operation is executed.
 
     :ivar retryPolicy: The retry settings for failed resource operations.
     :vartype retryPolicy: "ScheduledActionsRetryPolicy"
@@ -2333,7 +2326,7 @@ class ScheduledActionsExecutionParameters(TypedDict, total=False):
 
 
 class ScheduledActionsRetryPolicy(TypedDict, total=False):
-    """Retry settings for a scheduled action operation.
+    """Retry settings for a recurring bulk action operation.
 
     :ivar retryCount: The maximum number of retry attempts.
     :vartype retryCount: int
@@ -2354,9 +2347,9 @@ class ScheduledActionsRetryPolicy(TypedDict, total=False):
 
 
 class ScheduledActionsSchedule(TypedDict, total=False):
-    """The recurring schedule for a scheduled action.
+    """The recurring schedule for a recurring bulk action.
 
-    :ivar scheduledTime: The local time of day when the scheduled action runs. Required.
+    :ivar scheduledTime: The local time of day when the recurring bulk action runs. Required.
     :vartype scheduledTime: str
     :ivar timeZone: The time zone used to interpret the scheduled time. Required.
     :vartype timeZone: str
@@ -2376,7 +2369,7 @@ class ScheduledActionsSchedule(TypedDict, total=False):
     """
 
     scheduledTime: Required[str]
-    """The local time of day when the scheduled action runs. Required."""
+    """The local time of day when the recurring bulk action runs. Required."""
     timeZone: Required[str]
     """The time zone used to interpret the scheduled time. Required."""
     requestedWeekDays: list[Union[str, "WeekDay"]]
@@ -2393,9 +2386,9 @@ class ScheduledActionsSchedule(TypedDict, total=False):
 
 
 class ScheduledActionsScheduleUpdate(TypedDict, total=False):
-    """Schedule changes for a scheduled action. Omitted properties keep their current values.
+    """Schedule changes for a recurring bulk action. Omitted properties keep their current values.
 
-    :ivar scheduledTime: The local time of day when the scheduled action runs.
+    :ivar scheduledTime: The local time of day when the recurring bulk action runs.
     :vartype scheduledTime: str
     :ivar timeZone: The time zone used to interpret the scheduled time.
     :vartype timeZone: str
@@ -2415,7 +2408,7 @@ class ScheduledActionsScheduleUpdate(TypedDict, total=False):
     """
 
     scheduledTime: str
-    """The local time of day when the scheduled action runs."""
+    """The local time of day when the recurring bulk action runs."""
     timeZone: str
     """The time zone used to interpret the scheduled time."""
     requestedWeekDays: list[Union[str, "WeekDay"]]
@@ -2462,7 +2455,7 @@ class ScheduledActionUpdateProperties(TypedDict, total=False):
     :vartype endTime: str
     :ivar schedule: Changes to the recurring schedule.
     :vartype schedule: "ScheduledActionsScheduleUpdate"
-    :ivar notificationSettings: Notification settings that apply to the scheduled action.
+    :ivar notificationSettings: Notification settings that apply to the recurring bulk action.
     :vartype notificationSettings: list["NotificationProperties"]
     :ivar disabled: Indicates whether new occurrences are disabled.
     :vartype disabled: bool
@@ -2481,7 +2474,7 @@ class ScheduledActionUpdateProperties(TypedDict, total=False):
     schedule: "ScheduledActionsScheduleUpdate"
     """Changes to the recurring schedule."""
     notificationSettings: list["NotificationProperties"]
-    """Notification settings that apply to the scheduled action."""
+    """Notification settings that apply to the recurring bulk action."""
     disabled: bool
     """Indicates whether new occurrences are disabled."""
 
