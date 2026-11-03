@@ -1,5 +1,9 @@
 # Release History
 
+## 3.1.0b3 (2026-10-28)
+
+tool can't generate changelog for this release, please update manually.
+
 ## 3.1.0b2 (2026-08-31)
 
 ### Other Changes
