@@ -9,8 +9,8 @@ class ComputeType:
     ComputeType can be used to specify the compute type for a compute target. It can also be used to
     specify the compute type for a compute target that is being created.
 
-    Valid values are "managed", "amlcompute", "computeinstance", "virtualmachine", "kubernetes", "DataFactory"
-        , "synapsespark".
+    Valid values are "managed", "amlcompute", "computeinstance", "virtualmachine", "kubernetes", "DataFactory",
+        "synapsespark", and "fabricspark".
     """
 
     MANAGED = "managed"
@@ -27,6 +27,8 @@ class ComputeType:
     """Data Factory is a compute resource that is managed by Azure Machine Learning."""
     SYNAPSESPARK = "synapsespark"
     """Synapse Spark is a compute resource that is managed by Azure Machine Learning."""
+    FABRICSPARK = "fabricspark"
+    """Fabric Spark is an attached custom pool in a Fabric workspace."""
 
 
 class ComputeTier:

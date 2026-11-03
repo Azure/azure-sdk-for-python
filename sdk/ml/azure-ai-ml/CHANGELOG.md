@@ -3,6 +3,7 @@
 ## 1.36.0 (unreleased)
 
 ### Features Added
+- Added Fabric Spark compute attachment support, including typed attach, detach, get, and list results.
 - Added Spark runtime 3.5 support for model monitoring serverless Spark compute while retaining runtime 3.4 support.
 
 ### Bugs Fixed
