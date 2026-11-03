@@ -156,7 +156,7 @@ class FabricMirroringProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumM
 
 
 class FabricMirroringSettingsName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The name of the Fabric Mirroring settings resource (singleton: only "default" is allowed)."""
+    """The name of the Fabric Mirroring settings resource (singleton: only \"default\" is allowed)."""
 
     DEFAULT = "Default"
     """The default Fabric Mirroring settings instance."""
@@ -309,7 +309,7 @@ class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"

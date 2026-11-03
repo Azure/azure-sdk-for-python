@@ -2,7 +2,6 @@ import pytest
 
 from azure.mgmt.mysqlflexibleservers.aio import MySQLManagementClient
 
-
 pytestmark = pytest.mark.asyncio
 
 
