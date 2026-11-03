@@ -47,6 +47,16 @@ TEXT_RESPONSE = [
     {"role": "user", "content": [{"type": "text", "text": "What is the weather in Paris?"}]},
     {"role": "assistant", "content": [{"type": "output_text", "text": "I can't check the weather."}]},
 ]
+# What OpenAI's ChatCompletionMessage.model_dump() returns for a reply without tool calls.
+OPENAI_TEXT_REPLY = {
+    "content": "Hello.",
+    "refusal": None,
+    "role": "assistant",
+    "annotations": [],
+    "audio": None,
+    "function_call": None,
+    "tool_calls": None,
+}
 JUDGE_USAGE = {"input_token_count": 11, "output_token_count": 7, "total_token_count": 18}
 
 
@@ -240,8 +250,23 @@ class TestToolCallSuccessWithoutToolCalls:
                     "content": [{"type": "mcp_approval_response", "approve": False}],
                 },
             ],
+            [{"role": "assistant", "content": "Hello.", "tool_calls": None}],
+            [{"role": "assistant", "content": [{"type": "text", "text": "Hello."}], "tool_calls": []}],
+            [{"role": "assistant", "content": "Hello.", "function_call": None}],
+            [{"role": "user", "content": "Hi.", "tool_call_id": None}, {"role": "assistant", "content": "Hello."}],
+            [OPENAI_TEXT_REPLY],
         ],
-        ids=["text-items", "string-content", "every-text-role", "mcp-approval-only"],
+        ids=[
+            "text-items",
+            "string-content",
+            "every-text-role",
+            "mcp-approval-only",
+            "null-tool-calls",
+            "empty-tool-calls",
+            "null-function-call",
+            "null-tool-call-id",
+            "openai-model-dump",
+        ],
     )
     def test_a_response_without_tool_calls_is_not_applicable_without_a_judge_call(self, config, response):
         evaluator = _ToolCallSuccessEvaluator(model_config=dict(config))
@@ -305,6 +330,25 @@ class TestToolCallSuccessWithoutToolCalls:
                 },
                 {"role": "assistant", "content": [{"type": "text", "text": "Done."}]},
             ],
+            [
+                {
+                    **OPENAI_TEXT_REPLY,
+                    "content": "Checking the weather.",
+                    "tool_calls": [
+                        {
+                            "id": "call_1",
+                            "type": "function",
+                            "function": {"name": "fetch_weather", "arguments": '{"city": "Paris"}'},
+                        }
+                    ],
+                },
+                {
+                    "role": "tool",
+                    "tool_call_id": "call_1",
+                    "content": [{"type": "tool_result", "tool_result": {"error": "timed out"}}],
+                },
+                {**OPENAI_TEXT_REPLY, "content": "The weather service timed out."},
+            ],
         ],
         ids=[
             "tool-call",
@@ -314,6 +358,7 @@ class TestToolCallSuccessWithoutToolCalls:
             "trace-in-message",
             "trace-in-text-item",
             "approval-with-tool-call",
+            "openai-model-dump-tool-call",
         ],
     )
     def test_tool_calls_and_text_responses_still_go_to_the_judge(self, response):
@@ -341,6 +386,17 @@ class TestToolCallSuccessWithoutToolCalls:
             [{"role": "assistant", "content": [{"type": "tool_call", "name": "t", "arguments": {}}]}],
             [{"role": "assistant", "content": "Calling a tool.", "tool_calls": [{"id": "call_1"}]}],
             [{"role": "assistant", "content": "Calling a tool.", "function_call": {"name": "t"}}],
+            [
+                {
+                    "role": "assistant",
+                    "content": "Calling a tool.",
+                    "tool_calls": [{"id": "call_1"}],
+                    "function_call": None,
+                }
+            ],
+            [{"role": "assistant", "content": "Calling a tool.", "tool_calls": [None]}],
+            [{"role": "assistant", "content": "Calling a tool.", "function_call": "t"}],
+            [{"role": "assistant", "content": "Calling a tool.", "tool_calls": False}],
             [{"role": "assistant", "content": "Result.", "tool_call_id": "call_1"}],
             [{"role": "function", "content": "Result."}],
             [{"content": "No role."}],
@@ -360,6 +416,11 @@ class TestToolCallSuccessWithoutToolCalls:
     def test_text_messages_have_no_tool_calls(self):
         assert _has_no_tool_calls(TEXT_RESPONSE) is True
         assert _has_no_tool_calls([{"role": "assistant", "content": []}]) is True
+
+    @pytest.mark.parametrize("key", ["tool_calls", "function_call", "tool_call_id"])
+    @pytest.mark.parametrize("value", [None, "", [], {}], ids=["none", "empty-string", "empty-list", "empty-dict"])
+    def test_a_call_field_that_holds_nothing_counts_as_absent(self, key, value):
+        assert _has_no_tool_calls([{"role": "assistant", "content": "Hello.", key: value}]) is True
 
     def test_mcp_approvals_are_not_tool_calls_but_a_tool_call_beside_one_is(self):
         approval = {"type": "mcp_approval_request", "name": "search", "arguments": "{}"}
@@ -385,3 +446,4 @@ class TestToolCallSuccessWithoutToolCalls:
             ]
         )
         assert not _has_no_tool_calls([{"role": "assistant", "content": [approval], "function_call": {"name": "t"}}])
+        assert _has_no_tool_calls([{"role": "assistant", "content": [approval], "tool_calls": None}])

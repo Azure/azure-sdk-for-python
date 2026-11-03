@@ -150,7 +150,8 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             result = evaluator(response=response, )
 
         A list of messages that holds only text has no tool calls, so it is reported as not applicable without
-        calling the judge model.
+        calling the judge model. A tool_calls, function_call or tool_call_id field that is None or empty does not
+        count as a tool call.
 
         :keyword response: The response being evaluated, either a string or a list of messages (full agent
             response potentially including tool calls)
@@ -311,15 +312,22 @@ def _binary_score(value: Any) -> Optional[float]:
     return None
 
 
+def _holds_nothing(value: Any) -> bool:
+    """Return True for None and an empty string, list or dict."""
+    return value is None or (isinstance(value, (str, list, dict)) and not value)
+
+
 def _has_no_tool_calls(messages) -> bool:
     """Return True only for a list of text messages and MCP approvals that holds no tool calls, results or traces.
 
-    A list in any other format may hold tool activity this evaluator does not parse, so the judge assesses it.
+    A tool_calls, function_call or tool_call_id field that holds nothing, such as the None that OpenAI's model_dump()
+    writes, counts as absent. A list in any other format may hold tool activity this evaluator does not parse, so the
+    judge assesses it.
     """
     if not isinstance(messages, list) or not messages:
         return False
     for message in messages:
-        if not isinstance(message, dict) or any(key in message for key in _TOOL_CALL_KEYS):
+        if not isinstance(message, dict) or not all(_holds_nothing(message.get(key)) for key in _TOOL_CALL_KEYS):
             return False
         content = message.get("content")
         items = content
@@ -329,7 +337,7 @@ def _has_no_tool_calls(messages) -> bool:
                 # Only MCP approval requests or responses, which are not tool calls; a response names its request
                 # in tool_call_id.
                 continue
-        if message.get("role") not in _CONVERSATION_ROLES or "tool_call_id" in message:
+        if message.get("role") not in _CONVERSATION_ROLES or not _holds_nothing(message.get("tool_call_id")):
             return False
         if isinstance(content, str):
             texts = [content]
