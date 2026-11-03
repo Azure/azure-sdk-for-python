@@ -31,6 +31,23 @@ Install the Azure Storage Blobs client library for Python with [pip](https://pyp
 pip install azure-storage-blob
 ```
 
+#### Experimental native transfers
+
+For synchronous block blob uploads and downloads, the optional Rust-based transfer extension
+could increase performance:
+
+```bash
+pip install "azure-storage-blob[ext-transfer]"
+```
+
+The extension is experimental, is not intended for production use, and may introduce breaking
+changes in minor releases. Native transfer return types, request counts, and error handling
+may differ from transfers without the extension; unsupported options raise errors rather than
+automatically falling back to Python. Set `AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1` to use
+Python transfers even when the extension is installed. Asynchronous APIs do not use the extension.
+See the [transfer extension README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensions-transfer#readme)
+for supported options and prerequisites.
+
 ### Create a storage account
 If you wish to create a new storage account, you can use the
 [Azure Portal](https://learn.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal),
