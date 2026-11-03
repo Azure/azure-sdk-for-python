@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class RadiologyInsightsClientConfiguration:  # pylint: disable=too-many-instance-attributes
+class RadiologyInsightsClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Configuration for RadiologyInsightsClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -31,8 +31,8 @@ class RadiologyInsightsClientConfiguration:  # pylint: disable=too-many-instance
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2024-10-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Required. Default value is
+     None. If not set, the operation's default API version will be used.
     :paramtype api_version: str
     """
 
@@ -45,6 +45,8 @@ class RadiologyInsightsClientConfiguration:  # pylint: disable=too-many-instance
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+        if api_version is None:
+            raise ValueError("Parameter 'api_version' must not be None.")
 
         self.endpoint = endpoint
         self.credential = credential

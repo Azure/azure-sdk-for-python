@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +8,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -29,27 +28,26 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._operations._operations import build_radiology_insights_infer_radiology_insights_request
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.utils import ClientMixinABC
 from .._configuration import RadiologyInsightsClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class RadiologyInsightsClientOperationsMixin(
+class _RadiologyInsightsClientOperationsMixin(
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], RadiologyInsightsClientConfiguration]
 ):
 
     async def _infer_radiology_insights_initial(
         self,
         id: str,
-        resource: Union[_models.RadiologyInsightsJob, JSON, IO[bytes]],
+        resource: Union[_models.RadiologyInsightsJob, _types.RadiologyInsightsJob, IO[bytes]],
         *,
-        expand: Optional[List[str]] = None,
+        expand: Optional[list[str]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -87,6 +85,7 @@ class RadiologyInsightsClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -100,14 +99,17 @@ class RadiologyInsightsClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.HealthInsightsErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.HealthInsightsErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -120,7 +122,7 @@ class RadiologyInsightsClientOperationsMixin(
         id: str,
         resource: _models.RadiologyInsightsJob,
         *,
-        expand: Optional[List[str]] = None,
+        expand: Optional[list[str]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RadiologyInsightsJob]:
@@ -148,9 +150,9 @@ class RadiologyInsightsClientOperationsMixin(
     async def begin_infer_radiology_insights(
         self,
         id: str,
-        resource: JSON,
+        resource: _types.RadiologyInsightsJob,
         *,
-        expand: Optional[List[str]] = None,
+        expand: Optional[list[str]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RadiologyInsightsJob]:
@@ -161,7 +163,7 @@ class RadiologyInsightsClientOperationsMixin(
         :param id: The unique ID of the job. Required.
         :type id: str
         :param resource: The resource instance. Required.
-        :type resource: JSON
+        :type resource: ~azure.healthinsights.radiologyinsights.types.RadiologyInsightsJob
         :keyword expand: Expand the indicated resources into the response. Default value is None.
         :paramtype expand: list[str]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -180,7 +182,7 @@ class RadiologyInsightsClientOperationsMixin(
         id: str,
         resource: IO[bytes],
         *,
-        expand: Optional[List[str]] = None,
+        expand: Optional[list[str]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RadiologyInsightsJob]:
@@ -208,9 +210,9 @@ class RadiologyInsightsClientOperationsMixin(
     async def begin_infer_radiology_insights(
         self,
         id: str,
-        resource: Union[_models.RadiologyInsightsJob, JSON, IO[bytes]],
+        resource: Union[_models.RadiologyInsightsJob, _types.RadiologyInsightsJob, IO[bytes]],
         *,
-        expand: Optional[List[str]] = None,
+        expand: Optional[list[str]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RadiologyInsightsJob]:
         """Create Radiology Insights job.
@@ -219,10 +221,10 @@ class RadiologyInsightsClientOperationsMixin(
 
         :param id: The unique ID of the job. Required.
         :type id: str
-        :param resource: The resource instance. Is one of the following types: RadiologyInsightsJob,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsJob or JSON or
-         IO[bytes]
+        :param resource: The resource instance. Is either a RadiologyInsightsJob type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.healthinsights.radiologyinsights.models.RadiologyInsightsJob or
+         ~azure.healthinsights.radiologyinsights.types.RadiologyInsightsJob or IO[bytes]
         :keyword expand: Expand the indicated resources into the response. Default value is None.
         :paramtype expand: list[str]
         :return: An instance of AsyncLROPoller that returns RadiologyInsightsJob. The

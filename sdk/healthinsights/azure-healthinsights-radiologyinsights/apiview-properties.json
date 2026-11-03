@@ -71,9 +71,6 @@
         "azure.healthinsights.radiologyinsights.models.DocumentContentSourceType": "AzureHealthInsights.DocumentContentSourceType",
         "azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceType": "AzureHealthInsights.RadiologyInsightsInferenceType",
         "azure.healthinsights.radiologyinsights.models.QualityMeasureType": "AzureHealthInsights.QualityMeasureType",
-        "azure.healthinsights.radiologyinsights.models.ResearchStudyStatusCodeType": "Fhir.R4.ResearchStudyStatusCodeType",
-        "azure.healthinsights.radiologyinsights.models.ContactPointSystem": "Fhir.R4.ContactPointSystem",
-        "azure.healthinsights.radiologyinsights.models.ContactPointUse": "Fhir.R4.ContactPointUse",
         "azure.healthinsights.radiologyinsights.models.ObservationStatusCodeType": "Fhir.R4.ObservationStatusCodeType",
         "azure.healthinsights.radiologyinsights.models.MedicalProfessionalType": "AzureHealthInsights.MedicalProfessionalType",
         "azure.healthinsights.radiologyinsights.models.RecommendationFindingStatusType": "AzureHealthInsights.RecommendationFindingStatusType",
@@ -82,7 +79,11 @@
         "azure.healthinsights.radiologyinsights.models.QualityMeasureComplianceType": "AzureHealthInsights.QualityMeasureComplianceType",
         "azure.healthinsights.radiologyinsights.models.ScoringAndAssessmentCategoryType": "AzureHealthInsights.ScoringAndAssessmentCategoryType",
         "azure.healthinsights.radiologyinsights.models.JobStatus": "AzureHealthInsights.JobStatus",
+        "azure.healthinsights.radiologyinsights.models.ResearchStudyStatusCodeType": "Fhir.R4.ResearchStudyStatusCodeType",
+        "azure.healthinsights.radiologyinsights.models.ContactPointSystem": "Fhir.R4.ContactPointSystem",
+        "azure.healthinsights.radiologyinsights.models.ContactPointUse": "Fhir.R4.ContactPointUse",
         "azure.healthinsights.radiologyinsights.RadiologyInsightsClient.begin_infer_radiology_insights": "ClientForAzureHealthInsights.RadiologyInsightsClient.inferRadiologyInsights",
         "azure.healthinsights.radiologyinsights.aio.RadiologyInsightsClient.begin_infer_radiology_insights": "ClientForAzureHealthInsights.RadiologyInsightsClient.inferRadiologyInsights"
-    }
+    },
+    "CrossLanguageVersion": "14282a504b2a"
 }
