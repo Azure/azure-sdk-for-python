@@ -15719,6 +15719,7 @@ namespace azure.ai.projects.models
         model_type: Optional[Union[str, VoiceModelType]]
         output_modalities: Optional[list[Union[str, VoiceOutputModality]]]
         parallel_tool_calls: Optional[bool]
+        post_call: Optional[VoiceAgentPostCallConfig]
         rai_config: RaiConfig
         soundscape: Optional[VoiceAgentSoundscapeConfig]
         store: Optional[bool]
@@ -15743,6 +15744,7 @@ namespace azure.ai.projects.models
                 model_type: Optional[Union[str, VoiceModelType]] = ..., 
                 output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ..., 
                 parallel_tool_calls: Optional[bool] = ..., 
+                post_call: Optional[VoiceAgentPostCallConfig] = ..., 
                 rai_config: Optional[RaiConfig] = ..., 
                 soundscape: Optional[VoiceAgentSoundscapeConfig] = ..., 
                 store: Optional[bool] = ..., 
@@ -15824,6 +15826,21 @@ namespace azure.ai.projects.models
         HIGH = "high"
         LOW = "low"
         MEDIUM = "medium"
+
+
+    class azure.ai.projects.models.VoiceAgentEventGridPostCallDestination(VoiceAgentPostCallDestination, discriminator='event_grid'):
+        connection_name: str
+        type: Literal[VoiceAgentPostCallDestinationType.EVENT_GRID]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.VoiceAgentFunctionTool(VoiceAgentTool, discriminator='function'):
@@ -16024,6 +16041,45 @@ namespace azure.ai.projects.models
         NEAR_FIELD = "near_field"
 
 
+    class azure.ai.projects.models.VoiceAgentPostCallConfig(_Model):
+        destinations: list[VoiceAgentPostCallDestination]
+        include: Optional[list[Union[str, VoiceAgentPostCallIncludeOption]]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                destinations: list[VoiceAgentPostCallDestination], 
+                include: Optional[list[Union[str, VoiceAgentPostCallIncludeOption]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentPostCallDestination(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentPostCallDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        EVENT_GRID = "event_grid"
+        ROUTINE = "routine"
+
+
+    class azure.ai.projects.models.VoiceAgentPostCallIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUDIO = "audio"
+
+
     class azure.ai.projects.models.VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         MASKED = "masked"
         REMOVED = "removed"
@@ -16096,6 +16152,21 @@ namespace azure.ai.projects.models
                 reasoning: Optional[RealtimeReasoning] = ..., 
                 tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceFunction, ToolChoiceMCP]] = ..., 
                 tools: Optional[list[Union[RealtimeFunctionTool, MCPTool]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentRoutinePostCallDestination(VoiceAgentPostCallDestination, discriminator='routine'):
+        name: str
+        type: Literal[VoiceAgentPostCallDestinationType.ROUTINE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str
             ) -> None: ...
 
         @overload

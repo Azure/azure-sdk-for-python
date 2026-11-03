@@ -71,6 +71,7 @@ from ._enums import (
     TriggerType,
     VersionIndicatorType,
     VersionSelectorType,
+    VoiceAgentPostCallDestinationType,
     VoiceAgentSystemToolName,
     VoiceAgentTurnDetectionType,
 )
@@ -28835,6 +28836,9 @@ class VoiceAgentDefinition(
     :ivar subagent_config: Optional configuration for sibling Foundry text agents that this voice
      agent may consult as background specialists.
     :vartype subagent_config: ~azure.ai.projects.models.VoiceAgentSubagentConfig
+    :ivar post_call: Optional post-call delivery configuration. After each session ends, the
+     service notifies the configured destinations.
+    :vartype post_call: ~azure.ai.projects.models.VoiceAgentPostCallConfig
     :ivar store: Whether conversations with this agent are persisted. A single, all-or-nothing
      persistence switch that defaults to ``false`` (privacy-safe: off by default). When ``true``,
      Foundry persists the full conversation — the transcript/event timeline and raw audio. When
@@ -28937,6 +28941,11 @@ class VoiceAgentDefinition(
     )
     """Optional configuration for sibling Foundry text agents that this voice agent may consult as
      background specialists."""
+    post_call: Optional["_models.VoiceAgentPostCallConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional post-call delivery configuration. After each session ends, the service notifies the
+     configured destinations."""
     store: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether conversations with this agent are persisted. A single, all-or-nothing persistence
      switch that defaults to ``false`` (privacy-safe: off by default). When ``true``, Foundry
@@ -28968,6 +28977,7 @@ class VoiceAgentDefinition(
         parallel_tool_calls: Optional[bool] = None,
         structured_inputs: Optional[dict[str, "_models.StructuredInputDefinition"]] = None,
         subagent_config: Optional["_models.VoiceAgentSubagentConfig"] = None,
+        post_call: Optional["_models.VoiceAgentPostCallConfig"] = None,
         store: Optional[bool] = None,
     ) -> None: ...
 
@@ -29195,6 +29205,73 @@ class VoiceAgentEndOfUtteranceDetection(_Model):  # pylint: disable=docstring-ke
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class VoiceAgentPostCallDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A post-call destination.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VoiceAgentEventGridPostCallDestination, VoiceAgentRoutinePostCallDestination
+
+    :ivar type: The destination type. Required. Known values are: "event_grid" and "routine".
+    :vartype type: str or ~azure.ai.projects.models.VoiceAgentPostCallDestinationType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The destination type. Required. Known values are: \"event_grid\" and \"routine\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentEventGridPostCallDestination(
+    VoiceAgentPostCallDestination, discriminator="event_grid"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An Event Grid connection that receives post-call events.
+
+    :ivar type: Required. An Event Grid connection.
+    :vartype type: str or ~azure.ai.projects.models.EVENT_GRID
+    :ivar connection_name: The name of the Event Grid connection. Required.
+    :vartype connection_name: str
+    """
+
+    type: Literal[VoiceAgentPostCallDestinationType.EVENT_GRID] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. An Event Grid connection."""
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the Event Grid connection. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentPostCallDestinationType.EVENT_GRID  # type: ignore
 
 
 class VoiceAgentFunctionTool(
@@ -29715,6 +29792,46 @@ class VoiceAgentNoiseReduction(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
+class VoiceAgentPostCallConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Post-call delivery configuration.
+
+    :ivar destinations: The destinations to notify. Required.
+    :vartype destinations: list[~azure.ai.projects.models.VoiceAgentPostCallDestination]
+    :ivar include: Additional content to include in each delivery. The transcript is always
+     delivered. ``audio`` is not supported in this preview; the service rejects it when the agent
+     version is saved.
+    :vartype include: list[str or ~azure.ai.projects.models.VoiceAgentPostCallIncludeOption]
+    """
+
+    destinations: list["_models.VoiceAgentPostCallDestination"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The destinations to notify. Required."""
+    include: Optional[list[Union[str, "_models.VoiceAgentPostCallIncludeOption"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional content to include in each delivery. The transcript is always delivered. ``audio``
+     is not supported in this preview; the service rejects it when the agent version is saved."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        destinations: list["_models.VoiceAgentPostCallDestination"],
+        include: Optional[list[Union[str, "_models.VoiceAgentPostCallIncludeOption"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class VoiceAgentRealtimeResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A live realtime response returned by the voice-agent service in both ``response.created`` and
     ``response.done`` events.
@@ -29986,6 +30103,41 @@ class VoiceAgentResponseCreateParams(_Model):  # pylint: disable=docstring-keywo
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class VoiceAgentRoutinePostCallDestination(
+    VoiceAgentPostCallDestination, discriminator="routine"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A routine that is dispatched with the post-call event.
+
+    :ivar type: Required. A routine.
+    :vartype type: str or ~azure.ai.projects.models.ROUTINE
+    :ivar name: The name of the routine. Required.
+    :vartype name: str
+    """
+
+    type: Literal[VoiceAgentPostCallDestinationType.ROUTINE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. A routine."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the routine. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentPostCallDestinationType.ROUTINE  # type: ignore
 
 
 class VoiceAgentRtcCallErrorDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
