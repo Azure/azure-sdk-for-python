@@ -508,14 +508,25 @@ class TestDecisionModelRunnerRequests:
                 "request_token_limit_exceeded",
             ),
             ("invalid TypeSafe request: request has 256 questions; the limit is 255", "question_limit_exceeded"),
-            ('invalid TypeSafe request: invalid instructions for question "private-key": value must not be empty',
-             "invalid_question"),
-            ('invalid TypeSafe request: invalid criteria for question "q": value must not be empty', "invalid_question"),
+            (
+                'invalid TypeSafe request: invalid instructions for question "private-key": value must not be empty',
+                "invalid_question",
+            ),
+            (
+                'invalid TypeSafe request: invalid criteria for question "q": value must not be empty',
+                "invalid_question",
+            ),
             ("invalid TypeSafe request: private-message test-key-value", None),
-            ("invalid model request: Question prompt exceeds the 32768-token context limit " + "x" * 5000,
-             "context_window_exceeded"),
-            ('invalid TypeSafe request: invalid instructions for question "' + "q" * 2000 + '": value must not be empty',
-             "invalid_question"),
+            (
+                "invalid model request: Question prompt exceeds the 32768-token context limit " + "x" * 5000,
+                "context_window_exceeded",
+            ),
+            (
+                'invalid TypeSafe request: invalid instructions for question "'
+                + "q" * 2000
+                + '": value must not be empty',
+                "invalid_question",
+            ),
             ("x" * 1100 + "invalid model request: Question prompt exceeds the 32768-token context limit", None),
             ("", None),
         ],
@@ -1005,7 +1016,9 @@ class TestDecisionTokenReuse:
         assert all("private-detail" not in str(error) for error in errors.values())
         credential.get_token.side_effect = lambda *_, **__: self.access_token("recovered")
         run(DecisionModelRunner(self.CONFIG, credential))
-        assert credential.get_token.call_count == token_requests + 1 and self.authorizations(client) == ["Bearer recovered"]
+        assert credential.get_token.call_count == token_requests + 1 and self.authorizations(client) == [
+            "Bearer recovered"
+        ]
 
     def test_requests_waiting_on_a_transient_token_failure_recover_with_one_more_request(self, client):
         client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())

@@ -70,10 +70,16 @@ _ERROR_CODE = re.compile(r"[A-Za-z][A-Za-z0-9_.-]{0,127}")
 # reported as a bounded ``decision_model.error_kind``; any other sentence is ignored. Only the sentence's first
 # characters are read, which hold every opening, so a long question identifier cannot hide the reason.
 _PROVIDER_DETAIL_KINDS = (
-    (re.compile(r"invalid model request: Question prompt exceeds the \d+-token context limit\b"),
-     "context_window_exceeded"),
-    (re.compile(r"invalid TypeSafe request: request is about \d+ tokens; the limit for the state plus all questions is \d+"),
-     "request_token_limit_exceeded"),
+    (
+        re.compile(r"invalid model request: Question prompt exceeds the \d+-token context limit\b"),
+        "context_window_exceeded",
+    ),
+    (
+        re.compile(
+            r"invalid TypeSafe request: request is about \d+ tokens; the limit for the state plus all questions is \d+"
+        ),
+        "request_token_limit_exceeded",
+    ),
     (re.compile(r"invalid TypeSafe request: request has \d+ questions; the limit is \d+"), "question_limit_exceeded"),
     (re.compile(r"invalid TypeSafe request: invalid [a-z_]+ for question \""), "invalid_question"),
 )
