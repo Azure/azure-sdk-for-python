@@ -4,6 +4,7 @@
 
 import logging
 import os
+import threading
 from typing import Any, AsyncContextManager, Optional
 
 from azure.core.credentials import AccessToken, TokenCredential
@@ -27,11 +28,13 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
         """Initialize the AsyncAzureTokenProvider."""
         self._credential: Optional[TokenCredential] = None
         self._env_client: Optional[AzureEnvironmentClient] = AzureEnvironmentClient(base_url=base_url, **kwargs)
+        self._credential_lock = threading.Lock()
 
     async def close(self) -> None:
-        credential, client = self._credential, self._env_client
-        self._credential = None
-        self._env_client = None
+        with self._credential_lock:
+            credential, client = self._credential, self._env_client
+            self._credential = None
+            self._env_client = None
         try:
             close_credential = getattr(credential, "close", None)
             if close_credential is not None:
@@ -39,6 +42,44 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
         finally:
             if client is not None:
                 await client.close()
+
+    async def get_credential(self) -> TokenCredential:
+        """Return the synchronous credential that supplies this provider's tokens, creating it on first use.
+
+        Concurrent first requests all use the first credential created, so they can share its token.
+
+        :return: The credential.
+        :rtype: ~azure.core.credentials.TokenCredential
+        """
+        credential = self._credential
+        if credential is None:
+            created = await self._initialize_async(self._env_client)
+            with self._credential_lock:
+                closed = self._env_client is None
+                # A provider closed while the credential was created keeps no credential.
+                if self._credential is None and not closed:
+                    self._credential = created
+                credential = self._credential
+            if credential is not created:
+                close_created = getattr(created, "close", None)
+                if close_created is not None:
+                    close_created()
+            if closed:
+                raise EvaluationException(
+                    f"{AsyncAzureTokenProvider.__name__} instance has already been closed.",
+                    target=ErrorTarget.UNKNOWN,
+                    category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
+                )
+
+        if credential is None:
+            raise EvaluationException(
+                f"{self.__class__.__name__} could not determine the credential to use.",
+                target=ErrorTarget.UNKNOWN,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.SYSTEM_ERROR,
+            )
+        return credential
 
     async def get_token(
         self,
@@ -48,23 +89,12 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
         enable_cae: bool = False,
         **kwargs: Any,
     ) -> AccessToken:
-        if self._credential is None:
-            self._credential = await self._initialize_async(self._env_client)
-
-        if self._credential is None:
-            raise EvaluationException(
-                f"{self.__class__.__name__} could not determine the credential to use.",
-                target=ErrorTarget.UNKNOWN,
-                category=ErrorCategory.INVALID_VALUE,
-                blame=ErrorBlame.SYSTEM_ERROR,
-            )
-
-        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
+        credential = await self.get_credential()
+        return credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
 
     async def __aenter__(self) -> "AsyncAzureTokenProvider":
         try:
-            if self._credential is None:
-                self._credential = await self._initialize_async(self._env_client)
+            await self.get_credential()
         except BaseException:
             try:
                 await self.close()

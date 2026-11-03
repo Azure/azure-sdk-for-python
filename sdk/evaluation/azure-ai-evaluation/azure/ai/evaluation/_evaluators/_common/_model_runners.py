@@ -16,6 +16,7 @@ import logging
 import math
 import os
 import re
+import threading
 import time
 from typing import Any, Callable, Dict, List, Optional
 from urllib.parse import urlsplit
@@ -24,6 +25,7 @@ from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy, 
 from azure.core.pipeline.transport import AioHttpTransport
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._legacy._common._token_cache import TOKENS as _TOKENS
 from ..._common.utils import construct_prompty_model_config, validate_model_config
 from ..._http_utils import get_async_http_client
 
@@ -340,6 +342,26 @@ def _is_finite_number(value: Any) -> bool:
         return False
 
 
+def _token_failure(error: BaseException) -> Dict[str, Any]:
+    """Describe a failed token request without keeping the error, whose traceback references the credential."""
+    if isinstance(error, EvaluationException):
+        return {
+            "message": error.message,
+            "internal_message": error.internal_message,
+            "target": error.target,
+            "category": error.category,
+            "blame": error.blame,
+        }
+    message = "Could not acquire a token for the decision model."
+    return {
+        "message": message,
+        "internal_message": message,
+        "target": ErrorTarget.EVALUATE,
+        "category": ErrorCategory.FAILED_EXECUTION,
+        "blame": ErrorBlame.USER_ERROR,
+    }
+
+
 def _probability(value: Any) -> float:
     if not _is_finite_number(value):
         raise ValueError("Decision probabilities must be finite numbers.")
@@ -648,25 +670,56 @@ class DecisionModelRunner:
                 task.cancel()
                 await asyncio.gather(task, return_exceptions=True)
 
-    async def _get_token(self) -> str:
-        if inspect.iscoroutinefunction(self._credential.get_token):
-            return (await self._credential.get_token(_DECISION_TOKEN_SCOPE)).token
-        token = await asyncio.to_thread(self._credential.get_token, _DECISION_TOKEN_SCOPE)
-        if inspect.isawaitable(token):
-            token = await token
-        return token.token
+    async def _get_token(self, deadline: float) -> Optional[str]:
+        """Return a bearer token, or None when the deadline passed while waiting for another request's token."""
+        credential = self._credential
+        token = _TOKENS.cached(credential, _DECISION_TOKEN_SCOPE)
+        if token is None:
+            # An acquisition that begins before a service rejects a token may return that token; the generation it
+            # began under lets the cache refuse it.
+            generation = _TOKENS.generation(credential, _DECISION_TOKEN_SCOPE)
+            if inspect.iscoroutinefunction(credential.get_token):
+                token = await credential.get_token(_DECISION_TOKEN_SCOPE)
+                _TOKENS.store(credential, _DECISION_TOKEN_SCOPE, token, generation)
+            else:
+                abandoned = threading.Event()
+                try:
+                    token = await asyncio.to_thread(
+                        _TOKENS.fetch,
+                        credential,
+                        _DECISION_TOKEN_SCOPE,
+                        abandoned=abandoned,
+                        deadline=deadline,
+                        describe_failure=_token_failure,
+                    )
+                finally:
+                    abandoned.set()
+                if token is None and time.monotonic() >= deadline:
+                    return None
+                if inspect.isawaitable(token):
+                    token = await token
+                    _TOKENS.store(credential, _DECISION_TOKEN_SCOPE, token, generation)
+        value = getattr(token, "token", None)
+        if not isinstance(value, str):
+            raise _failed("Could not acquire a token for the decision model.", ErrorBlame.USER_ERROR)
+        return value
 
     async def _post(self, content: bytes, *, deadline: float, execution: DecisionExecution) -> Any:
         headers = {"x-ms-useragent": self._user_agent, "Content-Type": "application/json"}
+        token = None
         if self._api_key:
             headers["api-key"] = self._api_key
         else:
             try:
-                headers["Authorization"] = f"Bearer {await self._get_token()}"
+                token = await self._get_token(deadline)
             except EvaluationException:
                 raise
             except Exception:  # pylint: disable=broad-except
                 raise _failed("Could not acquire a token for the decision model.", ErrorBlame.USER_ERROR) from None
+            if token is None:
+                execution.outcome = "deadline"
+                raise _failed("The decision model request timed out.")
+            headers["Authorization"] = "Bearer " + token
 
         policies: Dict[str, Any] = {
             "custom_hook_policy": execution,
@@ -718,6 +771,9 @@ class DecisionModelRunner:
                     raise _failed("The decision model returned invalid JSON.") from None
                 payload = None
         if status != 200:
+            if status == 401 and token is not None:
+                # A rejected token is not reused.
+                _TOKENS.discard(self._credential, _DECISION_TOKEN_SCOPE, token)
             blame = ErrorBlame.USER_ERROR if status in (400, 401, 403, 404, 422) else ErrorBlame.SYSTEM_ERROR
             provider_error = payload.get("error") if isinstance(payload, dict) else None
             code = provider_error.get("code") if isinstance(provider_error, dict) else None
