@@ -1,5 +1,83 @@
 # Release History
 
+## 1.1.0b1 (2026-11-03)
+
+### Features Added
+
+  - Client `ResilienceManagementClient` added operation group `recovery_config_profiles`
+  - Model `DrillResourceProperties` added property `fault_eligibility`
+  - Model `DrillResourceProperties` added property `fault_ineligible_reason`
+  - Model `DrillRunProperties` added property `recovery_time_objective`
+  - Model `GoalAssignmentProperties` added property `regional_objectives`
+  - Model `GoalAssignmentProperties` added property `require_regional_resiliency`
+  - Model `GoalResourceProperties` added property `regional_resiliency`
+  - Model `GoalsData` added property `regional_resiliency`
+  - Model `LastRunProperties` added property `last_run_recovery_time_actual`
+  - Model `RecoveryGroupProperties` added property `resiliency_group_properties`
+  - Model `RecoveryPlanProperties` added property `resiliency_plan_properties`
+  - Enum `RecoveryPlanType` added member `CYBER_RECOVERY`
+  - Model `RecoveryResourceProperties` added property `inclusion_disabled_reasons`
+  - Model `RecoveryResourceProperties` added property `resiliency_resource_properties`
+  - Model `RegionalDrillResourceProperties` added property `advisor_regional_recommendation_id`
+  - Model `RegionalDrillResourceProperties` added property `fault_eligibility`
+  - Model `RegionalDrillResourceProperties` added property `fault_ineligible_reason`
+  - Model `RegionalDrillResourceProperties` added property `regional_resiliency_status`
+  - Model `RegionalDrillResourceProperties` added property `replication_mode`
+  - Model `ResourceProtectionSolutionSettings` added property `replication_mode`
+  - Enum `ResourceProtectionSolutionType` added member `AZURE_COSMOS_DB`
+  - Enum `ResourceProtectionSolutionType` added member `AZURE_NET_APP_FILES`
+  - Enum `ResourceProtectionSolutionType` added member `AZURE_SERVICE_BUS`
+  - Enum `ResourceProtectionSolutionType` added member `AZURE_STORAGE_ACCOUNT`
+  - Enum `ResourceProtectionSolutionType` added member `AZURE_TEMPLATE`
+  - Model `UnifiedResilienceItemResiliencyPosture` added property `regional_resiliency`
+  - Model `ZonalDrillResourceProperties` added property `fault_eligibility`
+  - Model `ZonalDrillResourceProperties` added property `fault_ineligible_reason`
+  - Added enum `BackupType`
+  - Added enum `CopyOptions`
+  - Added model `CyberResiliencyGroupProperties`
+  - Added model `CyberResiliencyPlanProperties`
+  - Added model `CyberResiliencyResourceProperties`
+  - Added model `EffectiveConfiguration`
+  - Added enum `FaultEligibility`
+  - Added enum `FaultIneligibleReason`
+  - Added model `FileShareRecoveryConfig`
+  - Added model `InfrastructureResiliencyGroupProperties`
+  - Added model `InfrastructureResiliencyPlanProperties`
+  - Added model `InfrastructureResiliencyResourceProperties`
+  - Added enum `IsoDuration`
+  - Added model `ProtectedItemDetails`
+  - Added model `RecoveryConfigProfile`
+  - Added model `RecoveryConfigProfileAssociation`
+  - Added model `RecoveryConfigProfileProperties`
+  - Added model `RecoveryGroupResiliencyProperties`
+  - Added model `RecoveryPlanResiliencyProperties`
+  - Added enum `RecoveryPointHealthStatus`
+  - Added model `RecoveryPointPolicy`
+  - Added enum `RecoveryPointPolicyType`
+  - Added enum `RecoveryResourceInclusionEligibility`
+  - Added model `RecoveryResourceResiliencyProperties`
+  - Added enum `RecoveryType`
+  - Added model `RegionalObjectives`
+  - Added enum `RegionalResiliencyStatus`
+  - Added enum `ReplicationMode`
+  - Added enum `ResiliencyType`
+  - Added model `ResourceAzureTemplateProtectionSetting`
+  - Added model `ResourceCosmosDBProtectionSetting`
+  - Added enum `ResourceInclusionDisabledReason`
+  - Added model `ResourceNetAppFilesProtectionSetting`
+  - Added enum `ResourceProtectionState`
+  - Added model `ResourceServiceBusProtectionSetting`
+  - Added model `ResourceStorageAccountProtectionSetting`
+  - Added model `TargetEnvironment`
+  - Added enum `TargetProvisioningMode`
+  - Added model `TargetResourceSpec`
+  - Added model `TargetScope`
+  - Added model `UnifiedResilienceItemRegionalResiliencyPosture`
+  - Added model `VmRecoveryConfig`
+  - Added model `WorkloadConfig`
+  - Added enum `WorkloadType`
+  - Added operation group `RecoveryConfigProfilesOperations`
+
 ## 1.0.0 (2026-10-09)
 
 ### Features Added

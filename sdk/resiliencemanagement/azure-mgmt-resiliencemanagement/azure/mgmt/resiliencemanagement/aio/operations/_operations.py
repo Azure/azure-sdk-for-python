@@ -77,6 +77,11 @@ from ...operations._operations import (
     build_goal_resources_list_request,
     build_operation_status_get_request,
     build_operations_list_request,
+    build_recovery_config_profiles_create_or_update_request,
+    build_recovery_config_profiles_delete_request,
+    build_recovery_config_profiles_get_request,
+    build_recovery_config_profiles_list_request,
+    build_recovery_config_profiles_update_request,
     build_recovery_job_resources_get_request,
     build_recovery_job_resources_list_request,
     build_recovery_jobs_cancel_request,
@@ -144,7 +149,7 @@ class Operations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["api_version", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Operation"]:
         """List the operations for the provider.
@@ -262,7 +267,7 @@ class OperationStatusOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["api_version", "location", "operation_id", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def get(self, location: str, operation_id: str, **kwargs: Any) -> _models.OperationStatusResult:
         """Returns the current status of an async operation.
@@ -355,7 +360,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "goal_assignment_name", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def get(self, service_group_name: str, goal_assignment_name: str, **kwargs: Any) -> _models.GoalAssignment:
         """Gets a goal assignment.
@@ -435,7 +440,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -604,7 +609,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -685,7 +690,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _update_initial(
         self,
@@ -854,7 +859,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_update(
         self,
@@ -935,7 +940,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _update_goal_resources_initial(
         self,
@@ -1104,7 +1109,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_update_goal_resources(
         self,
@@ -1177,7 +1182,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "goal_assignment_name", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _refresh_goal_resources_initial(
         self, service_group_name: str, goal_assignment_name: str, **kwargs: Any
@@ -1246,7 +1251,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "goal_assignment_name", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_refresh_goal_resources(
         self, service_group_name: str, goal_assignment_name: str, **kwargs: Any
@@ -1309,7 +1314,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "goal_assignment_name"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _delete_initial(
         self, service_group_name: str, goal_assignment_name: str, **kwargs: Any
@@ -1378,7 +1383,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "goal_assignment_name"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_delete(
         self, service_group_name: str, goal_assignment_name: str, **kwargs: Any
@@ -1448,7 +1453,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _recommend_capacity_initial(
         self,
@@ -1620,7 +1625,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_recommend_capacity(
         self,
@@ -1695,7 +1700,7 @@ class GoalAssignmentsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "skip_token", "top", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     def list(
         self, service_group_name: str, *, skip_token: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
@@ -1832,7 +1837,7 @@ class GoalResourcesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def get(
         self, service_group_name: str, goal_assignment_name: str, goal_resource_name: str, **kwargs: Any
@@ -1919,7 +1924,7 @@ class GoalResourcesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     def list(
         self,
@@ -2057,7 +2062,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "recovery_plan_name", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def get(self, service_group_name: str, recovery_plan_name: str, **kwargs: Any) -> _models.RecoveryPlan:
         """Get a RecoveryPlan.
@@ -2131,7 +2136,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "recovery_plan_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -2299,7 +2304,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "recovery_plan_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -2381,7 +2386,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "recovery_plan_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _update_initial(
         self,
@@ -2547,7 +2552,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "recovery_plan_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_update(
         self,
@@ -2627,7 +2632,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "recovery_plan_name"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _delete_initial(
         self, service_group_name: str, recovery_plan_name: str, **kwargs: Any
@@ -2693,7 +2698,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "recovery_plan_name"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_delete(
         self, service_group_name: str, recovery_plan_name: str, **kwargs: Any
@@ -2756,7 +2761,7 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "skip_token", "top", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     def list(
         self, service_group_name: str, *, skip_token: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
@@ -2862,6 +2867,920 @@ class RecoveryPlansOperations:  # pylint: disable=docstring-missing-param
         return AsyncItemPaged(get_next, extract_data)
 
 
+class RecoveryConfigProfilesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.resiliencemanagement.aio.ResilienceManagementClient`'s
+        :attr:`recovery_config_profiles` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ResilienceManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-30-preview",
+        params_added_on={
+            "2026-11-30-preview": [
+                "service_group_name",
+                "api_version",
+                "recovery_plan_name",
+                "recovery_config_profile_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-30-preview"],
+    )
+    async def get(
+        self, service_group_name: str, recovery_plan_name: str, recovery_config_profile_name: str, **kwargs: Any
+    ) -> _models.RecoveryConfigProfile:
+        """Gets a recovery configuration profile.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recovery_plan_name: The name of the recovery orchestration plan. Required.
+        :type recovery_plan_name: str
+        :param recovery_config_profile_name: The name of the recovery configuration profile. Required.
+        :type recovery_config_profile_name: str
+        :return: RecoveryConfigProfile. The RecoveryConfigProfile is compatible with MutableMapping
+        :rtype: ~azure.mgmt.resiliencemanagement.models.RecoveryConfigProfile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RecoveryConfigProfile] = kwargs.pop("cls", None)
+
+        _request = build_recovery_config_profiles_get_request(
+            service_group_name=service_group_name,
+            recovery_plan_name=recovery_plan_name,
+            recovery_config_profile_name=recovery_config_profile_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.RecoveryConfigProfile, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-11-30-preview",
+        params_added_on={
+            "2026-11-30-preview": [
+                "service_group_name",
+                "api_version",
+                "recovery_plan_name",
+                "recovery_config_profile_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-30-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        service_group_name: str,
+        recovery_plan_name: str,
+        recovery_config_profile_name: str,
+        resource: Union[_models.RecoveryConfigProfile, _types.RecoveryConfigProfile, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_recovery_config_profiles_create_or_update_request(
+            service_group_name=service_group_name,
+            recovery_plan_name=recovery_plan_name,
+            recovery_config_profile_name=recovery_config_profile_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        service_group_name: str,
+        recovery_plan_name: str,
+        recovery_config_profile_name: str,
+        resource: _models.RecoveryConfigProfile,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.RecoveryConfigProfile]:
+        """Creates or replaces a recovery configuration profile.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recovery_plan_name: The name of the recovery orchestration plan. Required.
+        :type recovery_plan_name: str
+        :param recovery_config_profile_name: The name of the recovery configuration profile. Required.
+        :type recovery_config_profile_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.resiliencemanagement.models.RecoveryConfigProfile
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns RecoveryConfigProfile. The
+         RecoveryConfigProfile is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.RecoveryConfigProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        service_group_name: str,
+        recovery_plan_name: str,
+        recovery_config_profile_name: str,
+        resource: _types.RecoveryConfigProfile,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.RecoveryConfigProfile]:
+        """Creates or replaces a recovery configuration profile.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recovery_plan_name: The name of the recovery orchestration plan. Required.
+        :type recovery_plan_name: str
+        :param recovery_config_profile_name: The name of the recovery configuration profile. Required.
+        :type recovery_config_profile_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.resiliencemanagement.types.RecoveryConfigProfile
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns RecoveryConfigProfile. The
+         RecoveryConfigProfile is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.RecoveryConfigProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        service_group_name: str,
+        recovery_plan_name: str,
+        recovery_config_profile_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.RecoveryConfigProfile]:
+        """Creates or replaces a recovery configuration profile.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recovery_plan_name: The name of the recovery orchestration plan. Required.
+        :type recovery_plan_name: str
+        :param recovery_config_profile_name: The name of the recovery configuration profile. Required.
+        :type recovery_config_profile_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns RecoveryConfigProfile. The
+         RecoveryConfigProfile is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.RecoveryConfigProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-30-preview",
+        params_added_on={
+            "2026-11-30-preview": [
+                "service_group_name",
+                "api_version",
+                "recovery_plan_name",
+                "recovery_config_profile_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-30-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        service_group_name: str,
+        recovery_plan_name: str,
+        recovery_config_profile_name: str,
+        resource: Union[_models.RecoveryConfigProfile, _types.RecoveryConfigProfile, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.RecoveryConfigProfile]:
+        """Creates or replaces a recovery configuration profile.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recovery_plan_name: The name of the recovery orchestration plan. Required.
+        :type recovery_plan_name: str
+        :param recovery_config_profile_name: The name of the recovery configuration profile. Required.
+        :type recovery_config_profile_name: str
+        :param resource: Resource create parameters. Is either a RecoveryConfigProfile type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.resiliencemanagement.models.RecoveryConfigProfile or
+         ~azure.mgmt.resiliencemanagement.types.RecoveryConfigProfile or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns RecoveryConfigProfile. The
+         RecoveryConfigProfile is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.RecoveryConfigProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RecoveryConfigProfile] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                service_group_name=service_group_name,
+                recovery_plan_name=recovery_plan_name,
+                recovery_config_profile_name=recovery_config_profile_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.RecoveryConfigProfile, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.RecoveryConfigProfile].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.RecoveryConfigProfile](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-11-30-preview",
+        params_added_on={
+            "2026-11-30-preview": [
+                "service_group_name",
+                "api_version",
+                "recovery_plan_name",
+                "recovery_config_profile_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-30-preview"],
+    )
+    async def _update_initial(
+        self,
+        service_group_name: str,
+        recovery_plan_name: str,
+        recovery_config_profile_name: str,
+        properties: Union[_models.RecoveryConfigProfile, _types.RecoveryConfigProfile, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_recovery_config_profiles_update_request(
+            service_group_name=service_group_name,
+            recovery_plan_name=recovery_plan_name,
+            recovery_config_profile_name=recovery_config_profile_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        service_group_name: str,
+        recovery_plan_name: str,
+        recovery_config_profile_name: str,
+        properties: _models.RecoveryConfigProfile,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.RecoveryConfigProfile]:
+        """Updates a recovery configuration profile. Omitted fields remain unchanged.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recovery_plan_name: The name of the recovery orchestration plan. Required.
+        :type recovery_plan_name: str
+        :param recovery_config_profile_name: The name of the recovery configuration profile. Required.
+        :type recovery_config_profile_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.resiliencemanagement.models.RecoveryConfigProfile
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns RecoveryConfigProfile. The
+         RecoveryConfigProfile is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.RecoveryConfigProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        service_group_name: str,
+        recovery_plan_name: str,
+        recovery_config_profile_name: str,
+        properties: _types.RecoveryConfigProfile,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.RecoveryConfigProfile]:
+        """Updates a recovery configuration profile. Omitted fields remain unchanged.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recovery_plan_name: The name of the recovery orchestration plan. Required.
+        :type recovery_plan_name: str
+        :param recovery_config_profile_name: The name of the recovery configuration profile. Required.
+        :type recovery_config_profile_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.resiliencemanagement.types.RecoveryConfigProfile
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns RecoveryConfigProfile. The
+         RecoveryConfigProfile is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.RecoveryConfigProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        service_group_name: str,
+        recovery_plan_name: str,
+        recovery_config_profile_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.RecoveryConfigProfile]:
+        """Updates a recovery configuration profile. Omitted fields remain unchanged.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recovery_plan_name: The name of the recovery orchestration plan. Required.
+        :type recovery_plan_name: str
+        :param recovery_config_profile_name: The name of the recovery configuration profile. Required.
+        :type recovery_config_profile_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns RecoveryConfigProfile. The
+         RecoveryConfigProfile is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.RecoveryConfigProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-30-preview",
+        params_added_on={
+            "2026-11-30-preview": [
+                "service_group_name",
+                "api_version",
+                "recovery_plan_name",
+                "recovery_config_profile_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-30-preview"],
+    )
+    async def begin_update(
+        self,
+        service_group_name: str,
+        recovery_plan_name: str,
+        recovery_config_profile_name: str,
+        properties: Union[_models.RecoveryConfigProfile, _types.RecoveryConfigProfile, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.RecoveryConfigProfile]:
+        """Updates a recovery configuration profile. Omitted fields remain unchanged.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recovery_plan_name: The name of the recovery orchestration plan. Required.
+        :type recovery_plan_name: str
+        :param recovery_config_profile_name: The name of the recovery configuration profile. Required.
+        :type recovery_config_profile_name: str
+        :param properties: The resource properties to be updated. Is either a RecoveryConfigProfile
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.resiliencemanagement.models.RecoveryConfigProfile or
+         ~azure.mgmt.resiliencemanagement.types.RecoveryConfigProfile or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns RecoveryConfigProfile. The
+         RecoveryConfigProfile is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.resiliencemanagement.models.RecoveryConfigProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RecoveryConfigProfile] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                service_group_name=service_group_name,
+                recovery_plan_name=recovery_plan_name,
+                recovery_config_profile_name=recovery_config_profile_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.RecoveryConfigProfile, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.RecoveryConfigProfile].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.RecoveryConfigProfile](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-30-preview",
+        params_added_on={"2026-11-30-preview": ["service_group_name", "api_version", "recovery_plan_name", "accept"]},
+        api_versions_list=["2026-11-30-preview"],
+    )
+    def list(
+        self, service_group_name: str, recovery_plan_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.RecoveryConfigProfile"]:
+        """Lists recovery configuration profiles under a recovery plan.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recovery_plan_name: The name of the recovery orchestration plan. Required.
+        :type recovery_plan_name: str
+        :return: An iterator like instance of RecoveryConfigProfile
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resiliencemanagement.models.RecoveryConfigProfile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.RecoveryConfigProfile]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_recovery_config_profiles_list_request(
+                    service_group_name=service_group_name,
+                    recovery_plan_name=recovery_plan_name,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.RecoveryConfigProfile],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-11-30-preview",
+        params_added_on={
+            "2026-11-30-preview": [
+                "service_group_name",
+                "api_version",
+                "recovery_plan_name",
+                "recovery_config_profile_name",
+            ]
+        },
+        api_versions_list=["2026-11-30-preview"],
+    )
+    async def _delete_initial(
+        self, service_group_name: str, recovery_plan_name: str, recovery_config_profile_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_recovery_config_profiles_delete_request(
+            service_group_name=service_group_name,
+            recovery_plan_name=recovery_plan_name,
+            recovery_config_profile_name=recovery_config_profile_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-30-preview",
+        params_added_on={
+            "2026-11-30-preview": [
+                "service_group_name",
+                "api_version",
+                "recovery_plan_name",
+                "recovery_config_profile_name",
+            ]
+        },
+        api_versions_list=["2026-11-30-preview"],
+    )
+    async def begin_delete(
+        self, service_group_name: str, recovery_plan_name: str, recovery_config_profile_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes a recovery configuration profile.
+
+        :param service_group_name: The name of the service group. Required.
+        :type service_group_name: str
+        :param recovery_plan_name: The name of the recovery orchestration plan. Required.
+        :type recovery_plan_name: str
+        :param recovery_config_profile_name: The name of the recovery configuration profile. Required.
+        :type recovery_config_profile_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                service_group_name=service_group_name,
+                recovery_plan_name=recovery_plan_name,
+                recovery_config_profile_name=recovery_config_profile_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
 class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
@@ -2886,7 +3805,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "operation_id", "recovery_plan_name"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _finalize_initial(
         self, service_group_name: str, recovery_plan_name: str, *, operation_id: str, **kwargs: Any
@@ -2958,7 +3877,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "operation_id", "recovery_plan_name"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_finalize(
         self, service_group_name: str, recovery_plan_name: str, *, operation_id: str, **kwargs: Any
@@ -3044,7 +3963,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _update_resources_initial(
         self,
@@ -3229,7 +4148,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_update_resources(
         self,
@@ -3322,7 +4241,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "content_type",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _validate_for_operation_initial(
         self,
@@ -3512,7 +4431,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "content_type",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_validate_for_operation(
         self,
@@ -3611,7 +4530,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _validate_for_failover_initial(
         self,
@@ -3802,7 +4721,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_validate_for_failover(
         self,
@@ -3891,7 +4810,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "operation_id", "recovery_plan_name", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _validate_for_failover_commit_initial(
         self, service_group_name: str, recovery_plan_name: str, *, operation_id: str, **kwargs: Any
@@ -3960,7 +4879,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "operation_id", "recovery_plan_name", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_validate_for_failover_commit(
         self, service_group_name: str, recovery_plan_name: str, *, operation_id: str, **kwargs: Any
@@ -4043,7 +4962,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _validate_for_test_failover_initial(
         self,
@@ -4234,7 +5153,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_validate_for_test_failover(
         self,
@@ -4323,7 +5242,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "operation_id", "recovery_plan_name", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _validate_for_test_failover_cleanup_initial(  # pylint: disable=name-too-long
         self, service_group_name: str, recovery_plan_name: str, *, operation_id: str, **kwargs: Any
@@ -4392,7 +5311,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "operation_id", "recovery_plan_name", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_validate_for_test_failover_cleanup(
         self, service_group_name: str, recovery_plan_name: str, *, operation_id: str, **kwargs: Any
@@ -4475,7 +5394,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _validate_for_reprotect_initial(
         self,
@@ -4670,7 +5589,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_validate_for_reprotect(
         self,
@@ -4760,7 +5679,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "operation_id", "recovery_plan_name", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _check_readiness_initial(
         self, service_group_name: str, recovery_plan_name: str, *, operation_id: str, **kwargs: Any
@@ -4832,7 +5751,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "operation_id", "recovery_plan_name", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_check_readiness(
         self, service_group_name: str, recovery_plan_name: str, *, operation_id: str, **kwargs: Any
@@ -4908,7 +5827,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _failover_initial(
         self,
@@ -5096,7 +6015,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_failover(
         self,
@@ -5184,7 +6103,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "operation_id", "recovery_plan_name", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _failover_commit_initial(
         self, service_group_name: str, recovery_plan_name: str, *, operation_id: str, **kwargs: Any
@@ -5253,7 +6172,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "operation_id", "recovery_plan_name", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_failover_commit(
         self, service_group_name: str, recovery_plan_name: str, *, operation_id: str, **kwargs: Any
@@ -5335,7 +6254,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _reprotect_initial(
         self,
@@ -5527,7 +6446,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_reprotect(
         self,
@@ -5623,7 +6542,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _test_failover_initial(
         self,
@@ -5811,7 +6730,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_test_failover(
         self,
@@ -5906,7 +6825,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _test_failover_cleanup_initial(
         self,
@@ -6094,7 +7013,7 @@ class RecoveryPlanActionsOperations:  # pylint: disable=docstring-missing-param,
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_test_failover_cleanup(
         self,
@@ -6209,7 +7128,7 @@ class RecoveryResourcesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def get(
         self, service_group_name: str, recovery_plan_name: str, recovery_resource_name: str, **kwargs: Any
@@ -6287,7 +7206,7 @@ class RecoveryResourcesOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "recovery_plan_name", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     def list(
         self, service_group_name: str, recovery_plan_name: str, **kwargs: Any
@@ -6421,7 +7340,7 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def get(
         self, service_group_name: str, recovery_plan_name: str, recovery_job_name: str, **kwargs: Any
@@ -6499,7 +7418,7 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "recovery_plan_name", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     def list(
         self, service_group_name: str, recovery_plan_name: str, **kwargs: Any
@@ -6613,7 +7532,7 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _cancel_initial(
         self,
@@ -6812,7 +7731,7 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_cancel(
         self,
@@ -6914,7 +7833,7 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _resume_initial(
         self,
@@ -7116,7 +8035,7 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_resume(
         self,
@@ -7218,7 +8137,7 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
                 "recovery_job_name",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _retry_initial(
         self,
@@ -7303,7 +8222,7 @@ class RecoveryJobsOperations:  # pylint: disable=docstring-missing-param
                 "recovery_job_name",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_retry(
         self,
@@ -7419,7 +8338,7 @@ class RecoveryJobResourcesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def get(
         self,
@@ -7514,7 +8433,7 @@ class RecoveryJobResourcesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     def list(
         self, service_group_name: str, recovery_plan_name: str, recovery_job_name: str, **kwargs: Any
@@ -7643,7 +8562,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "drill_name", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def get(self, service_group_name: str, drill_name: str, **kwargs: Any) -> _models.Drill:
         """Get a Drill.
@@ -7717,7 +8636,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "drill_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _create_initial(
         self,
@@ -7882,7 +8801,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "drill_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_create(
         self,
@@ -7963,7 +8882,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "drill_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _update_initial(
         self,
@@ -8126,7 +9045,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "drill_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_update(
         self,
@@ -8199,7 +9118,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "drill_name"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _delete_initial(self, service_group_name: str, drill_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8263,7 +9182,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "drill_name"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_delete(self, service_group_name: str, drill_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Delete a Drill.
@@ -8324,7 +9243,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "skip_token", "top", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     def list(
         self, service_group_name: str, *, skip_token: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
@@ -8440,7 +9359,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _validate_for_execution_initial(
         self,
@@ -8622,7 +9541,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_validate_for_execution(
         self,
@@ -8709,7 +9628,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _start_initial(
         self,
@@ -8891,7 +9810,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_start(
         self,
@@ -8978,7 +9897,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _end_initial(
         self,
@@ -9160,7 +10079,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_end(
         self,
@@ -9240,7 +10159,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "operation_id", "drill_name", "content_type"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _add_or_update_resources_initial(
         self,
@@ -9415,7 +10334,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "operation_id", "drill_name", "content_type"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_add_or_update_resources(
         self,
@@ -9493,7 +10412,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "operation_id", "drill_name"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _resync_readiness_check_initial(
         self, service_group_name: str, drill_name: str, *, operation_id: str, **kwargs: Any
@@ -9563,7 +10482,7 @@ class DrillsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "operation_id", "drill_name"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_resync_readiness_check(
         self, service_group_name: str, drill_name: str, *, operation_id: str, **kwargs: Any
@@ -9651,7 +10570,7 @@ class DrillResourcesOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "drill_name", "drill_resource_name", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def get(
         self, service_group_name: str, drill_name: str, drill_resource_name: str, **kwargs: Any
@@ -9731,7 +10650,7 @@ class DrillResourcesOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "skip_token", "top", "drill_name", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     def list(
         self,
@@ -9871,7 +10790,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "drill_name", "drill_run_name", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def get(
         self, service_group_name: str, drill_name: str, drill_run_name: str, **kwargs: Any
@@ -9949,7 +10868,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "drill_name", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     def list(self, service_group_name: str, drill_name: str, **kwargs: Any) -> AsyncItemPaged["_models.DrillRun"]:
         """List DrillRun resources by Drill.
@@ -10062,7 +10981,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _fail_over_initial(
         self,
@@ -10260,7 +11179,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_fail_over(
         self,
@@ -10353,7 +11272,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _reprotect_initial(
         self,
@@ -10551,7 +11470,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_reprotect(
         self,
@@ -10644,7 +11563,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _add_notes_initial(
         self,
@@ -10838,7 +11757,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_add_notes(
         self,
@@ -10929,7 +11848,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _resume_initial(
         self, service_group_name: str, drill_name: str, drill_run_name: str, *, operation_id: str, **kwargs: Any
@@ -11009,7 +11928,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_resume(
         self, service_group_name: str, drill_name: str, drill_run_name: str, *, operation_id: str, **kwargs: Any
@@ -11088,7 +12007,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _mark_as_complete_initial(
         self,
@@ -11282,7 +12201,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_mark_as_complete(
         self,
@@ -11373,7 +12292,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _generate_report_initial(
         self, service_group_name: str, drill_name: str, drill_run_name: str, *, operation_id: str, **kwargs: Any
@@ -11453,7 +12372,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_generate_report(
         self, service_group_name: str, drill_name: str, drill_run_name: str, *, operation_id: str, **kwargs: Any
@@ -11541,7 +12460,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _list_report_download_url_initial(
         self,
@@ -11744,7 +12663,7 @@ class DrillRunsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_list_report_download_url(
         self,
@@ -11864,7 +12783,7 @@ class DrillRunResourcesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def get(
         self, service_group_name: str, drill_name: str, drill_run_name: str, drill_run_resource_name: str, **kwargs: Any
@@ -11947,7 +12866,7 @@ class DrillRunResourcesOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "drill_name", "drill_run_name", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     def list(
         self, service_group_name: str, drill_name: str, drill_run_name: str, **kwargs: Any
@@ -12078,7 +12997,7 @@ class UnifiedResilienceItemsOperations:  # pylint: disable=docstring-missing-par
         params_added_on={
             "2026-09-30-preview": ["service_group_name", "api_version", "unified_resilience_item_name", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def get(
         self, service_group_name: str, unified_resilience_item_name: str, **kwargs: Any
@@ -12153,7 +13072,7 @@ class UnifiedResilienceItemsOperations:  # pylint: disable=docstring-missing-par
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["service_group_name", "api_version", "skip_token", "top", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     def list(
         self, service_group_name: str, *, skip_token: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
@@ -12284,7 +13203,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["api_version", "subscription_id", "resource_group_name", "usage_plan_name", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def get(self, resource_group_name: str, usage_plan_name: str, **kwargs: Any) -> _models.UsagePlan:
         """Get a UsagePlan.
@@ -12367,7 +13286,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -12543,7 +13462,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -12632,7 +13551,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _update_initial(
         self,
@@ -12806,7 +13725,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_update(
         self,
@@ -12888,7 +13807,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["api_version", "subscription_id", "resource_group_name", "usage_plan_name"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, usage_plan_name: str, **kwargs: Any
@@ -12957,7 +13876,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["api_version", "subscription_id", "resource_group_name", "usage_plan_name"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_delete(self, resource_group_name: str, usage_plan_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Delete a UsagePlan.
@@ -13019,7 +13938,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.UsagePlan"]:
         """List UsagePlan resources by resource group.
@@ -13122,7 +14041,7 @@ class UsagePlansOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-09-30-preview",
         params_added_on={"2026-09-30-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.UsagePlan"]:
         """List UsagePlan resources by subscription ID.
@@ -13250,7 +14169,7 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def get(
         self, resource_group_name: str, usage_plan_name: str, enrollment_name: str, **kwargs: Any
@@ -13339,7 +14258,7 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -13527,7 +14446,7 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -13619,7 +14538,7 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
                 "enrollment_name",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, usage_plan_name: str, enrollment_name: str, **kwargs: Any
@@ -13695,7 +14614,7 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
                 "enrollment_name",
             ]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, usage_plan_name: str, enrollment_name: str, **kwargs: Any
@@ -13764,7 +14683,7 @@ class EnrollmentsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-09-30-preview": ["api_version", "subscription_id", "resource_group_name", "usage_plan_name", "accept"]
         },
-        api_versions_list=["2026-09-30-preview", "2026-10-01"],
+        api_versions_list=["2026-09-30-preview", "2026-10-01", "2026-10-31-preview", "2026-11-30-preview"],
     )
     def list(
         self, resource_group_name: str, usage_plan_name: str, **kwargs: Any

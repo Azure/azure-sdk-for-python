@@ -52,7 +52,7 @@ def main():
                     "resourceGroup": "customDrillResourceGroup",
                     "subscription": "4e88bed3-114f-443d-9975-28f64122ec5e",
                 },
-                "drillType": "Zonal",
+                "drillType": "DrillProperties",
                 "executionReadinessState": "Ready",
                 "executionState": "NotRunning",
                 "goalAssignmentProperties": {
@@ -105,6 +105,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-01/Drills_Create_MaximumSet_Gen.json
+# x-ms-original-file: 2026-11-30-preview/Drills_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
