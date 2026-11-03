@@ -105,7 +105,8 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         with self._renew_tasks.mutex:
             if self._shutdown.is_set():
                 raise ServiceBusError(
-                    "The AutoLockRenewer has already been shutdown. Please create a new instance for auto lock renewing."
+                    "The AutoLockRenewer has already been shutdown. Please create a new instance for auto "
+                    "lock renewing."
                 )
             if not self._running_dispatcher.is_set():
                 self._running_dispatcher.set()

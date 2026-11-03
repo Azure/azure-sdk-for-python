@@ -26,6 +26,7 @@ class _Message(ServiceBusReceivedMessage):
         self._received_timestamp_utc = utc_now()
         self._locked = utc_now() + datetime.timedelta(seconds=8)
         self._settled = False
+        self._raw_amqp_message = None
 
 
 class _Session(ServiceBusSession):
