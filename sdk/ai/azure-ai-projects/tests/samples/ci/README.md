@@ -112,6 +112,8 @@ Before a Function selection can provision resources, admission requires preconfi
 
 The pipeline publishes only the three handler package files and checks for `queue_trigger` indexing up to 30 times, ten seconds apart, before starting the sample. This allows for host startup after publication; missing indexing or an Azure query error still fails provisioning. The five non-secret Function outputs become sample inputs: `FUNCTION_APP_NAME`, `FUNCTION_APP_URL`, `STORAGE_INPUT_QUEUE_NAME`, `STORAGE_OUTPUT_QUEUE_NAME`, and `STORAGE_QUEUE_SERVICE_ENDPOINT`. These are sample environment variables, not provisioning configuration. No `FUNCTION_APP_KEY` is retrieved or output.
 
+The package's [pytest environment hook](../../conftest.py) registers all five Function inputs as CLI options, accepting both hyphenated and underscored spellings. Explicit CLI values are copied to the sample environment without adding global playback defaults for Function resources.
+
 ## Safety and results
 
 - **Explicit targets and identity:** task, plan and state subscription/tenant IDs must match the same authorized service-principal identity. No fallback to an active account, another tenant, or a developer's login.
