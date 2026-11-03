@@ -13,7 +13,6 @@ from devtools_testutils import EnvironmentVariableLoader, get_credential
 from azure.core.exceptions import HttpResponseError
 
 FAKE_SEARCH_ENDPOINT = "https://fakesearchendpoint.search.windows.net"
-FAKE_SEARCH_SERVICE_NAME = "fakesearchendpoint"
 FAKE_STORAGE_CONNECTION_STRING = (
     "DefaultEndpointsProtocol=https;AccountName=fakestoragecs;AccountKey=FAKE;EndpointSuffix=core.windows.net"
 )
@@ -23,17 +22,20 @@ FAKE_AZURE_OPENAI_EMBEDDING_DEPLOYMENT = "text-embedding-3-small"
 FAKE_AZURE_OPENAI_EMBEDDING_MODEL = "text-embedding-3-small"
 SKILLSET_NOT_ENABLED_MESSAGE = "skillset related operations are not enabled in this region"
 
-SearchEnvVarPreparer = functools.partial(
-    EnvironmentVariableLoader,
-    "search",
-    search_service_endpoint=FAKE_SEARCH_ENDPOINT,
-    search_service_name=FAKE_SEARCH_SERVICE_NAME,
-    search_storage_connection_string=FAKE_STORAGE_CONNECTION_STRING,
-    search_storage_container_name=FAKE_STORAGE_CONTAINER_NAME,
-    search_azure_openai_endpoint=FAKE_AZURE_OPENAI_ENDPOINT,
-    search_azure_openai_embedding_deployment=FAKE_AZURE_OPENAI_EMBEDDING_DEPLOYMENT,
-    search_azure_openai_embedding_model=FAKE_AZURE_OPENAI_EMBEDDING_MODEL,
-)
+def SearchEnvVarPreparer(*, storage: bool = False, openai: bool = False):
+    environment_variables = {"search_service_endpoint": FAKE_SEARCH_ENDPOINT}
+    if storage:
+        environment_variables.update(
+            search_storage_connection_string=FAKE_STORAGE_CONNECTION_STRING,
+            search_storage_container_name=FAKE_STORAGE_CONTAINER_NAME,
+        )
+    if openai:
+        environment_variables.update(
+            search_azure_openai_endpoint=FAKE_AZURE_OPENAI_ENDPOINT,
+            search_azure_openai_embedding_deployment=FAKE_AZURE_OPENAI_EMBEDDING_DEPLOYMENT,
+            search_azure_openai_embedding_model=FAKE_AZURE_OPENAI_EMBEDDING_MODEL,
+        )
+    return EnvironmentVariableLoader("search", **environment_variables)
 
 
 def _clean_up_indexes(endpoint, cred):

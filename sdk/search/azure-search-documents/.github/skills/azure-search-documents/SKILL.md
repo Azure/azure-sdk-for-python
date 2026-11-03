@@ -31,7 +31,7 @@ Set-Alias venv .\.github\skills\azure-search-documents\scripts\Invoke-VenvComman
 cd sdk/search/azure-search-documents
 
 # Update tsp-location.yaml with the new spec commit SHA, then:
-tsp-client update
+tsp-client update --emitter-options "generate-typeddict=false"
 # or: azsdk_package_generate_code
 
 # Reapply temporary Python emitter workarounds, then verify they are present:

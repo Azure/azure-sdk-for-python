@@ -17,7 +17,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ... import models as _models, types as _types
+from ... import models as _models
 from ..._operations._patch import _convert_index_response
 from ._operations import (
     _SearchIndexClientOperationsMixin as _SearchIndexClientOperationsMixinGenerated,
@@ -421,7 +421,7 @@ class _SearchIndexClientOperationsMixin(
         self,
         name: str,
         file_id: str,
-        body: Union[_models.UpdateKnowledgeSourceFileRequest, _types.UpdateKnowledgeSourceFileRequest],
+        body: Union[_models.UpdateKnowledgeSourceFileRequest, JSON],
         **kwargs: Any,
     ) -> _models.KnowledgeSourceFile:
         """Updates an existing file in a File knowledge source in place.
@@ -431,8 +431,7 @@ class _SearchIndexClientOperationsMixin(
         :param file_id: The unique identifier of the file to update. Required.
         :type file_id: str
         :param body: The multipart body containing replacement metadata and content. Required.
-        :type body: ~azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest or
-         ~azure.search.documents.indexes.types.UpdateKnowledgeSourceFileRequest
+        :type body: ~azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest or JSON
         :return: The updated knowledge source file.
         :rtype: ~azure.search.documents.indexes.models.KnowledgeSourceFile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -790,10 +789,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        typed_indexer_resync = cast(
-            Union[_models.IndexerResyncBody, _types.IndexerResyncBody, IO[bytes]], indexer_resync
-        )
-        return await self._resync(name=name, indexer_resync=typed_indexer_resync, **kwargs)
+        return await self._resync(name=name, indexer_resync=indexer_resync, **kwargs)
 
     @distributed_trace_async
     async def reset_documents(
@@ -819,10 +815,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        typed_keys_or_ids = cast(
-            Optional[Union[_models.DocumentKeysOrIds, _types.DocumentKeysOrIds, IO[bytes]]], keys_or_ids
-        )
-        return await self._reset_documents(name=name, keys_or_ids=typed_keys_or_ids, overwrite=overwrite, **kwargs)
+        return await self._reset_documents(name=name, keys_or_ids=keys_or_ids, overwrite=overwrite, **kwargs)
 
     @distributed_trace_async
     async def delete_skillset(
@@ -912,8 +905,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        typed_skill_names = cast(Union[_models.SkillNames, _types.SkillNames, IO[bytes]], skill_names)
-        return await self._reset_skills(name=name, skill_names=typed_skill_names, **kwargs)
+        return await self._reset_skills(name=name, skill_names=skill_names, **kwargs)
 
     @distributed_trace_async
     async def get_skillsets(

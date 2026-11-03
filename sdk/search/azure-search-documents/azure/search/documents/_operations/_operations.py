@@ -27,7 +27,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models1, types as _types_models1
+from .. import models as _models1
 from .._configuration import SearchClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Serializer
@@ -894,7 +894,7 @@ class _SearchClientOperationsMixin(
     @overload
     def _search_post(
         self,
-        body: _types_models1.SearchPostRequest,
+        body: JSON,
         *,
         query_source_authorization: Optional[str] = None,
         enable_elevated_read: Optional[bool] = None,
@@ -919,7 +919,7 @@ class _SearchClientOperationsMixin(
     )
     def _search_post(  # pylint: disable=too-many-locals
         self,
-        body: Union[JSON, _types_models1.SearchPostRequest, IO[bytes]] = _Unset,
+        body: Union[JSON, IO[bytes]] = _Unset,
         *,
         query_source_authorization: Optional[str] = None,
         enable_elevated_read: Optional[bool] = None,
@@ -960,8 +960,8 @@ class _SearchClientOperationsMixin(
     ) -> _models1._models.SearchDocumentsResult:
         """Searches for documents in the index.
 
-        :param body: Is one of the following types: JSON, SearchPostRequest, IO[bytes] Required.
-        :type body: JSON or ~azure.search.documents.types.SearchPostRequest or IO[bytes]
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
         :keyword query_source_authorization: Token identifying the user for which the query is being
          executed. This token is used to enforce security restrictions on documents. Default value is
          None.
@@ -1462,7 +1462,7 @@ class _SearchClientOperationsMixin(
     ) -> _models1._models.SuggestDocumentsResult: ...
     @overload
     def _suggest_post(
-        self, body: _types_models1.SuggestPostRequest, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1._models.SuggestDocumentsResult: ...
     @overload
     def _suggest_post(
@@ -1472,7 +1472,7 @@ class _SearchClientOperationsMixin(
     @distributed_trace
     def _suggest_post(  # pylint: disable=too-many-locals
         self,
-        body: Union[JSON, _types_models1.SuggestPostRequest, IO[bytes]] = _Unset,
+        body: Union[JSON, IO[bytes]] = _Unset,
         *,
         search_text: str = _Unset,
         suggester_name: str = _Unset,
@@ -1489,8 +1489,8 @@ class _SearchClientOperationsMixin(
     ) -> _models1._models.SuggestDocumentsResult:
         """Suggests documents in the index that match the given partial query text.
 
-        :param body: Is one of the following types: JSON, SuggestPostRequest, IO[bytes] Required.
-        :type body: JSON or ~azure.search.documents.types.SuggestPostRequest or IO[bytes]
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
         :keyword search_text: The search text to use to suggest documents. Must be at least 1
          character, and no more than 100 characters. Required.
         :paramtype search_text: str
@@ -1631,7 +1631,7 @@ class _SearchClientOperationsMixin(
     ) -> _models1._models.IndexDocumentsResult: ...
     @overload
     def _index(
-        self, batch: _types_models1.IndexDocumentsBatch, *, content_type: str = "application/json", **kwargs: Any
+        self, batch: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1._models.IndexDocumentsResult: ...
     @overload
     def _index(
@@ -1640,14 +1640,13 @@ class _SearchClientOperationsMixin(
 
     @distributed_trace
     def _index(
-        self, batch: Union[_models1.IndexDocumentsBatch, _types_models1.IndexDocumentsBatch, IO[bytes]], **kwargs: Any
+        self, batch: Union[_models1.IndexDocumentsBatch, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1._models.IndexDocumentsResult:
         """Sends a batch of document write actions to the index.
 
-        :param batch: The batch of index actions. Is either a IndexDocumentsBatch type or a IO[bytes]
-         type. Required.
-        :type batch: ~azure.search.documents.models.IndexDocumentsBatch or
-         ~azure.search.documents.types.IndexDocumentsBatch or IO[bytes]
+        :param batch: The batch of index actions. Is one of the following types: IndexDocumentsBatch,
+         JSON, IO[bytes] Required.
+        :type batch: ~azure.search.documents.models.IndexDocumentsBatch or JSON or IO[bytes]
         :return: IndexDocumentsResult. The IndexDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models._models.IndexDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1863,7 +1862,7 @@ class _SearchClientOperationsMixin(
     ) -> _models1._models.AutocompleteResult: ...
     @overload
     def _autocomplete_post(
-        self, body: _types_models1.AutocompletePostRequest, *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1._models.AutocompleteResult: ...
     @overload
     def _autocomplete_post(
@@ -1873,7 +1872,7 @@ class _SearchClientOperationsMixin(
     @distributed_trace
     def _autocomplete_post(  # pylint: disable=too-many-locals
         self,
-        body: Union[JSON, _types_models1.AutocompletePostRequest, IO[bytes]] = _Unset,
+        body: Union[JSON, IO[bytes]] = _Unset,
         *,
         search_text: str = _Unset,
         suggester_name: str = _Unset,
@@ -1889,8 +1888,8 @@ class _SearchClientOperationsMixin(
     ) -> _models1._models.AutocompleteResult:
         """Autocompletes incomplete query terms based on input text and matching terms in the index.
 
-        :param body: Is one of the following types: JSON, AutocompletePostRequest, IO[bytes] Required.
-        :type body: JSON or ~azure.search.documents.types.AutocompletePostRequest or IO[bytes]
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
         :keyword search_text: The search text on which to base autocomplete results. Required.
         :paramtype search_text: str
         :keyword suggester_name: The name of the suggester as specified in the suggesters collection

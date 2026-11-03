@@ -16,7 +16,7 @@ from azure.search.documents.indexes.models import (
 )
 from devtools_testutils import AzureRecordedTestCase
 
-from _search_helpers import live_test, make_indexer_client, safe_delete
+from _search_helpers import make_indexer_client, safe_delete, storage_live_test as live_test
 
 DATA_SOURCE_TYPE = "azureblob"
 DATA_SOURCE_DESCRIPTION = "Data source description"

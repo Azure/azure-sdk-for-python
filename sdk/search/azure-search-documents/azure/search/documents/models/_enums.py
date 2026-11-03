@@ -300,7 +300,7 @@ class QueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SIMPLE = "simple"
     """Uses the simple query syntax for searches. Search text is interpreted using a simple query
-    language that allows for symbols such as +, * and "". Queries are evaluated across all
+    language that allows for symbols such as +, * and \"\". Queries are evaluated across all
     searchable fields by default, unless the searchFields parameter is specified."""
     FULL = "full"
     """Uses the full Lucene query syntax for searches. Search text is interpreted using the Lucene

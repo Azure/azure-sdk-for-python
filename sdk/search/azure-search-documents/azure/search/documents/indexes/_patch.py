@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Optional, Union
+from typing import Any, Union
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 
@@ -81,16 +81,3 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-    from . import types
-
-    ingestion_parameter_types = (
-        types.AzureBlobKnowledgeSourceParameters,
-        types.FileKnowledgeSourceParameters,
-        types.IndexedOneLakeKnowledgeSourceParameters,
-        types.IndexedSharePointKnowledgeSourceParameters,
-        types.IndexedSqlKnowledgeSourceParameters,
-    )
-    for parameter_type in ingestion_parameter_types:
-        parameter_type.__annotations__["ingestionParameters"] = Optional[
-            "azure.search.documents.knowledgebases.types.KnowledgeSourceIngestionParameters"
-        ]

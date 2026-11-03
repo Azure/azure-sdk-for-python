@@ -123,25 +123,21 @@ def main():
             semantic_result = retrieval_client.retrieve(semantic_request)
             print_retrieval_summary(semantic_result)
 
-            stream_event_types = []
+            stream_events = []
             stream_request_id = None
             with retrieval_client.retrieve_stream(semantic_request) as stream:
                 for event in stream:
-                    stream_event_types.append(event.event_type)
-                    if event.event_type == "retrieval.started" and isinstance(
-                        event.data, KnowledgeBaseRetrievalStartedEvent
-                    ):
-                        stream_request_id = event.data.request_id
-                    elif event.event_type == "response.completed" and isinstance(
-                        event.data, KnowledgeBaseResponseCompletedEvent
-                    ):
-                        assert event.data.status_code in {200, 206}
-                        print_retrieval_summary(event.data.response)
-                    elif event.event_type == "error" and isinstance(event.data, KnowledgeBaseStreamErrorEvent):
-                        error_message = event.data.error.message if event.data.error else "Retrieval failed"
+                    stream_events.append(event)
+                    if isinstance(event, KnowledgeBaseRetrievalStartedEvent):
+                        stream_request_id = event.request_id
+                    elif isinstance(event, KnowledgeBaseResponseCompletedEvent):
+                        assert event.status_code in {200, 206}
+                        print_retrieval_summary(event.response)
+                    elif isinstance(event, KnowledgeBaseStreamErrorEvent):
+                        error_message = event.error.message if event.error else "Retrieval failed"
                         raise RuntimeError(f"Streaming retrieval error: {error_message}")
-            assert stream_event_types[0] == "retrieval.started"
-            assert stream_event_types[-1] == "response.completed"
+            assert isinstance(stream_events[0], KnowledgeBaseRetrievalStartedEvent)
+            assert isinstance(stream_events[-1], KnowledgeBaseResponseCompletedEvent)
             assert stream_request_id
 
             message_request = KnowledgeBaseRetrievalRequest(
