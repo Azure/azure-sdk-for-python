@@ -247,6 +247,18 @@ Describe 'Bootstrap-owned shared identity bindings and existing grants' {
             roleDefinitionId = "$scope/providers/Microsoft.Authorization/roleDefinitions/53ca6127-db72-4b80-b1b0-d745d6d5456d"
             condition = ''
         } }
+        foreach ($grant in @(
+            @{ Purpose = 'function'; Role = 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b' },
+            @{ Purpose = 'function'; Role = '974c5e8b-45b9-4653-ba55-5f855dd0fb88' },
+            @{ Purpose = 'project'; Role = '974c5e8b-45b9-4653-ba55-5f855dd0fb88' }
+        )) {
+            $script:sharedIdentityFixture.assignments += @{ properties = @{
+                principalId = $script:sharedIdentityFixture.principals[$grant.Purpose]
+                scope = $scope
+                roleDefinitionId = "$scope/providers/Microsoft.Authorization/roleDefinitions/$($grant.Role)"
+                condition = ''
+            } }
+        }
         Mock Invoke-RestMethod { throw 'Shared identity verification must use the isolated Azure wrapper.' }
         Mock Invoke-SampleAzure {
             param($Arguments, $Sensitive)

@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 """Offline checks for the on-demand pipeline's automatic live-run flow."""
 
+import json
 from pathlib import Path
 
 import pytest
@@ -301,3 +302,77 @@ def test_batch_admission_retains_guards_without_querying_ado():
     helper = (directory / "SampleCiHelpers.ps1").read_text(encoding="utf-8")
     assert "function Assert-SampleCapacityLock" not in helper
     assert "pipelines/checks/configurations" not in helper
+
+
+def test_provisioning_metadata_is_passed_directly_not_through_environment_variables():
+    directory = Path(__file__).resolve().parent
+    parameters = (directory / "infra/sample-resources.bicepparam").read_text(encoding="utf-8")
+    assert parameters.startswith("using none")
+    assert parameters.count("readEnvironmentVariable(") == 1
+    assert "param mcpPat = readEnvironmentVariable('MCP_GITHUB_PAT', '')" in parameters
+    provisioning = (directory / "Invoke-SampleProvisioning.ps1").read_text(encoding="utf-8")
+    assert "SAMPLE_CI_" not in provisioning + parameters
+    assert "SetEnvironmentVariable" not in provisioning
+    assert "accountName = [string] $accounts[0].name" in provisioning
+    assert "projectName = $projectName" in provisioning
+    assert "agentName = [string] $plan.agentName" in provisioning
+    assert "'sampleModel=' + ($modelParameters | ConvertTo-Json -Compress)" in provisioning
+    assert "Invoke-SampleAzure -Arguments $sampleArguments -Sensitive" in provisioning
+
+
+def test_function_infrastructure_is_always_provisioned_using_resolved_inputs():
+    directory = Path(__file__).resolve().parent
+    provisioning = (directory / "Invoke-SampleProvisioning.ps1").read_text(encoding="utf-8")
+    template = (directory / "infra/sample-resources.bicep").read_text(encoding="utf-8")
+    parameters = (directory / "infra/sample-resources.bicepparam").read_text(encoding="utf-8")
+    assert "enableFunctionApp" not in provisioning + template + parameters
+    assert "'infra/function-app.bicep'" in provisioning
+    assert '"storageAccountName=$storageAccountName"' in provisioning
+    assert '"sharedFunctionIdentityResourceId=$($identities.function.resourceId)"' in provisioning
+    assert "$standard.properties.outputs.storageAccountName.value" in provisioning
+    assert "Test-SampleFunctionRequired" not in provisioning
+    assert "$requiresFunction" not in provisioning
+    assert "'Microsoft.Web'" in provisioning.split("foreach ($namespace", 1)[0]
+    grant_checks = [
+        line.strip()
+        for line in provisioning.splitlines()
+        if line.strip().startswith("Assert-SampleSharedIdentityGrants ")
+    ]
+    assert len(grant_checks) == 2
+    assert "requiredEnvironment" not in provisioning
+    helper = (directory / "SampleCiHelpers.ps1").read_text(encoding="utf-8")
+    assert "Test-SampleFunctionRequired" not in helper
+    assert "RequireFunctionAccess" not in helper
+    assert "requiredEnvironment" not in helper
+    assert provisioning.index("Publish-SampleFunctionApp -Plan $plan") < provisioning.index(
+        "$state['status'] = 'Ready'"
+    )
+
+
+@pytest.mark.parametrize(
+    "target, role_id",
+    [
+        ("function", "b7e6dc6d-f1e8-4753-8033-0f276bb0955b"),
+        ("function", "974c5e8b-45b9-4653-ba55-5f855dd0fb88"),
+        ("project", "974c5e8b-45b9-4653-ba55-5f855dd0fb88"),
+    ],
+)
+def test_shared_identity_bootstrap_preconfigures_function_storage_permissions(target, role_id):
+    path = Path(__file__).resolve().parent.parent / "shared-identities/infra/IdentityConfiguration.json"
+    configuration = json.loads(path.read_text(encoding="utf-8"))
+    matches = [
+        grant
+        for grant in configuration["roleAssignments"]
+        if grant["target"] == target and grant["roleDefinitionId"] == role_id
+    ]
+    assert len(matches) == 1
+    assert "condition" not in matches[0]
+    assert "conditionVersion" not in matches[0]
+    conditioned_owner = [
+        grant
+        for grant in configuration["roleAssignments"]
+        if grant["target"] == "project" and grant["roleDefinitionId"] == "b7e6dc6d-f1e8-4753-8033-0f276bb0955b"
+    ]
+    assert len(conditioned_owner) == 1
+    assert "*-azureml-agent" in conditioned_owner[0]["condition"]
+    assert conditioned_owner[0]["conditionVersion"] == "2.0"

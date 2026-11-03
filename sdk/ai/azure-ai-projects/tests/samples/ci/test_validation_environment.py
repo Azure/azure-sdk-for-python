@@ -5,6 +5,7 @@
 import ast
 import os
 from pathlib import Path
+import sys
 from types import SimpleNamespace
 
 import pytest
@@ -16,25 +17,61 @@ def isolated_configuration_environment(monkeypatch):
     monkeypatch.setenv("LLM_VALIDATION_PROJECT_ENDPOINT", "fixture-endpoint")
 
 
-def configure_cli_environment(values):
-    """Execute the actual configure hook in isolation, without importing proxy fixtures or dotenv."""
+def load_cli_environment_hooks():
+    """Load the real option registry and hooks without importing proxy fixtures or dotenv."""
     path = Path(__file__).resolve().parents[2] / "conftest.py"
     module = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-    hook = next(node for node in module.body if isinstance(node, ast.FunctionDef) and node.name == "pytest_configure")
+    hooks = [
+        node
+        for node in module.body
+        if (
+            isinstance(node, ast.Assign)
+            and any(isinstance(target, ast.Name) and target.id == "_CLI_ENV_OPTIONS" for target in node.targets)
+        )
+        or (
+            isinstance(node, ast.FunctionDef)
+            and node.name in {"_has_cli_env_options", "pytest_addoption", "pytest_configure"}
+        )
+    ]
     namespace = {
         "os": os,
+        "sys": sys,
         "_CLI_ENV_MODE": True,
-        "_CLI_ENV_OPTIONS": {
-            "llm_validation_project_endpoint": "LLM_VALIDATION_PROJECT_ENDPOINT",
-            "foundry_model_name": "FOUNDRY_MODEL_NAME",
-        },
         "_SERVICE_PREPARER_DEFAULTS": {
             "llm_validation_project_endpoint": "https://sanitized.services.ai.azure.com/api/projects/sanitized",
             "foundry_model_name": "sanitized-model",
         },
     }
-    exec(compile(ast.Module(body=[hook], type_ignores=[]), str(path), "exec"), namespace)
+    exec(compile(ast.Module(body=hooks, type_ignores=[]), str(path), "exec"), namespace)
+    return namespace
+
+
+def configure_cli_environment(values):
+    namespace = load_cli_environment_hooks()
     namespace["pytest_configure"](SimpleNamespace(getoption=values.get))
+
+
+@pytest.mark.parametrize("separator", ["-", "_"])
+def test_function_cli_options_are_registered_and_applied(separator, monkeypatch):
+    hooks = load_cli_environment_hooks()
+    parser = pytest.Parser(_ispytest=True)
+    hooks["pytest_addoption"](parser)
+    environment = {
+        "FUNCTION_APP_NAME": "example-function",
+        "FUNCTION_APP_URL": "https://example-function.azurewebsites.net",
+        "STORAGE_INPUT_QUEUE_NAME": "weather-input-queue",
+        "STORAGE_OUTPUT_QUEUE_NAME": "weather-output-queue",
+        "STORAGE_QUEUE_SERVICE_ENDPOINT": "https://example.queue.core.windows.net",
+    }
+    arguments = [f"--{name.lower().replace('_', separator)}={value}" for name, value in environment.items()]
+    for name in environment:
+        monkeypatch.setenv(name, "old-value")
+    monkeypatch.setattr(sys, "argv", ["pytest", *arguments])
+    assert hooks["_has_cli_env_options"]()
+    options = vars(parser.parse(arguments))
+    hooks["pytest_configure"](SimpleNamespace(getoption=options.get))
+    for name, value in environment.items():
+        assert os.environ[name] == value
 
 
 def test_secret_endpoint_is_not_overwritten_by_preparer_default(monkeypatch):

@@ -390,6 +390,52 @@ function Get-SampleSharedIdentities {
     return $identities
 }
 
+function Publish-SampleFunctionApp {
+    param([Parameter(Mandatory)] [hashtable] $Plan,
+        [Parameter(Mandatory)] [ValidatePattern('^[a-zA-Z0-9][a-zA-Z0-9-]{0,58}[a-zA-Z0-9]$')] [string] $FunctionAppName,
+        [string] $SourceDirectory = (Join-Path $PSScriptRoot 'function_app'))
+
+    Assert-SampleRunPlan -Plan $Plan
+    $files = @('function_app.py', 'host.json', 'requirements.txt')
+    foreach ($file in $files) {
+        if (-not (Test-Path -LiteralPath (Join-Path $SourceDirectory $file) -PathType Leaf)) {
+            throw "Missing Function App source file '$file'; no code was published."
+        }
+    }
+    $zipPath = Join-Path ([IO.Path]::GetTempPath()) ('sample-function-' + [guid]::NewGuid().ToString('N') + '.zip')
+    try {
+        $archive = [IO.Compression.ZipFile]::Open($zipPath, [IO.Compression.ZipArchiveMode]::Create)
+        try {
+            foreach ($file in $files) {
+                $entry = $archive.CreateEntry($file)
+                $entry.LastWriteTime = [DateTimeOffset]::new(2000, 1, 1, 0, 0, 0, [TimeSpan]::Zero)
+                $entryStream = $entry.Open()
+                try {
+                    $sourceStream = [IO.File]::OpenRead((Join-Path $SourceDirectory $file))
+                    try { $sourceStream.CopyTo($entryStream) } finally { $sourceStream.Dispose() }
+                } finally { $entryStream.Dispose() }
+            }
+        } finally { $archive.Dispose() }
+        $null = Invoke-SampleAzure -Arguments @('functionapp', 'deployment', 'source', 'config-zip',
+            '--name', $FunctionAppName, '--resource-group', $Plan.resourceGroup, '--subscription', $Plan.subscriptionId,
+            '--src', $zipPath, '--build-remote', 'true', '--timeout', '1200') -Sensitive
+        for ($attempt = 1; $attempt -le 30; $attempt++) {
+            $functions = @(Invoke-SampleAzure -Arguments @('functionapp', 'function', 'list', '--name', $FunctionAppName,
+                '--resource-group', $Plan.resourceGroup, '--subscription', $Plan.subscriptionId, '--query', '[].name') -Sensitive)
+            if (@($functions | Where-Object { ($_ -split '/')[-1] -ceq 'queue_trigger' }).Count -eq 1) {
+                return
+            }
+            if ($attempt -lt 30) {
+                Write-Host ('Waiting for queue_trigger indexing after publication (check {0}/30).' -f $attempt)
+                Start-Sleep -Seconds 10
+            }
+        }
+        throw 'The published Function App did not index queue_trigger after 30 checks; sample execution is disabled.'
+    } finally {
+        if (Test-Path -LiteralPath $zipPath) { Remove-Item -LiteralPath $zipPath -Force }
+    }
+}
+
 function Assert-SampleSharedIdentityGrants {
     param([Parameter(Mandatory)] [hashtable] $Plan, [Parameter(Mandatory)] [hashtable] $Identities,
         [Parameter(Mandatory)] [string] $RunnerPrincipalId)
@@ -413,6 +459,21 @@ function Assert-SampleSharedIdentityGrants {
         -not $_['properties']['condition']
     })
     if ($callerAccess.Count -ne 1) { throw 'Preconfigure the pipeline Foundry User grant; workers never create Azure IAM assignments.' }
+    foreach ($grant in @(
+        @{ Purpose = 'function'; Role = 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'; Name = 'Storage Blob Data Owner' },
+        @{ Purpose = 'function'; Role = '974c5e8b-45b9-4653-ba55-5f855dd0fb88'; Name = 'Storage Queue Data Contributor' },
+        @{ Purpose = 'project'; Role = '974c5e8b-45b9-4653-ba55-5f855dd0fb88'; Name = 'Storage Queue Data Contributor' }
+    )) {
+        $matching = @($assignments | Where-Object {
+            $_['properties']['principalId'] -ieq $Identities[$grant.Purpose].principalId -and
+            $_['properties']['scope'] -ieq $scope -and
+            $_['properties']['roleDefinitionId'] -ieq "$scope/providers/Microsoft.Authorization/roleDefinitions/$($grant.Role)" -and
+            -not $_['properties']['condition']
+        })
+        if ($matching.Count -ne 1) {
+            throw "Preconfigure $($grant.Name) for the shared $($grant.Purpose) identity at the subscription scope before provisioning; no resources were changed."
+        }
+    }
 }
 
 function Assert-SampleBatchCapacity {

@@ -29,9 +29,12 @@ $required = @()
 $runnable = @()
 $rejected = @()
 # Bicep outputs plus values the provisioning script adds; the validation endpoint is a pipeline variable and never enters state.
+$functionBindings = @(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $PSScriptRoot 'infra/function-app.bicep'))
 $stateBindings = @(@(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $PSScriptRoot 'infra/sample-resources.bicep')) +
+    $functionBindings +
     @('AZURE_SUBSCRIPTION_ID', 'AZURE_TENANT_ID', 'AZURE_RESOURCE_GROUP') | Sort-Object -Unique)
 $provided = @($stateBindings + 'LLM_VALIDATION_PROJECT_ENDPOINT')
+# Validate test compatibility only; selection never changes the resource bundle or its bindings.
 foreach ($test in @($manifest.tests)) {
     $names = @(& $scanner -SamplePath @($test.sample_path) -PackageRoot $PackageRoot)
     $unsupported = @($names | Where-Object { $_ -notin $provided })
@@ -94,5 +97,6 @@ Write-Host 'Shared UAMIs and Azure service-role grants must already exist. Only 
 Write-Host ('Sample model: {0} ({1}).' -f $ModelName, $ModelVersion)
 Write-Host 'Output validation uses an existing project supplied by the LLM_VALIDATION_PROJECT_ENDPOINT environment variable; no validator is provisioned.'
 Write-Host 'GitHub MCP connection: always provisioned; the PAT is never stored in this plan.'
+Write-Host 'Function App, hosting plan, queues and handler code: always provisioned for every active queue.'
 Write-Host 'Public networking. Resources incur charges until cleanup completes.'
 Write-Host 'This offline preview is not ARM what-if. A live run checks identity, providers, regional dependency eligibility and model/account quota before provisioning.'

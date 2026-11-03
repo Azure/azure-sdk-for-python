@@ -3,6 +3,170 @@
 
 . (Join-Path $PSScriptRoot '../SampleCiHelpers.ps1')
 
+Describe 'Function integration prerequisites' {
+    BeforeEach {
+        $script:functionPlan = @{ subscriptionId = '11111111-1111-1111-1111-111111111111'; requiredEnvironment = @() }
+        $script:functionScope = '/subscriptions/' + $script:functionPlan.subscriptionId
+        $script:functionIdentities = @{
+            project = @{ principalId = '22222222-2222-2222-2222-222222222222' }
+            function = @{ principalId = '33333333-3333-3333-3333-333333333333' }
+        }
+        $script:functionRunner = '44444444-4444-4444-4444-444444444444'
+        $script:functionAssignments = @(@{ properties = @{
+            principalId = $script:functionRunner; scope = $script:functionScope
+            roleDefinitionId = "$script:functionScope/providers/Microsoft.Authorization/roleDefinitions/53ca6127-db72-4b80-b1b0-d745d6d5456d"
+        } })
+        Mock Get-SampleProjectRoleIds { return @() }
+        Mock Get-SampleSubscriptionAssignments { return $script:functionAssignments }
+        $script:requiredFunctionGrants = @(
+            @{ Purpose = 'function'; Role = 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b' },
+            @{ Purpose = 'function'; Role = '974c5e8b-45b9-4653-ba55-5f855dd0fb88' },
+            @{ Purpose = 'project'; Role = '974c5e8b-45b9-4653-ba55-5f855dd0fb88' }
+        )
+        foreach ($grant in $script:requiredFunctionGrants) {
+            $script:functionAssignments += @{ properties = @{
+                principalId = $script:functionIdentities[$grant.Purpose].principalId
+                scope = $script:functionScope
+                roleDefinitionId = "$script:functionScope/providers/Microsoft.Authorization/roleDefinitions/$($grant.Role)"
+            } }
+        }
+    }
+
+    It 'requires Function grants regardless of sample requirements: <Label>' -TestCases @(
+        @{ Label = 'no Function inputs'; Requirements = @() },
+        @{ Label = 'Function inputs'; Requirements = @('STORAGE_INPUT_QUEUE_NAME') },
+        @{ Label = 'no sample metadata'; Requirements = $null }
+    ) {
+        param($Label, $Requirements)
+        if ($null -eq $Requirements) {
+            $script:functionPlan.Remove('requiredEnvironment')
+        } else {
+            $script:functionPlan.requiredEnvironment = $Requirements
+        }
+        $script:functionAssignments = @($script:functionAssignments[0])
+        { Assert-SampleSharedIdentityGrants -Plan $script:functionPlan -Identities $script:functionIdentities `
+            -RunnerPrincipalId $script:functionRunner } | Should Throw 'Preconfigure Storage Blob Data Owner'
+    }
+
+    It 'accepts the three exact preconfigured Function grants' {
+        Assert-SampleSharedIdentityGrants -Plan $script:functionPlan -Identities $script:functionIdentities -RunnerPrincipalId $script:functionRunner
+    }
+
+    It 'rejects a missing Function grant: <Index>' -TestCases @(@{ Index = 1 }, @{ Index = 2 }, @{ Index = 3 }) {
+        param($Index)
+        $script:functionAssignments = @(for ($position = 0; $position -lt 4; $position++) {
+            if ($position -ne $Index) { $script:functionAssignments[$position] }
+        })
+        { Assert-SampleSharedIdentityGrants -Plan $script:functionPlan -Identities $script:functionIdentities `
+            -RunnerPrincipalId $script:functionRunner } | Should Throw 'Preconfigure Storage'
+    }
+
+    It 'rejects a Function grant at a different scope' {
+        $script:functionAssignments[1].properties.scope += '/resourceGroups/unrelated'
+        { Assert-SampleSharedIdentityGrants -Plan $script:functionPlan -Identities $script:functionIdentities `
+            -RunnerPrincipalId $script:functionRunner } | Should Throw 'Preconfigure Storage Blob Data Owner'
+    }
+
+    It 'rejects a conditioned Function grant rather than assuming it grants host access' {
+        $script:functionAssignments[1].properties.condition = 'unreviewed condition'
+        { Assert-SampleSharedIdentityGrants -Plan $script:functionPlan -Identities $script:functionIdentities `
+            -RunnerPrincipalId $script:functionRunner } | Should Throw 'Preconfigure Storage Blob Data Owner'
+    }
+}
+
+Describe 'Function code publication' {
+    BeforeEach {
+        $script:publishOriginalQueue = $env:SAMPLE_QUEUE_NAME
+        $env:SAMPLE_QUEUE_NAME = 'q1'
+        $script:publishPlan = @{
+            schemaVersion = 1; queueName = 'q1'; jobAttempt = '1'; ownerToken = '0123456789abcdef0123456789abcdef'
+            definitionId = $(if ($env:SYSTEM_DEFINITIONID) { $env:SYSTEM_DEFINITIONID } else { '8392' })
+            buildId = $(if ($env:BUILD_BUILDID) { $env:BUILD_BUILDID } else { '12345' })
+            subscriptionId = '11111111-1111-1111-1111-111111111111'; tenantId = '22222222-2222-2222-2222-222222222222'
+        }
+        $script:publishPlan.resourceGroup = 'azsdk-samples-{0}-{1}-q1-1-01234567' -f $script:publishPlan.definitionId, $script:publishPlan.buildId
+        $script:publishedZip = ''
+        $script:publishedEntries = @()
+        $script:publishFailure = $false
+        $script:indexedFunctions = @('example-function/queue_trigger')
+        $script:indexingDelay = 0
+        $script:indexingQueries = 0
+        $script:indexingFailure = $false
+        Mock Start-Sleep {}
+        Mock Invoke-SampleAzure {
+            param($Arguments, $Sensitive)
+            $Sensitive | Should Be $true
+            $Arguments[[array]::IndexOf($Arguments, '--subscription') + 1] | Should Be $script:publishPlan.subscriptionId
+            $Arguments[[array]::IndexOf($Arguments, '--resource-group') + 1] | Should Be $script:publishPlan.resourceGroup
+            if ($Arguments[1] -eq 'deployment') {
+                $Arguments[[array]::IndexOf($Arguments, '--build-remote') + 1] | Should Be 'true'
+                $script:publishedZip = $Arguments[[array]::IndexOf($Arguments, '--src') + 1]
+                $archive = [IO.Compression.ZipFile]::OpenRead($script:publishedZip)
+                try {
+                    $script:publishedEntries = @($archive.Entries.FullName)
+                    @($archive.Entries | Where-Object { $_.LastWriteTime.Year -ne 2000 }).Count | Should Be 0
+                } finally { $archive.Dispose() }
+                if ($script:publishFailure) { throw 'Isolated code publication failure' }
+                return @{}
+            }
+            if ($Arguments[1] -eq 'function') {
+                $script:indexingQueries++
+                if ($script:indexingFailure) { throw 'Isolated indexing query failure' }
+                if ($script:indexingQueries -le $script:indexingDelay) { return @() }
+                return $script:indexedFunctions
+            }
+            throw 'Unexpected Azure operation in isolated publication test.'
+        }
+    }
+    AfterEach { $env:SAMPLE_QUEUE_NAME = $script:publishOriginalQueue }
+
+    It 'publishes exactly the three source files and removes the temporary package' {
+        Publish-SampleFunctionApp -Plan $script:publishPlan -FunctionAppName 'example-function'
+        ($script:publishedEntries | Sort-Object) -join ',' | Should Be 'function_app.py,host.json,requirements.txt'
+        Test-Path -LiteralPath $script:publishedZip | Should Be $false
+        Assert-MockCalled Invoke-SampleAzure -Times 2 -Exactly -Scope It
+        Assert-MockCalled Start-Sleep -Times 0 -Exactly -Scope It
+    }
+
+    It 'waits for delayed indexing without republishing the code' {
+        $script:indexingDelay = 2
+        Publish-SampleFunctionApp -Plan $script:publishPlan -FunctionAppName 'example-function'
+        $script:indexingQueries | Should Be 3
+        Assert-MockCalled Invoke-SampleAzure -Times 1 -Exactly -Scope It -ParameterFilter { $Arguments[1] -eq 'deployment' }
+        Assert-MockCalled Start-Sleep -Times 2 -Exactly -Scope It -ParameterFilter { $Seconds -eq 10 }
+        Test-Path -LiteralPath $script:publishedZip | Should Be $false
+    }
+
+    It 'cleans up the package when code publishing fails and never queries function indexing' {
+        $script:publishFailure = $true
+        { Publish-SampleFunctionApp -Plan $script:publishPlan -FunctionAppName 'example-function' } | Should Throw 'Isolated code publication failure'
+        Test-Path -LiteralPath $script:publishedZip | Should Be $false
+        Assert-MockCalled Invoke-SampleAzure -Times 1 -Exactly -Scope It
+    }
+
+    It 'fails before sample execution if queue_trigger was not indexed' {
+        $script:indexedFunctions = @()
+        { Publish-SampleFunctionApp -Plan $script:publishPlan -FunctionAppName 'example-function' } | Should Throw 'did not index queue_trigger'
+        $script:indexingQueries | Should Be 30
+        Assert-MockCalled Start-Sleep -Times 29 -Exactly -Scope It -ParameterFilter { $Seconds -eq 10 }
+        Test-Path -LiteralPath $script:publishedZip | Should Be $false
+    }
+
+    It 'propagates indexing query errors without retrying or leaking the package' {
+        $script:indexingFailure = $true
+        { Publish-SampleFunctionApp -Plan $script:publishPlan -FunctionAppName 'example-function' } | Should Throw 'Isolated indexing query failure'
+        $script:indexingQueries | Should Be 1
+        Assert-MockCalled Start-Sleep -Times 0 -Exactly -Scope It
+        Test-Path -LiteralPath $script:publishedZip | Should Be $false
+    }
+
+    It 'rejects an incomplete source package without contacting Azure' {
+        { Publish-SampleFunctionApp -Plan $script:publishPlan -FunctionAppName 'example-function' -SourceDirectory $TestDrive } |
+            Should Throw 'Missing Function App source file'
+        Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
+    }
+}
+
 Describe 'Explicit subscription targeting' {
     BeforeEach {
         $script:originalSubscription = $env:AZURE_SUBSCRIPTION_ID

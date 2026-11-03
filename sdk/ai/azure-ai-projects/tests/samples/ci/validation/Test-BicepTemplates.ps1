@@ -89,7 +89,7 @@ function Assert-SharedIdentity {
     $identity = $Resource['identity']
     if ($identity -isnot [System.Collections.IDictionary] -or $identity['type'] -cne 'UserAssigned' -or
         $identity['userAssignedIdentities'] -isnot [System.Collections.IDictionary]) {
-        throw 'Foundry account, project, and Search must use only their existing shared UAMIs.'
+        throw 'Foundry account, project, Search, and Function App must use only their existing shared UAMIs.'
     }
     $keys = @($identity['userAssignedIdentities'].Keys)
     $expectedKey = '[parameters(''{0}'')]' -f $ParameterName
@@ -115,6 +115,11 @@ if ($standard['parameters']['location'].Contains('defaultValue') -or $standard['
 $storageResources = @($standardResources | Where-Object { $_.Type -ieq 'Microsoft.Storage/storageAccounts' })
 if ($storageResources.Count -ne 1 -or $storageResources[0].Definition['sku']['name'] -cne 'Standard_ZRS') {
     throw 'The deployed StorageV2 SKU must match the Standard_ZRS regional preflight contract.'
+}
+$uniqueSuffix = [string] $standard['variables']['uniqueSuffix']
+if ($uniqueSuffix -cnotmatch '^\[uniqueString\(' -or $uniqueSuffix -match 'substring\(' -or
+    $uniqueSuffix -notmatch 'resourceGroup\(\)\.id' -or $uniqueSuffix -notmatch 'deploymentTimestamp') {
+    throw 'Globally unique resource names must retain the full run hash seeded by resource group and deployment timestamp.'
 }
 
 foreach ($binding in @(
@@ -179,23 +184,9 @@ if ($models.Count -ne 1 -or $sample['parameters'].Contains('validationModel') -o
 }
 Write-Host 'Three worker templates compiled; shared identities, zero worker ARM IAM, native Cosmos grant, and secure single-model MCP contract verified.'
 
-# Only fictional bindings are used to validate the dynamic .bicepparam file.
-$bindings = @{
-    SAMPLE_CI_ACCOUNT_NAME = 'example-account'
-    SAMPLE_CI_PROJECT_NAME = 'example-project'
-    SAMPLE_CI_AGENT_NAME = 'sample-preview'
-    SAMPLE_CI_MODEL_NAME = 'gpt-5.2'
-    SAMPLE_CI_MODEL_VERSION = '2025-12-11'
-    SAMPLE_CI_MODEL_SKU = 'GlobalStandard'
-    SAMPLE_CI_MODEL_CAPACITY = '10'
-    MCP_GITHUB_PAT = ''
-}
-$original = @{}
+$originalPat = [Environment]::GetEnvironmentVariable('MCP_GITHUB_PAT')
 try {
-    foreach ($entry in $bindings.GetEnumerator()) {
-        $original[$entry.Key] = [Environment]::GetEnvironmentVariable($entry.Key)
-        [Environment]::SetEnvironmentVariable($entry.Key, $entry.Value)
-    }
+    $env:MCP_GITHUB_PAT = ''
     $compiledParameters = Invoke-BicepCompilation -Path (Join-Path $infra 'sample-resources.bicepparam') -Parameters
     # CLI versions may return either the parameter object or a parametersJson wrapper.
     if ($compiledParameters.Contains('parametersJson')) {
@@ -206,16 +197,72 @@ try {
         }
     }
     if ($compiledParameters['parameters'] -isnot [System.Collections.IDictionary] -or
-        $compiledParameters['parameters'].Contains('runnerPrincipalId') -or
-        $compiledParameters['parameters']['mcpPat']['value'] -cne '' -or
-        $compiledParameters['parameters']['sampleModel']['value']['name'] -cne 'gpt-5.2') {
-        throw 'Bicep parameter compilation must use only the fictional single-model bindings and an empty PAT.'
+        $compiledParameters['parameters'].Count -ne 1 -or
+        -not $compiledParameters['parameters'].Contains('mcpPat') -or
+        $compiledParameters['parameters']['mcpPat']['value'] -cne '') {
+        throw 'Bicep parameter compilation must contain only an empty PAT; provisioning metadata must be passed directly.'
     }
 } finally {
-    foreach ($entry in $original.GetEnumerator()) { [Environment]::SetEnvironmentVariable($entry.Key, $entry.Value) }
+    [Environment]::SetEnvironmentVariable('MCP_GITHUB_PAT', $originalPat)
     $compiledParameters = $null
 }
-Write-Host 'Bicep parameter file compiled with fictional values; no secret values were logged or saved.'
+Write-Host 'Secret-only Bicep parameter file compiled with an empty PAT; no provisioning metadata comes from environment variables.'
+
+$functionTemplate = Invoke-BicepCompilation -Path (Join-Path $infra 'function-app.bicep')
+$functionResources = @(Get-ArmResources -Template $functionTemplate)
+Assert-NoArmRoleAssignments -Resources $functionResources
+$functionResourceTypes = @('Microsoft.Web/serverfarms', 'Microsoft.Web/sites', 'Microsoft.Web/sites/config',
+    'Microsoft.Storage/storageAccounts/queueServices/queues')
+if (@($functionResources | Where-Object { $_.Type -cnotin $functionResourceTypes }).Count -ne 0) {
+    throw 'Function infrastructure must reuse existing storage and identities, and create only its plan, app, settings, and queues.'
+}
+foreach ($resourceType in $functionResourceTypes) {
+    if (@($functionResources | Where-Object { $_.Type -ceq $resourceType }).Count -ne 1) {
+        throw "Function infrastructure must contain exactly one '$resourceType' resource declaration."
+    }
+}
+if ($functionTemplate['parameters']['planSku']['defaultValue'] -cne 'EP1' -or
+    $functionTemplate['parameters']['runtimeVersion']['defaultValue'] -cne '3.11' -or
+    $functionTemplate['parameters']['inputQueueName']['defaultValue'] -cne 'weather-input-queue' -or
+    $functionTemplate['parameters']['outputQueueName']['defaultValue'] -cne 'weather-output-queue' -or
+    $functionTemplate['parameters']['location'].Contains('defaultValue') -or
+    $functionTemplate['parameters']['storageAccountName'].Contains('defaultValue') -or
+    $functionTemplate['parameters']['sharedFunctionIdentityResourceId'].Contains('defaultValue')) {
+    throw 'Function infrastructure must preserve reference defaults and require explicit region, storage, and shared identity inputs.'
+}
+$functionSite = @($functionResources | Where-Object { $_.Type -ceq 'Microsoft.Web/sites' })[0].Definition
+Assert-SharedIdentity -Resource $functionSite -ParameterName 'sharedFunctionIdentityResourceId'
+if ($functionSite['properties']['httpsOnly'] -ne $true -or
+    $functionSite['properties']['siteConfig']['linuxFxVersion'] -notmatch 'Python\|' -or
+    $functionSite['properties']['siteConfig']['minTlsVersion'] -cne '1.2' -or
+    $functionSite['properties']['siteConfig']['ftpsState'] -cne 'Disabled') {
+    throw 'The Function App must use its single existing UAMI, Linux Python runtime, HTTPS, and disabled FTP.'
+}
+$functionSettings = @($functionResources | Where-Object { $_.Type -ceq 'Microsoft.Web/sites/config' })[0].Definition
+if ($functionSettings['properties'] -isnot [System.Collections.IDictionary]) {
+    throw 'Fresh Function App settings must be declared directly, without reading the appsettings resource being deployed.'
+}
+$settingsJson = $functionSettings['properties'] | ConvertTo-Json -Depth 20 -Compress
+foreach ($setting in @('AzureWebJobsStorage__accountName', 'AzureWebJobsStorage__credential',
+        'AzureWebJobsStorage__clientId', 'FUNCTIONS_EXTENSION_VERSION', 'FUNCTIONS_WORKER_RUNTIME',
+    'SCM_DO_BUILD_DURING_DEPLOYMENT', 'ENABLE_ORYX_BUILD', 'STORAGE_INPUT_QUEUE_NAME', 'STORAGE_OUTPUT_QUEUE_NAME',
+        'STORAGE_CONNECTION__queueServiceUri', 'STORAGE_CONNECTION__credential', 'STORAGE_CONNECTION__clientId')) {
+    if ($settingsJson -notmatch [regex]::Escape($setting)) { throw "Missing Function App setting '$setting'." }
+}
+if ($settingsJson -notmatch 'managedidentity' -or $settingsJson -notmatch '~4' -or
+    $settingsJson -match '(?i)\blist\w*\s*\(') {
+    throw 'Function settings must use managed identity and host v4 without a circular appsettings list operation.'
+}
+$functionNames = @($functionTemplate['outputs']['environment']['value'].Keys | Sort-Object)
+$expectedFunctionNames = @('FUNCTION_APP_NAME', 'FUNCTION_APP_URL', 'STORAGE_INPUT_QUEUE_NAME',
+    'STORAGE_OUTPUT_QUEUE_NAME', 'STORAGE_QUEUE_SERVICE_ENDPOINT' | Sort-Object)
+$functionPlanNames = @(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $infra 'function-app.bicep') | Sort-Object)
+if (($functionNames -join ',') -cne ($expectedFunctionNames -join ',') -or
+    ($functionNames -join ',') -cne ($functionPlanNames -join ',') -or
+    ($functionTemplate | ConvertTo-Json -Depth 100 -Compress) -match 'listKeys|FUNCTION_APP_KEY|connectionString') {
+    throw 'Function outputs must contain only the five non-secret sample bindings, without storage keys or function keys.'
+}
+Write-Host 'Standalone Function App template compiled; reference defaults, shared identity, keyless settings, and non-secret outputs verified.'
 
 # Optional, separate provenance check. The parent downloader remains responsible
 # for fetching the original 14 pinned files; this checker never downloads or patches them.

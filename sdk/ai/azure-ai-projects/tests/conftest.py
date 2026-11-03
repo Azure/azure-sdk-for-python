@@ -32,6 +32,11 @@ from test_base import servicePreparer
 _SERVICE_PREPARER_DEFAULTS = servicePreparer.keywords or {}
 _CLI_ENV_OPTIONS = {
     **{option_name: option_name.upper() for option_name in _SERVICE_PREPARER_DEFAULTS},
+    "function_app_name": "FUNCTION_APP_NAME",
+    "function_app_url": "FUNCTION_APP_URL",
+    "storage_input_queue_name": "STORAGE_INPUT_QUEUE_NAME",
+    "storage_output_queue_name": "STORAGE_OUTPUT_QUEUE_NAME",
+    "storage_queue_service_endpoint": "STORAGE_QUEUE_SERVICE_ENDPOINT",
     "azure_test_run_live": "AZURE_TEST_RUN_LIVE",
     "azure_skip_live_recording": "AZURE_SKIP_LIVE_RECORDING",
 }

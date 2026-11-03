@@ -59,6 +59,70 @@ Describe 'Offline deployment-plan defaults' {
         $plan.sampleModel.version | Should Be 'auto'
     }
 
+    It 'plans the registered Azure Function sample with all queue bindings without contacting Azure' {
+        @{ schemaVersion = 1; tests = @(@{
+            node_id = 'tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_agent_azure_function]'
+            sample_path = 'samples/agents/tools/sample_agent_azure_function.py'
+        }) } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $script:planArguments.SelectionManifest -Encoding utf8
+        & {
+            function az { throw 'Offline planning must not contact Azure.' }
+            & $script:planScript @script:planArguments
+        }
+        $plan = Get-Content -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
+        @($plan.selectedTests).Count | Should Be 1
+        foreach ($name in @('STORAGE_INPUT_QUEUE_NAME', 'STORAGE_OUTPUT_QUEUE_NAME', 'STORAGE_QUEUE_SERVICE_ENDPOINT')) {
+            $plan.requiredEnvironment -contains $name | Should Be $true
+            $plan.environmentBindings -contains $name | Should Be $true
+        }
+        Test-Path -LiteralPath (Join-Path $script:planDirectory 'rejected-tests.json') | Should Be $false
+    }
+
+    It 'includes all Function bindings even when the selected sample does not require them' {
+        & $script:planScript @script:planArguments
+        $plan = Get-Content -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
+        $functionBindings = @('FUNCTION_APP_NAME', 'FUNCTION_APP_URL', 'STORAGE_INPUT_QUEUE_NAME',
+            'STORAGE_OUTPUT_QUEUE_NAME', 'STORAGE_QUEUE_SERVICE_ENDPOINT')
+        foreach ($name in $functionBindings) {
+            $plan.environmentBindings -contains $name | Should Be $true
+            $plan.requiredEnvironment -contains $name | Should Be $false
+        }
+    }
+
+    It 'deploys and publishes the Function App outside sample-selection conditions' {
+        $tokens = $null
+        $parseErrors = $null
+        $path = (Resolve-Path (Join-Path $PSScriptRoot '../Invoke-SampleProvisioning.ps1')).Path
+        $ast = [System.Management.Automation.Language.Parser]::ParseFile($path, [ref] $tokens, [ref] $parseErrors)
+        $parseErrors.Count | Should Be 0
+        $commands = @($ast.FindAll({
+            param($node)
+            $node -is [System.Management.Automation.Language.CommandAst] -and (
+                $node.GetCommandName() -eq 'Publish-SampleFunctionApp' -or
+                ($node.GetCommandName() -eq 'Invoke-SampleAzure' -and
+                    $node.Extent.Text.Contains("'infra/function-app.bicep'"))
+            )
+        }, $true))
+        $commands.Count | Should Be 2
+        foreach ($command in $commands) {
+            for ($parent = $command.Parent; $null -ne $parent; $parent = $parent.Parent) {
+                ($parent -is [System.Management.Automation.Language.IfStatementAst]) | Should Be $false
+            }
+        }
+    }
+
+    It 'keeps provisioning bindings identical for Function and non-Function sample selections' {
+        & $script:planScript @script:planArguments
+        $firstPlan = Get-Content -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
+        @{ schemaVersion = 1; tests = @(@{
+            node_id = 'tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_agent_azure_function]'
+            sample_path = 'samples/agents/tools/sample_agent_azure_function.py'
+        }) } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $script:planArguments.SelectionManifest -Encoding utf8
+        & $script:planScript @script:planArguments
+        $secondPlan = Get-Content -LiteralPath (Join-Path $script:planDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable
+        ($secondPlan.environmentBindings -join ',') | Should BeExactly ($firstPlan.environmentBindings -join ',')
+        ($secondPlan.requiredEnvironment -join ',') | Should Not Be ($firstPlan.requiredEnvironment -join ',')
+    }
+
     It 'requires the identity resource group instead of a name pattern' {
         $arguments = @{} + $script:planArguments
         $arguments.Remove('IdentityResourceGroup')
