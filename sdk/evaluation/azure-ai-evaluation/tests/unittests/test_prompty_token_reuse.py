@@ -11,6 +11,7 @@ import time
 import weakref
 from pathlib import Path
 from types import SimpleNamespace
+from unittest.mock import MagicMock
 
 import httpx
 import pytest
@@ -822,6 +823,25 @@ class LoopBoundAsyncCredential:
         pass
 
 
+class DualProtocolCredential(GatedCredential):
+    """A synchronous credential that implements both the synchronous and the asynchronous context manager protocols."""
+
+    def close(self):
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        pass
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *_):
+        pass
+
+
 @pytest.mark.unittest
 class TestAsynchronousCredentialRequests:
     @pytest.mark.parametrize("kind", ["chat", "decision"])
@@ -831,6 +851,21 @@ class TestAsynchronousCredentialRequests:
 
         assert [make_request(credential) for _ in range(2)] == ["loop-bound"] * 2
         assert credential.calls == 1
+
+    def test_a_synchronous_credential_with_both_context_manager_protocols_is_asked_on_a_worker_thread(self):
+        credential = DualProtocolCredential(access_token("dual"))
+
+        # Both requests wait for one token request on a worker thread; on the event loop each would ask the credential.
+        assert queue_behind(credential, request_token, request_token) == ["dual", "dual"]
+        assert len(credential.scopes) == 1
+
+    def test_a_plain_get_token_outside_the_asynchronous_protocol_is_asked_on_a_worker_thread(self):
+        class MinimalWrapper:
+            def get_token(self, *_, **__):
+                return asyncio.ensure_future(asyncio.sleep(0, access_token("minimal")))
+
+        # A plain get_token that needs the running event loop must belong to an AsyncTokenCredential.
+        assert not is_async_credential(MinimalWrapper())
 
     def test_synchronous_identity_credentials_request_tokens_on_a_worker_thread(self):
         from azure.identity import (
@@ -847,6 +882,8 @@ class TestAsynchronousCredentialRequests:
             DefaultAzureCredential(exclude_shared_token_cache_credential=True),
             ManagedIdentityCredential(),
             Credential(access_token("sync")),
+            MagicMock(get_token=MagicMock(return_value=access_token("mock")), close=MagicMock()),
+            DualProtocolCredential(access_token("dual")),
         ]
 
         assert not any(is_async_credential(credential) for credential in synchronous)

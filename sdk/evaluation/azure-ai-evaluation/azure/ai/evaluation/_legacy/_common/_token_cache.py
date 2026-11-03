@@ -21,6 +21,7 @@ Sharing one token across evaluators, waiting with a deadline and under cancellat
 need the coordination here.
 """
 
+import contextlib
 import inspect
 import math
 import threading
@@ -43,10 +44,12 @@ def is_async_credential(credential: Any) -> bool:
     """Whether a credential's token is requested on the caller's event loop rather than on a worker thread.
 
     That is a credential whose ``get_token`` is a coroutine function, or one that implements the asynchronous
-    credential protocol: its ``get_token`` may return an awaitable that needs the loop it was called on.
+    credential protocol but not the synchronous context manager protocol: its ``get_token`` may return an awaitable
+    that needs the loop it was called on. Any other credential is asked on a worker thread, so a plain ``get_token``
+    that needs the caller's running loop must belong to an ``AsyncTokenCredential``.
     """
-    return inspect.iscoroutinefunction(getattr(credential, "get_token", None)) or isinstance(
-        credential, AsyncTokenCredential
+    return inspect.iscoroutinefunction(getattr(credential, "get_token", None)) or (
+        isinstance(credential, AsyncTokenCredential) and not isinstance(credential, contextlib.AbstractContextManager)
     )
 
 
@@ -201,8 +204,10 @@ class CredentialTokenCache:
         ``failure_type`` built from that request's description instead of requesting a token again. A None
         description is not shared, and a request never raises a failure that another kind of request described, so
         each keeps its own error type and classification; with no failure of its own kind, it makes its own attempt.
-        The description must not keep the error, whose traceback references the credential. Requests that waited on a
-        request whose token was not cached use that token.
+        The description must not keep the error, whose traceback references the credential, and ``describe_failure``
+        and ``failure_type`` must be module-level functions or classes: they key the shared failures, so a bound method
+        or closure would keep what it references, such as the credential, alive. Requests that waited on a request
+        whose token was not cached use that token.
         """
         entry = self._entry(credential, scope, create=True)
         if entry is None:

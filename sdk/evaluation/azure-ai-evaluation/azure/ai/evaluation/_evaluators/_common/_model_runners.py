@@ -723,8 +723,9 @@ class DecisionModelRunner:
     async def _get_token(self, deadline: float) -> Optional[str]:
         """Return a bearer token, or None when the deadline passed while waiting for another request's token.
 
-        A credential whose ``get_token`` is a coroutine function, or that implements ``AsyncTokenCredential``, is
-        asked on this event loop; any other credential is asked on a worker thread, once for concurrent requests.
+        A credential whose ``get_token`` is a coroutine function, or that implements ``AsyncTokenCredential`` but not
+        the synchronous context manager protocol, is asked on this event loop; any other credential is asked on a
+        worker thread, once for concurrent requests.
 
         :param float deadline: Absolute ``time.monotonic()`` instant by which the request must complete, not a
             duration or a wall-clock time; the caller derives it from the request timeout.

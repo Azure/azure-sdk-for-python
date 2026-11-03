@@ -456,12 +456,13 @@ class _ReusedTokenProvider:
 
     Concurrent requests that share a synchronous credential wait for one token request, on a worker thread so the
     event loop is not blocked. An asynchronous credential, one whose ``get_token`` is a coroutine function or that
-    implements ``AsyncTokenCredential``, is asked on the caller's event loop instead. The default token provider is
-    represented by the synchronous credential it creates. The request that made a failed token request raises the
-    credential's error. When that failure was an authentication failure, requests that waited on it raise a
-    ``ClientAuthenticationError`` with the same message instead of each requesting a token again; after any other
-    failure, each waiting request makes its own attempt. A token the service rejected is discarded, and an acquisition
-    that began before the rejection is not stored.
+    implements ``AsyncTokenCredential`` but not the synchronous context manager protocol, is asked on the caller's
+    event loop instead; a plain ``get_token`` that needs the running loop must therefore belong to an
+    ``AsyncTokenCredential``. The default token provider is represented by the synchronous credential it creates. The
+    request that made a failed token request raises the credential's error. When that failure was an authentication
+    failure, requests that waited on it raise a ``ClientAuthenticationError`` with the same message instead of each
+    requesting a token again; after any other failure, each waiting request makes its own attempt. A token the service
+    rejected is discarded, and an acquisition that began before the rejection is not stored.
     """
 
     def __init__(self, credential: Union[TokenCredential, AsyncTokenCredential], scope: str) -> None:
