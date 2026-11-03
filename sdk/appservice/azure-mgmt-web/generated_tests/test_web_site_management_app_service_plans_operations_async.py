@@ -275,6 +275,28 @@ class TestWebSiteManagementAppServicePlansOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_app_service_plans_start_web_apps(self, resource_group):
+        response = await self.client.app_service_plans.start_web_apps(
+            resource_group_name=resource_group.name,
+            name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_app_service_plans_stop_web_apps(self, resource_group):
+        response = await self.client.app_service_plans.stop_web_apps(
+            resource_group_name=resource_group.name,
+            name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_app_service_plans_list_web_apps(self, resource_group):
         response = self.client.app_service_plans.list_web_apps(
             resource_group_name=resource_group.name,
