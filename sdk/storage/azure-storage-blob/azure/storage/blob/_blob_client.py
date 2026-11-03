@@ -489,6 +489,16 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     ) -> Dict[str, Any]:
         """Creates a new blob from a data source with automatic chunking.
 
+        .. admonition:: Experimental native transfers
+
+            Installing ``pip install "azure-storage-blob[ext-transfer]"`` enables an optional
+            Rust-based extension that could increase performance for synchronous block blob uploads.
+            The extension is experimental, is not intended for production use, and may have breaking
+            changes in minor releases. Return types, request counts, and error handling may differ
+            from transfers without the extension. Unsupported options raise errors rather than
+            falling back to Python. Set ``AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1`` to disable
+            native transfers even when the extension is installed.
+
         :param data: The blob data to upload.
         :type data: Union[bytes, str, Iterable[AnyStr], IO[bytes]]
         :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
@@ -693,6 +703,16 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
+
+        .. admonition:: Experimental native transfers
+
+            Installing ``pip install "azure-storage-blob[ext-transfer]"`` enables an optional
+            Rust-based extension that could increase performance for synchronous block blob downloads.
+            The extension is experimental, is not intended for production use, and may have breaking
+            changes in minor releases. Return types, request counts, and error handling may differ
+            from transfers without the extension. Unsupported options raise errors rather than
+            falling back to Python. Set ``AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1`` to disable
+            native transfers even when the extension is installed.
 
         :param int offset:
             Start of byte range to use for downloading a section of the blob.
