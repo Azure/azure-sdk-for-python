@@ -108,3 +108,4 @@ github-copilot-sdk
 hypercorn
 pystac
 geojson
+nanoarrow

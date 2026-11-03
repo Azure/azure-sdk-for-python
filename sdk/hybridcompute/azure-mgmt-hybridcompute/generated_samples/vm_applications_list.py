@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.postgresqlflexibleservers import PostgreSQLManagementClient
+from azure.mgmt.hybridcompute import HybridComputeManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-postgresqlflexibleservers
+    pip install azure-mgmt-hybridcompute
 # USAGE
-    python db_agent_get.py
+    python vm_applications_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,18 +25,19 @@ from azure.mgmt.postgresqlflexibleservers import PostgreSQLManagementClient
 
 
 def main():
-    client = PostgreSQLManagementClient(
+    client = HybridComputeManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.db_agents.get(
-        resource_group_name="exampleresourcegroup",
-        server_name="exampleserver",
+    response = client.vm_applications.list(
+        resource_group_name="myResourceGroup",
+        machine_name="myMachine",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-07-01-preview/DBAgentGet.json
+# x-ms-original-file: 2026-09-01/application/VMApplications_List.json
 if __name__ == "__main__":
     main()
