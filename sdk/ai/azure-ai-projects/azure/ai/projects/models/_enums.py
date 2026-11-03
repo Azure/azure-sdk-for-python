@@ -2537,6 +2537,23 @@ class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     unchanged; headset suppression remains active when personalization is unavailable."""
 
 
+class VoiceAgentPostCallDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of a post-call destination."""
+
+    EVENT_GRID = "event_grid"
+    """An Event Grid connection."""
+    ROUTINE = "routine"
+    """A routine."""
+
+
+class VoiceAgentPostCallIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Content that can be included in a post-call delivery."""
+
+    AUDIO = "audio"
+    """A URL to the merged call recording. Not supported in this preview: the service rejects
+    ``audio`` when the agent version is saved."""
+
+
 class VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The supported input-transcript profanity filtering modes."""
 

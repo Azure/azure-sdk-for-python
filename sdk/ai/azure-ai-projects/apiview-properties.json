@@ -605,6 +605,8 @@
         "azure.ai.projects.models.VoiceAgentSystemTool": "Azure.AI.Projects.VoiceAgentSystemTool",
         "azure.ai.projects.models.VoiceAgentEndConversationSystemTool": "Azure.AI.Projects.VoiceAgentEndConversationSystemTool",
         "azure.ai.projects.models.VoiceAgentEndOfUtteranceDetection": "Azure.AI.Projects.VoiceAgentEndOfUtteranceDetection",
+        "azure.ai.projects.models.VoiceAgentPostCallDestination": "Azure.AI.Projects.VoiceAgentPostCallDestination",
+        "azure.ai.projects.models.VoiceAgentEventGridPostCallDestination": "Azure.AI.Projects.VoiceAgentEventGridPostCallDestination",
         "azure.ai.projects.models.VoiceAgentFunctionTool": "Azure.AI.Projects.VoiceAgentFunctionTool",
         "azure.ai.projects.models.VoiceAgentGreetingConfig": "Azure.AI.Projects.VoiceAgentGreetingConfig",
         "azure.ai.projects.models.VoiceAgentInputTranscription": "Azure.AI.Projects.VoiceAgentInputTranscription",
@@ -613,8 +615,10 @@
         "azure.ai.projects.models.VoiceAgentLlmInterimResponseConfig": "Azure.AI.Projects.VoiceAgentLlmInterimResponseConfig",
         "azure.ai.projects.models.VoiceAgentMcpTool": "Azure.AI.Projects.VoiceAgentMcpTool",
         "azure.ai.projects.models.VoiceAgentNoiseReduction": "Azure.AI.Projects.VoiceAgentNoiseReduction",
+        "azure.ai.projects.models.VoiceAgentPostCallConfig": "Azure.AI.Projects.VoiceAgentPostCallConfig",
         "azure.ai.projects.models.VoiceAgentRealtimeResponse": "Azure.AI.Projects.VoiceAgentRealtimeResponse",
         "azure.ai.projects.models.VoiceAgentResponseCreateParams": "Azure.AI.Projects.VoiceAgentResponseCreateParams",
+        "azure.ai.projects.models.VoiceAgentRoutinePostCallDestination": "Azure.AI.Projects.VoiceAgentRoutinePostCallDestination",
         "azure.ai.projects.models.VoiceAgentRtcCallErrorDetails": "Azure.AI.Projects.VoiceAgentRtcCallErrorDetails",
         "azure.ai.projects.models.VoiceAgentSemanticVadTurnDetection": "Azure.AI.Projects.VoiceAgentSemanticVadTurnDetection",
         "azure.ai.projects.models.VoiceAgentServerEventResponseAnimationBlendshapesDelta": "Azure.AI.Projects.VoiceAgentServerEventResponseAnimationBlendshapesDelta",
@@ -754,6 +758,8 @@
         "azure.ai.projects.models.VoiceAgentAvatarOutputProtocol": "Azure.AI.Projects.VoiceAgentAvatarOutputProtocol",
         "azure.ai.projects.models.VoiceAgentToolResponseScheduling": "Azure.AI.Projects.VoiceAgentToolResponseScheduling",
         "azure.ai.projects.models.VoiceAgentSystemToolName": "Azure.AI.Projects.VoiceAgentSystemToolName",
+        "azure.ai.projects.models.VoiceAgentPostCallDestinationType": "Azure.AI.Projects.VoiceAgentPostCallDestinationType",
+        "azure.ai.projects.models.VoiceAgentPostCallIncludeOption": "Azure.AI.Projects.VoiceAgentPostCallIncludeOption",
         "azure.ai.projects.models.AgentVersionStatus": "Azure.AI.Projects.AgentVersionStatus",
         "azure.ai.projects.models.AgentIdentityStatus": "Azure.AI.Projects.AgentIdentityStatus",
         "azure.ai.projects.models.AgentBlueprintReferenceType": "Azure.AI.Projects.AgentBlueprintReferenceType",
@@ -1005,5 +1011,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "1c8b2a2c820a"
+    "CrossLanguageVersion": "254c76e16806"
 }
