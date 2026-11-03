@@ -63,7 +63,7 @@ class ProxyResource(Resource):
     """
 
 
-class Agent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Agent(ProxyResource):
     """The Agent resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -137,7 +137,7 @@ class Agent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-ke
             super().__setattr__(key, value)
 
 
-class AgentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AgentProperties(_Model):
     """AgentProperties.
 
     :ivar description: A description for the Agent.
@@ -238,7 +238,7 @@ class AgentProperties(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
-class AgentPropertiesErrorDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AgentPropertiesErrorDetails(_Model):
     """AgentPropertiesErrorDetails.
 
     :ivar code: Error code reported by Agent.
@@ -271,7 +271,7 @@ class AgentPropertiesErrorDetails(_Model):  # pylint: disable=docstring-keyword-
         super().__init__(*args, **kwargs)
 
 
-class AgentUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AgentUpdateParameters(_Model):
     """The Agent resource.
 
     :ivar properties:
@@ -320,7 +320,7 @@ class AgentUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should
             super().__setattr__(key, value)
 
 
-class AgentUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AgentUpdateProperties(_Model):
     """AgentUpdateProperties.
 
     :ivar description: A description for the Agent.
@@ -361,7 +361,7 @@ class AgentUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should
         super().__init__(*args, **kwargs)
 
 
-class Credentials(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Credentials(_Model):
     """The Credentials.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -395,9 +395,7 @@ class Credentials(_Model):  # pylint: disable=docstring-keyword-should-match-key
         super().__init__(*args, **kwargs)
 
 
-class AzureKeyVaultS3WithHmacCredentials(
-    Credentials, discriminator="AzureKeyVaultS3WithHMAC"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AzureKeyVaultS3WithHmacCredentials(Credentials, discriminator="AzureKeyVaultS3WithHMAC"):
     """The Azure Key Vault secret URIs which store the credentials.
 
     :ivar access_key_uri: The Azure Key Vault secret URI which stores the username. Use empty
@@ -443,9 +441,7 @@ class AzureKeyVaultS3WithHmacCredentials(
         self.type = CredentialType.AZURE_KEY_VAULT_S3_WITH_HMAC  # type: ignore
 
 
-class AzureKeyVaultSmbCredentials(
-    Credentials, discriminator="AzureKeyVaultSmb"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class AzureKeyVaultSmbCredentials(Credentials, discriminator="AzureKeyVaultSmb"):
     """The Azure Key Vault secret URIs which store the credentials.
 
     :ivar username_uri: The Azure Key Vault secret URI which stores the username. Use empty string
@@ -491,7 +487,7 @@ class AzureKeyVaultSmbCredentials(
         self.type = CredentialType.AZURE_KEY_VAULT_SMB  # type: ignore
 
 
-class EndpointBaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class EndpointBaseProperties(_Model):
     """The resource specific properties for the Storage Mover resource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -552,7 +548,7 @@ class EndpointBaseProperties(_Model):  # pylint: disable=docstring-keyword-shoul
 
 class AzureMultiCloudConnectorEndpointProperties(
     EndpointBaseProperties, discriminator="AzureMultiCloudConnector"
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+):  # pylint: disable=name-too-long
     """The properties of Azure MultiCloudConnector endpoint.
 
     :ivar description: A description for the Endpoint.
@@ -601,7 +597,7 @@ class AzureMultiCloudConnectorEndpointProperties(
         self.endpoint_type = EndpointType.AZURE_MULTI_CLOUD_CONNECTOR  # type: ignore
 
 
-class EndpointBaseUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class EndpointBaseUpdateProperties(_Model):
     """The Endpoint resource, which contains information about file sources and targets.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -648,7 +644,7 @@ class EndpointBaseUpdateProperties(_Model):  # pylint: disable=docstring-keyword
 
 class AzureMultiCloudConnectorEndpointUpdateProperties(
     EndpointBaseUpdateProperties, discriminator="AzureMultiCloudConnector"
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+):  # pylint: disable=name-too-long
     """The properties of Azure Storage NFS file share endpoint to update.
 
     :ivar description: A description for the Endpoint.
@@ -681,7 +677,7 @@ class AzureMultiCloudConnectorEndpointUpdateProperties(
 
 class AzureStorageBlobContainerEndpointProperties(
     EndpointBaseProperties, discriminator="AzureStorageBlobContainer"
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+):  # pylint: disable=name-too-long
     """The properties of Azure Storage blob container endpoint.
 
     :ivar description: A description for the Endpoint.
@@ -700,19 +696,6 @@ class AzureStorageBlobContainerEndpointProperties(
     :vartype blob_container_name: str
     :ivar endpoint_type: The Endpoint resource type. Required. AZURE_STORAGE_BLOB_CONTAINER.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.AZURE_STORAGE_BLOB_CONTAINER
-    :ivar enable_cross_tenant_transfer: Opt-in flag enabling this endpoint to be used as one side
-     of a cross-tenant data transfer pair. When set to true, RBAC for the endpoint's managed
-     identity is granted on the customer's storage account so that authorization can be performed
-     entirely in the tenant where this endpoint lives. Defaults to false. Can be updated via PATCH.
-    :vartype enable_cross_tenant_transfer: bool
-    :ivar allowed_storage_accounts: Full ARM resource IDs of partner-tenant storage accounts that
-     are allowed to be the other side of a cross-tenant data transfer pair with this endpoint. For a
-     source endpoint this lists allowed target storage accounts; for a target endpoint this lists
-     allowed source storage accounts. The full list is replaced on PATCH (omit an entry to remove
-     it; include an entry to add it). Mutual presence in both endpoints' allow lists is re-validated
-     at every job run start, so removing an entry blocks future runs that reference the removed
-     storage account.
-    :vartype allowed_storage_accounts: list[str]
     """
 
     storage_account_resource_id: str = rest_field(name="storageAccountResourceId", visibility=["read", "create"])
@@ -721,22 +704,6 @@ class AzureStorageBlobContainerEndpointProperties(
     """The name of the Storage blob container that is the target destination. Required."""
     endpoint_type: Literal[EndpointType.AZURE_STORAGE_BLOB_CONTAINER] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The Endpoint resource type. Required. AZURE_STORAGE_BLOB_CONTAINER."""
-    enable_cross_tenant_transfer: Optional[bool] = rest_field(
-        name="enableCrossTenantTransfer", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Opt-in flag enabling this endpoint to be used as one side of a cross-tenant data transfer pair.
-     When set to true, RBAC for the endpoint's managed identity is granted on the customer's storage
-     account so that authorization can be performed entirely in the tenant where this endpoint
-     lives. Defaults to false. Can be updated via PATCH."""
-    allowed_storage_accounts: Optional[list[str]] = rest_field(
-        name="allowedStorageAccounts", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Full ARM resource IDs of partner-tenant storage accounts that are allowed to be the other side
-     of a cross-tenant data transfer pair with this endpoint. For a source endpoint this lists
-     allowed target storage accounts; for a target endpoint this lists allowed source storage
-     accounts. The full list is replaced on PATCH (omit an entry to remove it; include an entry to
-     add it). Mutual presence in both endpoints' allow lists is re-validated at every job run start,
-     so removing an entry blocks future runs that reference the removed storage account."""
 
     @overload
     def __init__(
@@ -746,8 +713,6 @@ class AzureStorageBlobContainerEndpointProperties(
         blob_container_name: str,
         description: Optional[str] = None,
         endpoint_kind: Optional[Union[str, "_models.EndpointKind"]] = None,
-        enable_cross_tenant_transfer: Optional[bool] = None,
-        allowed_storage_accounts: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -764,44 +729,23 @@ class AzureStorageBlobContainerEndpointProperties(
 
 class AzureStorageBlobContainerEndpointUpdateProperties(
     EndpointBaseUpdateProperties, discriminator="AzureStorageBlobContainer"
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+):  # pylint: disable=name-too-long
     """AzureStorageBlobContainerEndpointUpdateProperties.
 
     :ivar description: A description for the Endpoint.
     :vartype description: str
     :ivar endpoint_type: The Endpoint resource type. Required. AZURE_STORAGE_BLOB_CONTAINER.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.AZURE_STORAGE_BLOB_CONTAINER
-    :ivar enable_cross_tenant_transfer: Opt-in flag enabling this endpoint to be used as one side
-     of a cross-tenant data transfer pair. Defaults to false.
-    :vartype enable_cross_tenant_transfer: bool
-    :ivar allowed_storage_accounts: Replaces the list of partner-tenant storage account ARM IDs
-     allowed to be the other side of a cross-tenant data transfer pair with this endpoint. Omit an
-     entry to remove it; include an entry to add it. Removing an entry blocks future job runs that
-     reference that storage account.
-    :vartype allowed_storage_accounts: list[str]
     """
 
     endpoint_type: Literal[EndpointType.AZURE_STORAGE_BLOB_CONTAINER] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The Endpoint resource type. Required. AZURE_STORAGE_BLOB_CONTAINER."""
-    enable_cross_tenant_transfer: Optional[bool] = rest_field(
-        name="enableCrossTenantTransfer", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Opt-in flag enabling this endpoint to be used as one side of a cross-tenant data transfer pair.
-     Defaults to false."""
-    allowed_storage_accounts: Optional[list[str]] = rest_field(
-        name="allowedStorageAccounts", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Replaces the list of partner-tenant storage account ARM IDs allowed to be the other side of a
-     cross-tenant data transfer pair with this endpoint. Omit an entry to remove it; include an
-     entry to add it. Removing an entry blocks future job runs that reference that storage account."""
 
     @overload
     def __init__(
         self,
         *,
         description: Optional[str] = None,
-        enable_cross_tenant_transfer: Optional[bool] = None,
-        allowed_storage_accounts: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -818,7 +762,7 @@ class AzureStorageBlobContainerEndpointUpdateProperties(
 
 class AzureStorageNfsFileShareEndpointProperties(
     EndpointBaseProperties, discriminator="AzureStorageNfsFileShare"
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+):  # pylint: disable=name-too-long
     """The properties of Azure Storage NFS file share endpoint.
 
     :ivar description: A description for the Endpoint.
@@ -868,7 +812,7 @@ class AzureStorageNfsFileShareEndpointProperties(
 
 class AzureStorageNfsFileShareEndpointUpdateProperties(
     EndpointBaseUpdateProperties, discriminator="AzureStorageNfsFileShare"
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+):  # pylint: disable=name-too-long
     """The properties of Azure Storage NFS file share endpoint to update.
 
     :ivar description: A description for the Endpoint.
@@ -901,7 +845,7 @@ class AzureStorageNfsFileShareEndpointUpdateProperties(
 
 class AzureStorageSmbFileShareEndpointProperties(
     EndpointBaseProperties, discriminator="AzureStorageSmbFileShare"
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+):  # pylint: disable=name-too-long
     """The properties of Azure Storage SMB file share endpoint.
 
     :ivar description: A description for the Endpoint.
@@ -918,19 +862,6 @@ class AzureStorageSmbFileShareEndpointProperties(
     :vartype file_share_name: str
     :ivar endpoint_type: The Endpoint resource type. Required. AZURE_STORAGE_SMB_FILE_SHARE.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.AZURE_STORAGE_SMB_FILE_SHARE
-    :ivar enable_cross_tenant_transfer: Opt-in flag enabling this endpoint to be used as one side
-     of a cross-tenant data transfer pair. When set to true, RBAC for the endpoint's managed
-     identity is granted on the customer's storage account so that authorization can be performed
-     entirely in the tenant where this endpoint lives. Defaults to false. Can be updated via PATCH.
-    :vartype enable_cross_tenant_transfer: bool
-    :ivar allowed_storage_accounts: Full ARM resource IDs of partner-tenant storage accounts that
-     are allowed to be the other side of a cross-tenant data transfer pair with this endpoint. For a
-     source endpoint this lists allowed target storage accounts; for a target endpoint this lists
-     allowed source storage accounts. The full list is replaced on PATCH (omit an entry to remove
-     it; include an entry to add it). Mutual presence in both endpoints' allow lists is re-validated
-     at every job run start, so removing an entry blocks future runs that reference the removed
-     storage account.
-    :vartype allowed_storage_accounts: list[str]
     """
 
     storage_account_resource_id: str = rest_field(name="storageAccountResourceId", visibility=["read", "create"])
@@ -939,22 +870,6 @@ class AzureStorageSmbFileShareEndpointProperties(
     """The name of the Azure Storage file share. Required."""
     endpoint_type: Literal[EndpointType.AZURE_STORAGE_SMB_FILE_SHARE] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The Endpoint resource type. Required. AZURE_STORAGE_SMB_FILE_SHARE."""
-    enable_cross_tenant_transfer: Optional[bool] = rest_field(
-        name="enableCrossTenantTransfer", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Opt-in flag enabling this endpoint to be used as one side of a cross-tenant data transfer pair.
-     When set to true, RBAC for the endpoint's managed identity is granted on the customer's storage
-     account so that authorization can be performed entirely in the tenant where this endpoint
-     lives. Defaults to false. Can be updated via PATCH."""
-    allowed_storage_accounts: Optional[list[str]] = rest_field(
-        name="allowedStorageAccounts", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Full ARM resource IDs of partner-tenant storage accounts that are allowed to be the other side
-     of a cross-tenant data transfer pair with this endpoint. For a source endpoint this lists
-     allowed target storage accounts; for a target endpoint this lists allowed source storage
-     accounts. The full list is replaced on PATCH (omit an entry to remove it; include an entry to
-     add it). Mutual presence in both endpoints' allow lists is re-validated at every job run start,
-     so removing an entry blocks future runs that reference the removed storage account."""
 
     @overload
     def __init__(
@@ -964,8 +879,6 @@ class AzureStorageSmbFileShareEndpointProperties(
         file_share_name: str,
         description: Optional[str] = None,
         endpoint_kind: Optional[Union[str, "_models.EndpointKind"]] = None,
-        enable_cross_tenant_transfer: Optional[bool] = None,
-        allowed_storage_accounts: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -982,44 +895,23 @@ class AzureStorageSmbFileShareEndpointProperties(
 
 class AzureStorageSmbFileShareEndpointUpdateProperties(
     EndpointBaseUpdateProperties, discriminator="AzureStorageSmbFileShare"
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+):  # pylint: disable=name-too-long
     """The properties of Azure Storage SMB file share endpoint to update.
 
     :ivar description: A description for the Endpoint.
     :vartype description: str
     :ivar endpoint_type: The Endpoint resource type. Required. AZURE_STORAGE_SMB_FILE_SHARE.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.AZURE_STORAGE_SMB_FILE_SHARE
-    :ivar enable_cross_tenant_transfer: Opt-in flag enabling this endpoint to be used as one side
-     of a cross-tenant data transfer pair. Defaults to false.
-    :vartype enable_cross_tenant_transfer: bool
-    :ivar allowed_storage_accounts: Replaces the list of partner-tenant storage account ARM IDs
-     allowed to be the other side of a cross-tenant data transfer pair with this endpoint. Omit an
-     entry to remove it; include an entry to add it. Removing an entry blocks future job runs that
-     reference that storage account.
-    :vartype allowed_storage_accounts: list[str]
     """
 
     endpoint_type: Literal[EndpointType.AZURE_STORAGE_SMB_FILE_SHARE] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The Endpoint resource type. Required. AZURE_STORAGE_SMB_FILE_SHARE."""
-    enable_cross_tenant_transfer: Optional[bool] = rest_field(
-        name="enableCrossTenantTransfer", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Opt-in flag enabling this endpoint to be used as one side of a cross-tenant data transfer pair.
-     Defaults to false."""
-    allowed_storage_accounts: Optional[list[str]] = rest_field(
-        name="allowedStorageAccounts", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Replaces the list of partner-tenant storage account ARM IDs allowed to be the other side of a
-     cross-tenant data transfer pair with this endpoint. Omit an entry to remove it; include an
-     entry to add it. Removing an entry blocks future job runs that reference that storage account."""
 
     @overload
     def __init__(
         self,
         *,
         description: Optional[str] = None,
-        enable_cross_tenant_transfer: Optional[bool] = None,
-        allowed_storage_accounts: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1034,7 +926,7 @@ class AzureStorageSmbFileShareEndpointUpdateProperties(
         self.endpoint_type = EndpointType.AZURE_STORAGE_SMB_FILE_SHARE  # type: ignore
 
 
-class Connection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Connection(ProxyResource):
     """The Connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1073,7 +965,7 @@ class Connection(ProxyResource):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class ConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ConnectionProperties(_Model):
     """Properties of the Connection resource.
 
     :ivar description: A description for the Connection.
@@ -1139,7 +1031,7 @@ class ConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
-class Endpoint(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Endpoint(ProxyResource):
     """The Endpoint resource, which contains information about file sources and targets.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1189,7 +1081,7 @@ class Endpoint(ProxyResource):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
-class EndpointBaseUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class EndpointBaseUpdateParameters(_Model):
     """The Endpoint resource.
 
     :ivar properties: The Endpoint resource, which contains information about file sources and
@@ -1271,7 +1163,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ErrorResponse(_Model):
     """Error response.
 
     :ivar error: The error object.
@@ -1299,7 +1191,7 @@ class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
-class JobDefinition(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class JobDefinition(ProxyResource):
     """The Job Definition resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1343,11 +1235,6 @@ class JobDefinition(ProxyResource):  # pylint: disable=docstring-keyword-should-
         "schedule",
         "data_integrity_validation",
         "preserve_permissions",
-        "is_cross_tenant_job",
-        "cross_tenant_endpoint_tenant_id",
-        "cross_tenant_endpoint_resource_id",
-        "sync_mode",
-        "mover_synced_until",
     ]
 
     @overload
@@ -1386,14 +1273,13 @@ class JobDefinition(ProxyResource):  # pylint: disable=docstring-keyword-should-
             super().__setattr__(key, value)
 
 
-class JobDefinitionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class JobDefinitionProperties(_Model):
     """Job definition properties.
 
     :ivar description: A description for the Job Definition. OnPremToCloud is for migrating data
      from on-premises to cloud. CloudToCloud is for migrating data between cloud to cloud.
     :vartype description: str
-    :ivar job_type: The type of the Job. Known values are: "OnPremToCloud", "CloudToCloud", and
-     "OnPremToCloudAgentLess".
+    :ivar job_type: The type of the Job. Known values are: "OnPremToCloud" and "CloudToCloud".
     :vartype job_type: str or ~azure.mgmt.storagemover.models.JobType
     :ivar copy_mode: Strategy to use for copy. Required. Known values are: "Additive" and "Mirror".
     :vartype copy_mode: str or ~azure.mgmt.storagemover.models.CopyMode
@@ -1439,23 +1325,6 @@ class JobDefinitionProperties(_Model):  # pylint: disable=docstring-keyword-shou
      ~azure.mgmt.storagemover.models.DataIntegrityValidation
     :ivar preserve_permissions: Boolean to preserve permissions or not.
     :vartype preserve_permissions: bool
-    :ivar is_cross_tenant_job: Indicates that this Job Definition is a cross-tenant job where the
-     counterpart endpoint resides in a different Azure AD tenant. When true,
-     ``crossTenantEndpointTenantId`` and ``crossTenantEndpointResourceId`` must be provided.
-     Defaults to false. Cannot be modified after the Job Definition is created.
-    :vartype is_cross_tenant_job: bool
-    :ivar cross_tenant_endpoint_tenant_id: The Azure AD tenant ID of the cross-tenant source
-     endpoint. Required when ``isCrossTenantJob`` is true. Cannot be modified after the Job
-     Definition is created.
-    :vartype cross_tenant_endpoint_tenant_id: str
-    :ivar cross_tenant_endpoint_resource_id: Full ARM resource ID of the cross-tenant (foreign)
-     endpoint. On the source-tenant copy this is the TARGET endpoint; on the target-tenant copy this
-     is the SOURCE endpoint.
-    :vartype cross_tenant_endpoint_resource_id: str
-    :ivar sync_mode: The synchronization mode for the Job Definition.
-    :vartype sync_mode: str
-    :ivar mover_synced_until: The last time the mover was synchronized.
-    :vartype mover_synced_until: ~datetime.datetime
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1464,8 +1333,7 @@ class JobDefinitionProperties(_Model):  # pylint: disable=docstring-keyword-shou
     job_type: Optional[Union[str, "_models.JobType"]] = rest_field(
         name="jobType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The type of the Job. Known values are: \"OnPremToCloud\", \"CloudToCloud\", and
-     \"OnPremToCloudAgentLess\"."""
+    """The type of the Job. Known values are: \"OnPremToCloud\" and \"CloudToCloud\"."""
     copy_mode: Union[str, "_models.CopyMode"] = rest_field(
         name="copyMode", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1518,27 +1386,6 @@ class JobDefinitionProperties(_Model):  # pylint: disable=docstring-keyword-shou
         name="preservePermissions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Boolean to preserve permissions or not."""
-    is_cross_tenant_job: Optional[bool] = rest_field(name="isCrossTenantJob", visibility=["read", "create"])
-    """Indicates that this Job Definition is a cross-tenant job where the counterpart endpoint resides
-     in a different Azure AD tenant. When true, ``crossTenantEndpointTenantId`` and
-     ``crossTenantEndpointResourceId`` must be provided. Defaults to false. Cannot be modified after
-     the Job Definition is created."""
-    cross_tenant_endpoint_tenant_id: Optional[str] = rest_field(
-        name="crossTenantEndpointTenantId", visibility=["read", "create"]
-    )
-    """The Azure AD tenant ID of the cross-tenant source endpoint. Required when ``isCrossTenantJob``
-     is true. Cannot be modified after the Job Definition is created."""
-    cross_tenant_endpoint_resource_id: Optional[str] = rest_field(
-        name="crossTenantEndpointResourceId", visibility=["read", "create"]
-    )
-    """Full ARM resource ID of the cross-tenant (foreign) endpoint. On the source-tenant copy this is
-     the TARGET endpoint; on the target-tenant copy this is the SOURCE endpoint."""
-    sync_mode: Optional[str] = rest_field(name="syncMode", visibility=["read", "create", "update", "delete", "query"])
-    """The synchronization mode for the Job Definition."""
-    mover_synced_until: Optional[datetime.datetime] = rest_field(
-        name="moverSyncedUntil", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last time the mover was synchronized."""
 
     @overload
     def __init__(
@@ -1557,11 +1404,6 @@ class JobDefinitionProperties(_Model):  # pylint: disable=docstring-keyword-shou
         schedule: Optional["_models.ScheduleInfo"] = None,
         data_integrity_validation: Optional[Union[str, "_models.DataIntegrityValidation"]] = None,
         preserve_permissions: Optional[bool] = None,
-        is_cross_tenant_job: Optional[bool] = None,
-        cross_tenant_endpoint_tenant_id: Optional[str] = None,
-        cross_tenant_endpoint_resource_id: Optional[str] = None,
-        sync_mode: Optional[str] = None,
-        mover_synced_until: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -1585,7 +1427,7 @@ class JobDefinitionPropertiesSourceTargetMap(_Model):
     value: Optional[list["_models.SourceTargetMap"]] = rest_field(visibility=["read"])
 
 
-class JobDefinitionUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class JobDefinitionUpdateParameters(_Model):
     """The Job Definition resource.
 
     :ivar properties: Job definition properties.
@@ -1604,8 +1446,6 @@ class JobDefinitionUpdateParameters(_Model):  # pylint: disable=docstring-keywor
         "connections",
         "data_integrity_validation",
         "schedule",
-        "sync_mode",
-        "mover_synced_until",
     ]
 
     @overload
@@ -1644,7 +1484,7 @@ class JobDefinitionUpdateParameters(_Model):  # pylint: disable=docstring-keywor
             super().__setattr__(key, value)
 
 
-class JobDefinitionUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class JobDefinitionUpdateProperties(_Model):
     """Job definition properties.
 
     :ivar description: A description for the Job Definition.
@@ -1661,10 +1501,6 @@ class JobDefinitionUpdateProperties(_Model):  # pylint: disable=docstring-keywor
      ~azure.mgmt.storagemover.models.DataIntegrityValidation
     :ivar schedule: Schedule information for the Job Definition.
     :vartype schedule: ~azure.mgmt.storagemover.models.ScheduleInfo
-    :ivar sync_mode: The synchronization mode for the Job Definition.
-    :vartype sync_mode: str
-    :ivar mover_synced_until: The last time the mover was synchronized.
-    :vartype mover_synced_until: ~datetime.datetime
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1684,12 +1520,6 @@ class JobDefinitionUpdateProperties(_Model):  # pylint: disable=docstring-keywor
      \"None\"."""
     schedule: Optional["_models.ScheduleInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Schedule information for the Job Definition."""
-    sync_mode: Optional[str] = rest_field(name="syncMode", visibility=["read", "create", "update", "delete", "query"])
-    """The synchronization mode for the Job Definition."""
-    mover_synced_until: Optional[datetime.datetime] = rest_field(
-        name="moverSyncedUntil", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The last time the mover was synchronized."""
 
     @overload
     def __init__(
@@ -1701,8 +1531,6 @@ class JobDefinitionUpdateProperties(_Model):  # pylint: disable=docstring-keywor
         connections: Optional[list[str]] = None,
         data_integrity_validation: Optional[Union[str, "_models.DataIntegrityValidation"]] = None,
         schedule: Optional["_models.ScheduleInfo"] = None,
-        sync_mode: Optional[str] = None,
-        mover_synced_until: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -1716,7 +1544,7 @@ class JobDefinitionUpdateProperties(_Model):  # pylint: disable=docstring-keywor
         super().__init__(*args, **kwargs)
 
 
-class JobRun(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class JobRun(ProxyResource):
     """The Job Run resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1809,7 +1637,7 @@ class JobRun(ProxyResource):  # pylint: disable=docstring-keyword-should-match-k
             super().__setattr__(key, value)
 
 
-class JobRunError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class JobRunError(_Model):
     """Error type.
 
     :ivar code: Error code of the given entry.
@@ -2023,7 +1851,7 @@ class JobRunResourceId(_Model):
     """Fully qualified resource id of the Job Run."""
 
 
-class JobRunWarning(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class JobRunWarning(_Model):
     """Warning type.
 
     :ivar code: Error code of the given entry.
@@ -2061,7 +1889,7 @@ class JobRunWarning(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ManagedServiceIdentity(_Model):
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -2113,9 +1941,7 @@ class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class NfsMountEndpointProperties(
-    EndpointBaseProperties, discriminator="NfsMount"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class NfsMountEndpointProperties(EndpointBaseProperties, discriminator="NfsMount"):
     """The properties of NFS share endpoint.
 
     :ivar description: A description for the Endpoint.
@@ -2128,16 +1954,12 @@ class NfsMountEndpointProperties(
     :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
     :ivar host: The host name or IP address of the server exporting the file system. Required.
     :vartype host: str
-    :ivar nfs_version: The NFS protocol version. Known values are: "NFSauto", "NFSv3", "NFSv4", and
-     "NFSv4_1".
+    :ivar nfs_version: The NFS protocol version. Known values are: "NFSauto", "NFSv3", and "NFSv4".
     :vartype nfs_version: str or ~azure.mgmt.storagemover.models.NfsVersion
     :ivar export: The directory being exported from the server. Required.
     :vartype export: str
     :ivar endpoint_type: The Endpoint resource type. Required. NFS_MOUNT.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.NFS_MOUNT
-    :ivar source_type: Source type to differentiate NFSMount and FSX-SMB endpoints. Default is
-     NFSMount. Known values are: "NfsMount" and "FSX-EFS".
-    :vartype source_type: str or ~azure.mgmt.storagemover.models.NfsMountSourceType
     """
 
     host: str = rest_field(visibility=["read", "create"])
@@ -2145,16 +1967,11 @@ class NfsMountEndpointProperties(
     nfs_version: Optional[Union[str, "_models.NfsVersion"]] = rest_field(
         name="nfsVersion", visibility=["read", "create"]
     )
-    """The NFS protocol version. Known values are: \"NFSauto\", \"NFSv3\", \"NFSv4\", and \"NFSv4_1\"."""
+    """The NFS protocol version. Known values are: \"NFSauto\", \"NFSv3\", and \"NFSv4\"."""
     export: str = rest_field(visibility=["read", "create"])
     """The directory being exported from the server. Required."""
     endpoint_type: Literal[EndpointType.NFS_MOUNT] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The Endpoint resource type. Required. NFS_MOUNT."""
-    source_type: Optional[Union[str, "_models.NfsMountSourceType"]] = rest_field(
-        name="sourceType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Source type to differentiate NFSMount and FSX-SMB endpoints. Default is NFSMount. Known values
-     are: \"NfsMount\" and \"FSX-EFS\"."""
 
     @overload
     def __init__(
@@ -2165,7 +1982,6 @@ class NfsMountEndpointProperties(
         description: Optional[str] = None,
         endpoint_kind: Optional[Union[str, "_models.EndpointKind"]] = None,
         nfs_version: Optional[Union[str, "_models.NfsVersion"]] = None,
-        source_type: Optional[Union[str, "_models.NfsMountSourceType"]] = None,
     ) -> None: ...
 
     @overload
@@ -2180,9 +1996,7 @@ class NfsMountEndpointProperties(
         self.endpoint_type = EndpointType.NFS_MOUNT  # type: ignore
 
 
-class NfsMountEndpointUpdateProperties(
-    EndpointBaseUpdateProperties, discriminator="NfsMount"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class NfsMountEndpointUpdateProperties(EndpointBaseUpdateProperties, discriminator="NfsMount"):
     """NfsMountEndpointUpdateProperties.
 
     :ivar description: A description for the Endpoint.
@@ -2213,7 +2027,7 @@ class NfsMountEndpointUpdateProperties(
         self.endpoint_type = EndpointType.NFS_MOUNT  # type: ignore
 
 
-class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Operation(_Model):
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -2301,7 +2115,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class Project(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Project(ProxyResource):
     """The Project resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2362,7 +2176,7 @@ class Project(ProxyResource):  # pylint: disable=docstring-keyword-should-match-
             super().__setattr__(key, value)
 
 
-class ProjectProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ProjectProperties(_Model):
     """Project properties.
 
     :ivar description: A description for the Project.
@@ -2398,7 +2212,7 @@ class ProjectProperties(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class ProjectUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ProjectUpdateParameters(_Model):
     """The Project resource.
 
     :ivar properties: Project properties.
@@ -2448,7 +2262,7 @@ class ProjectUpdateParameters(_Model):  # pylint: disable=docstring-keyword-shou
             super().__setattr__(key, value)
 
 
-class ProjectUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ProjectUpdateProperties(_Model):
     """Project properties.
 
     :ivar description: A description for the Project.
@@ -2476,7 +2290,7 @@ class ProjectUpdateProperties(_Model):  # pylint: disable=docstring-keyword-shou
         super().__init__(*args, **kwargs)
 
 
-class Recurrence(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Recurrence(_Model):
     """The schedule recurrence.
 
     :ivar start_time: The start time of the schedule recurrence. Full hour and 30-minute intervals
@@ -2515,9 +2329,7 @@ class Recurrence(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
-class S3WithHmacEndpointProperties(
-    EndpointBaseProperties, discriminator="S3WithHMAC"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class S3WithHmacEndpointProperties(EndpointBaseProperties, discriminator="S3WithHMAC"):
     """The properties of S3WithHmac share endpoint.
 
     :ivar description: A description for the Endpoint.
@@ -2584,9 +2396,7 @@ class S3WithHmacEndpointProperties(
         self.endpoint_type = EndpointType.S3_WITH_HMAC  # type: ignore
 
 
-class S3WithHmacEndpointUpdateProperties(
-    EndpointBaseUpdateProperties, discriminator="S3WithHMAC"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class S3WithHmacEndpointUpdateProperties(EndpointBaseUpdateProperties, discriminator="S3WithHMAC"):
     """S3WithHmacEndpointUpdateProperties.
 
     :ivar description: A description for the Endpoint.
@@ -2625,11 +2435,11 @@ class S3WithHmacEndpointUpdateProperties(
         self.endpoint_type = EndpointType.S3_WITH_HMAC  # type: ignore
 
 
-class ScheduleInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class ScheduleInfo(_Model):
     """Schedule information for the Job Definition.
 
     :ivar frequency: Type of schedule — Monthly, Weekly, or Daily. Known values are: "Monthly",
-     "Weekly", "Daily", "Onetime", "None", and "Hourly".
+     "Weekly", "Daily", "Onetime", and "None".
     :vartype frequency: str or ~azure.mgmt.storagemover.models.Frequency
     :ivar is_active: Whether the schedule is currently active.
     :vartype is_active: bool
@@ -2645,15 +2455,13 @@ class ScheduleInfo(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     :vartype cron_expression: str
     :ivar end_date: End time of the schedule (in UTC).
     :vartype end_date: ~datetime.datetime
-    :ivar repeat_interval: Repeat interval used for sub-daily schedules.
-    :vartype repeat_interval: str
     """
 
     frequency: Optional[Union[str, "_models.Frequency"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Type of schedule — Monthly, Weekly, or Daily. Known values are: \"Monthly\", \"Weekly\",
-     \"Daily\", \"Onetime\", \"None\", and \"Hourly\"."""
+     \"Daily\", \"Onetime\", and \"None\"."""
     is_active: Optional[bool] = rest_field(name="isActive", visibility=["read", "create", "update", "delete", "query"])
     """Whether the schedule is currently active."""
     execution_time: Optional["_models.SchedulerTime"] = rest_field(
@@ -2680,10 +2488,6 @@ class ScheduleInfo(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         name="endDate", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """End time of the schedule (in UTC)."""
-    repeat_interval: Optional[str] = rest_field(
-        name="repeatInterval", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Repeat interval used for sub-daily schedules."""
 
     @overload
     def __init__(
@@ -2697,7 +2501,6 @@ class ScheduleInfo(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         days_of_month: Optional[list[int]] = None,
         cron_expression: Optional[str] = None,
         end_date: Optional[datetime.datetime] = None,
-        repeat_interval: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2711,7 +2514,7 @@ class ScheduleInfo(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         super().__init__(*args, **kwargs)
 
 
-class SchedulerTime(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SchedulerTime(_Model):
     """The time of day.
 
     :ivar hour: The hour element of the time. Allowed values range from 0 (start of the selected
@@ -2751,9 +2554,7 @@ class SchedulerTime(_Model):  # pylint: disable=docstring-keyword-should-match-k
         super().__init__(*args, **kwargs)
 
 
-class SmbMountEndpointProperties(
-    EndpointBaseProperties, discriminator="SmbMount"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SmbMountEndpointProperties(EndpointBaseProperties, discriminator="SmbMount"):
     """The properties of SMB share endpoint.
 
     :ivar description: A description for the Endpoint.
@@ -2773,9 +2574,6 @@ class SmbMountEndpointProperties(
     :vartype credentials: ~azure.mgmt.storagemover.models.AzureKeyVaultSmbCredentials
     :ivar endpoint_type: The Endpoint resource type. Required. SMB_MOUNT.
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.SMB_MOUNT
-    :ivar source_type: Source type to differentiate SMBMount and FSX-SMB endpoints. Default is
-     SMBMount. Known values are: "SmbMount" and "FSX-SMB".
-    :vartype source_type: str or ~azure.mgmt.storagemover.models.SmbMountSourceType
     """
 
     host: str = rest_field(visibility=["read", "create"])
@@ -2788,11 +2586,6 @@ class SmbMountEndpointProperties(
     """The Azure Key Vault secret URIs which store the required credentials to access the SMB share."""
     endpoint_type: Literal[EndpointType.SMB_MOUNT] = rest_discriminator(name="endpointType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The Endpoint resource type. Required. SMB_MOUNT."""
-    source_type: Optional[Union[str, "_models.SmbMountSourceType"]] = rest_field(
-        name="sourceType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Source type to differentiate SMBMount and FSX-SMB endpoints. Default is SMBMount. Known values
-     are: \"SmbMount\" and \"FSX-SMB\"."""
 
     @overload
     def __init__(
@@ -2803,7 +2596,6 @@ class SmbMountEndpointProperties(
         description: Optional[str] = None,
         endpoint_kind: Optional[Union[str, "_models.EndpointKind"]] = None,
         credentials: Optional["_models.AzureKeyVaultSmbCredentials"] = None,
-        source_type: Optional[Union[str, "_models.SmbMountSourceType"]] = None,
     ) -> None: ...
 
     @overload
@@ -2818,9 +2610,7 @@ class SmbMountEndpointProperties(
         self.endpoint_type = EndpointType.SMB_MOUNT  # type: ignore
 
 
-class SmbMountEndpointUpdateProperties(
-    EndpointBaseUpdateProperties, discriminator="SmbMount"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SmbMountEndpointUpdateProperties(EndpointBaseUpdateProperties, discriminator="SmbMount"):
     """The properties of SMB share endpoint to update.
 
     :ivar description: A description for the Endpoint.
@@ -2859,7 +2649,7 @@ class SmbMountEndpointUpdateProperties(
         self.endpoint_type = EndpointType.SMB_MOUNT  # type: ignore
 
 
-class SourceEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SourceEndpoint(_Model):
     """The source endpoint resource for source and target mapping.
 
     :ivar properties: The properties of the cloud source endpoint to migrate.
@@ -2889,7 +2679,7 @@ class SourceEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class SourceEndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SourceEndpointProperties(_Model):
     """The properties of the cloud source endpoint to migrate.
 
     :ivar name: The name of the cloud source endpoint to migrate.
@@ -2930,7 +2720,7 @@ class SourceEndpointProperties(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
-class SourceTargetMap(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SourceTargetMap(_Model):
     """The properties of cloud endpoints to migrate.
 
     :ivar source_endpoint: Required.
@@ -2967,7 +2757,7 @@ class SourceTargetMap(_Model):  # pylint: disable=docstring-keyword-should-match
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class TrackedResource(Resource):
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3011,7 +2801,7 @@ class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class StorageMover(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class StorageMover(TrackedResource):
     """The Storage Mover resource, which is a container for a group of Agents, Projects, and
     Endpoints.
 
@@ -3079,7 +2869,7 @@ class StorageMover(TrackedResource):  # pylint: disable=docstring-keyword-should
             super().__setattr__(key, value)
 
 
-class StorageMoverProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class StorageMoverProperties(_Model):
     """The resource specific properties for the Storage Mover resource.
 
     :ivar description: A description for the Storage Mover.
@@ -3115,7 +2905,7 @@ class StorageMoverProperties(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class StorageMoverUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class StorageMoverUpdateParameters(_Model):
     """The Storage Mover resource.
 
     :ivar properties: The resource specific properties for the Storage Mover resource.
@@ -3170,7 +2960,7 @@ class StorageMoverUpdateParameters(_Model):  # pylint: disable=docstring-keyword
             super().__setattr__(key, value)
 
 
-class StorageMoverUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class StorageMoverUpdateProperties(_Model):
     """The resource specific properties for the Storage Mover resource.
 
     :ivar description: A description for the Storage Mover.
@@ -3198,7 +2988,7 @@ class StorageMoverUpdateProperties(_Model):  # pylint: disable=docstring-keyword
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -3265,7 +3055,7 @@ class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
-class TargetEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class TargetEndpoint(_Model):
     """The target endpoint resource for source and target mapping.
 
     :ivar properties: The properties of the cloud target endpoint to migrate.
@@ -3295,7 +3085,7 @@ class TargetEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class TargetEndpointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class TargetEndpointProperties(_Model):
     """The properties of the cloud target endpoint to migrate.
 
     :ivar name: The name of the cloud target endpoint to migrate.
@@ -3346,7 +3136,7 @@ class TargetEndpointProperties(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
-class Time(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class Time(_Model):
     """The time of day.
 
     :ivar hour: The hour element of the time. Allowed values range from 0 (start of the selected
@@ -3387,7 +3177,7 @@ class Time(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
         super().__init__(*args, **kwargs)
 
 
-class UploadLimitSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class UploadLimitSchedule(_Model):
     """The WAN-link upload limit schedule. Overlapping recurrences are not allowed.
 
     :ivar weekly_recurrences: The set of weekly repeating recurrences of the WAN-link upload limit
@@ -3418,7 +3208,7 @@ class UploadLimitSchedule(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
-class WeeklyRecurrence(Recurrence):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class WeeklyRecurrence(Recurrence):
     """The weekly recurrence of the schedule.
 
     :ivar start_time: The start time of the schedule recurrence. Full hour and 30-minute intervals
@@ -3456,7 +3246,7 @@ class WeeklyRecurrence(Recurrence):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
-class UploadLimitWeeklyRecurrence(WeeklyRecurrence):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class UploadLimitWeeklyRecurrence(WeeklyRecurrence):
     """The weekly recurrence of the WAN-link upload limit schedule. The start time must be earlier in
     the day than the end time. The recurrence must not span across multiple days.
 

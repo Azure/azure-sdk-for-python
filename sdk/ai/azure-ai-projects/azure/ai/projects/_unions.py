@@ -19,22 +19,13 @@ VoiceAgentToolChoice: TypeAlias = Union[
     Literal["none"], Literal["auto"], Literal["required"], "_models.ToolChoiceFunction", "_models.ToolChoiceMCP"
 ]
 VoiceAgentMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
-VoiceAgentHandoffMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
-VoiceAgentSubagentConfig: TypeAlias = Union[
-    "_models.VoiceAgentDelegateSubagentConfig", "_models.VoiceAgentInlineSubagentConfig"
-]
 VoiceAgentLiveDelegation: TypeAlias = Union[
     "_models.LiveClientDelegationParam",
     "_models.LiveResponsesDelegationParam",
     "_models.VoiceAgentLiveManagedAgentDelegation",
 ]
-VoiceAgentSessionResponse: TypeAlias = "_models.VoiceAgentSessionResponseConfig"
 VoiceAgentSessionUpdate: TypeAlias = "_models.VoiceAgentSessionUpdateConfig"
-VoiceAgentDtmfCompletionMode: TypeAlias = Union[
-    "_models.VoiceAgentDtmfFixedLengthCompletionMode",
-    "_models.VoiceAgentDtmfTerminatorCompletionMode",
-    "_models.VoiceAgentDtmfInterDigitSilenceCompletionMode",
-]
+VoiceAgentSessionResponse: TypeAlias = "_models.VoiceAgentSessionResponseConfig"
 ChoiceValueParam: TypeAlias = Union[str, bool]
 ChoiceValueResource: TypeAlias = Union[str, bool]
 GenerateAgentRequest: TypeAlias = "_models.GenerateVoiceAgentRequest"

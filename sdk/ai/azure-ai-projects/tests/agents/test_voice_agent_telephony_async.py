@@ -12,7 +12,8 @@ from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.ai.projects.models import (
     AgentVersionDetails,
-    PhoneNumber,
+    PSTNTelephonyTransferDestination,
+    TelephonyBindingStatus,
     TelephonyTransferTarget,
     TelephonyTransferTargets,
     UpdateTelephonyBindingRequest,
@@ -133,19 +134,19 @@ class TestVoiceAgentTelephonyAsync(TestBase):
         new_target = TelephonyTransferTarget(
             name="sales_desk",
             description="Transfers to the sales desk for pricing questions.",
-            destination=PhoneNumber(value="+14255550123"),
+            destination=PSTNTelephonyTransferDestination(value="+14255550123"),
         )
         replaced_targets: TelephonyTransferTargets = (
             await project_client.beta.voice_agents.telephony.replace_transfer_targets(
                 agent_name=agent_name,
                 transfer_targets=[new_target],
-                etag="*",
+                etag=None,
                 match_condition=MatchConditions.IfPresent,
             )
         )
         assert len(replaced_targets.transfer_targets) == 1
         assert replaced_targets.transfer_targets[0].name == "sales_desk"
-        assert replaced_targets.transfer_targets[0].destination.type == "phone_number"
+        assert replaced_targets.transfer_targets[0].destination.kind == "pstn"
 
         # Confirm the change persisted.
         confirmed_targets: TelephonyTransferTargets = (
@@ -159,7 +160,7 @@ class TestVoiceAgentTelephonyAsync(TestBase):
             await project_client.beta.voice_agents.telephony.replace_transfer_targets(
                 agent_name=agent_name,
                 transfer_targets=[],
-                etag="*",
+                etag=None,
                 match_condition=MatchConditions.IfPresent,
             )
         )
@@ -175,15 +176,15 @@ class TestVoiceAgentTelephonyAsync(TestBase):
             await project_client.beta.voice_agents.telephony.update_binding(
                 agent_name=agent_name,
                 binding_id=fake_binding_id,
-                body=UpdateTelephonyBindingRequest(label="updated-binding"),
-                etag="*",
+                body=UpdateTelephonyBindingRequest(status=TelephonyBindingStatus.SUSPENDED),
+                etag=None,
                 match_condition=MatchConditions.IfPresent,
             )
         with pytest.raises(ResourceNotFoundError):
             await project_client.beta.voice_agents.telephony.delete_binding(
                 agent_name=agent_name,
                 binding_id=fake_binding_id,
-                etag="*",
+                etag=None,
                 match_condition=MatchConditions.IfPresent,
             )
 

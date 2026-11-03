@@ -2,9 +2,6 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: not-specified
-  - name: ReleasePlanId
-    type: string
-    default: '0'
   - name: SkipPrValidation
     type: boolean
     default: false
@@ -256,7 +253,6 @@ extends:
         parameters:
           DependsOn: "Build"
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          ReleasePlanId: ${{ parameters.ReleasePlanId }}
           Artifacts: ${{ parameters.Artifacts }}
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true

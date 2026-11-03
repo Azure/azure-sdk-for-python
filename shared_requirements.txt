@@ -1,6 +1,5 @@
 msrest
 anyio
-a2a-sdk
 azure-ai-agents
 azure-ai-ml
 azure-ai-resources

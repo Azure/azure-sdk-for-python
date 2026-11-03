@@ -46,13 +46,12 @@ def main():
                 "endpointType": "SmbMount",
                 "host": "0.0.0.0",
                 "shareName": "examples-shareName",
-                "sourceType": "SmbMount",
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2026-05-01/Endpoints_CreateOrUpdate_SmbMount.json
+# x-ms-original-file: 2025-12-01/Endpoints_CreateOrUpdate_SmbMount.json
 if __name__ == "__main__":
     main()

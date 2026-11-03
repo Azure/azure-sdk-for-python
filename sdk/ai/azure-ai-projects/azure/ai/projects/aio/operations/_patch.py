@@ -35,9 +35,7 @@ from ._operations import (
     BetaRoutinesOperations,
     BetaSchedulesOperations,
     BetaSkillsOperations,
-    BetaVoiceAgentsCampaignsOperations,
     BetaVoiceAgentsConversationsOperations,
-    BetaVoiceAgentsLiveConversationsOperations,
     BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
     BetaVoiceAgentsTelephonyOperations,
 )
@@ -53,12 +51,8 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         :attr:`~azure.ai.projects.aio.operations.BetaOperations.voice_agents` attribute.
     """
 
-    campaigns: BetaVoiceAgentsCampaignsOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsCampaignsOperations` operations"""
     conversations: BetaVoiceAgentsConversationsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsConversationsOperations` operations"""
-    live_conversations: BetaVoiceAgentsLiveConversationsOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsLiveConversationsOperations` operations"""
     telephony: BetaVoiceAgentsTelephonyOperations
     """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsTelephonyOperations` operations"""
     realtime: AsyncBetaRealtime
@@ -144,9 +138,7 @@ __all__: List[str] = [
     "BetaRoutinesOperations",
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
-    "BetaVoiceAgentsCampaignsOperations",
     "BetaVoiceAgentsConversationsOperations",
-    "BetaVoiceAgentsLiveConversationsOperations",
     "BetaVoiceAgentsOperations",
     "BetaVoiceAgentsTelephonyOperations",
     "ClientEvent",

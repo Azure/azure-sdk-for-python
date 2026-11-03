@@ -102,12 +102,10 @@ from ._enums import (  # type: ignore
     JobType,
     ManagedServiceIdentityType,
     Minute,
-    NfsMountSourceType,
     NfsVersion,
     Origin,
     ProvisioningState,
     S3WithHmacSourceType,
-    SmbMountSourceType,
     TriggerType,
 )
 from ._patch import __all__ as _patch_all
@@ -200,12 +198,10 @@ __all__ = [
     "JobType",
     "ManagedServiceIdentityType",
     "Minute",
-    "NfsMountSourceType",
     "NfsVersion",
     "Origin",
     "ProvisioningState",
     "S3WithHmacSourceType",
-    "SmbMountSourceType",
     "TriggerType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
