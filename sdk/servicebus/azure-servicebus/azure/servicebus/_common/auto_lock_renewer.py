@@ -100,10 +100,15 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         self.close()
 
     def _init_workers(self):
-        if not self._running_dispatcher.is_set():
-            self._infer_max_workers_greater_than_one_if_needed()
-            self._running_dispatcher.set()
-            self._executor.submit(self._dispatch_worker)
+        with self._renew_tasks.mutex:
+            if self._shutdown.is_set():
+                raise ServiceBusError(
+                    "The AutoLockRenewer has already been shutdown. Please create a new instance for auto lock renewing."
+                )
+            if not self._running_dispatcher.is_set():
+                self._infer_max_workers_greater_than_one_if_needed()
+                self._running_dispatcher.set()
+                self._executor.submit(self._dispatch_worker)
 
     def _infer_max_workers_greater_than_one_if_needed(self):
         # infer max_workers value if executor is passed in
@@ -139,19 +144,27 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
             while not self._renew_tasks.empty():
                 renew_task = self._renew_tasks.get()
                 if self._is_max_workers_greater_than_one:
-                    self._executor.submit(self._auto_lock_renew_task, *renew_task)
+                    future = self._executor.submit(self._auto_lock_renew_task, *renew_task)
+                    future.add_done_callback(self._renew_task_done)
                 else:
-                    self._auto_lock_renew_task(*renew_task)
-                self._renew_tasks.task_done()
+                    try:
+                        self._auto_lock_renew_task(*renew_task)
+                    finally:
+                        self._renew_tasks.task_done()
                 self._last_activity_timestamp = time.time()
-            # If there's no activity in the past self._idle_timeout seconds, exit the method
-            # This ensures the dispatching thread could exit, not blocking the main python thread
-            # the main worker thread could be started again if new tasks get registered
-            if time.time() - self._last_activity_timestamp >= self._dispatcher_timeout:
-                self._running_dispatcher.clear()
-                self._last_activity_timestamp = None
-                return
+            # Submitted renewals can still re-enqueue work while the queue is empty.
+            with self._renew_tasks.mutex:
+                if (
+                    not self._renew_tasks.unfinished_tasks
+                    and time.time() - self._last_activity_timestamp >= self._dispatcher_timeout
+                ):
+                    self._running_dispatcher.clear()
+                    self._last_activity_timestamp = None
+                    return
             time.sleep(self._sleep_time)  # save cpu cycles if there's currently no task in self._renew_tasks
+
+    def _renew_task_done(self, _):
+        self._renew_tasks.task_done()
 
     def _auto_lock_renew_task(
         self,
@@ -264,8 +277,6 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
             max_lock_renewal_duration or self._max_lock_renewal_duration,
         )
 
-        self._init_workers()
-
         self._renew_tasks.put(
             (
                 receiver,
@@ -276,6 +287,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
                 renew_period_override,
             )
         )
+        self._init_workers()
 
     def close(self, wait: bool = True) -> None:
         """Cease autorenewal by shutting down the thread pool to clean up any remaining lock renewal threads.
@@ -285,6 +297,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
 
         :rtype: None
         """
-        self._running_dispatcher.clear()
-        self._shutdown.set()
+        with self._renew_tasks.mutex:
+            self._running_dispatcher.clear()
+            self._shutdown.set()
         self._executor.shutdown(wait=wait)
