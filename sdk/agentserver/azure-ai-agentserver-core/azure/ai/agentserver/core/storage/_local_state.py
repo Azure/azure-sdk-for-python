@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from ._errors import (
+    FoundryStorageBadRequestError,
     FoundryStorageConflictError,
     FoundryStorageNotFoundError,
     FoundryStoragePreconditionError,
@@ -92,6 +93,7 @@ class LocalStateStoreBackend:
                         "updated_at": now,
                     },
                     "items": {},
+                    "_next_sequence": 0,
                 }
                 self._write(document)
             else:
@@ -151,7 +153,7 @@ class LocalStateStoreBackend:
                     f"State store item {key!r} already exists.",
                     status_code=409,
                 )
-            item = self._new_item(key, value, tags)
+            item = self._new_item(document, key, value, tags)
             items[key] = item
             self._write(document)
             return self._item_ref(item)
@@ -168,22 +170,18 @@ class LocalStateStoreBackend:
             self._remove_expired(document)
             current = document["items"].get(key)
             self._check_precondition(key, current, if_match)
-            now = _now()
-            item = {
-                "id": (
-                    current["id"]
-                    if current is not None
-                    else _resource_id("it", f"{self._name}/{key}")
-                ),
-                "object": "state_store.item",
-                "key": key,
-                "value": dict(value),
-                "tags": dict(tags) if tags else None,
-                "etag": _new_etag(),
-                "created_at": current["created_at"] if current is not None else now,
-                "updated_at": now,
-                "expires_at": self._expires_at(now),
-            }
+            if current is None:
+                item = self._new_item(document, key, value, tags)
+            else:
+                now = _now()
+                item = {
+                    **current,
+                    "value": dict(value),
+                    "tags": dict(tags) if tags else None,
+                    "etag": _new_etag(),
+                    "updated_at": now,
+                    "expires_at": self._expires_at(now),
+                }
             document["items"][key] = item
             self._write(document)
             return self._item_ref(item)
@@ -225,34 +223,35 @@ class LocalStateStoreBackend:
         before: str | None,
         order: Order,
     ) -> StateStoreItemKeyPage:
+        if limit is not None and (isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100):
+            raise FoundryStorageBadRequestError(
+                "limit must be an integer between 1 and 100.", status_code=400, param="limit"
+            )
+        if order not in ("asc", "desc"):
+            raise FoundryStorageBadRequestError("order must be 'asc' or 'desc'.", status_code=400, param="order")
         with self._lock:
             document = self._require_document()
             changed = self._remove_expired(document)
-            items = [
-                item
-                for item in document["items"].values()
-                if not tags
-                or all(
-                    (item.get("tags") or {}).get(key) == value
-                    for key, value in tags.items()
-                )
-            ]
-            items.sort(
-                key=lambda item: (item["created_at"], item["id"]),
+            items = sorted(
+                document["items"].values(),
+                key=lambda item: (item["created_at"], item["_sequence"]),
                 reverse=order == "desc",
             )
             if after is not None:
                 items = self._after_cursor(items, after)
             elif before is not None:
                 items = self._before_cursor(items, before)
+            if tags:
+                items = [
+                    item
+                    for item in items
+                    if all((item.get("tags") or {}).get(key) == value for key, value in tags.items())
+                ]
             page_size = 20 if limit is None else limit
-            page_items = items[:page_size]
+            page_items = items[-page_size:] if before is not None else items[:page_size]
             if changed:
                 self._write(document)
-            keys = [
-                StateStoreItemKey(self._public_item_ref(item, include_tags=True))
-                for item in page_items
-            ]
+            keys = [StateStoreItemKey(self._public_item_ref(item, include_tags=True)) for item in page_items]
             return StateStoreItemKeyPage(
                 keys=keys,
                 first_id=keys[0].id if keys else None,
@@ -279,15 +278,22 @@ class LocalStateStoreBackend:
     def _read(self) -> dict[str, Any] | None:
         if not self._path.exists():
             return None
-        return json.loads(self._path.read_text(encoding="utf-8"))
+        document = json.loads(self._path.read_text(encoding="utf-8"))
+        if "_next_sequence" not in document or any("_sequence" not in item for item in document["items"].values()):
+            items = sorted(
+                document["items"].values(),
+                key=lambda item: (item["created_at"], item["id"]),
+            )
+            for sequence, item in enumerate(items):
+                item["_sequence"] = sequence
+            document["_next_sequence"] = len(items)
+        return document
 
     def _write(self, document: dict[str, Any]) -> None:
         self._path.parent.mkdir(parents=True, exist_ok=True)
         temporary = self._path.with_name(f".{self._path.name}.{uuid.uuid4().hex}.tmp")
         try:
-            temporary.write_text(
-                json.dumps(document, indent=2, sort_keys=True), encoding="utf-8"
-            )
+            temporary.write_text(json.dumps(document, indent=2, sort_keys=True), encoding="utf-8")
             os.replace(temporary, self._path)
         finally:
             if temporary.exists():
@@ -295,13 +301,17 @@ class LocalStateStoreBackend:
 
     def _new_item(
         self,
+        document: dict[str, Any],
         key: str,
         value: JSONObject,
         tags: Mapping[str, str] | None,
     ) -> dict[str, Any]:
         now = _now()
+        sequence = document["_next_sequence"]
+        document["_next_sequence"] += 1
         return {
-            "id": _resource_id("it", f"{self._name}/{key}"),
+            "_sequence": sequence,
+            "id": f"it_{uuid.uuid4().hex[:24]}",
             "object": "state_store.item",
             "key": key,
             "value": dict(value),
@@ -317,12 +327,10 @@ class LocalStateStoreBackend:
 
     @staticmethod
     def _public_item(item: Mapping[str, Any]) -> dict[str, Any]:
-        return {key: value for key, value in item.items() if key != "expires_at"}
+        return {key: value for key, value in item.items() if key not in {"expires_at", "_sequence"}}
 
     @classmethod
-    def _public_item_ref(
-        cls, item: Mapping[str, Any], *, include_tags: bool = False
-    ) -> dict[str, Any]:
+    def _public_item_ref(cls, item: Mapping[str, Any], *, include_tags: bool = False) -> dict[str, Any]:
         result = {
             key: value
             for key, value in cls._public_item(item).items()
@@ -337,9 +345,7 @@ class LocalStateStoreBackend:
         return StateStoreItemRef(cls._public_item_ref(item))
 
     @staticmethod
-    def _check_precondition(
-        key: str, current: Mapping[str, Any] | None, if_match: str | None
-    ) -> None:
+    def _check_precondition(key: str, current: Mapping[str, Any] | None, if_match: str | None) -> None:
         if if_match is None:
             return
         current_etag = current.get("etag") if current is not None else None
@@ -358,9 +364,7 @@ class LocalStateStoreBackend:
         return []
 
     @staticmethod
-    def _before_cursor(
-        items: list[dict[str, Any]], cursor: str
-    ) -> list[dict[str, Any]]:
+    def _before_cursor(items: list[dict[str, Any]], cursor: str) -> list[dict[str, Any]]:
         for index, item in enumerate(items):
             if item["id"] == cursor:
                 return items[:index]

@@ -285,6 +285,21 @@ Use:
 - `after` / `before` for cursor paging by item id
 - `order="desc"` (default) or `"asc"`
 
+Ordering uses creation time, not the logical item key or its value. The local
+backend preserves creation order within a timestamp using private persisted
+sequence numbers; updates keep their position, and recreation gets a new
+position and item ID, so a deleted item's cursor cannot bind to its replacement.
+Existing local files retain their previous timestamp/ID order because
+their original same-timestamp creation order cannot be reconstructed.
+If an older SDK rewrites a file without sequence metadata, the next upgraded
+read applies the same deterministic legacy ordering.
+
+Cursors refer to positions before tag filtering. In the local backend, `before`
+returns the adjacent preceding page in the requested order. Paging is not a snapshot: concurrent
+creation, deletion, or expiry can change the visible items between requests.
+Applications requiring their own revision order must use application revision
+identifiers rather than assume storage creation order is that revision order.
+
 ## Error Handling
 
 All storage errors derive from `FoundryStorageError`.
