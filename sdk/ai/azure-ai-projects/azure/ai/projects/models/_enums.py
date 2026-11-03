@@ -986,9 +986,9 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Control how much effort the model will exert to match the style and features, especially facial
-    features, of input images. Supports ``high`` and ``low`` on ``gpt-image-1`` and
-    ``gpt-image-1.5``; ``gpt-image-1-mini`` supports only ``low``. For ``gpt-image-2``, omit this
-    parameter. Defaults to ``low`` on supported models.
+    features, of input images. Supports ``high`` and ``low`` on ``gpt-image-1.5``;
+    ``gpt-image-1-mini`` supports only ``low``. For ``gpt-image-2``, omit this parameter. Defaults
+    to ``low`` on supported models.
     """
 
     HIGH = "high"
@@ -1082,6 +1082,47 @@ class LiveContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """64_G."""
 
 
+class LiveDecisionInputItemParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveDecisionInputItemParamType."""
+
+    MESSAGE = "message"
+    """MESSAGE."""
+    FUNCTION_CALL = "function_call"
+    """FUNCTION_CALL."""
+    FUNCTION_CALL_OUTPUT = "function_call_output"
+    """FUNCTION_CALL_OUTPUT."""
+    CUSTOM_TOOL_CALL = "custom_tool_call"
+    """CUSTOM_TOOL_CALL."""
+    CUSTOM_TOOL_CALL_OUTPUT = "custom_tool_call_output"
+    """CUSTOM_TOOL_CALL_OUTPUT."""
+
+
+class LiveDecisionQuestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveDecisionQuestionType."""
+
+    CHOICE = "choice"
+    """CHOICE."""
+    PREDICATE = "predicate"
+    """PREDICATE."""
+    SCORE = "score"
+    """SCORE."""
+
+
+class LiveDecisionStoredInputItemParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveDecisionStoredInputItemParamType."""
+
+    MESSAGE = "message"
+    """MESSAGE."""
+    FUNCTION_CALL = "function_call"
+    """FUNCTION_CALL."""
+    FUNCTION_CALL_OUTPUT = "function_call_output"
+    """FUNCTION_CALL_OUTPUT."""
+    CUSTOM_TOOL_CALL = "custom_tool_call"
+    """CUSTOM_TOOL_CALL."""
+    CUSTOM_TOOL_CALL_OUTPUT = "custom_tool_call_output"
+    """CUSTOM_TOOL_CALL_OUTPUT."""
+
+
 class LiveDetailEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of LiveDetailEnum."""
 
@@ -1093,6 +1134,17 @@ class LiveDetailEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AUTO."""
     ORIGINAL = "original"
     """ORIGINAL."""
+
+
+class LiveFunctionCallItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveFunctionCallItemStatus."""
+
+    IN_PROGRESS = "in_progress"
+    """IN_PROGRESS."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+    INCOMPLETE = "incomplete"
+    """INCOMPLETE."""
 
 
 class LiveInitialItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1209,8 +1261,8 @@ class LiveServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """INFO."""
     TRANSPORT_DTMF_RECEIVED = "transport.dtmf.received"
     """TRANSPORT_DTMF_RECEIVED."""
-    TRANSPORT_DTMF_SEND = "transport.dtmf.send"
-    """TRANSPORT_DTMF_SEND."""
+    TRANSPORT_DTMF_SENT = "transport.dtmf.sent"
+    """TRANSPORT_DTMF_SENT."""
     TRANSPORT_RINGING = "transport.ringing"
     """TRANSPORT_RINGING."""
     TRANSPORT_ANSWERED = "transport.answered"
@@ -1434,17 +1486,6 @@ class PublishApprovalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     tenant-scoped titles are reviewed."""
 
 
-class QuestionParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of QuestionParamType."""
-
-    PREDICATE = "predicate"
-    """PREDICATE."""
-    CHOICE = "choice"
-    """CHOICE."""
-    SCORE = "score"
-    """SCORE."""
-
-
 class RaiInvocationContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """How an invocations request/response body is parsed to locate text for content-safety
     moderation.
@@ -1574,6 +1615,19 @@ class RealtimeReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HIGH."""
     XHIGH = "xhigh"
     """XHIGH."""
+
+
+class RealtimeResponseInputMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RealtimeResponseInputMessageType."""
+
+    SYSTEM = "system"
+    """SYSTEM."""
+    DEVELOPER = "developer"
+    """DEVELOPER."""
+    USER = "user"
+    """USER."""
+    ASSISTANT = "assistant"
+    """ASSISTANT."""
 
 
 class RealtimeServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2818,6 +2872,17 @@ class VoiceAgentLiveDelegationTarget(str, Enum, metaclass=CaseInsensitiveEnumMet
     """FOUNDRY_MANAGED_AGENT."""
 
 
+class VoiceAgentLiveDelegationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported owners of work delegated by a Live voice agent."""
+
+    CLIENT = "client"
+    """The application handles delegated work."""
+    RESPONSES = "responses"
+    """A Responses backend handles delegated work."""
+    FOUNDRY_MANAGED_AGENT = "foundry_managed_agent"
+    """A prompt agent in the same project handles delegated work."""
+
+
 class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The input audio noise reduction mode.
 
@@ -2843,6 +2908,23 @@ class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Azure personalized noise suppression for local voice activity detection. Starts with headset
     suppression and personalizes detection after automatic speaker enrollment. Recognition audio is
     unchanged; headset suppression remains active when personalization is unavailable."""
+
+
+class VoiceAgentPostCallDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of a post-call destination."""
+
+    EVENT_GRID = "event_grid"
+    """An Event Grid connection."""
+    ROUTINE = "routine"
+    """A routine."""
+
+
+class VoiceAgentPostCallIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Content that can be included in a post-call delivery."""
+
+    AUDIO = "audio"
+    """A URL to the merged call recording. Not supported in this preview: the service rejects
+    ``audio`` when the agent version is saved."""
 
 
 class VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

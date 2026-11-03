@@ -10,22 +10,19 @@ from typing import Literal, TYPE_CHECKING, TypeAlias, Union
 
 if TYPE_CHECKING:
     from . import models as _models
-VoiceAgentLiveDelegationResultItem: TypeAlias = Union[
-    "_models.VoiceAgentLiveDelegationResultItem2", "_models.VoiceAgentLiveDelegationResultItem1"
-]
 Filters: TypeAlias = Union["_models.ComparisonFilter", "_models.CompoundFilter"]
-RoutineRunStatus: TypeAlias = str
 VoiceAgentToolChoice: TypeAlias = Union[
     Literal["none"], Literal["auto"], Literal["required"], "_models.ToolChoiceFunction", "_models.ToolChoiceMCP"
 ]
 VoiceAgentMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
-VoiceAgentLiveDelegation: TypeAlias = Union[
-    "_models.LiveClientDelegationParam",
-    "_models.LiveResponsesDelegationParam",
-    "_models.VoiceAgentLiveManagedAgentDelegation",
+RoutineRunStatus: TypeAlias = str
+RealtimeResponseInputItem: TypeAlias = Union[
+    "_models.RealtimeResponseInputMessage",
+    "_models.RealtimeResponseInputFunctionCall",
+    "_models.RealtimeResponseInputFunctionCallOutput",
+    "_models.RealtimeResponseItemReference",
 ]
 VoiceAgentSessionUpdate: TypeAlias = "_models.VoiceAgentSessionUpdateConfig"
 VoiceAgentSessionResponse: TypeAlias = "_models.VoiceAgentSessionResponseConfig"
-ChoiceValueParam: TypeAlias = Union[str, bool]
 ChoiceValueResource: TypeAlias = Union[str, bool]
 GenerateAgentRequest: TypeAlias = "_models.GenerateVoiceAgentRequest"
