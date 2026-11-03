@@ -6,7 +6,7 @@
 
 - Credential HTTP pipeline policies can now be overridden via the `headers_policy`, `logging_policy`, `http_logging_policy`, `proxy_policy`, `user_agent_policy`, `custom_hook_policy`, and `retry_policy` keyword arguments when constructing credentials. The `per_retry_policies` and `per_call_policies` keyword arguments are also supported. ([#46072](https://github.com/Azure/azure-sdk-for-python/pull/46072))
 
-## 1.27.0 (Unreleased)
+## 1.27.0 (2026-10-26)
 
 ### Features Added
 

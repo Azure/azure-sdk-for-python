@@ -39,7 +39,13 @@ class TestSiteRecoveryManagementReplicationVaultSettingOperationsAsync(AzureMgmt
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 vault_setting_name="str",
-                input={"properties": {"migrationSolutionId": "str", "vmwareToAzureProviderType": "str"}},
+                input={
+                    "properties": {
+                        "migrationSolutionId": "str",
+                        "recoveryNetworkConfigAutoSync": "str",
+                        "vmwareToAzureProviderType": "str",
+                    }
+                },
             )
         ).result()  # call '.result()' to poll until service return final result
 

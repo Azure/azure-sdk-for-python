@@ -645,6 +645,18 @@ For all applications set up with OpenTelemetry SDK and Azure Monitor exporters, 
 
 The exporter raises exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#azure-core-library-exceptions).
 
+### Custom properties truncation
+
+Span, span event, and log record attributes are exported as custom properties. Values are truncated to the following lengths (in characters):
+
+| Attributes | Max length |
+| --- | --- |
+| `gen_ai.input.messages`, `gen_ai.output.messages` | 256 KiB (`256 * 1024`); 4 MiB (`4 * 1024 * 1024`) when the `gen_ai_input_output_limit_increase` [experimental feature](#experimental-features) is enabled |
+| `gen_ai.system_instructions`, `gen_ai.tool.definitions`, `gen_ai.tool.call.arguments`, `gen_ai.tool.call.result`, `gen_ai.evaluation.explanation` | 256 KiB (`256 * 1024`) |
+| All other attributes | 8 KiB (`8 * 1024`) |
+
+When the `gen_ai_input_output_limit_increase` experimental feature is enabled, GenAI messages with multimodal content (for example, base64-encoded images or audio) can produce large telemetry items. If you capture such content, consider increasing the exporter `timeout` and `storage_max_size` settings, reducing the batch processor's `max_export_batch_size`, or bounding attribute size at the source with `OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT`.
+
 ## Next steps
 
 ### More sample code

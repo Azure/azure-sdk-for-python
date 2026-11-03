@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -2399,7 +2400,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
             assert blob_ref.blob_tier_inferred
 
             pcontainer = pbs.get_container_client(container_name)
-            blobs = list(pcontainer.list_blobs())
+            blobs = list(pcontainer.list_blobs(response_format="xml"))
 
             # Assert
             assert blobs is not None
@@ -2413,7 +2414,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
             assert PremiumPageBlobTier.P50 == blob_ref2.blob_tier
             assert not blob_ref2.blob_tier_inferred
 
-            blobs = list(pcontainer.list_blobs())
+            blobs = list(pcontainer.list_blobs(response_format="xml"))
 
             # Assert
             assert blobs is not None

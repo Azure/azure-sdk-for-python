@@ -2,6 +2,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: not-specified
+  - name: ReleasePlanId
+    type: string
+    default: '0'
   - name: SkipPrValidation
     type: boolean
     default: false
@@ -32,6 +35,12 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 60
+  - name: BuildTimeoutInMinutes
+    type: number
+    default: 90
+  - name: SbomGenerationTimeoutInMinutes
+    type: number
+    default: 30
   - name: InjectedPackages
     type: string
     default: ''
@@ -144,6 +153,8 @@ extends:
               TestMarkArgument: ${{ parameters.TestMarkArgument }}
               BuildTargetingString: ${{ parameters.BuildTargetingString }}
               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+              BuildTimeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
+              SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
               InjectedPackages: ${{ parameters.InjectedPackages }}
               BuildDocs: ${{ parameters.BuildDocs }}
               DevFeedName: ${{ parameters.DevFeedName }}
@@ -245,6 +256,7 @@ extends:
         parameters:
           DependsOn: "Build"
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          ReleasePlanId: ${{ parameters.ReleasePlanId }}
           Artifacts: ${{ parameters.Artifacts }}
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true

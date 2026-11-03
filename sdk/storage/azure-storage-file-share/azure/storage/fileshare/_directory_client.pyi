@@ -43,6 +43,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
     allow_trailing_dot: Optional[bool]
     allow_source_trailing_dot: Optional[bool]
     file_request_intent: Optional[Literal["backup"]]
+    file_id: Optional[str]
     def __init__(
         self,
         account_url: str,

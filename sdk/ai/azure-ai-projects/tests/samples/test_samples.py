@@ -249,7 +249,6 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_dataset_generation_job_simpleqna_for_finetuning_with_app_polling.py",  # Need test recordings
                 "sample_dataset_generation_job_management.py",  # Need test recordings
                 "sample_dataset_generation_job_traces_for_evaluation_merge.py",  # Need test recordings
-                "sample_dataset_generation_job_simulation_seed_for_evaluation.py",  # Need test recordings
             ],
         ),
     )
@@ -257,6 +256,9 @@ class TestSamples(AzureRecordedTestCase):
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     # To run this test: pytest tests/samples/test_samples.py::TestSamples::test_datasets_samples[sample_dataset_generation_job_simpleqna_with_prompt_source] -s
     def test_datasets_samples(self, sample_path: str, **kwargs) -> None:
+        # Preserve Location for the final GET; existing URL rules still redact resource identifiers.
+        # https://github.com/Azure/azure-sdk-tools/blob/b295229441fc28aec2964891655180b622283ed0/tools/test-proxy/Azure.Sdk.Tools.TestProxy/Common/SanitizerDictionary.cs#L124
+        remove_batch_sanitizers(["AZSDK2003"], headers={"x-recording-id": get_recording_id()})
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()

@@ -15,11 +15,13 @@
 # https://github.com/pypa/setuptools/blob/84ed5913724df5a12dc804e1d5efe12508e706d2/setuptools/config/pyprojecttoml.py#L135
 
 import re
+import sys
 from pathlib import Path
 
 from setuptools import setup, Extension
 
 PACKAGE_NAME = "azure-storage-extensions"
+USE_LIMITED_API = sys.implementation.name == "cpython"
 
 # `name` and `version` are declared in pyproject.toml (version dynamically via
 # [tool.setuptools.dynamic]). They are repeated in the setup() call below only
@@ -39,9 +41,9 @@ setup(
         Extension(
             "crc64",
             ["azure/storage/extensions/checksums/crc64/crc64module.c"],
-            define_macros=[("Py_LIMITED_API", "0x030A0000")],
-            py_limited_api=True,
+            define_macros=[("Py_LIMITED_API", "0x030A0000")] if USE_LIMITED_API else [],
+            py_limited_api=USE_LIMITED_API,
         ),
     ],
-    options={"bdist_wheel": {"py_limited_api": "cp310"}},
+    options={"bdist_wheel": {"py_limited_api": "cp310"}} if USE_LIMITED_API else {},
 )

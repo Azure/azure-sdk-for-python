@@ -33,7 +33,7 @@ class TestHealthDeidentificationCreateAndListJob(DeidBaseTestCase):
             customizations=DeidentificationJobCustomizationOptions(redaction_format="[{type}]"),
         )
 
-        client.begin_deidentify_documents(jobname, job).result(180)
+        self.wait_for_job(client, client.begin_deidentify_documents(jobname, job), jobname)
         job_documents = client.list_job_documents(job_name=jobname, maxpagesize=2)
 
         _get_next = job_documents._args[0]  # type: ignore

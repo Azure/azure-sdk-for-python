@@ -228,6 +228,82 @@ class CertificateResponse(ProxyResource):  # pylint: disable=docstring-keyword-s
         super().__init__(*args, **kwargs)
 
 
+class DeviceRegistryNamespaceDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Description of the Device Registry namespace that is linked to the provisioning service.
+
+    :ivar resource_id: The ARM resource ID of the Device Registry namespace. Required.
+    :vartype resource_id: str
+    :ivar authentication_type: Device Registry Namespace MI authentication type: UserAssigned,
+     SystemAssigned. Required. Known values are: "UserAssigned" and "SystemAssigned".
+    :vartype authentication_type: str or
+     ~azure.mgmt.iothubprovisioningservices.models.DeviceRegistryNamespaceAuthenticationType
+    :ivar selected_user_assigned_identity_resource_id: The selected user-assigned identity resource
+     Id associated with Device Registry namespace. This is required when authenticationType is
+     UserAssigned.
+    :vartype selected_user_assigned_identity_resource_id: str
+    :ivar namespace_uuid: Unique identifier of the linked Device Registry namespace.
+    :vartype namespace_uuid: str
+    :ivar data_address: The data plane address of the linked Azure Device Registry namespace.
+    :vartype data_address: str
+    :ivar location: Azure location of the linked Device Registry namespace.
+    :vartype location: str
+    :ivar linking_state: The linking state of this namespace. Known values are: "NotLinked",
+     "InProgress", "Succeeded", and "Orphaned".
+    :vartype linking_state: str or ~azure.mgmt.iothubprovisioningservices.models.LinkingState
+    """
+
+    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
+    """The ARM resource ID of the Device Registry namespace. Required."""
+    authentication_type: Union[str, "_models.DeviceRegistryNamespaceAuthenticationType"] = rest_field(
+        name="authenticationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Device Registry Namespace MI authentication type: UserAssigned, SystemAssigned. Required. Known
+     values are: \"UserAssigned\" and \"SystemAssigned\"."""
+    selected_user_assigned_identity_resource_id: Optional[str] = rest_field(
+        name="selectedUserAssignedIdentityResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The selected user-assigned identity resource Id associated with Device Registry namespace. This
+     is required when authenticationType is UserAssigned."""
+    namespace_uuid: Optional[str] = rest_field(
+        name="namespaceUuid", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Unique identifier of the linked Device Registry namespace."""
+    data_address: Optional[str] = rest_field(
+        name="dataAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The data plane address of the linked Azure Device Registry namespace."""
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Azure location of the linked Device Registry namespace."""
+    linking_state: Optional[Union[str, "_models.LinkingState"]] = rest_field(
+        name="linkingState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The linking state of this namespace. Known values are: \"NotLinked\", \"InProgress\",
+     \"Succeeded\", and \"Orphaned\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: str,
+        authentication_type: Union[str, "_models.DeviceRegistryNamespaceAuthenticationType"],
+        selected_user_assigned_identity_resource_id: Optional[str] = None,
+        namespace_uuid: Optional[str] = None,
+        data_address: Optional[str] = None,
+        location: Optional[str] = None,
+        linking_state: Optional[Union[str, "_models.LinkingState"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
@@ -467,6 +543,10 @@ class IotDpsPropertiesDescription(_Model):  # pylint: disable=docstring-keyword-
     :ivar iot_hubs: List of IoT hubs associated with this provisioning service.
     :vartype iot_hubs:
      list[~azure.mgmt.iothubprovisioningservices.models.IotHubDefinitionDescription]
+    :ivar device_registry_namespaces: The Device Registry namespaces linked to the provisioning
+     service.
+    :vartype device_registry_namespaces:
+     list[~azure.mgmt.iothubprovisioningservices.models.DeviceRegistryNamespaceDescription]
     :ivar allocation_policy: Allocation policy to be used by this provisioning service. Known
      values are: "Hashed", "GeoLatency", and "Static".
     :vartype allocation_policy: str or
@@ -517,6 +597,10 @@ class IotDpsPropertiesDescription(_Model):  # pylint: disable=docstring-keyword-
         name="iotHubs", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of IoT hubs associated with this provisioning service."""
+    device_registry_namespaces: Optional[list["_models.DeviceRegistryNamespaceDescription"]] = rest_field(
+        name="deviceRegistryNamespaces", visibility=["read"]
+    )
+    """The Device Registry namespaces linked to the provisioning service."""
     allocation_policy: Optional[Union[str, "_models.AllocationPolicy"]] = rest_field(
         name="allocationPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
