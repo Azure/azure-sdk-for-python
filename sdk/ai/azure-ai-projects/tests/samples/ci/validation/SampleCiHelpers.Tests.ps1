@@ -32,38 +32,28 @@ Describe 'Function integration prerequisites' {
         }
     }
 
-    It 'does not enable Functions for unrelated or legacy plans' {
-        Test-SampleFunctionRequired -Plan $script:functionPlan | Should Be $false
-        Test-SampleFunctionRequired -Plan @{ subscriptionId = $script:functionPlan.subscriptionId } | Should Be $false
-    }
-
-    It 'enables Functions only for selected queue requirements: <Name>' -TestCases @(
-        @{ Name = 'STORAGE_INPUT_QUEUE_NAME' }, @{ Name = 'STORAGE_OUTPUT_QUEUE_NAME' }, @{ Name = 'STORAGE_QUEUE_SERVICE_ENDPOINT' }
+    It 'requires Function grants regardless of sample requirements: <Label>' -TestCases @(
+        @{ Label = 'no Function inputs'; Requirements = @() },
+        @{ Label = 'Function inputs'; Requirements = @('STORAGE_INPUT_QUEUE_NAME') },
+        @{ Label = 'no sample metadata'; Requirements = $null }
     ) {
-        param($Name)
-        $script:functionPlan.requiredEnvironment = @($Name)
-        Test-SampleFunctionRequired -Plan $script:functionPlan | Should Be $true
-    }
-
-    It 'does not require Function grants for a non-Function selection' {
+        param($Label, $Requirements)
+        if ($null -eq $Requirements) {
+            $script:functionPlan.Remove('requiredEnvironment')
+        } else {
+            $script:functionPlan.requiredEnvironment = $Requirements
+        }
         $script:functionAssignments = @($script:functionAssignments[0])
-        Assert-SampleSharedIdentityGrants -Plan $script:functionPlan -Identities $script:functionIdentities -RunnerPrincipalId $script:functionRunner
+        { Assert-SampleSharedIdentityGrants -Plan $script:functionPlan -Identities $script:functionIdentities `
+            -RunnerPrincipalId $script:functionRunner } | Should Throw 'Preconfigure Storage Blob Data Owner'
     }
 
     It 'accepts the three exact preconfigured Function grants' {
-        $script:functionPlan.requiredEnvironment = @('STORAGE_INPUT_QUEUE_NAME')
         Assert-SampleSharedIdentityGrants -Plan $script:functionPlan -Identities $script:functionIdentities -RunnerPrincipalId $script:functionRunner
-    }
-
-    It 'requires Function grants when another queue in the batch needs them' {
-        $script:functionAssignments = @($script:functionAssignments[0])
-        { Assert-SampleSharedIdentityGrants -Plan $script:functionPlan -Identities $script:functionIdentities `
-            -RunnerPrincipalId $script:functionRunner -RequireFunctionAccess } | Should Throw 'Preconfigure Storage Blob Data Owner'
     }
 
     It 'rejects a missing Function grant: <Index>' -TestCases @(@{ Index = 1 }, @{ Index = 2 }, @{ Index = 3 }) {
         param($Index)
-        $script:functionPlan.requiredEnvironment = @('STORAGE_INPUT_QUEUE_NAME')
         $script:functionAssignments = @(for ($position = 0; $position -lt 4; $position++) {
             if ($position -ne $Index) { $script:functionAssignments[$position] }
         })
@@ -72,14 +62,12 @@ Describe 'Function integration prerequisites' {
     }
 
     It 'rejects a Function grant at a different scope' {
-        $script:functionPlan.requiredEnvironment = @('STORAGE_INPUT_QUEUE_NAME')
         $script:functionAssignments[1].properties.scope += '/resourceGroups/unrelated'
         { Assert-SampleSharedIdentityGrants -Plan $script:functionPlan -Identities $script:functionIdentities `
             -RunnerPrincipalId $script:functionRunner } | Should Throw 'Preconfigure Storage Blob Data Owner'
     }
 
     It 'rejects a conditioned Function grant rather than assuming it grants host access' {
-        $script:functionPlan.requiredEnvironment = @('STORAGE_INPUT_QUEUE_NAME')
         $script:functionAssignments[1].properties.condition = 'unreviewed condition'
         { Assert-SampleSharedIdentityGrants -Plan $script:functionPlan -Identities $script:functionIdentities `
             -RunnerPrincipalId $script:functionRunner } | Should Throw 'Preconfigure Storage Blob Data Owner'

@@ -34,8 +34,7 @@ if ($PSCmdlet.ParameterSetName -eq 'Admission') {
     }
     $plans = $resolvedPlans
     $identities = Get-SampleSharedIdentities -Plan $plans[0]
-    $requiresFunction = @($plans | Where-Object { Test-SampleFunctionRequired -Plan $_ }).Count -gt 0
-    Assert-SampleSharedIdentityGrants -Plan $plans[0] -Identities $identities -RunnerPrincipalId $runner.principalId -RequireFunctionAccess:$requiresFunction
+    Assert-SampleSharedIdentityGrants -Plan $plans[0] -Identities $identities -RunnerPrincipalId $runner.principalId
     Assert-SampleBatchCapacity -Plans $plans
     if ($ResolvedPlanDirectory) {
         if (Test-Path -LiteralPath $ResolvedPlanDirectory) { throw 'Resolved plan output already exists; refusing to overwrite an earlier admission.' }
@@ -50,7 +49,6 @@ if ($PSCmdlet.ParameterSetName -eq 'Admission') {
 if (-not $ConfirmProvisioning) { throw 'Provisioning is disabled by default. Use -ConfirmProvisioning only for an explicitly requested live run.' }
 $plan = Get-Content -LiteralPath $PlanPath -Raw | ConvertFrom-Json -AsHashtable
 Assert-SampleRunPlan -Plan $plan -QueueName $QueueName
-$requiresFunction = Test-SampleFunctionRequired -Plan $plan
 if ($plan.ContainsKey('identityResolution') -and $plan.identityResolution -cne 'Resolved') { throw 'Only an admitted, resolved identity plan may provision resources.' }
 if (Test-Path -LiteralPath $StatePath) { throw 'Deployment state already exists. Do not adopt or overwrite a previous attempt.' }
 Assert-SampleMcpPat
@@ -62,8 +60,7 @@ if ($exists) { throw 'The generated resource group already exists. No existing g
 
 $providers = @(Invoke-SampleAzure -Arguments @('provider', 'list', '--subscription', $subscription,
     '--query', '[].{namespace:namespace,state:registrationState}'))
-$namespaces = @('Microsoft.CognitiveServices', 'Microsoft.Storage', 'Microsoft.DocumentDB', 'Microsoft.Search')
-if ($requiresFunction) { $namespaces += 'Microsoft.Web' }
+$namespaces = @('Microsoft.CognitiveServices', 'Microsoft.Storage', 'Microsoft.DocumentDB', 'Microsoft.Search', 'Microsoft.Web')
 foreach ($namespace in $namespaces) {
     if (@($providers | Where-Object { $_.namespace -eq $namespace -and $_.state -eq 'Registered' }).Count -ne 1) {
         throw "Provider '$namespace' must already be registered by an administrator; nothing has been provisioned."
@@ -163,24 +160,22 @@ try {
     $sampleResources = Invoke-SampleAzure -Arguments $sampleArguments -Sensitive
     if ($sampleResources.properties.provisioningState -ne 'Succeeded') { throw 'Sample resources Bicep deployment did not succeed.' }
     $state['environment'] = $sampleResources.properties.outputs.environment.value
-    if ($requiresFunction) {
-        $storageAccountName = [string] $standard.properties.outputs.storageAccountName.value
-        if ($storageAccountName -notmatch '^[a-z0-9]{3,24}$') {
-            throw 'Standard setup did not return a valid storage account name; no Function App was provisioned.'
-        }
-        $state['provisioningStep'] = 'FunctionInfrastructure'
-        $functionResources = Invoke-SampleAzure -Arguments @('deployment', 'group', 'create', '--name', 'function-app',
-            '--resource-group', $plan.resourceGroup, '--subscription', $subscription,
-            '--template-file', (Join-Path $PSScriptRoot 'infra/function-app.bicep'), '--parameters',
-            "location=$($plan.location)", "functionAppName=func-$($plan.ownerToken.Substring(0, 20))",
-            "storageAccountName=$storageAccountName", "sharedFunctionIdentityResourceId=$($identities.function.resourceId)") -Sensitive
-        if ($functionResources.properties.provisioningState -ne 'Succeeded') { throw 'Function App infrastructure Bicep deployment did not succeed.' }
-        $functionEnvironment = $functionResources.properties.outputs.environment.value
-        $state['provisioningStep'] = 'FunctionCode'
-        Publish-SampleFunctionApp -Plan $plan -FunctionAppName ([string] $functionEnvironment.FUNCTION_APP_NAME)
-        foreach ($name in $functionEnvironment.Keys) { $state.environment[$name] = $functionEnvironment[$name] }
-        Write-Host 'Function code published and queue_trigger indexed successfully.'
+    $storageAccountName = [string] $standard.properties.outputs.storageAccountName.value
+    if ($storageAccountName -notmatch '^[a-z0-9]{3,24}$') {
+        throw 'Standard setup did not return a valid storage account name; no Function App was provisioned.'
     }
+    $state['provisioningStep'] = 'FunctionInfrastructure'
+    $functionResources = Invoke-SampleAzure -Arguments @('deployment', 'group', 'create', '--name', 'function-app',
+        '--resource-group', $plan.resourceGroup, '--subscription', $subscription,
+        '--template-file', (Join-Path $PSScriptRoot 'infra/function-app.bicep'), '--parameters',
+        "location=$($plan.location)", "functionAppName=func-$($plan.ownerToken.Substring(0, 20))",
+        "storageAccountName=$storageAccountName", "sharedFunctionIdentityResourceId=$($identities.function.resourceId)") -Sensitive
+    if ($functionResources.properties.provisioningState -ne 'Succeeded') { throw 'Function App infrastructure Bicep deployment did not succeed.' }
+    $functionEnvironment = $functionResources.properties.outputs.environment.value
+    $state['provisioningStep'] = 'FunctionCode'
+    Publish-SampleFunctionApp -Plan $plan -FunctionAppName ([string] $functionEnvironment.FUNCTION_APP_NAME)
+    foreach ($name in $functionEnvironment.Keys) { $state.environment[$name] = $functionEnvironment[$name] }
+    Write-Host 'Function code published and queue_trigger indexed successfully.'
     $state.environment['AZURE_SUBSCRIPTION_ID'] = $subscription
     $state.environment['AZURE_TENANT_ID'] = $runnerIdentity.tenantId
     $state.environment['AZURE_RESOURCE_GROUP'] = $plan.resourceGroup

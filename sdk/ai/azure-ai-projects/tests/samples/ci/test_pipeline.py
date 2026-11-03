@@ -320,7 +320,7 @@ def test_provisioning_metadata_is_passed_directly_not_through_environment_variab
     assert "Invoke-SampleAzure -Arguments $sampleArguments -Sensitive" in provisioning
 
 
-def test_function_infrastructure_uses_resolved_inputs_without_a_configurable_toggle():
+def test_function_infrastructure_is_always_provisioned_using_resolved_inputs():
     directory = Path(__file__).resolve().parent
     provisioning = (directory / "Invoke-SampleProvisioning.ps1").read_text(encoding="utf-8")
     template = (directory / "infra/sample-resources.bicep").read_text(encoding="utf-8")
@@ -330,7 +330,20 @@ def test_function_infrastructure_uses_resolved_inputs_without_a_configurable_tog
     assert '"storageAccountName=$storageAccountName"' in provisioning
     assert '"sharedFunctionIdentityResourceId=$($identities.function.resourceId)"' in provisioning
     assert "$standard.properties.outputs.storageAccountName.value" in provisioning
-    assert "Test-SampleFunctionRequired -Plan $plan" in provisioning
+    assert "Test-SampleFunctionRequired" not in provisioning
+    assert "$requiresFunction" not in provisioning
+    assert "'Microsoft.Web'" in provisioning.split("foreach ($namespace", 1)[0]
+    grant_checks = [
+        line.strip()
+        for line in provisioning.splitlines()
+        if line.strip().startswith("Assert-SampleSharedIdentityGrants ")
+    ]
+    assert len(grant_checks) == 2
+    assert "requiredEnvironment" not in provisioning
+    helper = (directory / "SampleCiHelpers.ps1").read_text(encoding="utf-8")
+    assert "Test-SampleFunctionRequired" not in helper
+    assert "RequireFunctionAccess" not in helper
+    assert "requiredEnvironment" not in helper
     assert provisioning.index("Publish-SampleFunctionApp -Plan $plan") < provisioning.index(
         "$state['status'] = 'Ready'"
     )

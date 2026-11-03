@@ -390,14 +390,6 @@ function Get-SampleSharedIdentities {
     return $identities
 }
 
-function Test-SampleFunctionRequired {
-    param([Parameter(Mandatory)] [hashtable] $Plan)
-
-    return @($Plan['requiredEnvironment'] | Where-Object {
-        $_ -in @('FUNCTION_APP_NAME', 'FUNCTION_APP_URL', 'STORAGE_INPUT_QUEUE_NAME', 'STORAGE_OUTPUT_QUEUE_NAME', 'STORAGE_QUEUE_SERVICE_ENDPOINT')
-    }).Count -gt 0
-}
-
 function Publish-SampleFunctionApp {
     param([Parameter(Mandatory)] [hashtable] $Plan,
         [Parameter(Mandatory)] [ValidatePattern('^[a-zA-Z0-9][a-zA-Z0-9-]{0,58}[a-zA-Z0-9]$')] [string] $FunctionAppName,
@@ -446,7 +438,7 @@ function Publish-SampleFunctionApp {
 
 function Assert-SampleSharedIdentityGrants {
     param([Parameter(Mandatory)] [hashtable] $Plan, [Parameter(Mandatory)] [hashtable] $Identities,
-        [Parameter(Mandatory)] [string] $RunnerPrincipalId, [switch] $RequireFunctionAccess)
+        [Parameter(Mandatory)] [string] $RunnerPrincipalId)
 
     $scope = '/subscriptions/' + $Plan.subscriptionId
     $assignments = @(Get-SampleSubscriptionAssignments -SubscriptionId $Plan.subscriptionId)
@@ -467,21 +459,19 @@ function Assert-SampleSharedIdentityGrants {
         -not $_['properties']['condition']
     })
     if ($callerAccess.Count -ne 1) { throw 'Preconfigure the pipeline Foundry User grant; workers never create Azure IAM assignments.' }
-    if ($RequireFunctionAccess -or (Test-SampleFunctionRequired -Plan $Plan)) {
-        foreach ($grant in @(
-            @{ Purpose = 'function'; Role = 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'; Name = 'Storage Blob Data Owner' },
-            @{ Purpose = 'function'; Role = '974c5e8b-45b9-4653-ba55-5f855dd0fb88'; Name = 'Storage Queue Data Contributor' },
-            @{ Purpose = 'project'; Role = '974c5e8b-45b9-4653-ba55-5f855dd0fb88'; Name = 'Storage Queue Data Contributor' }
-        )) {
-            $matching = @($assignments | Where-Object {
-                $_['properties']['principalId'] -ieq $Identities[$grant.Purpose].principalId -and
-                $_['properties']['scope'] -ieq $scope -and
-                $_['properties']['roleDefinitionId'] -ieq "$scope/providers/Microsoft.Authorization/roleDefinitions/$($grant.Role)" -and
-                -not $_['properties']['condition']
-            })
-            if ($matching.Count -ne 1) {
-                throw "Preconfigure $($grant.Name) for the shared $($grant.Purpose) identity at the subscription scope before a Function test; no resources were changed."
-            }
+    foreach ($grant in @(
+        @{ Purpose = 'function'; Role = 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'; Name = 'Storage Blob Data Owner' },
+        @{ Purpose = 'function'; Role = '974c5e8b-45b9-4653-ba55-5f855dd0fb88'; Name = 'Storage Queue Data Contributor' },
+        @{ Purpose = 'project'; Role = '974c5e8b-45b9-4653-ba55-5f855dd0fb88'; Name = 'Storage Queue Data Contributor' }
+    )) {
+        $matching = @($assignments | Where-Object {
+            $_['properties']['principalId'] -ieq $Identities[$grant.Purpose].principalId -and
+            $_['properties']['scope'] -ieq $scope -and
+            $_['properties']['roleDefinitionId'] -ieq "$scope/providers/Microsoft.Authorization/roleDefinitions/$($grant.Role)" -and
+            -not $_['properties']['condition']
+        })
+        if ($matching.Count -ne 1) {
+            throw "Preconfigure $($grant.Name) for the shared $($grant.Purpose) identity at the subscription scope before provisioning; no resources were changed."
         }
     }
 }
