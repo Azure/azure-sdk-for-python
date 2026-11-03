@@ -782,6 +782,24 @@ class TestEvaluate:
             f"got: {[r.getMessage() for r in caplog.records]}"
         )
 
+    def test_binary_aggregation_counts_only_rows_that_passed_or_failed(self):
+        data = {
+            "outputs.mixed.mixed_result": ["pass", "fail", "not_applicable", None, "pass", np.nan],
+            "outputs.mixed.mixed": [1.0, 0.0, None, np.nan, 1.0, np.nan],
+            "outputs.skipped.skipped_result": ["not_applicable", None, "not_applicable", np.nan, None, np.nan],
+            "outputs.skipped.skipped": [None, np.nan, None, np.nan, None, np.nan],
+            "outputs.passing.passing_result": ["pass"] * 6,
+        }
+
+        aggregation = _aggregate_metrics(pd.DataFrame(data), {})
+
+        assert aggregation["mixed.binary_aggregate"] == 0.67
+        assert aggregation["mixed.mixed"] == pytest.approx(2 / 3)
+        assert aggregation["passing.binary_aggregate"] == 1.0
+        # Like the mean score, the binary aggregate is left out when no row has a result.
+        assert "skipped.binary_aggregate" not in aggregation
+        assert "skipped.skipped" not in aggregation
+
     def test_aggregate_label_defect_metrics_with_nan_in_details(self):
         """Test that NaN/None values in details column are properly ignored during aggregation."""
         data = {

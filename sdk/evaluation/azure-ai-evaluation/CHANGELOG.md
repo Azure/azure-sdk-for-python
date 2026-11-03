@@ -14,6 +14,7 @@
 
 - `_ToolCallSuccessEvaluator` no longer scores successful tool calls 0 when a chat judge model, such as gpt-4.1 or gpt-4o, puts `score` and `status` inside `properties`. The example outputs in its prompt are now valid JSON, and `score`, `status` and `reason` are read from `properties` when the output has none at the top level. A missing score is no longer reported as 0, and any score other than 0 or 1 raises a system-classified `EvaluationException`, as `_ToolInputAccuracyEvaluator` does.
 - `_ToolCallSuccessEvaluator` reports a list of messages that holds no tool calls, such as one that contains only text or only MCP approval messages, as not applicable without calling the chat or Decision judge model. A `tool_calls`, `function_call` or `tool_call_id` field that is None or empty, as in OpenAI's `model_dump()` of a reply without tool calls, does not count as a tool call. Strings, text that contains `[TOOL_CALL]` or `[TOOL_RESULT]`, and messages with any other content are still sent to the judge model.
+- `evaluate()` computes `<evaluator>.binary_aggregate` over the rows that passed or failed. Rows without either result, such as not applicable or errored rows, counted as failures, so the metric disagreed with the mean score. An evaluator without any passed or failed rows has no `binary_aggregate`, as one without scores has no mean.
 
 ## 1.18.10 (2026-10-22)
 

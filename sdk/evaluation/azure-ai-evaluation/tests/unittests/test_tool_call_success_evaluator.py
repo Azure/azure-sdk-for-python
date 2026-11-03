@@ -377,6 +377,30 @@ class TestToolCallSuccessWithoutToolCalls:
         state = evaluator._decision.evaluate.await_args.args[0]
         assert "[TOOL_CALL] fetch_weather" in state["tool_calls"]
 
+    def test_evaluate_leaves_rows_without_tool_calls_out_of_the_pass_rate(self, tmp_path):
+        failed_call = json.loads(json.dumps(TOOL_CALL_RESPONSE).replace("sunny", "timed out"))
+        rows = [{"response": TOOL_CALL_RESPONSE}, {"response": failed_call}, {"response": [OPENAI_TEXT_REPLY]}]
+        data = tmp_path / "rows.jsonl"
+        data.write_text("\n".join(json.dumps(row) for row in rows), encoding="utf-8")
+        evaluator = _ToolCallSuccessEvaluator(model_config=dict(CHAT_CONFIG))
+
+        async def flow(timeout, **kwargs):
+            score = 0 if "timed out" in str(kwargs["tool_calls"]) else 1
+            return {"llm_output": {"score": score, "status": "completed", "reason": "r"}, **JUDGE_USAGE}
+
+        evaluator._flow = flow
+        result = evaluate(
+            data=str(data),
+            evaluators={"tool_call_success": evaluator},
+            evaluator_config={"tool_call_success": {"column_mapping": {"response": "${data.response}"}}},
+            _use_run_submitter_client=True,
+        )
+
+        results = sorted(row["outputs.tool_call_success.tool_call_success_result"] for row in result["rows"])
+        assert results == ["fail", "not_applicable", "pass"]
+        assert result["metrics"]["tool_call_success.tool_call_success"] == 0.5
+        assert result["metrics"]["tool_call_success.binary_aggregate"] == 0.5
+
     @pytest.mark.parametrize(
         "messages",
         [
