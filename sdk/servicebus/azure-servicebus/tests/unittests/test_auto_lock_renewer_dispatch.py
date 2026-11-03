@@ -250,10 +250,11 @@ def test_slow_renewal_does_not_block_another_message():
         renewer.close()
 
 
-def test_closed_renewer_cannot_restart_dispatcher():
+@pytest.mark.parametrize("capacity", [None, False, True])
+def test_closed_renewer_cannot_restart_dispatcher(capacity):
     executor = _Executor()
     renewer = AutoLockRenewer(executor=executor)
-    renewer._is_max_workers_greater_than_one = True
+    renewer._is_max_workers_greater_than_one = capacity
     renewer.close()
     with pytest.raises(ServiceBusError):
         renewer._init_workers()
@@ -783,6 +784,81 @@ def test_saturated_executor_drains_success_cancelled_and_failed_work(workers, qu
     finally:
         release.set()
         occupied.abort()
+        renewer.close()
+
+
+@pytest.mark.parametrize("workers", [1, 2])
+@pytest.mark.parametrize("operation", ["register", "enter"])
+def test_close_during_first_inference_with_saturated_executor(workers, operation):
+    executor = ThreadPoolExecutor(max_workers=workers)
+    occupied = threading.Barrier(workers + 1)
+    release = threading.Event()
+    inference_submitted = threading.Event()
+    closed = threading.Event()
+    registration_errors = []
+    close_errors = []
+    renewer = AutoLockRenewer(executor=executor)
+    original_submit = executor.submit
+
+    def occupy():
+        occupied.wait(timeout=5)
+        assert release.wait(timeout=15)
+
+    def submit(function, *args):
+        future = original_submit(function, *args)
+        if function == renewer._infer_max_workers_value_worker:
+            inference_submitted.set()
+        return future
+
+    def register():
+        try:
+            if operation == "register":
+                receiver = Mock(_running=True)
+                renewer.register(receiver, _Message(receiver))
+            else:
+                renewer.__enter__()
+        except Exception as error:
+            registration_errors.append(error)
+
+    def close():
+        try:
+            renewer.close(wait=False)
+        except Exception as error:
+            close_errors.append(error)
+        finally:
+            closed.set()
+
+    blockers = [executor.submit(occupy) for _ in range(workers)]
+    registration = threading.Thread(target=register)
+    closer = threading.Thread(target=close)
+    try:
+        occupied.wait(timeout=5)
+        with patch.object(executor, "submit", side_effect=submit) as submissions:
+            registration.start()
+            assert inference_submitted.wait(timeout=5)
+            closer.start()
+            assert closed.wait(timeout=5), "close(wait=False) waited for executor capacity inference."
+            assert renewer._shutdown.is_set()
+            assert not release.is_set()
+            release.set()
+            registration.join(timeout=5)
+            closer.join(timeout=5)
+            assert not registration.is_alive()
+            assert not closer.is_alive()
+            assert not close_errors
+            assert len(registration_errors) == 1
+            assert isinstance(registration_errors[0], (RuntimeError, ServiceBusError))
+            assert all(invocation.args[0] != renewer._dispatch_worker for invocation in submissions.call_args_list)
+        for blocker in blockers:
+            blocker.result(timeout=5)
+        assert not renewer._running_dispatcher.is_set()
+    finally:
+        release.set()
+        occupied.abort()
+        if registration.ident is not None:
+            registration.join(timeout=5)
+        if closer.ident is not None:
+            closer.join(timeout=5)
         renewer.close()
 
 

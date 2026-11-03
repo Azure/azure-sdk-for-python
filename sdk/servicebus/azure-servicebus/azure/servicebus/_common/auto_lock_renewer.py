@@ -86,6 +86,7 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         self._on_lock_renew_failure = on_lock_renew_failure
         self._renew_tasks = queue.Queue()  # type: ignore
         self._infer_max_workers_time = 1
+        self._infer_max_workers_lock = threading.Lock()
 
     def __enter__(self) -> "AutoLockRenewer":
         if self._shutdown.is_set():
@@ -100,21 +101,22 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
         self.close()
 
     def _init_workers(self):
+        self._infer_max_workers_greater_than_one_if_needed()
         with self._renew_tasks.mutex:
             if self._shutdown.is_set():
                 raise ServiceBusError(
                     "The AutoLockRenewer has already been shutdown. Please create a new instance for auto lock renewing."
                 )
             if not self._running_dispatcher.is_set():
-                self._infer_max_workers_greater_than_one_if_needed()
                 self._running_dispatcher.set()
                 self._executor.submit(self._dispatch_worker)
 
     def _infer_max_workers_greater_than_one_if_needed(self):
         # infer max_workers value if executor is passed in
-        if self._is_max_workers_greater_than_one is None:
-            max_wokers_checker = self._executor.submit(self._infer_max_workers_value_worker)
-            max_wokers_checker.result()
+        with self._infer_max_workers_lock:
+            if self._is_max_workers_greater_than_one is None and not self._shutdown.is_set():
+                max_wokers_checker = self._executor.submit(self._infer_max_workers_value_worker)
+                max_wokers_checker.result()
 
     def _infer_max_workers_value_worker(self):
         max_workers_checker = self._executor.submit(pow, 1, 1)
