@@ -82,7 +82,7 @@ class JobQueueSamplesAsync(object):
         print("JobRouterAdministrationClient created successfully!")
 
         async with router_admin_client:
-            updated_job_queue: RouterQueue = await router_admin_client.upsert_queue(
+            updated_job_queue: RouterQueue = await router_admin_client.upsert_queue(  # type: ignore[call-overload]
                 job_queue_id, labels={"Additional-Queue-Label": "ChatQueue"}
             )
 
