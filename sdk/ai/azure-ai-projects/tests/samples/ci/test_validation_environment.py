@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+# cspell:ignore ispytest
 """Offline regression of CLI-mode conftest configuration without loading service fixtures."""
 
 import ast
