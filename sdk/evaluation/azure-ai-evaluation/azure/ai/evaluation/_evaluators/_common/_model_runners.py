@@ -21,6 +21,7 @@ import time
 from typing import Any, Callable, Dict, List, Optional
 from urllib.parse import urlsplit
 
+from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy, CustomHookPolicy
 from azure.core.pipeline.transport import AioHttpTransport
 
@@ -63,6 +64,23 @@ _DECISION_CONFIG_KEYS = {
 _DEFAULT_PROBABILITY_THRESHOLD = 0.75
 # The service adds api_version to every resolved model configuration; the decision endpoint does not use it.
 _IGNORED_CONFIG_KEYS = {"api_version"}
+_ERROR_CODE = re.compile(r"[A-Za-z][A-Za-z0-9_.-]{0,127}")
+# A 422 states its reason only in a ``detail`` sentence, which is never surfaced. These reasons are recognized by the
+# provider's fixed sentence openings, so a quoted question identifier later in the sentence cannot change the kind, and
+# reported as a bounded ``decision_model.error_kind``; any other sentence is ignored. Only the sentence's first
+# characters are read, which hold every opening, so a long question identifier cannot hide the reason.
+_PROVIDER_DETAIL_KINDS = (
+    (re.compile(r"invalid model request: Question prompt exceeds the \d+-token context limit\b"),
+     "context_window_exceeded"),
+    (re.compile(r"invalid TypeSafe request: request is about \d+ tokens; the limit for the state plus all questions is \d+"),
+     "request_token_limit_exceeded"),
+    (re.compile(r"invalid TypeSafe request: request has \d+ questions; the limit is \d+"), "question_limit_exceeded"),
+    (re.compile(r"invalid TypeSafe request: invalid [a-z_]+ for question \""), "invalid_question"),
+)
+_MAX_PROVIDER_DETAIL_CHARS = 1024
+# Reported when a request exceeds the caller's max_request_bytes or max_state_question_bytes and is not sent.
+_REQUEST_BYTES_EXCEEDED = "request_bytes_exceeded"
+DECISION_ERROR_KINDS = tuple(kind for _, kind in _PROVIDER_DETAIL_KINDS) + (_REQUEST_BYTES_EXCEEDED,)
 
 
 def is_decision_model_config(model_config: Any) -> bool:
@@ -344,16 +362,15 @@ def _is_finite_number(value: Any) -> bool:
         return False
 
 
-def _token_failure(error: BaseException) -> Dict[str, Any]:
-    """Describe a failed token request without keeping the error, whose traceback references the credential."""
-    if isinstance(error, EvaluationException):
-        return {
-            "message": error.message,
-            "internal_message": error.internal_message,
-            "target": error.target,
-            "category": error.category,
-            "blame": error.blame,
-        }
+def _token_failure(error: BaseException) -> Optional[Dict[str, Any]]:
+    """Describe an authentication failure for the requests that waited on it, or return None for any other failure.
+
+    As on the chat path, only an authentication failure is shared: any other failure, such as a token service outage,
+    is not, so each waiting request makes its own attempt and one transient failure fails only the request that hit
+    it. The description never keeps the error, whose traceback references the credential.
+    """
+    if not isinstance(error, ClientAuthenticationError):
+        return None
     message = "Could not acquire a token for the decision model."
     return {
         "message": message,
@@ -362,6 +379,26 @@ def _token_failure(error: BaseException) -> Dict[str, Any]:
         "category": ErrorCategory.FAILED_EXECUTION,
         "blame": ErrorBlame.USER_ERROR,
     }
+
+
+def _provider_error_code(payload: Any) -> Optional[str]:
+    """Return the provider's nested ``error.code`` when it is a bounded identifier, otherwise None."""
+    provider_error = payload.get("error") if isinstance(payload, dict) else None
+    code = provider_error.get("code") if isinstance(provider_error, dict) else None
+    return code if isinstance(code, str) and _ERROR_CODE.fullmatch(code) is not None else None
+
+
+def _provider_error_kind(status: int, payload: Any) -> Optional[str]:
+    """Name a 422 that states its reason only in a ``detail`` sentence, from the sentence's fixed opening.
+
+    For example ``{"detail": "invalid model request: Question prompt exceeds the 32768-token context limit"}`` is
+    ``context_window_exceeded``. Any other status or unrecognized sentence returns None and is never surfaced.
+    """
+    detail = payload.get("detail") if status == 422 and isinstance(payload, dict) else None
+    if not isinstance(detail, str):
+        return None
+    opening = detail[:_MAX_PROVIDER_DETAIL_CHARS]
+    return next((kind for phrase, kind in _PROVIDER_DETAIL_KINDS if phrase.match(opening)), None)
 
 
 def _probability(value: Any) -> float:
@@ -439,6 +476,10 @@ class DecisionModelRunner:
     it stops awaiting synchronous credentials but cannot stop their worker threads. Byte limits measure
     compact unescaped UTF-8 JSON, with ``max_state_question_bytes`` applying to the largest individual pair.
     ``max_response_bytes`` limits acceptance before parsing, not transport allocation.
+    A failed request names a recognized reason in ``decision_model.error_kind`` of the error's properties:
+    ``context_window_exceeded`` when the evidence and one question exceed the model's context window,
+    ``request_token_limit_exceeded``, ``question_limit_exceeded`` or ``invalid_question`` for the provider's other
+    rejections, and ``request_bytes_exceeded`` for a request over the byte limits, which is not sent.
     """
 
     def __init__(
@@ -607,6 +648,7 @@ class DecisionModelRunner:
             if (self._max_request_bytes is not None and len(content) > self._max_request_bytes) or (
                 self._max_state_question_bytes is not None and state_question_bytes > self._max_state_question_bytes
             ):
+                properties["decision_model"]["error_kind"] = _REQUEST_BYTES_EXCEEDED
                 raise _failed("The decision request exceeds the configured byte budget.", ErrorBlame.USER_ERROR)
             try:
                 payload = await asyncio.wait_for(
@@ -693,6 +735,8 @@ class DecisionModelRunner:
             else:
                 abandoned = threading.Event()
                 try:
+                    # A request waiting for another request's token holds a default-executor thread while it waits;
+                    # past the executor's size, further requests queue for a thread before they reach the cache.
                     token = await asyncio.to_thread(
                         _TOKENS.fetch,
                         credential,
@@ -785,15 +829,13 @@ class DecisionModelRunner:
                 # A rejected token is not reused.
                 _TOKENS.discard(self._credential, _MODEL_TOKEN_SCOPE, token)
             blame = ErrorBlame.USER_ERROR if status in (400, 401, 403, 404, 422) else ErrorBlame.SYSTEM_ERROR
-            provider_error = payload.get("error") if isinstance(payload, dict) else None
-            code = provider_error.get("code") if isinstance(provider_error, dict) else None
-            diagnostic = (
-                f" ({code})"
-                if isinstance(code, str) and re.fullmatch(r"[A-Za-z][A-Za-z0-9_.-]{0,127}", code) is not None
-                else ""
-            )
+            code = _provider_error_code(payload)
+            kind = _provider_error_kind(status, payload)
+            diagnostic = f" ({code or kind})" if code or kind else ""
             error = _failed(f"The decision model returned HTTP {status}{diagnostic}.", blame)
             error.properties = self._response_properties(payload)
+            if kind is not None:
+                error.properties["decision_model"]["error_kind"] = kind
             raise error
         return payload
 

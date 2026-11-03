@@ -26,7 +26,7 @@ from openai.types.chat import ChatCompletion
 from azure.core.credentials import AccessToken
 from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport, HttpResponse
-from azure.core.exceptions import ServiceRequestError
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 
 from azure.ai.evaluation import CoherenceEvaluator, FluencyEvaluator
 from azure.ai.evaluation._constants import TokenScope
@@ -495,6 +495,102 @@ class TestDecisionModelRunnerRequests:
         )
 
     @pytest.mark.parametrize(
+        "detail,kind",
+        [
+            (
+                "invalid model request: Question prompt exceeds the 32768-token context limit including the decision "
+                "token",
+                "context_window_exceeded",
+            ),
+            (
+                "invalid TypeSafe request: request is about 75108 tokens; the limit for the state plus all questions "
+                "is 64000",
+                "request_token_limit_exceeded",
+            ),
+            ("invalid TypeSafe request: request has 256 questions; the limit is 255", "question_limit_exceeded"),
+            ('invalid TypeSafe request: invalid instructions for question "private-key": value must not be empty',
+             "invalid_question"),
+            ('invalid TypeSafe request: invalid criteria for question "q": value must not be empty', "invalid_question"),
+            ("invalid TypeSafe request: private-message test-key-value", None),
+            ("invalid model request: Question prompt exceeds the 32768-token context limit " + "x" * 5000,
+             "context_window_exceeded"),
+            ('invalid TypeSafe request: invalid instructions for question "' + "q" * 2000 + '": value must not be empty',
+             "invalid_question"),
+            ("x" * 1100 + "invalid model request: Question prompt exceeds the 32768-token context limit", None),
+            ("", None),
+        ],
+    )
+    def test_provider_rejection_reason_is_named_by_a_known_kind_without_its_text(self, client, detail, kind):
+        client.response = FakeResponse(422, json.dumps({"detail": detail}).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, max_retries=0))
+        diagnostic = f" ({kind})" if kind else ""
+        assert str(raised.value) == f"(UserError) The decision model returned HTTP 422{diagnostic}."
+        assert raised.value.blame == ErrorBlame.USER_ERROR
+        native = raised.value.properties["decision_model"]
+        assert native.get("error_kind") == kind
+        persisted = json.dumps(raised.value.properties) + str(raised.value) + raised.value.internal_message
+        assert "private" not in persisted and "test-key-value" not in persisted and "32768" not in persisted
+        assert len(client.calls) == 1
+
+    @pytest.mark.parametrize(
+        "body",
+        [
+            {"detail": ["exceeds the 1-token context limit"]},
+            {"detail": {"message": "exceeds the 1-token context limit"}},
+            {"error": "exceeds the 1-token context limit"},
+            ["exceeds the 1-token context limit"],
+        ],
+    )
+    def test_malformed_provider_rejection_detail_has_no_kind(self, client, body):
+        client.response = FakeResponse(422, json.dumps(body).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, max_retries=0))
+        assert str(raised.value) == "(UserError) The decision model returned HTTP 422."
+        assert "error_kind" not in raised.value.properties["decision_model"]
+
+    def test_provider_error_code_names_the_message_and_only_a_422_has_a_kind(self, client):
+        body = {
+            "error": {"code": "unsupported_request_argument", "message": "private-message"},
+            "detail": "invalid model request: Question prompt exceeds the 32768-token context limit",
+        }
+        client.response = FakeResponse(400, json.dumps(body).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, max_retries=0))
+        assert str(raised.value) == "(UserError) The decision model returned HTTP 400 (unsupported_request_argument)."
+        assert "error_kind" not in raised.value.properties["decision_model"]
+        assert "private-message" not in json.dumps(raised.value.properties)
+
+    @pytest.mark.parametrize(
+        "detail",
+        [
+            'invalid TypeSafe request: invalid instructions for question "exceeds the 32768-token context limit": '
+            "value must not be empty",
+            'invalid TypeSafe request: invalid criteria for question "request has 300 questions; the limit is 255": '
+            "value must not be empty",
+        ],
+    )
+    def test_a_quoted_question_identifier_cannot_change_the_kind(self, client, detail):
+        client.response = FakeResponse(422, json.dumps({"detail": detail}).encode())
+        with pytest.raises(EvaluationException) as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, max_retries=0))
+        assert raised.value.properties["decision_model"]["error_kind"] == "invalid_question"
+
+    @pytest.mark.parametrize(
+        "limits",
+        [{"max_request_bytes": 64}, {"max_state_question_bytes": 64}],
+        ids=["request", "state_question"],
+    )
+    def test_request_over_the_byte_limits_names_its_reason_and_is_not_sent(self, client, limits):
+        with pytest.raises(EvaluationException, match="exceeds the configured byte budget") as raised:
+            run(DecisionModelRunner(DECISION_CONFIG, **limits), state={"response": "x" * 200})
+        assert raised.value.blame == ErrorBlame.USER_ERROR
+        native = raised.value.properties["decision_model"]
+        assert native["error_kind"] == "request_bytes_exceeded"
+        assert native["execution"]["attempt_count"] == 0
+        assert not client.calls
+
+    @pytest.mark.parametrize(
         "payload",
         [
             {"error": {"code": ""}},
@@ -844,7 +940,33 @@ class TestDecisionTokenReuse:
         assert "timed out" in outcomes["waiter"]
         assert "Could not acquire a token" in outcomes["leader"]
 
-    def test_requests_waiting_on_a_failed_token_request_share_its_failure(self, client):
+    @pytest.mark.parametrize(
+        "failure,token_requests,blame,message",
+        [
+            pytest.param(
+                lambda: ClientAuthenticationError("Please run 'az login' (private-detail)"),
+                1,
+                ErrorBlame.USER_ERROR,
+                "Could not acquire a token",
+                id="authentication-shared-at-once",
+            ),
+            pytest.param(
+                lambda: EvaluationException(
+                    message="Service-owned Decision credential acquisition failed (RuntimeError, status 5xx).",
+                    blame=ErrorBlame.SYSTEM_ERROR,
+                    category=ErrorCategory.FAILED_EXECUTION,
+                    target=ErrorTarget.EVALUATE,
+                ),
+                4,
+                ErrorBlame.SYSTEM_ERROR,
+                "acquisition failed",
+                id="other-not-shared-each-request-tries",
+            ),
+        ],
+    )
+    def test_requests_waiting_on_a_failed_token_request_share_its_failure(
+        self, client, failure, token_requests, blame, message
+    ):
         client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
         entered, release = threading.Event(), threading.Event()
         requested = []
@@ -853,12 +975,7 @@ class TestDecisionTokenReuse:
             requested.append(1)
             entered.set()
             release.wait()
-            raise EvaluationException(
-                message="Service-owned Decision credential acquisition failed (RuntimeError, status unknown).",
-                blame=ErrorBlame.SYSTEM_ERROR,
-                category=ErrorCategory.FAILED_EXECUTION,
-                target=ErrorTarget.EVALUATE,
-            )
+            raise failure()
 
         credential = Mock(get_token=Mock(side_effect=get_token))
         all_queued = watch_token_queue(credential, 4)
@@ -882,14 +999,56 @@ class TestDecisionTokenReuse:
             release.set()
         for thread in [leader, *waiters]:
             thread.join(WAIT_SECONDS)
-        # The queued requests fail with the same typed error instead of each starting another request.
-        assert len(requested) == 1 and len(errors) == 4
-        assert all(
-            error.blame == ErrorBlame.SYSTEM_ERROR and "acquisition failed" in str(error) for error in errors.values()
-        )
+        # Queued requests share an authentication failure instead of each starting another request; any other failure is
+        # not shared, so each request makes its own attempt and keeps its own typed error.
+        assert len(requested) == token_requests and len(errors) == 4
+        assert all(error.blame == blame and message in str(error) for error in errors.values())
+        assert all("private-detail" not in str(error) for error in errors.values())
         credential.get_token.side_effect = lambda *_, **__: self.access_token("recovered")
         run(DecisionModelRunner(self.CONFIG, credential))
-        assert len(requested) == 1 and self.authorizations(client) == ["Bearer recovered"]
+        assert credential.get_token.call_count == token_requests + 1 and self.authorizations(client) == ["Bearer recovered"]
+
+    def test_requests_waiting_on_a_transient_token_failure_recover_with_one_more_request(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        entered, release = threading.Event(), threading.Event()
+        requested = []
+
+        def get_token(*_, **__):
+            requested.append(1)
+            if len(requested) == 1:
+                entered.set()
+                release.wait()
+                raise RuntimeError("token service unavailable")
+            return self.access_token("recovered")
+
+        credential = Mock(get_token=Mock(side_effect=get_token))
+        all_queued = watch_token_queue(credential, 4)
+        outcomes = {}
+
+        def request(name):
+            try:
+                run(DecisionModelRunner(self.CONFIG, credential), timeout=2 * WAIT_SECONDS)
+                outcomes[name] = "completed"
+            except EvaluationException as error:
+                outcomes[name] = str(error)
+
+        leader = threading.Thread(target=request, args=("leader",))
+        waiters = [threading.Thread(target=request, args=(f"waiter-{index}",)) for index in range(3)]
+        try:
+            leader.start()
+            assert entered.wait(WAIT_SECONDS)
+            for waiter in waiters:
+                waiter.start()
+            assert all_queued.wait(WAIT_SECONDS)
+        finally:
+            release.set()
+        for thread in [leader, *waiters]:
+            thread.join(WAIT_SECONDS)
+        # Only the request whose token request failed fails; the next request recovers the token for the others.
+        assert len(requested) == 2
+        assert "Could not acquire a token" in outcomes["leader"]
+        assert [outcomes[f"waiter-{index}"] for index in range(3)] == ["completed"] * 3
+        assert self.authorizations(client) == ["Bearer recovered"] * 3
 
     def test_requests_waiting_on_a_token_kept_out_of_the_cache_use_it(self, client):
         client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())

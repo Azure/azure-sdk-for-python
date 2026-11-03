@@ -485,6 +485,8 @@ class _ReusedTokenProvider:
             else:
                 abandoned = threading.Event()
                 try:
+                    # A request waiting for another request's token holds a default-executor thread while it waits;
+                    # past the executor's size, further requests queue for a thread before they reach the cache.
                     token = await asyncio.to_thread(
                         TOKENS.fetch,
                         credential,
