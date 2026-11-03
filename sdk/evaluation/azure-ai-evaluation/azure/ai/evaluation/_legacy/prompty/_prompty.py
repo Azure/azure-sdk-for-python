@@ -43,7 +43,7 @@ from azure.ai.evaluation._legacy.prompty._utils import (
 from azure.ai.evaluation._constants import DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
 from azure.ai.evaluation._legacy._common._logging import get_logger
 from azure.ai.evaluation._legacy._common._async_token_provider import AsyncAzureTokenProvider
-from azure.ai.evaluation._legacy._common._token_cache import TOKENS, describe_credential_failure
+from azure.ai.evaluation._legacy._common._token_cache import TOKENS, describe_credential_failure, is_async_credential
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 
 PROMPTY_EXTENSION: Final[str] = ".prompty"
@@ -455,11 +455,13 @@ class _ReusedTokenProvider:
     """Supply a credential's token to a chat client, reusing it until shortly before it expires.
 
     Concurrent requests that share a synchronous credential wait for one token request, on a worker thread so the
-    event loop is not blocked. The default token provider is represented by the synchronous credential it creates.
-    The request that made a failed token request raises the credential's error. When that failure was an
-    authentication failure, requests that waited on it raise a ``ClientAuthenticationError`` with the same message
-    instead of each requesting a token again; after any other failure, each waiting request makes its own attempt. A
-    token the service rejected is discarded, and an acquisition that began before the rejection is not stored.
+    event loop is not blocked. An asynchronous credential, one whose ``get_token`` is a coroutine function or that
+    implements ``AsyncTokenCredential``, is asked on the caller's event loop instead. The default token provider is
+    represented by the synchronous credential it creates. The request that made a failed token request raises the
+    credential's error. When that failure was an authentication failure, requests that waited on it raise a
+    ``ClientAuthenticationError`` with the same message instead of each requesting a token again; after any other
+    failure, each waiting request makes its own attempt. A token the service rejected is discarded, and an acquisition
+    that began before the rejection is not stored.
     """
 
     def __init__(self, credential: Union[TokenCredential, AsyncTokenCredential], scope: str) -> None:
@@ -479,8 +481,11 @@ class _ReusedTokenProvider:
             # An acquisition that begins before a service rejects a token may return that token; the generation it
             # began under lets the cache refuse it.
             generation = TOKENS.generation(credential, self._scope)
-            if inspect.iscoroutinefunction(credential.get_token):
-                token = await credential.get_token(self._scope)
+            if is_async_credential(credential):
+                # An asynchronous credential's token request may need this event loop.
+                token = credential.get_token(self._scope)
+                if inspect.isawaitable(token):
+                    token = await token
                 TOKENS.store(credential, self._scope, token, generation)
             else:
                 abandoned = threading.Event()

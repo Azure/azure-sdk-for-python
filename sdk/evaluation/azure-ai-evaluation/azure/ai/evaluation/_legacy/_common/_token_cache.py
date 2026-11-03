@@ -26,8 +26,9 @@ import math
 import threading
 import time
 import weakref
-from typing import Any, Callable, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, NamedTuple, Optional, Tuple
 
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ClientAuthenticationError
 
 from azure.ai.evaluation._exceptions import EvaluationException
@@ -36,6 +37,17 @@ from azure.ai.evaluation._exceptions import EvaluationException
 TOKEN_REFRESH_SECONDS = 300
 # How often a request waiting for another request's token checks whether it was abandoned.
 TOKEN_WAIT_INTERVAL_SECONDS = 0.05
+
+
+def is_async_credential(credential: Any) -> bool:
+    """Whether a credential's token is requested on the caller's event loop rather than on a worker thread.
+
+    That is a credential whose ``get_token`` is a coroutine function, or one that implements the asynchronous
+    credential protocol: its ``get_token`` may return an awaitable that needs the loop it was called on.
+    """
+    return inspect.iscoroutinefunction(getattr(credential, "get_token", None)) or isinstance(
+        credential, AsyncTokenCredential
+    )
 
 
 def _is_fresh(token: Any) -> bool:
@@ -69,16 +81,25 @@ def describe_credential_failure(error: BaseException) -> Optional[Dict[str, Any]
     return None
 
 
+class _SharedFailure(NamedTuple):
+    """A failed token request's description and the attempt count after it, kept for requests of the same kind."""
+
+    attempt: int
+    description: Dict[str, Any]
+
+
 class _CredentialTokens:
-    """One credential's cached token for one scope, the lock for its token requests, the outcome of its latest token
-    request and the count of rejections that invalidates acquisitions begun before them."""
+    """One credential's cached token for one scope, the lock for its token requests, the latest failure that each
+    kind of request described, and the count of rejections that invalidates acquisitions begun before them."""
 
     def __init__(self, reference: Any) -> None:
         self.reference = reference
         self.token: Any = None
         self.lock = threading.Lock()
         self.attempts = 0
-        self.failure: Optional[Dict[str, Any]] = None
+        # Keyed by the failure formatter and exception type of the requests that share the failure, so requests that
+        # describe or raise failures differently never raise each other's. Cleared when a token request succeeds.
+        self.failures: Dict[Tuple[Callable[..., Any], Callable[..., BaseException]], _SharedFailure] = {}
         # The latest token request's token when it was not cached, because a rejection kept it out or because of its
         # expiry, for the requests that waited on that request. It is never cached.
         self.unstored: Any = None
@@ -91,10 +112,11 @@ class CredentialTokenCache:
     """Share each caller credential's token for a scope across requests until shortly before it expires.
 
     Concurrent requests that share a synchronous credential wait for one token request. A caller can also ask that
-    requests which waited on a failed token request share its failure instead of each requesting a token again. A
-    token a service rejected is discarded; the credential's next token is cached again, even when it is the same
-    token, while an acquisition that began before the rejection is never stored. Requests that waited on an
-    acquisition whose token was not cached use that token instead of each requesting another one.
+    requests which waited on a failed token request share its failure instead of each requesting a token again; only
+    requests that describe and raise failures the same way share one. A token a service rejected is discarded; the
+    credential's next token is cached again, even when it is the same token, while an acquisition that began before
+    the rejection is never stored. Requests that waited on an acquisition whose token was not cached use that token
+    instead of each requesting another one.
     """
 
     def __init__(self) -> None:
@@ -174,10 +196,13 @@ class CredentialTokenCache:
         """Request a synchronous credential's token once for concurrent requests.
 
         Returns None, without requesting a token, when the request was abandoned or its monotonic ``deadline`` passed
-        while it waited for another request's token. With ``describe_failure``, requests that waited on a failed
-        request raise ``failure_type`` built from its description instead of each requesting a token again; a None
-        description is not shared. The description must not keep the error, whose traceback references the
-        credential. Requests that waited on a request whose token was not cached use that token.
+        while it waited for another request's token. With ``describe_failure``, a request that waited on a failed
+        request of its own kind, one that passed the same ``describe_failure`` and ``failure_type``, raises
+        ``failure_type`` built from that request's description instead of requesting a token again. A None
+        description is not shared, and a request never raises a failure that another kind of request described, so
+        each keeps its own error type and classification; with no failure of its own kind, it makes its own attempt.
+        The description must not keep the error, whose traceback references the credential. Requests that waited on a
+        request whose token was not cached use that token.
         """
         entry = self._entry(credential, scope, create=True)
         if entry is None:
@@ -203,12 +228,13 @@ class CredentialTokenCache:
                 or (deadline is not None and time.monotonic() >= deadline)
             ):
                 return token
+            kind = (describe_failure, failure_type)
             with self._guard:
                 waited = entry.attempts != queued_after
-                failure = entry.failure if waited and describe_failure is not None else None
+                failure = entry.failures.get(kind) if waited and describe_failure is not None else None
                 unstored = entry.unstored if waited else None
-            if failure is not None:
-                raise failure_type(**failure)
+            if failure is not None and failure.attempt > queued_after:
+                raise failure_type(**failure.description)
             if _has_value(unstored):
                 # Issued for the request this one waited on and not rejected since it was shared, so use it rather
                 # than request another token.
@@ -218,9 +244,13 @@ class CredentialTokenCache:
             try:
                 token = credential.get_token(scope)
             except Exception as error:
+                description = describe_failure(error) if describe_failure is not None else None
                 with self._guard:
                     entry.attempts += 1
-                    entry.failure = describe_failure(error) if describe_failure is not None else None
+                    if description is not None:
+                        entry.failures[kind] = _SharedFailure(entry.attempts, description)
+                    else:
+                        entry.failures.pop(kind, None)
                     entry.unstored = None
                 raise
             # Decide whether the token is cached and publish the outcome together, so a rejection cannot land between
@@ -228,7 +258,7 @@ class CredentialTokenCache:
             with self._guard:
                 stored = inspect.isawaitable(token) or self.store(credential, scope, token, generation)
                 entry.attempts += 1
-                entry.failure = None
+                entry.failures.clear()
                 entry.unstored = token if not stored and _has_value(token) else None
             return token
         finally:

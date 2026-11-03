@@ -24,12 +24,12 @@ from azure.ai.evaluation._common.utils import construct_prompty_model_config, va
 from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._legacy._common._async_token_provider import AsyncAzureTokenProvider
-from azure.ai.evaluation._legacy._common._token_cache import TOKENS
+from azure.ai.evaluation._legacy._common._token_cache import TOKENS, describe_credential_failure, is_async_credential
 from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 from azure.ai.evaluation._legacy.prompty._exceptions import WrappedOpenAIError
 
 CHAT_SCOPE = TokenScope.COGNITIVE_SERVICES_MANAGEMENT
-DECISION_SCOPE = _model_runners._MODEL_TOKEN_SCOPE
+DECISION_SCOPE = _model_runners._DECISION_TOKEN_SCOPE
 COHERENCE_PROMPTY = Path(coherence.__file__).parent / "coherence.prompty"
 CHAT_MODEL = construct_prompty_model_config(
     validate_model_config({"azure_endpoint": "https://example.openai.azure.com", "azure_deployment": "judge"}),
@@ -201,13 +201,13 @@ class TestChatTokenReuse:
         join_all([leader])
         assert len(credential.scopes) == 1
 
-    def test_chat_requests_reuse_a_token_a_decision_request_acquired(self):
-        credential = Credential(access_token("unused"))
+    def test_chat_and_decision_tokens_are_kept_apart(self):
+        credential = Credential(access_token("chat"))
         TOKENS.store(credential, DECISION_SCOPE, access_token("decision"))
 
-        assert request_token(credential) == "decision"
-        assert credential.scopes == []
-        assert TOKENS.cached(credential, CHAT_SCOPE).token == "decision"
+        assert request_token(credential) == "chat"
+        assert credential.scopes == [(CHAT_SCOPE,)]
+        assert TOKENS.cached(credential, DECISION_SCOPE).token == "decision"
 
     def test_a_failed_token_request_raises_the_credential_error_and_is_retried(self):
         credential = Credential(ClientAuthenticationError("Please run az login."), access_token("recovered"))
@@ -646,3 +646,209 @@ class TestChatTokenReuse:
             assert TOKENS.cached(credential, CHAT_SCOPE).token == "token-B"
 
         asyncio.run(scenario())
+
+
+DECISION_CONFIG = {
+    "type": "decision",
+    "azure_endpoint": "https://example.services.ai.azure.com",
+    "azure_deployment": "Decision-1",
+}
+
+
+def request_decision_token(credential):
+    runner = _model_runners.DecisionModelRunner(DECISION_CONFIG, credential)
+    return asyncio.run(runner._get_token(time.monotonic() + 2 * WAIT_SECONDS))
+
+
+class GatedCredential(Credential):
+    """A ``Credential`` whose token requests wait until the test sets ``release``, and that reports the first one."""
+
+    def __init__(self, *results):
+        self.entered, self.release = threading.Event(), threading.Event()
+        super().__init__(*results, gate=self.release)
+
+    def get_token(self, *scopes, **kwargs):
+        self.entered.set()
+        return super().get_token(*scopes, **kwargs)
+
+
+def queue_behind(credential, leader, *waiters):
+    """Return the outcomes of ``leader``'s token request and of each of ``waiters``, all queued behind it."""
+    requests = [leader, *waiters]
+    all_queued = watch_token_queue(credential, len(requests))
+    outcomes = [None] * len(requests)
+
+    def request(index):
+        try:
+            outcomes[index] = requests[index](credential)
+        except Exception as error:  # pylint: disable=broad-except
+            outcomes[index] = error
+
+    threads = [threading.Thread(target=request, args=(index,)) for index in range(len(requests))]
+    try:
+        threads[0].start()
+        assert credential.entered.wait(WAIT_SECONDS)
+        for thread in threads[1:]:
+            thread.start()
+        assert all_queued.wait(WAIT_SECONDS)
+    finally:
+        credential.release.set()
+    join_all(threads)
+    return outcomes
+
+
+def fetch_as(describe_failure, failure_type):
+    """Return a request for the credential's chat-scope token that describes and raises failures its own way."""
+
+    def request(credential):
+        return TOKENS.fetch(credential, CHAT_SCOPE, describe_failure=describe_failure, failure_type=failure_type).token
+
+    return request
+
+
+# Two kinds of request that describe and raise failures differently, as chat and Decision requests do.
+AUTHENTICATION_KIND = fetch_as(describe_credential_failure, ClientAuthenticationError)
+EVALUATION_KIND = fetch_as(_model_runners._token_failure, EvaluationException)
+EVALUATION_MESSAGE = "Could not acquire a token for the decision model."
+
+
+@pytest.mark.unittest
+class TestFailuresAreSharedWithinOneKindOfRequest:
+    """Requests that describe failures differently share a credential's tokens, but not each other's failures."""
+
+    @pytest.mark.parametrize("leader", ["authentication", "evaluation"])
+    def test_both_kinds_of_request_share_one_token_request(self, leader):
+        kinds = {"authentication": AUTHENTICATION_KIND, "evaluation": EVALUATION_KIND}
+        waiter = "evaluation" if leader == "authentication" else "authentication"
+        credential = GatedCredential(access_token("shared"))
+
+        assert queue_behind(credential, kinds[leader], kinds[waiter]) == ["shared", "shared"]
+        assert len(credential.scopes) == 1
+
+    @pytest.mark.parametrize("retried", ["recovered", "failed again"])
+    def test_an_evaluation_failure_is_not_replayed_to_another_kind_of_request(self, retried):
+        retry = access_token("recovered") if retried == "recovered" else ClientAuthenticationError("Run az login.")
+        credential = GatedCredential(ClientAuthenticationError("Please run az login."), retry)
+
+        evaluation, authentication = queue_behind(credential, EVALUATION_KIND, AUTHENTICATION_KIND)
+
+        assert isinstance(evaluation, ClientAuthenticationError)
+        # The other request asks the credential itself rather than raising the evaluation description as its own
+        # authentication error.
+        if retried == "recovered":
+            assert authentication == "recovered"
+        else:
+            assert isinstance(authentication, ClientAuthenticationError) and str(authentication) == "Run az login."
+        assert len(credential.scopes) == 2
+
+    @pytest.mark.parametrize("retried", ["recovered", "failed again"])
+    def test_an_authentication_failure_is_not_replayed_to_another_kind_of_request(self, retried):
+        retry = access_token("recovered") if retried == "recovered" else ClientAuthenticationError("Run az login.")
+        credential = GatedCredential(ClientAuthenticationError("Please run az login."), retry)
+
+        authentication, evaluation = queue_behind(credential, AUTHENTICATION_KIND, EVALUATION_KIND)
+
+        assert isinstance(authentication, ClientAuthenticationError) and "az login" in str(authentication)
+        # The other request asks the credential itself rather than raising an unclassified EvaluationException.
+        if retried == "recovered":
+            assert evaluation == "recovered"
+        else:
+            assert isinstance(evaluation, ClientAuthenticationError) and str(evaluation) == "Run az login."
+        assert len(credential.scopes) == 2
+
+    def test_evaluation_failures_are_shared_whichever_request_wakes_first(self):
+        credential = GatedCredential(ClientAuthenticationError("Please run az login."))
+
+        evaluation, authentication, other_evaluation = queue_behind(
+            credential, EVALUATION_KIND, AUTHENTICATION_KIND, EVALUATION_KIND
+        )
+
+        assert isinstance(evaluation, ClientAuthenticationError)
+        # The other kind of request makes its own attempt and raises the credential's error. The request of the same
+        # kind shares the first failure even when the other kind's attempt ends first.
+        assert isinstance(authentication, ClientAuthenticationError) and str(authentication) == "Please run az login."
+        assert isinstance(other_evaluation, EvaluationException) and EVALUATION_MESSAGE in str(other_evaluation)
+        assert len(credential.scopes) == 2
+
+    def test_authentication_failures_are_shared_whichever_request_wakes_first(self):
+        credential = GatedCredential(ClientAuthenticationError("Please run az login."))
+
+        authentication, evaluation, other_authentication = queue_behind(
+            credential, AUTHENTICATION_KIND, EVALUATION_KIND, AUTHENTICATION_KIND
+        )
+
+        assert isinstance(authentication, ClientAuthenticationError)
+        assert isinstance(evaluation, ClientAuthenticationError) and not isinstance(evaluation, EvaluationException)
+        assert isinstance(other_authentication, ClientAuthenticationError)
+        assert str(other_authentication) == "Please run az login."
+        assert len(credential.scopes) == 2
+
+    def test_a_successful_token_request_ends_sharing_of_earlier_failures(self):
+        credential = Credential(ClientAuthenticationError("Please run az login."), access_token("recovered"))
+
+        with pytest.raises(ClientAuthenticationError):
+            EVALUATION_KIND(credential)
+        entry = TOKENS._entry(credential, CHAT_SCOPE)
+        assert list(entry.failures) == [(_model_runners._token_failure, EvaluationException)]
+
+        assert AUTHENTICATION_KIND(credential) == "recovered"
+        # A request that waited on the failure but wakes after this success gets the token, not the earlier failure.
+        assert entry.failures == {}
+
+
+class LoopBoundAsyncCredential:
+    """An asynchronous credential whose ``get_token`` is a plain function that needs the caller's event loop."""
+
+    def __init__(self):
+        self.calls = 0
+
+    def get_token(self, *_, **__):
+        self.calls += 1
+        loop = asyncio.get_running_loop()
+
+        async def request():
+            assert asyncio.get_running_loop() is loop
+            return access_token("loop-bound")
+
+        return request()
+
+    async def close(self):
+        pass
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *_):
+        pass
+
+
+@pytest.mark.unittest
+class TestAsynchronousCredentialRequests:
+    @pytest.mark.parametrize("kind", ["chat", "decision"])
+    def test_an_asynchronous_credential_requests_its_token_on_the_callers_event_loop(self, kind):
+        make_request = {"chat": request_token, "decision": request_decision_token}[kind]
+        credential = LoopBoundAsyncCredential()
+
+        assert [make_request(credential) for _ in range(2)] == ["loop-bound"] * 2
+        assert credential.calls == 1
+
+    def test_synchronous_identity_credentials_request_tokens_on_a_worker_thread(self):
+        from azure.identity import (
+            AzureCliCredential,
+            ClientSecretCredential,
+            DefaultAzureCredential,
+            ManagedIdentityCredential,
+        )
+        from azure.identity.aio import AzureCliCredential as AsyncAzureCliCredential
+
+        synchronous = [
+            AzureCliCredential(),
+            ClientSecretCredential("tenant", "client", "secret"),
+            DefaultAzureCredential(exclude_shared_token_cache_credential=True),
+            ManagedIdentityCredential(),
+            Credential(access_token("sync")),
+        ]
+
+        assert not any(is_async_credential(credential) for credential in synchronous)
+        assert is_async_credential(AsyncAzureCliCredential())
+        assert is_async_credential(LoopBoundAsyncCredential())

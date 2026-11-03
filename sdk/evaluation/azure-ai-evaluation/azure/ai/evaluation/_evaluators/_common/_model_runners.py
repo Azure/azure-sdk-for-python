@@ -25,9 +25,8 @@ from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy, CustomHookPolicy
 from azure.core.pipeline.transport import AioHttpTransport
 
-from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._legacy._common._token_cache import TOKENS as _TOKENS
+from azure.ai.evaluation._legacy._common._token_cache import TOKENS as _TOKENS, is_async_credential
 from ..._common.utils import construct_prompty_model_config, validate_model_config
 from ..._http_utils import get_async_http_client
 
@@ -48,9 +47,10 @@ except ImportError:
 
 DECISION_MODEL_TYPE = "decision"
 _DECISION_PATH = "/providers/microsoft/v1/systemone"
-# The scope chat model requests use. Decision endpoints accept it, so a credential shared by chat and Decision
-# evaluators needs one token.
-_MODEL_TOKEN_SCOPE = TokenScope.COGNITIVE_SERVICES_MANAGEMENT.value
+# Decision endpoints also accept the chat scope, https://ai.azure.com/.default, but the hosted evaluation service
+# relies on this audience to call Decision with its exchanged or managed identity token rather than the caller's own
+# token, so Decision requests keep this scope and their own cached token.
+_DECISION_TOKEN_SCOPE = "https://cognitiveservices.azure.com/.default"
 LOGGER = logging.getLogger(__name__)
 _PREFIX = "azure.ai.evaluation.decision."
 _DECISION_CONFIG_KEYS = {
@@ -717,6 +717,9 @@ class DecisionModelRunner:
     async def _get_token(self, deadline: float) -> Optional[str]:
         """Return a bearer token, or None when the deadline passed while waiting for another request's token.
 
+        A credential whose ``get_token`` is a coroutine function, or that implements ``AsyncTokenCredential``, is
+        asked on this event loop; any other credential is asked on a worker thread, once for concurrent requests.
+
         :param float deadline: Absolute ``time.monotonic()`` instant by which the request must complete, not a
             duration or a wall-clock time; the caller derives it from the request timeout.
         :return: The bearer token, or None when the deadline passed while this request waited for a token that
@@ -724,14 +727,17 @@ class DecisionModelRunner:
         :rtype: Optional[str]
         """
         credential = self._credential
-        token = _TOKENS.cached(credential, _MODEL_TOKEN_SCOPE)
+        token = _TOKENS.cached(credential, _DECISION_TOKEN_SCOPE)
         if token is None:
             # An acquisition that begins before a service rejects a token may return that token; the generation it
             # began under lets the cache refuse it.
-            generation = _TOKENS.generation(credential, _MODEL_TOKEN_SCOPE)
-            if inspect.iscoroutinefunction(credential.get_token):
-                token = await credential.get_token(_MODEL_TOKEN_SCOPE)
-                _TOKENS.store(credential, _MODEL_TOKEN_SCOPE, token, generation)
+            generation = _TOKENS.generation(credential, _DECISION_TOKEN_SCOPE)
+            if is_async_credential(credential):
+                # An asynchronous credential's token request may need this event loop.
+                token = credential.get_token(_DECISION_TOKEN_SCOPE)
+                if inspect.isawaitable(token):
+                    token = await token
+                _TOKENS.store(credential, _DECISION_TOKEN_SCOPE, token, generation)
             else:
                 abandoned = threading.Event()
                 try:
@@ -740,7 +746,7 @@ class DecisionModelRunner:
                     token = await asyncio.to_thread(
                         _TOKENS.fetch,
                         credential,
-                        _MODEL_TOKEN_SCOPE,
+                        _DECISION_TOKEN_SCOPE,
                         abandoned=abandoned,
                         deadline=deadline,
                         describe_failure=_token_failure,
@@ -751,7 +757,7 @@ class DecisionModelRunner:
                     return None
                 if inspect.isawaitable(token):
                     token = await token
-                    _TOKENS.store(credential, _MODEL_TOKEN_SCOPE, token, generation)
+                    _TOKENS.store(credential, _DECISION_TOKEN_SCOPE, token, generation)
         value = getattr(token, "token", None)
         if not isinstance(value, str):
             raise _failed("Could not acquire a token for the decision model.", ErrorBlame.USER_ERROR)
@@ -827,7 +833,7 @@ class DecisionModelRunner:
         if status != 200:
             if status == 401 and token is not None:
                 # A rejected token is not reused.
-                _TOKENS.discard(self._credential, _MODEL_TOKEN_SCOPE, token)
+                _TOKENS.discard(self._credential, _DECISION_TOKEN_SCOPE, token)
             blame = ErrorBlame.USER_ERROR if status in (400, 401, 403, 404, 422) else ErrorBlame.SYSTEM_ERROR
             code = _provider_error_code(payload)
             kind = _provider_error_kind(status, payload)
