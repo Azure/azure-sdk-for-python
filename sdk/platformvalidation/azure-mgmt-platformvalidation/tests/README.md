@@ -30,12 +30,12 @@ not replay of an existing completed run.
 Catalog tests, categories and child versions follow the subscription-scoped ARM
 contract. Expected IDs use the framework's configured subscription:
 `/subscriptions/{subscriptionId}/providers/Microsoft.PlatformValidation/...`.
-The current deployment and published recordings instead return provider-global
-IDs beginning `/providers/Microsoft.PlatformValidation/`. Both recorded catalog
-scenarios therefore fail strict identity assertions, reproducing the service
-contract mismatch observed in Go and JavaScript. No fallback or expected-failure
-masking is applied. Refresh and publish recordings after the service is corrected;
-do not rewrite recorded responses to make the assertions pass.
+Sweden Central live catalog verification now passes the strict subscription-scoped
+identity assertions. Catalog and provider-discovery recordings were refreshed
+after the service correction; the other sixteen scenario recordings were retained
+unchanged. This does not establish fresh Sweden lifecycle/boot execution or rollout
+to other regions. No fallback, expected-failure masking or rewritten responses are
+used to make assertions pass.
 Description-only PATCH tests verify that omitted tags and configuration are preserved.
 
 Run serially; do not re-submit an existing execution merely to test its

@@ -3,11 +3,31 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import json
+import re
 from types import SimpleNamespace
 
 import pytest
 
 from test_catalog import TestCatalog as CatalogTestCase
+import test_catalog
+
+
+def test_catalog_sanitizes_nested_contacts_without_changing_ids(monkeypatch):
+    patterns = []
+    monkeypatch.setattr(test_catalog, "add_general_regex_sanitizer", lambda **_: None)
+    monkeypatch.setattr(test_catalog, "add_body_key_sanitizer", lambda **_: None)
+    monkeypatch.setattr(test_catalog, "add_body_regex_sanitizer", lambda **options: patterns.append(options))
+    test_catalog.sanitize_catalog()
+    resource_id = "/subscriptions/example/providers/Microsoft.PlatformValidation/validationTests/boot"
+    text = json.dumps(
+        {"id": resource_id, "properties": {"contact": "owner@example.com", "reviewer": "a.b@example.org"}}
+    )
+    for options in patterns:
+        text = re.sub(options["regex"], options["value"], text)
+    result = json.loads(text)
+    assert result["id"] == resource_id
+    assert result["properties"] == {"contact": "Sanitized", "reviewer": "Sanitized"}
 
 
 @pytest.mark.parametrize(

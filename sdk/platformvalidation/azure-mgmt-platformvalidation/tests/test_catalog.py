@@ -10,6 +10,7 @@ from azure.mgmt.platformvalidation.aio import PlatformValidationMgmtClient as As
 from devtools_testutils import (
     EnvironmentVariableLoader,
     add_body_key_sanitizer,
+    add_body_regex_sanitizer,
     add_general_regex_sanitizer,
     recorded_by_proxy,
 )
@@ -34,6 +35,11 @@ def sanitize_catalog():
         function_scoped=True,
     )
     add_body_key_sanitizer(json_path="$..owners[*]", value="Sanitized", function_scoped=True)
+    add_body_regex_sanitizer(
+        regex=r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}",
+        value="Sanitized",
+        function_scoped=True,
+    )
 
 
 class TestCatalog(CloudValidationTestCase):
