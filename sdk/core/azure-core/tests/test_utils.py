@@ -350,3 +350,56 @@ class TestCaseInsensitiveSet:
         assert len(s) == 1
         s.discard("foo")
         assert len(s) == 0
+
+    def test_inplace_or(self):
+        s = CaseInsensitiveSet(["Foo"])
+        s |= {"Bar"}
+        assert isinstance(s, CaseInsensitiveSet)
+        assert "Bar" in s
+        assert "bar" in s
+        s |= {"FOO"}
+        assert len(s) == 2
+
+    def test_inplace_sub(self):
+        s = CaseInsensitiveSet(["Foo", "Bar"])
+        s -= {"foo"}
+        assert isinstance(s, CaseInsensitiveSet)
+        assert "Foo" not in s
+        assert "bar" in s
+        assert len(s) == 1
+
+    def test_difference_update(self):
+        s = CaseInsensitiveSet(["Foo", "Bar", "Baz"])
+        s.difference_update(["FOO"], ["baz"])
+        assert "foo" not in s
+        assert "baz" not in s
+        assert "bar" in s
+        assert len(s) == 1
+
+    def test_intersection_update(self):
+        s = CaseInsensitiveSet(["Foo", "Bar"])
+        s.intersection_update(["FOO", "Baz"])
+        assert "Foo" in s
+        assert "Bar" not in s
+        assert list(s) == ["Foo"]
+
+        s = CaseInsensitiveSet(["Foo", "Bar"])
+        s &= {"bar"}
+        assert isinstance(s, CaseInsensitiveSet)
+        assert "Foo" not in s
+        assert "BAR" in s
+        assert len(s) == 1
+
+    def test_symmetric_difference_update(self):
+        s = CaseInsensitiveSet(["Foo", "Bar"])
+        s.symmetric_difference_update(["FOO", "Baz"])
+        assert "foo" not in s
+        assert "bar" in s
+        assert "baz" in s
+        assert len(s) == 2
+
+        s ^= {"BAZ", "Qux"}
+        assert isinstance(s, CaseInsensitiveSet)
+        assert "baz" not in s
+        assert "qux" in s
+        assert len(s) == 2
