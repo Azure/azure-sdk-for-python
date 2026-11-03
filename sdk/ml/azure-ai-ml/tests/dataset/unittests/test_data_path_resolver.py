@@ -229,6 +229,78 @@ def test_key_backed_definition_uses_datastore_secret(operations, blob_storage):
     assert blob_storage[1].call_args.kwargs["credential"] == "temporary-sas"
 
 
+@pytest.mark.parametrize(
+    "endpoint",
+    ["core.windows.net.attacker.example", "core.windows.net@attacker.example", "core.usgovcloudapi.net"],
+)
+def test_untrusted_endpoint_rejected_before_credentials_or_storage(operations, blob_storage, endpoint):
+    operations.stores["blob"].endpoint = endpoint
+    operations.stores["blob"].credentials = AccountKeyConfiguration(account_key="not-used-directly")
+    with pytest.raises(ValidationException, match="configured Azure cloud"):
+        _DataPathResolver(operations, True).resolve("azureml://datastores/blob/paths/folder/")
+    operations._list_secrets.assert_not_called()
+    blob_storage[1].assert_not_called()
+
+
+@pytest.mark.parametrize("account", ["account.evil", "account@attacker.example", "account/evil", "account?evil"])
+def test_invalid_account_rejected_before_credentials_or_storage(operations, blob_storage, account):
+    operations.stores["blob"].account_name = account
+    operations.stores["blob"].credentials = AccountKeyConfiguration(account_key="not-used-directly")
+    with pytest.raises(ValidationException, match="configured Azure cloud"):
+        _DataPathResolver(operations, True).resolve("azureml://datastores/blob/paths/folder/")
+    operations._list_secrets.assert_not_called()
+    blob_storage[1].assert_not_called()
+
+
+def test_nested_untrusted_endpoint_rejected_before_credential_use(operations, blob_storage):
+    operations.stores["untrusted"] = AzureBlobDatastore(
+        name="untrusted",
+        account_name="account",
+        container_name="container",
+        endpoint="core.windows.net.attacker.example",
+        credentials=AccountKeyConfiguration(account_key="not-used-directly"),
+    )
+    blob_storage[0]["root/MLTable"] = b"paths:\n- folder: azureml://datastores/untrusted/paths/data"
+    with pytest.raises(ValidationException, match="configured Azure cloud"):
+        _DataPathResolver(operations, True).resolve("azureml://datastores/blob/paths/root/")
+    operations._list_secrets.assert_not_called()
+    assert len(blob_storage[1].call_args_list) == 1
+
+
+def test_custom_endpoint_metadata_only_does_not_use_credentials(operations, blob_storage):
+    operations.stores["blob"].endpoint = "custom.example"
+    result = _DataPathResolver(operations, False).resolve("azureml://datastores/blob/paths/data.csv")
+    assert result.uri == "https://account.blob.custom.example/container/data.csv"
+    operations._list_secrets.assert_not_called()
+    blob_storage[1].assert_not_called()
+
+
+@pytest.mark.parametrize("endpoint", ["core.usgovcloudapi.net", "core.chinacloudapi.cn"])
+def test_authenticated_discovery_uses_configured_cloud(operations, blob_storage, endpoint):
+    operations.stores["blob"].endpoint = endpoint
+    with patch("azure.ai.ml._utils._data_path_resolver._get_storage_endpoint_from_metadata", return_value=endpoint):
+        _DataPathResolver(operations, True).resolve("azureml://datastores/blob/paths/folder/")
+    assert blob_storage[1].call_args.args[0] == f"https://account.blob.{endpoint}"
+
+
+@pytest.mark.parametrize("follow_mltable", [False, True])
+def test_blob_paths_preserve_internal_separators(operations, blob_storage, follow_mltable):
+    blob_storage[0]["data//a.csv"] = b"correct"
+    blob_storage[0]["data/a.csv"] = b"wrong"
+    result = _DataPathResolver(operations, follow_mltable).resolve("azureml://datastores/blob/paths/data//a.csv")
+    assert result.uri == "https://account.blob.core.windows.net/container/data//a.csv"
+    if follow_mltable:
+        assert [call.args[2] for call in blob_storage[1].call_args_list] == ["data//a.csv"]
+
+
+def test_blob_definition_path_preserves_internal_separators(operations, blob_storage):
+    blob_storage[0]["data//definition/MLTable"] = b"paths:\n- file: https://example.blob.core.windows.net/c/a.csv"
+    result = _DataPathResolver(operations, True).resolve("azureml://datastores/blob/paths/data//definition/")
+    assert result.uri.endswith("/data//definition")
+    assert len(result.sources) == 1
+    assert blob_storage[1].call_args.args[2] == "data//definition/MLTable"
+
+
 def test_relative_multiple_sources_and_patterns(operations, blob_storage):
     blob_storage[0]["definition/MLTable"] = yaml.safe_dump(
         {
@@ -312,6 +384,72 @@ def test_nesting_depth_is_bounded(operations, blob_storage):
         blob_storage[0][("root/" + "child/" * depth) + "MLTable"] = b"paths:\n- folder: child"
     with pytest.raises(ValidationException, match="nesting"):
         _DataPathResolver(operations, True).resolve("azureml://datastores/blob/paths/root/")
+
+
+@pytest.mark.parametrize(
+    "leaf",
+    [
+        {"file": "data.csv"},
+        {"folder": "data"},
+        {"file": "https://example.blob.core.windows.net/container/data.csv"},
+    ],
+)
+def test_eight_definition_levels_allow_leaf_sources(operations, blob_storage, leaf):
+    for depth in range(8):
+        entry = {"folder": "child"} if depth < 7 else leaf
+        blob_storage[0][("root/" + "child/" * depth) + "MLTable"] = yaml.safe_dump({"paths": [entry]}).encode()
+    result = _DataPathResolver(operations, True).resolve("azureml://datastores/blob/paths/root/")
+    for _ in range(8):
+        result = result.sources[0]
+    assert result.path_type == next(iter(leaf))
+    assert not result.sources
+
+
+def test_relative_folder_can_reference_container_root(operations, blob_storage):
+    blob_storage[0]["definition/MLTable"] = b"paths:\n- folder: '..'"
+    result = _DataPathResolver(operations, True).resolve("azureml://datastores/blob/paths/definition/MLTable")
+    assert result.sources[0].uri == "https://account.blob.core.windows.net/container/"
+    assert blob_storage[1].call_args.args[2] == "MLTable"
+
+
+def test_repeated_definitions_are_downloaded_and_parsed_once(operations, blob_storage):
+    blob_storage[0]["root/MLTable"] = b"paths:\n- folder: child\n- folder: child"
+    blob_storage[0]["root/child/MLTable"] = b"paths:\n- file: a.csv"
+    with patch("azure.ai.ml._utils._data_path_resolver.yaml.safe_load", wraps=yaml.safe_load) as parse:
+        result = _DataPathResolver(operations, True).resolve("azureml://datastores/blob/paths/root/")
+    assert len(blob_storage[1].call_args_list) == 2
+    assert parse.call_count == 2
+    assert len(result.sources) == 2
+    assert result.sources[0] is not result.sources[1]
+    assert result.sources[0].sources[0] is not result.sources[1].sources[0]
+
+
+def test_missing_definition_probes_are_cached(operations, blob_storage):
+    blob_storage[0]["root/MLTable"] = b"paths:\n- folder: child\n- folder: child"
+    result = _DataPathResolver(operations, True).resolve("azureml://datastores/blob/paths/root/")
+    assert len(result.sources) == 2
+    assert len(blob_storage[1].call_args_list) == 2
+
+
+@pytest.mark.parametrize("kind", ["file", "folder", "pattern", "external"])
+def test_shared_traversal_budget_bounds_wide_source_lists(operations, blob_storage, kind):
+    entry = (
+        {"file": "https://example.blob.core.windows.net/container/data.csv"} if kind == "external" else {kind: "data"}
+    )
+    blob_storage[0]["root/MLTable"] = yaml.safe_dump({"paths": [entry] * 4}).encode()
+    with patch("azure.ai.ml._utils._data_path_resolver._MAX_RESOLVED_PATHS", 4):
+        with pytest.raises(ValidationException, match="resolved paths"):
+            _DataPathResolver(operations, True).resolve("azureml://datastores/blob/paths/root/")
+    assert len(blob_storage[1].call_args_list) <= 2
+
+
+def test_shared_budget_bounds_repeated_subtree_expansion(operations, blob_storage):
+    blob_storage[0]["root/MLTable"] = yaml.safe_dump({"paths": [{"folder": "child"}] * 100}).encode()
+    blob_storage[0]["root/child/MLTable"] = yaml.safe_dump({"paths": [{"folder": "child"}] * 100}).encode()
+    blob_storage[0]["root/child/child/MLTable"] = b"paths:\n- file: a.csv"
+    with pytest.raises(ValidationException, match="resolved paths"):
+        _DataPathResolver(operations, True).resolve("azureml://datastores/blob/paths/root/")
+    assert len(blob_storage[1].call_args_list) == 3
 
 
 def test_public_operation_uses_its_datastore_client(operations):

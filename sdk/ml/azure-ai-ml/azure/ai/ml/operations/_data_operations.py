@@ -143,8 +143,11 @@ class DataOperations(_ScopeDependentOperations):
         The method does not read table rows, apply transformations, or generate SAS tokens.
         Returned URIs do not carry the credentials used for resolution. Authenticate separately
         when reading them. MLTable discovery is limited to Blob-backed definitions of at most
-        1 MiB and eight levels; non-Blob source references and patterns are returned without
-        discovery or expansion. Missing optional definitions leave the location unchanged.
+        1 MiB and eight definition levels, with at most 1024 resolved paths per call.
+        Non-Blob source references and patterns are returned without discovery or expansion.
+        Authenticated discovery only accesses the configured Azure cloud's Blob endpoints;
+        custom endpoints require metadata-only resolution. Missing optional definitions
+        leave the location unchanged.
 
         :param path: AML datastore path URI. Asset IDs are not accepted; pass a retrieved asset's path.
         :type path: str

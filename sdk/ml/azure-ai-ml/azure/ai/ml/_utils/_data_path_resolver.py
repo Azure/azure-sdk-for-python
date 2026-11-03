@@ -6,6 +6,7 @@
 
 import logging
 import posixpath
+import re
 from typing import TYPE_CHECKING, Any, Dict, Optional, Set, Tuple
 from urllib.parse import quote, unquote, urlsplit
 from uuid import UUID
@@ -29,6 +30,7 @@ if TYPE_CHECKING:
 module_logger = logging.getLogger(__name__)
 _MAX_DEFINITION_BYTES = 1024 * 1024
 _MAX_DEPTH = 8
+_MAX_RESOLVED_PATHS = 1024
 
 
 def _invalid(message: str) -> ValidationException:
@@ -48,14 +50,16 @@ def _is_guid(value: str) -> bool:
         return False
 
 
-def _relative_path(path: str) -> str:
+def _relative_path(path: str, *, normalize: bool = False) -> str:
     path = unquote(path)
     if path.startswith("/") or "\\" in path:
         raise _invalid("Data paths must be relative to the datastore root and use forward slashes.")
     normalized = posixpath.normpath(path)
     if normalized == ".." or normalized.startswith("../"):
         raise _invalid("Data path escapes the datastore root.")
-    return "" if normalized == "." else normalized
+    if normalize:
+        return "" if normalized == "." else normalized
+    return "" if path == "." else path.rstrip("/")
 
 
 def _storage_uri(store: Datastore, path: str) -> str:
@@ -96,6 +100,20 @@ class _DataPathResolver:
         self._operations = datastore_operations
         self._follow_mltable = follow_mltable
         self._stores: Dict[str, Datastore] = {}
+        self._definitions: Dict[Tuple[str, str, bool], Optional[Dict[str, Any]]] = {}
+        self._remaining_paths = _MAX_RESOLVED_PATHS
+
+    def _consume_path(self) -> None:
+        if self._remaining_paths == 0:
+            raise _invalid("MLTable resolution exceeds the maximum of 1024 resolved paths.")
+        self._remaining_paths -= 1
+
+    def _get_datastore(self, name: str) -> Datastore:
+        key = name.casefold()
+        if key not in self._stores:
+            module_logger.info("Retrieving AML datastore metadata.")
+            self._stores[key] = self._operations.get(name)
+        return self._stores[key]
 
     def resolve(
         self,
@@ -115,12 +133,8 @@ class _DataPathResolver:
         relative = _relative_path(uri.path)
         key = (uri.datastore.casefold(), relative)
         ancestors = ancestors or set()
-        if key in ancestors or len(ancestors) >= _MAX_DEPTH:
-            raise _invalid("MLTable reference cycle or maximum nesting depth reached.")
-        if key[0] not in self._stores:
-            module_logger.info("Retrieving AML datastore metadata.")
-            self._stores[key[0]] = self._operations.get(uri.datastore)
-        store = self._stores[key[0]]
+        self._consume_path()
+        store = self._get_datastore(uri.datastore)
         result = ResolvedDataPath(uri=_storage_uri(store, relative), path_type=path_type)
         module_logger.info("Resolved datastore path using %s metadata.", type(store).__name__)
 
@@ -130,6 +144,8 @@ class _DataPathResolver:
         definition = self._read_definition(store, relative, folder=path_type == "folder" or uri.path.endswith("/"))
         if definition is None:
             return result
+        if key in ancestors or len(ancestors) >= _MAX_DEPTH:
+            raise _invalid("MLTable reference cycle or maximum nesting depth reached.")
         entries = definition.get("paths")
         transformations = definition.get("transformations", [])
         if (
@@ -149,8 +165,10 @@ class _DataPathResolver:
                 raise _invalid("MLTable paths must be nonempty file, folder, or pattern strings.")
             target_scheme = urlsplit(target).scheme
             if not target_scheme:
-                target_relative = _relative_path(posixpath.join(quote(parent, safe="/"), target))
-                target = "azureml://datastores/{}/paths/{}".format(uri.datastore, quote(target_relative, safe="/*"))
+                target_relative = _relative_path(posixpath.join(quote(parent, safe="/"), target), normalize=True)
+                target = "azureml://datastores/{}/paths/{}".format(
+                    uri.datastore, quote(target_relative or ".", safe="/*")
+                )
             elif target_scheme != "azureml":
                 if target_scheme not in ("https", "abfss", "wasbs", "adl"):
                     raise _invalid("Unsupported storage URI scheme in MLTable source.")
@@ -164,6 +182,7 @@ class _DataPathResolver:
                     or (target_parts.scheme == "https" and target_parts.username)
                 ):
                     raise _invalid("MLTable source URIs must not contain credentials, queries, or fragments.")
+                self._consume_path()
                 result.sources.append(ResolvedDataPath(uri=target, path_type=kind))
                 continue
             result.sources.append(self.resolve(target, path_type=kind, ancestors=ancestors | {key}))
@@ -182,6 +201,24 @@ class _DataPathResolver:
                 raise _invalid("URI scope differs from MLClient. Use a client configured for that workspace.")
 
     def _read_definition(self, store: AzureBlobDatastore, path: str, *, folder: bool) -> Optional[Dict[str, Any]]:
+        key = (store.name.casefold(), path, folder)
+        if key not in self._definitions:
+            self._definitions[key] = self._download_definition(store, path, folder=folder)
+        return self._definitions[key]
+
+    def _download_definition(self, store: AzureBlobDatastore, path: str, *, folder: bool) -> Optional[Dict[str, Any]]:
+        trusted_endpoint = _get_storage_endpoint_from_metadata()
+        endpoint = store.endpoint or trusted_endpoint
+        if (
+            not trusted_endpoint
+            or endpoint.casefold() != trusted_endpoint.casefold()
+            or not re.fullmatch(r"[a-z0-9]{3,24}", store.account_name)
+        ):
+            raise _invalid(
+                "Authenticated MLTable discovery requires a storage account in the configured Azure cloud. "
+                "Use follow_mltable=False for metadata-only resolution of custom endpoints."
+            )
+        account_url = "https://{}.blob.{}".format(store.account_name, trusted_endpoint)
         explicit = posixpath.basename(path) == "MLTable"
         read_credential = self._operations._credential
         if store.credentials and not isinstance(
@@ -191,9 +228,6 @@ class _DataPathResolver:
             read_credential = getattr(secrets, "sas_token", None) or getattr(secrets, "key", None)
             if not read_credential:
                 raise _invalid("Datastore does not provide a supported Blob credential.")
-        account_url = "https://{}.blob.{}".format(
-            store.account_name, store.endpoint or _get_storage_endpoint_from_metadata()
-        )
         if not folder and not explicit and path:
             with BlobClient(account_url, store.container_name, path, credential=read_credential) as blob:
                 try:
