@@ -46,7 +46,7 @@ extends:
     # must be scanned
     EnableCompiledCodeql: true
     InstallMsRustToolchain: true
-    MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/storage
+    MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/storage/azure-storage-extensions-transfer
     MsRustToolchainFeed: https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json
     MsRustAdditionalTargets: aarch64-pc-windows-msvc
     Artifacts:
