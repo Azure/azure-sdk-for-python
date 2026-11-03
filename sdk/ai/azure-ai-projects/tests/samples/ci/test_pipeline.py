@@ -205,7 +205,6 @@ def test_provisioning_uses_shared_variant_without_worker_iam_writes():
     directory = Path(__file__).resolve().parent
     source = (directory / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
     assert source.index("Get-SampleSharedIdentities -Plan $plan") < source.index("$state = @{")
-    assert source.index("Assert-SampleSharedIdentityGrants -Plan $plan") < source.index("$state = @{")
     assert source.index("Set-Content -LiteralPath $StatePath") < source.index("@('deployment', 'sub', 'create')")
     assert "[Parameter(Mandatory)] [string] $StandardTemplatePath" not in source
     helper = (directory / "SampleCiHelpers.ps1").read_text(encoding="utf-8")
@@ -296,7 +295,6 @@ def test_batch_admission_retains_guards_without_querying_ado():
     for guard in (
         "Set-SampleSubscriptionContext",
         "Get-SampleSharedIdentities",
-        "Assert-SampleSharedIdentityGrants",
         "Assert-SampleBatchCapacity",
     ):
         assert guard in admission
@@ -335,15 +333,6 @@ def test_function_infrastructure_is_always_provisioned_using_resolved_inputs():
     assert '"sharedFunctionIdentityResourceId=$($identities.function.resourceId)"' in provisioning
     assert "Test-SampleFunctionRequired" not in provisioning
     assert "$requiresFunction" not in provisioning
-    prerequisites = json.loads((directory / "infra/prerequisites.json").read_text(encoding="utf-8"))
-    assert "Microsoft.Web" in prerequisites["providers"]
-    assert "$namespaces = (Get-SamplePrerequisites).providers" in provisioning
-    grant_checks = [
-        line.strip()
-        for line in provisioning.splitlines()
-        if line.strip().startswith("Assert-SampleSharedIdentityGrants ")
-    ]
-    assert len(grant_checks) == 2
     assert "requiredEnvironment" not in provisioning
     helper = (directory / "SampleCiHelpers.ps1").read_text(encoding="utf-8")
     assert "Test-SampleFunctionRequired" not in helper

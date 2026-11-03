@@ -43,10 +43,6 @@ Describe 'Provisioning rejects ineligible regions before mutation' {
                             user = @{ type = 'servicePrincipal'; name = '33333333-3333-3333-3333-333333333333' } } | ConvertTo-Json -Compress)
                     }
                     if ($args[0] -eq 'group' -and $args[1] -eq 'exists') { return 'false' }
-                    if ($args[0] -eq 'provider' -and $args[1] -eq 'list') {
-                        return (ConvertTo-Json -InputObject @('Microsoft.CognitiveServices', 'Microsoft.Storage', 'Microsoft.DocumentDB', 'Microsoft.Search', 'Microsoft.Web' |
-                            ForEach-Object { @{ namespace = $_; state = 'Registered' } }))
-                    }
                     if ($args[0] -eq 'rest' -and $args[2] -eq 'get') {
                         return '{"value":[{"regionName":"westus3","skus":[]}]}'
                     }
@@ -60,6 +56,7 @@ Describe 'Provisioning rejects ineligible regions before mutation' {
             $failure | Should Match 'AI Search S1 is not offered'
             Test-Path -LiteralPath $statePath | Should Be $false
             @($calls | Where-Object { $_ -match '\b(create|delete|set|register)\b' }).Count | Should Be 0
+            @($calls | Where-Object { $_ -match '^provider |Microsoft.Authorization/roleAssignments' }).Count | Should Be 0
         } finally {
             $env:AZURE_SUBSCRIPTION_ID = $previousSubscription
             $env:AZURE_TENANT_ID = $previousTenant

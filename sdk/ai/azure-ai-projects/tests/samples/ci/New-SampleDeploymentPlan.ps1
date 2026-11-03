@@ -77,4 +77,4 @@ Write-Host 'Output validation uses an existing project supplied by the LLM_VALID
 Write-Host 'GitHub MCP connection: always provisioned; the PAT is never stored in this plan.'
 Write-Host 'Function App, hosting plan, queues and handler code: always provisioned for every active queue.'
 Write-Host 'Public networking. Resources incur charges until cleanup completes.'
-Write-Host 'This offline preview is not ARM what-if. A live run checks identity, providers, regional dependency eligibility and model/account quota before provisioning.'
+Write-Host 'This offline preview is not ARM what-if. A live run checks identity, regional dependency eligibility and model/account quota before provisioning.'

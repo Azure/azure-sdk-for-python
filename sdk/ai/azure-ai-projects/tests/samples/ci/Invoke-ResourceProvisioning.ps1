@@ -7,7 +7,7 @@
 Validates infrastructure plans and provisions Azure resources for any SDK language.
 
 .DESCRIPTION
-Admission mode resolves shared identities and checks existing grants and batch capacity
+Admission mode resolves shared identities and checks batch capacity
 before provisioning workers start. Provision mode requires -ConfirmProvisioning, creates
 a fresh run-owned resource group, and deploys the complete resource bundle: Foundry,
 Storage, Cosmos DB, Search, model and MCP resources, and a Function App with its published
@@ -39,7 +39,7 @@ if ($PSCmdlet.ParameterSetName -eq 'Admission') {
         Assert-SampleRunPlan -Plan $item -QueueName $queue
         $item
     })
-    $runner = Set-SampleSubscriptionContext -Plan $plans[0]
+    $null = Set-SampleSubscriptionContext -Plan $plans[0]
     # Resolve each immutable offline name intent before any capacity check/write.
     # No unresolved artifact is ever used by provisioning workers.
     $resolvedPlans = @()
@@ -49,8 +49,7 @@ if ($PSCmdlet.ParameterSetName -eq 'Admission') {
         } else { $item })
     }
     $plans = $resolvedPlans
-    $identities = Get-SampleSharedIdentities -Plan $plans[0]
-    Assert-SampleSharedIdentityGrants -Plan $plans[0] -Identities $identities -RunnerPrincipalId $runner.principalId
+    $null = Get-SampleSharedIdentities -Plan $plans[0]
     Assert-SampleBatchCapacity -Plans $plans
     if ($ResolvedPlanDirectory) {
         # Workers consume these resolved plans, not a second identity lookup that could select different identities.
@@ -76,18 +75,8 @@ $subscription = Get-SampleSubscriptionId
 $exists = Invoke-SampleAzure -Arguments @('group', 'exists', '--name', $plan.resourceGroup, '--subscription', $subscription)
 if ($exists) { throw 'The generated resource group already exists. No existing group will be reused, retagged, or deleted.' }
 
-# Provider registration and identity grants are administrator-owned prerequisites, not worker-side repairs.
-$providers = @(Invoke-SampleAzure -Arguments @('provider', 'list', '--subscription', $subscription,
-    '--query', '[].{namespace:namespace,state:registrationState}'))
-$namespaces = (Get-SamplePrerequisites).providers
-foreach ($namespace in $namespaces) {
-    if (@($providers | Where-Object { $_.namespace -eq $namespace -and $_.state -eq 'Registered' }).Count -ne 1) {
-        throw "Provider '$namespace' must already be registered by an administrator; nothing has been provisioned."
-    }
-}
 Assert-SampleRegionAvailability -SubscriptionId $subscription -Location $plan.location
 $identities = Get-SampleSharedIdentities -Plan $plan
-Assert-SampleSharedIdentityGrants -Plan $plan -Identities $identities -RunnerPrincipalId $runnerIdentity.principalId
 
 # Recheck live availability after batch admission because another deployment may have consumed capacity.
 $catalog = @(Invoke-SampleAzure -Arguments @('cognitiveservices', 'model', 'list', '--location', $plan.location, '--subscription', $subscription))

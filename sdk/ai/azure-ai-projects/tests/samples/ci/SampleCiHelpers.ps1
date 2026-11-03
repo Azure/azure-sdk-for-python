@@ -100,23 +100,6 @@ function Assert-SampleEnvironment {
     }
 }
 
-function Get-SamplePrerequisites {
-    $configuration = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'infra/prerequisites.json') -Raw | ConvertFrom-Json -AsHashtable
-    if ($configuration['schemaVersion'] -ne 1 -or @($configuration['providers']).Count -eq 0 -or
-        $configuration['identityGrants'] -isnot [System.Collections.IList]) {
-        throw 'Invalid infrastructure prerequisite configuration.'
-    }
-    foreach ($namespace in $configuration.providers) {
-        if ($namespace -cnotmatch '^Microsoft\.[A-Za-z0-9]+$') { throw 'Invalid prerequisite provider namespace.' }
-    }
-    foreach ($grant in $configuration.identityGrants) {
-        if ($grant['purpose'] -cnotin @('project', 'account', 'search', 'function') -or
-            $grant['role'] -notmatch '^[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}$' -or
-            [string]::IsNullOrWhiteSpace($grant['name'])) { throw 'Invalid prerequisite identity grant.' }
-    }
-    return $configuration
-}
-
 function Get-SampleSubscriptionId {
     param([AllowNull()] [AllowEmptyString()] [string] $SubscriptionId = $env:AZURE_SUBSCRIPTION_ID)
 
@@ -347,32 +330,6 @@ function Resolve-SampleIdentitySelection {
     return $resolved
 }
 
-function Get-SampleBlobOwnerCondition {
-    # One-time, explicitly approved shared-subscription variant of the pinned workspace condition.
-    return "((!(ActionMatches{'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/read'})  AND  !(ActionMatches{'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/filter/action'}) AND  !(ActionMatches{'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/write'}) ) OR (@Resource[Microsoft.Storage/storageAccounts/blobServices/containers:name] StringLikeIgnoreCase '*-azureml-agent'))"
-}
-
-function Get-SampleProjectRoleIds {
-    return @('53ca6127-db72-4b80-b1b0-d745d6d5456d', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe',
-        'b7e6dc6d-f1e8-4753-8033-0f276bb0955b', '230815da-be43-4aae-9cb4-875f7bd000aa',
-        '7ca78c08-252a-4471-8644-bb5ff32d4ba0', '8ebe5a00-799e-43f5-93ac-243d3dce84a7')
-}
-
-function Get-SampleSubscriptionAssignments {
-    param([Parameter(Mandatory)] [string] $SubscriptionId)
-
-    $uri = 'https://management.azure.com/subscriptions/' + (Get-SampleSubscriptionId -SubscriptionId $SubscriptionId) +
-        '/providers/Microsoft.Authorization/roleAssignments?api-version=2022-04-01'
-    $assignments = @()
-    do {
-        if ($uri -notmatch '^https://management\.azure\.com/') { throw 'Unexpected authorization metadata host.' }
-        $page = Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--subscription', $SubscriptionId, '--url', $uri) -Sensitive
-        $assignments += @($page['value'])
-        $uri = [string] $page['nextLink']
-    } while ($uri)
-    return $assignments
-}
-
 function Get-SampleSharedIdentities {
     param([Parameter(Mandatory)] [hashtable] $Plan)
 
@@ -453,42 +410,6 @@ function Publish-SampleFunctionApp {
         throw 'The published Function App did not index queue_trigger after 30 checks; sample execution is disabled.'
     } finally {
         if (Test-Path -LiteralPath $zipPath) { Remove-Item -LiteralPath $zipPath -Force }
-    }
-}
-
-function Assert-SampleSharedIdentityGrants {
-    param([Parameter(Mandatory)] [hashtable] $Plan, [Parameter(Mandatory)] [hashtable] $Identities,
-        [Parameter(Mandatory)] [string] $RunnerPrincipalId)
-
-    $scope = '/subscriptions/' + $Plan.subscriptionId
-    $assignments = @(Get-SampleSubscriptionAssignments -SubscriptionId $Plan.subscriptionId)
-    foreach ($role in @(Get-SampleProjectRoleIds)) {
-        $matching = @($assignments | Where-Object {
-            $_['properties']['principalId'] -ieq $Identities.project.principalId -and
-            $_['properties']['scope'] -ieq $scope -and $_['properties']['roleDefinitionId'] -ieq "$scope/providers/Microsoft.Authorization/roleDefinitions/$role"
-        })
-        $condition = if ($role -eq 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b') { Get-SampleBlobOwnerCondition } else { '' }
-        if ($matching.Count -ne 1 -or [string] $matching[0]['properties']['condition'] -cne $condition -or
-            ($condition -and $matching[0]['properties']['conditionVersion'] -cne '2.0')) {
-            throw 'The approved shared project-identity service grants are missing or differ; no resources were changed.'
-        }
-    }
-    $callerAccess = @($assignments | Where-Object {
-        $_['properties']['principalId'] -ieq $RunnerPrincipalId -and $_['properties']['scope'] -ieq $scope -and
-        $_['properties']['roleDefinitionId'] -ieq "$scope/providers/Microsoft.Authorization/roleDefinitions/53ca6127-db72-4b80-b1b0-d745d6d5456d" -and
-        -not $_['properties']['condition']
-    })
-    if ($callerAccess.Count -ne 1) { throw 'Preconfigure the pipeline Foundry User grant; workers never create Azure IAM assignments.' }
-    foreach ($grant in (Get-SamplePrerequisites).identityGrants) {
-        $matching = @($assignments | Where-Object {
-            $_['properties']['principalId'] -ieq $Identities[$grant.purpose].principalId -and
-            $_['properties']['scope'] -ieq $scope -and
-            $_['properties']['roleDefinitionId'] -ieq "$scope/providers/Microsoft.Authorization/roleDefinitions/$($grant.role)" -and
-            -not $_['properties']['condition']
-        })
-        if ($matching.Count -ne 1) {
-            throw "Preconfigure $($grant.name) for the shared $($grant.purpose) identity at the subscription scope before provisioning; no resources were changed."
-        }
     }
 }
 

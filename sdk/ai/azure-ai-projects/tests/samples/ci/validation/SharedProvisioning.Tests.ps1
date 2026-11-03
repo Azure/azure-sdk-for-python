@@ -73,9 +73,4 @@ output environment object = {
         { Assert-SampleEnvironment -Environment $Environment -Names $Names } | Should Throw
     }
 
-    It 'keeps the existing storage grants declarative and subscription checks read-only' {
-        $configuration = Get-SamplePrerequisites
-        $configuration.providers -contains 'Microsoft.Web' | Should Be $true
-        $configuration.identityGrants.Count | Should Be 3
-    }
 }

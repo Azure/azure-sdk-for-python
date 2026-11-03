@@ -264,7 +264,7 @@ if (($functionNames -join ',') -cne ($expectedFunctionNames -join ',') -or
 }
 Write-Host 'Standalone Function App template compiled; reference defaults, shared identity, keyless settings, and non-secret outputs verified.'
 
-# The root is the extensibility boundary: modules, providers and bindings must stay in sync.
+# The root is the extensibility boundary: modules and bindings must stay in sync.
 $bundle = Invoke-BicepCompilation -Path (Join-Path $infra 'main.bicep')
 $bundleResources = @(Get-ArmResources -Template $bundle)
 Assert-NoArmRoleAssignments -Resources $bundleResources
@@ -278,13 +278,7 @@ foreach ($resource in $bundleResources) {
         throw 'Resource bundle modules must be unconditional; test selection never chooses infrastructure.'
     }
 }
-$requiredProviders = @($bundleResources | Where-Object { $_.Type -ine 'Microsoft.Resources/deployments' } |
-    ForEach-Object { $_.Type.Split('/')[0] } | Sort-Object -Unique)
-$configuredProviders = (Get-SamplePrerequisites).providers
-foreach ($namespace in $requiredProviders) {
-    if ($namespace -cnotin $configuredProviders) { throw "Declare prerequisite provider '$namespace' in infra/prerequisites.json." }
-}
-Write-Host 'Complete resource bundle compiled; unconditional modules, environment contract, provider prerequisites and zero worker IAM verified.'
+Write-Host 'Complete resource bundle compiled; unconditional modules, environment contract and zero worker IAM verified.'
 
 # Optional, separate provenance check. The parent downloader remains responsible
 # for fetching the original 14 pinned files; this checker never downloads or patches them.
