@@ -63,14 +63,7 @@
         "azure.healthinsights.radiologyinsights.models.ScoringAndAssessmentInference": "AzureHealthInsights.ScoringAndAssessmentInference",
         "azure.healthinsights.radiologyinsights.models.SexMismatchInference": "AzureHealthInsights.SexMismatchInference",
         "azure.healthinsights.radiologyinsights.models.TimePeriod": "AzureHealthInsights.TimePeriod",
-        "azure.healthinsights.radiologyinsights.models.PatientSex": "AzureHealthInsights.PatientSex",
-        "azure.healthinsights.radiologyinsights.models.EncounterClass": "AzureHealthInsights.EncounterClass",
-        "azure.healthinsights.radiologyinsights.models.DocumentType": "AzureHealthInsights.DocumentType",
-        "azure.healthinsights.radiologyinsights.models.ClinicalDocumentType": "AzureHealthInsights.ClinicalDocumentType",
-        "azure.healthinsights.radiologyinsights.models.SpecialtyType": "AzureHealthInsights.SpecialtyType",
-        "azure.healthinsights.radiologyinsights.models.DocumentContentSourceType": "AzureHealthInsights.DocumentContentSourceType",
         "azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceType": "AzureHealthInsights.RadiologyInsightsInferenceType",
-        "azure.healthinsights.radiologyinsights.models.QualityMeasureType": "AzureHealthInsights.QualityMeasureType",
         "azure.healthinsights.radiologyinsights.models.ObservationStatusCodeType": "Fhir.R4.ObservationStatusCodeType",
         "azure.healthinsights.radiologyinsights.models.MedicalProfessionalType": "AzureHealthInsights.MedicalProfessionalType",
         "azure.healthinsights.radiologyinsights.models.RecommendationFindingStatusType": "AzureHealthInsights.RecommendationFindingStatusType",
@@ -78,6 +71,13 @@
         "azure.healthinsights.radiologyinsights.models.LateralityDiscrepancyType": "AzureHealthInsights.LateralityDiscrepancyType",
         "azure.healthinsights.radiologyinsights.models.QualityMeasureComplianceType": "AzureHealthInsights.QualityMeasureComplianceType",
         "azure.healthinsights.radiologyinsights.models.ScoringAndAssessmentCategoryType": "AzureHealthInsights.ScoringAndAssessmentCategoryType",
+        "azure.healthinsights.radiologyinsights.models.PatientSex": "AzureHealthInsights.PatientSex",
+        "azure.healthinsights.radiologyinsights.models.EncounterClass": "AzureHealthInsights.EncounterClass",
+        "azure.healthinsights.radiologyinsights.models.DocumentType": "AzureHealthInsights.DocumentType",
+        "azure.healthinsights.radiologyinsights.models.ClinicalDocumentType": "AzureHealthInsights.ClinicalDocumentType",
+        "azure.healthinsights.radiologyinsights.models.SpecialtyType": "AzureHealthInsights.SpecialtyType",
+        "azure.healthinsights.radiologyinsights.models.DocumentContentSourceType": "AzureHealthInsights.DocumentContentSourceType",
+        "azure.healthinsights.radiologyinsights.models.QualityMeasureType": "AzureHealthInsights.QualityMeasureType",
         "azure.healthinsights.radiologyinsights.models.JobStatus": "AzureHealthInsights.JobStatus",
         "azure.healthinsights.radiologyinsights.models.ResearchStudyStatusCodeType": "Fhir.R4.ResearchStudyStatusCodeType",
         "azure.healthinsights.radiologyinsights.models.ContactPointSystem": "Fhir.R4.ContactPointSystem",
@@ -85,5 +85,5 @@
         "azure.healthinsights.radiologyinsights.RadiologyInsightsClient.begin_infer_radiology_insights": "ClientForAzureHealthInsights.RadiologyInsightsClient.inferRadiologyInsights",
         "azure.healthinsights.radiologyinsights.aio.RadiologyInsightsClient.begin_infer_radiology_insights": "ClientForAzureHealthInsights.RadiologyInsightsClient.inferRadiologyInsights"
     },
-    "CrossLanguageVersion": "14282a504b2a"
+    "CrossLanguageVersion": "726b337b7f64"
 }

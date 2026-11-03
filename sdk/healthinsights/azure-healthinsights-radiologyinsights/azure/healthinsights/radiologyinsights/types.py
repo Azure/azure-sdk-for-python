@@ -108,6 +108,10 @@ class CodeableConcept(Element):
     """Concept - reference to a terminology or just text Based on `FHIR CodeableConcept
     <https://www.hl7.org/fhir/R4/datatypes.html#CodeableConcept>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list["Extension"]
     :ivar coding: Code defined by a terminology system.
     :vartype coding: list["Coding"]
     :ivar text: Plain text representation of the concept.
@@ -301,6 +305,10 @@ class Resource(TypedDict, total=False):
 class Extension(Element):
     """Base for all elements Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list["Extension"]
     :ivar url: Source of the definition for the extension code - a logical name or a URL. Required.
     :vartype url: str
     :ivar valueQuantity: Value as Quantity.
@@ -604,6 +612,10 @@ class Identifier(Element):
     """An identifier intended for computation Based on `FHIR Identifier
     <https://www.hl7.org/fhir/R4/identifier.html>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list["Extension"]
     :ivar use: usual | official | temp | secondary | old (If known).
     :vartype use: str
     :ivar type: Description of identifier.
@@ -1240,6 +1252,10 @@ class Period(Element):
     """A time period defined by a start and end date and optionally time Based on `FHIR Period
     <https://www.hl7.org/fhir/R4/datatypes.html#Period>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list["Extension"]
     :ivar start: Starting time with inclusive boundary.
     :vartype start: str
     :ivar end: End time with inclusive boundary, if not ongoing.
@@ -1330,6 +1346,10 @@ class Quantity(Element):
     """A measured or measurable amount Based on `FHIR Quantity
     <https://www.hl7.org/fhir/R4/datatypes.html#Quantity>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list["Extension"]
     :ivar value: Numerical value (with implicit precision).
     :vartype value: float
     :ivar comparator: < | <= | >= | > - how to understand the value.
@@ -1553,6 +1573,10 @@ class Range(Element):
     """A set of ordered Quantities defined by a low and high limit Based on `FHIR Range
     <https://www.hl7.org/fhir/R4/datatypes.html#Range>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list["Extension"]
     :ivar low: Low limit.
     :vartype low: "Quantity"
     :ivar high: High limit.
@@ -1569,6 +1593,10 @@ class Ratio(Element):
     """A ratio of two Quantity values - a numerator and a denominator Based on `FHIR Ratio
     <https://www.hl7.org/fhir/R4/datatypes.html#Ratio>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list["Extension"]
     :ivar numerator: Numerator value.
     :vartype numerator: "Quantity"
     :ivar denominator: Denominator value.
@@ -1610,6 +1638,10 @@ class Reference(Element):
     """A reference from one resource to another Based on `FHIR Reference
     <https://www.hl7.org/fhir/R4/references.html>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list["Extension"]
     :ivar reference: Literal reference, Relative, internal or absolute URL.
     :vartype reference: str
     :ivar type: Type the reference refers to (e.g. "Patient").
@@ -1634,6 +1666,10 @@ class SampledData(Element):
     """A series of measurements taken by a device Based on `FHIR SampledData
     <https://www.hl7.org/fhir/R4/datatypes.html#SampledData>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list["Extension"]
     :ivar origin: Zero value and units. Required.
     :vartype origin: "Quantity"
     :ivar period: Number of milliseconds between samples. Required.

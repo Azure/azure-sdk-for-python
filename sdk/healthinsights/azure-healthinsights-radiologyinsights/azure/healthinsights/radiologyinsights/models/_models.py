@@ -236,6 +236,10 @@ class CodeableConcept(Element):  # pylint: disable=docstring-keyword-should-matc
     """Concept - reference to a terminology or just text Based on `FHIR CodeableConcept
     <https://www.hl7.org/fhir/R4/datatypes.html#CodeableConcept>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar coding: Code defined by a terminology system.
     :vartype coding: list[~azure.healthinsights.radiologyinsights.models.Coding]
     :ivar text: Plain text representation of the concept.
@@ -251,6 +255,8 @@ class CodeableConcept(Element):  # pylint: disable=docstring-keyword-should-matc
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         coding: Optional[list["_models.Coding"]] = None,
         text: Optional[str] = None,
     ) -> None: ...
@@ -692,6 +698,10 @@ class DomainResource(Resource):  # pylint: disable=docstring-keyword-should-matc
 class Extension(Element):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base for all elements Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar url: Source of the definition for the extension code - a logical name or a URL. Required.
     :vartype url: str
     :ivar value_quantity: Value as Quantity.
@@ -776,6 +786,8 @@ class Extension(Element):  # pylint: disable=docstring-keyword-should-match-keyw
         self,
         *,
         url: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         value_quantity: Optional["_models.Quantity"] = None,
         value_codeable_concept: Optional["_models.CodeableConcept"] = None,
         value_string: Optional[str] = None,
@@ -1315,6 +1327,10 @@ class Identifier(Element):  # pylint: disable=docstring-keyword-should-match-key
     """An identifier intended for computation Based on `FHIR Identifier
     <https://www.hl7.org/fhir/R4/identifier.html>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar use: usual | official | temp | secondary | old (If known).
     :vartype use: str
     :ivar type: Description of identifier.
@@ -1346,6 +1362,8 @@ class Identifier(Element):  # pylint: disable=docstring-keyword-should-match-key
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         use: Optional[str] = None,
         type: Optional["_models.CodeableConcept"] = None,
         system: Optional[str] = None,
@@ -2433,6 +2451,10 @@ class Period(Element):  # pylint: disable=docstring-keyword-should-match-keyword
     """A time period defined by a start and end date and optionally time Based on `FHIR Period
     <https://www.hl7.org/fhir/R4/datatypes.html#Period>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar start: Starting time with inclusive boundary.
     :vartype start: str
     :ivar end: End time with inclusive boundary, if not ongoing.
@@ -2448,6 +2470,8 @@ class Period(Element):  # pylint: disable=docstring-keyword-should-match-keyword
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         start: Optional[str] = None,
         end: Optional[str] = None,
     ) -> None: ...
@@ -2620,6 +2644,10 @@ class Quantity(Element):  # pylint: disable=docstring-keyword-should-match-keywo
     """A measured or measurable amount Based on `FHIR Quantity
     <https://www.hl7.org/fhir/R4/datatypes.html#Quantity>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar value: Numerical value (with implicit precision).
     :vartype value: float
     :ivar comparator: < | <= | >= | > - how to understand the value.
@@ -2647,6 +2675,8 @@ class Quantity(Element):  # pylint: disable=docstring-keyword-should-match-keywo
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         value: Optional[float] = None,
         comparator: Optional[str] = None,
         unit: Optional[str] = None,
@@ -3050,6 +3080,10 @@ class Range(Element):  # pylint: disable=docstring-keyword-should-match-keyword-
     """A set of ordered Quantities defined by a low and high limit Based on `FHIR Range
     <https://www.hl7.org/fhir/R4/datatypes.html#Range>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar low: Low limit.
     :vartype low: ~azure.healthinsights.radiologyinsights.models.Quantity
     :ivar high: High limit.
@@ -3065,6 +3099,8 @@ class Range(Element):  # pylint: disable=docstring-keyword-should-match-keyword-
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         low: Optional["_models.Quantity"] = None,
         high: Optional["_models.Quantity"] = None,
     ) -> None: ...
@@ -3084,6 +3120,10 @@ class Ratio(Element):  # pylint: disable=docstring-keyword-should-match-keyword-
     """A ratio of two Quantity values - a numerator and a denominator Based on `FHIR Ratio
     <https://www.hl7.org/fhir/R4/datatypes.html#Ratio>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar numerator: Numerator value.
     :vartype numerator: ~azure.healthinsights.radiologyinsights.models.Quantity
     :ivar denominator: Denominator value.
@@ -3099,6 +3139,8 @@ class Ratio(Element):  # pylint: disable=docstring-keyword-should-match-keyword-
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         numerator: Optional["_models.Quantity"] = None,
         denominator: Optional["_models.Quantity"] = None,
     ) -> None: ...
@@ -3170,6 +3212,10 @@ class Reference(Element):  # pylint: disable=docstring-keyword-should-match-keyw
     """A reference from one resource to another Based on `FHIR Reference
     <https://www.hl7.org/fhir/R4/references.html>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar reference: Literal reference, Relative, internal or absolute URL.
     :vartype reference: str
     :ivar type: Type the reference refers to (e.g. "Patient").
@@ -3193,6 +3239,8 @@ class Reference(Element):  # pylint: disable=docstring-keyword-should-match-keyw
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         reference: Optional[str] = None,
         type: Optional[str] = None,
         identifier: Optional["_models.Identifier"] = None,
@@ -3214,6 +3262,10 @@ class SampledData(Element):  # pylint: disable=docstring-keyword-should-match-ke
     """A series of measurements taken by a device Based on `FHIR SampledData
     <https://www.hl7.org/fhir/R4/datatypes.html#SampledData>`_.
 
+    :ivar id: Unique id for inter-element referencing.
+    :vartype id: str
+    :ivar extension: Additional Content defined by implementations.
+    :vartype extension: list[~azure.healthinsights.radiologyinsights.models.Extension]
     :ivar origin: Zero value and units. Required.
     :vartype origin: ~azure.healthinsights.radiologyinsights.models.Quantity
     :ivar period: Number of milliseconds between samples. Required.
@@ -3256,6 +3308,8 @@ class SampledData(Element):  # pylint: disable=docstring-keyword-should-match-ke
         origin: "_models.Quantity",
         period: float,
         dimensions: int,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        extension: Optional[list["_models.Extension"]] = None,
         factor: Optional[float] = None,
         lower_limit: Optional[float] = None,
         upper_limit: Optional[float] = None,
