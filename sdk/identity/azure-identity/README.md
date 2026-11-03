@@ -279,6 +279,13 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information, see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
+### Identity development branches
+
+- Target `main` for stable-ready changes and `azure-identity-beta` for preview-only Identity features.
+  Explicitly choose the correct PR target; feature branches should normally start from that target branch.
+- Promote stable-ready features to `main` through reviewed, scoped PRs; do not merge the entire
+  `azure-identity-beta` branch back into `main`.
+
 [auth_code_cred_ref]: https://aka.ms/azsdk/python/identity/authorizationcodecredential
 [az_pipelines_cred_ref]: https://aka.ms/azsdk/python/identity/azurepipelinescredential
 [azd_cli_cred_ref]: https://aka.ms/azsdk/python/identity/azuredeveloperclicredential
