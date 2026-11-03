@@ -24,6 +24,7 @@ from urllib.parse import urlsplit
 from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy, CustomHookPolicy
 from azure.core.pipeline.transport import AioHttpTransport
 
+from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._legacy._common._token_cache import TOKENS as _TOKENS
 from ..._common.utils import construct_prompty_model_config, validate_model_config
@@ -46,8 +47,9 @@ except ImportError:
 
 DECISION_MODEL_TYPE = "decision"
 _DECISION_PATH = "/providers/microsoft/v1/systemone"
-_DECISION_TOKEN_SCOPE = "https://cognitiveservices.azure.com/.default"
-_DECISION_RETRY_STATUS_CODES = [408, 429, 500, 502, 503, 504, 529]
+# The scope chat model requests use. Decision endpoints accept it, so a credential shared by chat and Decision
+# evaluators needs one token.
+_MODEL_TOKEN_SCOPE = TokenScope.COGNITIVE_SERVICES_MANAGEMENT.value
 LOGGER = logging.getLogger(__name__)
 _PREFIX = "azure.ai.evaluation.decision."
 _DECISION_CONFIG_KEYS = {
@@ -671,23 +673,30 @@ class DecisionModelRunner:
                 await asyncio.gather(task, return_exceptions=True)
 
     async def _get_token(self, deadline: float) -> Optional[str]:
-        """Return a bearer token, or None when the deadline passed while waiting for another request's token."""
+        """Return a bearer token, or None when the deadline passed while waiting for another request's token.
+
+        :param float deadline: Absolute ``time.monotonic()`` instant by which the request must complete, not a
+            duration or a wall-clock time; the caller derives it from the request timeout.
+        :return: The bearer token, or None when the deadline passed while this request waited for a token that
+            another request was acquiring.
+        :rtype: Optional[str]
+        """
         credential = self._credential
-        token = _TOKENS.cached(credential, _DECISION_TOKEN_SCOPE)
+        token = _TOKENS.cached(credential, _MODEL_TOKEN_SCOPE)
         if token is None:
             # An acquisition that begins before a service rejects a token may return that token; the generation it
             # began under lets the cache refuse it.
-            generation = _TOKENS.generation(credential, _DECISION_TOKEN_SCOPE)
+            generation = _TOKENS.generation(credential, _MODEL_TOKEN_SCOPE)
             if inspect.iscoroutinefunction(credential.get_token):
-                token = await credential.get_token(_DECISION_TOKEN_SCOPE)
-                _TOKENS.store(credential, _DECISION_TOKEN_SCOPE, token, generation)
+                token = await credential.get_token(_MODEL_TOKEN_SCOPE)
+                _TOKENS.store(credential, _MODEL_TOKEN_SCOPE, token, generation)
             else:
                 abandoned = threading.Event()
                 try:
                     token = await asyncio.to_thread(
                         _TOKENS.fetch,
                         credential,
-                        _DECISION_TOKEN_SCOPE,
+                        _MODEL_TOKEN_SCOPE,
                         abandoned=abandoned,
                         deadline=deadline,
                         describe_failure=_token_failure,
@@ -698,7 +707,7 @@ class DecisionModelRunner:
                     return None
                 if inspect.isawaitable(token):
                     token = await token
-                    _TOKENS.store(credential, _DECISION_TOKEN_SCOPE, token, generation)
+                    _TOKENS.store(credential, _MODEL_TOKEN_SCOPE, token, generation)
         value = getattr(token, "token", None)
         if not isinstance(value, str):
             raise _failed("Could not acquire a token for the decision model.", ErrorBlame.USER_ERROR)
@@ -723,13 +732,14 @@ class DecisionModelRunner:
 
         policies: Dict[str, Any] = {
             "custom_hook_policy": execution,
+            # azure-core retries 408, 429, 500, 502, 503, 504 and 506 through 998 by default; POST is opted in
+            # per request below.
             "retry_policy": AsyncRetryPolicy(
                 retry_total=self._max_retries,
                 retry_connect=self._max_retries,
                 retry_read=self._max_retries,
                 retry_status=self._max_retries,
                 retry_backoff_factor=0.8,
-                retry_on_status_codes=_DECISION_RETRY_STATUS_CODES,
             ),
             "redirect_policy": AsyncRedirectPolicy(permit_redirects=False),
         }
@@ -773,7 +783,7 @@ class DecisionModelRunner:
         if status != 200:
             if status == 401 and token is not None:
                 # A rejected token is not reused.
-                _TOKENS.discard(self._credential, _DECISION_TOKEN_SCOPE, token)
+                _TOKENS.discard(self._credential, _MODEL_TOKEN_SCOPE, token)
             blame = ErrorBlame.USER_ERROR if status in (400, 401, 403, 404, 422) else ErrorBlame.SYSTEM_ERROR
             provider_error = payload.get("error") if isinstance(payload, dict) else None
             code = provider_error.get("code") if isinstance(provider_error, dict) else None

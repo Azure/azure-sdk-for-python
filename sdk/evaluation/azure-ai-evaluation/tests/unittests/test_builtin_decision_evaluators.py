@@ -804,7 +804,7 @@ def test_qa_passes_the_credential_and_decision_controls_to_its_members(service):
         assert runner._max_retries == 1 and runner._cancellation_requested is _never_cancelled
     # Every member's request carries the forwarded credential's token, however many token requests that took.
     assert service.authorizations == ["Bearer decision-token"] * len(QA_KEYS)
-    assert credential.scopes and set(credential.scopes) == {("https://cognitiveservices.azure.com/.default",)}
+    assert credential.scopes and set(credential.scopes) == {("https://ai.azure.com/.default",)}
     assert [result[f"{key}_status"] for key in QA_KEYS] == ["completed"] * len(QA_KEYS)
     assert result["f1_score"] == pytest.approx(5 / 6)
 

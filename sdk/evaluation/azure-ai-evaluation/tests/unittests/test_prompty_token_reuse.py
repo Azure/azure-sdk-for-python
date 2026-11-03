@@ -19,6 +19,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from openai import AuthenticationError, InternalServerError
 
 import azure.ai.evaluation._evaluators._coherence as coherence
+from azure.ai.evaluation._evaluators._common import _model_runners
 from azure.ai.evaluation._common.utils import construct_prompty_model_config, validate_model_config
 from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._exceptions import EvaluationException
@@ -28,7 +29,7 @@ from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 from azure.ai.evaluation._legacy.prompty._exceptions import WrappedOpenAIError
 
 CHAT_SCOPE = TokenScope.COGNITIVE_SERVICES_MANAGEMENT
-DECISION_SCOPE = "https://cognitiveservices.azure.com/.default"
+DECISION_SCOPE = _model_runners._MODEL_TOKEN_SCOPE
 COHERENCE_PROMPTY = Path(coherence.__file__).parent / "coherence.prompty"
 CHAT_MODEL = construct_prompty_model_config(
     validate_model_config({"azure_endpoint": "https://example.openai.azure.com", "azure_deployment": "judge"}),
@@ -200,13 +201,13 @@ class TestChatTokenReuse:
         join_all([leader])
         assert len(credential.scopes) == 1
 
-    def test_chat_and_decision_tokens_are_kept_apart(self):
-        credential = Credential(access_token("chat"))
+    def test_chat_requests_reuse_a_token_a_decision_request_acquired(self):
+        credential = Credential(access_token("unused"))
         TOKENS.store(credential, DECISION_SCOPE, access_token("decision"))
 
-        assert request_token(credential) == "chat"
-        assert credential.scopes == [(CHAT_SCOPE,)]
-        assert TOKENS.cached(credential, DECISION_SCOPE).token == "decision"
+        assert request_token(credential) == "decision"
+        assert credential.scopes == []
+        assert TOKENS.cached(credential, CHAT_SCOPE).token == "decision"
 
     def test_a_failed_token_request_raises_the_credential_error_and_is_retried(self):
         credential = Credential(ClientAuthenticationError("Please run az login."), access_token("recovered"))

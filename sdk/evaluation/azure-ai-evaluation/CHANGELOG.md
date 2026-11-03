@@ -15,6 +15,10 @@
 - `_ToolCallSuccessEvaluator` no longer scores successful tool calls 0 when a chat judge model, such as gpt-4.1 or gpt-4o, puts `score` and `status` inside `properties`. The example outputs in its prompt are now valid JSON, and `score`, `status` and `reason` are read from `properties` when the output has none at the top level. A missing score is no longer reported as 0, and any score other than 0 or 1 raises a system-classified `EvaluationException`, as `_ToolInputAccuracyEvaluator` does.
 - `_ToolCallSuccessEvaluator` reports a list of messages that holds no tool calls, such as one that contains only text or only MCP approval messages, as not applicable without calling the chat or Decision judge model. Strings, text that contains `[TOOL_CALL]` or `[TOOL_RESULT]`, and messages with any other content are still sent to the judge model.
 
+### Other Changes
+
+- Decision requests request tokens for the `https://ai.azure.com/.default` scope, the scope that Azure OpenAI chat model requests use, instead of `https://cognitiveservices.azure.com/.default`. Decision endpoints accept both, and a credential shared by chat and Decision evaluators now needs one token instead of one per scope.
+
 ## 1.18.10 (2026-10-22)
 
 ### Features Added

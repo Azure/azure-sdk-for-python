@@ -29,6 +29,7 @@ from azure.core.pipeline.transport import AsyncHttpTransport, HttpResponse
 from azure.core.exceptions import ServiceRequestError
 
 from azure.ai.evaluation import CoherenceEvaluator, FluencyEvaluator
+from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._evaluators._common import EvaluatorBase, ModelEvaluatorBase, PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common import _model_runners
 from azure.ai.evaluation._evaluators._common._decision_strategy import (
@@ -153,7 +154,7 @@ def watch_token_queue(credential, requests):
     Each request reads the cache's attempt count before it queues, so a token request released after this event
     completes while every request is queued, whatever the thread scheduling.
     """
-    entry = _model_runners._TOKENS._entry(credential, _model_runners._DECISION_TOKEN_SCOPE, create=True)
+    entry = _model_runners._TOKENS._entry(credential, _model_runners._MODEL_TOKEN_SCOPE, create=True)
     lock, queued, all_queued = entry.lock, set(), threading.Event()
 
     class QueueWatchingLock:
@@ -338,7 +339,7 @@ class TestDecisionModelRunnerRequests:
         credential.get_token = AsyncMock(return_value=token) if asynchronous else Mock(return_value=token)
         config = {key: value for key, value in DECISION_CONFIG.items() if key != "api_key"}
         run(DecisionModelRunner(config, credential))
-        credential.get_token.assert_called_once_with("https://cognitiveservices.azure.com/.default")
+        credential.get_token.assert_called_once_with("https://ai.azure.com/.default")
         headers = client.calls[0]["headers"]
         assert headers["Authorization"] == "Bearer bearer-value" and "api-key" not in headers
 
@@ -356,7 +357,8 @@ class TestDecisionModelRunnerRequests:
         assert isinstance(retry, AsyncRetryPolicy) and retry.total_retries == 3
         assert isinstance(redirect, AsyncRedirectPolicy) and redirect.allow is False
 
-    @pytest.mark.parametrize("status", _model_runners._DECISION_RETRY_STATUS_CODES)
+    # Statuses that azure-core's retry policy retries by default and a Decision endpoint can return.
+    @pytest.mark.parametrize("status", [408, 429, 500, 502, 503, 504, 529])
     def test_transient_post_response_is_retried_without_retry_after(self, monkeypatch, status):
         from azure.ai.evaluation._http_utils import AsyncHttpPipeline
 
@@ -604,7 +606,7 @@ class TestDecisionTokenReuse:
         first, second = DecisionModelRunner(self.CONFIG, credential), DecisionModelRunner(self.CONFIG, credential)
         for runner in (first, second, first):
             run(runner)
-        credential.get_token.assert_called_once_with("https://cognitiveservices.azure.com/.default")
+        credential.get_token.assert_called_once_with("https://ai.azure.com/.default")
         assert self.authorizations(client) == ["Bearer shared-token"] * 3
 
     @pytest.mark.parametrize("lifetime", [None, 60], ids=["no-expiry", "near-expiry"])
@@ -669,7 +671,16 @@ class TestDecisionTokenReuse:
                 request.result(2 * WAIT_SECONDS)
         assert len(requested) == 1
         assert self.authorizations(client) == ["Bearer uncached"] * 6
-        assert _model_runners._TOKENS.cached(credential, _model_runners._DECISION_TOKEN_SCOPE) is None
+        assert _model_runners._TOKENS.cached(credential, _model_runners._MODEL_TOKEN_SCOPE) is None
+
+    def test_requests_the_token_scope_chat_models_use(self, client):
+        client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
+        credential = Mock(get_token=Mock(return_value=self.access_token("shared")))
+        run(DecisionModelRunner(self.CONFIG, credential))
+        credential.get_token.assert_called_once_with("https://ai.azure.com/.default")
+        assert _model_runners._MODEL_TOKEN_SCOPE == TokenScope.COGNITIVE_SERVICES_MANAGEMENT
+        # The chat path keys the cache with the enum member; the entry is the same one.
+        assert _model_runners._TOKENS.cached(credential, TokenScope.COGNITIVE_SERVICES_MANAGEMENT).token == "shared"
 
     def test_rejected_token_is_not_reused(self, client):
         client.response = FakeResponse(status_code=401, body=b"{}")
@@ -702,7 +713,7 @@ class TestDecisionTokenReuse:
         runner = DecisionModelRunner(self.CONFIG, credential)
         with pytest.raises(EvaluationException, match="HTTP 401"):
             run(runner)
-        assert _model_runners._TOKENS.cached(credential, _model_runners._DECISION_TOKEN_SCOPE) is None
+        assert _model_runners._TOKENS.cached(credential, _model_runners._MODEL_TOKEN_SCOPE) is None
         # The service accepts the token now, for example after a role assignment propagated. The credential
         # re-issues the same token: it is requested once more, then reused again instead of once per request.
         client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
@@ -710,10 +721,10 @@ class TestDecisionTokenReuse:
             run(runner)
         assert credential.get_token.call_count == 2
         assert self.authorizations(client) == ["Bearer same"] * 4
-        assert _model_runners._TOKENS.cached(credential, _model_runners._DECISION_TOKEN_SCOPE).token == "same"
+        assert _model_runners._TOKENS.cached(credential, _model_runners._MODEL_TOKEN_SCOPE).token == "same"
 
     def test_an_acquisition_that_began_before_two_rejections_is_not_stored(self):
-        scope = _model_runners._DECISION_TOKEN_SCOPE
+        scope = _model_runners._MODEL_TOKEN_SCOPE
 
         async def scenario():
             entered, gate = asyncio.Event(), asyncio.Event()
@@ -893,7 +904,7 @@ class TestDecisionTokenReuse:
 
         credential = Mock(get_token=Mock(side_effect=get_token))
         all_queued = watch_token_queue(credential, 4)
-        scope = _model_runners._DECISION_TOKEN_SCOPE
+        scope = _model_runners._MODEL_TOKEN_SCOPE
         with ThreadPoolExecutor(max_workers=4) as pool:
             try:
                 requests = [
@@ -919,7 +930,7 @@ class TestDecisionTokenReuse:
         client.response = FakeResponse(body=json.dumps(level_payload(4)).encode())
         credential = Mock(get_token=Mock(return_value=self.access_token("shared")))
         fetch = _model_runners._TOKENS.fetch
-        scope = _model_runners._DECISION_TOKEN_SCOPE
+        scope = _model_runners._MODEL_TOKEN_SCOPE
 
         def fetch_then_reject(*args, **kwargs):
             token = fetch(*args, **kwargs)
@@ -1001,7 +1012,7 @@ class TestDecisionTokenReuse:
 
         credential = Credential()
         run(DecisionModelRunner(self.CONFIG, credential))
-        assert _model_runners._TOKENS.cached(credential, _model_runners._DECISION_TOKEN_SCOPE) is token
+        assert _model_runners._TOKENS.cached(credential, _model_runners._MODEL_TOKEN_SCOPE) is token
         reference = weakref.ref(credential)
         del credential
         gc.collect()
@@ -1037,7 +1048,7 @@ class TestDecisionTokenReuse:
 
     def test_a_token_wait_ends_at_the_deadline_without_requesting_a_token(self):
         credential = Mock(get_token=Mock(return_value=self.access_token("unused")))
-        scope = _model_runners._DECISION_TOKEN_SCOPE
+        scope = _model_runners._MODEL_TOKEN_SCOPE
         entry = _model_runners._TOKENS._entry(credential, scope, create=True)
         runner = DecisionModelRunner(self.CONFIG, credential)
         # Another request holds the credential's token request throughout.
@@ -1052,7 +1063,7 @@ class TestDecisionTokenReuse:
     def test_a_credential_without_weak_references_is_not_asked_after_the_deadline(self):
         requested = []
         credential = SimpleNamespace(get_token=lambda *scopes, **_: requested.append(scopes))
-        scope = _model_runners._DECISION_TOKEN_SCOPE
+        scope = _model_runners._MODEL_TOKEN_SCOPE
 
         assert _model_runners._TOKENS.fetch(credential, scope, deadline=time.monotonic() - 1) is None
         assert requested == []

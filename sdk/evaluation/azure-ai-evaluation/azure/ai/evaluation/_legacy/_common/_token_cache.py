@@ -12,6 +12,13 @@ numeric expiry, is not cached. A token that a service rejected is dropped, and a
 that rejection is not stored, so a rejected token never re-enters the cache through a slower request. Requests that
 waited on an acquisition whose token was not cached, because of such a rejection or because of its expiry, use that
 token instead of each requesting another one.
+
+azure-identity's ``get_bearer_token_provider`` is not used because it keeps one token per provider instance with no
+coordination between concurrent requests, so concurrent first requests each call the credential; because its
+wrapper never sees a service's 401 response, so a rejected token is served until it expires; and because its
+asynchronous form binds its lock to one event loop while each synchronous evaluator call runs on a new loop.
+Sharing one token across evaluators, waiting with a deadline and under cancellation, and dropping a rejected token
+need the coordination here.
 """
 
 import inspect
