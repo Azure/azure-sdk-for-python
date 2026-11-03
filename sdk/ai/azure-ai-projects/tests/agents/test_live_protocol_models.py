@@ -5,10 +5,12 @@
 """Offline coverage for Foundry-owned GPT Live protocol metadata."""
 
 from collections.abc import Mapping
+from typing import get_type_hints
 
 import pytest
 
-from azure.ai.projects import models
+from azure.ai.projects import models, operations
+from azure.ai.projects.aio import operations as async_operations
 
 
 def _session(delegation):
@@ -99,3 +101,35 @@ def test_foundry_live_session_preserves_native_and_null_delegation_modes(delegat
 def test_foundry_live_protocol_metadata_models_are_publicly_exported():
     assert "VoiceAgentLiveSessionResource" in models.__all__
     assert "VoiceAgentLiveDelegationItem" in models.__all__
+
+
+@pytest.mark.parametrize("operation_module", [operations, async_operations])
+def test_live_conversation_operation_type_is_public(operation_module):
+    assert "BetaVoiceAgentsLiveConversationsOperations" in operation_module.__all__
+    annotations = get_type_hints(operation_module.BetaVoiceAgentsOperations)
+    assert annotations["live_conversations"] is operation_module.BetaVoiceAgentsLiveConversationsOperations
+
+
+@pytest.mark.parametrize(
+    "destination_type,arguments,payload",
+    [
+        (
+            models.VoiceAgentRoutinePostCallDestination,
+            {"name": "routine-test"},
+            {"type": "routine", "name": "routine-test"},
+        ),
+        (
+            models.VoiceAgentEventGridPostCallDestination,
+            {"connection_name": "connection-test"},
+            {"type": "event_grid", "connection_name": "connection-test"},
+        ),
+    ],
+)
+def test_post_call_destination_configuration_round_trip(destination_type, arguments, payload):
+    configuration = models.VoiceAgentPostCallConfig(destinations=[destination_type(**arguments)])
+    expected = {"destinations": [payload]}
+    assert configuration.as_dict() == expected
+
+    restored = models.VoiceAgentPostCallConfig(expected)
+    assert isinstance(restored.destinations[0], destination_type)
+    assert restored.as_dict() == expected

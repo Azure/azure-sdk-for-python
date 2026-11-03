@@ -2167,8 +2167,100 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncItemPaged[VoiceResponse]: ...
 
 
+    class azure.ai.projects.aio.operations.BetaVoiceAgentsLiveConversationsOperations:
+
+        def __init__(
+                self,
+                *args,
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def delete(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def download_audio(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def download_audio_item(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
+                **kwargs: Any
+            ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def get(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                **kwargs: Any
+            ) -> VoiceAgentLiveConversation: ...
+
+        @distributed_trace_async
+        async def get_audio(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                **kwargs: Any
+            ) -> VoiceRecording: ...
+
+        @distributed_trace_async
+        async def get_audio_item(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
+                **kwargs: Any
+            ) -> VoiceAudioItem: ...
+
+        @distributed_trace_async
+        async def get_item(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
+                **kwargs: Any
+            ) -> VoiceAgentLiveConversationItem: ...
+
+        @distributed_trace
+        def list(
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                **kwargs: Any
+            ) -> AsyncItemPaged[VoiceAgentLiveConversation]: ...
+
+        @distributed_trace
+        def list_items(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                **kwargs: Any
+            ) -> AsyncItemPaged[VoiceAgentLiveConversationItem]: ...
+
+
     class azure.ai.projects.aio.operations.BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         conversations: BetaVoiceAgentsConversationsOperations
+        live_conversations: BetaVoiceAgentsLiveConversationsOperations
         realtime: AsyncBetaRealtime
         telephony: BetaVoiceAgentsTelephonyOperations
 
@@ -5906,22 +5998,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.ChoiceOptionParam(_Model):
-        description: Optional[str]
-        value: ChoiceValueParam
-
-        @overload
-        def __init__(
-                self,
-                *,
-                description: Optional[str] = ...,
-                value: ChoiceValueParam
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.ChoiceProbabilityResource(_Model):
         probability: float
         value: ChoiceValueResource
@@ -8869,10 +8945,15 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.LiveClientDelegationParam(Delegation, discriminator='client'):
+        acknowledgement_delay_ms: Optional[int]
         type: Literal[DelegationType.CLIENT]
 
         @overload
-        def __init__(self) -> None: ...
+        def __init__(
+                self,
+                *,
+                acknowledgement_delay_ms: Optional[int] = ...
+            ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
@@ -9250,6 +9331,41 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.LiveDecisionChoiceParam(_Model):
+        description: Optional[str]
+        value: Union[str, bool]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                description: Optional[str] = ...,
+                value: Union[str, bool]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionChoiceQuestionParam(LiveDecisionQuestion, discriminator='choice'):
+        choices: list[LiveDecisionChoiceParam]
+        instructions: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam, LiveDecisionInputJsonParam]]]
+        name: Optional[str]
+        type: Literal[LiveDecisionQuestionType.CHOICE]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                choices: list[LiveDecisionChoiceParam],
+                instructions: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam, LiveDecisionInputJsonParam]]],
+                name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.LiveDecisionCompleted(_Model):
         decision: DecisionResponse
         type: Literal["completed"]
@@ -9259,6 +9375,98 @@ namespace azure.ai.projects.models
                 self,
                 *,
                 decision: DecisionResponse
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionCustomToolCallOutputParam(LiveDecisionInputItemParam, discriminator='custom_tool_call_output'):
+        call_id: str
+        id: Optional[str]
+        output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]]
+        status: Optional[Union[str, LiveFunctionCallItemStatus]]
+        type: Literal[LiveDecisionInputItemParamType.CUSTOM_TOOL_CALL_OUTPUT]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]],
+                status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionCustomToolCallParam(LiveDecisionInputItemParam, discriminator='custom_tool_call'):
+        call_id: str
+        id: Optional[str]
+        input: str
+        name: str
+        namespace: Optional[str]
+        status: Optional[Union[str, LiveFunctionCallItemStatus]]
+        type: Literal[LiveDecisionInputItemParamType.CUSTOM_TOOL_CALL]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                input: str,
+                name: str,
+                namespace: Optional[str] = ...,
+                status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionFunctionCallOutputParam(LiveDecisionInputItemParam, discriminator='function_call_output'):
+        call_id: str
+        id: Optional[str]
+        output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]]
+        status: Optional[Union[str, LiveFunctionCallItemStatus]]
+        type: Literal[LiveDecisionInputItemParamType.FUNCTION_CALL_OUTPUT]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]],
+                status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionFunctionCallParam(LiveDecisionInputItemParam, discriminator='function_call'):
+        arguments: str
+        call_id: str
+        id: Optional[str]
+        name: str
+        namespace: Optional[str]
+        status: Optional[Union[str, LiveFunctionCallItemStatus]]
+        type: Literal[LiveDecisionInputItemParamType.FUNCTION_CALL]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                arguments: str,
+                call_id: str,
+                id: Optional[str] = ...,
+                name: str,
+                namespace: Optional[str] = ...,
+                status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
             ) -> None: ...
 
         @overload
@@ -9283,18 +9491,46 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.LiveDecisionInputItemParam(_Model):
-        content: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]]
-        id: Optional[str]
-        role: Literal["user"]
-        type: Optional[Literal["message"]]
+        type: str
 
         @overload
         def __init__(
                 self,
                 *,
-                content: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]],
-                id: Optional[str] = ...,
-                type: Optional[Literal[message]] = ...
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionInputItemParamMessage(LiveDecisionInputItemParam, discriminator='message'):
+        type: Literal[LiveDecisionInputItemParamType.MESSAGE]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionInputItemParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CUSTOM_TOOL_CALL = "custom_tool_call"
+        CUSTOM_TOOL_CALL_OUTPUT = "custom_tool_call_output"
+        FUNCTION_CALL = "function_call"
+        FUNCTION_CALL_OUTPUT = "function_call_output"
+        MESSAGE = "message"
+
+
+    class azure.ai.projects.models.LiveDecisionInputJsonParam(_Model):
+        data: Union[LiveDecisionJsonObject, list[LiveDecisionJsonObject]]
+        type: Literal["input_json"]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                data: Union[LiveDecisionJsonObject, list[LiveDecisionJsonObject]]
             ) -> None: ...
 
         @overload
@@ -9316,14 +9552,181 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.LiveDecisionQuestionsInputParam_2(_Model):
-        questions: list[QuestionParam]
+    class azure.ai.projects.models.LiveDecisionJsonObject(_Model):
+
+
+    class azure.ai.projects.models.LiveDecisionPredicateQuestionParam(LiveDecisionQuestion, discriminator='predicate'):
+        instructions: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam, LiveDecisionInputJsonParam]]]
+        name: Optional[str]
+        type: Literal[LiveDecisionQuestionType.PREDICATE]
 
         @overload
         def __init__(
                 self,
                 *,
-                questions: list[QuestionParam]
+                instructions: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam, LiveDecisionInputJsonParam]]],
+                name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionQuestion(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionQuestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CHOICE = "choice"
+        PREDICATE = "predicate"
+        SCORE = "score"
+
+
+    class azure.ai.projects.models.LiveDecisionQuestionsInputParam(_Model):
+        questions: list[LiveDecisionQuestion]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                questions: list[LiveDecisionQuestion]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionScoreLevelParam(_Model):
+        description: Optional[str]
+        label: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                description: Optional[str] = ...,
+                label: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionScoreQuestionParam(LiveDecisionQuestion, discriminator='score'):
+        instructions: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam, LiveDecisionInputJsonParam]]]
+        levels: list[LiveDecisionScoreLevelParam]
+        name: Optional[str]
+        type: Literal[LiveDecisionQuestionType.SCORE]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                instructions: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam, LiveDecisionInputJsonParam]]],
+                levels: list[LiveDecisionScoreLevelParam],
+                name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionStoredCustomToolCallOutputParam(LiveDecisionStoredInputItemParam, discriminator='custom_tool_call_output'):
+        call_id: str
+        id: str
+        output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]]
+        status: Optional[Union[str, LiveFunctionCallItemStatus]]
+        type: Literal[LiveDecisionStoredInputItemParamType.CUSTOM_TOOL_CALL_OUTPUT]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                call_id: str,
+                id: str,
+                output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]],
+                status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionStoredCustomToolCallParam(LiveDecisionStoredInputItemParam, discriminator='custom_tool_call'):
+        call_id: str
+        id: str
+        input: str
+        name: str
+        namespace: Optional[str]
+        status: Optional[Union[str, LiveFunctionCallItemStatus]]
+        type: Literal[LiveDecisionStoredInputItemParamType.CUSTOM_TOOL_CALL]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                call_id: str,
+                id: str,
+                input: str,
+                name: str,
+                namespace: Optional[str] = ...,
+                status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionStoredFunctionCallOutputParam(LiveDecisionStoredInputItemParam, discriminator='function_call_output'):
+        call_id: str
+        id: str
+        output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]]
+        status: Optional[Union[str, LiveFunctionCallItemStatus]]
+        type: Literal[LiveDecisionStoredInputItemParamType.FUNCTION_CALL_OUTPUT]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                call_id: str,
+                id: str,
+                output: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]],
+                status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionStoredFunctionCallParam(LiveDecisionStoredInputItemParam, discriminator='function_call'):
+        arguments: str
+        call_id: str
+        id: str
+        name: str
+        namespace: Optional[str]
+        status: Optional[Union[str, LiveFunctionCallItemStatus]]
+        type: Literal[LiveDecisionStoredInputItemParamType.FUNCTION_CALL]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                arguments: str,
+                call_id: str,
+                id: str,
+                name: str,
+                namespace: Optional[str] = ...,
+                status: Optional[Union[str, LiveFunctionCallItemStatus]] = ...
             ) -> None: ...
 
         @overload
@@ -9331,26 +9734,39 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.LiveDecisionStoredInputItemParam(_Model):
-        content: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]]
-        id: str
-        role: Literal["user"]
-        type: Optional[Literal["message"]]
+        type: str
 
         @overload
         def __init__(
                 self,
                 *,
-                content: Union[str, list[Union[LiveDecisionInputTextParam, LiveDecisionInputImageParam]]],
-                id: str,
-                type: Optional[Literal[message]] = ...
+                type: str
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.LiveDecisionTriggerInputParam_2(_Model):
-        decisions: LiveDecisionQuestionsInputParam_2
+    class azure.ai.projects.models.LiveDecisionStoredInputItemParamMessage(LiveDecisionStoredInputItemParam, discriminator='message'):
+        type: Literal[LiveDecisionStoredInputItemParamType.MESSAGE]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveDecisionStoredInputItemParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CUSTOM_TOOL_CALL = "custom_tool_call"
+        CUSTOM_TOOL_CALL_OUTPUT = "custom_tool_call_output"
+        FUNCTION_CALL = "function_call"
+        FUNCTION_CALL_OUTPUT = "function_call_output"
+        MESSAGE = "message"
+
+
+    class azure.ai.projects.models.LiveDecisionTriggerInputParam(_Model):
+        decisions: LiveDecisionQuestionsInputParam
         event_type: Literal["delta", "delta"]
         type: Literal["decisions"]
 
@@ -9358,7 +9774,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self,
                 *,
-                decisions: LiveDecisionQuestionsInputParam_2,
+                decisions: LiveDecisionQuestionsInputParam,
                 event_type: Literal["delta", "delta"]
             ) -> None: ...
 
@@ -9366,15 +9782,17 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.LiveDecisionsDelegationParam_2(_Model):
-        decisions: LiveDecisionsSettingsInputParam_2
+    class azure.ai.projects.models.LiveDecisionsDelegationParam(_Model):
+        acknowledgement_delay_ms: Optional[int]
+        decisions: LiveDecisionsSettingsInputParam
         type: Literal["decisions"]
 
         @overload
         def __init__(
                 self,
                 *,
-                decisions: LiveDecisionsSettingsInputParam_2
+                acknowledgement_delay_ms: Optional[int] = ...,
+                decisions: LiveDecisionsSettingsInputParam
             ) -> None: ...
 
         @overload
@@ -9382,6 +9800,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.LiveDecisionsDelegationUpdateParam(_Model):
+        acknowledgement_delay_ms: Optional[int]
         decisions: Optional[LiveDecisionsSettingsUpdateParam]
         type: Literal["decisions"]
 
@@ -9389,6 +9808,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self,
                 *,
+                acknowledgement_delay_ms: Optional[int] = ...,
                 decisions: Optional[LiveDecisionsSettingsUpdateParam] = ...
             ) -> None: ...
 
@@ -9396,16 +9816,16 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.LiveDecisionsSettingsInputParam_2(_Model):
+    class azure.ai.projects.models.LiveDecisionsSettingsInputParam(_Model):
         model: str
-        questions: list[QuestionParam]
+        questions: list[LiveDecisionQuestion]
 
         @overload
         def __init__(
                 self,
                 *,
                 model: str,
-                questions: list[QuestionParam]
+                questions: list[LiveDecisionQuestion]
             ) -> None: ...
 
         @overload
@@ -9414,14 +9834,14 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.LiveDecisionsSettingsUpdateParam(_Model):
         model: Optional[str]
-        questions: Optional[list[QuestionParam]]
+        questions: Optional[list[LiveDecisionQuestion]]
 
         @overload
         def __init__(
                 self,
                 *,
                 model: Optional[str] = ...,
-                questions: Optional[list[QuestionParam]] = ...
+                questions: Optional[list[LiveDecisionQuestion]] = ...
             ) -> None: ...
 
         @overload
@@ -9473,6 +9893,12 @@ namespace azure.ai.projects.models
                 *args: Any,
                 **kwargs: Any
             ) -> None: ...
+
+
+    class azure.ai.projects.models.LiveFunctionCallItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        COMPLETED = "completed"
+        INCOMPLETE = "incomplete"
+        IN_PROGRESS = "in_progress"
 
 
     class azure.ai.projects.models.LiveFunctionToolChoiceParam(_Model):
@@ -9924,6 +10350,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.LiveResponsesDelegationParam(Delegation, discriminator='responses'):
+        acknowledgement_delay_ms: Optional[int]
         responses: LiveResponsesDelegationSettingsInputParam
         type: Literal[DelegationType.RESPONSES]
 
@@ -9931,6 +10358,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self,
                 *,
+                acknowledgement_delay_ms: Optional[int] = ...,
                 responses: LiveResponsesDelegationSettingsInputParam
             ) -> None: ...
 
@@ -9999,6 +10427,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.LiveResponsesDelegationUpdateParam(_Model):
+        acknowledgement_delay_ms: Optional[int]
         responses: Optional[LiveResponsesDelegationSettingsUpdateInputParam]
         type: Literal["responses"]
 
@@ -10006,6 +10435,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self,
                 *,
+                acknowledgement_delay_ms: Optional[int] = ...,
                 responses: Optional[LiveResponsesDelegationSettingsUpdateInputParam] = ...
             ) -> None: ...
 
@@ -10459,6 +10889,42 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.LiveServerEventLiveTransportDtmfReceived(LiveServerEvent, discriminator='transport.dtmf.received'):
+        event: str
+        event_id: str
+        type: Literal[LiveServerEventType.TRANSPORT_DTMF_RECEIVED]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                event: str,
+                event_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveServerEventLiveTransportDtmfSent(LiveServerEvent, discriminator='transport.dtmf.sent'):
+        client_event_id: Optional[str]
+        event: str
+        event_id: str
+        type: Literal[LiveServerEventType.TRANSPORT_DTMF_SENT]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                client_event_id: Optional[str] = ...,
+                event: str,
+                event_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.LiveServerEventLiveTransportFailed(LiveServerEvent, discriminator='transport.failed'):
         error: LiveTransportCallError
         event_id: str
@@ -10520,7 +10986,7 @@ namespace azure.ai.projects.models
         SESSION_USAGE_UPDATED = "session.usage.updated"
         TRANSPORT_ANSWERED = "transport.answered"
         TRANSPORT_DTMF_RECEIVED = "transport.dtmf.received"
-        TRANSPORT_DTMF_SEND = "transport.dtmf.send"
+        TRANSPORT_DTMF_SENT = "transport.dtmf.sent"
         TRANSPORT_FAILED = "transport.failed"
         TRANSPORT_RINGING = "transport.ringing"
 
@@ -10573,12 +11039,12 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.LiveSessionCreateParams(_Model):
         audio: Optional[LiveInitialSessionAudioParam]
         client: Optional[LiveClientConfigParam]
-        delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationParam, LiveDecisionsDelegationParam_2]]
+        delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationParam, LiveDecisionsDelegationParam]]
         input: Optional[list[LiveInitialItem]]
         instructions: Optional[str]
         model: Union[str, ModelIdsLive]
         store: Optional[bool]
-        triggers: Optional[list[LiveDecisionTriggerInputParam_2]]
+        triggers: Optional[list[LiveDecisionTriggerInputParam]]
 
         @overload
         def __init__(
@@ -10586,12 +11052,12 @@ namespace azure.ai.projects.models
                 *,
                 audio: Optional[LiveInitialSessionAudioParam] = ...,
                 client: Optional[LiveClientConfigParam] = ...,
-                delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationParam, LiveDecisionsDelegationParam_2]] = ...,
+                delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationParam, LiveDecisionsDelegationParam]] = ...,
                 input: Optional[list[LiveInitialItem]] = ...,
                 instructions: Optional[str] = ...,
                 model: Union[str, ModelIdsLive],
                 store: Optional[bool] = ...,
-                triggers: Optional[list[LiveDecisionTriggerInputParam_2]] = ...
+                triggers: Optional[list[LiveDecisionTriggerInputParam]] = ...
             ) -> None: ...
 
         @overload
@@ -10617,14 +11083,14 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.LiveSessionUpdateParams(_Model):
         delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationUpdateParam, LiveDecisionsDelegationUpdateParam]]
-        triggers: Optional[list[LiveDecisionTriggerInputParam_2]]
+        triggers: Optional[list[LiveDecisionTriggerInputParam]]
 
         @overload
         def __init__(
                 self,
                 *,
                 delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationUpdateParam, LiveDecisionsDelegationUpdateParam]] = ...,
-                triggers: Optional[list[LiveDecisionTriggerInputParam_2]] = ...
+                triggers: Optional[list[LiveDecisionTriggerInputParam]] = ...
             ) -> None: ...
 
         @overload
@@ -10808,42 +11274,6 @@ namespace azure.ai.projects.models
                 code: str,
                 message: str,
                 param: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.LiveTransportDTMFReceived(LiveServerEvent, discriminator='transport.dtmf.received'):
-        event: str
-        event_id: str
-        type: Literal[LiveServerEventType.TRANSPORT_DTMF_RECEIVED]
-
-        @overload
-        def __init__(
-                self,
-                *,
-                event: str,
-                event_id: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.LiveTransportDTMFSend(LiveServerEvent, discriminator='transport.dtmf.send'):
-        client_event_id: Optional[str]
-        event: str
-        event_id: str
-        type: Literal[LiveServerEventType.TRANSPORT_DTMF_SEND]
-
-        @overload
-        def __init__(
-                self,
-                *,
-                client_event_id: Optional[str] = ...,
-                event: str,
-                event_id: str
             ) -> None: ...
 
         @overload
@@ -12327,81 +12757,6 @@ namespace azure.ai.projects.models
         REJECTED = "rejected"
 
 
-    class azure.ai.projects.models.QuestionParam(_Model):
-        type: str
-
-        @overload
-        def __init__(
-                self,
-                *,
-                type: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.QuestionParamChoice(QuestionParam, discriminator='choice'):
-        choices: list[ChoiceOptionParam]
-        instructions: str
-        name: Optional[str]
-        type: Literal[QuestionParamType.CHOICE]
-
-        @overload
-        def __init__(
-                self,
-                *,
-                choices: list[ChoiceOptionParam],
-                instructions: str,
-                name: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.QuestionParamPredicate(QuestionParam, discriminator='predicate'):
-        instructions: str
-        name: Optional[str]
-        type: Literal[QuestionParamType.PREDICATE]
-
-        @overload
-        def __init__(
-                self,
-                *,
-                instructions: str,
-                name: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.QuestionParamScore(QuestionParam, discriminator='score'):
-        instructions: str
-        levels: list[ScoreLevelParam]
-        name: Optional[str]
-        type: Literal[QuestionParamType.SCORE]
-
-        @overload
-        def __init__(
-                self,
-                *,
-                instructions: str,
-                levels: list[ScoreLevelParam],
-                name: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.QuestionParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CHOICE = "choice"
-        PREDICATE = "predicate"
-        SCORE = "score"
-
-
     class azure.ai.projects.models.RaiConfig(_Model):
         invocations_moderation: Optional[RaiInvocationModeration]
         rai_policy_name: str
@@ -13189,6 +13544,230 @@ namespace azure.ai.projects.models
         MEDIUM = "medium"
         MINIMAL = "minimal"
         XHIGH = "xhigh"
+
+
+    class azure.ai.projects.models.RealtimeResponseInputAudio(_Model):
+        audio: str
+        transcript: Optional[str]
+        type: Literal["input_audio"]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                audio: str,
+                transcript: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseInputFunctionCall(_Model):
+        arguments: str
+        call_id: str
+        id: Optional[str]
+        name: str
+        status: Optional[Literal["completed", "incomplete"]]
+        type: Literal["function_call"]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                arguments: str,
+                call_id: str,
+                id: Optional[str] = ...,
+                name: str,
+                status: Optional[Literal[completed, incomplete]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseInputFunctionCallOutput(_Model):
+        call_id: str
+        id: Optional[str]
+        output: str
+        status: Optional[Literal["completed", "incomplete"]]
+        type: Literal["function_call_output"]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                output: str,
+                status: Optional[Literal[completed, incomplete]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseInputImage(_Model):
+        detail: Optional[Literal["auto", "low", "high"]]
+        image_url: str
+        type: Literal["input_image"]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                detail: Optional[Literal[low, high, auto]] = ...,
+                image_url: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseInputMessage(_Model):
+        role: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                role: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseInputMessageAssistant(RealtimeResponseInputMessage, discriminator='assistant'):
+        content: list[RealtimeResponseInputMessageAssistantContent]
+        id: Optional[str]
+        role: Literal[RealtimeResponseInputMessageType.ASSISTANT]
+        status: Optional[Literal["completed", "incomplete"]]
+        type: Literal["message"]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                content: list[RealtimeResponseInputMessageAssistantContent],
+                id: Optional[str] = ...,
+                status: Optional[Literal[completed, incomplete]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseInputMessageAssistantContent(_Model):
+        text: str
+        type: Literal["output_text"]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                text: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseInputMessageDeveloper(RealtimeResponseInputMessage, discriminator='developer'):
+        content: list[RealtimeResponseInputText]
+        id: Optional[str]
+        role: Literal[RealtimeResponseInputMessageType.DEVELOPER]
+        status: Optional[Literal["completed", "incomplete"]]
+        type: Literal["message"]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                content: list[RealtimeResponseInputText],
+                id: Optional[str] = ...,
+                status: Optional[Literal[completed, incomplete]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseInputMessageSystem(RealtimeResponseInputMessage, discriminator='system'):
+        content: list[RealtimeResponseInputText]
+        id: Optional[str]
+        role: Literal[RealtimeResponseInputMessageType.SYSTEM]
+        status: Optional[Literal["completed", "incomplete"]]
+        type: Literal["message"]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                content: list[RealtimeResponseInputText],
+                id: Optional[str] = ...,
+                status: Optional[Literal[completed, incomplete]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseInputMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ASSISTANT = "assistant"
+        DEVELOPER = "developer"
+        SYSTEM = "system"
+        USER = "user"
+
+
+    class azure.ai.projects.models.RealtimeResponseInputMessageUser(RealtimeResponseInputMessage, discriminator='user'):
+        content: list[Union[RealtimeResponseInputText, RealtimeResponseInputAudio, RealtimeResponseInputImage]]
+        id: Optional[str]
+        role: Literal[RealtimeResponseInputMessageType.USER]
+        status: Optional[Literal["completed", "incomplete"]]
+        type: Literal["message"]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                content: list[Union[RealtimeResponseInputText, RealtimeResponseInputAudio, RealtimeResponseInputImage]],
+                id: Optional[str] = ...,
+                status: Optional[Literal[completed, incomplete]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseInputText(_Model):
+        text: str
+        type: Literal["input_text"]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                text: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RealtimeResponseItemReference(_Model):
+        id: str
+        type: Literal["item_reference"]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.RealtimeResponseStatusDetails(_Model):
@@ -15010,22 +15589,6 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.ScheduleTaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         EVALUATION = "Evaluation"
         INSIGHT = "Insight"
-
-
-    class azure.ai.projects.models.ScoreLevelParam(_Model):
-        description: Optional[str]
-        label: str
-
-        @overload
-        def __init__(
-                self,
-                *,
-                description: Optional[str] = ...,
-                label: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.ScoreProbabilityResource(_Model):
@@ -18171,7 +18734,7 @@ namespace azure.ai.projects.models
         rai_config: RaiConfig
         store: Optional[bool]
         structured_inputs: Optional[dict[str, StructuredInputDefinition]]
-        sub_protocol: Optional[Union[str, VoiceAgentSubProtocol]]
+        sub_protocol: str
 
         @overload
         def __init__(
@@ -18181,7 +18744,7 @@ namespace azure.ai.projects.models
                 rai_config: Optional[RaiConfig] = ...,
                 store: Optional[bool] = ...,
                 structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ...,
-                sub_protocol: Optional[Union[str, VoiceAgentSubProtocol]] = ...
+                sub_protocol: str
             ) -> None: ...
 
         @overload
@@ -18242,7 +18805,7 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.VoiceAgentDefinition(VoiceAgentBaseDefinition):
+    class azure.ai.projects.models.VoiceAgentDefinition(VoiceAgentBaseDefinition, discriminator='realtime'):
         audio: Optional[VoiceAgentAudioConfig]
         avatar: Optional[VoiceAgentAvatarConfig]
         conversation_engine: Optional[VoiceConversationEngine]
@@ -18256,11 +18819,12 @@ namespace azure.ai.projects.models
         model_type: Optional[Union[str, VoiceModelType]]
         output_modalities: Optional[list[Union[str, VoiceOutputModality]]]
         parallel_tool_calls: Optional[bool]
+        post_call: Optional[VoiceAgentPostCallConfig]
         rai_config: RaiConfig
         soundscape: Optional[VoiceAgentSoundscapeConfig]
         store: bool
         structured_inputs: dict[str, StructuredInputDefinition]
-        sub_protocol: Optional[Literal["realtime"]]
+        sub_protocol: Literal[VoiceAgentSubProtocol.REALTIME]
         subagent_config: Optional[VoiceAgentSubagentConfig]
         tool_choice: Optional[VoiceAgentToolChoice]
         tools: Optional[list[VoiceAgentTool]]
@@ -18281,11 +18845,11 @@ namespace azure.ai.projects.models
                 model_type: Optional[Union[str, VoiceModelType]] = ...,
                 output_modalities: Optional[list[Union[str, VoiceOutputModality]]] = ...,
                 parallel_tool_calls: Optional[bool] = ...,
+                post_call: Optional[VoiceAgentPostCallConfig] = ...,
                 rai_config: Optional[RaiConfig] = ...,
                 soundscape: Optional[VoiceAgentSoundscapeConfig] = ...,
                 store: Optional[bool] = ...,
                 structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ...,
-                sub_protocol: Optional[Literal[realtime]] = ...,
                 subagent_config: Optional[VoiceAgentSubagentConfig] = ...,
                 tool_choice: Optional[VoiceAgentToolChoice] = ...,
                 tools: Optional[list[VoiceAgentTool]] = ...
@@ -18363,6 +18927,21 @@ namespace azure.ai.projects.models
         HIGH = "high"
         LOW = "low"
         MEDIUM = "medium"
+
+
+    class azure.ai.projects.models.VoiceAgentEventGridPostCallDestination(VoiceAgentPostCallDestination, discriminator='event_grid'):
+        connection_name: str
+        type: Literal[VoiceAgentPostCallDestinationType.EVENT_GRID]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                connection_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.VoiceAgentFunctionTool(VoiceAgentTool, discriminator='function'):
@@ -18464,6 +19043,21 @@ namespace azure.ai.projects.models
         TOOL = "tool"
 
 
+    class azure.ai.projects.models.VoiceAgentLiveClientDelegation(VoiceAgentLiveDelegation, discriminator='client'):
+        acknowledgement_delay_ms: Optional[int]
+        type: Literal[VoiceAgentLiveDelegationType.CLIENT]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                acknowledgement_delay_ms: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentLiveClientDelegationConversationItem(VoiceAgentLiveDelegationConversationItem, discriminator='client'):
         commentary: Optional[str]
         created_at: datetime
@@ -18537,18 +19131,18 @@ namespace azure.ai.projects.models
         OUTPUT = "output"
 
 
-    class azure.ai.projects.models.VoiceAgentLiveDefinition(VoiceAgentBaseDefinition):
+    class azure.ai.projects.models.VoiceAgentLiveDefinition(VoiceAgentBaseDefinition, discriminator='live'):
         audio: Optional[LiveInitialSessionAudioParam]
         delegation: Optional[VoiceAgentLiveDelegation]
         greeting: Optional[VoiceAgentTemplateGreetingConfig]
         instructions: str
         kind: Union[str, azure.ai.projects.models.VOICE]
         model: str
-        model_type: Literal["self_deployed"]
+        model_type: Literal[VoiceModelType.SELF_DEPLOYED]
         rai_config: RaiConfig
         store: bool
         structured_inputs: dict[str, StructuredInputDefinition]
-        sub_protocol: Literal["live"]
+        sub_protocol: Literal[VoiceAgentSubProtocol.LIVE]
 
         @overload
         def __init__(
@@ -18559,9 +19153,24 @@ namespace azure.ai.projects.models
                 greeting: Optional[VoiceAgentTemplateGreetingConfig] = ...,
                 instructions: Optional[str] = ...,
                 model: str,
+                model_type: Literal[VoiceModelType.SELF_DEPLOYED],
                 rai_config: Optional[RaiConfig] = ...,
                 store: Optional[bool] = ...,
                 structured_inputs: Optional[dict[str, StructuredInputDefinition]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentLiveDelegation(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                type: str
             ) -> None: ...
 
         @overload
@@ -18608,31 +19217,15 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.VoiceAgentLiveDelegationResultItem1(_Model):
+    class azure.ai.projects.models.VoiceAgentLiveDelegationResultItem(_Model):
         commentary: Optional[str]
-        thinking: str
-
-        @overload
-        def __init__(
-                self,
-                *,
-                commentary: Optional[str] = ...,
-                thinking: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.VoiceAgentLiveDelegationResultItem2(_Model):
-        commentary: str
         thinking: Optional[str]
 
         @overload
         def __init__(
                 self,
                 *,
-                commentary: str,
+                commentary: Optional[str] = ...,
                 thinking: Optional[str] = ...
             ) -> None: ...
 
@@ -18654,6 +19247,12 @@ namespace azure.ai.projects.models
         RESPONSES = "responses"
 
 
+    class azure.ai.projects.models.VoiceAgentLiveDelegationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CLIENT = "client"
+        FOUNDRY_MANAGED_AGENT = "foundry_managed_agent"
+        RESPONSES = "responses"
+
+
     class azure.ai.projects.models.VoiceAgentLiveFoundryManagedAgentDelegationItem(VoiceAgentLiveDelegationConversationItem, discriminator='foundry_managed_agent'):
         agent_name: str
         agent_version: str
@@ -18661,7 +19260,7 @@ namespace azure.ai.projects.models
         created_at: datetime
         delegation_context: Optional[str]
         id: str
-        offset_ms: int
+        offset_ms: timedelta
         output: list[VoiceAgentLiveDelegationResultItem]
         response_id: str
         status: Union[str, VoiceAgentLiveDelegationStatus]
@@ -18678,7 +19277,7 @@ namespace azure.ai.projects.models
                 created_at: datetime,
                 delegation_context: Optional[str] = ...,
                 id: str,
-                offset_ms: int,
+                offset_ms: timedelta,
                 output: list[VoiceAgentLiveDelegationResultItem],
                 response_id: Optional[str] = ...,
                 status: Union[str, VoiceAgentLiveDelegationStatus]
@@ -18707,10 +19306,10 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.VoiceAgentLiveManagedAgentDelegation(_Model):
+    class azure.ai.projects.models.VoiceAgentLiveManagedAgentDelegation(VoiceAgentLiveDelegation, discriminator='foundry_managed_agent'):
         agent_name: str
         agent_version: Optional[str]
-        type: Literal["foundry_managed_agent"]
+        type: Literal[VoiceAgentLiveDelegationType.FOUNDRY_MANAGED_AGENT]
 
         @overload
         def __init__(
@@ -18737,6 +19336,23 @@ namespace azure.ai.projects.models
                 audio: Optional[VoiceAudioItem] = ...,
                 id: str,
                 transcription: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentLiveResponsesDelegation(VoiceAgentLiveDelegation, discriminator='responses'):
+        acknowledgement_delay_ms: Optional[int]
+        responses: LiveResponsesDelegationSettingsInputParam
+        type: Literal[VoiceAgentLiveDelegationType.RESPONSES]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                acknowledgement_delay_ms: Optional[int] = ...,
+                responses: LiveResponsesDelegationSettingsInputParam
             ) -> None: ...
 
         @overload
@@ -18776,7 +19392,7 @@ namespace azure.ai.projects.models
         model: Union[str, ModelIdsLive]
         status: Literal["active"]
         store: Optional[bool]
-        triggers: Optional[list[LiveDecisionTriggerInputParam_2]]
+        triggers: Optional[list[LiveDecisionTriggerInputParam]]
 
         @overload
         def __init__(
@@ -18791,7 +19407,7 @@ namespace azure.ai.projects.models
                 instructions: Optional[str] = ...,
                 model: Union[str, ModelIdsLive],
                 store: Optional[bool] = ...,
-                triggers: Optional[list[LiveDecisionTriggerInputParam_2]] = ...
+                triggers: Optional[list[LiveDecisionTriggerInputParam]] = ...
             ) -> None: ...
 
         @overload
@@ -18897,6 +19513,45 @@ namespace azure.ai.projects.models
         NEAR_FIELD = "near_field"
 
 
+    class azure.ai.projects.models.VoiceAgentPostCallConfig(_Model):
+        destinations: list[VoiceAgentPostCallDestination]
+        include: Optional[list[Union[str, VoiceAgentPostCallIncludeOption]]]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                destinations: list[VoiceAgentPostCallDestination],
+                include: Optional[list[Union[str, VoiceAgentPostCallIncludeOption]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentPostCallDestination(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentPostCallDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        EVENT_GRID = "event_grid"
+        ROUTINE = "routine"
+
+
+    class azure.ai.projects.models.VoiceAgentPostCallIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUDIO = "audio"
+
+
     class azure.ai.projects.models.VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         MASKED = "masked"
         REMOVED = "removed"
@@ -18940,7 +19595,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentResponseCreateParams(_Model):
         audio: Optional[PickPropertiesVoiceAgentAudioConfig]
         conversation: Optional[Union[Literal["auto"], Literal["none"], str]]
-        input: Optional[list[RealtimeConversationItem]]
+        input: Optional[list[RealtimeResponseInputItem]]
         instructions: Optional[str]
         interim_response: Optional[VoiceAgentInterimResponseConfig]
         max_output_tokens: Optional[Union[int, Literal["inf"]]]
@@ -18958,7 +19613,7 @@ namespace azure.ai.projects.models
                 *,
                 audio: Optional[PickPropertiesVoiceAgentAudioConfig] = ...,
                 conversation: Optional[Union[Literal[auto], Literal[none], str]] = ...,
-                input: Optional[list[RealtimeConversationItem]] = ...,
+                input: Optional[list[RealtimeResponseInputItem]] = ...,
                 instructions: Optional[str] = ...,
                 interim_response: Optional[VoiceAgentInterimResponseConfig] = ...,
                 max_output_tokens: Optional[Union[int, Literal[inf]]] = ...,
@@ -18969,6 +19624,21 @@ namespace azure.ai.projects.models
                 reasoning: Optional[RealtimeReasoning] = ...,
                 tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceFunction, ToolChoiceMCP]] = ...,
                 tools: Optional[list[Union[RealtimeFunctionTool, MCPTool]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentRoutinePostCallDestination(VoiceAgentPostCallDestination, discriminator='routine'):
+        name: str
+        type: Literal[VoiceAgentPostCallDestinationType.ROUTINE]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                name: str
             ) -> None: ...
 
         @overload
@@ -22415,8 +23085,100 @@ namespace azure.ai.projects.operations
             ) -> ItemPaged[VoiceResponse]: ...
 
 
+    class azure.ai.projects.operations.BetaVoiceAgentsLiveConversationsOperations:
+
+        def __init__(
+                self,
+                *args,
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        def delete(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def download_audio(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def download_audio_item(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
+                **kwargs: Any
+            ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def get(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                **kwargs: Any
+            ) -> VoiceAgentLiveConversation: ...
+
+        @distributed_trace
+        def get_audio(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                **kwargs: Any
+            ) -> VoiceRecording: ...
+
+        @distributed_trace
+        def get_audio_item(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
+                **kwargs: Any
+            ) -> VoiceAudioItem: ...
+
+        @distributed_trace
+        def get_item(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                item_id: str,
+                **kwargs: Any
+            ) -> VoiceAgentLiveConversationItem: ...
+
+        @distributed_trace
+        def list(
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                **kwargs: Any
+            ) -> ItemPaged[VoiceAgentLiveConversation]: ...
+
+        @distributed_trace
+        def list_items(
+                self,
+                agent_name: str,
+                conversation_id: str,
+                *,
+                before: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                **kwargs: Any
+            ) -> ItemPaged[VoiceAgentLiveConversationItem]: ...
+
+
     class azure.ai.projects.operations.BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
         conversations: BetaVoiceAgentsConversationsOperations
+        live_conversations: BetaVoiceAgentsLiveConversationsOperations
         realtime: BetaRealtime
         telephony: BetaVoiceAgentsTelephonyOperations
 
