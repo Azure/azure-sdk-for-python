@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.Sovereign": "2026-10-31-preview"
   },
-  "commit": "afa6145e6ce37f162660f56802fd3dd8045a3d16",
+  "commit": "1c2924e5e0c6fc45bd330d2ca9a49e35dbcb19bb",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/sovereign/resource-manager/Microsoft.Sovereign/Sovereign",
   "emitterVersion": "0.63.10",
