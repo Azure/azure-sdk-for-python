@@ -127,6 +127,8 @@ stages:
                       continueOnError: true
 
               - task: UsePythonVersion@0
+                inputs:
+                  versionSpec: '3.11'
 
               - template: ../steps/auth-dev-feed.yml
                 parameters:
@@ -134,6 +136,7 @@ stages:
 
               - script: |
                   set -e
+                  python "$(Build.SourcesDirectory)/eng/tools/azure-sdk-tools/ci_tools/bootstrap.py"
                   python -m pip install twine
                 displayName: Install Twine
 

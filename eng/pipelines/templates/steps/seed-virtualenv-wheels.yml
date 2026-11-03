@@ -5,6 +5,9 @@ parameters:
 
 steps:
   - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      python "$(Build.SourcesDirectory)/eng/tools/azure-sdk-tools/ci_tools/bootstrap.py" --uv
       $(PIP_EXE) install virtualenv
     displayName: Ensure virtualenv installed
 

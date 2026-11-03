@@ -23,6 +23,7 @@ from ci_tools.venv import (
     get_pip_command,
 )
 from ci_tools.variables import discover_repo_root, in_ci
+from ci_tools.bootstrap import ensure_pip
 from ci_tools.logging import logger
 
 # right now, we are assuming you HAVE to be in the azure-sdk-tools repo
@@ -84,11 +85,13 @@ class Check(abc.ABC):
             venv_python = get_venv_python(venv_location)
             if os.path.exists(venv_python):
                 logger.info(f"Reusing existing venv at {venv_python}")
+                ensure_pip(venv_python)
                 return venv_python
             else:
                 shutil.rmtree(venv_location, ignore_errors=True)
 
             subprocess.check_call(venv_cmd + [venv_location])
+            ensure_pip(venv_python)
 
             if in_ci():
                 # first attempt to retrieve azure-sdk-tools from the prebuilt wheel directory

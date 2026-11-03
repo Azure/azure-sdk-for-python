@@ -59,6 +59,13 @@ jobs:
         parameters:
           versionSpec: '${{ parameters.PythonVersion }}'
 
+      - bash: |
+          set -ev
+          python -m venv env
+          source env/bin/activate
+          python "$(Build.SourcesDirectory)/eng/tools/azure-sdk-tools/ci_tools/bootstrap.py" --uv
+        displayName: Prepare secure CLI virtual environment
+
       - template: .azure-pipelines/templates/azdev_setup.yml@AzureCLI
         parameters:
           CLIRepoPath: $(Agent.BuildDirectory)/cli

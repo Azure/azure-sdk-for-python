@@ -1,5 +1,6 @@
 import os
 from typing import Optional, Dict
+from ci_tools.bootstrap import PIP_VERSION
 
 
 def str_to_bool(input_string: str) -> bool:
@@ -104,7 +105,7 @@ DEFAULT_BUILD_ID = os.getenv("GITHUB_RUN_ID", os.getenv("BUILD.BUILDID", os.gete
 DEFAULT_ENVIRONMENT_VARIABLES = {
     "SPHINX_APIDOC_OPTIONS": "members,undoc-members,inherited-members",
     "VIRTUALENV_WHEEL": "0.45.1",
-    "VIRTUALENV_PIP": "24.0",
+    "VIRTUALENV_PIP": PIP_VERSION,
     "VIRTUALENV_SETUPTOOLS": "75.3.2",
     # Intentionally no PIP_EXTRA_INDEX_URL default. azpysdk.main already points PIP_INDEX_URL and
     # UV_DEFAULT_INDEX at CFS_INDEX_URL when they are unset, and PipAuthenticate@1 supplies an

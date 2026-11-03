@@ -100,6 +100,9 @@ stages:
             parameters:
               DevFeedName: ${{ parameters.DevFeedName }}
 
+          - script: python "$(Build.SourcesDirectory)/eng/tools/azure-sdk-tools/ci_tools/bootstrap.py"
+            displayName: Bootstrap pip
+
           - template: /eng/common/pipelines/templates/steps/retain-run.yml
 
           - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
@@ -193,9 +196,11 @@ stages:
 
                     - task: UsePythonVersion@0
                       inputs:
-                        versionSpec: '3.10'
+                        versionSpec: '3.11'
 
                     - script: |
+                        set -e
+                        python "$(Pipeline.Workspace)/release_artifact/bootstrap.py"
                         python -m pip install -r $(Pipeline.Workspace)/release_artifact/release_requirements.txt
                       displayName: Install Release Dependencies
 
@@ -409,12 +414,16 @@ stages:
         steps:
           - checkout: self
           - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.11'
 
           - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
             parameters:
               DevFeedName: ${{ parameters.DevFeedName }}
 
           - script: |
+              set -e
+              python "$(Build.SourcesDirectory)/eng/tools/azure-sdk-tools/ci_tools/bootstrap.py"
               python -m pip install "./eng/tools/azure-sdk-tools"
             displayName: Install versioning tool dependencies
 

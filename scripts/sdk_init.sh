@@ -1,9 +1,10 @@
 #!/bin/bash
+set -e
 
-# install python3.10
+# install python3.11
 add-apt-repository ppa:deadsnakes/ppa
-apt-get install python3.10
-apt-get install python3.10-venv
+apt-get install python3.11
+apt-get install python3.11-venv
 
 # init env
 TMPDIR="$(dirname $(dirname $(readlink -f "$0")))/venv"
@@ -15,8 +16,8 @@ export VIRTUAL_ENV
 PATH="$VIRTUAL_ENV/bin:$PATH"
 export PATH
 echo "$PATH"
-python3.10 -m venv $TMPDIR/venv-sdk
-python -m pip install -U pip
+python3.11 -m venv $TMPDIR/venv-sdk
+python eng/tools/azure-sdk-tools/ci_tools/bootstrap.py || exit $?
 python scripts/dev_setup.py -p azure-core
 
 if [ x"$1" = x ]; then

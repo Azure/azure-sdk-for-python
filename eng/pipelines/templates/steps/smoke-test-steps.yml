@@ -22,10 +22,12 @@ steps:
     parameters:
       DevFeedName: ${{ parameters.DevFeedName }}
 
-  - script: |
-      python -m pip install pip==26.2.2
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      python "$(Build.SourcesDirectory)/eng/tools/azure-sdk-tools/ci_tools/bootstrap.py"
       pip --version
-    displayName: pip --version
+    displayName: Bootstrap pip and show version
 
   - ${{ if eq(parameters.Daily, false) }}:
     - download: current

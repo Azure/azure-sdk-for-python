@@ -20,13 +20,10 @@ jobs:
         with:
           python-version: 3.11
         
-      - name: Install Dependencies
-        run: pip install packaging==25.0 requests==2.32.4
-
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install packaging==25.0 requests==2.32.4
+          python eng/tools/azure-sdk-tools/ci_tools/bootstrap.py
+          python -m pip install packaging==25.0 requests==2.32.4
 
       - name: Run major dependency update check
         run: python sdk/ml/azure-ai-ml/scripts/major_updates.py

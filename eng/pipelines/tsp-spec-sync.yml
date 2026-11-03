@@ -18,7 +18,7 @@ extends:
               - task: UsePythonVersion@0
                 displayName: 'Set up Python'
                 inputs:
-                  versionSpec: '3.10'
+                  versionSpec: '3.11'
                   addToPath: true
 
               - script: |
@@ -56,4 +56,3 @@ extends:
                     Generated from workflow triggered by PR #$(System.PullRequest.PullRequestNumber).
                   CommitMsg: 'Auto-update TSP client generated code'
                   AuthToken: ''
-
