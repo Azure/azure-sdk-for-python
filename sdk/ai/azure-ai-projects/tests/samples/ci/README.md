@@ -125,7 +125,13 @@ No PowerShell changes are needed for ordinary ARM resources and their environmen
 outputs. The Python runner also registers new output names as pytest options automatically:
 it passes only the validated binding **names** through
 `AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES`; values still use the existing CLI options.
-Outside that runner, existing CLI behavior and playback defaults are unchanged.
+There is no resource-specific option list or sanitized default for these bindings.
+Outside that runner, manual pytest invocations using extra environment CLI options must
+set the same metadata first, for example
+`$env:AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES = '["NEW_RESOURCE_ENDPOINT"]'`
+before passing `--new-resource-endpoint=...`. Only names belong in that JSON array,
+not values. Existing preparer-derived options, live/recording flags and playback
+defaults are unchanged; directly running a sample script still uses its usual environment.
 
 This is not a generic imperative-task framework. Code publication, data-plane initialization,
 specialized quota/readiness checks, new identity types, or secret delivery may still need
@@ -200,7 +206,11 @@ Before any queue can provision resources, admission and worker preflight require
 
 The pipeline publishes only the three handler package files and checks for `queue_trigger` indexing up to 30 times, ten seconds apart, before starting the sample. This allows for host startup after publication; missing indexing or an Azure query error still fails provisioning. The five non-secret Function outputs become sample inputs: `FUNCTION_APP_NAME`, `FUNCTION_APP_URL`, `STORAGE_INPUT_QUEUE_NAME`, `STORAGE_OUTPUT_QUEUE_NAME`, and `STORAGE_QUEUE_SERVICE_ENDPOINT`. These are sample environment variables, not provisioning configuration. No `FUNCTION_APP_KEY` is retrieved or output.
 
-The package's [pytest environment hook](../../conftest.py) registers all five Function inputs as CLI options, accepting both hyphenated and underscored spellings. Explicit CLI values are copied to the sample environment without adding global playback defaults for Function resources.
+The package's [pytest environment hook](../../conftest.py) registers these Function inputs
+from the runner's binding-name metadata, just like any other provisioned resource.
+Both hyphenated and underscored CLI spellings are accepted. No Function-specific option
+mapping or sanitized playback default is needed. Explicit CLI values are copied to the
+sample environment; an omitted value leaves the existing environment unchanged.
 
 ## Safety and results
 

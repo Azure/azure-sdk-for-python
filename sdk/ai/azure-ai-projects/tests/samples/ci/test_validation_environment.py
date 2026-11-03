@@ -62,6 +62,30 @@ def test_future_resource_binding_is_registered_without_a_python_option_mapping(m
     assert os.environ["NEW_RESOURCE_ENDPOINT"] == "https://example.invalid/new"
 
 
+def test_only_preparer_options_and_mode_flags_are_registered_without_dynamic_names():
+    hooks = load_cli_environment_hooks()
+    assert set(hooks["_CLI_ENV_OPTIONS"]) == set(hooks["_SERVICE_PREPARER_DEFAULTS"]) | {
+        "azure_test_run_live",
+        "azure_skip_live_recording",
+    }
+
+
+@pytest.mark.parametrize("existing", [None, "existing-endpoint"])
+def test_dynamic_options_do_not_inject_sanitized_defaults(monkeypatch, existing):
+    monkeypatch.setenv("AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES", '["NEW_RESOURCE_ENDPOINT"]')
+    if existing is None:
+        monkeypatch.delenv("NEW_RESOURCE_ENDPOINT", raising=False)
+    else:
+        monkeypatch.setenv("NEW_RESOURCE_ENDPOINT", existing)
+    hooks = load_cli_environment_hooks()
+    parser = pytest.Parser(_ispytest=True)
+    hooks["pytest_addoption"](parser)
+    options = vars(parser.parse([]))
+    hooks["pytest_configure"](SimpleNamespace(getoption=options.get))
+    assert os.environ.get("NEW_RESOURCE_ENDPOINT") == existing
+    assert "new_resource_endpoint" not in hooks["_SERVICE_PREPARER_DEFAULTS"]
+
+
 @pytest.mark.parametrize("names", ['["ACCESS_TOKEN"]', '["lowercase"]', '{"NAME": "value"}', "[123]", "not-json"])
 def test_invalid_dynamic_option_names_fail_explicitly(monkeypatch, names):
     monkeypatch.setenv("AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES", names)
@@ -76,9 +100,6 @@ def configure_cli_environment(values):
 
 @pytest.mark.parametrize("separator", ["-", "_"])
 def test_function_cli_options_are_registered_and_applied(separator, monkeypatch):
-    hooks = load_cli_environment_hooks()
-    parser = pytest.Parser(_ispytest=True)
-    hooks["pytest_addoption"](parser)
     environment = {
         "FUNCTION_APP_NAME": "example-function",
         "FUNCTION_APP_URL": "https://example-function.azurewebsites.net",
@@ -86,6 +107,10 @@ def test_function_cli_options_are_registered_and_applied(separator, monkeypatch)
         "STORAGE_OUTPUT_QUEUE_NAME": "weather-output-queue",
         "STORAGE_QUEUE_SERVICE_ENDPOINT": "https://example.queue.core.windows.net",
     }
+    monkeypatch.setenv("AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES", json.dumps(list(environment)))
+    hooks = load_cli_environment_hooks()
+    parser = pytest.Parser(_ispytest=True)
+    hooks["pytest_addoption"](parser)
     arguments = [f"--{name.lower().replace('_', separator)}={value}" for name, value in environment.items()]
     for name in environment:
         monkeypatch.setenv(name, "old-value")
