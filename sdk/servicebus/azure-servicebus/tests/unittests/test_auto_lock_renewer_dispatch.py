@@ -4,6 +4,7 @@
 # pylint: disable=protected-access
 
 import datetime
+import logging
 import threading
 from concurrent.futures import Future, ThreadPoolExecutor
 from unittest.mock import Mock, call, patch
@@ -13,6 +14,7 @@ import pytest
 from azure.servicebus import AutoLockRenewer
 from azure.servicebus._common.message import ServiceBusReceivedMessage
 from azure.servicebus._common.utils import utc_now
+from azure.servicebus._pyamqp.message import Message
 from azure.servicebus._servicebus_session import ServiceBusSession
 from azure.servicebus.exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, ServiceBusError
 
@@ -22,10 +24,8 @@ class _Message(ServiceBusReceivedMessage):
     _lock_expired = property(lambda self: False)
 
     def __init__(self, receiver):
-        self._receiver = receiver
-        self._received_timestamp_utc = utc_now()
+        super().__init__(Message(data=[b"body"]), receiver=receiver)
         self._locked = utc_now() + datetime.timedelta(seconds=8)
-        self._settled = False
 
 
 class _Session(ServiceBusSession):
@@ -74,6 +74,22 @@ def _run_executor_until_idle(executor):
         "azure.servicebus._common.auto_lock_renewer.time.sleep", side_effect=tick
     ):
         executor.run_next()
+
+
+@pytest.mark.parametrize("renewable_type", [_Message, _Session])
+def test_registration_with_debug_logging(caplog, renewable_type):
+    receiver = Mock(_running=True)
+    executor = _Executor()
+    renewer = AutoLockRenewer(executor=executor)
+    renewer._is_max_workers_greater_than_one = False
+    caplog.set_level(logging.DEBUG, logger="azure.servicebus._common.auto_lock_renewer")
+    try:
+        renewer.register(receiver, renewable_type(receiver))
+        assert "Running lock auto-renew for" in caplog.text
+        assert renewer._renew_tasks.unfinished_tasks == 1
+        assert len(executor.pending) == 1
+    finally:
+        renewer.close()
 
 
 @pytest.mark.parametrize("delay", [4, 5, 6])
