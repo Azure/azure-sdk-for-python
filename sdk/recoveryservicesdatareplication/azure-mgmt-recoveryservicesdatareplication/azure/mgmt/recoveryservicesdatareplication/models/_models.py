@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 
@@ -17,7 +17,40 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AzStackHCIClusterProperties(_Model):
+class AffectedObjectDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Details of the affected object.
+
+    :ivar description: Description of the affected object details.
+    :vartype description: str
+    :ivar type: Type of the affected object details. Default value is "object".
+    :vartype type: str
+    """
+
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the affected object details."""
+    type: Optional[Literal["object"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Type of the affected object details. Default value is \"object\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        type: Optional[Literal["object"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzStackHCIClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzStackHCI cluster properties.
 
     :ivar cluster_name: Gets or sets the AzStackHCICluster FQDN name. Required.
@@ -40,7 +73,7 @@ class AzStackHCIClusterProperties(_Model):
         name="storageAccountName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the Storage account name. Required."""
-    storage_containers: List["_models.StorageContainerProperties"] = rest_field(
+    storage_containers: list["_models.StorageContainerProperties"] = rest_field(
         name="storageContainers", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the list of AzStackHCICluster Storage Container. Required."""
@@ -52,7 +85,7 @@ class AzStackHCIClusterProperties(_Model):
         cluster_name: str,
         resource_name: str,
         storage_account_name: str,
-        storage_containers: List["_models.StorageContainerProperties"],
+        storage_containers: list["_models.StorageContainerProperties"],
     ) -> None: ...
 
     @overload
@@ -66,7 +99,7 @@ class AzStackHCIClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FabricModelCustomProperties(_Model):
+class FabricModelCustomProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fabric model custom properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -78,7 +111,7 @@ class FabricModelCustomProperties(_Model):
     :vartype instance_type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     instance_type: str = rest_discriminator(name="instanceType")
     """Discriminator property for FabricModelCustomProperties. Required. Default value is None."""
 
@@ -100,7 +133,9 @@ class FabricModelCustomProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzStackHCIFabricModelCustomProperties(FabricModelCustomProperties, discriminator="AzStackHCI"):
+class AzStackHCIFabricModelCustomProperties(
+    FabricModelCustomProperties, discriminator="AzStackHCI"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzStackHCI fabric model custom properties.
 
     :ivar az_stack_hci_site_id: Gets or sets the ARM Id of the AzStackHCI site. Required.
@@ -126,7 +161,7 @@ class AzStackHCIFabricModelCustomProperties(FabricModelCustomProperties, discrim
         name="azStackHciSiteId", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the ARM Id of the AzStackHCI site. Required."""
-    appliance_name: Optional[List[str]] = rest_field(name="applianceName", visibility=["read"])
+    appliance_name: Optional[list[str]] = rest_field(name="applianceName", visibility=["read"])
     """Gets or sets the Appliance name."""
     cluster: "_models.AzStackHCIClusterProperties" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -162,10 +197,11 @@ class AzStackHCIFabricModelCustomProperties(FabricModelCustomProperties, discrim
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="AzStackHCI", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "AzStackHCI"  # type: ignore
 
 
-class CheckNameAvailabilityModel(_Model):
+class CheckNameAvailabilityModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Check name availability model.
 
     :ivar name: Gets or sets the resource name.
@@ -198,7 +234,7 @@ class CheckNameAvailabilityModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityResponseModel(_Model):
+class CheckNameAvailabilityResponseModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Check name availability response model.
 
     :ivar name_available: Gets or sets a value indicating whether resource name is available or
@@ -239,61 +275,7 @@ class CheckNameAvailabilityResponseModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionDetails(_Model):
-    """Private endpoint connection details at member level.
-
-    :ivar id: Gets or sets id.
-    :vartype id: str
-    :ivar private_ip_address: Gets or sets private IP address.
-    :vartype private_ip_address: str
-    :ivar link_identifier: Gets or sets link identifier.
-    :vartype link_identifier: str
-    :ivar group_id: Gets or sets group id.
-    :vartype group_id: str
-    :ivar member_name: Gets or sets member name.
-    :vartype member_name: str
-    """
-
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Gets or sets id."""
-    private_ip_address: Optional[str] = rest_field(
-        name="privateIpAddress", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets private IP address."""
-    link_identifier: Optional[str] = rest_field(
-        name="linkIdentifier", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets link identifier."""
-    group_id: Optional[str] = rest_field(name="groupId", visibility=["read", "create", "update", "delete", "query"])
-    """Gets or sets group id."""
-    member_name: Optional[str] = rest_field(
-        name="memberName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets member name."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        private_ip_address: Optional[str] = None,
-        link_identifier: Optional[str] = None,
-        group_id: Optional[str] = None,
-        member_name: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DeploymentPreflightModel(_Model):
+class DeploymentPreflightModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment preflight model.
 
     :ivar resources: Gets or sets the list of resources.
@@ -301,7 +283,7 @@ class DeploymentPreflightModel(_Model):
      list[~azure.mgmt.recoveryservicesdatareplication.models.DeploymentPreflightResource]
     """
 
-    resources: Optional[List["_models.DeploymentPreflightResource"]] = rest_field(
+    resources: Optional[list["_models.DeploymentPreflightResource"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the list of resources."""
@@ -310,7 +292,7 @@ class DeploymentPreflightModel(_Model):
     def __init__(
         self,
         *,
-        resources: Optional[List["_models.DeploymentPreflightResource"]] = None,
+        resources: Optional[list["_models.DeploymentPreflightResource"]] = None,
     ) -> None: ...
 
     @overload
@@ -324,7 +306,7 @@ class DeploymentPreflightModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeploymentPreflightResource(_Model):
+class DeploymentPreflightResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Deployment preflight resource.
 
     :ivar name: Gets or sets the resource name.
@@ -374,7 +356,7 @@ class DeploymentPreflightResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskControllerInputs(_Model):
+class DiskControllerInputs(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk controller.
 
     :ivar controller_name: Gets or sets the controller name (IDE,SCSI). Required.
@@ -415,7 +397,7 @@ class DiskControllerInputs(_Model):
 
 
 class Resource(_Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -443,8 +425,7 @@ class Resource(_Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
+    """Proxy Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -460,7 +441,7 @@ class ProxyResource(Resource):
     """
 
 
-class EmailConfigurationModel(ProxyResource):
+class EmailConfigurationModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Email configuration model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -502,7 +483,7 @@ class EmailConfigurationModel(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class EmailConfigurationModelProperties(_Model):
+class EmailConfigurationModelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Email configuration model properties.
 
     :ivar send_to_owners: Gets or sets a value indicating whether to send email to subscription
@@ -521,7 +502,7 @@ class EmailConfigurationModelProperties(_Model):
 
     send_to_owners: bool = rest_field(name="sendToOwners", visibility=["read", "create", "update", "delete", "query"])
     """Gets or sets a value indicating whether to send email to subscription administrator. Required."""
-    custom_email_addresses: Optional[List[str]] = rest_field(
+    custom_email_addresses: Optional[list[str]] = rest_field(
         name="customEmailAddresses", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the custom email address for sending emails."""
@@ -538,7 +519,7 @@ class EmailConfigurationModelProperties(_Model):
         self,
         *,
         send_to_owners: bool,
-        custom_email_addresses: Optional[List[str]] = None,
+        custom_email_addresses: Optional[list[str]] = None,
         locale: Optional[str] = None,
     ) -> None: ...
 
@@ -590,9 +571,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -633,9 +614,8 @@ class ErrorModel(_Model):
     """Gets or sets the recommended action to resolve error."""
 
 
-class ErrorResponse(_Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.recoveryservicesdatareplication.models.ErrorDetail
@@ -662,7 +642,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventModel(ProxyResource):
+class EventModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Event model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -703,7 +683,7 @@ class EventModel(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class EventModelCustomProperties(_Model):
+class EventModelCustomProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Event model custom properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -714,7 +694,7 @@ class EventModelCustomProperties(_Model):
     :vartype instance_type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     instance_type: str = rest_discriminator(name="instanceType")
     """Discriminator property for EventModelCustomProperties. Required. Default value is None."""
 
@@ -736,7 +716,7 @@ class EventModelCustomProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventModelProperties(_Model):
+class EventModelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Event model properties.
 
     :ivar resource_type: Gets or sets the resource type.
@@ -785,7 +765,7 @@ class EventModelProperties(_Model):
     """Gets or sets the event description."""
     correlation_id: Optional[str] = rest_field(name="correlationId", visibility=["read"])
     """Gets or sets the event correlation Id."""
-    health_errors: Optional[List["_models.HealthErrorModel"]] = rest_field(name="healthErrors", visibility=["read"])
+    health_errors: Optional[list["_models.HealthErrorModel"]] = rest_field(name="healthErrors", visibility=["read"])
     """Gets or sets the errors associated with this event."""
     custom_properties: "_models.EventModelCustomProperties" = rest_field(
         name="customProperties", visibility=["read", "create", "update", "delete", "query"]
@@ -815,7 +795,7 @@ class EventModelProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FabricAgentModel(ProxyResource):
+class FabricAgentModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fabric agent model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -857,7 +837,7 @@ class FabricAgentModel(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class FabricAgentModelCustomProperties(_Model):
+class FabricAgentModelCustomProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fabric agent model custom properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -868,7 +848,7 @@ class FabricAgentModelCustomProperties(_Model):
     :vartype instance_type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     instance_type: str = rest_discriminator(name="instanceType")
     """Discriminator property for FabricAgentModelCustomProperties. Required. Default value is None."""
 
@@ -890,7 +870,7 @@ class FabricAgentModelCustomProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FabricAgentModelProperties(_Model):
+class FabricAgentModelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fabric agent model properties.
 
     :ivar correlation_id: Gets or sets the fabric agent correlation Id.
@@ -950,7 +930,7 @@ class FabricAgentModelProperties(_Model):
     )
     """Gets or sets the provisioning state of the fabric agent. Known values are: \"Canceled\",
      \"Creating\", \"Deleting\", \"Deleted\", \"Failed\", \"Succeeded\", and \"Updating\"."""
-    health_errors: Optional[List["_models.HealthErrorModel"]] = rest_field(name="healthErrors", visibility=["read"])
+    health_errors: Optional[list["_models.HealthErrorModel"]] = rest_field(name="healthErrors", visibility=["read"])
     """Gets or sets the list of health errors."""
     custom_properties: "_models.FabricAgentModelCustomProperties" = rest_field(
         name="customProperties", visibility=["read", "create", "update", "delete", "query"]
@@ -979,9 +959,8 @@ class FabricAgentModelProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -1000,7 +979,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -1010,7 +989,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1024,7 +1003,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class FabricModel(TrackedResource):
+class FabricModel(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fabric model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1056,7 +1035,7 @@ class FabricModel(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.FabricModelProperties"] = None,
     ) -> None: ...
 
@@ -1071,7 +1050,7 @@ class FabricModel(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class FabricModelProperties(_Model):
+class FabricModelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fabric model properties.
 
     :ivar provisioning_state: Gets or sets the provisioning state of the fabric. Known values are:
@@ -1104,7 +1083,7 @@ class FabricModelProperties(_Model):
     """Gets or sets the service resource Id."""
     health: Optional[Union[str, "_models.HealthStatus"]] = rest_field(visibility=["read"])
     """Gets or sets the fabric health. Known values are: \"Normal\", \"Warning\", and \"Critical\"."""
-    health_errors: Optional[List["_models.HealthErrorModel"]] = rest_field(name="healthErrors", visibility=["read"])
+    health_errors: Optional[list["_models.HealthErrorModel"]] = rest_field(name="healthErrors", visibility=["read"])
     """Gets or sets the list of health errors."""
     custom_properties: "_models.FabricModelCustomProperties" = rest_field(
         name="customProperties", visibility=["read", "create", "update", "delete", "query"]
@@ -1129,7 +1108,7 @@ class FabricModelProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FabricModelUpdate(_Model):
+class FabricModelUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fabric model update.
 
     :ivar tags: Gets or sets the resource tags.
@@ -1146,7 +1125,7 @@ class FabricModelUpdate(_Model):
     :vartype system_data: ~azure.mgmt.recoveryservicesdatareplication.models.SystemData
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Gets or sets the resource tags."""
     properties: Optional["_models.FabricModelProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1165,7 +1144,7 @@ class FabricModelUpdate(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.FabricModelProperties"] = None,
     ) -> None: ...
 
@@ -1180,7 +1159,7 @@ class FabricModelUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JobModelCustomProperties(_Model):
+class JobModelCustomProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job model custom properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1192,13 +1171,13 @@ class JobModelCustomProperties(_Model):
     :vartype instance_type: str
     :ivar affected_object_details: Gets or sets any custom properties of the affected object.
     :vartype affected_object_details:
-     ~azure.mgmt.recoveryservicesdatareplication.models.JobModelCustomPropertiesAffectedObjectDetails
+     ~azure.mgmt.recoveryservicesdatareplication.models.AffectedObjectDetails
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     instance_type: str = rest_discriminator(name="instanceType")
     """Discriminator property for JobModelCustomProperties. Required. Default value is None."""
-    affected_object_details: Optional["_models.JobModelCustomPropertiesAffectedObjectDetails"] = rest_field(
+    affected_object_details: Optional["_models.AffectedObjectDetails"] = rest_field(
         name="affectedObjectDetails", visibility=["read"]
     )
     """Gets or sets any custom properties of the affected object."""
@@ -1226,7 +1205,7 @@ class FailoverJobModelCustomProperties(JobModelCustomProperties, discriminator="
 
     :ivar affected_object_details: Gets or sets any custom properties of the affected object.
     :vartype affected_object_details:
-     ~azure.mgmt.recoveryservicesdatareplication.models.JobModelCustomPropertiesAffectedObjectDetails
+     ~azure.mgmt.recoveryservicesdatareplication.models.AffectedObjectDetails
     :ivar protected_item_details: Gets or sets the failed over protected item details.
     :vartype protected_item_details:
      list[~azure.mgmt.recoveryservicesdatareplication.models.FailoverProtectedItemProperties]
@@ -1235,7 +1214,7 @@ class FailoverJobModelCustomProperties(JobModelCustomProperties, discriminator="
     :vartype instance_type: str
     """
 
-    protected_item_details: Optional[List["_models.FailoverProtectedItemProperties"]] = rest_field(
+    protected_item_details: Optional[list["_models.FailoverProtectedItemProperties"]] = rest_field(
         name="protectedItemDetails", visibility=["read"]
     )
     """Gets or sets the failed over protected item details."""
@@ -1255,7 +1234,8 @@ class FailoverJobModelCustomProperties(JobModelCustomProperties, discriminator="
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="FailoverJobDetails", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "FailoverJobDetails"  # type: ignore
 
 
 class FailoverProtectedItemProperties(_Model):
@@ -1295,70 +1275,7 @@ class FailoverProtectedItemProperties(_Model):
     """Gets or sets the network subnet."""
 
 
-class GroupConnectivityInformation(_Model):
-    """Represents of a connection's group information.
-
-    :ivar group_id: Gets or sets group id.
-    :vartype group_id: str
-    :ivar member_name: Gets or sets member name.
-    :vartype member_name: str
-    :ivar customer_visible_fqdns: Gets or sets customer visible FQDNs.
-    :vartype customer_visible_fqdns: list[str]
-    :ivar internal_fqdn: Gets or sets Internal Fqdn.
-    :vartype internal_fqdn: str
-    :ivar redirect_map_id: Gets or sets the redirect map id.
-    :vartype redirect_map_id: str
-    :ivar private_link_service_arm_region: Gets or sets the private link service arm region.
-    :vartype private_link_service_arm_region: str
-    """
-
-    group_id: Optional[str] = rest_field(name="groupId", visibility=["read", "create", "update", "delete", "query"])
-    """Gets or sets group id."""
-    member_name: Optional[str] = rest_field(
-        name="memberName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets member name."""
-    customer_visible_fqdns: Optional[List[str]] = rest_field(
-        name="customerVisibleFqdns", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets customer visible FQDNs."""
-    internal_fqdn: Optional[str] = rest_field(
-        name="internalFqdn", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets Internal Fqdn."""
-    redirect_map_id: Optional[str] = rest_field(
-        name="redirectMapId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets the redirect map id."""
-    private_link_service_arm_region: Optional[str] = rest_field(
-        name="privateLinkServiceArmRegion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets the private link service arm region."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        group_id: Optional[str] = None,
-        member_name: Optional[str] = None,
-        customer_visible_fqdns: Optional[List[str]] = None,
-        internal_fqdn: Optional[str] = None,
-        redirect_map_id: Optional[str] = None,
-        private_link_service_arm_region: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HealthErrorModel(_Model):
+class HealthErrorModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Health error model.
 
     :ivar affected_resource_type: Gets or sets the type of affected resource type.
@@ -1399,13 +1316,13 @@ class HealthErrorModel(_Model):
         name="affectedResourceType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the type of affected resource type."""
-    affected_resource_correlation_ids: Optional[List[str]] = rest_field(
+    affected_resource_correlation_ids: Optional[list[str]] = rest_field(
         name="affectedResourceCorrelationIds", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the list of affected resource correlation Ids. This can be used to uniquely
      identify the count of items affected by a specific category and severity as well as count of
      item affected by an specific issue."""
-    child_errors: Optional[List["_models.InnerHealthErrorModel"]] = rest_field(
+    child_errors: Optional[list["_models.InnerHealthErrorModel"]] = rest_field(
         name="childErrors", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets a list of child health errors associated with this error."""
@@ -1437,8 +1354,8 @@ class HealthErrorModel(_Model):
         self,
         *,
         affected_resource_type: Optional[str] = None,
-        affected_resource_correlation_ids: Optional[List[str]] = None,
-        child_errors: Optional[List["_models.InnerHealthErrorModel"]] = None,
+        affected_resource_correlation_ids: Optional[list[str]] = None,
+        child_errors: Optional[list["_models.InnerHealthErrorModel"]] = None,
     ) -> None: ...
 
     @overload
@@ -1452,7 +1369,9 @@ class HealthErrorModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HyperVMigrateFabricModelCustomProperties(FabricModelCustomProperties, discriminator="HyperVMigrate"):
+class HyperVMigrateFabricModelCustomProperties(
+    FabricModelCustomProperties, discriminator="HyperVMigrate"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HyperV migrate fabric model custom properties.
 
     :ivar hyper_v_site_id: Gets or sets the ARM Id of the HyperV site. Required.
@@ -1501,10 +1420,11 @@ class HyperVMigrateFabricModelCustomProperties(FabricModelCustomProperties, disc
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="HyperVMigrate", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "HyperVMigrate"  # type: ignore
 
 
-class HyperVToAzStackHCIDiskInput(_Model):
+class HyperVToAzStackHCIDiskInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HyperVToAzStack disk input.
 
     :ivar disk_id: Gets or sets the disk Id. Required.
@@ -1649,10 +1569,11 @@ class HyperVToAzStackHCIEventModelCustomProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="HyperVToAzStackHCI", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "HyperVToAzStackHCI"  # type: ignore
 
 
-class HyperVToAzStackHCINicInput(_Model):
+class HyperVToAzStackHCINicInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HyperVToAzStackHCI NIC properties.
 
     :ivar nic_id: Gets or sets the NIC Id. Required.
@@ -1724,7 +1645,7 @@ class HyperVToAzStackHCINicInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlannedFailoverModelCustomProperties(_Model):
+class PlannedFailoverModelCustomProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Planned failover model custom properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1736,7 +1657,7 @@ class PlannedFailoverModelCustomProperties(_Model):
     :vartype instance_type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     instance_type: str = rest_discriminator(name="instanceType")
     """Discriminator property for PlannedFailoverModelCustomProperties. Required. Default value is
      None."""
@@ -1761,7 +1682,7 @@ class PlannedFailoverModelCustomProperties(_Model):
 
 class HyperVToAzStackHCIPlannedFailoverModelCustomProperties(
     PlannedFailoverModelCustomProperties, discriminator="HyperVToAzStackHCI"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """HyperV to AzStackHCI planned failover model custom properties.
 
     :ivar shutdown_source_vm: Gets or sets a value indicating whether VM needs to be shut down.
@@ -1794,10 +1715,11 @@ class HyperVToAzStackHCIPlannedFailoverModelCustomProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="HyperVToAzStackHCI", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "HyperVToAzStackHCI"  # type: ignore
 
 
-class PolicyModelCustomProperties(_Model):
+class PolicyModelCustomProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy model custom properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1808,7 +1730,7 @@ class PolicyModelCustomProperties(_Model):
     :vartype instance_type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     instance_type: str = rest_discriminator(name="instanceType")
     """Discriminator property for PolicyModelCustomProperties. Required. Default value is None."""
 
@@ -1832,7 +1754,7 @@ class PolicyModelCustomProperties(_Model):
 
 class HyperVToAzStackHCIPolicyModelCustomProperties(
     PolicyModelCustomProperties, discriminator="HyperVToAzStackHCI"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """HyperV To AzStackHCI Policy model custom properties.
 
     :ivar recovery_point_history_in_minutes: Gets or sets the duration in minutes until which the
@@ -1882,7 +1804,8 @@ class HyperVToAzStackHCIPolicyModelCustomProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="HyperVToAzStackHCI", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "HyperVToAzStackHCI"  # type: ignore
 
 
 class HyperVToAzStackHCIProtectedDiskProperties(_Model):  # pylint: disable=name-too-long
@@ -1949,7 +1872,7 @@ class HyperVToAzStackHCIProtectedDiskProperties(_Model):  # pylint: disable=name
     """Gets or sets a value of disk physical sector size."""
 
 
-class ProtectedItemModelCustomProperties(_Model):
+class ProtectedItemModelCustomProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protected item model custom properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1961,7 +1884,7 @@ class ProtectedItemModelCustomProperties(_Model):
     :vartype instance_type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     instance_type: str = rest_discriminator(name="instanceType")
     """Discriminator property for ProtectedItemModelCustomProperties. Required. Default value is None."""
 
@@ -1985,7 +1908,7 @@ class ProtectedItemModelCustomProperties(_Model):
 
 class HyperVToAzStackHCIProtectedItemModelCustomProperties(
     ProtectedItemModelCustomProperties, discriminator="HyperVToAzStackHCI"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """HyperV to AzStackHCI Protected item model custom properties.
 
     :ivar active_location: Gets or sets the location of the protected item. Known values are:
@@ -2083,6 +2006,15 @@ class HyperVToAzStackHCIProtectedItemModelCustomProperties(
     :ivar instance_type: Gets or sets the instance type. Required. Default value is
      "HyperVToAzStackHCI".
     :vartype instance_type: str
+    :ivar security_option: Gets or sets the security options for this VM. Known values are: "None",
+     "SecureBootEnabled", "EnablevTPM", and "TrustedLaunch".
+    :vartype security_option: str or
+     ~azure.mgmt.recoveryservicesdatareplication.models.SecurityOption
+    :ivar convert_to_gen2: Gets or sets a value indicating whether conversion to Gen 2 is required.
+    :vartype convert_to_gen2: bool
+    :ivar migrate_as_arc_vm: Gets or sets a value indicating whether VM is to be migrated as Arc
+     VM.
+    :vartype migrate_as_arc_vm: bool
     """
 
     active_location: Optional[Union[str, "_models.ProtectedItemActiveLocation"]] = rest_field(
@@ -2106,11 +2038,11 @@ class HyperVToAzStackHCIProtectedItemModelCustomProperties(
         name="fabricDiscoveryMachineId", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the ARM Id of the discovered machine. Required."""
-    disks_to_include: List["_models.HyperVToAzStackHCIDiskInput"] = rest_field(
+    disks_to_include: list["_models.HyperVToAzStackHCIDiskInput"] = rest_field(
         name="disksToInclude", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the list of disks to replicate. Required."""
-    nics_to_include: List["_models.HyperVToAzStackHCINicInput"] = rest_field(
+    nics_to_include: list["_models.HyperVToAzStackHCINicInput"] = rest_field(
         name="nicsToInclude", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the list of VM NIC to replicate. Required."""
@@ -2204,11 +2136,11 @@ class HyperVToAzStackHCIProtectedItemModelCustomProperties(
     resync_progress_percentage: Optional[int] = rest_field(name="resyncProgressPercentage", visibility=["read"])
     """Gets or sets the resync progress percentage. This is calculated based on total bytes processed
      for all disks in the source VM."""
-    protected_disks: Optional[List["_models.HyperVToAzStackHCIProtectedDiskProperties"]] = rest_field(
+    protected_disks: Optional[list["_models.HyperVToAzStackHCIProtectedDiskProperties"]] = rest_field(
         name="protectedDisks", visibility=["read"]
     )
     """Gets or sets the list of protected disks."""
-    protected_nics: Optional[List["_models.HyperVToAzStackHCIProtectedNicProperties"]] = rest_field(
+    protected_nics: Optional[list["_models.HyperVToAzStackHCIProtectedNicProperties"]] = rest_field(
         name="protectedNics", visibility=["read"]
     )
     """Gets or sets the VM NIC details."""
@@ -2220,6 +2152,19 @@ class HyperVToAzStackHCIProtectedItemModelCustomProperties(
     """Gets or sets the latest timestamp that replication status is updated."""
     instance_type: Literal["HyperVToAzStackHCI"] = rest_discriminator(name="instanceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Gets or sets the instance type. Required. Default value is \"HyperVToAzStackHCI\"."""
+    security_option: Optional[Union[str, "_models.SecurityOption"]] = rest_field(
+        name="securityOption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets the security options for this VM. Known values are: \"None\",
+     \"SecureBootEnabled\", \"EnablevTPM\", and \"TrustedLaunch\"."""
+    convert_to_gen2: Optional[bool] = rest_field(
+        name="convertToGen2", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets a value indicating whether conversion to Gen 2 is required."""
+    migrate_as_arc_vm: Optional[bool] = rest_field(
+        name="migrateAsArcVM", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets a value indicating whether VM is to be migrated as Arc VM."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -2228,8 +2173,8 @@ class HyperVToAzStackHCIProtectedItemModelCustomProperties(
         target_hci_cluster_id: str,
         target_arc_cluster_custom_location_id: str,
         fabric_discovery_machine_id: str,
-        disks_to_include: List["_models.HyperVToAzStackHCIDiskInput"],
-        nics_to_include: List["_models.HyperVToAzStackHCINicInput"],
+        disks_to_include: list["_models.HyperVToAzStackHCIDiskInput"],
+        nics_to_include: list["_models.HyperVToAzStackHCINicInput"],
         target_resource_group_id: str,
         storage_container_id: str,
         hyper_v_generation: str,
@@ -2244,6 +2189,9 @@ class HyperVToAzStackHCIProtectedItemModelCustomProperties(
         is_dynamic_ram: Optional[bool] = None,
         dynamic_memory_config: Optional["_models.ProtectedItemDynamicMemoryConfig"] = None,
         target_memory_in_mega_bytes: Optional[int] = None,
+        security_option: Optional[Union[str, "_models.SecurityOption"]] = None,
+        convert_to_gen2: Optional[bool] = None,
+        migrate_as_arc_vm: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -2254,10 +2202,11 @@ class HyperVToAzStackHCIProtectedItemModelCustomProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="HyperVToAzStackHCI", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "HyperVToAzStackHCI"  # type: ignore
 
 
-class ProtectedItemModelCustomPropertiesUpdate(_Model):
+class ProtectedItemModelCustomPropertiesUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protected item model custom properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2269,7 +2218,7 @@ class ProtectedItemModelCustomPropertiesUpdate(_Model):
     :vartype instance_type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     instance_type: str = rest_discriminator(name="instanceType")
     """Discriminator property for ProtectedItemModelCustomPropertiesUpdate. Required. Default value is
      None."""
@@ -2294,7 +2243,7 @@ class ProtectedItemModelCustomPropertiesUpdate(_Model):
 
 class HyperVToAzStackHCIProtectedItemModelCustomPropertiesUpdate(
     ProtectedItemModelCustomPropertiesUpdate, discriminator="HyperVToAzStackHCI"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """HyperV to AzStackHCI Protected item model custom properties.
 
     :ivar nics_to_include: Gets or sets the list of VM NIC to replicate.
@@ -2314,9 +2263,18 @@ class HyperVToAzStackHCIProtectedItemModelCustomPropertiesUpdate(
     :vartype instance_type: str
     :ivar os_type: Gets or sets the type of the OS.
     :vartype os_type: str
+    :ivar security_option: Gets or sets the security options for this VM. Known values are: "None",
+     "SecureBootEnabled", "EnablevTPM", and "TrustedLaunch".
+    :vartype security_option: str or
+     ~azure.mgmt.recoveryservicesdatareplication.models.SecurityOption
+    :ivar convert_to_gen2: Gets or sets a value indicating whether conversion to Gen 2 is required.
+    :vartype convert_to_gen2: bool
+    :ivar migrate_as_arc_vm: Gets or sets a value indicating whether VM is to be migrated as Arc
+     VM.
+    :vartype migrate_as_arc_vm: bool
     """
 
-    nics_to_include: Optional[List["_models.HyperVToAzStackHCINicInput"]] = rest_field(
+    nics_to_include: Optional[list["_models.HyperVToAzStackHCINicInput"]] = rest_field(
         name="nicsToInclude", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the list of VM NIC to replicate."""
@@ -2340,17 +2298,33 @@ class HyperVToAzStackHCIProtectedItemModelCustomPropertiesUpdate(
     """Gets or sets the instance type. Required. Default value is \"HyperVToAzStackHCI\"."""
     os_type: Optional[str] = rest_field(name="osType", visibility=["read", "create", "update", "delete", "query"])
     """Gets or sets the type of the OS."""
+    security_option: Optional[Union[str, "_models.SecurityOption"]] = rest_field(
+        name="securityOption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets the security options for this VM. Known values are: \"None\",
+     \"SecureBootEnabled\", \"EnablevTPM\", and \"TrustedLaunch\"."""
+    convert_to_gen2: Optional[bool] = rest_field(
+        name="convertToGen2", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets a value indicating whether conversion to Gen 2 is required."""
+    migrate_as_arc_vm: Optional[bool] = rest_field(
+        name="migrateAsArcVM", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets a value indicating whether VM is to be migrated as Arc VM."""
 
     @overload
     def __init__(
         self,
         *,
-        nics_to_include: Optional[List["_models.HyperVToAzStackHCINicInput"]] = None,
+        nics_to_include: Optional[list["_models.HyperVToAzStackHCINicInput"]] = None,
         target_cpu_cores: Optional[int] = None,
         is_dynamic_ram: Optional[bool] = None,
         dynamic_memory_config: Optional["_models.ProtectedItemDynamicMemoryConfig"] = None,
         target_memory_in_mega_bytes: Optional[int] = None,
         os_type: Optional[str] = None,
+        security_option: Optional[Union[str, "_models.SecurityOption"]] = None,
+        convert_to_gen2: Optional[bool] = None,
+        migrate_as_arc_vm: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -2361,7 +2335,8 @@ class HyperVToAzStackHCIProtectedItemModelCustomPropertiesUpdate(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="HyperVToAzStackHCI", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "HyperVToAzStackHCI"  # type: ignore
 
 
 class HyperVToAzStackHCIProtectedNicProperties(_Model):
@@ -2400,7 +2375,7 @@ class HyperVToAzStackHCIProtectedNicProperties(_Model):
      \"SelectedByUser\", \"SelectedByDefault\", and \"SelectedByUserOverride\"."""
 
 
-class RecoveryPointModelCustomProperties(_Model):
+class RecoveryPointModelCustomProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery point model custom properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2412,7 +2387,7 @@ class RecoveryPointModelCustomProperties(_Model):
     :vartype instance_type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     instance_type: str = rest_discriminator(name="instanceType")
     """Discriminator property for RecoveryPointModelCustomProperties. Required. Default value is None."""
 
@@ -2446,7 +2421,7 @@ class HyperVToAzStackHCIRecoveryPointModelCustomProperties(
     :vartype instance_type: str
     """
 
-    disk_ids: Optional[List[str]] = rest_field(name="diskIds", visibility=["read"])
+    disk_ids: Optional[list[str]] = rest_field(name="diskIds", visibility=["read"])
     """Gets or sets the list of the disk Ids."""
     instance_type: Literal["HyperVToAzStackHCI"] = rest_discriminator(name="instanceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Gets or sets the instance type. Required. Default value is \"HyperVToAzStackHCI\"."""
@@ -2464,10 +2439,13 @@ class HyperVToAzStackHCIRecoveryPointModelCustomProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="HyperVToAzStackHCI", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "HyperVToAzStackHCI"  # type: ignore
 
 
-class ReplicationExtensionModelCustomProperties(_Model):  # pylint: disable=name-too-long
+class ReplicationExtensionModelCustomProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Replication extension model custom properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2479,7 +2457,7 @@ class ReplicationExtensionModelCustomProperties(_Model):  # pylint: disable=name
     :vartype instance_type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     instance_type: str = rest_discriminator(name="instanceType")
     """Discriminator property for ReplicationExtensionModelCustomProperties. Required. Default value
      is None."""
@@ -2504,7 +2482,7 @@ class ReplicationExtensionModelCustomProperties(_Model):  # pylint: disable=name
 
 class HyperVToAzStackHCIReplicationExtensionModelCustomProperties(
     ReplicationExtensionModelCustomProperties, discriminator="HyperVToAzStackHCI"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """HyperV to AzStackHCI Replication extension model custom properties.
 
     :ivar hyper_v_fabric_arm_id: Gets or sets the ARM Id of the source HyperV fabric. Required.
@@ -2606,10 +2584,11 @@ class HyperVToAzStackHCIReplicationExtensionModelCustomProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="HyperVToAzStackHCI", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "HyperVToAzStackHCI"  # type: ignore
 
 
-class IdentityModel(_Model):
+class IdentityModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity model.
 
     :ivar tenant_id: Gets or sets the tenant Id of the SPN with which fabric agent communicates to
@@ -2718,7 +2697,7 @@ class InnerHealthErrorModel(_Model):
     """Gets or sets recommended action to resolve the error."""
 
 
-class JobModel(ProxyResource):
+class JobModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2759,39 +2738,7 @@ class JobModel(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class JobModelCustomPropertiesAffectedObjectDetails(_Model):  # pylint: disable=name-too-long
-    """JobModelCustomPropertiesAffectedObjectDetails.
-
-    :ivar description:
-    :vartype description: str
-    :ivar type: Default value is "object".
-    :vartype type: str
-    """
-
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    type: Optional[Literal["object"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Default value is \"object\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        type: Optional[Literal["object"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class JobModelProperties(_Model):
+class JobModelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Job model properties.
 
     :ivar display_name: Gets or sets the friendly display name.
@@ -2866,13 +2813,13 @@ class JobModelProperties(_Model):
     """Gets or sets the source fabric provider."""
     target_fabric_provider_id: Optional[str] = rest_field(name="targetFabricProviderId", visibility=["read"])
     """Gets or sets the target fabric provider."""
-    allowed_actions: Optional[List[str]] = rest_field(name="allowedActions", visibility=["read"])
+    allowed_actions: Optional[list[str]] = rest_field(name="allowedActions", visibility=["read"])
     """Gets or sets the list of allowed actions on the job."""
     activity_id: Optional[str] = rest_field(name="activityId", visibility=["read"])
     """Gets or sets the job activity id."""
-    tasks: Optional[List["_models.TaskModel"]] = rest_field(visibility=["read"])
+    tasks: Optional[list["_models.TaskModel"]] = rest_field(visibility=["read"])
     """Gets or sets the list of tasks."""
-    errors: Optional[List["_models.ErrorModel"]] = rest_field(visibility=["read"])
+    errors: Optional[list["_models.ErrorModel"]] = rest_field(visibility=["read"])
     """Gets or sets the list of errors."""
     custom_properties: "_models.JobModelCustomProperties" = rest_field(
         name="customProperties", visibility=["read", "create", "update", "delete", "query"]
@@ -2902,7 +2849,7 @@ class JobModelProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -2931,7 +2878,7 @@ class ManagedServiceIdentity(_Model):
     )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
@@ -2941,7 +2888,7 @@ class ManagedServiceIdentity(_Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -2955,8 +2902,8 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -3013,7 +2960,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -3043,7 +2990,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OperationStatus(_Model):
+class OperationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the operation status.
 
     :ivar id: Gets or sets the Id.
@@ -3093,7 +3040,7 @@ class OperationStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlannedFailoverModel(_Model):
+class PlannedFailoverModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Planned failover model.
 
     :ivar properties: Planned failover model properties. Required.
@@ -3124,7 +3071,7 @@ class PlannedFailoverModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlannedFailoverModelProperties(_Model):
+class PlannedFailoverModelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Planned failover model properties.
 
     :ivar custom_properties: Planned failover model custom properties. Required.
@@ -3155,7 +3102,7 @@ class PlannedFailoverModelProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PolicyModel(ProxyResource):
+class PolicyModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3196,7 +3143,7 @@ class PolicyModel(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PolicyModelProperties(_Model):
+class PolicyModelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy model properties.
 
     :ivar provisioning_state: Gets or sets the provisioning state of the policy. Known values are:
@@ -3236,7 +3183,7 @@ class PolicyModelProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpoint(_Model):
+class PrivateEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represent private Endpoint network resource that is linked to the Private Endpoint connection.
 
     :ivar id: Gets or sets the id.
@@ -3264,7 +3211,7 @@ class PrivateEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents private endpoint connection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3306,97 +3253,9 @@ class PrivateEndpointConnection(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProxy(ProxyResource):
-    """Represents private endpoint connection proxy request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.recoveryservicesdatareplication.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties:
-     ~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnectionProxyProperties
-    :ivar etag: Gets or sets ETag.
-    :vartype etag: str
-    """
-
-    properties: Optional["_models.PrivateEndpointConnectionProxyProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-    etag: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Gets or sets ETag."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.PrivateEndpointConnectionProxyProperties"] = None,
-        etag: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PrivateEndpointConnectionProxyProperties(_Model):
-    """Represents private endpoint connection proxy request.
-
-    :ivar provisioning_state: Gets or sets the provisioning state of the private endpoint
-     connection proxy. Known values are: "Canceled", "Creating", "Deleting", "Deleted", "Failed",
-     "Succeeded", and "Updating".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.recoveryservicesdatareplication.models.ProvisioningState
-    :ivar remote_private_endpoint: Represent remote private endpoint information for the private
-     endpoint connection proxy.
-    :vartype remote_private_endpoint:
-     ~azure.mgmt.recoveryservicesdatareplication.models.RemotePrivateEndpoint
-    """
-
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """Gets or sets the provisioning state of the private endpoint connection proxy. Known values are:
-     \"Canceled\", \"Creating\", \"Deleting\", \"Deleted\", \"Failed\", \"Succeeded\", and
-     \"Updating\"."""
-    remote_private_endpoint: Optional["_models.RemotePrivateEndpoint"] = rest_field(
-        name="remotePrivateEndpoint", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represent remote private endpoint information for the private endpoint connection proxy."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        remote_private_endpoint: Optional["_models.RemotePrivateEndpoint"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PrivateEndpointConnectionResponseProperties(_Model):  # pylint: disable=name-too-long
+class PrivateEndpointConnectionResponseProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents Private endpoint connection response properties.
 
     :ivar provisioning_state: Gets or sets provisioning state of the private endpoint connection.
@@ -3446,7 +3305,7 @@ class PrivateEndpointConnectionResponseProperties(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(ProxyResource):
+class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3488,7 +3347,7 @@ class PrivateLinkResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents private link resource properties.
 
     :ivar group_id: Gets or sets the group id.
@@ -3507,12 +3366,12 @@ class PrivateLinkResourceProperties(_Model):
 
     group_id: Optional[str] = rest_field(name="groupId", visibility=["read", "create", "update", "delete", "query"])
     """Gets or sets the group id."""
-    required_members: Optional[List[str]] = rest_field(
+    required_members: Optional[list[str]] = rest_field(
         name="requiredMembers", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the required member. This translates to how many Private IPs should be created for
      each privately linkable resource."""
-    required_zone_names: Optional[List[str]] = rest_field(
+    required_zone_names: Optional[list[str]] = rest_field(
         name="requiredZoneNames", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the private DNS zone names."""
@@ -3528,8 +3387,8 @@ class PrivateLinkResourceProperties(_Model):
         self,
         *,
         group_id: Optional[str] = None,
-        required_members: Optional[List[str]] = None,
-        required_zone_names: Optional[List[str]] = None,
+        required_members: Optional[list[str]] = None,
+        required_zone_names: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -3543,50 +3402,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnection(_Model):
-    """Represents of an NRP private link service connection.
-
-    :ivar name: Gets or sets private link service connection name.
-    :vartype name: str
-    :ivar group_ids: Gets or sets group ids.
-    :vartype group_ids: list[str]
-    :ivar request_message: Gets or sets the request message for the private link service
-     connection.
-    :vartype request_message: str
-    """
-
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Gets or sets private link service connection name."""
-    group_ids: Optional[List[str]] = rest_field(
-        name="groupIds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets group ids."""
-    request_message: Optional[str] = rest_field(
-        name="requestMessage", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets the request message for the private link service connection."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        group_ids: Optional[List[str]] = None,
-        request_message: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Private link service connection state.
 
     :ivar status: Gets or sets the status. Known values are: "Approved", "Disconnected", "Pending",
@@ -3631,60 +3447,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceProxy(_Model):
-    """Represents NRP private link service proxy.
-
-    :ivar id: Gets or sets private link service proxy id.
-    :vartype id: str
-    :ivar remote_private_link_service_connection_state: Represents Private link service connection
-     state.
-    :vartype remote_private_link_service_connection_state:
-     ~azure.mgmt.recoveryservicesdatareplication.models.PrivateLinkServiceConnectionState
-    :ivar remote_private_endpoint_connection: Represent remote private endpoint connection.
-    :vartype remote_private_endpoint_connection:
-     ~azure.mgmt.recoveryservicesdatareplication.models.RemotePrivateEndpointConnection
-    :ivar group_connectivity_information: Gets or sets group connectivity information.
-    :vartype group_connectivity_information:
-     list[~azure.mgmt.recoveryservicesdatareplication.models.GroupConnectivityInformation]
-    """
-
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Gets or sets private link service proxy id."""
-    remote_private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = rest_field(
-        name="remotePrivateLinkServiceConnectionState", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represents Private link service connection state."""
-    remote_private_endpoint_connection: Optional["_models.RemotePrivateEndpointConnection"] = rest_field(
-        name="remotePrivateEndpointConnection", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Represent remote private endpoint connection."""
-    group_connectivity_information: Optional[List["_models.GroupConnectivityInformation"]] = rest_field(
-        name="groupConnectivityInformation", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets group connectivity information."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        remote_private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
-        remote_private_endpoint_connection: Optional["_models.RemotePrivateEndpointConnection"] = None,
-        group_connectivity_information: Optional[List["_models.GroupConnectivityInformation"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ProtectedItemDynamicMemoryConfig(_Model):
+class ProtectedItemDynamicMemoryConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protected item dynamic memory config.
 
     :ivar maximum_memory_in_mega_bytes: Gets or sets maximum memory in MB. Required.
@@ -3763,7 +3526,7 @@ class ProtectedItemJobProperties(_Model):
     """Gets or sets end time of the job."""
 
 
-class ProtectedItemModel(ProxyResource):
+class ProtectedItemModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protected item model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3805,7 +3568,7 @@ class ProtectedItemModel(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ProtectedItemModelProperties(_Model):
+class ProtectedItemModelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protected item model properties.
 
     :ivar policy_name: Gets or sets the policy name. Required.
@@ -3998,7 +3761,7 @@ class ProtectedItemModelProperties(_Model):
     """Gets or sets the Last successful test failover time."""
     current_job: Optional["_models.ProtectedItemJobProperties"] = rest_field(name="currentJob", visibility=["read"])
     """Gets or sets the current scenario."""
-    allowed_jobs: Optional[List[str]] = rest_field(name="allowedJobs", visibility=["read"])
+    allowed_jobs: Optional[list[str]] = rest_field(name="allowedJobs", visibility=["read"])
     """Gets or sets the allowed scenarios on the protected item."""
     last_failed_enable_protection_job: Optional["_models.ProtectedItemJobProperties"] = rest_field(
         name="lastFailedEnableProtectionJob", visibility=["read"]
@@ -4017,7 +3780,7 @@ class ProtectedItemModelProperties(_Model):
     )
     """Gets or sets protected item replication health. Known values are: \"Normal\", \"Warning\", and
      \"Critical\"."""
-    health_errors: Optional[List["_models.HealthErrorModel"]] = rest_field(name="healthErrors", visibility=["read"])
+    health_errors: Optional[list["_models.HealthErrorModel"]] = rest_field(name="healthErrors", visibility=["read"])
     """Gets or sets the list of health errors."""
     custom_properties: "_models.ProtectedItemModelCustomProperties" = rest_field(
         name="customProperties", visibility=["read", "create", "update", "delete", "query"]
@@ -4044,7 +3807,7 @@ class ProtectedItemModelProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProtectedItemModelPropertiesUpdate(_Model):
+class ProtectedItemModelPropertiesUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protected item model properties update.
 
     :ivar custom_properties: Protected item model custom properties update.
@@ -4075,7 +3838,7 @@ class ProtectedItemModelPropertiesUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProtectedItemModelUpdate(_Model):
+class ProtectedItemModelUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protected item model update.
 
     :ivar properties: Protected item model properties.
@@ -4122,7 +3885,7 @@ class ProtectedItemModelUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPointModel(ProxyResource):
+class RecoveryPointModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery point model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4164,7 +3927,7 @@ class RecoveryPointModel(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class RecoveryPointModelProperties(_Model):
+class RecoveryPointModelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Recovery point model properties.
 
     :ivar recovery_point_time: Gets or sets the recovery point time. Required.
@@ -4222,101 +3985,7 @@ class RecoveryPointModelProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RemotePrivateEndpoint(_Model):
-    """Represent remote private endpoint information for the private endpoint connection proxy.
-
-    :ivar id: Gets or sets private link service proxy id. Required.
-    :vartype id: str
-    :ivar private_link_service_connections: Gets or sets the list of Private Link Service
-     Connections and gets populated for Auto approval flow.
-    :vartype private_link_service_connections:
-     list[~azure.mgmt.recoveryservicesdatareplication.models.PrivateLinkServiceConnection]
-    :ivar manual_private_link_service_connections: Gets or sets the list of Manual Private Link
-     Service Connections and gets populated for Manual approval flow.
-    :vartype manual_private_link_service_connections:
-     list[~azure.mgmt.recoveryservicesdatareplication.models.PrivateLinkServiceConnection]
-    :ivar private_link_service_proxies: Gets or sets the list of private link service proxies.
-    :vartype private_link_service_proxies:
-     list[~azure.mgmt.recoveryservicesdatareplication.models.PrivateLinkServiceProxy]
-    :ivar connection_details: Gets or sets the list of Connection Details. This is the connection
-     details for private endpoint.
-    :vartype connection_details:
-     list[~azure.mgmt.recoveryservicesdatareplication.models.ConnectionDetails]
-    """
-
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Gets or sets private link service proxy id. Required."""
-    private_link_service_connections: Optional[List["_models.PrivateLinkServiceConnection"]] = rest_field(
-        name="privateLinkServiceConnections", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets the list of Private Link Service Connections and gets populated for Auto approval
-     flow."""
-    manual_private_link_service_connections: Optional[List["_models.PrivateLinkServiceConnection"]] = rest_field(
-        name="manualPrivateLinkServiceConnections", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets the list of Manual Private Link Service Connections and gets populated for Manual
-     approval flow."""
-    private_link_service_proxies: Optional[List["_models.PrivateLinkServiceProxy"]] = rest_field(
-        name="privateLinkServiceProxies", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets the list of private link service proxies."""
-    connection_details: Optional[List["_models.ConnectionDetails"]] = rest_field(
-        name="connectionDetails", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Gets or sets the list of Connection Details. This is the connection details for private
-     endpoint."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        private_link_service_connections: Optional[List["_models.PrivateLinkServiceConnection"]] = None,
-        manual_private_link_service_connections: Optional[List["_models.PrivateLinkServiceConnection"]] = None,
-        private_link_service_proxies: Optional[List["_models.PrivateLinkServiceProxy"]] = None,
-        connection_details: Optional[List["_models.ConnectionDetails"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class RemotePrivateEndpointConnection(_Model):
-    """Represent remote private endpoint connection.
-
-    :ivar id: Gets or sets the remote private endpoint connection id.
-    :vartype id: str
-    """
-
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Gets or sets the remote private endpoint connection id."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ReplicationExtensionModel(ProxyResource):
+class ReplicationExtensionModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication extension model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4358,7 +4027,7 @@ class ReplicationExtensionModel(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ReplicationExtensionModelProperties(_Model):
+class ReplicationExtensionModelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Replication extension model properties.
 
     :ivar provisioning_state: Gets or sets the provisioning state of the replication extension.
@@ -4400,7 +4069,7 @@ class ReplicationExtensionModelProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageContainerProperties(_Model):
+class StorageContainerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage container properties.
 
     :ivar name: Gets or sets the Name. Required.
@@ -4435,7 +4104,7 @@ class StorageContainerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -4504,7 +4173,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TaskModel(_Model):
+class TaskModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Task model.
 
     :ivar task_name: Gets or sets the task name.
@@ -4536,7 +4205,7 @@ class TaskModel(_Model):
         name="customProperties", visibility=["read", "create", "update", "delete", "query"]
     )
     """Task model custom properties."""
-    children_jobs: Optional[List["_models.JobModel"]] = rest_field(
+    children_jobs: Optional[list["_models.JobModel"]] = rest_field(
         name="childrenJobs", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the list of children job models."""
@@ -4546,7 +4215,7 @@ class TaskModel(_Model):
         self,
         *,
         custom_properties: Optional["_models.TaskModelCustomProperties"] = None,
-        children_jobs: Optional[List["_models.JobModel"]] = None,
+        children_jobs: Optional[list["_models.JobModel"]] = None,
     ) -> None: ...
 
     @overload
@@ -4560,7 +4229,7 @@ class TaskModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TaskModelCustomProperties(_Model):
+class TaskModelCustomProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Task model custom properties.
 
     :ivar instance_type: Gets or sets the instance type. Required.
@@ -4595,7 +4264,7 @@ class TestFailoverCleanupJobModelCustomProperties(
 
     :ivar affected_object_details: Gets or sets any custom properties of the affected object.
     :vartype affected_object_details:
-     ~azure.mgmt.recoveryservicesdatareplication.models.JobModelCustomPropertiesAffectedObjectDetails
+     ~azure.mgmt.recoveryservicesdatareplication.models.AffectedObjectDetails
     :ivar comments: Gets or sets the test failover cleanup comments.
     :vartype comments: str
     :ivar instance_type: Gets or sets the instance type. Required. Default value is
@@ -4621,7 +4290,8 @@ class TestFailoverCleanupJobModelCustomProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="TestFailoverCleanupJobDetails", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "TestFailoverCleanupJobDetails"  # type: ignore
 
 
 class TestFailoverJobModelCustomProperties(JobModelCustomProperties, discriminator="TestFailoverJobDetails"):
@@ -4629,7 +4299,7 @@ class TestFailoverJobModelCustomProperties(JobModelCustomProperties, discriminat
 
     :ivar affected_object_details: Gets or sets any custom properties of the affected object.
     :vartype affected_object_details:
-     ~azure.mgmt.recoveryservicesdatareplication.models.JobModelCustomPropertiesAffectedObjectDetails
+     ~azure.mgmt.recoveryservicesdatareplication.models.AffectedObjectDetails
     :ivar protected_item_details: Gets or sets the test VM details.
     :vartype protected_item_details:
      list[~azure.mgmt.recoveryservicesdatareplication.models.FailoverProtectedItemProperties]
@@ -4638,7 +4308,7 @@ class TestFailoverJobModelCustomProperties(JobModelCustomProperties, discriminat
     :vartype instance_type: str
     """
 
-    protected_item_details: Optional[List["_models.FailoverProtectedItemProperties"]] = rest_field(
+    protected_item_details: Optional[list["_models.FailoverProtectedItemProperties"]] = rest_field(
         name="protectedItemDetails", visibility=["read"]
     )
     """Gets or sets the test VM details."""
@@ -4658,25 +4328,26 @@ class TestFailoverJobModelCustomProperties(JobModelCustomProperties, discriminat
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="TestFailoverJobDetails", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "TestFailoverJobDetails"  # type: ignore
 
 
 class UserAssignedIdentity(_Model):
     """User assigned identity properties.
 
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
     :ivar principal_id: The principal ID of the assigned identity.
     :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
     """
 
-    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
-    """The client ID of the assigned identity."""
     principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
     """The principal ID of the assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the assigned identity."""
 
 
-class VaultIdentityModel(_Model):
+class VaultIdentityModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Vault model.
 
     :ivar type: Gets or sets the identityType which can be either SystemAssigned or None. Required.
@@ -4720,7 +4391,7 @@ class VaultIdentityModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultModel(TrackedResource):
+class VaultModel(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Vault model.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4758,7 +4429,7 @@ class VaultModel(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.VaultModelProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
@@ -4774,7 +4445,7 @@ class VaultModel(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class VaultModelProperties(_Model):
+class VaultModelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Vault properties.
 
     :ivar provisioning_state: Gets or sets the provisioning state of the vault. Known values are:
@@ -4787,6 +4458,17 @@ class VaultModelProperties(_Model):
      "Migrate".
     :vartype vault_type: str or
      ~azure.mgmt.recoveryservicesdatareplication.models.ReplicationVaultType
+    :ivar private_endpoint_state: Private endpoint state for the vault. Known values are: "None",
+     "InProgress", "Succeeded", "Deleting", "Failed", and "Pending".
+    :vartype private_endpoint_state: str or
+     ~azure.mgmt.recoveryservicesdatareplication.models.VaultPrivateEndpointState
+    :ivar public_network_access: Property to enable or disable resource provider inbound network
+     traffic from public clients. Known values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.recoveryservicesdatareplication.models.PublicNetworkAccess
+    :ivar private_endpoint_connections: List of private endpoint connection.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.recoveryservicesdatareplication.models.PrivateEndpointConnection]
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -4800,12 +4482,27 @@ class VaultModelProperties(_Model):
         name="vaultType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the type of vault. Known values are: \"DisasterRecovery\" and \"Migrate\"."""
+    private_endpoint_state: Optional[Union[str, "_models.VaultPrivateEndpointState"]] = rest_field(
+        name="privateEndpointState", visibility=["read"]
+    )
+    """Private endpoint state for the vault. Known values are: \"None\", \"InProgress\",
+     \"Succeeded\", \"Deleting\", \"Failed\", and \"Pending\"."""
+    public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(
+        name="publicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Property to enable or disable resource provider inbound network traffic from public clients.
+     Known values are: \"Enabled\" and \"Disabled\"."""
+    private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
+        name="privateEndpointConnections", visibility=["read"]
+    )
+    """List of private endpoint connection."""
 
     @overload
     def __init__(
         self,
         *,
         vault_type: Optional[Union[str, "_models.ReplicationVaultType"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
     ) -> None: ...
 
     @overload
@@ -4819,7 +4516,7 @@ class VaultModelProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaultModelUpdate(_Model):
+class VaultModelUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Vault model update.
 
     :ivar tags: Gets or sets the resource tags.
@@ -4838,7 +4535,7 @@ class VaultModelUpdate(_Model):
     :vartype system_data: ~azure.mgmt.recoveryservicesdatareplication.models.SystemData
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Gets or sets the resource tags."""
     properties: Optional["_models.VaultModelProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -4861,7 +4558,7 @@ class VaultModelUpdate(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.VaultModelProperties"] = None,
         identity: Optional["_models.VaultIdentityModel"] = None,
     ) -> None: ...
@@ -4877,7 +4574,9 @@ class VaultModelUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMwareFabricAgentModelCustomProperties(FabricAgentModelCustomProperties, discriminator="VMware"):
+class VMwareFabricAgentModelCustomProperties(
+    FabricAgentModelCustomProperties, discriminator="VMware"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMware fabric agent model custom properties.
 
     :ivar bios_id: Gets or sets the BIOS Id of the fabric agent machine. Required.
@@ -4914,10 +4613,13 @@ class VMwareFabricAgentModelCustomProperties(FabricAgentModelCustomProperties, d
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="VMware", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "VMware"  # type: ignore
 
 
-class VMwareMigrateFabricModelCustomProperties(FabricModelCustomProperties, discriminator="VMwareMigrate"):
+class VMwareMigrateFabricModelCustomProperties(
+    FabricModelCustomProperties, discriminator="VMwareMigrate"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMware migrate fabric model custom properties.
 
     :ivar vmware_site_id: Gets or sets the ARM Id of the VMware site. Required.
@@ -4954,10 +4656,11 @@ class VMwareMigrateFabricModelCustomProperties(FabricModelCustomProperties, disc
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="VMwareMigrate", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "VMwareMigrate"  # type: ignore
 
 
-class VMwareToAzStackHCIDiskInput(_Model):
+class VMwareToAzStackHCIDiskInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareToAzStack disk input.
 
     :ivar disk_id: Gets or sets the disk Id. Required.
@@ -5102,10 +4805,11 @@ class VMwareToAzStackHCIEventModelCustomProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="VMwareToAzStackHCI", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "VMwareToAzStackHCI"  # type: ignore
 
 
-class VMwareToAzStackHCINicInput(_Model):
+class VMwareToAzStackHCINicInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareToAzStackHCI NIC properties.
 
     :ivar nic_id: Gets or sets the NIC Id. Required.
@@ -5184,7 +4888,7 @@ class VMwareToAzStackHCINicInput(_Model):
 
 class VMwareToAzStackHCIPlannedFailoverModelCustomProperties(
     PlannedFailoverModelCustomProperties, discriminator="VMwareToAzStackHCI"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """VMware to AzStackHCI planned failover model custom properties.
 
     :ivar shutdown_source_vm: Gets or sets a value indicating whether VM needs to be shut down.
@@ -5217,12 +4921,13 @@ class VMwareToAzStackHCIPlannedFailoverModelCustomProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="VMwareToAzStackHCI", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "VMwareToAzStackHCI"  # type: ignore
 
 
 class VMwareToAzStackHCIPolicyModelCustomProperties(
     PolicyModelCustomProperties, discriminator="VMwareToAzStackHCI"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """VMware To AzStackHCI Policy model custom properties.
 
     :ivar recovery_point_history_in_minutes: Gets or sets the duration in minutes until which the
@@ -5272,7 +4977,8 @@ class VMwareToAzStackHCIPolicyModelCustomProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="VMwareToAzStackHCI", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "VMwareToAzStackHCI"  # type: ignore
 
 
 class VMwareToAzStackHCIProtectedDiskProperties(_Model):  # pylint: disable=name-too-long
@@ -5341,7 +5047,7 @@ class VMwareToAzStackHCIProtectedDiskProperties(_Model):  # pylint: disable=name
 
 class VMwareToAzStackHCIProtectedItemModelCustomProperties(
     ProtectedItemModelCustomProperties, discriminator="VMwareToAzStackHCI"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """VMware to AzStackHCI Protected item model custom properties.
 
     :ivar active_location: Gets or sets the location of the protected item. Known values are:
@@ -5455,6 +5161,15 @@ class VMwareToAzStackHCIProtectedItemModelCustomProperties(
     :ivar instance_type: Gets or sets the instance type. Required. Default value is
      "VMwareToAzStackHCI".
     :vartype instance_type: str
+    :ivar security_option: Gets or sets the security options for this VM. Known values are: "None",
+     "SecureBootEnabled", "EnablevTPM", and "TrustedLaunch".
+    :vartype security_option: str or
+     ~azure.mgmt.recoveryservicesdatareplication.models.SecurityOption
+    :ivar convert_to_gen2: Gets or sets a value indicating whether conversion to Gen 2 is required.
+    :vartype convert_to_gen2: bool
+    :ivar migrate_as_arc_vm: Gets or sets a value indicating whether VM is to be migrated as Arc
+     VM.
+    :vartype migrate_as_arc_vm: bool
     """
 
     active_location: Optional[Union[str, "_models.ProtectedItemActiveLocation"]] = rest_field(
@@ -5488,19 +5203,19 @@ class VMwareToAzStackHCIProtectedItemModelCustomProperties(
         name="customLocationRegion", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the location of Azure Arc HCI custom location resource. Required."""
-    disks_to_include: List["_models.VMwareToAzStackHCIDiskInput"] = rest_field(
+    disks_to_include: list["_models.VMwareToAzStackHCIDiskInput"] = rest_field(
         name="disksToInclude", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the list of disks to replicate. Required."""
-    nics_to_include: List["_models.VMwareToAzStackHCINicInput"] = rest_field(
+    nics_to_include: list["_models.VMwareToAzStackHCINicInput"] = rest_field(
         name="nicsToInclude", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the list of VM NIC to replicate. Required."""
-    protected_disks: Optional[List["_models.VMwareToAzStackHCIProtectedDiskProperties"]] = rest_field(
+    protected_disks: Optional[list["_models.VMwareToAzStackHCIProtectedDiskProperties"]] = rest_field(
         name="protectedDisks", visibility=["read"]
     )
     """Gets or sets the list of protected disks."""
-    protected_nics: Optional[List["_models.VMwareToAzStackHCIProtectedNicProperties"]] = rest_field(
+    protected_nics: Optional[list["_models.VMwareToAzStackHCIProtectedNicProperties"]] = rest_field(
         name="protectedNics", visibility=["read"]
     )
     """Gets or sets the VM NIC details."""
@@ -5612,6 +5327,19 @@ class VMwareToAzStackHCIProtectedItemModelCustomProperties(
     """Gets or sets the latest timestamp that replication status is updated."""
     instance_type: Literal["VMwareToAzStackHCI"] = rest_discriminator(name="instanceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Gets or sets the instance type. Required. Default value is \"VMwareToAzStackHCI\"."""
+    security_option: Optional[Union[str, "_models.SecurityOption"]] = rest_field(
+        name="securityOption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets the security options for this VM. Known values are: \"None\",
+     \"SecureBootEnabled\", \"EnablevTPM\", and \"TrustedLaunch\"."""
+    convert_to_gen2: Optional[bool] = rest_field(
+        name="convertToGen2", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets a value indicating whether conversion to Gen 2 is required."""
+    migrate_as_arc_vm: Optional[bool] = rest_field(
+        name="migrateAsArcVM", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets a value indicating whether VM is to be migrated as Arc VM."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -5622,8 +5350,8 @@ class VMwareToAzStackHCIProtectedItemModelCustomProperties(
         storage_container_id: str,
         target_resource_group_id: str,
         custom_location_region: str,
-        disks_to_include: List["_models.VMwareToAzStackHCIDiskInput"],
-        nics_to_include: List["_models.VMwareToAzStackHCINicInput"],
+        disks_to_include: list["_models.VMwareToAzStackHCIDiskInput"],
+        nics_to_include: list["_models.VMwareToAzStackHCINicInput"],
         hyper_v_generation: str,
         fabric_discovery_machine_id: str,
         run_as_account_id: str,
@@ -5637,6 +5365,9 @@ class VMwareToAzStackHCIProtectedItemModelCustomProperties(
         dynamic_memory_config: Optional["_models.ProtectedItemDynamicMemoryConfig"] = None,
         target_memory_in_mega_bytes: Optional[int] = None,
         perform_auto_resync: Optional[bool] = None,
+        security_option: Optional[Union[str, "_models.SecurityOption"]] = None,
+        convert_to_gen2: Optional[bool] = None,
+        migrate_as_arc_vm: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -5647,12 +5378,13 @@ class VMwareToAzStackHCIProtectedItemModelCustomProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="VMwareToAzStackHCI", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "VMwareToAzStackHCI"  # type: ignore
 
 
 class VMwareToAzStackHCIProtectedItemModelCustomPropertiesUpdate(
     ProtectedItemModelCustomPropertiesUpdate, discriminator="VMwareToAzStackHCI"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """VMware to AzStackHCI Protected item model custom properties.
 
     :ivar nics_to_include: Gets or sets the list of VM NIC to replicate.
@@ -5672,9 +5404,18 @@ class VMwareToAzStackHCIProtectedItemModelCustomPropertiesUpdate(
     :vartype instance_type: str
     :ivar os_type: Gets or sets the type of the OS.
     :vartype os_type: str
+    :ivar security_option: Gets or sets the security options for this VM. Known values are: "None",
+     "SecureBootEnabled", "EnablevTPM", and "TrustedLaunch".
+    :vartype security_option: str or
+     ~azure.mgmt.recoveryservicesdatareplication.models.SecurityOption
+    :ivar convert_to_gen2: Gets or sets a value indicating whether conversion to Gen 2 is required.
+    :vartype convert_to_gen2: bool
+    :ivar migrate_as_arc_vm: Gets or sets a value indicating whether VM is to be migrated as Arc
+     VM.
+    :vartype migrate_as_arc_vm: bool
     """
 
-    nics_to_include: Optional[List["_models.VMwareToAzStackHCINicInput"]] = rest_field(
+    nics_to_include: Optional[list["_models.VMwareToAzStackHCINicInput"]] = rest_field(
         name="nicsToInclude", visibility=["read", "create", "update", "delete", "query"]
     )
     """Gets or sets the list of VM NIC to replicate."""
@@ -5698,17 +5439,33 @@ class VMwareToAzStackHCIProtectedItemModelCustomPropertiesUpdate(
     """Gets or sets the instance type. Required. Default value is \"VMwareToAzStackHCI\"."""
     os_type: Optional[str] = rest_field(name="osType", visibility=["read", "create", "update", "delete", "query"])
     """Gets or sets the type of the OS."""
+    security_option: Optional[Union[str, "_models.SecurityOption"]] = rest_field(
+        name="securityOption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets the security options for this VM. Known values are: \"None\",
+     \"SecureBootEnabled\", \"EnablevTPM\", and \"TrustedLaunch\"."""
+    convert_to_gen2: Optional[bool] = rest_field(
+        name="convertToGen2", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets a value indicating whether conversion to Gen 2 is required."""
+    migrate_as_arc_vm: Optional[bool] = rest_field(
+        name="migrateAsArcVM", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Gets or sets a value indicating whether VM is to be migrated as Arc VM."""
 
     @overload
     def __init__(
         self,
         *,
-        nics_to_include: Optional[List["_models.VMwareToAzStackHCINicInput"]] = None,
+        nics_to_include: Optional[list["_models.VMwareToAzStackHCINicInput"]] = None,
         target_cpu_cores: Optional[int] = None,
         is_dynamic_ram: Optional[bool] = None,
         dynamic_memory_config: Optional["_models.ProtectedItemDynamicMemoryConfig"] = None,
         target_memory_in_mega_bytes: Optional[int] = None,
         os_type: Optional[str] = None,
+        security_option: Optional[Union[str, "_models.SecurityOption"]] = None,
+        convert_to_gen2: Optional[bool] = None,
+        migrate_as_arc_vm: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -5719,10 +5476,11 @@ class VMwareToAzStackHCIProtectedItemModelCustomPropertiesUpdate(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="VMwareToAzStackHCI", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "VMwareToAzStackHCI"  # type: ignore
 
 
-class VMwareToAzStackHCIProtectedNicProperties(_Model):
+class VMwareToAzStackHCIProtectedNicProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VMwareToAzStackHCI NIC properties.
 
     :ivar nic_id: Gets or sets the NIC Id.
@@ -5797,7 +5555,7 @@ class VMwareToAzStackHCIRecoveryPointModelCustomProperties(
     :vartype instance_type: str
     """
 
-    disk_ids: Optional[List[str]] = rest_field(name="diskIds", visibility=["read"])
+    disk_ids: Optional[list[str]] = rest_field(name="diskIds", visibility=["read"])
     """Gets or sets the list of the disk Ids."""
     instance_type: Literal["VMwareToAzStackHCIRecoveryPointModelCustomProperties"] = rest_discriminator(name="instanceType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Gets or sets the instance type. Required. Default value is
@@ -5816,12 +5574,13 @@ class VMwareToAzStackHCIRecoveryPointModelCustomProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="VMwareToAzStackHCIRecoveryPointModelCustomProperties", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "VMwareToAzStackHCIRecoveryPointModelCustomProperties"  # type: ignore
 
 
 class VMwareToAzStackHCIReplicationExtensionModelCustomProperties(
     ReplicationExtensionModelCustomProperties, discriminator="VMwareToAzStackHCI"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """VMware to AzStackHCI Replication extension model custom properties.
 
     :ivar vmware_fabric_arm_id: Gets or sets the ARM Id of the source VMware fabric. Required.
@@ -5923,4 +5682,5 @@ class VMwareToAzStackHCIReplicationExtensionModelCustomProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, instance_type="VMwareToAzStackHCI", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.instance_type = "VMwareToAzStackHCI"  # type: ignore

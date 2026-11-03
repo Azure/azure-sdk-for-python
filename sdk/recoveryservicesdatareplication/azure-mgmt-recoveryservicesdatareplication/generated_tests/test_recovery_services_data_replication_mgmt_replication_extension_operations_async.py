@@ -39,7 +39,7 @@ class TestRecoveryServicesDataReplicationMgmtReplicationExtensionOperationsAsync
                 resource_group_name=resource_group.name,
                 vault_name="str",
                 replication_extension_name="str",
-                resource={
+                body={
                     "id": "str",
                     "name": "str",
                     "properties": {

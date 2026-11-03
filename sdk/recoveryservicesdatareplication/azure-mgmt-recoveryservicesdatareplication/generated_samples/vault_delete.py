@@ -32,10 +32,10 @@ def main():
 
     client.vault.begin_delete(
         resource_group_name="rgrecoveryservicesdatareplication",
-        vault_name="4",
+        vault_name="lftqijwwzmqhexnl",
     ).result()
 
 
-# x-ms-original-file: 2024-09-01/Vault_Delete.json
+# x-ms-original-file: 2026-05-01/Vault_Delete.json
 if __name__ == "__main__":
     main()

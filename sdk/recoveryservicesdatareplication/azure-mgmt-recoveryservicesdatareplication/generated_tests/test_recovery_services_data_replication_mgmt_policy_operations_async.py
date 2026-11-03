@@ -39,7 +39,7 @@ class TestRecoveryServicesDataReplicationMgmtPolicyOperationsAsync(AzureMgmtReco
                 resource_group_name=resource_group.name,
                 vault_name="str",
                 policy_name="str",
-                resource={
+                body={
                     "id": "str",
                     "name": "str",
                     "properties": {"customProperties": "policy_model_custom_properties", "provisioningState": "str"},

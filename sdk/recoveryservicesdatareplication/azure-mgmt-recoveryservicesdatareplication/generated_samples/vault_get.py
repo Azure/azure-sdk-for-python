@@ -32,11 +32,11 @@ def main():
 
     response = client.vault.get(
         resource_group_name="rgrecoveryservicesdatareplication",
-        vault_name="4",
+        vault_name="lftqijwwzmqhexnl",
     )
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/Vault_Get.json
+# x-ms-original-file: 2026-05-01/Vault_Get.json
 if __name__ == "__main__":
     main()

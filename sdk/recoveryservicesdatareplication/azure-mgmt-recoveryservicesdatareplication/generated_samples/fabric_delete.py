@@ -32,10 +32,10 @@ def main():
 
     client.fabric.begin_delete(
         resource_group_name="rgrecoveryservicesdatareplication",
-        fabric_name="wPR",
+        fabric_name="lftqijwwzmqhexnl",
     ).result()
 
 
-# x-ms-original-file: 2024-09-01/Fabric_Delete.json
+# x-ms-original-file: 2026-05-01/Fabric_Delete.json
 if __name__ == "__main__":
     main()

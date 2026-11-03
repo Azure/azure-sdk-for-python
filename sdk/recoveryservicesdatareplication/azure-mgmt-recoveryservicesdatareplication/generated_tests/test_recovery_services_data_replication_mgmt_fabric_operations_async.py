@@ -37,7 +37,7 @@ class TestRecoveryServicesDataReplicationMgmtFabricOperationsAsync(AzureMgmtReco
             await self.client.fabric.begin_create(
                 resource_group_name=resource_group.name,
                 fabric_name="str",
-                resource={
+                body={
                     "location": "str",
                     "id": "str",
                     "name": "str",
@@ -104,7 +104,7 @@ class TestRecoveryServicesDataReplicationMgmtFabricOperationsAsync(AzureMgmtReco
             await self.client.fabric.begin_update(
                 resource_group_name=resource_group.name,
                 fabric_name="str",
-                properties={
+                body={
                     "id": "str",
                     "name": "str",
                     "properties": {
