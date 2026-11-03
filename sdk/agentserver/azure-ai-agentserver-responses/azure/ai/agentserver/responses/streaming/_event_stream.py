@@ -201,7 +201,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
                 }
             )
             if request_mapping is not None:
-                for field_name in ("metadata", "background", "previous_response_id"):
+                for field_name in ("metadata", "background", "previous_response_id", "tools", "tool_choice"):
                     value = request_mapping.get(field_name)
                     if value is not None:
                         self._response[field_name] = deepcopy(value)
@@ -216,6 +216,9 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
                 request_agent_reference = request_mapping.get("agent_reference")
                 if isinstance(request_agent_reference, dict):
                     self._response["agent_reference"] = deepcopy(request_agent_reference)
+
+        self._response.setdefault("tools", [])
+        self._response.setdefault("tool_choice", "auto")
 
         if model is not None:
             self._response["model"] = model
