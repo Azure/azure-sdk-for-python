@@ -35,19 +35,19 @@ class TestSamples(AzureRecordedTestCase):
     # To run this test with a specific sample, use:
     # pytest tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_agent_memory_search]
     @servicePreparer()
-    # @additionalSampleTests(
-    #     [
-    #         AdditionalSampleTestDetail( # 2/28/2026 westus2 get 500
-    #             test_id="sample_agent_azure_function",
-    #             sample_filename="sample_agent_azure_function.py",
-    #             env_vars={
-    #                 "STORAGE_INPUT_QUEUE_NAME": "sanitized_input_queue_name",
-    #                 "STORAGE_OUTPUT_QUEUE_NAME": "sanitized_output_queue_name",
-    #                 "STORAGE_QUEUE_SERVICE_ENDPOINT": "sanitized_queue_service_endpoint",
-    #             },
-    #         ),
-    #     ]
-    # )
+    @additionalSampleTests(
+        [
+            AdditionalSampleTestDetail(
+                test_id="sample_agent_azure_function",
+                sample_filename="sample_agent_azure_function.py",
+                env_vars={
+                    "STORAGE_INPUT_QUEUE_NAME": "sanitized_input_queue_name",
+                    "STORAGE_OUTPUT_QUEUE_NAME": "sanitized_output_queue_name",
+                    "STORAGE_QUEUE_SERVICE_ENDPOINT": "sanitized_queue_service_endpoint",
+                },
+            ),
+        ]
+    )
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(

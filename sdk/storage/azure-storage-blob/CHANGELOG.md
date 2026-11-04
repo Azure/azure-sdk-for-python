@@ -2,16 +2,23 @@
 
 ## 12.32.0b1 (Unreleased)
 
+### Breaking Changes
+- Changed the default `max_single_put_size` from 64 MiB to 4 MiB. This means uploads greater than 4 MiB will now be performed in multiple requests instead of a single request. This may result in more requests and a block blob with more blocks than in previous versions. To restore the previous behavior, pass `max_single_put_size = 64 * 1024 * 1024` when constructing the client.
+- Changed the default `max_single_get_size` from 32 MiB to 4 MiB. This means the initial download request will now be 4 MiB rather than 32 MiB which may result in more requests than previous versions depending on blob size. This also means some blob downloads may use parallel requests when they were not previously, if `max_concurrency` is set greater than 1. To restore the previous behavior, pass `max_single_get_size = 32 * 1024 * 1024` when constructing the client.
+
 ### Features Added
+- Added opt-in client session-based authentication via the new `use_session` keyword argument. When enabled, eligible blob download requests are authenticated with a short-lived, per-container session credential obtained from the service rather than the bearer token. Requires a `TokenCredential`. Sessions are managed by a session provider, which can be shared across clients via the `session_provider` keyword, and the account name used for signing can be set explicitly with `session_account_name`.
 
 ### Bugs Fixed
 - Fixed an issue with the new generation where listing page ranges for an empty page blob could raise a `ValueError` instead of returning an empty list.
 - Fixed an issue where a SAS generated for a blob name containing a backslash (`\`) was invalid because the backslash was not normalized to a forward slash when building the signed resource.
 
 ### Other Changes
+- Added `nanoarrow>=0.7.0` as a required dependency.
 - Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`
   and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
   models instead of generated internal types.
+- `ContainerClient`'s `list_blobs`, `list_blob_names`, and `walk_blobs` now use Arrow by default. Pass `response_format="xml"` to use the previous behavior.
 
 ## 12.31.1 (2026-10-29)
 

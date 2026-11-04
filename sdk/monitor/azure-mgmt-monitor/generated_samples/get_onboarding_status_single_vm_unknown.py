@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,14 +9,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.postgresqlflexibleservers import PostgreSQLManagementClient
+from azure.mgmt.monitor import MonitorManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-postgresqlflexibleservers
+    pip install azure-mgmt-monitor
 # USAGE
-    python db_agent_update_enable.py
+    python get_onboarding_status_single_vm_unknown.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,19 +26,17 @@ from azure.mgmt.postgresqlflexibleservers import PostgreSQLManagementClient
 
 
 def main():
-    client = PostgreSQLManagementClient(
+    client = MonitorManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.db_agents.begin_create_or_update(
-        resource_group_name="exampleresourcegroup",
-        server_name="exampleserver",
-        resource={"properties": {"state": "Enabled"}},
-    ).result()
+    response = client.vm_insights.get_onboarding_status(
+        resource_uri="subscriptions/3d51de47-8d1c-4d24-b42f-bcae075dfa87/resourceGroups/vm-resource-group/providers/Microsoft.Compute/virtualMachines/ubuntu-vm",
+    )
     print(response)
 
 
-# x-ms-original-file: 2026-07-01-preview/DBAgentUpdateEnable.json
+# x-ms-original-file: 2018-11-27-preview/getOnboardingStatusSingleVMUnknown.json
 if __name__ == "__main__":
     main()

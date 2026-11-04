@@ -40,6 +40,21 @@
       "roleName": "Search Index Data Contributor"
     },
     {
+      "target": "project",
+      "roleDefinitionId": "974c5e8b-45b9-4653-ba55-5f855dd0fb88",
+      "roleName": "Storage Queue Data Contributor"
+    },
+    {
+      "target": "function",
+      "roleDefinitionId": "b7e6dc6d-f1e8-4753-8033-0f276bb0955b",
+      "roleName": "Storage Blob Data Owner"
+    },
+    {
+      "target": "function",
+      "roleDefinitionId": "974c5e8b-45b9-4653-ba55-5f855dd0fb88",
+      "roleName": "Storage Queue Data Contributor"
+    },
+    {
       "target": "pipeline",
       "roleDefinitionId": "53ca6127-db72-4b80-b1b0-d745d6d5456d",
       "roleName": "Foundry User"

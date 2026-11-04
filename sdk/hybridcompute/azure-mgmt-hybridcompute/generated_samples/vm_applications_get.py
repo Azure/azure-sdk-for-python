@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.postgresqlflexibleservers import PostgreSQLManagementClient
+from azure.mgmt.hybridcompute import HybridComputeManagementClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-postgresqlflexibleservers
+    pip install azure-mgmt-hybridcompute
 # USAGE
-    python db_agent_update_disable.py
+    python vm_applications_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,19 +25,19 @@ from azure.mgmt.postgresqlflexibleservers import PostgreSQLManagementClient
 
 
 def main():
-    client = PostgreSQLManagementClient(
+    client = HybridComputeManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.db_agents.begin_create_or_update(
-        resource_group_name="exampleresourcegroup",
-        server_name="exampleserver",
-        resource={"properties": {"state": "Disabled"}},
-    ).result()
+    response = client.vm_applications.get(
+        resource_group_name="myResourceGroup",
+        machine_name="myMachine",
+        application_name="myApplication",
+    )
     print(response)
 
 
-# x-ms-original-file: 2026-07-01-preview/DBAgentUpdateDisable.json
+# x-ms-original-file: 2026-09-01/application/VMApplications_Get.json
 if __name__ == "__main__":
     main()
