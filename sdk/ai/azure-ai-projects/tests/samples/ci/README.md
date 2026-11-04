@@ -51,12 +51,33 @@ The subscription/tenant still come from saved variables, never an active-account
 - A permanent RG `rg-azsdk-identities-{region}-{MMddyy_HHmmss}` and four UAMIs `mi-azsdk-sample-{project,account,search,function}-{region}-{MMddyy_HHmmss}`, tagged `purpose=azsdk-sample-identities`, `sample-ci-retention=permanent`, a shared `sample-ci-owner` token and `sample-ci-identity={purpose}`. Pass the RG name to the pipeline's `identityResourceGroup`.
 - The seven **subscription-scoped** roles in [IdentityConfiguration.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/shared-identities/infra/IdentityConfiguration.json) for the project UAMI: Foundry User, Storage Blob Data Contributor, Storage Blob Data Owner (conditioned), Cosmos DB Operator, Search Service Contributor, Search Index Data Contributor and Storage Queue Data Contributor.
 - Subscription-scoped **Storage Blob Data Owner** and **Storage Queue Data Contributor** for the Function UAMI.
+- Subscription-scoped **Search Service Contributor**, **Search Index Data Contributor**,
+  **Storage Blob Data Contributor**, and **Cognitive Services OpenAI User** for the Search
+  UAMI. The deployment script uses it to upload source documents and configure indexes;
+  Search uses that same identity to read blobs and generate embeddings.
 
 The script does **not** grant the pipeline service principal Foundry User; that subscription-scoped grant must exist already and is not checked by admission. Every run creates a new RG and identity set; nothing is reused or deleted.
 
 **A newly created set does not automatically run this pipeline.** Pass its RG name as `identityResourceGroup` after reviewing the target, broad role scope and regional eligibility. The [metadata resolver](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/SampleCiHelpers.ps1) requires a single existing, owned identity set in that RG and never adopts unowned identities. Grants are assumed to be configured already. Do not infer workload compatibility from MI creation.
 
-The account and Search identities have **no grants** until a separately reviewed integration needs them. The deployment script creates no test workloads. The CI cleanup never deletes these identities or grants.
+The account identity has **no grants**. The identity bootstrap creates no test workloads.
+The CI cleanup never deletes these identities or grants. The new Search grants use the
+existing subscription-scoped bootstrap pattern because temporary worker resources do not
+exist yet; review that broad scope before approving them.
+
+For an **existing permanent identity set**, an administrator can preview
+[update-search-roles.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/shared-identities/infra/update-search-roles.bicep)
+without creating replacement identities:
+
+```powershell
+az deployment sub what-if --subscription '<subscription-id>' --location '<identity-region>' `
+    --template-file tests\samples\shared-identities\infra\update-search-roles.bicep `
+    --parameters identityResourceGroupName='<existing-identity-rg>' searchIdentityName='<existing-search-uami>'
+```
+
+Verify the exact existing Search identity name, owner and region first. After approval,
+use `az deployment sub create` with the same explicit arguments to apply the four grants.
+Do not run this administrator template from a worker or rely on workers to repair RBAC.
 
 **Scope warning:** the service grants reach matching existing and future resources throughout the subscription, not just temporary RGs. Shared identities reduce cross-run isolation. The approved Blob Owner condition restricts only blob tag read/write and filtering to container names ending `-azureml-agent`; it omits the original generated workspace-prefix restriction, and other Blob Owner permissions remain allowed. Do not silently broaden this pattern or use it without scope review.
 
@@ -181,6 +202,49 @@ In the caller's `finally`/always-run cleanup step, invoke:
 
 A non-Python adapter and pipeline are not shipped here. The shared interface is prepared
 for reuse; cross-language test execution still needs its own adapter and live validation.
+
+## AI Search integration
+
+[ai-search.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/ai-search.bicep)
+ports the Search content provisioning from `foundry-project-pool` into the unconditional
+resource bundle. It reuses the Standard setup's S1 Search service, storage account,
+AAD-authenticated project connection and pre-existing Search UAMI. Semantic search uses
+the free tier. It adds a private `documents` container and a `text-embedding-3-small`
+version `1` deployment with Standard capacity `10` and `1536` dimensions. The region must
+support that embedding deployment and have its own remaining model quota; the chat-model
+preflight does not check embedding quota. ARM validates this additional deployment.
+
+Search indexes, data sources, skillsets and indexer execution are
+[data-plane APIs](https://learn.microsoft.com/azure/search/search-how-to-create-indexers),
+not native ARM resources. A Bicep-managed `Microsoft.Resources/deploymentScripts` resource
+runs the packaged, standard-library-only
+[search-indexing.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/search-indexing.py)
+under the shared Search UAMI. No new PowerShell publisher, SDK dependency, API key,
+storage key or IAM grant is required in workers.
+
+The script uploads the existing sample `product_info.md` in Markdown and plain-text
+formats, creates the chunk/vector/semantic index, a keyless blob data source, a split and
+embedding skillset, and separate Markdown and document indexers. Data sources, embedding
+skills and query-time vector generation explicitly select the Search UAMI for outbound authentication;
+[managed-identity connections](https://learn.microsoft.com/azure/search/search-how-to-managed-identities)
+use Search API `2026-04-01`.
+
+Indexer reset/run is explicit on each script execution, including retries. The script
+waits for fresh, successful executions with nonzero processed documents, rejects indexing
+errors and warnings, and verifies searchable content before deployment can finish.
+Authorization propagation, throttling and transient HTTP failures have bounded retries;
+missing grants or model/embedding failures still fail the deployment. The deployment script
+has a 30-minute timeout and always removes its supporting resources after execution.
+All indexing resources are created even when no selected sample uses Search.
+
+Root outputs provide `AI_SEARCH_PROJECT_CONNECTION_ID`, `AI_SEARCH_INDEX_NAME`,
+`AZURE_AI_SEARCH_ENDPOINT`, `AZURE_AI_EMBED_DEPLOYMENT_NAME`,
+`AZURE_AI_EMBED_DIMENSIONS`, `AZURE_BLOB_CONTAINER_NAME`, and `AI_SEARCH_USER_INPUT`.
+The last value supplies a question about the indexed sample product so the Search sample
+does not wait for interactive input. Output names are discovered by the existing planner
+and registered by the Python runner; no new option mapping or sanitized defaults are added.
+This product-content index is for sample execution, not the separate Agent Lightning
+question-answering service tests, which require their own document corpus.
 
 ## Function App integration
 

@@ -264,6 +264,74 @@ if (($functionNames -join ',') -cne ($expectedFunctionNames -join ',') -or
 }
 Write-Host 'Standalone Function App template compiled; reference defaults, shared identity, keyless settings, and non-secret outputs verified.'
 
+$searchTemplate = Invoke-BicepCompilation -Path (Join-Path $infra 'ai-search.bicep')
+$searchResources = @(Get-ArmResources -Template $searchTemplate)
+Assert-NoArmRoleAssignments -Resources $searchResources
+$expectedSearchTypes = @('Microsoft.Storage/storageAccounts/blobServices/containers',
+    'Microsoft.CognitiveServices/accounts/deployments', 'Microsoft.Resources/deploymentScripts')
+foreach ($type in $expectedSearchTypes) {
+    if (@($searchResources | Where-Object Type -ceq $type).Count -ne 1) {
+        throw "Search indexing must declare exactly one '$type' and reuse the Standard resources."
+    }
+}
+if ($searchResources.Count -ne $expectedSearchTypes.Count) {
+    throw 'Search indexing must not create additional accounts, Search services, identities or IAM grants.'
+}
+$searchScript = @($searchResources | Where-Object Type -ceq 'Microsoft.Resources/deploymentScripts')[0].Definition
+Assert-SharedIdentity -Resource $searchScript -ParameterName 'sharedSearchIdentityResourceId'
+if ($searchScript['properties']['cleanupPreference'] -cne 'Always' -or
+    $searchScript['properties']['timeout'] -cne 'PT30M' -or
+    @($searchScript['dependsOn']).Count -ne 2) {
+    throw 'Search data-plane deployment must wait for its container and model and clean up supporting resources.'
+}
+$embedding = @($searchResources | Where-Object Type -ceq 'Microsoft.CognitiveServices/accounts/deployments')[0].Definition
+if ($embedding['properties']['model']['name'] -cne 'text-embedding-3-small' -or
+    $embedding['properties']['model']['version'] -cne '1' -or
+    $embedding['sku']['name'] -cne 'Standard' -or $embedding['sku']['capacity'] -ne 10 -or
+    $searchTemplate['variables']['dimensions'] -ne 1536) {
+    throw 'Search index dimensions must match the pinned embedding model deployment.'
+}
+$service = @($standardResources | Where-Object Type -ceq 'Microsoft.Search/searchServices')[0].Definition
+if ($service['properties']['semanticSearch'] -cne 'free') {
+    throw 'The Search sample index requires the existing service semantic free tier.'
+}
+$scriptContent = [IO.File]::ReadAllText((Join-Path $infra 'search-indexing.py'))
+$loadedScripts = @($searchTemplate['variables'].GetEnumerator() |
+    Where-Object { $_.Value -is [string] -and $_.Value -ceq $scriptContent })
+if ($loadedScripts.Count -ne 1 -or
+    -not ([string] $searchScript['properties']['scriptContent']).Contains("variables('$($loadedScripts[0].Key)')") -or
+    $scriptContent -notmatch '2026-04-01' -or $scriptContent -notmatch 'wait_for_indexer' -or
+    $scriptContent -match '\baz\s+role\s+assignment|\blistKeys\b|\blistAdminKeys\b') {
+    throw 'Search data-plane execution must wait for indexers and use tokens rather than IAM writes or keys.'
+}
+$searchOutputNames = @($searchTemplate['outputs']['environment']['value'].Keys | Sort-Object)
+$expectedSearchNames = @('AZURE_AI_SEARCH_ENDPOINT', 'AI_SEARCH_PROJECT_CONNECTION_ID', 'AI_SEARCH_INDEX_NAME',
+    'AZURE_AI_EMBED_DEPLOYMENT_NAME', 'AZURE_AI_EMBED_DIMENSIONS', 'AZURE_BLOB_CONTAINER_NAME',
+    'AI_SEARCH_USER_INPUT' | Sort-Object)
+$searchPlanNames = @(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $infra 'ai-search.bicep') | Sort-Object)
+if (($searchOutputNames -join ',') -cne ($expectedSearchNames -join ',') -or
+    ($searchOutputNames -join ',') -cne ($searchPlanNames -join ',')) {
+    throw 'Search must expose only its discoverable, non-secret sample bindings.'
+}
+
+$identityInfra = Join-Path $PSScriptRoot '../../shared-identities/infra'
+$identityConfiguration = Get-Content -Raw -LiteralPath (Join-Path $identityInfra 'IdentityConfiguration.json') |
+    ConvertFrom-Json -AsHashtable
+$searchGrants = @($identityConfiguration['roleAssignments'] | Where-Object target -ceq 'search')
+$expectedRoles = @('7ca78c08-252a-4471-8644-bb5ff32d4ba0', '8ebe5a00-799e-43f5-93ac-243d3dce84a7',
+    'ba92f5b4-2d11-453d-a403-e96b0029c9fe', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd' | Sort-Object)
+if ((@($searchGrants.roleDefinitionId | Sort-Object) -join ',') -cne ($expectedRoles -join ',')) {
+    throw 'Only the four approved Search indexing and outbound data-plane roles belong in bootstrap.'
+}
+$roleUpdate = Invoke-BicepCompilation -Path (Join-Path $identityInfra 'update-search-roles.bicep')
+$roleUpdateResources = @(Get-ArmResources -Template $roleUpdate)
+if ($roleUpdateResources.Count -ne 1 -or
+    $roleUpdateResources[0].Type -cne 'Microsoft.Authorization/roleAssignments' -or
+    $roleUpdateResources[0].Definition['copy']['count'] -cne "[length(variables('grants'))]") {
+    throw 'The administrator-only update must add exactly the four Search roles and create no identities.'
+}
+Write-Host 'Search module compiled; keyless execution, bootstrap roles, embedding dimensions and non-secret outputs verified.'
+
 # The root is the extensibility boundary: modules and bindings must stay in sync.
 $bundle = Invoke-BicepCompilation -Path (Join-Path $infra 'main.bicep')
 $bundleResources = @(Get-ArmResources -Template $bundle)
