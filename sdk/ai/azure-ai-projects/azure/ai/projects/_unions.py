@@ -18,5 +18,12 @@ VoiceAgentMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
 VoiceAgentHandoffMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
 RoutineRunStatus: TypeAlias = str
 VoiceAgentSessionResponse: TypeAlias = "_models.VoiceAgentSessionResponseConfig"
+RealtimeResponseInputItem: TypeAlias = Union[
+    "_models.RealtimeResponseInputMessage",
+    "_models.RealtimeResponseInputFunctionCall",
+    "_models.RealtimeResponseInputFunctionCallOutput",
+    "_models.RealtimeResponseItemReference",
+]
 VoiceAgentSessionUpdate: TypeAlias = "_models.VoiceAgentSessionUpdateConfig"
+ChoiceValueResource: TypeAlias = Union[str, bool]
 GenerateAgentRequest: TypeAlias = "_models.GenerateVoiceAgentRequest"
