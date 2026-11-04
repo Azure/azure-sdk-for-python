@@ -5101,6 +5101,21 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ApplyPatchToolParam(Tool, discriminator='apply_patch'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        type: Literal[ToolType.APPLY_PATCH]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ApproximateLocation(_Model):
         city: Optional[str]
         country: Optional[str]
@@ -6009,6 +6024,29 @@ namespace azure.ai.projects.models
         REMOTE_BUILD = "remote_build"
 
 
+    class azure.ai.projects.models.CodeInterpreterTool(Tool, discriminator='code_interpreter'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        container: Optional[Union[str, AutoCodeInterpreterToolParam]]
+        description: Optional[str]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: Literal[ToolType.CODE_INTERPRETER]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
+                container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ..., 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.CodeInterpreterToolboxTool(ToolboxTool, discriminator='code_interpreter'):
         allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
         container: Optional[Union[str, AutoCodeInterpreterToolParam]]
@@ -6072,6 +6110,35 @@ namespace azure.ai.projects.models
         MAC = "mac"
         UBUNTU = "ubuntu"
         WINDOWS = "windows"
+
+
+    class azure.ai.projects.models.ComputerTool(Tool, discriminator='computer'):
+        type: Literal[ToolType.COMPUTER]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ComputerUsePreviewTool(Tool, discriminator='computer_use_preview'):
+        display_height: int
+        display_width: int
+        environment: Union[str, ComputerEnvironment]
+        type: Literal[ToolType.COMPUTER_USE_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                display_height: int, 
+                display_width: int, 
+                environment: Union[str, ComputerEnvironment]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.Connection(_Model):
@@ -6518,14 +6585,14 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.CustomToolParam(_Model):
+    class azure.ai.projects.models.CustomToolParam(Tool, discriminator='custom'):
         allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
         async_property: Optional[bool]
         defer_loading: Optional[bool]
         description: Optional[str]
         format: Optional[CustomToolParamFormat]
         name: str
-        type: Literal["custom"]
+        type: Literal[ToolType.CUSTOM]
 
         @overload
         def __init__(
@@ -7975,6 +8042,33 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.FileSearchTool(Tool, discriminator='file_search'):
+        description: Optional[str]
+        filters: Optional[Filters]
+        max_num_results: Optional[int]
+        name: Optional[str]
+        ranking_options: Optional[RankingOptions]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: Literal[ToolType.FILE_SEARCH]
+        vector_store_ids: list[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                filters: Optional[Filters] = ..., 
+                max_num_results: Optional[int] = ..., 
+                name: Optional[str] = ..., 
+                ranking_options: Optional[RankingOptions] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                vector_store_ids: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.FileSearchToolboxTool(ToolboxTool, discriminator='file_search'):
         description: str
         filters: Optional[Filters]
@@ -8113,6 +8207,29 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.FunctionParameters(_Model):
 
 
+    class azure.ai.projects.models.FunctionShellToolParam(Tool, discriminator='shell'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        description: Optional[str]
+        environment: Optional[FunctionShellToolParamEnvironment]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: Literal[ToolType.SHELL]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
+                description: Optional[str] = ..., 
+                environment: Optional[FunctionShellToolParamEnvironment] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.FunctionShellToolParamEnvironment(_Model):
         type: str
 
@@ -8161,6 +8278,35 @@ namespace azure.ai.projects.models
         CONTAINER_AUTO = "container_auto"
         CONTAINER_REFERENCE = "container_reference"
         LOCAL = "local"
+
+
+    class azure.ai.projects.models.FunctionTool(Tool, discriminator='function'):
+        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
+        async_property: Optional[bool]
+        defer_loading: Optional[bool]
+        description: Optional[str]
+        name: str
+        output_schema: Optional[dict[str, Any]]
+        parameters: dict[str, Any]
+        strict: bool
+        type: Literal[ToolType.FUNCTION]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
+                async_property: Optional[bool] = ..., 
+                defer_loading: Optional[bool] = ..., 
+                description: Optional[str] = ..., 
+                name: str, 
+                output_schema: Optional[dict[str, Any]] = ..., 
+                parameters: dict[str, Any], 
+                strict: bool
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.FunctionToolParam(_Model):
@@ -8419,6 +8565,47 @@ namespace azure.ai.projects.models
         AUTO = "auto"
         EDIT = "edit"
         GENERATE = "generate"
+
+
+    class azure.ai.projects.models.ImageGenTool(Tool, discriminator='image_generation'):
+        action: Optional[Union[str, ImageGenAction]]
+        background: Optional[Literal["transparent", "opaque", "auto"]]
+        description: Optional[str]
+        input_fidelity: Optional[Union[str, InputFidelity]]
+        input_image_mask: Optional[ImageGenToolInputImageMask]
+        model: Optional[Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-5"], Literal["gpt-image-2"], Literal["gpt-image-2-2026-04-21"], Literal["gpt-image-5-sunburst"], Literal["gpt-image-5-sunburst-2026-09-08"], Literal["gpt-image-5-flare"], Literal["gpt-image-5-flare-2026-09-08"], str]]
+        moderation: Optional[Literal["auto", "low"]]
+        name: Optional[str]
+        output_compression: Optional[int]
+        output_format: Optional[Literal["png", "webp", "jpeg"]]
+        partial_images: Optional[int]
+        quality: Optional[Literal["low", "medium", "high", "xhigh", "max", "auto"]]
+        size: Optional[Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: Literal[ToolType.IMAGE_GENERATION]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                action: Optional[Union[str, ImageGenAction]] = ..., 
+                background: Optional[Literal[transparent, opaque, auto]] = ..., 
+                description: Optional[str] = ..., 
+                input_fidelity: Optional[Union[str, InputFidelity]] = ..., 
+                input_image_mask: Optional[ImageGenToolInputImageMask] = ..., 
+                model: Optional[Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-5], Literal[gpt-image-2], Literal[gpt-image-2-2026-04-21], Literal[gpt-image-5-sunburst], Literal[gpt-image-5-sunburst-2026-09-08], Literal[gpt-image-5-flare], Literal[gpt-image-5-flare-2026-09-08], str]] = ..., 
+                moderation: Optional[Literal[auto, low]] = ..., 
+                name: Optional[str] = ..., 
+                output_compression: Optional[int] = ..., 
+                output_format: Optional[Literal[png, webp, jpeg]] = ..., 
+                partial_images: Optional[int] = ..., 
+                quality: Optional[Literal[low, medium, high, xhigh, max, auto]] = ..., 
+                size: Optional[Union[Literal[1024x1024], Literal[1024x1536], Literal[1536x1024], Literal[auto], str]] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.ImageGenToolInputImageMask(_Model):
@@ -11299,6 +11486,25 @@ namespace azure.ai.projects.models
             ) -> None: ...
 
 
+    class azure.ai.projects.models.LocalShellToolParam(Tool, discriminator='local_shell'):
+        description: Optional[str]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: Literal[ToolType.LOCAL_SHELL]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.LocalSkillParam(_Model):
         description: str
         name: str
@@ -11381,7 +11587,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.MCPListToolsToolInputSchema(_Model):
 
 
-    class azure.ai.projects.models.MCPTool(_Model):
+    class azure.ai.projects.models.MCPTool(Tool, discriminator='mcp'):
         allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
         allowed_tools: Optional[Union[list[str], MCPToolFilter]]
         authorization: Optional[str]
@@ -11395,7 +11601,7 @@ namespace azure.ai.projects.models
         server_url: Optional[str]
         tool_configs: Optional[dict[str, ToolConfig]]
         tunnel_id: Optional[str]
-        type: Literal["mcp"]
+        type: Literal[ToolType.MCP]
 
         @overload
         def __init__(
@@ -12597,6 +12803,16 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ProgrammaticToolCallingParam(Tool, discriminator='programmatic_tool_calling'):
+        type: Literal[ToolType.PROGRAMMATIC_TOOL_CALLING]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.PromptAgentDefinition(AgentDefinition, discriminator='prompt'):
         harness: Optional[AgentHarness]
         instructions: Optional[str]
@@ -13343,6 +13559,7 @@ namespace azure.ai.projects.models
         MCP_CALL = "mcp_call"
         MCP_LIST_TOOLS = "mcp_list_tools"
         MESSAGE = "message"
+        SYSTEM_TOOL = "system_tool"
 
 
     class azure.ai.projects.models.RealtimeFunctionTool(_Model):
@@ -17048,21 +17265,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.ToolApplyPatchToolParam(Tool, discriminator='apply_patch'):
-        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
-        type: Literal[ToolType.APPLY_PATCH]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.ToolChoiceAllowed(ToolChoiceParam, discriminator='allowed_tools'):
         mode: Literal["auto", "required"]
         tools: list[dict[str, Any]]
@@ -17245,58 +17447,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.ToolCodeInterpreterTool(Tool, discriminator='code_interpreter'):
-        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
-        container: Optional[Union[str, AutoCodeInterpreterToolParam]]
-        description: Optional[str]
-        name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
-        type: Literal[ToolType.CODE_INTERPRETER]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ..., 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ToolComputerTool(Tool, discriminator='computer'):
-        type: Literal[ToolType.COMPUTER]
-
-        @overload
-        def __init__(self) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ToolComputerUsePreviewTool(Tool, discriminator='computer_use_preview'):
-        display_height: int
-        display_width: int
-        environment: Union[str, ComputerEnvironment]
-        type: Literal[ToolType.COMPUTER_USE_PREVIEW]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                display_height: int, 
-                display_width: int, 
-                environment: Union[str, ComputerEnvironment]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.ToolConfig(_Model):
         additional_search_text: Optional[str]
         pin: Optional[bool]
@@ -17307,31 +17457,6 @@ namespace azure.ai.projects.models
                 *, 
                 additional_search_text: Optional[str] = ..., 
                 pin: Optional[bool] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ToolCustomToolParam(Tool, discriminator='custom'):
-        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
-        async_property: Optional[bool]
-        defer_loading: Optional[bool]
-        description: Optional[str]
-        format: Optional[CustomToolParamFormat]
-        name: str
-        type: Literal[ToolType.CUSTOM]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                async_property: Optional[bool] = ..., 
-                defer_loading: Optional[bool] = ..., 
-                description: Optional[str] = ..., 
-                format: Optional[CustomToolParamFormat] = ..., 
-                name: str
             ) -> None: ...
 
         @overload
@@ -17359,194 +17484,6 @@ namespace azure.ai.projects.models
         key "name": str
 
 
-    class azure.ai.projects.models.ToolFileSearchTool(Tool, discriminator='file_search'):
-        description: Optional[str]
-        filters: Optional[Filters]
-        max_num_results: Optional[int]
-        name: Optional[str]
-        ranking_options: Optional[RankingOptions]
-        tool_configs: Optional[dict[str, ToolConfig]]
-        type: Literal[ToolType.FILE_SEARCH]
-        vector_store_ids: list[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                filters: Optional[Filters] = ..., 
-                max_num_results: Optional[int] = ..., 
-                name: Optional[str] = ..., 
-                ranking_options: Optional[RankingOptions] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
-                vector_store_ids: list[str]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ToolFunctionShellToolParam(Tool, discriminator='shell'):
-        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
-        description: Optional[str]
-        environment: Optional[FunctionShellToolParamEnvironment]
-        name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
-        type: Literal[ToolType.SHELL]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                description: Optional[str] = ..., 
-                environment: Optional[FunctionShellToolParamEnvironment] = ..., 
-                name: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ToolFunctionTool(Tool, discriminator='function'):
-        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
-        async_property: Optional[bool]
-        defer_loading: Optional[bool]
-        description: Optional[str]
-        name: str
-        output_schema: Optional[dict[str, Any]]
-        parameters: dict[str, Any]
-        strict: bool
-        type: Literal[ToolType.FUNCTION]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                async_property: Optional[bool] = ..., 
-                defer_loading: Optional[bool] = ..., 
-                description: Optional[str] = ..., 
-                name: str, 
-                output_schema: Optional[dict[str, Any]] = ..., 
-                parameters: dict[str, Any], 
-                strict: bool
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ToolImageGenTool(Tool, discriminator='image_generation'):
-        action: Optional[Union[str, ImageGenAction]]
-        background: Optional[Literal["transparent", "opaque", "auto"]]
-        description: Optional[str]
-        input_fidelity: Optional[Union[str, InputFidelity]]
-        input_image_mask: Optional[ImageGenToolInputImageMask]
-        model: Optional[Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-5"], Literal["gpt-image-2"], Literal["gpt-image-2-2026-04-21"], Literal["gpt-image-5-sunburst"], Literal["gpt-image-5-sunburst-2026-09-08"], Literal["gpt-image-5-flare"], Literal["gpt-image-5-flare-2026-09-08"], str]]
-        moderation: Optional[Literal["auto", "low"]]
-        name: Optional[str]
-        output_compression: Optional[int]
-        output_format: Optional[Literal["png", "webp", "jpeg"]]
-        partial_images: Optional[int]
-        quality: Optional[Literal["low", "medium", "high", "xhigh", "max", "auto"]]
-        size: Optional[Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]]
-        tool_configs: Optional[dict[str, ToolConfig]]
-        type: Literal[ToolType.IMAGE_GENERATION]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                action: Optional[Union[str, ImageGenAction]] = ..., 
-                background: Optional[Literal[transparent, opaque, auto]] = ..., 
-                description: Optional[str] = ..., 
-                input_fidelity: Optional[Union[str, InputFidelity]] = ..., 
-                input_image_mask: Optional[ImageGenToolInputImageMask] = ..., 
-                model: Optional[Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-5], Literal[gpt-image-2], Literal[gpt-image-2-2026-04-21], Literal[gpt-image-5-sunburst], Literal[gpt-image-5-sunburst-2026-09-08], Literal[gpt-image-5-flare], Literal[gpt-image-5-flare-2026-09-08], str]] = ..., 
-                moderation: Optional[Literal[auto, low]] = ..., 
-                name: Optional[str] = ..., 
-                output_compression: Optional[int] = ..., 
-                output_format: Optional[Literal[png, webp, jpeg]] = ..., 
-                partial_images: Optional[int] = ..., 
-                quality: Optional[Literal[low, medium, high, xhigh, max, auto]] = ..., 
-                size: Optional[Union[Literal[1024x1024], Literal[1024x1536], Literal[1536x1024], Literal[auto], str]] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ToolLocalShellToolParam(Tool, discriminator='local_shell'):
-        description: Optional[str]
-        name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
-        type: Literal[ToolType.LOCAL_SHELL]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ToolMcpTool(Tool, discriminator='mcp'):
-        allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]]
-        allowed_tools: Optional[Union[list[str], MCPToolFilter]]
-        authorization: Optional[str]
-        connector_id: Optional[Literal["connector_dropbox", "connector_gmail", "connector_googlecalendar", "connector_googledrive", "connector_microsoftteams", "connector_outlookcalendar", "connector_outlookemail", "connector_sharepoint"]]
-        defer_loading: Optional[bool]
-        headers: Optional[dict[str, str]]
-        project_connection_id: Optional[str]
-        require_approval: Optional[Union[MCPToolRequireApproval, Literal["always"], Literal["never"]]]
-        server_description: Optional[str]
-        server_label: str
-        server_url: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
-        tunnel_id: Optional[str]
-        type: Literal[ToolType.MCP]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                allowed_callers: Optional[list[Union[str, CallableToolAllowedCaller]]] = ..., 
-                allowed_tools: Optional[Union[list[str], MCPToolFilter]] = ..., 
-                authorization: Optional[str] = ..., 
-                connector_id: Optional[Literal[connector_dropbox, connector_gmail, connector_googlecalendar, connector_googledrive, connector_microsoftteams, connector_outlookcalendar, connector_outlookemail, connector_sharepoint]] = ..., 
-                defer_loading: Optional[bool] = ..., 
-                headers: Optional[dict[str, str]] = ..., 
-                project_connection_id: Optional[str] = ..., 
-                require_approval: Optional[Union[MCPToolRequireApproval, Literal[always], Literal[never]]] = ..., 
-                server_description: Optional[str] = ..., 
-                server_label: str, 
-                server_url: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
-                tunnel_id: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ToolProgrammaticToolCallingParam(Tool, discriminator='programmatic_tool_calling'):
-        type: Literal[ToolType.PROGRAMMATIC_TOOL_CALLING]
-
-        @overload
-        def __init__(self) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.ToolProjectConnection(_Model):
         project_connection_id: str
 
@@ -17566,6 +17503,25 @@ namespace azure.ai.projects.models
         SERVER = "server"
 
 
+    class azure.ai.projects.models.ToolSearchToolParam(Tool, discriminator='tool_search'):
+        description: Optional[str]
+        execution: Optional[Union[str, ToolSearchExecutionType]]
+        parameters: Optional[EmptyModelParam]
+        type: Literal[ToolType.TOOL_SEARCH]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                execution: Optional[Union[str, ToolSearchExecutionType]] = ..., 
+                parameters: Optional[EmptyModelParam] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ToolSearchToolboxTool(ToolboxTool, discriminator='toolbox_search'):
         description: str
         name: str
@@ -17579,25 +17535,6 @@ namespace azure.ai.projects.models
                 description: Optional[str] = ..., 
                 name: Optional[str] = ..., 
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ToolToolSearchToolParam(Tool, discriminator='tool_search'):
-        description: Optional[str]
-        execution: Optional[Union[str, ToolSearchExecutionType]]
-        parameters: Optional[EmptyModelParam]
-        type: Literal[ToolType.TOOL_SEARCH]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                execution: Optional[Union[str, ToolSearchExecutionType]] = ..., 
-                parameters: Optional[EmptyModelParam] = ...
             ) -> None: ...
 
         @overload
@@ -17655,54 +17592,6 @@ namespace azure.ai.projects.models
                 max_samples: int, 
                 model_options: Optional[DataGenerationModelOptions] = ..., 
                 train_split: Optional[float] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ToolWebSearchPreviewTool(Tool, discriminator='web_search_preview'):
-        search_content_types: Optional[list[Union[str, SearchContentType]]]
-        search_context_size: Optional[Union[str, SearchContextSize]]
-        type: Literal[ToolType.WEB_SEARCH_PREVIEW]
-        user_location: Optional[ApproximateLocation]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                search_content_types: Optional[list[Union[str, SearchContentType]]] = ..., 
-                search_context_size: Optional[Union[str, SearchContextSize]] = ..., 
-                user_location: Optional[ApproximateLocation] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.ToolWebSearchTool(Tool, discriminator='web_search'):
-        custom_search_configuration: Optional[WebSearchConfiguration]
-        description: Optional[str]
-        external_web_access: Optional[bool]
-        filters: Optional[WebSearchToolFilters]
-        name: Optional[str]
-        search_context_size: Optional[Literal["low", "medium", "high"]]
-        tool_configs: Optional[dict[str, ToolConfig]]
-        type: Literal[ToolType.WEB_SEARCH]
-        user_location: Optional[WebSearchApproximateLocation]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                custom_search_configuration: Optional[WebSearchConfiguration] = ..., 
-                description: Optional[str] = ..., 
-                external_web_access: Optional[bool] = ..., 
-                filters: Optional[WebSearchToolFilters] = ..., 
-                name: Optional[str] = ..., 
-                search_context_size: Optional[Literal[low, medium, high]] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
-                user_location: Optional[WebSearchApproximateLocation] = ...
             ) -> None: ...
 
         @overload
@@ -18878,6 +18767,102 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentCollectDtmfStartArguments(_Model):
+        completion_mode: VoiceAgentDtmfCompletionMode
+        first_digit_timeout_seconds: Optional[int]
+        output_variable_name: Optional[str]
+        secret: bool
+        timeout_seconds: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                completion_mode: VoiceAgentDtmfCompletionMode, 
+                first_digit_timeout_seconds: Optional[int] = ..., 
+                output_variable_name: Optional[str] = ..., 
+                secret: bool, 
+                timeout_seconds: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentCollectDtmfSystemTool(VoiceAgentSystemTool, discriminator='collect_dtmf'):
+        description: str
+        name: Literal[VoiceAgentSystemToolName.COLLECT_DTMF]
+        timeout_seconds: timedelta
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentCollectSmsStartArguments(_Model):
+        from_phone_number: str
+        output_variable_name: Optional[str]
+        secret: bool
+        timeout_seconds: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                from_phone_number: str, 
+                output_variable_name: Optional[str] = ..., 
+                secret: bool, 
+                timeout_seconds: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentCollectSmsSystemTool(VoiceAgentSystemTool, discriminator='collect_sms'):
+        description: str
+        name: Literal[VoiceAgentSystemToolName.COLLECT_SMS]
+        timeout_seconds: timedelta
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentCollectionStartArguments(_Model):
+        output_variable_name: Optional[str]
+        secret: bool
+        timeout_seconds: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                output_variable_name: Optional[str] = ..., 
+                secret: bool, 
+                timeout_seconds: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentDefinition(VoiceAgentBaseDefinition, discriminator='realtime'):
         audio: Optional[VoiceAgentAudioConfig]
         avatar: Optional[VoiceAgentAvatarConfig]
@@ -18947,6 +18932,78 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentDigitRecognitionSystemTool(VoiceAgentSystemTool, discriminator='digit_recognition'):
+        description: str
+        name: Literal[VoiceAgentSystemToolName.DIGIT_RECOGNITION]
+        timeout_seconds: timedelta
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentDtmfFixedLengthCompletionMode(_Model):
+        inter_digit_timeout_seconds: Optional[int]
+        length: Optional[int]
+        type: Literal["fixed_length"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                inter_digit_timeout_seconds: Optional[int] = ..., 
+                length: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentDtmfInterDigitSilenceCompletionMode(_Model):
+        inter_digit_timeout_seconds: Optional[int]
+        type: Literal["inter_digit_silence"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                inter_digit_timeout_seconds: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentDtmfTerminator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ASTERISK = "*"
+        NUMBER_SIGN = "#"
+
+
+    class azure.ai.projects.models.VoiceAgentDtmfTerminatorCompletionMode(_Model):
+        inter_digit_timeout_seconds: Optional[int]
+        terminator: Union[str, VoiceAgentDtmfTerminator]
+        type: Literal["terminator"]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                inter_digit_timeout_seconds: Optional[int] = ..., 
+                terminator: Union[str, VoiceAgentDtmfTerminator]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentEchoCancellation(_Model):
         channels: Optional[int]
         reference_source: Optional[Union[str, VoiceAgentEchoCancellationReferenceSource]]
@@ -18972,13 +19029,15 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentEndConversationSystemTool(VoiceAgentSystemTool, discriminator='end_conversation'):
         description: str
         name: Literal[VoiceAgentSystemToolName.END_CONVERSATION]
+        timeout_seconds: timedelta
         type: str
 
         @overload
         def __init__(
                 self, 
                 *, 
-                description: Optional[str] = ...
+                description: Optional[str] = ..., 
+                timeout_seconds: Optional[timedelta] = ...
             ) -> None: ...
 
         @overload
@@ -19232,6 +19291,31 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentInputCollectionChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DTMF = "dtmf"
+        SMS = "sms"
+
+
+    class azure.ai.projects.models.VoiceAgentInputCollectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCEPTED = "accepted"
+        BUSY = "busy"
+        CANCELLED = "cancelled"
+        COMPLETED = "completed"
+        DISPATCH_FAILED = "dispatch_failed"
+        EXPIRED = "expired"
+        FAILED = "failed"
+        INVALID_ARGUMENTS = "invalid_arguments"
+        INVALID_INPUT = "invalid_input"
+        LISTENING = "listening"
+        PROVIDER_ACCEPTED = "provider_accepted"
+        PROVIDER_FAILED_OR_UNSUPPORTED = "provider_failed_or_unsupported"
+        PROVIDER_NOT_EXECUTED = "provider_not_executed"
+        PROVIDER_RESULT_UNCERTAIN = "provider_result_uncertain"
+        STALE_COLLECTION = "stale_collection"
+        TRANSFER_NOT_ANSWERED = "transfer_not_answered"
+        UNSUPPORTED_CHANNEL = "unsupported_channel"
+
+
     class azure.ai.projects.models.VoiceAgentInputTranscription(_Model):
         custom_speech: Optional[dict[str, str]]
         delay: Optional[Literal["minimal", "low", "medium", "high", "xhigh"]]
@@ -19296,6 +19380,40 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         LATENCY = "latency"
         TOOL = "tool"
+
+
+    class azure.ai.projects.models.VoiceAgentLanguageDetectionArguments(_Model):
+        language: str
+        reason: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                language: str, 
+                reason: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentLanguageDetectionSystemTool(VoiceAgentSystemTool, discriminator='language_detection'):
+        description: str
+        name: Literal[VoiceAgentSystemToolName.LANGUAGE_DETECTION]
+        timeout_seconds: timedelta
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.VoiceAgentLiveClientDelegation(VoiceAgentLiveDelegation, discriminator='client'):
@@ -19939,6 +20057,71 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentSendDtmfSystemTool(VoiceAgentSystemTool, discriminator='send_dtmf'):
+        description: str
+        name: Literal[VoiceAgentSystemToolName.SEND_DTMF]
+        timeout_seconds: timedelta
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSendSmsSystemTool(VoiceAgentSystemTool, discriminator='send_sms'):
+        description: str
+        name: Literal[VoiceAgentSystemToolName.SEND_SMS]
+        timeout_seconds: timedelta
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventInputCollectionStatus(RealtimeServerEvent, discriminator='input_collection.status'):
+        call_id: str
+        channel: Optional[Union[str, VoiceAgentInputCollectionChannel]]
+        collection_id: Optional[str]
+        event_id: Optional[str]
+        output_ref: Optional[str]
+        request_id: Optional[str]
+        status: Union[str, VoiceAgentInputCollectionStatus]
+        type: Literal[VoiceAgentServerEventTypeExtension.INPUT_COLLECTION_STATUS]
+        value: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                call_id: str, 
+                channel: Optional[Union[str, VoiceAgentInputCollectionChannel]] = ..., 
+                collection_id: Optional[str] = ..., 
+                event_id: Optional[str] = ..., 
+                output_ref: Optional[str] = ..., 
+                request_id: Optional[str] = ..., 
+                status: Union[str, VoiceAgentInputCollectionStatus], 
+                value: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentServerEventResponseAnimationBlendshapesDelta(RealtimeServerEvent, discriminator='response.animation_blendshapes.delta'):
         content_index: int
         event_id: str
@@ -20368,6 +20551,60 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentServerEventSystemToolArgumentsDelta(RealtimeServerEvent, discriminator='response.system_tool_arguments.delta'):
+        call_id: str
+        delta: str
+        event_id: str
+        item_id: str
+        obfuscation: Optional[str]
+        output_index: int
+        response_id: str
+        type: Literal[VoiceAgentServerEventTypeExtension.RESPONSE_SYSTEM_TOOL_ARGUMENTS_DELTA]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                call_id: str, 
+                delta: str, 
+                event_id: str, 
+                item_id: str, 
+                obfuscation: Optional[str] = ..., 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventSystemToolArgumentsDone(RealtimeServerEvent, discriminator='response.system_tool_arguments.done'):
+        arguments: str
+        call_id: str
+        event_id: str
+        item_id: str
+        name: Union[str, VoiceAgentSystemToolName]
+        output_index: int
+        response_id: str
+        type: Literal[VoiceAgentServerEventTypeExtension.RESPONSE_SYSTEM_TOOL_ARGUMENTS_DONE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                arguments: str, 
+                call_id: str, 
+                event_id: str, 
+                item_id: str, 
+                name: Union[str, VoiceAgentSystemToolName], 
+                output_index: int, 
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentServerEventTypeExtension(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         INPUT_COLLECTION_STATUS = "input_collection.status"
         RESPONSE_ANIMATION_BLENDSHAPES_DELTA = "response.animation_blendshapes.delta"
@@ -20776,6 +21013,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentSystemTool(VoiceAgentTool, discriminator='system'):
         description: Optional[str]
         name: str
+        timeout_seconds: Optional[timedelta]
         type: Literal["system"]
 
         @overload
@@ -20783,15 +21021,56 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 description: Optional[str] = ..., 
-                name: str
+                name: str, 
+                timeout_seconds: Optional[timedelta] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentSystemToolItem(RealtimeConversationItem, discriminator='system_tool'):
+        arguments: str
+        call_id: str
+        created_at: Optional[datetime]
+        id: Optional[str]
+        name: Union[str, VoiceAgentSystemToolName]
+        object: Optional[Literal["item"]]
+        response_id: Optional[str]
+        status: Union[str, VoiceAgentSystemToolItemStatus]
+        type: Literal[RealtimeConversationItemType.SYSTEM_TOOL]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                arguments: str, 
+                call_id: str, 
+                id: Optional[str] = ..., 
+                name: Union[str, VoiceAgentSystemToolName], 
+                object: Optional[Literal[item]] = ..., 
+                status: Union[str, VoiceAgentSystemToolItemStatus]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSystemToolItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        COMPLETED = "completed"
+        INCOMPLETE = "incomplete"
+        IN_PROGRESS = "in_progress"
+
+
     class azure.ai.projects.models.VoiceAgentSystemToolName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        COLLECT_DTMF = "collect_dtmf"
+        COLLECT_SMS = "collect_sms"
+        DIGIT_RECOGNITION = "digit_recognition"
         END_CONVERSATION = "end_conversation"
+        LANGUAGE_DETECTION = "language_detection"
+        SEND_DTMF = "send_dtmf"
+        SEND_SMS = "send_sms"
+        TRANSFER = "transfer"
 
 
     class azure.ai.projects.models.VoiceAgentTemplateGreetingConfig(VoiceAgentGreetingConfig, discriminator='template'):
@@ -20885,6 +21164,92 @@ namespace azure.ai.projects.models
                 duration_milliseconds: timedelta, 
                 offset_milliseconds: timedelta, 
                 text: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentTransferDestination(_Model):
+        type: Union[str, VoiceAgentTransferDestinationType]
+        value: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: Union[str, VoiceAgentTransferDestinationType], 
+                value: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentTransferDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PHONE_NUMBER = "phone_number"
+        SIP = "sip"
+        TEAMS = "teams"
+
+
+    class azure.ai.projects.models.VoiceAgentTransferRouting(_Model):
+        ring_timeout_seconds: Optional[int]
+        strategy: Union[str, VoiceAgentTransferStrategy]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                ring_timeout_seconds: Optional[int] = ..., 
+                strategy: Union[str, VoiceAgentTransferStrategy]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentTransferStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PARALLEL = "parallel"
+        RANDOM = "random"
+        SEQUENTIAL = "sequential"
+
+
+    class azure.ai.projects.models.VoiceAgentTransferSystemTool(VoiceAgentSystemTool, discriminator='transfer'):
+        description: str
+        name: Literal[VoiceAgentSystemToolName.TRANSFER]
+        require_handoff: Optional[bool]
+        targets: list[VoiceAgentTransferTarget]
+        timeout_seconds: timedelta
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                require_handoff: Optional[bool] = ..., 
+                targets: list[VoiceAgentTransferTarget], 
+                timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentTransferTarget(_Model):
+        description: Optional[str]
+        destinations: list[VoiceAgentTransferDestination]
+        name: str
+        routing: VoiceAgentTransferRouting
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                destinations: list[VoiceAgentTransferDestination], 
+                name: str, 
+                routing: VoiceAgentTransferRouting
             ) -> None: ...
 
         @overload
@@ -21308,6 +21673,54 @@ namespace azure.ai.projects.models
                 *, 
                 instance_name: str, 
                 project_connection_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.WebSearchPreviewTool(Tool, discriminator='web_search_preview'):
+        search_content_types: Optional[list[Union[str, SearchContentType]]]
+        search_context_size: Optional[Union[str, SearchContextSize]]
+        type: Literal[ToolType.WEB_SEARCH_PREVIEW]
+        user_location: Optional[ApproximateLocation]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                search_content_types: Optional[list[Union[str, SearchContentType]]] = ..., 
+                search_context_size: Optional[Union[str, SearchContextSize]] = ..., 
+                user_location: Optional[ApproximateLocation] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.WebSearchTool(Tool, discriminator='web_search'):
+        custom_search_configuration: Optional[WebSearchConfiguration]
+        description: Optional[str]
+        external_web_access: Optional[bool]
+        filters: Optional[WebSearchToolFilters]
+        name: Optional[str]
+        search_context_size: Optional[Literal["low", "medium", "high"]]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: Literal[ToolType.WEB_SEARCH]
+        user_location: Optional[WebSearchApproximateLocation]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                custom_search_configuration: Optional[WebSearchConfiguration] = ..., 
+                description: Optional[str] = ..., 
+                external_web_access: Optional[bool] = ..., 
+                filters: Optional[WebSearchToolFilters] = ..., 
+                name: Optional[str] = ..., 
+                search_context_size: Optional[Literal[low, medium, high]] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                user_location: Optional[WebSearchApproximateLocation] = ...
             ) -> None: ...
 
         @overload

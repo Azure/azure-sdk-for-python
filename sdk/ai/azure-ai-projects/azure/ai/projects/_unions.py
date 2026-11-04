@@ -25,5 +25,10 @@ RealtimeResponseInputItem: TypeAlias = Union[
     "_models.RealtimeResponseItemReference",
 ]
 VoiceAgentSessionUpdate: TypeAlias = "_models.VoiceAgentSessionUpdateConfig"
+VoiceAgentDtmfCompletionMode: TypeAlias = Union[
+    "_models.VoiceAgentDtmfFixedLengthCompletionMode",
+    "_models.VoiceAgentDtmfTerminatorCompletionMode",
+    "_models.VoiceAgentDtmfInterDigitSilenceCompletionMode",
+]
 ChoiceValueResource: TypeAlias = Union[str, bool]
 GenerateAgentRequest: TypeAlias = "_models.GenerateVoiceAgentRequest"
