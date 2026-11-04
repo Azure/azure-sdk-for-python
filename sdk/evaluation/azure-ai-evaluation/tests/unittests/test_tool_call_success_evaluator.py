@@ -18,6 +18,7 @@ from azure.ai.evaluation._evaluators._tool_call_success import _tool_call_succes
 from azure.ai.evaluation._evaluators._tool_call_success._tool_call_success import (
     _ToolCallSuccessEvaluator,
     _has_no_tool_calls,
+    _tool_transcript,
 )
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
@@ -274,6 +275,7 @@ class TestToolCallSuccessWithoutToolCalls:
             [{"role": "assistant", "content": "Hello.", "function_call": None}],
             [{"role": "user", "content": "Hi.", "tool_call_id": None}, {"role": "assistant", "content": "Hello."}],
             [OPENAI_TEXT_REPLY],
+            [{"role": "assistant", "content": "Next action: wait for the forecast.\nAction items: none."}],
         ],
         ids=[
             "text-items",
@@ -285,6 +287,7 @@ class TestToolCallSuccessWithoutToolCalls:
             "null-function-call",
             "null-tool-call-id",
             "openai-model-dump",
+            "mentions-actions",
         ],
     )
     def test_a_response_without_tool_calls_is_not_applicable_without_a_judge_call(self, config, response):
@@ -386,9 +389,161 @@ class TestToolCallSuccessWithoutToolCalls:
         assert evaluator._decision.evaluate.await_count == 1
         assert "fetch_weather" in str(evaluator._decision.evaluate.await_args.args[0]["tool_calls"])
 
+    @pytest.mark.parametrize("shape", ["string", "text-item"])
+    @pytest.mark.parametrize(
+        "transcript",
+        [
+            "Thought: I need the weather.\nAction: fetch_weather\nAction Input: Paris\nObservation: It timed out.",
+            "Observation: It timed out.",
+            "Action: fetch_weather\nAction Input: Paris\nIt timed out.",
+            "Thought 1: I need the weather.\nAction 1: Search[Paris weather]\nObservation 1: It timed out.",
+            "**Action:** fetch_weather\n**Observation:** It timed out.",
+            "> observation: It timed out.",
+            "1. Action: fetch_weather\n2. Observation: It timed out.",
+            "Thought: Retrying.\r\nObservation: It timed out.\r\n",
+            "Tool Calls:\n  fetch_weather (call_1)\n Call ID: call_1\n  Args:\n    city: Paris\nIt timed out.",
+            "Tool result: It timed out.",
+            "Function call: fetch_weather(city='Paris')\nIt timed out.",
+            '<tool_call>\n{"name": "fetch_weather", "arguments": {"city": "Paris"}}\n</tool_call>\nIt timed out.',
+            "<tool_response>\nIt timed out.\n</tool_response>",
+            '[TOOL_CALLS] [{"name": "fetch_weather", "arguments": {"city": "Paris"}}]\nIt timed out.',
+            "[TOOL_RESULTS] It timed out. [/TOOL_RESULTS]",
+            "[tool_call] fetch_weather(city=Paris)\n[tool_result] It timed out.",
+            '<function_calls>\n<invoke name="fetch_weather"></invoke>\n</function_calls>\nIt timed out.',
+            "<function_results>\nIt timed out.\n</function_results>",
+            '<|python_tag|>fetch_weather.call(city="Paris")\nIt timed out.',
+            '<function=fetch_weather>{"city": "Paris"}</function>\nIt timed out.',
+            '<|channel|>commentary to=functions.fetch_weather<|message|>{"city": "Paris"}<|call|>\nIt timed out.',
+            "<|tool_calls_section_begin|><|tool_call_begin|>functions.fetch_weather:0\nIt timed out.",
+        ],
+        ids=[
+            "react",
+            "react-observation-only",
+            "react-action-only",
+            "react-numbered-steps",
+            "react-markdown-bold",
+            "react-quoted-lowercase",
+            "react-numbered-list",
+            "react-crlf",
+            "langchain-printed-messages",
+            "tool-result-label",
+            "function-call-label",
+            "hermes-tool-call",
+            "hermes-tool-response",
+            "mistral-tool-calls",
+            "mistral-tool-results",
+            "lowercase-trace-markers",
+            "anthropic-function-calls",
+            "anthropic-function-results",
+            "llama-python-tag",
+            "llama-function-tag",
+            "gpt-oss-call",
+            "kimi-tool-call-tokens",
+        ],
+    )
+    def test_a_tool_transcript_in_text_still_goes_to_the_judge(self, transcript, shape):
+        content = transcript if shape == "string" else [{"type": "output_text", "text": transcript}]
+        evaluator = judge({"score": 0, "status": "completed", "reason": "The tool call timed out."})
+
+        result = evaluator(
+            response=[{"role": "user", "content": "Weather in Paris?"}, {"role": "assistant", "content": content}]
+        )
+
+        assert evaluator._flow.await_count == 1
+        assert "It timed out." in str(evaluator._flow.await_args.kwargs["tool_calls"])
+        assert result["tool_call_success_result"] == "fail"
+
+    def test_a_decision_judge_gets_a_tool_transcript_in_text(self):
+        evaluator = _ToolCallSuccessEvaluator(model_config=dict(DECISION_CONFIG))
+        evaluator._decision.evaluate = AsyncMock(return_value={"tool_call_success": 0.0})
+        transcript = "Action: fetch_weather\nAction Input: Paris\nObservation: It timed out."
+
+        assert evaluator(response=[{"role": "assistant", "content": transcript}])["tool_call_success"] == 0.0
+        assert evaluator._decision.evaluate.await_args.args[0]["tool_calls"] == f"assistant: {transcript}"
+
+    def test_a_list_with_a_tool_transcript_goes_to_the_judge_as_text_with_each_role(self):
+        evaluator = judge({"score": 0, "status": "completed", "reason": "r"})
+        response = [
+            {"role": "system", "content": "Answer briefly."},
+            {"role": "user", "content": [{"type": "input_text", "text": "Weather in Paris?"}]},
+            {"role": "assistant", "content": [{"type": "output_text", "text": "Action: fetch_weather"}]},
+            {"role": "user", "content": "Observation: It timed out.", "tool_calls": None},
+            {"role": "assistant", "content": [{"type": "text", "text": ""}, {"type": "text", "text": "Sorry."}]},
+        ]
+
+        evaluator(response=response)
+
+        assert evaluator._flow.await_args.kwargs["tool_calls"] == (
+            "system: Answer briefly.\n\nuser: Weather in Paris?\n\nassistant: Action: fetch_weather\n\n"
+            "user: Observation: It timed out.\n\nassistant: Sorry."
+        )
+
+    def test_a_message_with_an_mcp_approval_is_left_out_of_a_transcript_as_it_is_from_every_judge_input(self):
+        evaluator = judge({"score": 0, "status": "completed", "reason": "r"})
+        approval = {"type": "mcp_approval_request", "name": "search", "arguments": "{}"}
+        response = [
+            {"role": "assistant", "content": [approval, {"type": "output_text", "text": "Action: search"}]},
+            {"role": "assistant", "content": "Action: fetch_weather\nObservation: It timed out."},
+        ]
+
+        evaluator(response=response)
+
+        assert evaluator._flow.await_args.kwargs["tool_calls"] == (
+            "assistant: Action: fetch_weather\nObservation: It timed out."
+        )
+
+    @pytest.mark.parametrize("shape", ["string", "text-item"])
+    def test_a_tool_transcript_keeps_every_tool_definition(self, shape):
+        transcript = "Action: fetch_weather\nObservation: {}"
+        content = transcript if shape == "string" else [{"type": "output_text", "text": transcript}]
+        definitions = [
+            {
+                "name": "fetch_weather",
+                "description": "Returns the weather.",
+                "parameters": {"properties": {"city": {}}},
+            },
+            {"name": "send_email", "description": "Sends an email.", "parameters": {}},
+        ]
+        evaluator = judge({"score": 0, "status": "completed", "reason": "r"})
+
+        evaluator(response=[{"role": "assistant", "content": content}], tool_definitions=definitions)
+
+        assert evaluator._flow.await_args.kwargs["tool_definitions"] == (
+            "TOOL_DEFINITIONS:\n- fetch_weather: Returns the weather. (inputs: city)\n"
+            "- send_email: Sends an email. (inputs: no parameters)"
+        )
+
+    @pytest.mark.parametrize(
+        "response",
+        [
+            TOOL_CALL_RESPONSE,
+            TEXT_RESPONSE,
+            OPENAI_TOOL_CALL_RESPONSE,
+            [{"role": "assistant", "content": "Observation: It timed out.", "tool_calls": [{"id": "call_1"}]}],
+            [{"role": "tool", "content": "Observation: It timed out."}],
+            [
+                {
+                    "role": "assistant",
+                    "content": [{"type": "text", "text": None}, {"type": "text", "text": "<tool_call>"}],
+                }
+            ],
+            "Observation: It timed out.",
+            [],
+        ],
+        ids=["tool-call", "text", "openai-tool-call", "tool-calls-field", "tool-role", "null-text", "string", "empty"],
+    )
+    def test_only_text_messages_with_a_tool_transcript_become_a_transcript(self, response):
+        assert _tool_transcript(response) is None
+
     def test_evaluate_leaves_rows_without_tool_calls_out_of_the_pass_rate(self, tmp_path):
         failed_call = json.loads(json.dumps(TOOL_CALL_RESPONSE).replace("sunny", "timed out"))
-        rows = [{"response": TOOL_CALL_RESPONSE}, {"response": failed_call}, {"response": [OPENAI_TEXT_REPLY]}]
+        rows = [
+            {"response": TOOL_CALL_RESPONSE},
+            {"response": failed_call},
+            {"response": [OPENAI_TEXT_REPLY]},
+            {"response": [{"role": "assistant", "content": "Action: fetch_weather\nObservation: It is sunny."}]},
+            {"response": [{"role": "assistant", "content": "Action: fetch_weather\nObservation: It timed out."}]},
+        ]
         data = tmp_path / "rows.jsonl"
         data.write_text("\n".join(json.dumps(row) for row in rows), encoding="utf-8")
         evaluator = _ToolCallSuccessEvaluator(model_config=dict(CHAT_CONFIG))
@@ -406,7 +561,7 @@ class TestToolCallSuccessWithoutToolCalls:
         )
 
         results = sorted(row["outputs.tool_call_success.tool_call_success_result"] for row in result["rows"])
-        assert results == ["fail", "not_applicable", "pass"]
+        assert results == ["fail", "fail", "not_applicable", "pass", "pass"]
         assert result["metrics"]["tool_call_success.tool_call_success"] == 0.5
         assert result["metrics"]["tool_call_success.binary_aggregate"] == 0.5
 
@@ -473,6 +628,29 @@ class TestToolCallSuccessWithoutToolCalls:
     def test_text_messages_have_no_tool_calls(self):
         assert _has_no_tool_calls(TEXT_RESPONSE) is True
         assert _has_no_tool_calls([{"role": "assistant", "content": []}]) is True
+
+    @pytest.mark.parametrize(
+        "text",
+        [
+            "The next action: wait for the forecast.",
+            "Reaction: the user was happy.",
+            "Transaction: 42",
+            "Actionable: yes",
+            "Action items: none.",
+            "Observations: none.",
+            "Toolbox: a hammer.",
+            "Tools: none.",
+            "Calling a tool would not help here.",
+        ],
+    )
+    def test_text_that_only_mentions_actions_or_tools_has_no_tool_calls(self, text):
+        assert _has_no_tool_calls([{"role": "assistant", "content": text}]) is True
+        assert _has_no_tool_calls([{"role": "assistant", "content": [{"type": "text", "text": text}]}]) is True
+
+    @pytest.mark.parametrize("role", ["system", "developer", "user", "assistant"])
+    def test_a_tool_transcript_in_any_text_message_counts(self, role):
+        assert _has_no_tool_calls([{"role": role, "content": "Observation: It timed out."}]) is False
+        assert _has_no_tool_calls([{"role": role, "content": [{"type": "input_text", "text": "<tool_call>"}]}]) is False
 
     @pytest.mark.parametrize("key", ["tool_calls", "function_call", "tool_call_id"])
     @pytest.mark.parametrize("value", [None, "", [], {}], ids=["none", "empty-string", "empty-list", "empty-dict"])

@@ -4,8 +4,9 @@
 import math
 import os
 import logging
+import re
 import reprlib
-from typing import Any, Dict, Union, List, Optional
+from typing import Any, Dict, Union, List, Optional, Tuple
 from typing_extensions import overload, override
 from azure.ai.evaluation._exceptions import (
     EvaluationException,
@@ -26,7 +27,21 @@ _NO_TOOL_CALLS_MESSAGE = "No tool calls found in response."
 _TEXT_CONTENT_TYPES = frozenset({"text", "input_text", "output_text"})
 _CONVERSATION_ROLES = frozenset({"system", "developer", "user", "assistant"})
 _TOOL_CALL_KEYS = ("tool_calls", "function_call")
-_TOOL_TRACE_MARKERS = ("[TOOL_CALL]", "[TOOL_RESULT]")
+# Tool calls and results written as text: this evaluator's [TOOL_CALL] and [TOOL_RESULT] markers, tags such as
+# <tool_call>, [TOOL_CALLS] and <function_calls>, and the tool tokens of Llama and gpt-oss models.
+_TOOL_TRACE_MARKER = re.compile(
+    r"tool_call|tool_result|tool_response|function_call|function_result|<\|python_tag\|>|<function=|<\|call\|>",
+    re.IGNORECASE,
+)
+# A line that starts with a tool step label, as ReAct agents ("Action:", "Observation 2:") and LangChain's printed
+# messages ("Tool Calls:") write it, also in a Markdown list, quote, heading or emphasis. The character classes hold
+# no line breaks, so a search takes time linear in the length of the text.
+_TOOL_STEP_LABEL = re.compile(
+    r"^[ \t>*_#+`.\d-]*"
+    r"(?:action|observation|(?:tool|function)[ _-]?(?:call|result|response|output)s?)"
+    r"[ \t\d*_#.()`]*:",
+    re.IGNORECASE | re.MULTILINE,
+)
 _APPROVAL_TYPES = frozenset({"mcp_approval_request", "mcp_approval_response"})
 
 
@@ -151,7 +166,12 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         A list of messages that holds only text has no tool calls, so it is reported as not applicable without
         calling the judge model. A tool_calls, function_call or tool_call_id field that is None or empty does not
-        count as a tool call.
+        count as a tool call. A list of text messages that looks like a tool transcript still goes to the judge model,
+        as text with each message's role and every tool definition: text that contains tool_call, tool_result,
+        tool_response, function_call or function_result in any letter case, as tags such as <tool_call> and
+        [TOOL_CALLS] do, Llama's <|python_tag|> or <function= tags or the gpt-oss <|call|> token, or a line that starts
+        with a label such as Action:, Observation:, Tool call: or Tool result:, as ReAct agents write. Pass a transcript
+        in any other text format as a string so the judge model assesses it.
 
         :keyword response: The response being evaluated, either a string or a list of messages (full agent
             response potentially including tool calls)
@@ -213,12 +233,16 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             )
 
+        transcript = None
         if isinstance(eval_input.get("response"), list):
             # Decided before preprocessing, which drops whole messages that hold an MCP approval.
             if _has_no_tool_calls(eval_input["response"]):
                 return self._return_not_applicable_result(_NO_TOOL_CALLS_MESSAGE, self._threshold)
             eval_input["response"] = _preprocess_messages(eval_input["response"])
-            eval_input["tool_calls"] = _reformat_tool_calls_results(eval_input["response"], logger)
+            transcript = _tool_transcript(eval_input["response"])
+            eval_input["tool_calls"] = (
+                transcript if transcript is not None else _reformat_tool_calls_results(eval_input["response"], logger)
+            )
         # If response is a string, pass directly without reformatting
         elif isinstance(eval_input["response"], str):
             eval_input["tool_calls"] = eval_input["response"]
@@ -236,8 +260,8 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # If tool definitions are string, pass directly without reformatting, else format it.
         if "tool_definitions" in eval_input and not isinstance(eval_input["tool_definitions"], str):
             tool_definitions = eval_input["tool_definitions"]
-            # Only if response is not a string, we filter tool definitions to only tools needed.
-            if not isinstance(eval_input["response"], str):
+            # Keep only the tools that were called, unless the calls are in text: a string or a transcript.
+            if not isinstance(eval_input["response"], str) and transcript is None:
                 tool_definitions = _filter_to_used_tools(
                     tool_definitions=tool_definitions,
                     msgs_list=eval_input["response"],
@@ -322,18 +346,19 @@ def _is_one_of(value: Any, names: frozenset) -> bool:
     return isinstance(value, str) and value in names
 
 
-def _has_no_tool_calls(messages) -> bool:
-    """Return True only for a list of text messages and MCP approvals that holds no tool calls, results or traces.
+def _texts_of_text_messages(messages) -> Optional[List[Tuple[str, str]]]:
+    """Return the role and text of each text in a list of text messages and MCP approvals, or None for any other value.
 
     A tool_calls, function_call or tool_call_id field that holds nothing, such as the None that OpenAI's model_dump()
     writes, counts as absent. A list in any other format may hold tool activity this evaluator does not parse, so the
     judge assesses it.
     """
     if not isinstance(messages, list) or not messages:
-        return False
+        return None
+    texts = []
     for message in messages:
         if not isinstance(message, dict) or not all(_holds_nothing(message.get(key)) for key in _TOOL_CALL_KEYS):
-            return False
+            return None
         content = message.get("content")
         items = content
         if isinstance(content, list):
@@ -346,22 +371,46 @@ def _has_no_tool_calls(messages) -> bool:
                 # Only MCP approval requests or responses, which are not tool calls; a response names its request
                 # in tool_call_id.
                 continue
-        if not _is_one_of(message.get("role"), _CONVERSATION_ROLES) or not _holds_nothing(message.get("tool_call_id")):
-            return False
+        role = message.get("role")
+        if not _is_one_of(role, _CONVERSATION_ROLES) or not _holds_nothing(message.get("tool_call_id")):
+            return None
         if isinstance(content, str):
-            texts = [content]
+            message_texts = [content]
         elif isinstance(items, list) and all(
             isinstance(item, dict) and _is_one_of(item.get("type"), _TEXT_CONTENT_TYPES) for item in items
         ):
-            texts = [item.get("text") for item in items]
+            message_texts = [item.get("text") for item in items]
         else:
-            return False
-        # Text can carry tool calls in this evaluator's own trace format.
-        if not all(
-            isinstance(text, str) and not any(marker in text for marker in _TOOL_TRACE_MARKERS) for text in texts
-        ):
-            return False
-    return True
+            return None
+        if not all(isinstance(text, str) for text in message_texts):
+            return None
+        texts.extend((role, text) for text in message_texts)
+    return texts
+
+
+def _has_no_tool_calls(messages) -> bool:
+    """Return True only for a list of text messages and MCP approvals that holds no tool calls, results or traces.
+
+    Text that looks like a tool transcript, such as ReAct steps or <tool_call> tags, counts as tool activity.
+    """
+    texts = _texts_of_text_messages(messages)
+    return texts is not None and not any(_holds_tool_transcript(text) for _, text in texts)
+
+
+def _tool_transcript(messages) -> Optional[str]:
+    """Return the text of a list of text messages that holds a tool transcript, with each message's role, or None.
+
+    A Decision model can miss ReAct steps in a list of messages that it recognizes in the same text on its own.
+    """
+    texts = _texts_of_text_messages(messages)
+    if texts is None or not any(_holds_tool_transcript(text) for _, text in texts):
+        return None
+    return "\n\n".join(f"{role}: {text}" for role, text in texts if text)
+
+
+def _holds_tool_transcript(text: str) -> bool:
+    """Return True when the text records tool calls or results in a text format this evaluator recognizes."""
+    return _TOOL_TRACE_MARKER.search(text) is not None or _TOOL_STEP_LABEL.search(text) is not None
 
 
 def _filter_to_used_tools(tool_definitions, msgs_list, logger=None):
