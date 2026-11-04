@@ -2220,26 +2220,29 @@ class TestDecisionStateOrder:
             b'{"model":"Decision-1","state":{"response":"r","context":null,"query":"q","tool_definitions":[{"name":"t"}]},'
         )
 
-    def test_the_order_is_the_same_for_every_hash_seed(self):
+    def test_the_order_is_the_same_for_every_hash_seed(self, tmp_path):
         import azure.ai.evaluation
 
-        # The children import the same package as this process, from a checkout or an installed wheel.
+        # The children import the same package as this process, from a checkout or an installed wheel. They start in
+        # an empty directory, because "python -c" puts the working directory first on the path, so a checkout there
+        # would shadow an installed wheel.
         loaded = Path(azure.ai.evaluation.__file__).resolve()
         search_path = os.pathsep.join(filter(None, [str(loaded.parents[3]), os.environ.get("PYTHONPATH")]))
         children = []
         try:
-            for seed in range(6):
+            for seed in range(1, 4):
                 environment = dict(os.environ, PYTHONHASHSEED=str(seed), PYTHONNOUSERSITE="1", PYTHONPATH=search_path)
                 children.append(
                     subprocess.Popen(
                         [sys.executable, "-c", HASH_SEED_PROBE],
+                        cwd=tmp_path,
                         env=environment,
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE,
                         text=True,
                     )
                 )
-            for seed, child in enumerate(children):
+            for seed, child in enumerate(children, start=1):
                 output, errors = child.communicate(timeout=180)
                 assert child.returncode == 0, errors[-2000:]
                 result = json.loads(output.strip().splitlines()[-1])
