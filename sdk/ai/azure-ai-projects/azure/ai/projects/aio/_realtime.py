@@ -920,8 +920,7 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
         if self._agent_session_id is not None:
             params["agent_session_id"] = self._agent_session_id
         if self._structured_inputs is not None:
-            # Realtime expects structured_input (singular), serialized as JSON.
-            params["structured_input"] = json.dumps(self._structured_inputs, cls=SdkJSONEncoder)
+            params["structured_inputs"] = json.dumps(self._structured_inputs, cls=SdkJSONEncoder)
         params.update(self._extra_query)
         if self._transport is not None:
             params["transport"] = self._transport

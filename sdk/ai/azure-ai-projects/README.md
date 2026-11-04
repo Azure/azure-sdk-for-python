@@ -291,6 +291,13 @@ Foundry starts the session; do not send `session.start`. Use `session.input_audi
 To end a session, send `session.close`, wait for `session.closed`, and leave the context.
 Live has no `response.cancel`; cancel local receive tasks when needed.
 
+Create persisted Live definitions with `model_type=VoiceModelType.SELF_DEPLOYED` and
+`VoiceAgentLiveClientDelegation` or `VoiceAgentLiveResponsesDelegation`. Session updates use
+the native `LiveSessionUpdateParams` models to change backend settings or transcript triggers,
+not the persisted Foundry delegation target, frontend model, or audio format.
+Both protocols send structured inputs as JSON in the `structured_inputs` query parameter.
+The Live client's `agent_version` option uses the `agent_version_override` query parameter.
+
 Session events use `VoiceAgentLiveSessionResource`; delegation events use `VoiceAgentLiveDelegationItem`.
 For Foundry-managed sessions, these report the target agent and resolved version, not the task text.
 Foundry handles delegations with `target="foundry_managed_agent"`.

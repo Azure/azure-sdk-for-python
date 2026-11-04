@@ -140,7 +140,7 @@ class TestAsyncRealtimeConnectionManagerEnter:
         # Regression test: structured_inputs used to be serialized into a custom
         # "x-ms-voice-structured-inputs" header, but the generated request builder
         # (build_beta_voice_agents_realtime_connect_voice_agent_request) defines this as the
-        # "structured_input" query parameter -- the service never actually read the header.
+        # "structured_inputs" query parameter -- the service never actually read the header.
         fake_ws = _make_fake_ws()
         patcher, fake_session = _patch_client_session(fake_ws)
         with patcher:
@@ -149,7 +149,8 @@ class TestAsyncRealtimeConnectionManagerEnter:
             await manager.__aexit__()
 
         _args, kwargs = fake_session.ws_connect.call_args
-        assert json.loads(kwargs["params"]["structured_input"]) == {"greeting_name": "Alex"}
+        assert json.loads(kwargs["params"]["structured_inputs"]) == {"greeting_name": "Alex"}
+        assert "structured_input" not in kwargs["params"]
         assert "x-ms-voice-structured-inputs" not in kwargs["headers"]
 
     async def test_enter_caller_user_agent_overrides_default_case_insensitive(self):

@@ -67,8 +67,6 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
     """:class:`~azure.ai.projects.aio.operations.AsyncBetaRealtime` operations"""
     live: AsyncBetaLive
     """:class:`~azure.ai.projects.aio.operations.AsyncBetaLive` operations"""
-    live_conversations: BetaVoiceAgentsLiveConversationsOperations
-    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsLiveConversationsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)

@@ -472,12 +472,13 @@ async def main() -> None:
                     agent_name=agent_name,
                     definition=models.VoiceAgentLiveDefinition(
                         model=model,
+                        model_type=models.VoiceModelType.SELF_DEPLOYED,
                         instructions=(
                             "You are a friendly voice assistant. Briefly answer the user's speech. "
                             "Keep replies to one short sentence. Delegate external lookups to the client."
                         ),
                         audio=audio_settings(),
-                        delegation=models.LiveClientDelegationParam(),
+                        delegation=models.VoiceAgentLiveClientDelegation(),
                         store=False,
                     ),
                 )

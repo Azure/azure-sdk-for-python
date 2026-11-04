@@ -47,7 +47,7 @@ def _live_query(
     result = {"api-version": api_version, "x-ms-client-sdk": _USER_AGENT}
     result.update(extra_query)
     if agent_version is not None:
-        result["x-agent-version-override"] = agent_version
+        result["agent_version_override"] = agent_version
     if structured_inputs is not None:
         if "structured_input" in result:
             raise ValueError("structured_input and structured_inputs cannot be supplied together.")

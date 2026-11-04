@@ -94,9 +94,10 @@ def main() -> None:
                 agent_name=agent_name,
                 definition=models.VoiceAgentLiveDefinition(
                     model=model,
+                    model_type=models.VoiceModelType.SELF_DEPLOYED,
                     instructions="You are a friendly voice assistant. Delegate text questions to the backend.",
                     audio=audio_settings(),
-                    delegation=models.LiveResponsesDelegationParam(
+                    delegation=models.VoiceAgentLiveResponsesDelegation(
                         responses=models.LiveResponsesDelegationSettingsInputParam(
                             model=backend_model, instructions="Answer in one short sentence."
                         )

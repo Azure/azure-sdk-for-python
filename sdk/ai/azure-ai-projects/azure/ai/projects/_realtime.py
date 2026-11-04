@@ -885,10 +885,7 @@ class _BaseWebSocketConnectionManager(Generic[_ConnectionT]):  # pylint: disable
         if self._agent_session_id is not None:
             params["agent_session_id"] = self._agent_session_id
         if self._structured_inputs is not None:
-            # The service reads this from the `structured_input` query parameter (see the
-            # generated `build_beta_voice_agents_realtime_connect_voice_agent_request`), not a
-            # header -- it must be serialized and appended to the URL below, not sent as one.
-            params["structured_input"] = json.dumps(self._structured_inputs, cls=SdkJSONEncoder)
+            params["structured_inputs"] = json.dumps(self._structured_inputs, cls=SdkJSONEncoder)
         params.update(self._extra_query)
         if self._transport is not None:
             params["transport"] = self._transport

@@ -218,13 +218,14 @@ class LiveConversationPreparer(AbstractPreparer):
                     agent_name=agent_name,
                     definition=models.VoiceAgentLiveDefinition(
                         model=model,
+                        model_type=models.VoiceModelType.SELF_DEPLOYED,
                         instructions="Greet the caller briefly.",
                         greeting=models.VoiceAgentTemplateGreetingConfig(text="Hello, welcome."),
                         audio=models.LiveInitialSessionAudioParam(
                             format=models.LiveSessionAudioFormatPCMParam(rate=24000),
                             output=models.LiveInitialSessionAudioOutputParam(voice="marin"),
                         ),
-                        delegation=models.LiveClientDelegationParam(),
+                        delegation=models.VoiceAgentLiveClientDelegation(),
                         store=True,
                     ),
                 )

@@ -184,8 +184,12 @@ def test_connection_waits_for_start_and_confirms_graceful_close(monkeypatch, sam
     assert definition.model == "live-deployment-test"
     assert definition.sub_protocol == "live"
     assert definition.model_type == "self_deployed"
+    assert isinstance(definition.delegation, models.VoiceAgentLiveClientDelegation)
     assert definition.audio.format.rate == 24000
     assert definition.audio.output.voice == "marin"
+    session = connection.session.update.call_args.kwargs["session"]
+    assert isinstance(session, models.LiveSessionUpdateParams)
+    assert isinstance(session.delegation, models.LiveClientDelegationParam)
     connection.session.instructions.append.assert_called_once_with(
         content="Keep responses brief. Do not invent external facts.", delegation_id=None
     )
@@ -200,7 +204,7 @@ def test_text_uses_responses_delegation_and_granular_text(monkeypatch, sample_en
     sample.main()
 
     definition = sample_environment.client.agents.create_version.call_args.kwargs["definition"]
-    assert isinstance(definition.delegation, models.LiveResponsesDelegationParam)
+    assert isinstance(definition.delegation, models.VoiceAgentLiveResponsesDelegation)
     assert definition.delegation.responses.model == "backend-deployment-test"
     item = connection.response.item.create.call_args.kwargs["item"]
     assert item["type"] == "message" and item["role"] == "user"
@@ -740,7 +744,7 @@ def test_text_sample_keeps_the_original_single_prompt_default(monkeypatch, sampl
     sample.main()
 
     definition = client.agents.create_version.call_args.kwargs["definition"]
-    assert isinstance(definition.delegation, models.LiveResponsesDelegationParam)
+    assert isinstance(definition.delegation, models.VoiceAgentLiveResponsesDelegation)
     assert definition.delegation.responses.model == "backend-deployment-test"
     connection.response.item.create.assert_called_once_with(
         item={

@@ -384,7 +384,7 @@ async def test_handshake_encodes_live_route_authentication_and_all_options(live,
         assert query == {
             "api-version": ["live-test-version"],
             "x-ms-client-sdk": [user_agent],
-            "x-agent-version-override": ["7"],
+            "agent_version_override": ["7"],
             "structured_inputs": [query["structured_inputs"][0]],
             "store": ["false"],
             "custom": ["space + /?&=#"],
@@ -522,17 +522,18 @@ async def test_one_explicit_structured_input_query_spelling_is_preserved(live, n
 @pytest.mark.parametrize("store", [True, False])
 async def test_typed_query_options_override_extra_query_without_mutating_it(live, store):
     extra_query = {
-        "x-agent-version-override": "old-version",
+        "agent_version_override": "old-version",
         "structured_inputs": '{"old":true}',
         "store": "old-store",
     }
     async with live.open(agent_version="8", structured_inputs={}, store=store, extra_query=extra_query):
         query = _handshake_query(*live.handshake)
-        assert query["x-agent-version-override"] == ["8"]
+        assert query["agent_version_override"] == ["8"]
+        assert "x-agent-version-override" not in query
         assert query["structured_inputs"] == ["{}"]
         assert query["store"] == [str(store).lower()]
     assert extra_query == {
-        "x-agent-version-override": "old-version",
+        "agent_version_override": "old-version",
         "structured_inputs": '{"old":true}',
         "store": "old-store",
     }

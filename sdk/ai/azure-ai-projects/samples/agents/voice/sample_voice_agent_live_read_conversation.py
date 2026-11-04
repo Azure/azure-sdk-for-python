@@ -151,10 +151,11 @@ def _temporary_conversation(project_client: AIProjectClient, model: str) -> Iter
             agent_name=agent_name,
             definition=models.VoiceAgentLiveDefinition(
                 model=model,
+                model_type=models.VoiceModelType.SELF_DEPLOYED,
                 instructions="Greet the caller briefly.",
                 greeting=models.VoiceAgentTemplateGreetingConfig(text="Hello, welcome."),
                 audio=audio_settings(),
-                delegation=models.LiveClientDelegationParam(),
+                delegation=models.VoiceAgentLiveClientDelegation(),
                 store=True,
             ),
         )

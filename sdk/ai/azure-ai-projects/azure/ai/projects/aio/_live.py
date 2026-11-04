@@ -106,9 +106,12 @@ class SessionResource(_Resource):
     async def update(
         self, *, session: Union[models.LiveSessionUpdateParams, Mapping[str, Any]], event_id: Optional[str] = None
     ) -> None:
-        """Change delegation settings. The model and audio format cannot change mid-session.
+        """Update backend delegation settings or transcript triggers.
 
-        :keyword session: Only the delegation settings to change.
+        The persisted Foundry delegation target, frontend model, and audio format cannot change
+        mid-session.
+
+        :keyword session: The backend settings or transcript triggers to change.
         :paramtype session: ~azure.ai.projects.models.LiveSessionUpdateParams or Mapping[str, Any]
         :keyword event_id: Optional client event identifier.
         :paramtype event_id: str or None
