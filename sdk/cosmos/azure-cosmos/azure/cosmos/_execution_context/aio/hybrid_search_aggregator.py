@@ -6,7 +6,7 @@
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer
 from azure.cosmos._execution_context.hybrid_search_aggregator import _rewrite_query_infos, \
-    _rank_results, _use_competition_ranking, _coalesce_duplicate_rids, _attach_parameters, \
+    _rank_results, _coalesce_duplicate_rids, _attach_parameters, \
     _FULL_TEXT_SCORE_SCOPE_KEY, _FULL_TEXT_SCORE_SCOPE_LOCAL, _FULL_TEXT_SCORE_SCOPE_DEFAULT
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
@@ -63,7 +63,6 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                 else getattr(query_execution_info, "parameters", None)
             )
         self._hybrid_search_query_info = hybrid_search_query_info
-        self._use_competition_ranking = _use_competition_ranking()
         self._final_results = []
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None
@@ -170,7 +169,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
             self._format_final_results(drained_results)
             return
 
-        _rank_results(drained_results, self._hybrid_search_query_info, self._use_competition_ranking)
+        _rank_results(drained_results, self._hybrid_search_query_info)
         self._format_final_results(drained_results)
 
     def _attach_parameters(self, query):

@@ -10,7 +10,6 @@ from unittest.mock import AsyncMock, Mock
 import pytest
 
 from azure.cosmos.aio import CosmosClient  # noqa: F401 - needed to resolve circular imports
-from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._execution_context import hybrid_search_aggregator as sync_aggregator
 from azure.cosmos._execution_context.aio import hybrid_search_aggregator as async_aggregator
 from azure.cosmos._execution_context.hybrid_search_aggregator import (
@@ -28,13 +27,9 @@ def _result(document_rid, scores, payload=None, prefix=b"\x01" * 8):
     return {"_rid": rid, "payload": {"componentScores": scores, "payload": payload}}
 
 
-@pytest.mark.parametrize(
-    "competition, expected",
-    [(False, [1, 2, 3, 4, 5]), (True, [1, 2, 2, 2, 5])],
-)
-def test_component_ranks_are_ordinal_or_competition_not_dense(competition, expected):
+def test_tied_component_scores_receive_consecutive_ordinal_ranks():
     scores = [[(score, index) for index, score in enumerate([10, 5, 5, 5, 0])]]
-    assert _compute_ranks(scores, competition) == [expected]
+    assert _compute_ranks(scores) == [[1, 2, 3, 4, 5]]
 
 
 def test_mixed_component_rrf_scores_have_exact_expected_order():
@@ -110,23 +105,25 @@ def test_component_ties_follow_query_plan_direction_and_preserve_weights(weights
     )
 
 
-@pytest.mark.parametrize("competition, expected", [(False, [256, 1, 255]), (True, [256, 255, 1])])
-def test_final_rrf_ties_are_numeric_rid_descending(competition, expected):
+def test_final_rrf_ties_are_numeric_rid_descending():
     info = {"componentQueryInfos": [{}, {"orderBy": ["Ascending"]}]}
     for incoming in ([1, 255, 256], [256, 255, 1]):
         results = [_result(rid, [5, 5]) for rid in incoming]
-        _rank_results(results, info, competition)
-        assert [_get_document_rid(result["_rid"]) for result in results] == expected
+        _rank_results(results, info)
+        assert [_get_document_rid(result["_rid"]) for result in results] == [256, 1, 255]
         scores = {_get_document_rid(result["_rid"]): result["Score"] for result in results}
         assert scores[1] == scores[256]
 
 
 @pytest.mark.parametrize("module", [sync_aggregator, async_aggregator], ids=["sync", "async"])
-@pytest.mark.parametrize("competition", [False, True], ids=["ordinal", "competition"])
+@pytest.mark.parametrize("legacy_env", [None, "true"], ids=["unset", "legacy-env-ignored"])
 @pytest.mark.asyncio
-async def test_query_snapshots_ranking_mode_and_preserves_dedup_payload_and_window(module, competition, monkeypatch):
+async def test_query_uses_ordinal_ranks_and_preserves_dedup_payload_and_window(module, legacy_env, monkeypatch):
     is_async = module is async_aggregator
-    monkeypatch.setenv(Constants.HS_USE_COMPETITION_RANKING_CONFIG, "TrUe" if competition else "false")
+    if legacy_env is None:
+        monkeypatch.delenv("AZURE_COSMOS_HYBRID_SEARCH_USE_COMPETITION_RANKING", raising=False)
+    else:
+        monkeypatch.setenv("AZURE_COSMOS_HYBRID_SEARCH_USE_COMPETITION_RANKING", legacy_env)
     info = {
         "requiresGlobalStatistics": False,
         "componentQueryInfos": [
@@ -148,16 +145,13 @@ async def test_query_snapshots_ranking_mode_and_preserves_dedup_payload_and_wind
     client = SimpleNamespace(_routing_map_provider=None)
     context = module._HybridSearchContextAggregator(client, "colls/test", {}, None, info, None, None)
     context._get_target_partition_key_range = AsyncMock(return_value=[{}]) if is_async else Mock(return_value=[{}])
-    # Changing the environment after query initialization must not change this query's mode.
-    monkeypatch.setenv(Constants.HS_USE_COMPETITION_RANKING_CONFIG, "false" if competition else "true")
-    assert context._use_competition_ranking is competition
     if is_async:
         await context._run_hybrid_search()
         actual = [item async for item in context]
     else:
         context._run_hybrid_search()
         actual = list(context)
-    assert actual == (["projected scalar"] if competition else [{"id": "new"}])
+    assert actual == [{"id": "new"}]
     assert "Score" not in original
     assert "Score" in replacement
     assert replacement["_rid"] == original["_rid"]
@@ -189,7 +183,6 @@ async def test_query_uses_plan_component_count_for_empty_scores(module, second_s
     ]
     monkeypatch.setattr(module.document_producer, "_DocumentProducer", Mock(side_effect=producers))
     client = SimpleNamespace(_routing_map_provider=None)
-    monkeypatch.delenv(Constants.HS_USE_COMPETITION_RANKING_CONFIG, raising=False)
     context = module._HybridSearchContextAggregator(client, "colls/test", {}, None, info, None, None)
     context._get_target_partition_key_range = AsyncMock(return_value=[{}]) if is_async else Mock(return_value=[{}])
     if is_async:
@@ -205,18 +198,3 @@ async def test_query_uses_plan_component_count_for_empty_scores(module, second_s
     assert actual == [{"id": "empty"}, {"id": "second"}]
     assert empty["payload"]["componentScores"] == []
     assert second["payload"]["componentScores"] == second_scores
-
-
-@pytest.mark.parametrize("module", [sync_aggregator, async_aggregator], ids=["sync", "async"])
-def test_ranking_mode_uses_environment_not_options(module, monkeypatch):
-    client = SimpleNamespace(_routing_map_provider=None)
-    monkeypatch.delenv(Constants.HS_USE_COMPETITION_RANKING_CONFIG, raising=False)
-    options = {"hybridSearchUseCompetitionRanking": True}
-    default = module._HybridSearchContextAggregator(client, "colls/test", options, None, {}, None, None)
-    assert default._use_competition_ranking is False
-    for value, expected in (("TrUe", True), ("false", False), ("1", False), ("", False)):
-        monkeypatch.setenv(Constants.HS_USE_COMPETITION_RANKING_CONFIG, value)
-        options = {"hybridSearchUseCompetitionRanking": not expected}
-        context = module._HybridSearchContextAggregator(client, "colls/test", options, None, {}, None, None)
-        assert context._use_competition_ranking is expected
-        assert options == {"hybridSearchUseCompetitionRanking": not expected}

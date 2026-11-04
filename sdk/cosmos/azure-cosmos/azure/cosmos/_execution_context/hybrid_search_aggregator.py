@@ -4,7 +4,6 @@
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
 import base64
-import os
 from typing import Union
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context import document_producer
@@ -51,25 +50,15 @@ def _compute_rrf_scores(ranks: list[list[int]], component_weights: list[Union[in
         result['Score'] = rrf_score
 
 
-def _compute_ranks(component_scores, use_competition_ranking=False):
+def _compute_ranks(component_scores):
     # initialize ranks as an N-D list with zeros
     ranks = [[0] * len(component_scores[0]) for _ in range(len(component_scores))]
 
     for component_index, scores in enumerate(component_scores):
-        rank = 1  # ranks are 1-based
         for index, score_tuple in enumerate(scores):
-            if not use_competition_ranking or index == 0 or score_tuple[0] != scores[index - 1][0]:
-                rank = index + 1
-            ranks[component_index][score_tuple[1]] = rank
+            ranks[component_index][score_tuple[1]] = index + 1
 
     return ranks
-
-
-def _use_competition_ranking():
-    return os.environ.get(
-        Constants.HS_USE_COMPETITION_RANKING_CONFIG,
-        Constants.HS_USE_COMPETITION_RANKING_CONFIG_DEFAULT,
-    ).strip().lower() == "true"
 
 
 def _get_document_rid(rid):
@@ -80,7 +69,7 @@ def _get_document_rid(rid):
     return int.from_bytes(decoded[8:16], byteorder="little", signed=False)
 
 
-def _rank_results(drained_results, hybrid_search_query_info, use_competition_ranking=False):
+def _rank_results(drained_results, hybrid_search_query_info):
     # Use the query-plan weights, defaulting to equal contributions from all components.
     component_query_infos = hybrid_search_query_info['componentQueryInfos']
     component_weights = hybrid_search_query_info.get('componentWeights') or [1.0] * len(component_query_infos)
@@ -101,8 +90,8 @@ def _rank_results(drained_results, hybrid_search_query_info, use_competition_ran
             reverse=ordering[0].lower() != 'ascending',
         )
 
-    # Assign ordinal ranks by default, or competition ranks that share ranks for tied scores.
-    ranks = _compute_ranks(component_scores, use_competition_ranking)
+    # Assign consecutive ordinal ranks, including for tied component scores.
+    ranks = _compute_ranks(component_scores)
 
     # Combine weighted component contributions into each result's RRF score.
     _compute_rrf_scores(ranks, component_weights, drained_results)
@@ -246,7 +235,6 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                 else getattr(query_execution_info, "parameters", None)
             )
         self._hybrid_search_query_info = hybrid_search_query_info
-        self._use_competition_ranking = _use_competition_ranking()
         self._final_results = []
         self._aggregated_global_statistics = None
         self._document_producer_comparator = None
@@ -351,7 +339,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
             self._format_final_results(drained_results)
             return
 
-        _rank_results(drained_results, self._hybrid_search_query_info, self._use_competition_ranking)
+        _rank_results(drained_results, self._hybrid_search_query_info)
         self._format_final_results(drained_results)
 
     def _attach_parameters(self, query):
