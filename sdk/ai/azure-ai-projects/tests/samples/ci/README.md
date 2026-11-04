@@ -215,6 +215,9 @@ the free tier. It adds a private `documents` container and a `text-embedding-3-s
 version `1` deployment with Standard capacity `10` and `1536` dimensions. The region must
 support that embedding deployment and have its own remaining model quota; the chat-model
 preflight does not check embedding quota. ARM validates this additional deployment.
+The Search module waits for the chat-model/MCP module before deploying its embedding
+model: concurrent model deployment operations on the same Foundry account are rejected
+with `RequestConflict`.
 
 Search indexes, data sources, skillsets and indexer execution are
 [data-plane APIs](https://learn.microsoft.com/azure/search/search-how-to-create-indexers),

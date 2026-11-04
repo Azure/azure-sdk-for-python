@@ -65,6 +65,10 @@ module search './ai-search.bicep' = {
     sharedSearchIdentityResourceId: sharedSearchIdentityResourceId
     ownerToken: ownerToken
   }
+  // Foundry rejects concurrent model deployment operations on the same account.
+  dependsOn: [
+    samples
+  ]
 }
 
 // Public, non-secret contract consumed by every SDK language. Keep explicit keys

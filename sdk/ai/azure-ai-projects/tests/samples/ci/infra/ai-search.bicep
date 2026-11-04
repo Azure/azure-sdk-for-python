@@ -12,7 +12,7 @@ param ownerToken string
 
 @minLength(1)
 param indexName string = 'index-sample'
-@minLength(1)
+@minLength(3)
 param containerName string = 'documents'
 
 resource storage 'Microsoft.Storage/storageAccounts@2023-05-01' existing = {

@@ -346,7 +346,15 @@ foreach ($resource in $bundleResources) {
         throw 'Resource bundle modules must be unconditional; test selection never chooses infrastructure.'
     }
 }
-Write-Host 'Complete resource bundle compiled; unconditional modules, environment contract and zero worker IAM verified.'
+$searchModules = @($bundleResources | Where-Object {
+    $_.Type -ieq 'Microsoft.Resources/deployments' -and $_.Definition['name'] -ceq 'ai-search'
+})
+if ($searchModules.Count -ne 1 -or
+    "[resourceId('Microsoft.Resources/deployments', 'sample-resources')]" -cnotin
+        @($searchModules[0].Definition['dependsOn'])) {
+    throw 'Search embedding deployment must wait for the chat-model module to avoid concurrent Foundry account operations.'
+}
+Write-Host 'Complete resource bundle compiled; serialized models, unconditional modules, environment contract and zero worker IAM verified.'
 
 # Optional, separate provenance check. The parent downloader remains responsible
 # for fetching the original 14 pinned files; this checker never downloads or patches them.
