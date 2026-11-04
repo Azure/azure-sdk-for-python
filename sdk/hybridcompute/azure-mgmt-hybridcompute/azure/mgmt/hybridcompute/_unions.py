@@ -6,6 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Union
+from typing import TypeAlias, Union
 
-ServiceExtensionType = str
+ServiceExtensionType: TypeAlias = str
