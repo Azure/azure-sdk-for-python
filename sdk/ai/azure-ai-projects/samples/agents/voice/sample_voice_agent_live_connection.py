@@ -62,7 +62,9 @@ def main() -> None:
                     started = wait_for_event(connection, "session.started")
                     print(f"Live session started: {started['session']['id']}")
                     connection.session.update(
-                        session=models.LiveSessionUpdateParams(delegation=models.LiveClientDelegationParam())
+                        session=models.LiveSessionUpdateParams(
+                            delegation=models.LiveSessionUpdateParamsDelegationLiveClientDelegationParam()
+                        )
                     )
                     wait_for_event(connection, "session.updated")
                     connection.session.instructions.append(

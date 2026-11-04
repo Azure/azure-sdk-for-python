@@ -189,7 +189,7 @@ def test_connection_waits_for_start_and_confirms_graceful_close(monkeypatch, sam
     assert definition.audio.output.voice == "marin"
     session = connection.session.update.call_args.kwargs["session"]
     assert isinstance(session, models.LiveSessionUpdateParams)
-    assert isinstance(session.delegation, models.LiveClientDelegationParam)
+    assert isinstance(session.delegation, models.LiveSessionUpdateParamsDelegationLiveClientDelegationParam)
     connection.session.instructions.append.assert_called_once_with(
         content="Keep responses brief. Do not invent external facts.", delegation_id=None
     )
@@ -393,7 +393,7 @@ async def test_audio_streams_raw_frames_concurrently_and_collects_transcripts(mo
             models.LiveServerEventLiveDelegationCreated(
                 event_id="delegation",
                 offset_ms=50,
-                delegation=models.LiveDelegationItem(id="delegation-test", target="client"),
+                delegation=models.VoiceAgentLiveDelegationItem(id="delegation-test", target="client"),
             ),
         ]
     )

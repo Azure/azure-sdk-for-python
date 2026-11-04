@@ -61,6 +61,8 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
 
     conversations: BetaVoiceAgentsConversationsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsConversationsOperations` operations"""
+    live_conversations: BetaVoiceAgentsLiveConversationsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsLiveConversationsOperations` operations"""
     telephony: BetaVoiceAgentsTelephonyOperations
     """:class:`~azure.ai.projects.aio.operations.BetaVoiceAgentsTelephonyOperations` operations"""
     realtime: AsyncBetaRealtime

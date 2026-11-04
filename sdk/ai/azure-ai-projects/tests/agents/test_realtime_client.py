@@ -22,6 +22,7 @@ import pytest
 from azure.core.credentials import AccessToken
 from websockets.typing import Subprotocol
 
+from azure.ai.projects import models
 from azure.ai.projects._realtime import (
     BetaRealtime,
     BetaRealtimeConnectionManager,
@@ -248,7 +249,7 @@ class TestRealtimeConnectionManagerEnter:
         # Regression test: structured_inputs used to be serialized into a custom
         # "x-ms-voice-structured-inputs" header, but the generated request builder
         # (build_beta_voice_agents_realtime_connect_voice_agent_request) defines this as the
-        # "structured_input" query parameter -- the service never actually read the header.
+        # "structured_inputs" query parameter -- the service never actually read the header.
         fake_connection = MagicMock()
         with patch("websockets.sync.client.connect", return_value=fake_connection) as mock_connect:
             manager = _make_manager(structured_inputs={"greeting_name": "Alex"})
@@ -257,7 +258,8 @@ class TestRealtimeConnectionManagerEnter:
 
         _args, kwargs = mock_connect.call_args
         query = parse_qs(urlparse(_args[0]).query)
-        assert json.loads(query["structured_input"][0]) == {"greeting_name": "Alex"}
+        assert json.loads(query["structured_inputs"][0]) == {"greeting_name": "Alex"}
+        assert "structured_input" not in query
         assert "x-ms-voice-structured-inputs" not in kwargs["additional_headers"]
 
     def test_enter_preserves_existing_query_on_connection_url_override(self):
@@ -301,6 +303,39 @@ class TestRealtimeConnectionManagerEnter:
 
 class TestRealtimeConnectionRecv:
     """Unit tests for ``BetaRealtimeConnection.recv()``: event dispatch and error/timeout handling."""
+
+    @pytest.mark.parametrize(
+        "event_type,event_model",
+        [
+            ("session.handoff.started", models.VoiceAgentServerEventSessionHandoffStarted),
+            ("session.handoff.completed", models.VoiceAgentServerEventSessionHandoffCompleted),
+            ("session.handoff.aborted", models.VoiceAgentServerEventSessionHandoffAborted),
+        ],
+    )
+    def test_recv_dispatches_handoff_events(self, request, event_type, event_model):
+        payload = {
+            "type": event_type,
+            "event_id": "event-test",
+            "handoff_id": "handoff-test",
+            "edge_id": "edge-test",
+            "from_node_id": "$entrypoint",
+            "to_node_id": "node-test",
+            "from_model": "source-model-test",
+            "to_model": "target-model-test",
+            "tool_call_id": "call-test",
+            "node_generation": 0,
+        }
+        if event_type == "session.handoff.aborted":
+            payload["reason"] = "user_interruption"
+        transport = MagicMock()
+        transport.recv.return_value = json.dumps(payload)
+        with patch("websockets.sync.client.connect", return_value=transport):
+            manager = _make_manager()
+            connection = manager.enter()
+            request.addfinalizer(manager.__exit__)
+            event = connection.recv()
+        assert isinstance(event, event_model)
+        assert event.as_dict() == payload
 
     def test_recv_dispatches_known_event_type(self, request):
         fake_connection = MagicMock()

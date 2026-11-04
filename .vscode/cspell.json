@@ -2199,6 +2199,30 @@
       ]
     },
     {
+      "filename": "sdk/ai/azure-ai-projects/**",
+      "words": [
+        "azcopy",
+        "brise",
+        "csdl",
+        "dedup",
+        "flitz",
+        "genai",
+        "harema",
+        "inpainting",
+        "juni",
+        "nira",
+        "noeul",
+        "nuri",
+        "shida",
+        "simpleqna",
+        "unmute",
+        "unmuted",
+        "upia",
+        "webrtc",
+        "xhigh"
+      ]
+    },
+    {
       "filename": "sdk/ai/azure-ai-voicelive/**",
       "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound","webrtc","WEBRTC"]
     },

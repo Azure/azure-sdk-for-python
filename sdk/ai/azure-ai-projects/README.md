@@ -295,6 +295,8 @@ Create persisted Live definitions with `model_type=VoiceModelType.SELF_DEPLOYED`
 `VoiceAgentLiveClientDelegation` or `VoiceAgentLiveResponsesDelegation`. Session updates use
 the native `LiveSessionUpdateParams` models to change backend settings or transcript triggers,
 not the persisted Foundry delegation target, frontend model, or audio format.
+For client-delegation updates, use `LiveSessionUpdateParamsDelegationLiveClientDelegationParam`;
+for Responses updates, use `LiveResponsesDelegationUpdateParam`.
 Both protocols send structured inputs as JSON in the `structured_inputs` query parameter.
 The Live client's `agent_version` option uses the `agent_version_override` query parameter.
 

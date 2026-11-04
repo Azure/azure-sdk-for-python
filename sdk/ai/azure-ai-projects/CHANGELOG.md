@@ -5,10 +5,11 @@
 ### Features Added
 
 * Added preview GPT Live clients at `beta.voice_agents.live` for text and audio streaming, typed events, session controls, and Responses function-tool results. Both synchronous and asynchronous clients are available.
+* Added typed Realtime handoff events to the synchronous and asynchronous WebSocket clients.
 
 ### Sample updates
 
-* Added GPT Live connection, text conversation, asynchronous PCM audio streaming, and function-tool examples under `samples/agents/voice`.
+* Added GPT Live samples for session setup, text conversations, function tools, WAV and microphone audio, and stored-conversation readback. The REST sample creates and cleans up a conversation when no ID is supplied, or reads an existing conversation without changing it. Audio downloads use a unique user-temporary folder.
 
 ## 2.10.0 (2026-10-30)
 

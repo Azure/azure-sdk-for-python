@@ -236,6 +236,41 @@ class TestAsyncRealtimeConnectionManagerEnter:
 class TestAsyncRealtimeConnectionRecv:
     """Unit tests for ``AsyncBetaRealtimeConnection.recv()``: event dispatch and non-text frames."""
 
+    @pytest.mark.parametrize(
+        "event_type", ["session.handoff.started", "session.handoff.completed", "session.handoff.aborted"]
+    )
+    async def test_recv_dispatches_handoff_events(self, event_type):
+        import aiohttp
+
+        from azure.ai.projects import models
+
+        payload = {
+            "type": event_type,
+            "event_id": "event-test",
+            "handoff_id": "handoff-test",
+            "edge_id": "edge-test",
+            "from_node_id": "$entrypoint",
+            "to_node_id": "node-test",
+            "from_model": "source-model-test",
+            "to_model": "target-model-test",
+            "tool_call_id": "call-test",
+            "node_generation": 0,
+        }
+        if event_type == "session.handoff.aborted":
+            payload["reason"] = "user_interruption"
+        transport = _make_fake_ws()
+        transport.receive = AsyncMock(return_value=_make_fake_msg(aiohttp.WSMsgType.TEXT, json.dumps(payload)))
+        patcher, _ = _patch_client_session(transport)
+        with patcher:
+            manager = _make_manager()
+            connection = await manager.enter()
+            try:
+                event = await connection.recv()
+            finally:
+                await manager.__aexit__()
+        assert isinstance(event, models.RealtimeServerEvent.__mapping__[event_type])
+        assert event.as_dict() == payload
+
     async def test_recv_dispatches_known_event_type(self):
         import aiohttp
 
