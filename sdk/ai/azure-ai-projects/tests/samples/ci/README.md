@@ -162,7 +162,9 @@ its Python handler is a test dependency, not a dependency on the Python SDK test
 ### Calling from another SDK language
 
 Distribute the shared scripts, the complete [infra](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra) directory, and
-[function_app](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/tests/samples/ci/function_app) together at a pinned revision; keep their relative layout.
+[function_app](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/tests/samples/ci/function_app) and
+[search_documents](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/tests/samples/ci/search_documents)
+together at a pinned revision; keep their relative layout.
 The shared entry points require PowerShell 7.2+, Azure CLI with Bicep, and the existing
 authorized service-principal context. They do not authenticate on behalf of the caller.
 Function remote build uses the packaged handler requirements.
@@ -222,8 +224,9 @@ runs the packaged, standard-library-only
 under the shared Search UAMI. No new PowerShell publisher, SDK dependency, API key,
 storage key or IAM grant is required in workers.
 
-The script uploads the existing sample `product_info.md` in Markdown and plain-text
-formats, creates the chunk/vector/semantic index, a keyless blob data source, a split and
+The script uploads the CI-local
+[search_documents/product_info.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/search_documents/product_info.md)
+in Markdown and plain-text formats, creates the chunk/vector/semantic index, a keyless blob data source, a split and
 embedding skillset, and separate Markdown and document indexers. Data sources, embedding
 skills and query-time vector generation explicitly select the Search UAMI for outbound authentication;
 [managed-identity connections](https://learn.microsoft.com/azure/search/search-how-to-managed-identities)

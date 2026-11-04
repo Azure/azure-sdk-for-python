@@ -196,8 +196,8 @@ resource indexing 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
         storageEndpoint: storage.properties.primaryEndpoints.blob
         containerName: documents.name
         blobs: [
-          { name: 'product_info.md', content: loadTextContent('../../../../samples/agents/assets/product_info.md') }
-          { name: 'product_info.txt', content: loadTextContent('../../../../samples/agents/assets/product_info.md') }
+          { name: 'product_info.md', content: loadTextContent('../search_documents/product_info.md') }
+          { name: 'product_info.txt', content: loadTextContent('../search_documents/product_info.md') }
         ]
         index: index
         datasource: {
