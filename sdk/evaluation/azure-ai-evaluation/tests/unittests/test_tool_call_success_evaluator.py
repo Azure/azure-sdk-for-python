@@ -441,10 +441,34 @@ class TestToolCallSuccessWithoutToolCalls:
             [{"role": "assistant", "content": "[TOOL_CALL] fetch_weather()"}],
             [{"role": "assistant", "content": [{"type": "output_text", "text": "[TOOL_RESULT] ok"}]}],
             [{"role": "assistant", "content": [{"type": "text", "text": None}]}],
+            [{"role": ["assistant"], "content": "Hello."}],
+            [{"role": {"name": "assistant"}, "content": "Hello."}],
+            [{"role": "assistant", "content": [{"type": {"kind": "text"}, "text": "Hello."}]}],
+            [{"role": "assistant", "content": [{"type": ["text"], "text": "Hello."}]}],
+            [{"role": "assistant", "content": [{"type": {"kind": "mcp_approval_request"}}]}],
         ],
     )
     def test_only_recognized_text_messages_count_as_having_no_tool_calls(self, messages):
         assert _has_no_tool_calls(messages) is False
+
+    @pytest.mark.parametrize("role", [["assistant"], {"name": "assistant"}], ids=["list", "dict"])
+    def test_an_unsupported_role_value_still_goes_to_the_judge(self, role):
+        evaluator = judge({"score": 1, "status": "completed", "reason": "r"})
+
+        result = evaluator(response=[{"role": role, "content": "Hello."}])
+
+        assert evaluator._flow.await_count == 1
+        assert result["tool_call_success_result"] == "pass"
+
+    @pytest.mark.parametrize("item_type", [{"kind": "text"}, ["text"]], ids=["dict", "list"])
+    def test_an_unsupported_content_type_value_gets_the_input_validation_error(self, item_type):
+        evaluator = judge({"score": 1, "status": "completed", "reason": "r"})
+
+        with pytest.raises(EvaluationException, match="Invalid content type") as raised:
+            evaluator(response=[{"role": "assistant", "content": [{"type": item_type, "text": "Hello."}]}])
+
+        assert raised.value.blame == ErrorBlame.USER_ERROR
+        assert evaluator._flow.await_count == 0
 
     def test_text_messages_have_no_tool_calls(self):
         assert _has_no_tool_calls(TEXT_RESPONSE) is True

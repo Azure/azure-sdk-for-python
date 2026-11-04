@@ -317,6 +317,11 @@ def _holds_nothing(value: Any) -> bool:
     return value is None or (isinstance(value, (str, list, dict)) and not value)
 
 
+def _is_one_of(value: Any, names: frozenset) -> bool:
+    """Return True when the value is one of the names; any other value, including an unhashable one, is not."""
+    return isinstance(value, str) and value in names
+
+
 def _has_no_tool_calls(messages) -> bool:
     """Return True only for a list of text messages and MCP approvals that holds no tool calls, results or traces.
 
@@ -332,17 +337,21 @@ def _has_no_tool_calls(messages) -> bool:
         content = message.get("content")
         items = content
         if isinstance(content, list):
-            items = [item for item in content if not (isinstance(item, dict) and item.get("type") in _APPROVAL_TYPES)]
+            items = [
+                item
+                for item in content
+                if not (isinstance(item, dict) and _is_one_of(item.get("type"), _APPROVAL_TYPES))
+            ]
             if content and not items:
                 # Only MCP approval requests or responses, which are not tool calls; a response names its request
                 # in tool_call_id.
                 continue
-        if message.get("role") not in _CONVERSATION_ROLES or not _holds_nothing(message.get("tool_call_id")):
+        if not _is_one_of(message.get("role"), _CONVERSATION_ROLES) or not _holds_nothing(message.get("tool_call_id")):
             return False
         if isinstance(content, str):
             texts = [content]
         elif isinstance(items, list) and all(
-            isinstance(item, dict) and item.get("type") in _TEXT_CONTENT_TYPES for item in items
+            isinstance(item, dict) and _is_one_of(item.get("type"), _TEXT_CONTENT_TYPES) for item in items
         ):
             texts = [item.get("text") for item in items]
         else:
