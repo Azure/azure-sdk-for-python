@@ -6383,6 +6383,27 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.CreateSipTelephonyBindingRequest(CreateTelephonyBindingRequest, discriminator='sip'):
+        allowed_calling_numbers: Optional[list[str]]
+        connection_name: str
+        label: str
+        phone_number: Optional[str]
+        provider: Literal[TelephonyProvider.SIP]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                allowed_calling_numbers: Optional[list[str]] = ...,
+                connection_name: str,
+                label: Optional[str] = ...,
+                phone_number: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.CreateSkillVersionFromFilesBody(_Model):
         default: Optional[bool]
         files: list[Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]]
@@ -6951,25 +6972,6 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.Delegation(_Model):
-        type: str
-
-        @overload
-        def __init__(
-                self,
-                *,
-                type: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.DelegationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CLIENT = "client"
-        RESPONSES = "responses"
 
 
     class azure.ai.projects.models.DeleteAgentResponse(_Model):
@@ -8589,6 +8591,50 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.InlineVoiceSubagent(_Model):
+        audio_output: Optional[VoiceAgentVoiceConfig]
+        display_description: str
+        handoff_conditions: Optional[list[VoiceAgentHandoffCondition]]
+        id: str
+        inherit_base_instructions: Optional[bool]
+        instructions: Optional[str]
+        interface: Literal["voice"]
+        interim_response: Optional[VoiceAgentInterimResponseConfig]
+        max_response_output_tokens: Optional[VoiceAgentHandoffMaxOutputTokens]
+        model: Optional[str]
+        parallel_tool_calls: Optional[bool]
+        reasoning_effort: Optional[Union[str, VoiceAgentHandoffReasoningEffort]]
+        source: Literal["inline"]
+        temperature: Optional[float]
+        tool_choice: Optional[VoiceAgentToolChoice]
+        tools: Optional[list[VoiceAgentTool]]
+        voice_adaptation: Optional[VoiceAgentHandoffVoiceAdaptation]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                audio_output: Optional[VoiceAgentVoiceConfig] = ...,
+                display_description: str,
+                handoff_conditions: Optional[list[VoiceAgentHandoffCondition]] = ...,
+                id: str,
+                inherit_base_instructions: Optional[bool] = ...,
+                instructions: Optional[str] = ...,
+                interim_response: Optional[VoiceAgentInterimResponseConfig] = ...,
+                max_response_output_tokens: Optional[VoiceAgentHandoffMaxOutputTokens] = ...,
+                model: Optional[str] = ...,
+                parallel_tool_calls: Optional[bool] = ...,
+                reasoning_effort: Optional[Union[str, VoiceAgentHandoffReasoningEffort]] = ...,
+                temperature: Optional[float] = ...,
+                tool_choice: Optional[VoiceAgentToolChoice] = ...,
+                tools: Optional[list[VoiceAgentTool]] = ...,
+                voice_adaptation: Optional[VoiceAgentHandoffVoiceAdaptation] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         HIGH = "high"
         LOW = "low"
@@ -8938,21 +8984,6 @@ namespace azure.ai.projects.models
                 self,
                 *,
                 data_channel: LiveDataChannelConfigParam
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.LiveClientDelegationParam(Delegation, discriminator='client'):
-        acknowledgement_delay_ms: Optional[int]
-        type: Literal[DelegationType.CLIENT]
-
-        @overload
-        def __init__(
-                self,
-                *,
-                acknowledgement_delay_ms: Optional[int] = ...
             ) -> None: ...
 
         @overload
@@ -9782,27 +9813,10 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.LiveDecisionsDelegationParam(_Model):
-        acknowledgement_delay_ms: Optional[int]
-        decisions: LiveDecisionsSettingsInputParam
-        type: Literal["decisions"]
-
-        @overload
-        def __init__(
-                self,
-                *,
-                acknowledgement_delay_ms: Optional[int] = ...,
-                decisions: LiveDecisionsSettingsInputParam
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.LiveDecisionsDelegationUpdateParam(_Model):
+    class azure.ai.projects.models.LiveDecisionsDelegationUpdateParam(LiveSessionUpdateParamsDelegation, discriminator='decisions'):
         acknowledgement_delay_ms: Optional[int]
         decisions: Optional[LiveDecisionsSettingsUpdateParam]
-        type: Literal["decisions"]
+        type: Literal[LiveSessionUpdateParamsDelegationType.DECISIONS]
 
         @overload
         def __init__(
@@ -10349,23 +10363,6 @@ namespace azure.ai.projects.models
         DETAILED = "detailed"
 
 
-    class azure.ai.projects.models.LiveResponsesDelegationParam(Delegation, discriminator='responses'):
-        acknowledgement_delay_ms: Optional[int]
-        responses: LiveResponsesDelegationSettingsInputParam
-        type: Literal[DelegationType.RESPONSES]
-
-        @overload
-        def __init__(
-                self,
-                *,
-                acknowledgement_delay_ms: Optional[int] = ...,
-                responses: LiveResponsesDelegationSettingsInputParam
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.LiveResponsesDelegationSettingsInputParam(_Model):
         instructions: Optional[str]
         max_output_tokens: Optional[int]
@@ -10426,10 +10423,10 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.LiveResponsesDelegationUpdateParam(_Model):
+    class azure.ai.projects.models.LiveResponsesDelegationUpdateParam(LiveSessionUpdateParamsDelegation, discriminator='responses'):
         acknowledgement_delay_ms: Optional[int]
         responses: Optional[LiveResponsesDelegationSettingsUpdateInputParam]
-        type: Literal["responses"]
+        type: Literal[LiveSessionUpdateParamsDelegationType.RESPONSES]
 
         @overload
         def __init__(
@@ -11039,7 +11036,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.LiveSessionCreateParams(_Model):
         audio: Optional[LiveInitialSessionAudioParam]
         client: Optional[LiveClientConfigParam]
-        delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationParam, LiveDecisionsDelegationParam]]
+        delegation: Optional[LiveSessionCreateParamsDelegation]
         input: Optional[list[LiveInitialItem]]
         instructions: Optional[str]
         model: Union[str, ModelIdsLive]
@@ -11052,7 +11049,7 @@ namespace azure.ai.projects.models
                 *,
                 audio: Optional[LiveInitialSessionAudioParam] = ...,
                 client: Optional[LiveClientConfigParam] = ...,
-                delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationParam, LiveDecisionsDelegationParam]] = ...,
+                delegation: Optional[LiveSessionCreateParamsDelegation] = ...,
                 input: Optional[list[LiveInitialItem]] = ...,
                 instructions: Optional[str] = ...,
                 model: Union[str, ModelIdsLive],
@@ -11062,6 +11059,75 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSessionCreateParamsDelegation(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSessionCreateParamsDelegationLiveClientDelegationParam(LiveSessionCreateParamsDelegation, discriminator='client'):
+        acknowledgement_delay_ms: Optional[int]
+        type: Literal[LiveSessionCreateParamsDelegationType.CLIENT]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                acknowledgement_delay_ms: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSessionCreateParamsDelegationLiveDecisionsDelegationParam(LiveSessionCreateParamsDelegation, discriminator='decisions'):
+        acknowledgement_delay_ms: Optional[int]
+        decisions: LiveDecisionsSettingsInputParam
+        type: Literal[LiveSessionCreateParamsDelegationType.DECISIONS]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                acknowledgement_delay_ms: Optional[int] = ...,
+                decisions: LiveDecisionsSettingsInputParam
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSessionCreateParamsDelegationLiveResponsesDelegationParam(LiveSessionCreateParamsDelegation, discriminator='responses'):
+        acknowledgement_delay_ms: Optional[int]
+        responses: LiveResponsesDelegationSettingsInputParam
+        type: Literal[LiveSessionCreateParamsDelegationType.RESPONSES]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                acknowledgement_delay_ms: Optional[int] = ...,
+                responses: LiveResponsesDelegationSettingsInputParam
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSessionCreateParamsDelegationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CLIENT = "client"
+        DECISIONS = "decisions"
+        RESPONSES = "responses"
 
 
     class azure.ai.projects.models.LiveSessionStartEvent(LiveClientEvent, discriminator='session.start'):
@@ -11082,19 +11148,54 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.LiveSessionUpdateParams(_Model):
-        delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationUpdateParam, LiveDecisionsDelegationUpdateParam]]
+        delegation: Optional[LiveSessionUpdateParamsDelegation]
         triggers: Optional[list[LiveDecisionTriggerInputParam]]
 
         @overload
         def __init__(
                 self,
                 *,
-                delegation: Optional[Union[LiveClientDelegationParam, LiveResponsesDelegationUpdateParam, LiveDecisionsDelegationUpdateParam]] = ...,
+                delegation: Optional[LiveSessionUpdateParamsDelegation] = ...,
                 triggers: Optional[list[LiveDecisionTriggerInputParam]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSessionUpdateParamsDelegation(_Model):
+        type: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSessionUpdateParamsDelegationLiveClientDelegationParam(LiveSessionUpdateParamsDelegation, discriminator='client'):
+        acknowledgement_delay_ms: Optional[int]
+        type: Literal[LiveSessionUpdateParamsDelegationType.CLIENT]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                acknowledgement_delay_ms: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.LiveSessionUpdateParamsDelegationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CLIENT = "client"
+        DECISIONS = "decisions"
+        RESPONSES = "responses"
 
 
     class azure.ai.projects.models.LiveSessionUsage(_Model):
@@ -13334,6 +13435,7 @@ namespace azure.ai.projects.models
         MCP_CALL = "mcp_call"
         MCP_LIST_TOOLS = "mcp_list_tools"
         MESSAGE = "message"
+        SYSTEM_TOOL = "system_tool"
 
 
     class azure.ai.projects.models.RealtimeFunctionTool(_Model):
@@ -14899,6 +15001,7 @@ namespace azure.ai.projects.models
         INPUT_AUDIO_BUFFER_SPEECH_STARTED = "input_audio_buffer.speech_started"
         INPUT_AUDIO_BUFFER_SPEECH_STOPPED = "input_audio_buffer.speech_stopped"
         INPUT_AUDIO_BUFFER_TIMEOUT_TRIGGERED = "input_audio_buffer.timeout_triggered"
+        INPUT_COLLECTION_STATUS = "input_collection.status"
         MCP_LIST_TOOLS_COMPLETED = "mcp_list_tools.completed"
         MCP_LIST_TOOLS_FAILED = "mcp_list_tools.failed"
         MCP_LIST_TOOLS_IN_PROGRESS = "mcp_list_tools.in_progress"
@@ -14931,6 +15034,8 @@ namespace azure.ai.projects.models
         RESPONSE_OUTPUT_ITEM_DONE = "response.output_item.done"
         RESPONSE_OUTPUT_TEXT_DELTA = "response.output_text.delta"
         RESPONSE_OUTPUT_TEXT_DONE = "response.output_text.done"
+        RESPONSE_SYSTEM_TOOL_ARGUMENTS_DELTA = "response.system_tool_arguments.delta"
+        RESPONSE_SYSTEM_TOOL_ARGUMENTS_DONE = "response.system_tool_arguments.done"
         RESPONSE_VIDEO_DELTA = "response.video.delta"
         RTC_CALL_ERROR = "rtc.call.error"
         RTC_CALL_SDP_CREATED = "rtc.call.sdp.created"
@@ -14938,6 +15043,9 @@ namespace azure.ai.projects.models
         SESSION_AVATAR_SWITCH_TO_IDLE = "session.avatar.switch_to_idle"
         SESSION_AVATAR_SWITCH_TO_SPEAKING = "session.avatar.switch_to_speaking"
         SESSION_CREATED = "session.created"
+        SESSION_HANDOFF_ABORTED = "session.handoff.aborted"
+        SESSION_HANDOFF_COMPLETED = "session.handoff.completed"
+        SESSION_HANDOFF_STARTED = "session.handoff.started"
         SESSION_SUBAGENT_ABORTED = "session.subagent.aborted"
         SESSION_SUBAGENT_COMPLETED = "session.subagent.completed"
         SESSION_SUBAGENT_STARTED = "session.subagent.started"
@@ -15781,6 +15889,61 @@ namespace azure.ai.projects.models
                 max_samples: int,
                 model_options: Optional[DataGenerationModelOptions] = ...,
                 train_split: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.SipTelephonyBinding(TelephonyBinding, discriminator='sip'):
+        allowed_calling_numbers: Optional[list[str]]
+        connection_name: str
+        id: str
+        incoming_call_url: str
+        label: str
+        phone_number: Optional[str]
+        provider: Literal[TelephonyProvider.SIP]
+        status: Union[str, TelephonyBindingStatus]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                allowed_calling_numbers: Optional[list[str]] = ...,
+                connection_name: str,
+                id: str,
+                incoming_call_url: str,
+                label: Optional[str] = ...,
+                phone_number: Optional[str] = ...,
+                status: Union[str, TelephonyBindingStatus]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.SipTelephonyBindingListItem(TelephonyBindingListItem, discriminator='sip'):
+        allowed_calling_numbers: Optional[list[str]]
+        connection_name: str
+        etag: str
+        id: str
+        incoming_call_url: str
+        label: str
+        phone_number: Optional[str]
+        provider: Literal[TelephonyProvider.SIP]
+        status: Union[str, TelephonyBindingStatus]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                allowed_calling_numbers: Optional[list[str]] = ...,
+                connection_name: str,
+                id: str,
+                incoming_call_url: str,
+                label: Optional[str] = ...,
+                phone_number: Optional[str] = ...,
+                status: Union[str, TelephonyBindingStatus]
             ) -> None: ...
 
         @overload
@@ -16822,6 +16985,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.TelephonyProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        SIP = "sip"
         TEAMS_PHONE_EXTENSIBILITY = "teams_phone_extensibility"
         TWILIO = "twilio"
 
@@ -18141,6 +18305,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.UpdateTelephonyBindingRequest(_Model):
+        allowed_calling_numbers: Optional[list[str]]
         connection_name: Optional[str]
         label: Optional[str]
         phone_number: Optional[str]
@@ -18150,6 +18315,7 @@ namespace azure.ai.projects.models
         def __init__(
                 self,
                 *,
+                allowed_calling_numbers: Optional[list[str]] = ...,
                 connection_name: Optional[str] = ...,
                 label: Optional[str] = ...,
                 phone_number: Optional[str] = ...,
@@ -18425,22 +18591,22 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.VoiceAgentAudioOutputConfig(_Model):
-        custom_lexicon_url: Optional[str]
-        custom_text_normalization_url: Optional[str]
-        custom_voice_endpoint_id: Optional[str]
+    class azure.ai.projects.models.VoiceAgentAudioOutputConfig(VoiceAgentVoiceConfig):
+        custom_lexicon_url: str
+        custom_text_normalization_url: str
+        custom_voice_endpoint_id: str
         format: Optional[RealtimeAudioFormats]
         output_audio_timestamp_types: Optional[list[Union[str, VoiceAgentAudioTimestampType]]]
-        personal_voice_model: Optional[str]
-        pitch: Optional[str]
-        prefer_locales: Optional[list[str]]
-        speed: Optional[float]
-        style: Optional[str]
-        voice: Optional[str]
-        voice_locale: Optional[str]
-        voice_temperature: Optional[float]
-        voice_type: Optional[Union[str, VoiceType]]
-        volume: Optional[str]
+        personal_voice_model: str
+        pitch: str
+        prefer_locales: list[str]
+        speed: float
+        style: str
+        voice: str
+        voice_locale: str
+        voice_temperature: float
+        voice_type: Union[str, VoiceType]
+        volume: str
 
         @overload
         def __init__(
@@ -18805,6 +18971,102 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentCollectDtmfStartArguments(_Model):
+        completion_mode: VoiceAgentDtmfCompletionMode
+        first_digit_timeout_seconds: Optional[int]
+        output_variable_name: Optional[str]
+        secret: bool
+        timeout_seconds: Optional[int]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                completion_mode: VoiceAgentDtmfCompletionMode,
+                first_digit_timeout_seconds: Optional[int] = ...,
+                output_variable_name: Optional[str] = ...,
+                secret: bool,
+                timeout_seconds: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentCollectDtmfSystemTool(VoiceAgentSystemTool, discriminator='collect_dtmf'):
+        description: str
+        name: Literal[VoiceAgentSystemToolName.COLLECT_DTMF]
+        timeout_seconds: timedelta
+        type: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                description: Optional[str] = ...,
+                timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentCollectSmsStartArguments(_Model):
+        from_phone_number: str
+        output_variable_name: Optional[str]
+        secret: bool
+        timeout_seconds: Optional[int]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                from_phone_number: str,
+                output_variable_name: Optional[str] = ...,
+                secret: bool,
+                timeout_seconds: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentCollectSmsSystemTool(VoiceAgentSystemTool, discriminator='collect_sms'):
+        description: str
+        name: Literal[VoiceAgentSystemToolName.COLLECT_SMS]
+        timeout_seconds: timedelta
+        type: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                description: Optional[str] = ...,
+                timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentCollectionStartArguments(_Model):
+        output_variable_name: Optional[str]
+        secret: bool
+        timeout_seconds: Optional[int]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                output_variable_name: Optional[str] = ...,
+                secret: bool,
+                timeout_seconds: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentDefinition(VoiceAgentBaseDefinition, discriminator='realtime'):
         audio: Optional[VoiceAgentAudioConfig]
         avatar: Optional[VoiceAgentAvatarConfig]
@@ -18859,6 +19121,93 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentDelegateSubagentConfig(VoiceAgentSubagentConfig, discriminator='delegate'):
+        subagent_type: Literal[VoiceAgentSubagentType.DELEGATE]
+        subagents: list[VoiceAgentSubagent]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                subagents: list[VoiceAgentSubagent]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentDigitRecognitionSystemTool(VoiceAgentSystemTool, discriminator='digit_recognition'):
+        description: str
+        name: Literal[VoiceAgentSystemToolName.DIGIT_RECOGNITION]
+        timeout_seconds: timedelta
+        type: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                description: Optional[str] = ...,
+                timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentDtmfFixedLengthCompletionMode(_Model):
+        inter_digit_timeout_seconds: Optional[int]
+        length: Optional[int]
+        type: Literal["fixed_length"]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                inter_digit_timeout_seconds: Optional[int] = ...,
+                length: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentDtmfInterDigitSilenceCompletionMode(_Model):
+        inter_digit_timeout_seconds: Optional[int]
+        type: Literal["inter_digit_silence"]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                inter_digit_timeout_seconds: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentDtmfTerminator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ASTERISK = "*"
+        NUMBER_SIGN = "#"
+
+
+    class azure.ai.projects.models.VoiceAgentDtmfTerminatorCompletionMode(_Model):
+        inter_digit_timeout_seconds: Optional[int]
+        terminator: Union[str, VoiceAgentDtmfTerminator]
+        type: Literal["terminator"]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                inter_digit_timeout_seconds: Optional[int] = ...,
+                terminator: Union[str, VoiceAgentDtmfTerminator]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentEchoCancellation(_Model):
         channels: Optional[int]
         reference_source: Optional[Union[str, VoiceAgentEchoCancellationReferenceSource]]
@@ -18884,13 +19233,15 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentEndConversationSystemTool(VoiceAgentSystemTool, discriminator='end_conversation'):
         description: str
         name: Literal[VoiceAgentSystemToolName.END_CONVERSATION]
+        timeout_seconds: timedelta
         type: str
 
         @overload
         def __init__(
                 self,
                 *,
-                description: Optional[str] = ...
+                description: Optional[str] = ...,
+                timeout_seconds: Optional[timedelta] = ...
             ) -> None: ...
 
         @overload
@@ -18977,6 +19328,198 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentHandoffAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ERROR = "error"
+        USER_INTERRUPTION = "user_interruption"
+
+
+    class azure.ai.projects.models.VoiceAgentHandoffCondition(_Model):
+        cancel_on_interruption: Optional[bool]
+        condition: str
+        delay_ms: Optional[timedelta]
+        id: str
+        target: str
+        target_response: Optional[Union[str, VoiceAgentHandoffTargetResponse]]
+        transfer_message: Optional[str]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                cancel_on_interruption: Optional[bool] = ...,
+                condition: str,
+                delay_ms: Optional[timedelta] = ...,
+                id: str,
+                target: str,
+                target_response: Optional[Union[str, VoiceAgentHandoffTargetResponse]] = ...,
+                transfer_message: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentHandoffEdgeState(_Model):
+        cancel_on_interruption: Optional[bool]
+        delay_ms: Optional[timedelta]
+        id: str
+        source: str
+        target: str
+        target_response: Optional[Union[str, VoiceAgentHandoffTargetResponse]]
+        transfer_message: Optional[str]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                cancel_on_interruption: Optional[bool] = ...,
+                delay_ms: Optional[timedelta] = ...,
+                id: str,
+                source: str,
+                target: str,
+                target_response: Optional[Union[str, VoiceAgentHandoffTargetResponse]] = ...,
+                transfer_message: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentHandoffNodeState(_Model):
+        display_description: str
+        id: str
+        implicit: Optional[bool]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                display_description: str,
+                id: str,
+                implicit: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentHandoffPipelineFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CASCADED = "cascaded"
+        REALTIME = "realtime"
+
+
+    class azure.ai.projects.models.VoiceAgentHandoffPolicy(_Model):
+        max_attempts: Optional[int]
+        max_transfers: Optional[int]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                max_attempts: Optional[int] = ...,
+                max_transfers: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentHandoffReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        HIGH = "high"
+        LOW = "low"
+        MEDIUM = "medium"
+        MINIMAL = "minimal"
+        NONE = "none"
+        XHIGH = "xhigh"
+
+
+    class azure.ai.projects.models.VoiceAgentHandoffState(_Model):
+        active_node_id: str
+        attempt_count: int
+        available_edge_ids: list[str]
+        edges: list[VoiceAgentHandoffEdgeState]
+        node_generation: int
+        nodes: list[VoiceAgentHandoffNodeState]
+        pipeline_family: Union[str, VoiceAgentHandoffPipelineFamily]
+        transfer_count: int
+        transfer_tool: VoiceAgentFunctionTool
+
+        @overload
+        def __init__(
+                self,
+                *,
+                active_node_id: str,
+                attempt_count: int,
+                available_edge_ids: list[str],
+                edges: list[VoiceAgentHandoffEdgeState],
+                node_generation: int,
+                nodes: list[VoiceAgentHandoffNodeState],
+                pipeline_family: Union[str, VoiceAgentHandoffPipelineFamily],
+                transfer_count: int,
+                transfer_tool: VoiceAgentFunctionTool
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentHandoffTargetResponse(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUTO = "auto"
+        NONE = "none"
+
+
+    class azure.ai.projects.models.VoiceAgentHandoffVoiceAdaptation(_Model):
+        type: Literal["auto"]
+
+        def __init__(
+                self,
+                *args: Any,
+                **kwargs: Any
+            ) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentInlineSubagentConfig(VoiceAgentSubagentConfig, discriminator='inline'):
+        handoff_policy: Optional[VoiceAgentHandoffPolicy]
+        subagent_type: Literal[VoiceAgentSubagentType.INLINE]
+        subagents: list[InlineVoiceSubagent]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                handoff_policy: Optional[VoiceAgentHandoffPolicy] = ...,
+                subagents: list[InlineVoiceSubagent]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentInputCollectionChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DTMF = "dtmf"
+        SMS = "sms"
+
+
+    class azure.ai.projects.models.VoiceAgentInputCollectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCEPTED = "accepted"
+        BUSY = "busy"
+        CANCELLED = "cancelled"
+        COMPLETED = "completed"
+        DISPATCH_FAILED = "dispatch_failed"
+        EXPIRED = "expired"
+        FAILED = "failed"
+        INVALID_ARGUMENTS = "invalid_arguments"
+        INVALID_INPUT = "invalid_input"
+        LISTENING = "listening"
+        PROVIDER_ACCEPTED = "provider_accepted"
+        PROVIDER_FAILED_OR_UNSUPPORTED = "provider_failed_or_unsupported"
+        PROVIDER_NOT_EXECUTED = "provider_not_executed"
+        PROVIDER_RESULT_UNCERTAIN = "provider_result_uncertain"
+        STALE_COLLECTION = "stale_collection"
+        TRANSFER_NOT_ANSWERED = "transfer_not_answered"
+        UNSUPPORTED_CHANNEL = "unsupported_channel"
+
+
     class azure.ai.projects.models.VoiceAgentInputTranscription(_Model):
         custom_speech: Optional[dict[str, str]]
         delay: Optional[Literal["minimal", "low", "medium", "high", "xhigh"]]
@@ -19041,6 +19584,40 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         LATENCY = "latency"
         TOOL = "tool"
+
+
+    class azure.ai.projects.models.VoiceAgentLanguageDetectionArguments(_Model):
+        language: str
+        reason: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                language: str,
+                reason: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentLanguageDetectionSystemTool(VoiceAgentSystemTool, discriminator='language_detection'):
+        description: str
+        name: Literal[VoiceAgentSystemToolName.LANGUAGE_DETECTION]
+        timeout_seconds: timedelta
+        type: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                description: Optional[str] = ...,
+                timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.VoiceAgentLiveClientDelegation(VoiceAgentLiveDelegation, discriminator='client'):
@@ -19684,6 +20261,71 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentSendDtmfSystemTool(VoiceAgentSystemTool, discriminator='send_dtmf'):
+        description: str
+        name: Literal[VoiceAgentSystemToolName.SEND_DTMF]
+        timeout_seconds: timedelta
+        type: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                description: Optional[str] = ...,
+                timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSendSmsSystemTool(VoiceAgentSystemTool, discriminator='send_sms'):
+        description: str
+        name: Literal[VoiceAgentSystemToolName.SEND_SMS]
+        timeout_seconds: timedelta
+        type: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                description: Optional[str] = ...,
+                timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventInputCollectionStatus(RealtimeServerEvent, discriminator='input_collection.status'):
+        call_id: str
+        channel: Optional[Union[str, VoiceAgentInputCollectionChannel]]
+        collection_id: Optional[str]
+        event_id: Optional[str]
+        output_ref: Optional[str]
+        request_id: Optional[str]
+        status: Union[str, VoiceAgentInputCollectionStatus]
+        type: Literal[VoiceAgentServerEventTypeExtension.INPUT_COLLECTION_STATUS]
+        value: Optional[str]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                call_id: str,
+                channel: Optional[Union[str, VoiceAgentInputCollectionChannel]] = ...,
+                collection_id: Optional[str] = ...,
+                event_id: Optional[str] = ...,
+                output_ref: Optional[str] = ...,
+                request_id: Optional[str] = ...,
+                status: Union[str, VoiceAgentInputCollectionStatus],
+                value: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentServerEventResponseAnimationBlendshapesDelta(RealtimeServerEvent, discriminator='response.animation_blendshapes.delta'):
         content_index: int
         event_id: str
@@ -19947,6 +20589,107 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentServerEventSessionHandoffAborted(RealtimeServerEvent, discriminator='session.handoff.aborted'):
+        edge_id: str
+        error: Optional[RealtimeServerEventErrorError]
+        event_id: str
+        from_model: str
+        from_node_id: str
+        handoff_id: str
+        node_generation: int
+        reason: Union[str, VoiceAgentHandoffAbortReason]
+        to_model: str
+        to_node_id: str
+        tool_call_id: str
+        type: Literal[VoiceAgentServerEventTypeExtension.SESSION_HANDOFF_ABORTED]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                edge_id: str,
+                error: Optional[RealtimeServerEventErrorError] = ...,
+                event_id: str,
+                from_model: str,
+                from_node_id: str,
+                handoff_id: str,
+                node_generation: int,
+                reason: Union[str, VoiceAgentHandoffAbortReason],
+                to_model: str,
+                to_node_id: str,
+                tool_call_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventSessionHandoffCompleted(RealtimeServerEvent, discriminator='session.handoff.completed'):
+        duration_ms: timedelta
+        edge_id: str
+        event_id: str
+        from_model: str
+        from_node_id: str
+        handoff_id: str
+        node_generation: int
+        prepare_duration_ms: timedelta
+        to_model: str
+        to_node_id: str
+        tool_call_id: str
+        type: Literal[VoiceAgentServerEventTypeExtension.SESSION_HANDOFF_COMPLETED]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                duration_ms: timedelta,
+                edge_id: str,
+                event_id: str,
+                from_model: str,
+                from_node_id: str,
+                handoff_id: str,
+                node_generation: int,
+                prepare_duration_ms: timedelta,
+                to_model: str,
+                to_node_id: str,
+                tool_call_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventSessionHandoffStarted(RealtimeServerEvent, discriminator='session.handoff.started'):
+        edge_id: str
+        event_id: str
+        from_model: str
+        from_node_id: str
+        handoff_id: str
+        node_generation: int
+        to_model: str
+        to_node_id: str
+        tool_call_id: str
+        type: Literal[VoiceAgentServerEventTypeExtension.SESSION_HANDOFF_STARTED]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                edge_id: str,
+                event_id: str,
+                from_model: str,
+                from_node_id: str,
+                handoff_id: str,
+                node_generation: int,
+                to_model: str,
+                to_node_id: str,
+                tool_call_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentServerEventSessionSubagentAborted(RealtimeServerEvent, discriminator='session.subagent.aborted'):
         call_id: str
         consultation_id: str
@@ -20010,6 +20753,85 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventSystemToolArgumentsDelta(RealtimeServerEvent, discriminator='response.system_tool_arguments.delta'):
+        call_id: str
+        delta: str
+        event_id: str
+        item_id: str
+        obfuscation: Optional[str]
+        output_index: int
+        response_id: str
+        type: Literal[VoiceAgentServerEventTypeExtension.RESPONSE_SYSTEM_TOOL_ARGUMENTS_DELTA]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                call_id: str,
+                delta: str,
+                event_id: str,
+                item_id: str,
+                obfuscation: Optional[str] = ...,
+                output_index: int,
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventSystemToolArgumentsDone(RealtimeServerEvent, discriminator='response.system_tool_arguments.done'):
+        arguments: str
+        call_id: str
+        event_id: str
+        item_id: str
+        name: Union[str, VoiceAgentSystemToolName]
+        output_index: int
+        response_id: str
+        type: Literal[VoiceAgentServerEventTypeExtension.RESPONSE_SYSTEM_TOOL_ARGUMENTS_DONE]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                arguments: str,
+                call_id: str,
+                event_id: str,
+                item_id: str,
+                name: Union[str, VoiceAgentSystemToolName],
+                output_index: int,
+                response_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentServerEventTypeExtension(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INPUT_COLLECTION_STATUS = "input_collection.status"
+        RESPONSE_ANIMATION_BLENDSHAPES_DELTA = "response.animation_blendshapes.delta"
+        RESPONSE_ANIMATION_BLENDSHAPES_DONE = "response.animation_blendshapes.done"
+        RESPONSE_ANIMATION_VISEME_DELTA = "response.animation_viseme.delta"
+        RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
+        RESPONSE_AUDIO_TIMESTAMP_DELTA = "response.audio_timestamp.delta"
+        RESPONSE_AUDIO_TIMESTAMP_DONE = "response.audio_timestamp.done"
+        RESPONSE_SYSTEM_TOOL_ARGUMENTS_DELTA = "response.system_tool_arguments.delta"
+        RESPONSE_SYSTEM_TOOL_ARGUMENTS_DONE = "response.system_tool_arguments.done"
+        RESPONSE_VIDEO_DELTA = "response.video.delta"
+        RTC_CALL_ERROR = "rtc.call.error"
+        RTC_CALL_SDP_CREATED = "rtc.call.sdp.created"
+        SESSION_AVATAR_CONNECTING = "session.avatar.connecting"
+        SESSION_AVATAR_SWITCH_TO_IDLE = "session.avatar.switch_to_idle"
+        SESSION_AVATAR_SWITCH_TO_SPEAKING = "session.avatar.switch_to_speaking"
+        SESSION_HANDOFF_ABORTED = "session.handoff.aborted"
+        SESSION_HANDOFF_COMPLETED = "session.handoff.completed"
+        SESSION_HANDOFF_STARTED = "session.handoff.started"
+        SESSION_SUBAGENT_ABORTED = "session.subagent.aborted"
+        SESSION_SUBAGENT_COMPLETED = "session.subagent.completed"
+        SESSION_SUBAGENT_STARTED = "session.subagent.started"
+        WARNING = "warning"
 
 
     class azure.ai.projects.models.VoiceAgentServerEventWarning(RealtimeServerEvent, discriminator='warning'):
@@ -20122,6 +20944,7 @@ namespace azure.ai.projects.models
         avatar: Optional[VoiceAgentSessionAvatarConfig]
         expires_at: Optional[datetime]
         greeting: Optional[VoiceAgentGreetingConfig]
+        handoff: Optional[VoiceAgentHandoffState]
         id: str
         include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]]
         instructions: Optional[str]
@@ -20147,6 +20970,7 @@ namespace azure.ai.projects.models
                 avatar: Optional[VoiceAgentSessionAvatarConfig] = ...,
                 expires_at: Optional[datetime] = ...,
                 greeting: Optional[VoiceAgentGreetingConfig] = ...,
+                handoff: Optional[VoiceAgentHandoffState] = ...,
                 id: str,
                 include: Optional[list[Union[str, VoiceAgentSessionIncludeOption]]] = ...,
                 instructions: Optional[str] = ...,
@@ -20346,13 +21170,13 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.VoiceAgentSubagentConfig(_Model):
-        subagents: list[VoiceAgentSubagent]
+        subagent_type: str
 
         @overload
         def __init__(
                 self,
                 *,
-                subagents: list[VoiceAgentSubagent]
+                subagent_type: str
             ) -> None: ...
 
         @overload
@@ -20385,9 +21209,15 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentSubagentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DELEGATE = "delegate"
+        INLINE = "inline"
+
+
     class azure.ai.projects.models.VoiceAgentSystemTool(VoiceAgentTool, discriminator='system'):
         description: Optional[str]
         name: str
+        timeout_seconds: Optional[timedelta]
         type: Literal["system"]
 
         @overload
@@ -20395,15 +21225,56 @@ namespace azure.ai.projects.models
                 self,
                 *,
                 description: Optional[str] = ...,
-                name: str
+                name: str,
+                timeout_seconds: Optional[timedelta] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentSystemToolItem(RealtimeConversationItem, discriminator='system_tool'):
+        arguments: str
+        call_id: str
+        created_at: Optional[datetime]
+        id: Optional[str]
+        name: Union[str, VoiceAgentSystemToolName]
+        object: Optional[Literal["item"]]
+        response_id: Optional[str]
+        status: Union[str, VoiceAgentSystemToolItemStatus]
+        type: Literal[RealtimeConversationItemType.SYSTEM_TOOL]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                arguments: str,
+                call_id: str,
+                id: Optional[str] = ...,
+                name: Union[str, VoiceAgentSystemToolName],
+                object: Optional[Literal[item]] = ...,
+                status: Union[str, VoiceAgentSystemToolItemStatus]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentSystemToolItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        COMPLETED = "completed"
+        INCOMPLETE = "incomplete"
+        IN_PROGRESS = "in_progress"
+
+
     class azure.ai.projects.models.VoiceAgentSystemToolName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        COLLECT_DTMF = "collect_dtmf"
+        COLLECT_SMS = "collect_sms"
+        DIGIT_RECOGNITION = "digit_recognition"
         END_CONVERSATION = "end_conversation"
+        LANGUAGE_DETECTION = "language_detection"
+        SEND_DTMF = "send_dtmf"
+        SEND_SMS = "send_sms"
+        TRANSFER = "transfer"
 
 
     class azure.ai.projects.models.VoiceAgentTemplateGreetingConfig(VoiceAgentGreetingConfig, discriminator='template'):
@@ -20503,6 +21374,92 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentTransferDestination(_Model):
+        type: Union[str, VoiceAgentTransferDestinationType]
+        value: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                type: Union[str, VoiceAgentTransferDestinationType],
+                value: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentTransferDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PHONE_NUMBER = "phone_number"
+        SIP = "sip"
+        TEAMS = "teams"
+
+
+    class azure.ai.projects.models.VoiceAgentTransferRouting(_Model):
+        ring_timeout_seconds: Optional[int]
+        strategy: Union[str, VoiceAgentTransferStrategy]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                ring_timeout_seconds: Optional[int] = ...,
+                strategy: Union[str, VoiceAgentTransferStrategy]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentTransferStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PARALLEL = "parallel"
+        RANDOM = "random"
+        SEQUENTIAL = "sequential"
+
+
+    class azure.ai.projects.models.VoiceAgentTransferSystemTool(VoiceAgentSystemTool, discriminator='transfer'):
+        description: str
+        name: Literal[VoiceAgentSystemToolName.TRANSFER]
+        require_handoff: Optional[bool]
+        targets: list[VoiceAgentTransferTarget]
+        timeout_seconds: timedelta
+        type: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                description: Optional[str] = ...,
+                require_handoff: Optional[bool] = ...,
+                targets: list[VoiceAgentTransferTarget],
+                timeout_seconds: Optional[timedelta] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentTransferTarget(_Model):
+        description: Optional[str]
+        destinations: list[VoiceAgentTransferDestination]
+        name: str
+        routing: VoiceAgentTransferRouting
+
+        @overload
+        def __init__(
+                self,
+                *,
+                description: Optional[str] = ...,
+                destinations: list[VoiceAgentTransferDestination],
+                name: str,
+                routing: VoiceAgentTransferRouting
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.VoiceAgentTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         WEBRTC = "webrtc"
         WEBSOCKET = "websocket"
@@ -20530,6 +21487,44 @@ namespace azure.ai.projects.models
         AZURE_SEMANTIC_VAD_MULTILINGUAL = "azure_semantic_vad_multilingual"
         SEMANTIC_VAD = "semantic_vad"
         SERVER_VAD = "server_vad"
+
+
+    class azure.ai.projects.models.VoiceAgentVoiceConfig(_Model):
+        custom_lexicon_url: Optional[str]
+        custom_text_normalization_url: Optional[str]
+        custom_voice_endpoint_id: Optional[str]
+        personal_voice_model: Optional[str]
+        pitch: Optional[str]
+        prefer_locales: Optional[list[str]]
+        speed: Optional[float]
+        style: Optional[str]
+        voice: Optional[str]
+        voice_locale: Optional[str]
+        voice_temperature: Optional[float]
+        voice_type: Optional[Union[str, VoiceType]]
+        volume: Optional[str]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                custom_lexicon_url: Optional[str] = ...,
+                custom_text_normalization_url: Optional[str] = ...,
+                custom_voice_endpoint_id: Optional[str] = ...,
+                personal_voice_model: Optional[str] = ...,
+                pitch: Optional[str] = ...,
+                prefer_locales: Optional[list[str]] = ...,
+                speed: Optional[float] = ...,
+                style: Optional[str] = ...,
+                voice: Optional[str] = ...,
+                voice_locale: Optional[str] = ...,
+                voice_temperature: Optional[float] = ...,
+                voice_type: Optional[Union[str, VoiceType]] = ...,
+                volume: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.VoiceAudioCodec(str, Enum, metaclass=CaseInsensitiveEnumMeta):

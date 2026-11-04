@@ -103,6 +103,53 @@ def test_foundry_live_protocol_metadata_models_are_publicly_exported():
     assert "VoiceAgentLiveDelegationItem" in models.__all__
 
 
+@pytest.mark.parametrize(
+    "session_type,session_arguments,delegation_type,delegation_arguments,expected_delegation",
+    [
+        (
+            models.LiveSessionCreateParams,
+            {"model": "synthetic-live-model"},
+            models.LiveSessionCreateParamsDelegationLiveClientDelegationParam,
+            {"acknowledgement_delay_ms": 0},
+            {"type": "client", "acknowledgement_delay_ms": 0},
+        ),
+        (
+            models.LiveSessionCreateParams,
+            {"model": "synthetic-live-model"},
+            models.LiveSessionCreateParamsDelegationLiveResponsesDelegationParam,
+            {"responses": models.LiveResponsesDelegationSettingsInputParam(model="synthetic-backend-model")},
+            {"type": "responses", "responses": {"model": "synthetic-backend-model"}},
+        ),
+        (
+            models.LiveSessionUpdateParams,
+            {},
+            models.LiveSessionUpdateParamsDelegationLiveClientDelegationParam,
+            {"acknowledgement_delay_ms": 0},
+            {"type": "client", "acknowledgement_delay_ms": 0},
+        ),
+        (
+            models.LiveSessionUpdateParams,
+            {},
+            models.LiveResponsesDelegationUpdateParam,
+            {"responses": models.LiveResponsesDelegationSettingsUpdateInputParam(instructions="Keep replies brief.")},
+            {"type": "responses", "responses": {"instructions": "Keep replies brief."}},
+        ),
+    ],
+)
+def test_native_live_session_delegation_discriminators_round_trip(
+    session_type, session_arguments, delegation_type, delegation_arguments, expected_delegation
+):
+    delegation = delegation_type(**delegation_arguments)
+    session = session_type(**session_arguments, delegation=delegation)
+    expected = {**session_arguments, "delegation": expected_delegation}
+
+    assert session.as_dict(exclude_readonly=True) == expected
+
+    restored = session_type(expected)
+    assert isinstance(restored.delegation, delegation_type)
+    assert restored.as_dict() == expected
+
+
 @pytest.mark.parametrize("operation_module", [operations, async_operations])
 def test_live_conversation_operation_type_is_public(operation_module):
     assert "BetaVoiceAgentsLiveConversationsOperations" in operation_module.__all__
