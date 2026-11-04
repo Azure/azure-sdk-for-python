@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
     pip install azure-identity
     pip install azure-mgmt-redisenterprise
 # USAGE
-    python redis_enterprise_access_policy_assignment_get_with_failed_provisioning_state.py
+    python redis_enterprise_migration_validate_with_data_migration.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +31,17 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.access_policy_assignment.get(
+    response = client.migrations.validate(
         resource_group_name="rg1",
         cluster_name="cache1",
-        database_name="default",
-        access_policy_assignment_name="accessPolicyAssignmentName1",
+        body={
+            "skipDataMigration": False,
+            "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Cache/redis/cache1",
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2026-06-01-preview/RedisEnterpriseAccessPolicyAssignmentGetWithFailedProvisioningState.json
+# x-ms-original-file: 2026-09-01/RedisEnterpriseMigrationValidateWithDataMigration.json
 if __name__ == "__main__":
     main()
