@@ -9,6 +9,13 @@ import logging
 # mypy: disable-error-code="import-untyped"
 import requests  # pylint: disable=networking-import-outside-azure-core-transport
 
+from opentelemetry.context import (
+    _SUPPRESS_INSTRUMENTATION_KEY,
+    attach,
+    detach,
+    set_value,
+)
+
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
 )
@@ -118,6 +125,13 @@ def make_onesettings_request(
     query_dict = query_dict or {}
     headers = headers or {}
 
+    # This request is made by a background configuration-refresh thread/timer, not on behalf
+    # of any user-initiated operation. It therefore runs outside the span the OpenTelemetry SDK
+    # would otherwise suppress around exporter.export(), so we must explicitly suppress
+    # instrumentation here to prevent this internal SDK housekeeping call from being captured
+    # as an application span/trace (mirrors the pattern used for QuickPulse's background
+    # ping/post calls in _quickpulse/_exporter.py).
+    token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
     try:
         # requests honors standard proxy environment variables (HTTP_PROXY/HTTPS_PROXY/NO_PROXY)
         # automatically, so no explicit proxy configuration is needed here.
@@ -138,6 +152,8 @@ def make_onesettings_request(
         # here raises json.JSONDecodeError; this catch-all covers any other unexpected failure.
         logger.debug("Unexpected error while fetching configuration: %s", str(ex))
         return OneSettingsResponse(has_exception=True)
+    finally:
+        detach(token)
 
 
 def _parse_onesettings_response(response: requests.Response) -> OneSettingsResponse:
