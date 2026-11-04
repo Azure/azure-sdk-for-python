@@ -53,7 +53,7 @@ this artifact is a preview, not a PyPI release.
 
 ## Standalone queued V3 development artifact
 
-`2.7.0b7.dev20261104+queuedv3.1` provides explicitly selected durable queued V3
+`2.7.0b7.dev20261104+queuedv3.2` provides explicitly selected durable queued V3
 rollout transport. It is a **development-only artifact**, not an approved registry
 release or a PyPI publication. The approved registry, `latest` (`2.7.2b1`), existing
 installer and all previously published wheels/checksums are unchanged. The SDK
@@ -64,15 +64,20 @@ To select the development artifact explicitly, use its immutable public commit
 URL with a SHA-256 pin:
 
 ```powershell
-python -m pip install "azure-ai-projects[rle] @ https://raw.githubusercontent.com/swatisinghvi99/azure-sdk-for-python/4c69a064e7d6c9c013a5be090262e9f2058c2bf9/sdk/ai/azure-ai-projects/rle/wheels/2.7.0b7.dev20261104+queuedv3.1/azure_ai_projects-2.7.0b7.dev20261104+queuedv3.1-py3-none-any.whl#sha256=1cca2b75a5f2fbfa864584bf7f0f830098bf4fe13519cc4e1a39b3bd60a9ea8e"
+python -m pip install "azure-ai-projects[rle] @ https://raw.githubusercontent.com/swatisinghvi99/azure-sdk-for-python/16c1d8963a467285b7113d323d54fd9ed7452ccb/sdk/ai/azure-ai-projects/rle/wheels/2.7.0b7.dev20261104+queuedv3.2/azure_ai_projects-2.7.0b7.dev20261104+queuedv3.2-py3-none-any.whl#sha256=6a368b26ea32d8611a35cb76ae42ef93bcb618a52a56b25a1c94f87a6e9d401d"
 ```
 
 The wheel is anonymously readable from the public fork and contains no GitHub
 credentials. Pip verifies the pinned hash before installation. It is deliberately
 not selected by the registry installer or its `--version` option. See the
-[artifact documentation](wheels/2.7.0b7.dev20261104+queuedv3.1/README.md) and
-[provenance](wheels/2.7.0b7.dev20261104+queuedv3.1/provenance.json) for the public API,
+[artifact documentation](wheels/2.7.0b7.dev20261104+queuedv3.2/README.md) and
+[provenance](wheels/2.7.0b7.dev20261104+queuedv3.2/provenance.json) for the public API,
 source identity and offline validation evidence.
+
+The `.2` development build rechecks connection expiry before every submission,
+including after a backpressured send. Rotation attaches already submitted IDs
+without replaying execute or resetting deadlines/admission permits. The `.1`
+wheel remains available unchanged; no existing artifact is overwritten.
 
 Consumers opt into queued delivery with
 `get_rollout_client(..., protocol_version="v3")`; omission retains legacy defaults.
