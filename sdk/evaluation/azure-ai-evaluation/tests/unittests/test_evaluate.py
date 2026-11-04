@@ -789,6 +789,8 @@ class TestEvaluate:
             "outputs.skipped.skipped_result": ["not_applicable", None, "not_applicable", np.nan, None, np.nan],
             "outputs.skipped.skipped": [None, np.nan, None, np.nan, None, np.nan],
             "outputs.passing.passing_result": ["pass"] * 6,
+            "outputs.failing.failing_result": ["fail", None, "fail", "not_applicable", np.nan, "fail"],
+            "outputs.custom.custom_result": [True, False, True, True, False, True],
         }
 
         aggregation = _aggregate_metrics(pd.DataFrame(data), {})
@@ -796,9 +798,26 @@ class TestEvaluate:
         assert aggregation["mixed.binary_aggregate"] == 0.67
         assert aggregation["mixed.mixed"] == pytest.approx(2 / 3)
         assert aggregation["passing.binary_aggregate"] == 1.0
+        assert aggregation["failing.binary_aggregate"] == 0.0
         # Like the mean score, the binary aggregate is left out when no row has a result.
         assert "skipped.binary_aggregate" not in aggregation
         assert "skipped.skipped" not in aggregation
+        # Only "pass" and "fail" are results, so a column of other values has no binary aggregate.
+        assert "custom.binary_aggregate" not in aggregation
+
+    def test_binary_aggregation_reports_the_last_result_column_of_an_evaluator(self):
+        data = {
+            "outputs.qa.f1_score_result": ["pass", "pass", "fail"],
+            "outputs.qa.groundedness_result": ["not_applicable", None, "not_applicable"],
+            "outputs.rouge.rouge_precision_result": ["not_applicable", None, "not_applicable"],
+            "outputs.rouge.rouge_recall_result": ["pass", "fail", None],
+        }
+
+        aggregation = _aggregate_metrics(pd.DataFrame(data), {})
+
+        # An earlier column's rate does not stand in for a last column without results.
+        assert "qa.binary_aggregate" not in aggregation
+        assert aggregation["rouge.binary_aggregate"] == 0.5
 
     def test_aggregate_label_defect_metrics_with_nan_in_details(self):
         """Test that NaN/None values in details column are properly ignored during aggregation."""

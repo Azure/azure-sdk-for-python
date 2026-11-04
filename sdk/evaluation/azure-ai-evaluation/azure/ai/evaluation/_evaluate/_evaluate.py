@@ -273,9 +273,10 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
     """
     Aggregate binary output results (pass/fail) from evaluation dataframe.
 
-    For each evaluator, calculates the proportion of "pass" results among the rows that passed or failed. Rows
-    without either result, such as not applicable or errored rows, are left out, as they are from the mean score,
-    and an evaluator without any passed or failed rows gets no binary aggregate.
+    For each evaluator, calculates the proportion of "pass" results among the rows whose result is "pass" or "fail".
+    Other rows, such as not applicable or errored rows, are left out, as they are from the mean score, and a result
+    column without "pass" or "fail" rows gives no binary aggregate. An evaluator with several result columns reports
+    its last one.
 
     :param df: The dataframe of evaluation results.
     :type df: ~pandas.DataFrame
@@ -316,11 +317,13 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
 
             pass_count = value_counts.get(EVALUATION_PASS_FAIL_MAPPING[True], 0)
             judged_rows = pass_count + value_counts.get(EVALUATION_PASS_FAIL_MAPPING[False], 0)
-            if judged_rows == 0:
-                continue
 
             # Set the result with the evaluator name as the key
             result_key = f"{evaluator_name}.{BINARY_AGGREGATE_SUFFIX}"
+            if judged_rows == 0:
+                # The evaluator's last result column decides, so an earlier column's rate is not kept.
+                results.pop(result_key, None)
+                continue
             results[result_key] = round(pass_count / judged_rows, 2)
 
     return results

@@ -57,6 +57,25 @@ OPENAI_TEXT_REPLY = {
     "function_call": None,
     "tool_calls": None,
 }
+OPENAI_TOOL_CALL_RESPONSE = [
+    {
+        **OPENAI_TEXT_REPLY,
+        "content": "Checking the weather.",
+        "tool_calls": [
+            {
+                "id": "call_1",
+                "type": "function",
+                "function": {"name": "fetch_weather", "arguments": '{"city": "Paris"}'},
+            }
+        ],
+    },
+    {
+        "role": "tool",
+        "tool_call_id": "call_1",
+        "content": [{"type": "tool_result", "tool_result": {"error": "timed out"}}],
+    },
+    {**OPENAI_TEXT_REPLY, "content": "The weather service timed out."},
+]
 JUDGE_USAGE = {"input_token_count": 11, "output_token_count": 7, "total_token_count": 18}
 
 
@@ -330,25 +349,7 @@ class TestToolCallSuccessWithoutToolCalls:
                 },
                 {"role": "assistant", "content": [{"type": "text", "text": "Done."}]},
             ],
-            [
-                {
-                    **OPENAI_TEXT_REPLY,
-                    "content": "Checking the weather.",
-                    "tool_calls": [
-                        {
-                            "id": "call_1",
-                            "type": "function",
-                            "function": {"name": "fetch_weather", "arguments": '{"city": "Paris"}'},
-                        }
-                    ],
-                },
-                {
-                    "role": "tool",
-                    "tool_call_id": "call_1",
-                    "content": [{"type": "tool_result", "tool_result": {"error": "timed out"}}],
-                },
-                {**OPENAI_TEXT_REPLY, "content": "The weather service timed out."},
-            ],
+            OPENAI_TOOL_CALL_RESPONSE,
         ],
         ids=[
             "tool-call",
@@ -376,6 +377,14 @@ class TestToolCallSuccessWithoutToolCalls:
         assert evaluator(response=TOOL_CALL_RESPONSE)["tool_call_success"] == 1.0
         state = evaluator._decision.evaluate.await_args.args[0]
         assert "[TOOL_CALL] fetch_weather" in state["tool_calls"]
+
+    def test_a_decision_judge_still_gets_openai_tool_calls(self):
+        evaluator = _ToolCallSuccessEvaluator(model_config=dict(DECISION_CONFIG))
+        evaluator._decision.evaluate = AsyncMock(return_value={"tool_call_success": 0.0})
+
+        assert evaluator(response=OPENAI_TOOL_CALL_RESPONSE)["tool_call_success"] == 0.0
+        assert evaluator._decision.evaluate.await_count == 1
+        assert "fetch_weather" in str(evaluator._decision.evaluate.await_args.args[0]["tool_calls"])
 
     def test_evaluate_leaves_rows_without_tool_calls_out_of_the_pass_rate(self, tmp_path):
         failed_call = json.loads(json.dumps(TOOL_CALL_RESPONSE).replace("sunny", "timed out"))
