@@ -1,5 +1,191 @@
 # Release History
 
+## 3.0.0 (2026-11-04)
+
+### Features Added
+
+  - Client `ChaosManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ChaosManagementClient` added method `send_request`
+  - Client `ChaosManagementClient` added operation group `action_versions`
+  - Client `ChaosManagementClient` added operation group `actions`
+  - Client `ChaosManagementClient` added operation group `connections`
+  - Client `ChaosManagementClient` added operation group `discovered_resources`
+  - Client `ChaosManagementClient` added operation group `scenario_configurations`
+  - Client `ChaosManagementClient` added operation group `scenario_runs`
+  - Client `ChaosManagementClient` added operation group `scenario_template_versions`
+  - Client `ChaosManagementClient` added operation group `scenario_templates`
+  - Client `ChaosManagementClient` added operation group `scenarios`
+  - Client `ChaosManagementClient` added operation group `workspace_discoveries`
+  - Client `ChaosManagementClient` added operation group `workspace_evaluations`
+  - Client `ChaosManagementClient` added operation group `workspaces`
+  - Model `Capability` added property `properties`
+  - Model `CapabilityType` added property `properties`
+  - Model `Experiment` added property `properties`
+  - Model `ExperimentExecution` added property `properties`
+  - Model `ExperimentExecutionDetailsProperties` added property `provisioning_state`
+  - Enum `ProvisioningState` added member `RUNNING`
+  - Model `TargetType` added property `properties`
+  - Added model `Action`
+  - Added model `ActionDependency`
+  - Added enum `ActionDependencyType`
+  - Added model `ActionError`
+  - Added model `ActionErrorDetail`
+  - Added enum `ActionKind`
+  - Added enum `ActionLifecycle`
+  - Added model `ActionProperties`
+  - Added model `ActionSupportedTargetType`
+  - Added model `ActionVersion`
+  - Added model `CapabilityProperties`
+  - Added model `CapabilityTypeProperties`
+  - Added model `Connection`
+  - Added enum `ConnectionKind`
+  - Added model `ConnectionProperties`
+  - Added enum `ConnectionStatus`
+  - Added model `CustomerDataStorageProperties`
+  - Added model `DiscoveredResource`
+  - Added model `DiscoveredResourceProperties`
+  - Added model `EntraIdentity`
+  - Added model `ExperimentExecutionProperties`
+  - Added model `ExperimentProperties`
+  - Added model `ExternalResource`
+  - Added enum `FailureBehavior`
+  - Added model `FixResourcePermissionsRequest`
+  - Added model `OperationError`
+  - Added enum `ParameterFormatType`
+  - Added enum `ParameterType`
+  - Added model `PermissionError`
+  - Added model `PermissionsFix`
+  - Added model `PermissionsFixProperties`
+  - Added enum `PermissionsFixState`
+  - Added model `PermissionsFixSummary`
+  - Added model `PhysicalToLogicalZoneMapping`
+  - Added model `Recommendation`
+  - Added enum `RecommendationStatus`
+  - Added model `ResourceStateError`
+  - Added model `ResourceTargeting`
+  - Added model `ResourceTargetingCriteria`
+  - Added model `RoleAssignmentError`
+  - Added model `RoleAssignmentResult`
+  - Added enum `RoleAssignmentStatus`
+  - Added model `RunAfter`
+  - Added enum `RunAfterBehavior`
+  - Added model `Scenario`
+  - Added model `ScenarioAction`
+  - Added model `ScenarioActionSelector`
+  - Added enum `ScenarioActionSelectorName`
+  - Added model `ScenarioConfiguration`
+  - Added model `ScenarioConfigurationProperties`
+  - Added model `ScenarioErrors`
+  - Added model `ScenarioParameter`
+  - Added model `ScenarioParameterFormat`
+  - Added model `ScenarioProperties`
+  - Added model `ScenarioRun`
+  - Added model `ScenarioRunEffectiveTarget`
+  - Added model `ScenarioRunProperties`
+  - Added model `ScenarioRunResource`
+  - Added enum `ScenarioRunState`
+  - Added model `ScenarioRunSummaryAction`
+  - Added model `ScenarioRunSummaryResource`
+  - Added enum `ScenarioRunTargetState`
+  - Added model `ScenarioRunWarning`
+  - Added model `ScenarioRunWarningDetail`
+  - Added enum `ScenarioSummaryState`
+  - Added model `ScenarioTemplate`
+  - Added model `ScenarioTemplateProperties`
+  - Added model `ScenarioTemplateVersion`
+  - Added model `ScenarioTemplateVersionProperties`
+  - Added enum `ScenarioValidationState`
+  - Added model `TargetTypeProperties`
+  - Added model `TemplateEvaluationResultItem`
+  - Added model `Validation`
+  - Added model `ValidationProperties`
+  - Added model `Workspace`
+  - Added model `WorkspaceCustomerManagedKeyEncryption`
+  - Added model `WorkspaceCustomerManagedKeyEncryptionPatchMergePatchUpdateOrCreate`
+  - Added model `WorkspaceCustomerManagedKeyOnboarding`
+  - Added model `WorkspaceDiscovery`
+  - Added model `WorkspaceDiscoveryAccessWarning`
+  - Added enum `WorkspaceDiscoveryCompleteness`
+  - Added model `WorkspaceDiscoveryCoverageSummary`
+  - Added model `WorkspaceDiscoveryPermissionWarning`
+  - Added model `WorkspaceDiscoveryProperties`
+  - Added model `WorkspaceDiscoveryResourceCoverageSummary`
+  - Added model `WorkspaceDiscoveryResourceWarning`
+  - Added model `WorkspaceDiscoveryScopeCoverageSummary`
+  - Added enum `WorkspaceDiscoveryStatus`
+  - Added model `WorkspaceDiscoveryWarning`
+  - Added enum `WorkspaceDiscoveryWarningReason`
+  - Added model `WorkspaceEncryption`
+  - Added model `WorkspaceEncryptionPatchMergePatchUpdateOrCreate`
+  - Added enum `WorkspaceEncryptionProtection`
+  - Added enum `WorkspaceEncryptionState`
+  - Added model `WorkspaceEncryptionStatus`
+  - Added model `WorkspaceEvaluation`
+  - Added model `WorkspaceEvaluationProperties`
+  - Added enum `WorkspaceEvaluationStatus`
+  - Added model `WorkspaceProperties`
+  - Added model `WorkspaceUpdate`
+  - Added model `WorkspaceUpdateProperties`
+  - Added model `ZoneResolutionInfo`
+  - Added model `ZoneResolutionMapping`
+  - Added enum `ZoneResolutionMode`
+  - Added operation group `ActionVersionsOperations`
+  - Added operation group `ActionsOperations`
+  - Added operation group `ConnectionsOperations`
+  - Added operation group `DiscoveredResourcesOperations`
+  - Added operation group `ScenarioConfigurationsOperations`
+  - Added operation group `ScenarioRunsOperations`
+  - Added operation group `ScenarioTemplateVersionsOperations`
+  - Added operation group `ScenarioTemplatesOperations`
+  - Added operation group `ScenariosOperations`
+  - Added operation group `WorkspaceDiscoveriesOperations`
+  - Added operation group `WorkspaceEvaluationsOperations`
+  - Added operation group `WorkspacesOperations`
+
+### Breaking Changes
+
+  - Model `Capability` deleted or renamed its instance variable `description`
+  - Model `Capability` deleted or renamed its instance variable `parameters_schema`
+  - Model `Capability` deleted or renamed its instance variable `publisher`
+  - Model `Capability` deleted or renamed its instance variable `target_type`
+  - Model `Capability` deleted or renamed its instance variable `urn`
+  - Model `CapabilityType` deleted or renamed its instance variable `azure_rbac_actions`
+  - Model `CapabilityType` deleted or renamed its instance variable `azure_rbac_data_actions`
+  - Model `CapabilityType` deleted or renamed its instance variable `description`
+  - Model `CapabilityType` deleted or renamed its instance variable `display_name`
+  - Model `CapabilityType` deleted or renamed its instance variable `kind`
+  - Model `CapabilityType` deleted or renamed its instance variable `parameters_schema`
+  - Model `CapabilityType` deleted or renamed its instance variable `publisher`
+  - Model `CapabilityType` deleted or renamed its instance variable `required_azure_role_definition_ids`
+  - Model `CapabilityType` deleted or renamed its instance variable `runtime_properties`
+  - Model `CapabilityType` deleted or renamed its instance variable `target_type`
+  - Model `CapabilityType` deleted or renamed its instance variable `urn`
+  - Model `Experiment` deleted or renamed its instance variable `provisioning_state`
+  - Model `Experiment` deleted or renamed its instance variable `selectors`
+  - Model `Experiment` deleted or renamed its instance variable `steps`
+  - Model `ExperimentExecution` deleted or renamed its instance variable `started_at`
+  - Model `ExperimentExecution` deleted or renamed its instance variable `status`
+  - Model `ExperimentExecution` deleted or renamed its instance variable `stopped_at`
+  - Model `TargetType` deleted or renamed its instance variable `description`
+  - Model `TargetType` deleted or renamed its instance variable `display_name`
+  - Model `TargetType` deleted or renamed its instance variable `properties_schema`
+  - Model `TargetType` deleted or renamed its instance variable `resource_types`
+  - Deleted or renamed model `CapabilityListResult`
+  - Deleted or renamed model `CapabilityTypeListResult`
+  - Deleted or renamed model `ExperimentExecutionListResult`
+  - Deleted or renamed model `ExperimentListResult`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `TargetListResult`
+  - Deleted or renamed model `TargetTypeListResult`
+  - Method `CapabilitiesOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `CapabilityTypesOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `ExperimentsOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `ExperimentsOperations.list` changed its parameter `running` from `positional_or_keyword` to `keyword_only`
+  - Method `ExperimentsOperations.list_all` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `ExperimentsOperations.list_all` changed its parameter `running` from `positional_or_keyword` to `keyword_only`
+  - Method `TargetTypesOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `TargetsOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+
 ## 3.0.0b2 (2026-07-28)
 
 ### Features Added
