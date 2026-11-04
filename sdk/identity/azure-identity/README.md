@@ -166,6 +166,22 @@ Not all credentials require this configuration. Credentials that authenticate th
 | [`CertificateCredential`][cert_cred_ref]                 | Authenticates a service principal using a certificate.                                                                                                               | [Service principal authentication](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals) |
 | [`ClientAssertionCredential`][client_assertion_cred_ref] | Authenticates a service principal using a signed client assertion.                                                                                                   |                                                                                                                            |
 | [`ClientSecretCredential`][client_secret_cred_ref]       | Authenticates a service principal using a secret.                                                                                                                    | [Service principal authentication](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals) |
+| [`GitHubActionsCredential`][github_actions_cred_ref]     | Authenticates an application in GitHub Actions using an OIDC token, without a client secret. | [GitHub Actions workload identity federation](https://learn.microsoft.com/azure/developer/github/connect-from-azure-openid-connect) |
+
+`GitHubActionsCredential` requires a workflow with `id-token: write` permission and an application with a federated
+identity credential that trusts the workflow. Set `AZURE_TENANT_ID` and `AZURE_CLIENT_ID`, or pass `tenant_id` and
+`client_id` explicitly. GitHub supplies `ACTIONS_ID_TOKEN_REQUEST_URL` and `ACTIONS_ID_TOKEN_REQUEST_TOKEN`.
+Use this credential directly; it is not included in `DefaultAzureCredential`.
+
+```python
+from azure.identity import GitHubActionsCredential
+
+with GitHubActionsCredential() as credential:
+    token = credential.get_token("https://management.azure.com/.default")
+```
+
+The optional `authority` keyword (or `AZURE_AUTHORITY_HOST`) selects Azure Public, China, or US Government.
+The GitHub token audience is derived from that authority; Azure Public is the default.
 
 ### Authenticate users
 
@@ -288,6 +304,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 
 [auth_code_cred_ref]: https://aka.ms/azsdk/python/identity/authorizationcodecredential
 [az_pipelines_cred_ref]: https://aka.ms/azsdk/python/identity/azurepipelinescredential
+[github_actions_cred_ref]: https://learn.microsoft.com/python/api/azure-identity/azure.identity.githubactionscredential
 [azd_cli_cred_ref]: https://aka.ms/azsdk/python/identity/azuredeveloperclicredential
 [azure_core_transport_doc]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport
 [azure_identity_broker]: https://pypi.org/project/azure-identity-broker
