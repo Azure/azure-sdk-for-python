@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-03-01-preview/getMetricAlertMultipleResource.json
+# x-ms-original-file: 2026-01-01/getMetricAlertMultipleResource.json
 if __name__ == "__main__":
     main()

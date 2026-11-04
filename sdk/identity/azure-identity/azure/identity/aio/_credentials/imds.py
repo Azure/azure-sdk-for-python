@@ -49,8 +49,9 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
         # probes for the IMDS endpoint before attempting to get a token. If None (the default),
         # the credential probes only if it's part of a ChainedTokenCredential chain.
         self._enable_imds_probe = kwargs.pop("_enable_imds_probe", None)
-        kwargs["retry_policy_class"] = AsyncImdsRetryPolicy
-        self._client = AsyncManagedIdentityClient(_get_request, **dict(PIPELINE_SETTINGS, **kwargs))
+        merged_kwargs = dict(PIPELINE_SETTINGS, **kwargs)
+        retry_policy = merged_kwargs.pop("retry_policy", None) or AsyncImdsRetryPolicy(**merged_kwargs)
+        self._client = AsyncManagedIdentityClient(_get_request, retry_policy=retry_policy, **merged_kwargs)
         if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
             self._endpoint_available: Optional[bool] = True
         else:

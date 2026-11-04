@@ -5,6 +5,10 @@
 ### Features Added
 
 ### Bugs Fixed
+
+## 12.18.1 (2026-10-29)
+
+### Bugs Fixed
 - Fixed UTC conversion of timezone-aware datetimes in `generate_account_sas`, `generate_queue_sas`,
   and `QueueServiceClient.get_user_delegation_key` (sync and async).
   Datetimes without timezone information continue to be treated as UTC.

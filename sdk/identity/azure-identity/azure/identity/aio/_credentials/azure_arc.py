@@ -24,7 +24,7 @@ class AzureArcCredential(AsyncManagedIdentityBase):
             identity_config["client_id"] = client_id
         if url and imds:
             return AsyncManagedIdentityClient(
-                _per_retry_policies=[ArcChallengeAuthPolicy()],
+                per_retry_policies=[ArcChallengeAuthPolicy()],
                 request_factory=functools.partial(_get_request, url),
                 identity_config=identity_config,
                 _content_callback=functools.partial(_validate_user_assigned_identity, identity_config),

@@ -125,7 +125,7 @@ class TestBlobStorageAccount(StorageRecordedTestCase):
         assert "rehydrate-pending-to-cool" == blob_ref.archive_status
         assert not blob_ref.blob_tier_inferred
 
-        blobs = list(container.list_blobs())
+        blobs = list(container.list_blobs(response_format="xml"))
         blob.delete_blob()
 
         # Assert
@@ -146,7 +146,7 @@ class TestBlobStorageAccount(StorageRecordedTestCase):
         assert "rehydrate-pending-to-hot" == blob_ref2.archive_status
         assert not blob_ref2.blob_tier_inferred
 
-        blobs = list(container.list_blobs())
+        blobs = list(container.list_blobs(response_format="xml"))
 
         # Assert
         assert blobs is not None
