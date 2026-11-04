@@ -3,6 +3,7 @@
 #Requires -Version 7.2
 
 . (Join-Path $PSScriptRoot '../SampleCiHelpers.ps1')
+. (Join-Path $PSScriptRoot '../PythonSampleCiHelpers.ps1')
 
 function Invoke-QueueTestEnvironment {
     param([Parameter(Mandatory)] [scriptblock] $Test)
@@ -209,7 +210,7 @@ Describe 'Offline queue ownership and deployment plans' {
     }
 }
 
-Describe 'Bootstrap-owned shared identity bindings and existing grants' {
+Describe 'Bootstrap-owned shared identity bindings' {
     BeforeEach {
         $script:sharedIdentityFixture = @{
             subscriptionId = '11111111-1111-1111-1111-111111111111'
@@ -226,27 +227,8 @@ Describe 'Bootstrap-owned shared identity bindings and existing grants' {
                 search = '66666666-6666-6666-6666-666666666666'
                 function = '77777777-7777-7777-7777-777777777777'
             }
-            runnerPrincipalId = '88888888-8888-8888-8888-888888888888'
             tagChanges = @{}
-            assignments = @()
         }
-        $scope = '/subscriptions/' + $script:sharedIdentityFixture.subscriptionId
-        foreach ($role in @(Get-SampleProjectRoleIds)) {
-            $condition = if ($role -eq 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b') { Get-SampleBlobOwnerCondition } else { '' }
-            $script:sharedIdentityFixture.assignments += @{ properties = @{
-                principalId = $script:sharedIdentityFixture.principals.project
-                scope = $scope
-                roleDefinitionId = "$scope/providers/Microsoft.Authorization/roleDefinitions/$role"
-                condition = $condition
-                conditionVersion = $(if ($condition) { '2.0' } else { '' })
-            } }
-        }
-        $script:sharedIdentityFixture.assignments += @{ properties = @{
-            principalId = $script:sharedIdentityFixture.runnerPrincipalId
-            scope = $scope
-            roleDefinitionId = "$scope/providers/Microsoft.Authorization/roleDefinitions/53ca6127-db72-4b80-b1b0-d745d6d5456d"
-            condition = ''
-        } }
         Mock Invoke-RestMethod { throw 'Shared identity verification must use the isolated Azure wrapper.' }
         Mock Invoke-SampleAzure {
             param($Arguments, $Sensitive)
@@ -256,8 +238,6 @@ Describe 'Bootstrap-owned shared identity bindings and existing grants' {
                 throw 'Only protected, subscription-bound metadata GETs are allowed; workers must not write IAM.'
             }
             $uri = $Arguments[6]
-            $assignmentUri = 'https://management.azure.com/subscriptions/{0}/providers/Microsoft.Authorization/roleAssignments?api-version=2022-04-01' -f $script:sharedIdentityFixture.subscriptionId
-            if ($uri -ceq $assignmentUri) { return @{ value = $script:sharedIdentityFixture.assignments; nextLink = $null } }
             $purposes = @($script:sharedIdentityFixture.ids.Keys | Where-Object {
                 $uri -ceq ('https://management.azure.com{0}?api-version=2023-01-31' -f $script:sharedIdentityFixture.ids[$_])
             })
@@ -435,46 +415,20 @@ Describe 'Bootstrap-owned shared identity bindings and existing grants' {
         }
     }
 
-    It 'accepts one preconfigured shared identity set for all four queues without granting IAM' {
+    It 'accepts one preconfigured shared identity set for all four queues without querying or granting IAM' {
         Invoke-QueueTestEnvironment {
             $plans = @(New-OfflineQueuePlans -OutputDirectory (Join-Path $TestDrive 'shared-queue-plans'))
-            $identities = Get-SampleSharedIdentities -Plan $plans[0]
             foreach ($plan in $plans) {
-                @(Assert-SampleSharedIdentityGrants -Plan $plan -Identities $identities `
-                    -RunnerPrincipalId $script:sharedIdentityFixture.runnerPrincipalId).Count | Should Be 0
+                $env:SAMPLE_QUEUE_NAME = $plan.queueName
+                $identities = Get-SampleSharedIdentities -Plan $plan
+                $identities.Count | Should Be 4
+                $identities.project.principalId | Should Be $script:sharedIdentityFixture.principals.project
             }
-            Assert-MockCalled Invoke-SampleAzure -Times 8 -Exactly -Scope It
+            Assert-MockCalled Invoke-SampleAzure -Times 16 -Exactly -Scope It
             Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It -ParameterFilter {
-                $Arguments -contains 'create' -or $Arguments -contains 'put' -or $Arguments -contains 'delete'
+                $Arguments -contains 'create' -or $Arguments -contains 'put' -or $Arguments -contains 'delete' -or
+                ($Arguments -join ' ') -match 'Microsoft.Authorization/roleAssignments'
             }
-            $script:queueAzureCalls.Count | Should Be 0
-        }
-    }
-
-    It 'rejects a changed shared project service grant instead of repairing IAM' {
-        Invoke-QueueTestEnvironment {
-            $plan = New-OfflineQueuePlan -OutputDirectory (Join-Path $TestDrive 'changed-grant')
-            $identities = Get-SampleSharedIdentities -Plan $plan
-            $blobGrants = @($script:sharedIdentityFixture.assignments | Where-Object { $_.properties.condition })
-            $blobGrants.Count | Should Be 1
-            $blobGrants[0].properties.condition = ''
-            { Assert-SampleSharedIdentityGrants -Plan $plan -Identities $identities `
-                -RunnerPrincipalId $script:sharedIdentityFixture.runnerPrincipalId } | Should Throw 'approved shared project-identity service grants'
-            Assert-MockCalled Invoke-SampleAzure -Times 5 -Exactly -Scope It
-            $script:queueAzureCalls.Count | Should Be 0
-        }
-    }
-
-    It 'requires the existing runner Foundry User grant rather than creating it' {
-        Invoke-QueueTestEnvironment {
-            $plan = New-OfflineQueuePlan -OutputDirectory (Join-Path $TestDrive 'runner-grant')
-            $identities = Get-SampleSharedIdentities -Plan $plan
-            $script:sharedIdentityFixture.assignments = @($script:sharedIdentityFixture.assignments | Where-Object {
-                $_.properties.principalId -cne $script:sharedIdentityFixture.runnerPrincipalId
-            })
-            { Assert-SampleSharedIdentityGrants -Plan $plan -Identities $identities `
-                -RunnerPrincipalId $script:sharedIdentityFixture.runnerPrincipalId } | Should Throw 'workers never create Azure IAM assignments'
-            Assert-MockCalled Invoke-SampleAzure -Times 5 -Exactly -Scope It
             $script:queueAzureCalls.Count | Should Be 0
         }
     }
@@ -542,6 +496,18 @@ Describe 'Aggregate four-queue capacity admission' {
         }
     }
 
+    It 'admits infrastructure plans with no Python test metadata' {
+        Invoke-QueueTestEnvironment {
+            $plans = @(New-OfflineQueuePlans -OutputDirectory (Join-Path $TestDrive 'language-neutral-capacity'))
+            foreach ($plan in $plans) {
+                $plan.Remove('selectedTests')
+                $plan.Remove('requiredEnvironment')
+            }
+            @(Assert-SampleBatchCapacity -Plans $plans).Count | Should Be 0
+            Assert-MockCalled Invoke-SampleAzure -Times 4 -Exactly -Scope It
+        }
+    }
+
     It 'rejects empty or repeated queue selections before contacting Azure: <Mode>' -TestCases @(
         @{ Mode = 'empty' }, @{ Mode = 'repeat' }
     ) {
@@ -550,7 +516,7 @@ Describe 'Aggregate four-queue capacity admission' {
             $plans = @(New-OfflineQueuePlans -OutputDirectory (Join-Path $TestDrive 'invalid-shards'))
             if ($Mode -eq 'empty') { $plans[1].selectedTests = @() }
             else { $plans[1].selectedTests = $plans[0].selectedTests }
-            { Assert-SampleBatchCapacity -Plans $plans } | Should Throw 'unique test nodes'
+            { Assert-PythonSamplePartition -Plans $plans } | Should Throw 'unique test nodes'
             Assert-MockCalled Invoke-SampleAzure -Times 0 -Exactly -Scope It
             $script:queueAzureCalls.Count | Should Be 0
         }
