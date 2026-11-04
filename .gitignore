@@ -181,3 +181,4 @@ uv.lock
 
 # Sphinx generated documentation
 website/
+/sdk/**/toc_tree.rst
