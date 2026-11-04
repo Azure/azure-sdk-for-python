@@ -177,6 +177,7 @@ def main() -> int:
         AZURE_SKIP_LIVE_RECORDING="true",
         AZURE_TEST_USE_CLI_AUTH="true",
         AZURE_TOKEN_CREDENTIALS="AzureCliCredential",
+        AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES=json.dumps(sorted(allowed_environment_names(state["plan"]))),
         PYTEST_ADDOPTS="",
         PYTHONIOENCODING="utf-8",
     )
