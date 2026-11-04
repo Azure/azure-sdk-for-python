@@ -15,7 +15,9 @@ VoiceAgentToolChoice: TypeAlias = Union[
     Literal["none"], Literal["auto"], Literal["required"], "_models.ToolChoiceFunction", "_models.ToolChoiceMCP"
 ]
 VoiceAgentMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
+VoiceAgentHandoffMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
 RoutineRunStatus: TypeAlias = str
+VoiceAgentSessionResponse: TypeAlias = "_models.VoiceAgentSessionResponseConfig"
 RealtimeResponseInputItem: TypeAlias = Union[
     "_models.RealtimeResponseInputMessage",
     "_models.RealtimeResponseInputFunctionCall",
@@ -23,6 +25,10 @@ RealtimeResponseInputItem: TypeAlias = Union[
     "_models.RealtimeResponseItemReference",
 ]
 VoiceAgentSessionUpdate: TypeAlias = "_models.VoiceAgentSessionUpdateConfig"
-VoiceAgentSessionResponse: TypeAlias = "_models.VoiceAgentSessionResponseConfig"
+VoiceAgentDtmfCompletionMode: TypeAlias = Union[
+    "_models.VoiceAgentDtmfFixedLengthCompletionMode",
+    "_models.VoiceAgentDtmfTerminatorCompletionMode",
+    "_models.VoiceAgentDtmfInterDigitSilenceCompletionMode",
+]
 ChoiceValueResource: TypeAlias = Union[str, bool]
 GenerateAgentRequest: TypeAlias = "_models.GenerateVoiceAgentRequest"
