@@ -9,11 +9,14 @@ import hashlib
 import json
 import logging
 import math
+import os
+import subprocess
 import sys
 import threading
 from copy import deepcopy
 from logging.handlers import BufferingHandler
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock, call, patch
 
@@ -23,7 +26,7 @@ from azure.core.pipeline.policies import AsyncRedirectPolicy, AsyncRetryPolicy
 from azure.core.pipeline.transport import AsyncHttpTransport, HttpResponse
 from azure.core.exceptions import ServiceRequestError
 
-from azure.ai.evaluation import CoherenceEvaluator, FluencyEvaluator
+from azure.ai.evaluation import CoherenceEvaluator, FluencyEvaluator, GroundednessEvaluator
 from azure.ai.evaluation._evaluators._common import EvaluatorBase, ModelEvaluatorBase, PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common import _model_runners
 from azure.ai.evaluation._evaluators._common._decision_strategy import (
@@ -2150,3 +2153,99 @@ class TestDecisionExecutionObservations:
         with patch.dict(sys.modules, {"opentelemetry.metrics": None}):
             summary = execution.finish("error")
         assert summary["attempt_count"] == 0 and summary["usage_state"] == "unknown"
+
+
+DECLARED_ORDER = ["response", "context", "query", "tool_definitions"]
+
+
+class PassThroughDecisionEvaluator(ModelEvaluatorBase):
+    """Sends its converted inputs to the decision model unchanged, as the catalog's task completion evaluator does."""
+
+    _supports_decision_models = True
+
+    def _derive_singleton_inputs(self):
+        return [["response", "context", "query"], ["query", "response", "tool_definitions"]]
+
+    async def _do_eval(self, eval_input):
+        return await DecisionEvaluationStrategy(
+            self._decision_model_runner,
+            result_key="probe",
+            error_target=ErrorTarget.EVALUATE,
+            questions={
+                "status": {"type": "noul", "instructions": "Applicable?"},
+                "probe": {"type": "noul", "instructions": "Good?"},
+            },
+            scoring=BinaryScoring(0.5),
+            threshold=1,
+            timeout=self._LLM_CALL_TIMEOUT,
+        ).evaluate(eval_input)
+
+
+# Runs in a fresh interpreter, because the hash seed is fixed when the interpreter starts.
+HASH_SEED_PROBE = """
+import json
+import azure.ai.evaluation
+from azure.ai.evaluation._evaluators._common import EvaluatorBase
+
+
+class Probe(EvaluatorBase):
+    def _derive_singleton_inputs(self):
+        return [["response", "context", "query"], ["query", "response", "tool_definitions", "ground_truth"]]
+
+    async def _do_eval(self, eval_input):
+        return {}
+
+
+eval_input = Probe()._convert_kwargs_to_eval_input(query="q", response="r", context="c")
+print(json.dumps({"file": azure.ai.evaluation.__file__, "order": list(eval_input[0])}))
+"""
+
+
+class TestDecisionStateOrder:
+    def test_inputs_keep_the_order_their_overloads_declare(self):
+        evaluator = PassThroughDecisionEvaluator(result_key="probe", model_config=DECISION_CONFIG)
+        assert evaluator._get_all_singleton_inputs() == DECLARED_ORDER
+        eval_input = evaluator._convert_kwargs_to_eval_input(query="q", response="r", tool_definitions=[{"name": "t"}])
+        assert list(eval_input[0]) == DECLARED_ORDER
+
+    def test_a_built_in_with_several_overloads_keeps_its_declared_order(self):
+        assert GroundednessEvaluator(CHAT_CONFIG)._get_all_singleton_inputs() == DECLARED_ORDER
+
+    def test_a_decision_request_sends_unchanged_inputs_in_their_declared_order(self, client):
+        payload = decision_payload(0.9, probe={"type": "noul", "noul": 0.9})
+        client.response = FakeResponse(body=json.dumps(payload).encode())
+        evaluator = PassThroughDecisionEvaluator(result_key="probe", model_config=DECISION_CONFIG)
+        evaluator(query="q", response="r", tool_definitions=[{"name": "t"}])
+        assert client.calls[0]["content"].startswith(
+            b'{"model":"Decision-1","state":{"response":"r","context":null,"query":"q","tool_definitions":[{"name":"t"}]},'
+        )
+
+    def test_the_order_is_the_same_for_every_hash_seed(self):
+        import azure.ai.evaluation
+
+        # The children import the same package as this process, from a checkout or an installed wheel.
+        loaded = Path(azure.ai.evaluation.__file__).resolve()
+        search_path = os.pathsep.join(filter(None, [str(loaded.parents[3]), os.environ.get("PYTHONPATH")]))
+        children = []
+        try:
+            for seed in range(6):
+                environment = dict(os.environ, PYTHONHASHSEED=str(seed), PYTHONNOUSERSITE="1", PYTHONPATH=search_path)
+                children.append(
+                    subprocess.Popen(
+                        [sys.executable, "-c", HASH_SEED_PROBE],
+                        env=environment,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE,
+                        text=True,
+                    )
+                )
+            for seed, child in enumerate(children):
+                output, errors = child.communicate(timeout=180)
+                assert child.returncode == 0, errors[-2000:]
+                result = json.loads(output.strip().splitlines()[-1])
+                assert Path(result["file"]).resolve() == loaded
+                assert result["order"] == DECLARED_ORDER + ["ground_truth"], f"PYTHONHASHSEED={seed}"
+        finally:
+            for child in children:
+                if child.poll() is None:
+                    child.kill()
