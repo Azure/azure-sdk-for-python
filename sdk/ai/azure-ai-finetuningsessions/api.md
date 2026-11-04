@@ -1650,6 +1650,7 @@ namespace azure.ai.finetuningsessions.models
 
     class azure.ai.finetuningsessions.models.TextOnlySampleInput(TypedDict):
         key "messages": List[Union[TextOnlyContextMessage, TextOnlyAssistantMessage, TextOnlyToolMessage]]
+        key "reasoning_effort": NotRequired[Optional[Literal["low", "medium", "high"]]]
         key "tools": NotRequired[List[TextOnlyTool]]
 
 

@@ -68,10 +68,11 @@ class TextOnlyTool(TypedDict):
 
 
 class TextOnlySampleInput(TypedDict):
-    """The complete editable public history and optional function definitions."""
+    """Public history, optional tools and model-specific reasoning effort."""
 
     messages: List[TextOnlyMessage]
     tools: NotRequired[List[TextOnlyTool]]
+    reasoning_effort: NotRequired[Literal["low", "medium", "high"] | None]
 
 
 class TextOnlyTrainingSample(TypedDict):

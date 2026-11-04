@@ -94,6 +94,11 @@ still carry trainable references; they are not automatically operation failures.
 Text-only sampling does not support prompt log-probabilities, caller-selected
 stopping criteria, or structured-output `response_format`.
 
+For supported model codecs, `text_only_input` can include `reasoning_effort`
+with `"low"`, `"medium"`, `"high"`, or `None`. Omit it or use `None` to retain
+the codec's default. Unsupported labels are rejected before any request is
+submitted; this option does not grant access to additional models.
+
 These are opt-in service capabilities. Installing this package does not grant
 model eligibility or access. Existing token-native convenience calls and raw
 request constructors remain supported.

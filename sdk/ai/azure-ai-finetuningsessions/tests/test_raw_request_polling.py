@@ -603,6 +603,27 @@ async def test_all_raw_begin_routes_and_pending_states(asynchronous, group, meth
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
+@pytest.mark.parametrize("operation", ["unload", "complete"])
+async def test_untagged_non_sampling_completion_preserves_raw_result(asynchronous, operation):
+    raw_result = {"session_id": "session_test", "operation": operation, "unloaded": True}
+    script = Script(
+        Reply({"request_id": "request_test", "session_id": "session_test"}),
+        Reply({"status": "completed", "result": raw_result}),
+    )
+    client = client_for(script, asynchronous)
+    try:
+        poller = client.sessions.begin_unload("session_test", **COMMON)
+        if asynchronous:
+            poller = await poller
+        result = await result_of(poller, asynchronous)
+        assert result.as_dict() == raw_result
+        assert [request["method"] for request in script.requests] == ["POST", "GET"]
+        assert not script.replies
+    finally:
+        await close_client(client, asynchronous)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
 @pytest.mark.parametrize("shape", ["dict", "bytes", "io"])
 async def test_final_cls_and_caller_pipeline_options(asynchronous, shape):
     callback_calls, hooks = [], []

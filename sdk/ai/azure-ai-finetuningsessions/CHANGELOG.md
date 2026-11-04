@@ -5,6 +5,7 @@
 ### Features Added
 
 - Add opt-in text-only sampling and opaque-reference training, including public function-call messages, safely classified invalid completions, and scalar-only training results. Availability remains controlled by the service.
+- Support optional model-specific `reasoning_effort` values `low`, `medium`, and `high` for text-only sampling. Omission or `None` preserves the codec default; unsupported labels fail before submission.
 - Add synchronous and asynchronous checkpoint preparation methods that validate the local destination, poll server-side preparation, and validate the returned file inventory. These methods do not create local directories, transfer weights, or enable download access.
 - Add async `FineTuningSessionClient.attach_session(session_id)` to start the existing per-client heartbeat for an externally created session, without creation or initialization polling. Repeated attach is idempotent; existing client/session shutdown and heartbeat policies are unchanged.
 

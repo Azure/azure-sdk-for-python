@@ -238,6 +238,37 @@ async def test_create_opt_in_only(asynchronous, text_only):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize("effort", [None, "low", "medium", "high"])
+async def test_reasoning_effort_reaches_the_wire_on_both_sdk_surfaces(asynchronous, effort):
+    history = {**HISTORY, "reasoning_effort": effort}
+    async with session(asynchronous, [ACCEPTED, completed(PUBLIC_RESULT)]) as (obj, transport):
+        await invoke(
+            obj,
+            "sample",
+            text_only_input=history,
+            sampling_params=SamplingParams(max_tokens=32),
+            checkpoint_id="ckpt_sampler",
+        )
+        assert body(transport.requests[0])["text_only_input"] == history
+
+
+@pytest.mark.asyncio
+# cspell:ignore xhigh
+@pytest.mark.parametrize("effort", ["none", "minimal", "xhigh", "LOW", "", 64, True, [], {}])
+async def test_invalid_reasoning_effort_is_rejected_before_any_sdk_post(asynchronous, effort):
+    async with session(asynchronous, []) as (obj, transport):
+        with pytest.raises(ValueError, match="reasoning_effort"):
+            await invoke(
+                obj,
+                "sample",
+                text_only_input={**HISTORY, "reasoning_effort": effort},
+                sampling_params=SamplingParams(max_tokens=32),
+                checkpoint_id="ckpt_sampler",
+            )
+        assert transport.requests == []
+
+
+@pytest.mark.asyncio
 async def test_assistant_tool_call_history_can_omit_content(asynchronous):
     assert TextOnlyAssistantMessage.__required_keys__ == {"role"}
     history = deepcopy(HISTORY)

@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# cspell:ignore CONIN ffiles
 """Destination and private manifest validation, without network or file delivery."""
 
 from __future__ import annotations

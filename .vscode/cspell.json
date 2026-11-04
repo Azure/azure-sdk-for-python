@@ -594,6 +594,28 @@
       ]
     },
     {
+      "filename": [
+        "sdk/ai/azure-ai-projects/tests.yml",
+        "sdk/ai/azure-ai-projects/tests/samples/ci/**",
+        "sdk/ai/azure-ai-projects/tests/samples/sample_log.py"
+      ],
+      "words": [
+        "axpy",
+        "bicepparam",
+        "caphostproj",
+        "cnotin",
+        "DEFINITIONID",
+        "foundy",
+        "idtyp",
+        "Nlcjpw",
+        "opusr",
+        "pscore",
+        "pytrace",
+        "retagged",
+        "unconfigured"
+      ]
+    },
+    {
       "filename": "doc/sphinx/generate_doc.py",
       "words": [
         "undoc"

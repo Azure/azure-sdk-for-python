@@ -8,6 +8,14 @@ specification pin is in [tsp-location.yaml](tsp-location.yaml); current source,
 toolchain, generated-output, runtime fingerprints, and validation evidence are
 in [eng/generation/provenance.json](eng/generation/provenance.json).
 
+The November refresh includes optional text-only `reasoning_effort` and
+compatibility coverage for untagged non-sampling completion results from Loom
+master `d9f379e1b0f825dfa61a4da41998b03d2189ea8c`. The local checkpoint file
+delivery merged in Loom after the original snapshot is intentionally excluded:
+this beta's checkpoint methods remain preparation-only. The current source
+pin and inclusion/exclusion evidence in provenance supersede the original
+snapshot above.
+
 The shared SDK toolchain uses Python emitter 0.63.10, Python generator 0.39.0,
 and TypeSpec compiler 1.17.0. The central SDK manifest/lock remain authoritative;
 the package archives exact copies for independent verification.

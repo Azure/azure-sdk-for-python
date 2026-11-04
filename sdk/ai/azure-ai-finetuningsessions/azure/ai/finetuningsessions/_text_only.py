@@ -52,7 +52,10 @@ def _reject_constant(value: str) -> None:
 
 
 def _sample_input(value: Any) -> dict:  # pylint: disable=too-many-statements
-    data = _object(value, {"messages", "tools"}, {"messages"})
+    data = _object(value, {"messages", "tools", "reasoning_effort"}, {"messages"})
+    effort = data.get("reasoning_effort")
+    if effort is not None and (not isinstance(effort, str) or effort not in ("low", "medium", "high")):
+        raise ValueError("reasoning_effort must be low, medium, high or None")
     calls: dict[str, str] = {}
     for message in _list(data["messages"], nonempty=True):
         if not isinstance(message, Mapping):

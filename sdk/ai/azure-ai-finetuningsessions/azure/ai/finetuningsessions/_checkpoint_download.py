@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# cspell:ignore CONIN
 """Checkpoint destination/manifest validation and sync/async preparation."""
 
 from dataclasses import dataclass
