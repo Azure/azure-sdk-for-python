@@ -41,7 +41,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    WebSearchTool,
+    ToolWebSearchTool,
     WebSearchApproximateLocation,
 )
 
@@ -51,7 +51,7 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
-tool = WebSearchTool(user_location=WebSearchApproximateLocation(country="GB", city="London", region="London"))
+tool = ToolWebSearchTool(user_location=WebSearchApproximateLocation(country="GB", city="London", region="London"))
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,

@@ -7,7 +7,7 @@
 
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, WebSearchPreviewTool, ApproximateLocation
+from azure.ai.projects.models import PromptAgentDefinition, ToolWebSearchPreviewTool, ApproximateLocation
 
 
 class TestAgentWebSearch(TestBase):
@@ -19,7 +19,7 @@ class TestAgentWebSearch(TestBase):
         Test agent with Web Search tool for real-time information.
 
         This test verifies that an agent can:
-        1. Use WebSearchPreviewTool to search the web
+        1. Use ToolWebSearchPreviewTool to search the web
         2. Get current/real-time information
         3. Provide answers based on web search results
 
@@ -31,7 +31,7 @@ class TestAgentWebSearch(TestBase):
         POST   /agents/{agent_name}/versions                 project_client.agents.create_version()
 
         # Test focus:
-        POST   /openai/responses                             openai_client.responses.create() (with WebSearchPreviewTool)
+        POST   /openai/responses                             openai_client.responses.create() (with ToolWebSearchPreviewTool)
 
         # Teardown:
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
@@ -52,7 +52,7 @@ class TestAgentWebSearch(TestBase):
                     model=model,
                     instructions="You are a helpful assistant that can search the web for current information.",
                     tools=[
-                        WebSearchPreviewTool(
+                        ToolWebSearchPreviewTool(
                             user_location=ApproximateLocation(country="US", city="Seattle", region="Washington")
                         )
                     ],

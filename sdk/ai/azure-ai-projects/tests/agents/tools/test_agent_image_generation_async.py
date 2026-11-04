@@ -11,7 +11,7 @@ import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolImageGenTool
 from azure.core.exceptions import ResourceNotFoundError
 
 
@@ -47,7 +47,7 @@ class TestAgentImageGenerationAsync(TestBase):
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="Generate images based on user prompts",
-                    tools=[ImageGenTool(model=image_model, quality="low", size="1024x1024")],  # type: ignore
+                    tools=[ToolImageGenTool(model=image_model, quality="low", size="1024x1024")],  # type: ignore
                 ),
                 description="Agent for testing image generation.",
             )

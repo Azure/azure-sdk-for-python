@@ -9,7 +9,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
 from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
-from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
+from azure.ai.projects.models import PromptAgentDefinition, ToolMcpTool, Tool
 
 
 class TestAgentMCPAsync(TestBase):
@@ -27,7 +27,7 @@ class TestAgentMCPAsync(TestBase):
             project_client.get_openai_client() as openai_client,
         ):
             # Create MCP tool that connects to a public GitHub repo via MCP server
-            mcp_tool = MCPTool(
+            mcp_tool = ToolMcpTool(
                 server_label="api-specs",
                 server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
                 require_approval="always",

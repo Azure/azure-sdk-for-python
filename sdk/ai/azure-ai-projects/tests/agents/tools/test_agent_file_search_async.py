@@ -10,7 +10,7 @@ from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolFileSearchTool
 
 
 class TestAgentFileSearchAsync(TestBase):
@@ -56,7 +56,7 @@ class TestAgentFileSearchAsync(TestBase):
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant that can search through uploaded documents to answer questions.",
-                    tools=[FileSearchTool(vector_store_ids=[vector_store.id])],
+                    tools=[ToolFileSearchTool(vector_store_ids=[vector_store.id])],
                 ),
                 description="Agent for testing file search capabilities.",
             )
@@ -152,7 +152,7 @@ Widget C:
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a product information assistant. Use file search to answer questions about products.",
-                    tools=[FileSearchTool(vector_store_ids=[vector_store.id])],
+                    tools=[ToolFileSearchTool(vector_store_ids=[vector_store.id])],
                 ),
                 description="Agent for multi-turn product queries.",
             )

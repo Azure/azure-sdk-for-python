@@ -399,6 +399,19 @@ class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The agent version has been deleted."""
 
 
+class AnswerResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AnswerResourceType."""
+
+    PREDICATE = "predicate"
+    """PREDICATE."""
+    CHOICE = "choice"
+    """CHOICE."""
+    SCORE = "score"
+    """SCORE."""
+    REFUSAL = "refusal"
+    """REFUSAL."""
+
+
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Strategies for attacks."""
 
@@ -964,9 +977,9 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Control how much effort the model will exert to match the style and features, especially facial
-    features, of input images. This parameter is only supported for ``gpt-image-1`` and
-    ``gpt-image-1.5`` and later models, unsupported for ``gpt-image-1-mini``. Supports ``high`` and
-    ``low``. Defaults to ``low``.
+    features, of input images. Supports ``high`` and ``low`` on ``gpt-image-1.5``;
+    ``gpt-image-1-mini`` supports only ``low``. For ``gpt-image-2``, omit this parameter. Defaults
+    to ``low`` on supported models.
     """
 
     HIGH = "high"
@@ -999,6 +1012,309 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Job failed."""
     CANCELLED = "cancelled"
     """Job was cancelled by the caller."""
+
+
+class LiveAudioFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveAudioFormatType."""
+
+    AUDIO_PCM = "audio/pcm"
+    """AUDIO_PCM."""
+    AUDIO_PCMU = "audio/pcmu"
+    """AUDIO_PCMU."""
+    AUDIO_PCMA = "audio/pcma"
+    """AUDIO_PCMA."""
+
+
+class LiveClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveClientEventType."""
+
+    SESSION_START = "session.start"
+    """SESSION_START."""
+    SESSION_UPDATE = "session.update"
+    """SESSION_UPDATE."""
+    SESSION_INPUT_AUDIO_APPEND = "session.input_audio.append"
+    """SESSION_INPUT_AUDIO_APPEND."""
+    SESSION_INPUT_AUDIO_MUTE = "session.input_audio.mute"
+    """SESSION_INPUT_AUDIO_MUTE."""
+    SESSION_INPUT_AUDIO_UNMUTE = "session.input_audio.unmute"
+    """SESSION_INPUT_AUDIO_UNMUTE."""
+    SESSION_OUTPUT_AUDIO_FIXTURE_PLAY = "session.output_audio.fixture.play"
+    """SESSION_OUTPUT_AUDIO_FIXTURE_PLAY."""
+    SESSION_INSTRUCTIONS_APPEND = "session.instructions.append"
+    """SESSION_INSTRUCTIONS_APPEND."""
+    SESSION_THINKING_APPEND = "session.thinking.append"
+    """SESSION_THINKING_APPEND."""
+    SESSION_COMMENTARY_APPEND = "session.commentary.append"
+    """SESSION_COMMENTARY_APPEND."""
+    DECISION_CREATE = "decision.create"
+    """DECISION_CREATE."""
+    DECISION_ITEM_CREATE = "decision.item.create"
+    """DECISION_ITEM_CREATE."""
+    DECISION_ITEM_DELETE = "decision.item.delete"
+    """DECISION_ITEM_DELETE."""
+    RESPONSE_ITEM_CREATE = "response.item.create"
+    """RESPONSE_ITEM_CREATE."""
+    RESPONSE_CREATE = "response.create"
+    """RESPONSE_CREATE."""
+    SESSION_CLOSE = "session.close"
+    """SESSION_CLOSE."""
+
+
+class LiveContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveContainerMemoryLimit."""
+
+    ENUM_1_G = "1g"
+    """1_G."""
+    ENUM_4_G = "4g"
+    """4_G."""
+    ENUM_16_G = "16g"
+    """16_G."""
+    ENUM_64_G = "64g"
+    """64_G."""
+
+
+class LiveDecisionInputItemParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveDecisionInputItemParamType."""
+
+    MESSAGE = "message"
+    """MESSAGE."""
+    FUNCTION_CALL = "function_call"
+    """FUNCTION_CALL."""
+    FUNCTION_CALL_OUTPUT = "function_call_output"
+    """FUNCTION_CALL_OUTPUT."""
+    CUSTOM_TOOL_CALL = "custom_tool_call"
+    """CUSTOM_TOOL_CALL."""
+    CUSTOM_TOOL_CALL_OUTPUT = "custom_tool_call_output"
+    """CUSTOM_TOOL_CALL_OUTPUT."""
+
+
+class LiveDecisionQuestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveDecisionQuestionType."""
+
+    CHOICE = "choice"
+    """CHOICE."""
+    PREDICATE = "predicate"
+    """PREDICATE."""
+    SCORE = "score"
+    """SCORE."""
+
+
+class LiveDecisionStoredInputItemParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveDecisionStoredInputItemParamType."""
+
+    MESSAGE = "message"
+    """MESSAGE."""
+    FUNCTION_CALL = "function_call"
+    """FUNCTION_CALL."""
+    FUNCTION_CALL_OUTPUT = "function_call_output"
+    """FUNCTION_CALL_OUTPUT."""
+    CUSTOM_TOOL_CALL = "custom_tool_call"
+    """CUSTOM_TOOL_CALL."""
+    CUSTOM_TOOL_CALL_OUTPUT = "custom_tool_call_output"
+    """CUSTOM_TOOL_CALL_OUTPUT."""
+
+
+class LiveDetailEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveDetailEnum."""
+
+    LOW = "low"
+    """LOW."""
+    HIGH = "high"
+    """HIGH."""
+    AUTO = "auto"
+    """AUTO."""
+    ORIGINAL = "original"
+    """ORIGINAL."""
+
+
+class LiveFunctionCallItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveFunctionCallItemStatus."""
+
+    IN_PROGRESS = "in_progress"
+    """IN_PROGRESS."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+    INCOMPLETE = "incomplete"
+    """INCOMPLETE."""
+
+
+class LiveInitialItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveInitialItemType."""
+
+    DEVELOPER = "developer"
+    """DEVELOPER."""
+    USER = "user"
+    """USER."""
+    ASSISTANT = "assistant"
+    """ASSISTANT."""
+
+
+class LiveInitialMessageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveInitialMessageStatus."""
+
+    INCOMPLETE = "incomplete"
+    """INCOMPLETE."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+
+
+class LiveReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveReasoningEffort."""
+
+    NONE = "none"
+    """NONE."""
+    MINIMAL = "minimal"
+    """MINIMAL."""
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
+    XHIGH = "xhigh"
+    """XHIGH."""
+
+
+class LiveReasoningSummary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveReasoningSummary."""
+
+    CONCISE = "concise"
+    """CONCISE."""
+    DETAILED = "detailed"
+    """DETAILED."""
+    AUTO = "auto"
+    """AUTO."""
+
+
+class LiveResponsesServiceTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveResponsesServiceTier."""
+
+    AUTO = "auto"
+    """AUTO."""
+    DEFAULT = "default"
+    """DEFAULT."""
+    FAST_TIER_TEMP_PILOT = "fast_tier_temp_pilot"
+    """FAST_TIER_TEMP_PILOT."""
+    FLEX = "flex"
+    """FLEX."""
+    PRIORITY = "priority"
+    """PRIORITY."""
+    ULTRAFAST = "ultrafast"
+    """ULTRAFAST."""
+
+
+class LiveServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveServerEventType."""
+
+    SESSION_STARTED = "session.started"
+    """SESSION_STARTED."""
+    SESSION_UPDATED = "session.updated"
+    """SESSION_UPDATED."""
+    SESSION_INPUT_AUDIO_MUTED = "session.input_audio.muted"
+    """SESSION_INPUT_AUDIO_MUTED."""
+    SESSION_INPUT_AUDIO_UNMUTED = "session.input_audio.unmuted"
+    """SESSION_INPUT_AUDIO_UNMUTED."""
+    SESSION_OUTPUT_AUDIO_FIXTURE_PLAYING = "session.output_audio.fixture.playing"
+    """SESSION_OUTPUT_AUDIO_FIXTURE_PLAYING."""
+    SESSION_OUTPUT_AUDIO_FIXTURE_PLAYED = "session.output_audio.fixture.played"
+    """SESSION_OUTPUT_AUDIO_FIXTURE_PLAYED."""
+    SESSION_INSTRUCTIONS_APPENDED = "session.instructions.appended"
+    """SESSION_INSTRUCTIONS_APPENDED."""
+    SESSION_THINKING_APPENDED = "session.thinking.appended"
+    """SESSION_THINKING_APPENDED."""
+    SESSION_COMMENTARY_APPENDED = "session.commentary.appended"
+    """SESSION_COMMENTARY_APPENDED."""
+    SESSION_INPUT_AUDIO_APPEND = "session.input_audio.append"
+    """SESSION_INPUT_AUDIO_APPEND."""
+    SESSION_OUTPUT_AUDIO_DELTA = "session.output_audio.delta"
+    """SESSION_OUTPUT_AUDIO_DELTA."""
+    SESSION_INPUT_TRANSCRIPT_DELTA = "session.input_transcript.delta"
+    """SESSION_INPUT_TRANSCRIPT_DELTA."""
+    SESSION_OUTPUT_TRANSCRIPT_DELTA = "session.output_transcript.delta"
+    """SESSION_OUTPUT_TRANSCRIPT_DELTA."""
+    SESSION_DELEGATION_CREATED = "session.delegation.created"
+    """SESSION_DELEGATION_CREATED."""
+    DECISION_EVENT = "decision.event"
+    """DECISION_EVENT."""
+    DECISION_ITEM_CREATED = "decision.item.created"
+    """DECISION_ITEM_CREATED."""
+    DECISION_ITEM_DELETED = "decision.item.deleted"
+    """DECISION_ITEM_DELETED."""
+    RESPONSE_EVENT = "response.event"
+    """RESPONSE_EVENT."""
+    SESSION_USAGE_UPDATED = "session.usage.updated"
+    """SESSION_USAGE_UPDATED."""
+    SESSION_CLOSED = "session.closed"
+    """SESSION_CLOSED."""
+    ERROR = "error"
+    """ERROR."""
+    INFO = "info"
+    """INFO."""
+    TRANSPORT_DTMF_RECEIVED = "transport.dtmf.received"
+    """TRANSPORT_DTMF_RECEIVED."""
+    TRANSPORT_DTMF_SENT = "transport.dtmf.sent"
+    """TRANSPORT_DTMF_SENT."""
+    TRANSPORT_RINGING = "transport.ringing"
+    """TRANSPORT_RINGING."""
+    TRANSPORT_ANSWERED = "transport.answered"
+    """TRANSPORT_ANSWERED."""
+    TRANSPORT_FAILED = "transport.failed"
+    """TRANSPORT_FAILED."""
+
+
+class LiveSessionCreateParamsDelegationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveSessionCreateParamsDelegationType."""
+
+    CLIENT = "client"
+    """CLIENT."""
+    RESPONSES = "responses"
+    """RESPONSES."""
+    DECISIONS = "decisions"
+    """DECISIONS."""
+
+
+class LiveSessionUpdateParamsDelegationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveSessionUpdateParamsDelegationType."""
+
+    CLIENT = "client"
+    """CLIENT."""
+    RESPONSES = "responses"
+    """RESPONSES."""
+    DECISIONS = "decisions"
+    """DECISIONS."""
+
+
+class LiveTextVerbosity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveTextVerbosity."""
+
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
+
+
+class LiveToolChoiceEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveToolChoiceEnum."""
+
+    AUTO = "auto"
+    """AUTO."""
+    NONE = "none"
+    """NONE."""
+    REQUIRED = "required"
+    """REQUIRED."""
+
+
+class LiveToolChoiceValueEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of LiveToolChoiceValueEnum."""
+
+    NONE = "none"
+    """NONE."""
+    AUTO = "auto"
+    """AUTO."""
+    REQUIRED = "required"
+    """REQUIRED."""
 
 
 class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1095,6 +1411,15 @@ class MisalignmentErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """POTENTIALLY_UNINTENDED_DESTRUCTIVE_ACTIVITY."""
     OTHER = "other"
     """OTHER."""
+
+
+class ModelIdsLive(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Live model. Required in the session configuration for every transport; do not pass it as a
+    URL query parameter.
+    """
+
+    GPT_LIVE1 = "gpt-live-1"
+    """GPT_LIVE1."""
 
 
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1275,6 +1600,8 @@ class RealtimeConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """MCP_APPROVAL_REQUEST."""
     MESSAGE = "message"
     """MESSAGE."""
+    SYSTEM_TOOL = "system_tool"
+    """A service-managed system-tool intent, not a provider result."""
 
 
 class RealtimeMcpErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1305,9 +1632,66 @@ class RealtimeReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """XHIGH."""
 
 
+class RealtimeResponseInputMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RealtimeResponseInputMessageType."""
+
+    SYSTEM = "system"
+    """SYSTEM."""
+    DEVELOPER = "developer"
+    """DEVELOPER."""
+    USER = "user"
+    """USER."""
+    ASSISTANT = "assistant"
+    """ASSISTANT."""
+
+
 class RealtimeServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of RealtimeServerEventType."""
 
+    WARNING = "warning"
+    """WARNING."""
+    SESSION_SUBAGENT_STARTED = "session.subagent.started"
+    """SESSION_SUBAGENT_STARTED."""
+    SESSION_SUBAGENT_COMPLETED = "session.subagent.completed"
+    """SESSION_SUBAGENT_COMPLETED."""
+    SESSION_SUBAGENT_ABORTED = "session.subagent.aborted"
+    """SESSION_SUBAGENT_ABORTED."""
+    SESSION_AVATAR_CONNECTING = "session.avatar.connecting"
+    """SESSION_AVATAR_CONNECTING."""
+    SESSION_AVATAR_SWITCH_TO_SPEAKING = "session.avatar.switch_to_speaking"
+    """SESSION_AVATAR_SWITCH_TO_SPEAKING."""
+    SESSION_AVATAR_SWITCH_TO_IDLE = "session.avatar.switch_to_idle"
+    """SESSION_AVATAR_SWITCH_TO_IDLE."""
+    RTC_CALL_SDP_CREATED = "rtc.call.sdp.created"
+    """RTC_CALL_SDP_CREATED."""
+    RTC_CALL_ERROR = "rtc.call.error"
+    """RTC_CALL_ERROR."""
+    RESPONSE_AUDIO_TIMESTAMP_DELTA = "response.audio_timestamp.delta"
+    """RESPONSE_AUDIO_TIMESTAMP_DELTA."""
+    RESPONSE_AUDIO_TIMESTAMP_DONE = "response.audio_timestamp.done"
+    """RESPONSE_AUDIO_TIMESTAMP_DONE."""
+    RESPONSE_ANIMATION_BLENDSHAPES_DELTA = "response.animation_blendshapes.delta"
+    """RESPONSE_ANIMATION_BLENDSHAPES_DELTA."""
+    RESPONSE_ANIMATION_BLENDSHAPES_DONE = "response.animation_blendshapes.done"
+    """RESPONSE_ANIMATION_BLENDSHAPES_DONE."""
+    RESPONSE_ANIMATION_VISEME_DELTA = "response.animation_viseme.delta"
+    """RESPONSE_ANIMATION_VISEME_DELTA."""
+    RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
+    """RESPONSE_ANIMATION_VISEME_DONE."""
+    RESPONSE_VIDEO_DELTA = "response.video.delta"
+    """RESPONSE_VIDEO_DELTA."""
+    RESPONSE_SYSTEM_TOOL_ARGUMENTS_DELTA = "response.system_tool_arguments.delta"
+    """An incremental fragment of model-generated system-tool arguments."""
+    RESPONSE_SYSTEM_TOOL_ARGUMENTS_DONE = "response.system_tool_arguments.done"
+    """The complete model-generated system-tool arguments, not a provider outcome."""
+    INPUT_COLLECTION_STATUS = "input_collection.status"
+    """An asynchronous collection or telephony-operation outcome."""
+    SESSION_HANDOFF_STARTED = "session.handoff.started"
+    """SESSION_HANDOFF_STARTED."""
+    SESSION_HANDOFF_COMPLETED = "session.handoff.completed"
+    """SESSION_HANDOFF_COMPLETED."""
+    SESSION_HANDOFF_ABORTED = "session.handoff.aborted"
+    """SESSION_HANDOFF_ABORTED."""
     CONVERSATION_CREATED = "conversation.created"
     """CONVERSATION_CREATED."""
     CONVERSATION_ITEM_CREATED = "conversation.item.created"
@@ -1400,38 +1784,6 @@ class RealtimeServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESPONSE_MCP_CALL_COMPLETED."""
     RESPONSE_MCP_CALL_FAILED = "response.mcp_call.failed"
     """RESPONSE_MCP_CALL_FAILED."""
-    WARNING = "warning"
-    """WARNING."""
-    SESSION_SUBAGENT_STARTED = "session.subagent.started"
-    """SESSION_SUBAGENT_STARTED."""
-    SESSION_SUBAGENT_COMPLETED = "session.subagent.completed"
-    """SESSION_SUBAGENT_COMPLETED."""
-    SESSION_SUBAGENT_ABORTED = "session.subagent.aborted"
-    """SESSION_SUBAGENT_ABORTED."""
-    SESSION_AVATAR_CONNECTING = "session.avatar.connecting"
-    """SESSION_AVATAR_CONNECTING."""
-    SESSION_AVATAR_SWITCH_TO_SPEAKING = "session.avatar.switch_to_speaking"
-    """SESSION_AVATAR_SWITCH_TO_SPEAKING."""
-    SESSION_AVATAR_SWITCH_TO_IDLE = "session.avatar.switch_to_idle"
-    """SESSION_AVATAR_SWITCH_TO_IDLE."""
-    RTC_CALL_SDP_CREATED = "rtc.call.sdp.created"
-    """RTC_CALL_SDP_CREATED."""
-    RTC_CALL_ERROR = "rtc.call.error"
-    """RTC_CALL_ERROR."""
-    RESPONSE_AUDIO_TIMESTAMP_DELTA = "response.audio_timestamp.delta"
-    """RESPONSE_AUDIO_TIMESTAMP_DELTA."""
-    RESPONSE_AUDIO_TIMESTAMP_DONE = "response.audio_timestamp.done"
-    """RESPONSE_AUDIO_TIMESTAMP_DONE."""
-    RESPONSE_ANIMATION_BLENDSHAPES_DELTA = "response.animation_blendshapes.delta"
-    """RESPONSE_ANIMATION_BLENDSHAPES_DELTA."""
-    RESPONSE_ANIMATION_BLENDSHAPES_DONE = "response.animation_blendshapes.done"
-    """RESPONSE_ANIMATION_BLENDSHAPES_DONE."""
-    RESPONSE_ANIMATION_VISEME_DELTA = "response.animation_viseme.delta"
-    """RESPONSE_ANIMATION_VISEME_DELTA."""
-    RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
-    """RESPONSE_ANIMATION_VISEME_DONE."""
-    RESPONSE_VIDEO_DELTA = "response.video.delta"
-    """RESPONSE_VIDEO_DELTA."""
 
 
 class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1439,7 +1791,7 @@ class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ``minimal``, ``low``, ``medium``, ``high``, ``xhigh``, and ``max``. Reducing reasoning effort
     can result in faster responses and fewer tokens used on reasoning in a response. Not all
     reasoning models support every value. See the `reasoning guide
-    <https://platform.openai.com/docs/guides/reasoning>`_ for model-specific support.
+    <https://developers.openai.com/api/docs/guides/reasoning>`_ for model-specific support.
     """
 
     NONE = "none"
@@ -2143,6 +2495,8 @@ class TelephonyProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Microsoft Teams Phone extensibility."""
     TWILIO = "twilio"
     """Twilio Programmable Voice."""
+    SIP = "sip"
+    """Session Initiation Protocol."""
 
 
 class TelephonyTransferDestinationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2429,6 +2783,15 @@ class VoiceAgentAvatarType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PHOTO_AVATAR."""
 
 
+class VoiceAgentDtmfTerminator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The two non-numeric keypad keys permitted as confirmation terminators."""
+
+    NUMBER_SIGN = "#"
+    """The number-sign confirmation key."""
+    ASTERISK = "*"
+    """The asterisk confirmation key."""
+
+
 class VoiceAgentEchoCancellationReferenceSource(  # pylint: disable=name-too-long
     str, Enum, metaclass=CaseInsensitiveEnumMeta
 ):
@@ -2464,6 +2827,105 @@ class VoiceAgentEndOfUtteranceThresholdLevel(str, Enum, metaclass=CaseInsensitiv
     """The high sensitivity threshold."""
     DEFAULT = "default"
     """The service-selected sensitivity threshold."""
+
+
+class VoiceAgentHandoffAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Why a server-managed handoff ended before target commit."""
+
+    USER_INTERRUPTION = "user_interruption"
+    """USER_INTERRUPTION."""
+    ERROR = "error"
+    """ERROR."""
+
+
+class VoiceAgentHandoffPipelineFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The immutable pipeline family selected for a voice-agent handoff graph."""
+
+    CASCADED = "cascaded"
+    """CASCADED."""
+    REALTIME = "realtime"
+    """REALTIME."""
+
+
+class VoiceAgentHandoffReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reasoning effort applied by a compatible handoff-node model."""
+
+    NONE = "none"
+    """NONE."""
+    MINIMAL = "minimal"
+    """MINIMAL."""
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
+    XHIGH = "xhigh"
+    """XHIGH."""
+
+
+class VoiceAgentHandoffTargetResponse(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether Voice Live automatically starts a response after a handoff target becomes active."""
+
+    AUTO = "auto"
+    """AUTO."""
+    NONE = "none"
+    """NONE."""
+
+
+class VoiceAgentInputCollectionChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The receiver used by an input collection. Voice collection is not supported."""
+
+    SMS = "sms"
+    """Receives one complete SMS from the selected sender."""
+    DTMF = "dtmf"
+    """Receives individual keypad digits from the active call."""
+
+
+class VoiceAgentInputCollectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Collection lifecycle and value-free telephony-operation outcomes. Additional outcomes may be
+    introduced over time.
+    """
+
+    ACCEPTED = "accepted"
+    """The invocation was accepted; the receiver is not yet ready and no value has been collected."""
+    LISTENING = "listening"
+    """The receiver is ready, allowing the service to prompt the caller for input."""
+    COMPLETED = "completed"
+    """Collection completed with an ordinary value or a privately stored variable reference."""
+    EXPIRED = "expired"
+    """A collection deadline or input timer expired without completing collection."""
+    CANCELLED = "cancelled"
+    """The service cancelled collection and cleaned up its receiver."""
+    FAILED = "failed"
+    """Collection failed without creating an output variable."""
+    BUSY = "busy"
+    """The invocation was rejected because another operation is active."""
+    INVALID_INPUT = "invalid_input"
+    """The received input did not satisfy the collection policy."""
+    INVALID_ARGUMENTS = "invalid_arguments"
+    """The model-generated tool arguments were invalid."""
+    STALE_COLLECTION = "stale_collection"
+    """The result does not match the current collection or receiver request."""
+    UNSUPPORTED_CHANNEL = "unsupported_channel"
+    """No supported receiver. Also used when omitting an unsupported tool before model exposure; no
+    collection or variable is created."""
+    DISPATCH_FAILED = "dispatch_failed"
+    """The service could not dispatch the operation to its executor; this does not confirm a provider
+    outcome."""
+    PROVIDER_ACCEPTED = "provider_accepted"
+    """The provider accepted the operation; this does not confirm SMS delivery, IVR recognition or
+    authentication."""
+    TRANSFER_NOT_ANSWERED = "transfer_not_answered"
+    """The transfer target did not answer and the original conversation remains available."""
+    PROVIDER_FAILED_OR_UNSUPPORTED = "provider_failed_or_unsupported"
+    """The provider reported failure or does not support the requested operation."""
+    PROVIDER_RESULT_UNCERTAIN = "provider_result_uncertain"
+    """The provider outcome could not be confirmed after possible dispatch; the service does not
+    automatically retry."""
+    PROVIDER_NOT_EXECUTED = "provider_not_executed"
+    """Rejected before any provider side effect; nothing was sent or dialed. Includes unavailable
+    executors and unavailable-sender tool-resolution failures before model exposure."""
 
 
 class VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2510,6 +2972,54 @@ class VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumM
     """TOOL."""
 
 
+class VoiceAgentLiveConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of a persisted Live conversation item."""
+
+    INPUT = "input"
+    """INPUT."""
+    OUTPUT = "output"
+    """OUTPUT."""
+    DELEGATION = "delegation"
+    """DELEGATION."""
+
+
+class VoiceAgentLiveDelegationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Persisted delegation outcome, not speech or playback status."""
+
+    IN_PROGRESS = "in_progress"
+    """IN_PROGRESS."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+    FAILED = "failed"
+    """FAILED."""
+    INCOMPLETE = "incomplete"
+    """INCOMPLETE."""
+    CANCELLED = "cancelled"
+    """CANCELLED."""
+
+
+class VoiceAgentLiveDelegationTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Delegation owner. Foundry agent targets use native client delegation upstream."""
+
+    RESPONSES = "responses"
+    """RESPONSES."""
+    CLIENT = "client"
+    """CLIENT."""
+    FOUNDRY_MANAGED_AGENT = "foundry_managed_agent"
+    """FOUNDRY_MANAGED_AGENT."""
+
+
+class VoiceAgentLiveDelegationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported owners of work delegated by a Live voice agent."""
+
+    CLIENT = "client"
+    """The application handles delegated work."""
+    RESPONSES = "responses"
+    """A Responses backend handles delegated work."""
+    FOUNDRY_MANAGED_AGENT = "foundry_managed_agent"
+    """A prompt agent in the same project handles delegated work."""
+
+
 class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The input audio noise reduction mode.
 
@@ -2537,6 +3047,23 @@ class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     unchanged; headset suppression remains active when personalization is unavailable."""
 
 
+class VoiceAgentPostCallDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of a post-call destination."""
+
+    EVENT_GRID = "event_grid"
+    """An Event Grid connection."""
+    ROUTINE = "routine"
+    """A routine."""
+
+
+class VoiceAgentPostCallIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Content that can be included in a post-call delivery."""
+
+    AUDIO = "audio"
+    """A URL to the merged call recording. Not supported in this preview: the service rejects
+    ``audio`` when the agent version is saved."""
+
+
 class VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The supported input-transcript profanity filtering modes."""
 
@@ -2546,6 +3073,55 @@ class VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """Includes recognized profanity in the transcript, subject to mandatory service masking policies."""
     REMOVED = "removed"
     """Removes recognized profanity from the transcript."""
+
+
+class VoiceAgentServerEventTypeExtension(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of VoiceAgentServerEventTypeExtension."""
+
+    WARNING = "warning"
+    """WARNING."""
+    SESSION_SUBAGENT_STARTED = "session.subagent.started"
+    """SESSION_SUBAGENT_STARTED."""
+    SESSION_SUBAGENT_COMPLETED = "session.subagent.completed"
+    """SESSION_SUBAGENT_COMPLETED."""
+    SESSION_SUBAGENT_ABORTED = "session.subagent.aborted"
+    """SESSION_SUBAGENT_ABORTED."""
+    SESSION_AVATAR_CONNECTING = "session.avatar.connecting"
+    """SESSION_AVATAR_CONNECTING."""
+    SESSION_AVATAR_SWITCH_TO_SPEAKING = "session.avatar.switch_to_speaking"
+    """SESSION_AVATAR_SWITCH_TO_SPEAKING."""
+    SESSION_AVATAR_SWITCH_TO_IDLE = "session.avatar.switch_to_idle"
+    """SESSION_AVATAR_SWITCH_TO_IDLE."""
+    RTC_CALL_SDP_CREATED = "rtc.call.sdp.created"
+    """RTC_CALL_SDP_CREATED."""
+    RTC_CALL_ERROR = "rtc.call.error"
+    """RTC_CALL_ERROR."""
+    RESPONSE_AUDIO_TIMESTAMP_DELTA = "response.audio_timestamp.delta"
+    """RESPONSE_AUDIO_TIMESTAMP_DELTA."""
+    RESPONSE_AUDIO_TIMESTAMP_DONE = "response.audio_timestamp.done"
+    """RESPONSE_AUDIO_TIMESTAMP_DONE."""
+    RESPONSE_ANIMATION_BLENDSHAPES_DELTA = "response.animation_blendshapes.delta"
+    """RESPONSE_ANIMATION_BLENDSHAPES_DELTA."""
+    RESPONSE_ANIMATION_BLENDSHAPES_DONE = "response.animation_blendshapes.done"
+    """RESPONSE_ANIMATION_BLENDSHAPES_DONE."""
+    RESPONSE_ANIMATION_VISEME_DELTA = "response.animation_viseme.delta"
+    """RESPONSE_ANIMATION_VISEME_DELTA."""
+    RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
+    """RESPONSE_ANIMATION_VISEME_DONE."""
+    RESPONSE_VIDEO_DELTA = "response.video.delta"
+    """RESPONSE_VIDEO_DELTA."""
+    RESPONSE_SYSTEM_TOOL_ARGUMENTS_DELTA = "response.system_tool_arguments.delta"
+    """An incremental fragment of model-generated system-tool arguments."""
+    RESPONSE_SYSTEM_TOOL_ARGUMENTS_DONE = "response.system_tool_arguments.done"
+    """The complete model-generated system-tool arguments, not a provider outcome."""
+    INPUT_COLLECTION_STATUS = "input_collection.status"
+    """An asynchronous collection or telephony-operation outcome."""
+    SESSION_HANDOFF_STARTED = "session.handoff.started"
+    """SESSION_HANDOFF_STARTED."""
+    SESSION_HANDOFF_COMPLETED = "session.handoff.completed"
+    """SESSION_HANDOFF_COMPLETED."""
+    SESSION_HANDOFF_ABORTED = "session.handoff.aborted"
+    """SESSION_HANDOFF_ABORTED."""
 
 
 class VoiceAgentSessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2595,6 +3171,35 @@ class VoiceAgentSubagentAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """The consultation failed."""
 
 
+class VoiceAgentSubagentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The subagent configuration mode. Additional modes may be added over time."""
+
+    DELEGATE = "delegate"
+    """Referenced Foundry agents invoked as delegated background specialists."""
+    INLINE = "inline"
+    """Inline voice behaviors that may become active through Handoff."""
+
+
+class VoiceAgentSubProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Voice protocol; realtime includes cascaded models."""
+
+    REALTIME = "realtime"
+    """REALTIME."""
+    LIVE = "live"
+    """LIVE."""
+
+
+class VoiceAgentSystemToolItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The generation status of a system-tool item. It does not indicate provider success."""
+
+    IN_PROGRESS = "in_progress"
+    """The item is still being generated."""
+    COMPLETED = "completed"
+    """The item finished generation."""
+    INCOMPLETE = "incomplete"
+    """The item did not finish generation."""
+
+
 class VoiceAgentSystemToolName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A service-managed voice-session control action. Known values are stable; additional values may
     be added over time.
@@ -2602,6 +3207,20 @@ class VoiceAgentSystemToolName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     END_CONVERSATION = "end_conversation"
     """Ends the active conversation."""
+    LANGUAGE_DETECTION = "language_detection"
+    """Switches supported conversation language settings."""
+    DIGIT_RECOGNITION = "digit_recognition"
+    """Retrieves the unchanged transcript of the last user audio turn."""
+    TRANSFER = "transfer"
+    """Requests a transfer to an explicitly configured logical target."""
+    COLLECT_SMS = "collect_sms"
+    """Collects one complete SMS from an explicitly selected sender."""
+    COLLECT_DTMF = "collect_dtmf"
+    """Collects keypad digits on the current call."""
+    SEND_DTMF = "send_dtmf"
+    """Sends literal or templated keypad digits."""
+    SEND_SMS = "send_sms"
+    """Sends a text message from the Agent's SMS-capable number."""
 
 
 class VoiceAgentToolResponseScheduling(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2615,6 +3234,31 @@ class VoiceAgentToolResponseScheduling(str, Enum, metaclass=CaseInsensitiveEnumM
     """Interrupt the active response and create a follow-up response."""
     SKIP_IF_BUSY = "skip_if_busy"
     """Create a follow-up response only when no response is active."""
+
+
+class VoiceAgentTransferDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported address formats for a system-tool transfer destination."""
+
+    PHONE_NUMBER = "phone_number"
+    """An E.164 telephone number."""
+    TEAMS = "teams"
+    """A Microsoft Teams user or resource-account identifier."""
+    SIP = "sip"
+    """A SIP or SIPS URI."""
+
+
+class VoiceAgentTransferStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Per-invocation transfer routing. Unsupported strategies are rejected before provider execution;
+    schema membership does not imply support by every provider.
+    """
+
+    SEQUENTIAL = "sequential"
+    """Try destinations in configured order while the total budget remains."""
+    RANDOM = "random"
+    """Randomize destination order for this invocation, then try each within the total budget."""
+    PARALLEL = "parallel"
+    """Ring destinations concurrently and select the first answer when the executor supports this
+    strategy."""
 
 
 class VoiceAgentTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):

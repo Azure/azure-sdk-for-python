@@ -10,7 +10,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
-from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolFunctionTool
 
 
 class TestAgentFunctionToolAsync(TestBase):
@@ -36,7 +36,7 @@ class TestAgentFunctionToolAsync(TestBase):
 
         async with project_client:
             # Define a function tool for the model to use
-            func_tool = FunctionTool(
+            func_tool = ToolFunctionTool(
                 name="get_weather",
                 description="Get the current weather for a location.",
                 parameters={
@@ -169,7 +169,7 @@ class TestAgentFunctionToolAsync(TestBase):
 
         async with project_client:
             # Define multiple function tools
-            get_weather = FunctionTool(
+            get_weather = ToolFunctionTool(
                 name="get_weather",
                 description="Get current weather for a city",
                 parameters={
@@ -186,7 +186,7 @@ class TestAgentFunctionToolAsync(TestBase):
                 strict=True,
             )
 
-            get_temperature_forecast = FunctionTool(
+            get_temperature_forecast = ToolFunctionTool(
                 name="get_temperature_forecast",
                 description="Get 3-day temperature forecast for a city",
                 parameters={
@@ -379,7 +379,7 @@ class TestAgentFunctionToolAsync(TestBase):
             project_client.get_openai_client() as openai_client,
         ):
             # Define function tool
-            get_temperature = FunctionTool(
+            get_temperature = ToolFunctionTool(
                 name="get_temperature",
                 description="Get current temperature for a city in Fahrenheit",
                 parameters={

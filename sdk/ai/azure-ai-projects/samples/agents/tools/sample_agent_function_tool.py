@@ -32,7 +32,7 @@ from openai.types.responses.response_input_param import FunctionCallOutput, Resp
 from util import create_version_with_endpoint
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolFunctionTool
 
 load_dotenv()
 
@@ -47,7 +47,7 @@ def get_horoscope(sign: str) -> str:
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 
-tool = FunctionTool(
+tool = ToolFunctionTool(
     name="get_horoscope",
     parameters={
         "type": "object",

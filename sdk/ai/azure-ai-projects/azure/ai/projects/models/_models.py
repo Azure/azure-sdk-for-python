@@ -22,6 +22,7 @@ from ._enums import (
     AgentOptimizationDataSourceType,
     AgentOptimizationEvaluationSetType,
     AgentOptimizationTargetConfigurationType,
+    AnswerResourceType,
     ContainerNetworkPolicyParamType,
     ContainerSkillType,
     CreateTranscriptionResponseJsonUsageType,
@@ -40,6 +41,15 @@ from ._enums import (
     FunctionShellToolParamEnvironmentType,
     IndexType,
     InsightType,
+    LiveAudioFormatType,
+    LiveClientEventType,
+    LiveDecisionInputItemParamType,
+    LiveDecisionQuestionType,
+    LiveDecisionStoredInputItemParamType,
+    LiveInitialItemType,
+    LiveServerEventType,
+    LiveSessionCreateParamsDelegationType,
+    LiveSessionUpdateParamsDelegationType,
     MemoryItemKind,
     MemoryStoreKind,
     MemoryStoreObjectType,
@@ -51,6 +61,7 @@ from ._enums import (
     RealtimeConversationItemMessageType,
     RealtimeConversationItemType,
     RealtimeMcpErrorType,
+    RealtimeResponseInputMessageType,
     RealtimeServerEventType,
     RecurrenceType,
     RoutineActionType,
@@ -71,8 +82,16 @@ from ._enums import (
     TriggerType,
     VersionIndicatorType,
     VersionSelectorType,
+    VoiceAgentLiveConversationItemType,
+    VoiceAgentLiveDelegationTarget,
+    VoiceAgentLiveDelegationType,
+    VoiceAgentPostCallDestinationType,
+    VoiceAgentServerEventTypeExtension,
+    VoiceAgentSubProtocol,
+    VoiceAgentSubagentType,
     VoiceAgentSystemToolName,
     VoiceAgentTurnDetectionType,
+    VoiceModelType,
 )
 
 if TYPE_CHECKING:
@@ -143,7 +162,7 @@ class _CreateAgentVersionFromCodeMetadata(_Model):  # pylint: disable=docstring-
     """Set of 16 key-value pairs that can be attached to an object. This can be
      useful for storing additional information about the object in a structured
      format, and querying for objects via API or the dashboard.
-     
+
      Keys are strings with a maximum length of 64 characters. Values are strings
      with a maximum length of 512 characters."""
     definition: "_models.HostedAgentDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -174,14 +193,16 @@ class Tool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-on
     """A tool that can be used to generate a response.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    A2ATool, A2APreviewTool, ApplyPatchToolParam, AzureAISearchTool, AzureFunctionTool,
+    A2ATool, A2APreviewTool, ToolApplyPatchToolParam, AzureAISearchTool, AzureFunctionTool,
     BingCustomSearchPreviewTool, BingGroundingTool, BrowserAutomationTool,
-    BrowserAutomationPreviewTool, CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool,
-    ComputerUsePreviewTool, CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool,
-    FileSearchTool, FunctionTool, GitHubCopilotToolsetPreview, ImageGenTool, LocalShellToolParam,
-    MCPTool, MemorySearchPreviewTool, MicrosoftCopilotToolsetPreview, NamespaceToolParam,
-    OpenApiTool, ProgrammaticToolCallingParam, SharepointPreviewTool, FunctionShellToolParam,
-    ToolSearchToolParam, WebIQPreviewTool, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
+    BrowserAutomationPreviewTool, CaptureStructuredOutputsTool, ToolCodeInterpreterTool,
+    ToolComputerTool, ToolComputerUsePreviewTool, ToolCustomToolParam, MicrosoftFabricPreviewTool,
+    FabricIQPreviewTool, ToolFileSearchTool, ToolFunctionTool, GitHubCopilotToolsetPreview,
+    ToolImageGenTool, ToolLocalShellToolParam, ToolMcpTool, MemorySearchPreviewTool,
+    MicrosoftCopilotToolsetPreview, NamespaceToolParam, OpenApiTool,
+    ToolProgrammaticToolCallingParam, SharepointPreviewTool, ToolFunctionShellToolParam,
+    ToolToolSearchToolParam, WebIQPreviewTool, ToolWebSearchTool, ToolWebSearchPreviewTool,
+    WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
      "computer_use_preview", "web_search", "mcp", "code_interpreter", "programmatic_tool_calling",
@@ -960,8 +981,8 @@ class AgentDefinition(_Model):  # pylint: disable=docstring-keyword-should-match
     """AgentDefinition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ExternalAgentDefinition, HostedAgentDefinition, PromptAgentDefinition, VoiceAgentDefinition,
-    WorkflowAgentDefinition
+    ExternalAgentDefinition, HostedAgentDefinition, PromptAgentDefinition,
+    VoiceAgentBaseDefinition, WorkflowAgentDefinition
 
     :ivar kind: Required. Known values are: "prompt", "hosted", "workflow", "external", and
      "voice".
@@ -4537,7 +4558,7 @@ class AgentVersionDetails(_Model):  # pylint: disable=docstring-keyword-should-m
     """Set of 16 key-value pairs that can be attached to an object. This can be
      useful for storing additional information about the object in a structured
      format, and querying for objects via API or the dashboard.
-     
+
      Keys are strings with a maximum length of 64 characters. Values are strings
      with a maximum length of 512 characters. Required."""
     object: Literal[AgentObjectType.AGENT_VERSION] = rest_field(
@@ -4664,6 +4685,218 @@ class AISearchIndexResource(_Model):  # pylint: disable=docstring-keyword-should
         super().__init__(*args, **kwargs)
 
 
+class AnswerResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A completed question always includes its name, including null when unnamed.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AnswerResourceChoice, AnswerResourcePredicate, AnswerResourceRefusal, AnswerResourceScore
+
+    :ivar type: Required. Known values are: "predicate", "choice", "score", and "refusal".
+    :vartype type: str or ~azure.ai.projects.models.AnswerResourceType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"predicate\", \"choice\", \"score\", and \"refusal\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AnswerResourceChoice(
+    AnswerResource, discriminator="choice"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """AnswerResourceChoice.
+
+    :ivar type: The type of the object. Always ``choice``. Required. CHOICE.
+    :vartype type: str or ~azure.ai.projects.models.CHOICE
+    :ivar name: Required.
+    :vartype name: str
+    :ivar choice: Required. Is either a str type or a bool type.
+    :vartype choice: str or bool
+    :ivar probabilities: Required.
+    :vartype probabilities: list[~azure.ai.projects.models.ChoiceProbabilityResource]
+    :ivar confidence: Required.
+    :vartype confidence: float
+    """
+
+    type: Literal[AnswerResourceType.CHOICE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the object. Always ``choice``. Required. CHOICE."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    choice: "_unions.ChoiceValueResource" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Is either a str type or a bool type."""
+    probabilities: list["_models.ChoiceProbabilityResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+    confidence: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        choice: "_unions.ChoiceValueResource",
+        probabilities: list["_models.ChoiceProbabilityResource"],
+        confidence: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = AnswerResourceType.CHOICE  # type: ignore
+
+
+class AnswerResourcePredicate(
+    AnswerResource, discriminator="predicate"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """AnswerResourcePredicate.
+
+    :ivar type: The type of the object. Always ``predicate``. Required. PREDICATE.
+    :vartype type: str or ~azure.ai.projects.models.PREDICATE
+    :ivar name: Required.
+    :vartype name: str
+    :ivar probability: Required.
+    :vartype probability: float
+    """
+
+    type: Literal[AnswerResourceType.PREDICATE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the object. Always ``predicate``. Required. PREDICATE."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    probability: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        probability: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = AnswerResourceType.PREDICATE  # type: ignore
+
+
+class AnswerResourceRefusal(
+    AnswerResource, discriminator="refusal"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The model declined to answer this question. Other questions in the same request can still
+    receive answers.
+
+    :ivar type: The type of the object. Always ``refusal``. Required. REFUSAL.
+    :vartype type: str or ~azure.ai.projects.models.REFUSAL
+    :ivar name: Required.
+    :vartype name: str
+    """
+
+    type: Literal[AnswerResourceType.REFUSAL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the object. Always ``refusal``. Required. REFUSAL."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = AnswerResourceType.REFUSAL  # type: ignore
+
+
+class AnswerResourceScore(
+    AnswerResource, discriminator="score"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """AnswerResourceScore.
+
+    :ivar type: The type of the object. Always ``score``. Required. SCORE.
+    :vartype type: str or ~azure.ai.projects.models.SCORE
+    :ivar name: Required.
+    :vartype name: str
+    :ivar score: Required.
+    :vartype score: float
+    :ivar probabilities: Required.
+    :vartype probabilities: list[~azure.ai.projects.models.ScoreProbabilityResource]
+    :ivar confidence: Required.
+    :vartype confidence: float
+    """
+
+    type: Literal[AnswerResourceType.SCORE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the object. Always ``score``. Required. SCORE."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    score: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    probabilities: list["_models.ScoreProbabilityResource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+    confidence: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        score: float,
+        probabilities: list["_models.ScoreProbabilityResource"],
+        confidence: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = AnswerResourceType.SCORE  # type: ignore
+
+
 class ApiError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ApiError.
 
@@ -4787,42 +5020,6 @@ class ApiKeyCredentials(BaseCredentials, discriminator="ApiKey"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = CredentialType.API_KEY  # type: ignore
-
-
-class ApplyPatchToolParam(
-    Tool, discriminator="apply_patch"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Apply patch tool.
-
-    :ivar type: The type of the tool. Always ``apply_patch``. Required. APPLY_PATCH.
-    :vartype type: str or ~azure.ai.projects.models.APPLY_PATCH
-    :ivar allowed_callers:
-    :vartype allowed_callers: list[str or ~azure.ai.projects.models.CallableToolAllowedCaller]
-    """
-
-    type: Literal[ToolType.APPLY_PATCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the tool. Always ``apply_patch``. Required. APPLY_PATCH."""
-    allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-
-    @overload
-    def __init__(
-        self,
-        *,
-        allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.APPLY_PATCH  # type: ignore
 
 
 class ApproximateLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -6499,6 +6696,39 @@ class ChatSummaryMemoryItem(
         self.kind = MemoryItemKind.CHAT_SUMMARY  # type: ignore
 
 
+class ChoiceProbabilityResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ChoiceProbabilityResource.
+
+    :ivar value: Required. Is either a str type or a bool type.
+    :vartype value: str or bool
+    :ivar probability: Required.
+    :vartype probability: float
+    """
+
+    value: "_unions.ChoiceValueResource" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Is either a str type or a bool type."""
+    probability: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: "_unions.ChoiceValueResource",
+        probability: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ClusterInsightResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Insights from the cluster analysis.
 
@@ -6537,22 +6767,22 @@ class ClusterInsightResult(_Model):  # pylint: disable=docstring-keyword-should-
         visibility=["read", "create", "update", "delete", "query"]
     )
     """  Optional mapping of IDs to 2D coordinates used by the UX for visualization.
-     
+
        The map keys are string identifiers (for example, a cluster id or a sample id)
        and the values are the coordinates and visual size for rendering on a 2D chart.
-     
+
        This property is omitted unless the client requests coordinates (for example,
        by passing ``includeCoordinates=true`` as a query parameter).
-     
+
        Example:
-     
+
      .. code-block::
-     
+
         {
           \"cluster-1\": { \"x\": 12, \"y\": 34, \"size\": 8 },
           \"sample-123\": { \"x\": 18, \"y\": 22, \"size\": 4 }
         }
-     
+
        Coordinates are intended only for client-side visualization and do not
        modify the canonical insights results."""
 
@@ -6796,75 +7026,6 @@ class CodeConfiguration(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
-class CodeInterpreterTool(
-    Tool, discriminator="code_interpreter"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Code interpreter.
-
-    :ivar type: The type of the code interpreter tool. Always ``code_interpreter``. Required.
-     CODE_INTERPRETER.
-    :vartype type: str or ~azure.ai.projects.models.CODE_INTERPRETER
-    :ivar allowed_callers:
-    :vartype allowed_callers: list[str or ~azure.ai.projects.models.CallableToolAllowedCaller]
-    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
-    :vartype name: str
-    :ivar description: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype description: str
-    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
-    :ivar container: The code interpreter container. Can be a container ID or an object that
-     specifies uploaded file IDs to make available to your code, along with an optional
-     ``memory_limit`` setting. If not provided, the service assumes auto. Is either a str type or a
-     AutoCodeInterpreterToolParam type.
-    :vartype container: str or ~azure.ai.projects.models.AutoCodeInterpreterToolParam
-    """
-
-    type: Literal[ToolType.CODE_INTERPRETER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the code interpreter tool. Always ``code_interpreter``. Required. CODE_INTERPRETER."""
-    allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-    container: Optional[Union[str, "_models.AutoCodeInterpreterToolParam"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The code interpreter container. Can be a container ID or an object that specifies uploaded file
-     IDs to make available to your code, along with an optional ``memory_limit`` setting. If not
-     provided, the service assumes auto. Is either a str type or a AutoCodeInterpreterToolParam
-     type."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
-        container: Optional[Union[str, "_models.AutoCodeInterpreterToolParam"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.CODE_INTERPRETER  # type: ignore
-
-
 class CodeInterpreterToolboxTool(
     ToolboxTool, discriminator="code_interpreter"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -6954,7 +7115,7 @@ class ComparisonFilter(_Model):  # pylint: disable=docstring-keyword-should-matc
     )
     """Specifies the comparison operator: ``eq``, ``ne``, ``gt``, ``gte``, ``lt``, ``lte``, ``in``,
       ``nin``.
- 
+
       * `eq`: equals
       * `ne`: not equal
       * `gt`: greater than
@@ -7001,13 +7162,14 @@ class CompoundFilter(_Model):  # pylint: disable=docstring-keyword-should-match-
     :vartype type: str or str
     :ivar filters: Array of filters to combine. Items can be ``ComparisonFilter`` or
      ``CompoundFilter``. Required.
-    :vartype filters: list[~azure.ai.projects.models.ComparisonFilter or any]
+    :vartype filters: list[~azure.ai.projects.models.ComparisonFilter or
+     ~azure.ai.projects.models.CompoundFilter]
     """
 
     type: Literal["and", "or"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Type of operation: ``and`` or ``or``. Required. Is either a Literal[\"and\"] type or a
      Literal[\"or\"] type."""
-    filters: list[Union["_models.ComparisonFilter", Any]] = rest_field(
+    filters: list[Union["_models.ComparisonFilter", "_models.CompoundFilter"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Array of filters to combine. Items can be ``ComparisonFilter`` or ``CompoundFilter``. Required."""
@@ -7017,7 +7179,7 @@ class CompoundFilter(_Model):  # pylint: disable=docstring-keyword-should-match-
         self,
         *,
         type: Literal["and", "or"],
-        filters: list[Union["_models.ComparisonFilter", Any]],
+        filters: list[Union["_models.ComparisonFilter", "_models.CompoundFilter"]],
     ) -> None: ...
 
     @overload
@@ -7029,84 +7191,6 @@ class CompoundFilter(_Model):  # pylint: disable=docstring-keyword-should-match-
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ComputerTool(Tool, discriminator="computer"):
-    """Computer.
-
-    :ivar type: The type of the computer tool. Always ``computer``. Required. COMPUTER.
-    :vartype type: str or ~azure.ai.projects.models.COMPUTER
-    """
-
-    type: Literal[ToolType.COMPUTER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the computer tool. Always ``computer``. Required. COMPUTER."""
-
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.COMPUTER  # type: ignore
-
-
-class ComputerUsePreviewTool(
-    Tool, discriminator="computer_use_preview"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Computer use preview.
-
-    :ivar type: The type of the computer use tool. Always ``computer_use_preview``. Required.
-     COMPUTER_USE_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.COMPUTER_USE_PREVIEW
-    :ivar environment: The type of computer environment to control. Required. Known values are:
-     "windows", "mac", "linux", "ubuntu", and "browser".
-    :vartype environment: str or ~azure.ai.projects.models.ComputerEnvironment
-    :ivar display_width: The width of the computer display. Required.
-    :vartype display_width: int
-    :ivar display_height: The height of the computer display. Required.
-    :vartype display_height: int
-    """
-
-    type: Literal[ToolType.COMPUTER_USE_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the computer use tool. Always ``computer_use_preview``. Required.
-     COMPUTER_USE_PREVIEW."""
-    environment: Union[str, "_models.ComputerEnvironment"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of computer environment to control. Required. Known values are: \"windows\", \"mac\",
-     \"linux\", \"ubuntu\", and \"browser\"."""
-    display_width: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The width of the computer display. Required."""
-    display_height: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The height of the computer display. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        environment: Union[str, "_models.ComputerEnvironment"],
-        display_width: int,
-        display_height: int,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.COMPUTER_USE_PREVIEW  # type: ignore
 
 
 class Connection(_Model):
@@ -7646,6 +7730,100 @@ class CreateAsyncResponse(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
+class CreateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The request to create a telephony binding.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    CreateSipTelephonyBindingRequest, CreateTeamsPhoneExtensibilityTelephonyBindingRequest,
+    CreateTwilioTelephonyBindingRequest
+
+    :ivar provider: The telephony provider. Required. Known values are:
+     "teams_phone_extensibility", "twilio", and "sip".
+    :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
+    :ivar label: An optional display label for the binding.
+    :vartype label: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\", \"twilio\",
+     and \"sip\"."""
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Foundry connection name for the telephony provider. Required."""
+    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional display label for the binding."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        provider: str,
+        connection_name: str,
+        label: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CreateSipTelephonyBindingRequest(
+    CreateTelephonyBindingRequest, discriminator="sip"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The request to create an inbound SIP binding.
+
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
+    :ivar label: An optional display label for the binding.
+    :vartype label: str
+    :ivar provider: Required. Session Initiation Protocol.
+    :vartype provider: str or ~azure.ai.projects.models.SIP
+    :ivar phone_number: For UI display only.
+    :vartype phone_number: str
+    :ivar allowed_calling_numbers: Omit or send [] to allow any caller. Entries match the entire
+     normalized E.164 caller number.
+    :vartype allowed_calling_numbers: list[str]
+    """
+
+    provider: Literal[TelephonyProvider.SIP] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Session Initiation Protocol."""
+    phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """For UI display only."""
+    allowed_calling_numbers: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Omit or send [] to allow any caller. Entries match the entire normalized E.164 caller number."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_name: str,
+        label: Optional[str] = None,
+        phone_number: Optional[str] = None,
+        allowed_calling_numbers: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.provider = TelephonyProvider.SIP  # type: ignore
+
+
 class CreateSkillVersionFromFilesBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Multipart request body for creating a skill version from files. Accepts either a single zip
     file or multiple individual skill files (directory upload). For zip uploads, the server
@@ -7672,50 +7850,6 @@ class CreateSkillVersionFromFilesBody(_Model):  # pylint: disable=docstring-keyw
         *,
         files: list[FileType],
         default: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CreateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The request to create a telephony binding.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    CreateTeamsPhoneExtensibilityTelephonyBindingRequest, CreateTwilioTelephonyBindingRequest
-
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
-     and "twilio".
-    :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
-    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
-    :vartype connection_name: str
-    :ivar label: An optional display label for the binding.
-    :vartype label: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
-    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
-     \"twilio\"."""
-    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Foundry connection name for the telephony provider. Required."""
-    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An optional display label for the binding."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        provider: str,
-        connection_name: str,
-        label: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -7784,8 +7918,8 @@ class CreateTelephonyCallJobRequest(_Model):  # pylint: disable=docstring-keywor
     :ivar destination: The phone destination to call. Required.
     :vartype destination: ~azure.ai.projects.models.TelephonyOutboundDestination
     :ivar connection_name: The Foundry connection name in the current project used to originate the
-     call. Its category selects Twilio or Azure Communication Services / Teams Phone extensibility.
-     No inbound telephony binding is required. Required.
+     call. Its category selects Twilio, Azure Communication Services / Teams Phone extensibility, or
+     SIP. No inbound telephony binding is required. Required.
     :vartype connection_name: str
     :ivar source: The caller identity used to originate the call. For a Twilio connection, provide
      an authorized E.164 phone number. For an Azure Communication Services / Teams Phone
@@ -7812,7 +7946,7 @@ class CreateTelephonyCallJobRequest(_Model):  # pylint: disable=docstring-keywor
     """The phone destination to call. Required."""
     connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name in the current project used to originate the call. Its category
-     selects Twilio or Azure Communication Services / Teams Phone extensibility. No inbound
+     selects Twilio, Azure Communication Services / Teams Phone extensibility, or SIP. No inbound
      telephony binding is required. Required."""
     source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The caller identity used to originate the call. For a Twilio connection, provide an authorized
@@ -8226,11 +8360,12 @@ class CustomTextFormatParam(CustomToolParamFormat, discriminator="text"):
         self.type = CustomToolParamFormatType.TEXT  # type: ignore
 
 
-class CustomToolParam(Tool, discriminator="custom"):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CustomToolParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom tool.
 
-    :ivar type: The type of the custom tool. Always ``custom``. Required. CUSTOM.
-    :vartype type: str or ~azure.ai.projects.models.CUSTOM
+    :ivar type: The type of the custom tool. Always ``custom``. Required. Default value is
+     "custom".
+    :vartype type: str
     :ivar name: The name of the custom tool, used to identify it in tool calls. Required.
     :vartype name: str
     :ivar async_property: Whether the tool response can be returned asynchronously versus
@@ -8246,8 +8381,8 @@ class CustomToolParam(Tool, discriminator="custom"):  # pylint: disable=docstrin
     :vartype allowed_callers: list[str or ~azure.ai.projects.models.CallableToolAllowedCaller]
     """
 
-    type: Literal[ToolType.CUSTOM] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the custom tool. Always ``custom``. Required. CUSTOM."""
+    type: Literal["custom"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of the custom tool. Always ``custom``. Required. Default value is \"custom\"."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the custom tool, used to identify it in tool calls. Required."""
     async_property: Optional[bool] = rest_field(
@@ -8288,7 +8423,7 @@ class CustomToolParam(Tool, discriminator="custom"):  # pylint: disable=docstrin
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.CUSTOM  # type: ignore
+        self.type: Literal["custom"] = "custom"
 
 
 class RecurrenceSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -8897,6 +9032,48 @@ class DatasetVersion(_Model):  # pylint: disable=docstring-keyword-should-match-
         connection_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DecisionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """DecisionResponse.
+
+    :ivar model: The model used. Required.
+    :vartype model: str
+    :ivar answers: Answers in question order. Any question can return a refusal instead of an
+     answer; other questions can still receive answers. A refusal has ``type: "refusal"`` and the
+     question's ``name``, or ``null`` if it was unnamed. Required.
+    :vartype answers: list[~azure.ai.projects.models.AnswerResource]
+    :ivar usage: Token usage for the request. Required.
+    :vartype usage: ~azure.ai.projects.models.ResponseUsageResource
+    """
+
+    model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model used. Required."""
+    answers: list["_models.AnswerResource"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Answers in question order. Any question can return a refusal instead of an answer; other
+     questions can still receive answers. A refusal has ``type: \"refusal\"`` and the question's
+     ``name``, or ``null`` if it was unnamed. Required."""
+    usage: "_models.ResponseUsageResource" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Token usage for the request. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: str,
+        answers: list["_models.AnswerResource"],
+        usage: "_models.ResponseUsageResource",
     ) -> None: ...
 
     @overload
@@ -11349,77 +11526,6 @@ class FileDatasetVersion(
         self.type = DatasetType.URI_FILE  # type: ignore
 
 
-class FileSearchTool(Tool, discriminator="file_search"):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """File search.
-
-    :ivar type: The type of the file search tool. Always ``file_search``. Required. FILE_SEARCH.
-    :vartype type: str or ~azure.ai.projects.models.FILE_SEARCH
-    :ivar vector_store_ids: The IDs of the vector stores to search. Required.
-    :vartype vector_store_ids: list[str]
-    :ivar max_num_results: The maximum number of results to return. This number should be between 1
-     and 50 inclusive.
-    :vartype max_num_results: int
-    :ivar ranking_options: Ranking options for search.
-    :vartype ranking_options: ~azure.ai.projects.models.RankingOptions
-    :ivar filters: Is either a ComparisonFilter type or a CompoundFilter type.
-    :vartype filters: ~azure.ai.projects.models.ComparisonFilter or
-     ~azure.ai.projects.models.CompoundFilter
-    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
-    :vartype name: str
-    :ivar description: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype description: str
-    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
-    """
-
-    type: Literal[ToolType.FILE_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the file search tool. Always ``file_search``. Required. FILE_SEARCH."""
-    vector_store_ids: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The IDs of the vector stores to search. Required."""
-    max_num_results: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The maximum number of results to return. This number should be between 1 and 50 inclusive."""
-    ranking_options: Optional["_models.RankingOptions"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Ranking options for search."""
-    filters: Optional["_unions.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Is either a ComparisonFilter type or a CompoundFilter type."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        vector_store_ids: list[str],
-        max_num_results: Optional[int] = None,
-        ranking_options: Optional["_models.RankingOptions"] = None,
-        filters: Optional["_unions.Filters"] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.FILE_SEARCH  # type: ignore
-
-
 class FileSearchToolboxTool(
     ToolboxTool, discriminator="file_search"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -11700,72 +11806,11 @@ class FunctionObject(_Model):  # pylint: disable=docstring-keyword-should-match-
 
 class FunctionParameters(_Model):
     """The parameters the functions accepts, described as a JSON Schema object. See the `guide
-    </docs/guides/function-calling>`_ for examples, and the `JSON Schema reference
-    <https://json-schema.org/understanding-json-schema/>`_ for documentation about the format.
-    Omitting ``parameters`` defines a function with an empty parameter list.
+    <https://developers.openai.com/api/docs/guides/function-calling>`_ for examples, and the `JSON
+    Schema reference <https://json-schema.org/understanding-json-schema/>`_ for documentation about
+    the format. Omitting ``parameters`` defines a function with an empty parameter list.
 
     """
-
-
-class FunctionShellToolParam(
-    Tool, discriminator="shell"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Shell tool.
-
-    :ivar type: The type of the shell tool. Always ``shell``. Required. SHELL.
-    :vartype type: str or ~azure.ai.projects.models.SHELL
-    :ivar environment:
-    :vartype environment: ~azure.ai.projects.models.FunctionShellToolParamEnvironment
-    :ivar allowed_callers:
-    :vartype allowed_callers: list[str or ~azure.ai.projects.models.CallableToolAllowedCaller]
-    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
-    :vartype name: str
-    :ivar description: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype description: str
-    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
-    """
-
-    type: Literal[ToolType.SHELL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the shell tool. Always ``shell``. Required. SHELL."""
-    environment: Optional["_models.FunctionShellToolParamEnvironment"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        environment: Optional["_models.FunctionShellToolParamEnvironment"] = None,
-        allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.SHELL  # type: ignore
 
 
 class FunctionShellToolParamEnvironmentContainerReferenceParam(
@@ -11839,74 +11884,6 @@ class FunctionShellToolParamEnvironmentLocalEnvironmentParam(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = FunctionShellToolParamEnvironmentType.LOCAL  # type: ignore
-
-
-class FunctionTool(Tool, discriminator="function"):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Function.
-
-    :ivar type: The type of the function tool. Always ``function``. Required. FUNCTION.
-    :vartype type: str or ~azure.ai.projects.models.FUNCTION
-    :ivar name: The name of the function to call. Required.
-    :vartype name: str
-    :ivar async_property:
-    :vartype async_property: bool
-    :ivar description:
-    :vartype description: str
-    :ivar parameters: Required.
-    :vartype parameters: dict[str, any]
-    :ivar output_schema:
-    :vartype output_schema: dict[str, any]
-    :ivar strict: Required.
-    :vartype strict: bool
-    :ivar defer_loading: Whether this function is deferred and loaded via tool search.
-    :vartype defer_loading: bool
-    :ivar allowed_callers:
-    :vartype allowed_callers: list[str or ~azure.ai.projects.models.CallableToolAllowedCaller]
-    """
-
-    type: Literal[ToolType.FUNCTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the function tool. Always ``function``. Required. FUNCTION."""
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the function to call. Required."""
-    async_property: Optional[bool] = rest_field(
-        name="async", visibility=["read", "create", "update", "delete", "query"]
-    )
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    parameters: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    output_schema: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    strict: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    defer_loading: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether this function is deferred and loaded via tool search."""
-    allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        parameters: dict[str, Any],
-        strict: bool,
-        async_property: Optional[bool] = None,
-        description: Optional[str] = None,
-        output_schema: Optional[dict[str, Any]] = None,
-        defer_loading: Optional[bool] = None,
-        allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.FUNCTION  # type: ignore
 
 
 class FunctionToolParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -12560,191 +12537,6 @@ class HybridSearchOptions(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
-class ImageGenTool(
-    Tool, discriminator="image_generation"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Image generation tool.
-
-    :ivar type: The type of the image generation tool. Always ``image_generation``. Required.
-     IMAGE_GENERATION.
-    :vartype type: str or ~azure.ai.projects.models.IMAGE_GENERATION
-    :ivar model: Is one of the following types: Literal["gpt-image-1"],
-     Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], Literal["gpt-image-2"],
-     Literal["gpt-image-2-2026-04-21"], str
-    :vartype model: str or str or str or str or str or str
-    :ivar quality: The quality of the generated image. One of ``low``, ``medium``, ``high``, or
-     ``auto``. Default: ``auto``. Is one of the following types: Literal["low"], Literal["medium"],
-     Literal["high"], Literal["auto"]
-    :vartype quality: str or str or str or str
-    :ivar size: The size of the generated images. For ``gpt-image-2`` and
-     ``gpt-image-2-2026-04-21``, arbitrary resolutions are supported as ``WIDTHxHEIGHT`` strings,
-     for example ``1536x864``. Width and height must both be divisible by 16 and the requested
-     aspect ratio must be between 1:3 and 3:1. Resolutions above ``2560x1440`` are experimental, and
-     the maximum supported resolution is ``3840x2160``. The requested size must also satisfy the
-     model's current pixel and edge limits. The standard sizes ``1024x1024``, ``1536x1024``, and
-     ``1024x1536`` are supported by the GPT image models; ``auto`` is supported for models that
-     allow automatic sizing. For ``dall-e-2``, use one of ``256x256``, ``512x512``, or
-     ``1024x1024``. For ``dall-e-3``, use one of ``1024x1024``, ``1792x1024``, or ``1024x1792``. Is
-     one of the following types: Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"],
-     Literal["auto"], str
-    :vartype size: str or str or str or str or str
-    :ivar output_format: The output format of the generated image. One of ``png``, ``webp``, or
-     ``jpeg``. Default: ``png``. Is one of the following types: Literal["png"], Literal["webp"],
-     Literal["jpeg"]
-    :vartype output_format: str or str or str
-    :ivar output_compression: Compression level for the output image. Default: 100.
-    :vartype output_compression: int
-    :ivar moderation: Moderation level for the generated image. Default: ``auto``. Is either a
-     Literal["auto"] type or a Literal["low"] type.
-    :vartype moderation: str or str
-    :ivar background: Set the background of the generated image. One of ``transparent``,
-     ``opaque``, or ``auto``. Transparent backgrounds are available for supported GPT Image models.
-     For ``gpt-image-2`` and ``gpt-image-2-2026-04-21``, this support is in preview. When using
-     ``transparent``, set the output format to ``png`` or ``webp``. Default: ``auto``. Is one of the
-     following types: Literal["transparent"], Literal["opaque"], Literal["auto"]
-    :vartype background: str or str or str
-    :ivar input_fidelity: Known values are: "high" and "low".
-    :vartype input_fidelity: str or ~azure.ai.projects.models.InputFidelity
-    :ivar input_image_mask: Optional mask for inpainting. Contains ``image_url`` (string, optional)
-     and ``file_id`` (string, optional).
-    :vartype input_image_mask: ~azure.ai.projects.models.ImageGenToolInputImageMask
-    :ivar partial_images: Number of partial images to generate in streaming mode, from 0 (default
-     value) to 3.
-    :vartype partial_images: int
-    :ivar action: Whether to generate a new image or edit an existing image. Default: ``auto``.
-     Known values are: "generate", "edit", and "auto".
-    :vartype action: str or ~azure.ai.projects.models.ImageGenAction
-    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
-    :vartype name: str
-    :ivar description: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype description: str
-    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
-    """
-
-    type: Literal[ToolType.IMAGE_GENERATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the image generation tool. Always ``image_generation``. Required. IMAGE_GENERATION."""
-    model: Optional[
-        Union[
-            Literal["gpt-image-1"],
-            Literal["gpt-image-1-mini"],
-            Literal["gpt-image-1.5"],
-            Literal["gpt-image-2"],
-            Literal["gpt-image-2-2026-04-21"],
-            str,
-        ]
-    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Is one of the following types: Literal[\"gpt-image-1\"], Literal[\"gpt-image-1-mini\"],
-     Literal[\"gpt-image-1.5\"], Literal[\"gpt-image-2\"], Literal[\"gpt-image-2-2026-04-21\"], str"""
-    quality: Optional[Literal["low", "medium", "high", "auto"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The quality of the generated image. One of ``low``, ``medium``, ``high``, or ``auto``. Default:
-     ``auto``. Is one of the following types: Literal[\"low\"], Literal[\"medium\"],
-     Literal[\"high\"], Literal[\"auto\"]"""
-    size: Optional[Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]] = (
-        rest_field(visibility=["read", "create", "update", "delete", "query"])
-    )
-    """The size of the generated images. For ``gpt-image-2`` and ``gpt-image-2-2026-04-21``, arbitrary
-     resolutions are supported as ``WIDTHxHEIGHT`` strings, for example ``1536x864``. Width and
-     height must both be divisible by 16 and the requested aspect ratio must be between 1:3 and 3:1.
-     Resolutions above ``2560x1440`` are experimental, and the maximum supported resolution is
-     ``3840x2160``. The requested size must also satisfy the model's current pixel and edge limits.
-     The standard sizes ``1024x1024``, ``1536x1024``, and ``1024x1536`` are supported by the GPT
-     image models; ``auto`` is supported for models that allow automatic sizing. For ``dall-e-2``,
-     use one of ``256x256``, ``512x512``, or ``1024x1024``. For ``dall-e-3``, use one of
-     ``1024x1024``, ``1792x1024``, or ``1024x1792``. Is one of the following types:
-     Literal[\"1024x1024\"], Literal[\"1024x1536\"], Literal[\"1536x1024\"], Literal[\"auto\"], str"""
-    output_format: Optional[Literal["png", "webp", "jpeg"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The output format of the generated image. One of ``png``, ``webp``, or ``jpeg``. Default:
-     ``png``. Is one of the following types: Literal[\"png\"], Literal[\"webp\"], Literal[\"jpeg\"]"""
-    output_compression: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Compression level for the output image. Default: 100."""
-    moderation: Optional[Literal["auto", "low"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Moderation level for the generated image. Default: ``auto``. Is either a Literal[\"auto\"] type
-     or a Literal[\"low\"] type."""
-    background: Optional[Literal["transparent", "opaque", "auto"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Set the background of the generated image. One of ``transparent``, ``opaque``, or ``auto``.
-     Transparent backgrounds are available for supported GPT Image models. For ``gpt-image-2`` and
-     ``gpt-image-2-2026-04-21``, this support is in preview. When using ``transparent``, set the
-     output format to ``png`` or ``webp``. Default: ``auto``. Is one of the following types:
-     Literal[\"transparent\"], Literal[\"opaque\"], Literal[\"auto\"]"""
-    input_fidelity: Optional[Union[str, "_models.InputFidelity"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Known values are: \"high\" and \"low\"."""
-    input_image_mask: Optional["_models.ImageGenToolInputImageMask"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Optional mask for inpainting. Contains ``image_url`` (string, optional) and ``file_id``
-     (string, optional)."""
-    partial_images: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Number of partial images to generate in streaming mode, from 0 (default value) to 3."""
-    action: Optional[Union[str, "_models.ImageGenAction"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Whether to generate a new image or edit an existing image. Default: ``auto``. Known values are:
-     \"generate\", \"edit\", and \"auto\"."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        model: Optional[
-            Union[
-                Literal["gpt-image-1"],
-                Literal["gpt-image-1-mini"],
-                Literal["gpt-image-1.5"],
-                Literal["gpt-image-2"],
-                Literal["gpt-image-2-2026-04-21"],
-                str,
-            ]
-        ] = None,
-        quality: Optional[Literal["low", "medium", "high", "auto"]] = None,
-        size: Optional[
-            Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]
-        ] = None,
-        output_format: Optional[Literal["png", "webp", "jpeg"]] = None,
-        output_compression: Optional[int] = None,
-        moderation: Optional[Literal["auto", "low"]] = None,
-        background: Optional[Literal["transparent", "opaque", "auto"]] = None,
-        input_fidelity: Optional[Union[str, "_models.InputFidelity"]] = None,
-        input_image_mask: Optional["_models.ImageGenToolInputImageMask"] = None,
-        partial_images: Optional[int] = None,
-        action: Optional[Union[str, "_models.ImageGenAction"]] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.IMAGE_GENERATION  # type: ignore
-
-
 class ImageGenToolInputImageMask(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ImageGenToolInputImageMask.
 
@@ -12860,6 +12652,205 @@ class InlineSkillSourceParam(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
         self.type: Literal["base64"] = "base64"
         self.media_type: Literal["application/zip"] = "application/zip"
+
+
+class InlineVoiceSubagent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """One inline voice subagent owned and versioned with its parent Voice Agent, not a separate Agent
+    resource.
+
+    :ivar id: The subagent identifier. New Handoff authoring requires ``$entrypoint`` as the first
+     subagent; other values use the normal handoff ID grammar. Required.
+    :vartype id: str
+    :ivar source: The definition source. This phase supports only ``inline``; referenced Agent
+     resources are deferred. Required. Default value is "inline".
+    :vartype source: str
+    :ivar interface: The interaction interface. This phase supports only ``voice``; text delegation
+     is deferred. Required. Default value is "voice".
+    :vartype interface: str
+    :ivar display_description: A non-empty display-only description of the specialist behavior.
+     This value is not provided to the model. Required.
+    :vartype display_description: str
+    :ivar model: The target model for a cascaded graph. Realtime graphs reject this property and
+     retain the connection model.
+    :vartype model: str
+    :ivar instructions: Subagent-specific instructions. With default inheritance, non-empty
+     instructions follow the original top-level instructions. Omission, null, or an empty string
+     adds nothing after that base. With inheritance disabled, only this value applies.
+    :vartype instructions: str
+    :ivar inherit_base_instructions: Whether the subagent inherits the original top-level
+     instructions before applying its own non-empty instructions. Defaults to true; set to false to
+     opt out.
+    :vartype inherit_base_instructions: bool
+    :ivar tools: Customer tools available to this subagent. Omission or null selects an empty
+     customer tool set.
+    :vartype tools: list[~azure.ai.projects.models.VoiceAgentTool]
+    :ivar tool_choice: Tool-selection behavior for this subagent. If omitted, the service defaults
+     to auto. Null also selects auto. Is one of the following types: Literal["none"],
+     Literal["auto"], Literal["required"], ToolChoiceFunction, ToolChoiceMCP
+    :vartype tool_choice: str or str or str or ~azure.ai.projects.models.ToolChoiceFunction or
+     ~azure.ai.projects.models.ToolChoiceMCP
+    :ivar audio_output: The output voice configuration activated for this subagent, using the same
+     flat voice fields as the top-level audio output. Omission inherits the entrypoint
+     configuration; a supplied object replaces the voice-specific settings.
+    :vartype audio_output: ~azure.ai.projects.models.VoiceAgentVoiceConfig
+    :ivar temperature: The sampling temperature for a compatible subagent model, from 0 through 2.
+    :vartype temperature: float
+    :ivar max_response_output_tokens: The maximum output-token count for one response while this
+     subagent is active. Is either a int type or a Literal["inf"] type.
+    :vartype max_response_output_tokens: int or str
+    :ivar reasoning_effort: Reasoning effort for a compatible subagent model. Known values are:
+     "none", "minimal", "low", "medium", "high", and "xhigh".
+    :vartype reasoning_effort: str or ~azure.ai.projects.models.VoiceAgentHandoffReasoningEffort
+    :ivar voice_adaptation: Voice-optimized instruction adaptation for this subagent. Null disables
+     adaptation.
+    :vartype voice_adaptation: ~azure.ai.projects.models.VoiceAgentHandoffVoiceAdaptation
+    :ivar interim_response: Interim-response settings for this subagent. Null disables interim
+     responses.
+    :vartype interim_response: ~azure.ai.projects.models.VoiceAgentInterimResponseConfig
+    :ivar parallel_tool_calls: Whether this subagent may call customer tools in parallel. If
+     omitted, the service defaults to false. Subagents with outgoing handoff conditions must use
+     ``false``.
+    :vartype parallel_tool_calls: bool
+    :ivar handoff_conditions: Outgoing handoffs from this subagent. The containing subagent
+     supplies each condition's source. The service permits at most 128 conditions across the entire
+     Agent.
+    :vartype handoff_conditions: list[~azure.ai.projects.models.VoiceAgentHandoffCondition]
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The subagent identifier. New Handoff authoring requires ``$entrypoint`` as the first subagent;
+     other values use the normal handoff ID grammar. Required."""
+    source: Literal["inline"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The definition source. This phase supports only ``inline``; referenced Agent resources are
+     deferred. Required. Default value is \"inline\"."""
+    interface: Literal["voice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The interaction interface. This phase supports only ``voice``; text delegation is deferred.
+     Required. Default value is \"voice\"."""
+    display_description: str = rest_field(
+        name="description", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A non-empty display-only description of the specialist behavior. This value is not provided to
+     the model. Required."""
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target model for a cascaded graph. Realtime graphs reject this property and retain the
+     connection model."""
+    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Subagent-specific instructions. With default inheritance, non-empty instructions follow the
+     original top-level instructions. Omission, null, or an empty string adds nothing after that
+     base. With inheritance disabled, only this value applies."""
+    inherit_base_instructions: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the subagent inherits the original top-level instructions before applying its own
+     non-empty instructions. Defaults to true; set to false to opt out."""
+    tools: Optional[list["_models.VoiceAgentTool"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Customer tools available to this subagent. Omission or null selects an empty customer tool set."""
+    tool_choice: Optional["_unions.VoiceAgentToolChoice"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Tool-selection behavior for this subagent. If omitted, the service defaults to auto. Null also
+     selects auto. Is one of the following types: Literal[\"none\"], Literal[\"auto\"],
+     Literal[\"required\"], ToolChoiceFunction, ToolChoiceMCP"""
+    audio_output: Optional["_models.VoiceAgentVoiceConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The output voice configuration activated for this subagent, using the same flat voice fields as
+     the top-level audio output. Omission inherits the entrypoint configuration; a supplied object
+     replaces the voice-specific settings."""
+    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The sampling temperature for a compatible subagent model, from 0 through 2."""
+    max_response_output_tokens: Optional["_unions.VoiceAgentHandoffMaxOutputTokens"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum output-token count for one response while this subagent is active. Is either a int
+     type or a Literal[\"inf\"] type."""
+    reasoning_effort: Optional[Union[str, "_models.VoiceAgentHandoffReasoningEffort"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reasoning effort for a compatible subagent model. Known values are: \"none\", \"minimal\",
+     \"low\", \"medium\", \"high\", and \"xhigh\"."""
+    voice_adaptation: Optional["_models.VoiceAgentHandoffVoiceAdaptation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Voice-optimized instruction adaptation for this subagent. Null disables adaptation."""
+    interim_response: Optional["_models.VoiceAgentInterimResponseConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Interim-response settings for this subagent. Null disables interim responses."""
+    parallel_tool_calls: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this subagent may call customer tools in parallel. If omitted, the service defaults to
+     false. Subagents with outgoing handoff conditions must use ``false``."""
+    handoff_conditions: Optional[list["_models.VoiceAgentHandoffCondition"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Outgoing handoffs from this subagent. The containing subagent supplies each condition's source.
+     The service permits at most 128 conditions across the entire Agent."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        display_description: str,
+        model: Optional[str] = None,
+        instructions: Optional[str] = None,
+        inherit_base_instructions: Optional[bool] = None,
+        tools: Optional[list["_models.VoiceAgentTool"]] = None,
+        tool_choice: Optional["_unions.VoiceAgentToolChoice"] = None,
+        audio_output: Optional["_models.VoiceAgentVoiceConfig"] = None,
+        temperature: Optional[float] = None,
+        max_response_output_tokens: Optional["_unions.VoiceAgentHandoffMaxOutputTokens"] = None,
+        reasoning_effort: Optional[Union[str, "_models.VoiceAgentHandoffReasoningEffort"]] = None,
+        voice_adaptation: Optional["_models.VoiceAgentHandoffVoiceAdaptation"] = None,
+        interim_response: Optional["_models.VoiceAgentInterimResponseConfig"] = None,
+        parallel_tool_calls: Optional[bool] = None,
+        handoff_conditions: Optional[list["_models.VoiceAgentHandoffCondition"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source: Literal["inline"] = "inline"
+        self.interface: Literal["voice"] = "voice"
+
+
+class InputTokensDetailsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """InputTokensDetailsResource.
+
+    :ivar cached_tokens: Required.
+    :vartype cached_tokens: int
+    :ivar cache_write_tokens: Required.
+    :vartype cache_write_tokens: int
+    """
+
+    cached_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    cache_write_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cached_tokens: int,
+        cache_write_tokens: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class Insight(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -13407,41 +13398,29 @@ class InvokeAgentResponsesApiRoutineAction(
         self.type = RoutineActionType.INVOKE_AGENT_RESPONSES_API  # type: ignore
 
 
-class LocalShellToolParam(
-    Tool, discriminator="local_shell"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Local shell tool.
+class LiveAllowedServerEventParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A Live server event selector for the WebRTC frontend data channel.
 
-    :ivar type: The type of the local shell tool. Always ``local_shell``. Required. LOCAL_SHELL.
-    :vartype type: str or ~azure.ai.projects.models.LOCAL_SHELL
-    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
-    :vartype name: str
-    :ivar description: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype description: str
-    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: The outer Live server event type. Use 'response.event' for Responses events.
+     Required.
+    :vartype type: str
+    :ivar response_event: The nested Responses event type. Required when type is 'response.event';
+     forbidden for other event types.
+    :vartype response_event: str
     """
 
-    type: Literal[ToolType.LOCAL_SHELL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the local shell tool. Always ``local_shell``. Required. LOCAL_SHELL."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Deprecated. This property is deprecated and will be removed in a future version."""
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The outer Live server event type. Use 'response.event' for Responses events. Required."""
+    response_event: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The nested Responses event type. Required when type is 'response.event'; forbidden for other
+     event types."""
 
     @overload
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+        type: str,
+        response_event: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -13453,7 +13432,6079 @@ class LocalShellToolParam(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.LOCAL_SHELL  # type: ignore
+
+
+class LiveAllowedToolsChoiceParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveAllowedToolsChoiceParam.
+
+    :ivar type: The tool choice type. Always ``allowed_tools``. Required. Default value is
+     "allowed_tools".
+    :vartype type: str
+    :ivar tools: The tools that the delegated Responses model may call. Required.
+    :vartype tools: list[~azure.ai.projects.models.LiveFunctionToolChoiceParam or
+     ~azure.ai.projects.models.LiveMCPToolChoiceParam or
+     ~azure.ai.projects.models.LiveSpecificFileSearchParam or
+     ~azure.ai.projects.models.LiveSpecificWebSearchParam or
+     ~azure.ai.projects.models.LiveSpecificWebSearchPreviewParam or
+     ~azure.ai.projects.models.LiveSpecificImageGenParam or
+     ~azure.ai.projects.models.LiveSpecificComputerParam or
+     ~azure.ai.projects.models.LiveSpecificCodeInterpreterParam or
+     ~azure.ai.projects.models.LiveSpecificProgrammaticToolCallingParam or
+     ~azure.ai.projects.models.LiveSpecificFunctionShellParam or
+     ~azure.ai.projects.models.LiveSpecificCustomToolParam or
+     ~azure.ai.projects.models.LiveSpecificApplyPatchParam]
+    :ivar mode: Known values are: "none", "auto", and "required".
+    :vartype mode: str or ~azure.ai.projects.models.LiveToolChoiceValueEnum
+    """
+
+    type: Literal["allowed_tools"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tool choice type. Always ``allowed_tools``. Required. Default value is \"allowed_tools\"."""
+    tools: list[
+        Union[
+            "_models.LiveFunctionToolChoiceParam",
+            "_models.LiveMCPToolChoiceParam",
+            "_models.LiveSpecificFileSearchParam",
+            "_models.LiveSpecificWebSearchParam",
+            "_models.LiveSpecificWebSearchPreviewParam",
+            "_models.LiveSpecificImageGenParam",
+            "_models.LiveSpecificComputerParam",
+            "_models.LiveSpecificCodeInterpreterParam",
+            "_models.LiveSpecificProgrammaticToolCallingParam",
+            "_models.LiveSpecificFunctionShellParam",
+            "_models.LiveSpecificCustomToolParam",
+            "_models.LiveSpecificApplyPatchParam",
+        ]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tools that the delegated Responses model may call. Required."""
+    mode: Optional[Union[str, "_models.LiveToolChoiceValueEnum"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"none\", \"auto\", and \"required\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tools: list[
+            Union[
+                "_models.LiveFunctionToolChoiceParam",
+                "_models.LiveMCPToolChoiceParam",
+                "_models.LiveSpecificFileSearchParam",
+                "_models.LiveSpecificWebSearchParam",
+                "_models.LiveSpecificWebSearchPreviewParam",
+                "_models.LiveSpecificImageGenParam",
+                "_models.LiveSpecificComputerParam",
+                "_models.LiveSpecificCodeInterpreterParam",
+                "_models.LiveSpecificProgrammaticToolCallingParam",
+                "_models.LiveSpecificFunctionShellParam",
+                "_models.LiveSpecificCustomToolParam",
+                "_models.LiveSpecificApplyPatchParam",
+            ]
+        ],
+        mode: Optional[Union[str, "_models.LiveToolChoiceValueEnum"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["allowed_tools"] = "allowed_tools"
+
+
+class LiveApplyPatchToolInputParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveApplyPatchToolInputParam.
+
+    :ivar type: Required. Default value is "apply_patch".
+    :vartype type: str
+    """
+
+    type: Literal["apply_patch"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"apply_patch\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["apply_patch"] = "apply_patch"
+
+
+class LiveAudioFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Audio encoding and sample rate for audio sent and received over a Live WebSocket connection.
+    WebRTC and SIP negotiate their media format separately.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LiveSessionAudioFormatPCMParam, LiveSessionAudioFormatPCMAParam,
+    LiveSessionAudioFormatPCMUParam
+
+    :ivar type: Required. Known values are: "audio/pcm", "audio/pcmu", and "audio/pcma".
+    :vartype type: str or ~azure.ai.projects.models.LiveAudioFormatType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"audio/pcm\", \"audio/pcmu\", and \"audio/pcma\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveClientConfigParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Startup-only capabilities for an untrusted frontend attached to a unified WebRTC session.
+    Trusted sideband connections are unaffected.
+
+    :ivar data_channel: Client and server event permissions for the WebRTC frontend data channel.
+     Required.
+    :vartype data_channel: ~azure.ai.projects.models.LiveDataChannelConfigParam
+    """
+
+    data_channel: "_models.LiveDataChannelConfigParam" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Client and server event permissions for the WebRTC frontend data channel. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data_channel: "_models.LiveDataChannelConfigParam",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveClientEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Client events for Live. Initialize a primary WebSocket with session.start and wait for
+    session.started. WebRTC creation already starts the session. Audio append is primary
+    WebSocket-only. See the `Live prompting guide
+    <https://developers.openai.com/api/docs/guides/live-prompting>`_ before writing frontend
+    instructions and delegation policies.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LiveClientEventLiveDecisionCreateParam, LiveClientEventLiveDecisionItemCreateParam,
+    LiveClientEventLiveDecisionItemDeleteParam, LiveClientEventLiveResponseCreateParam,
+    LiveClientEventLiveResponseItemCreateParam, LiveClientEventLiveSessionCloseParam,
+    LiveClientEventLiveCommentaryAppendParam, LiveClientEventLiveInputAudioAppendEvent,
+    LiveClientEventLiveInputAudioMuteParam, LiveClientEventLiveInputAudioUnmuteParam,
+    LiveClientEventLiveInstructionsAppendParam, LiveClientEventLiveOutputAudioFixturePlayParam,
+    LiveSessionStartEvent, LiveClientEventLiveThinkingAppendParam,
+    LiveClientEventLiveSessionUpdateParam
+
+    :ivar type: Required. Known values are: "session.start", "session.update",
+     "session.input_audio.append", "session.input_audio.mute", "session.input_audio.unmute",
+     "session.output_audio.fixture.play", "session.instructions.append", "session.thinking.append",
+     "session.commentary.append", "decision.create", "decision.item.create", "decision.item.delete",
+     "response.item.create", "response.create", and "session.close".
+    :vartype type: str or ~azure.ai.projects.models.LiveClientEventType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"session.start\", \"session.update\",
+     \"session.input_audio.append\", \"session.input_audio.mute\", \"session.input_audio.unmute\",
+     \"session.output_audio.fixture.play\", \"session.instructions.append\",
+     \"session.thinking.append\", \"session.commentary.append\", \"decision.create\",
+     \"decision.item.create\", \"decision.item.delete\", \"response.item.create\",
+     \"response.create\", and \"session.close\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveClientEventLiveCommentaryAppendParam(
+    LiveClientEvent, discriminator="session.commentary.append"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Provide context the Live model can communicate to the user, optionally for an existing client
+    delegation. Rejected while an audio fixture is active.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The Live client event type. Always ``session.commentary.append``. Required.
+     SESSION_COMMENTARY_APPEND.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_COMMENTARY_APPEND
+    :ivar delegation_id: Required.
+    :vartype delegation_id: str
+    :ivar content: Speakable context for the Live model, limited to 500 tokens. Use this for a
+     result the model should communicate; use session.thinking.append for silent context. Required.
+    :vartype content: str
+    """
+
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal[LiveClientEventType.SESSION_COMMENTARY_APPEND] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Live client event type. Always ``session.commentary.append``. Required.
+     SESSION_COMMENTARY_APPEND."""
+    delegation_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Speakable context for the Live model, limited to 500 tokens. Use this for a result the model
+     should communicate; use session.thinking.append for silent context. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        delegation_id: str,
+        content: str,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveClientEventType.SESSION_COMMENTARY_APPEND  # type: ignore
+
+
+class LiveClientEventLiveDecisionCreateParam(
+    LiveClientEvent, discriminator="decision.create"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Evaluate the configured questions using the current conversation and Decision inputs. Reusing
+    an event_id is rejected for the lifetime of the session.
+
+    :ivar event_id: Required.
+    :vartype event_id: str
+    :ivar type: Required. DECISION_CREATE.
+    :vartype type: str or ~azure.ai.projects.models.DECISION_CREATE
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    type: Literal[LiveClientEventType.DECISION_CREATE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. DECISION_CREATE."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveClientEventType.DECISION_CREATE  # type: ignore
+
+
+class LiveClientEventLiveDecisionItemCreateParam(
+    LiveClientEvent, discriminator="decision.item.create"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Append an input item for future decisions without starting an evaluation or changing Live voice
+    context.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required. DECISION_ITEM_CREATE.
+    :vartype type: str or ~azure.ai.projects.models.DECISION_ITEM_CREATE
+    :ivar item: Required.
+    :vartype item: ~azure.ai.projects.models.LiveDecisionInputItemParam
+    """
+
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal[LiveClientEventType.DECISION_ITEM_CREATE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. DECISION_ITEM_CREATE."""
+    item: "_models.LiveDecisionInputItemParam" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        item: "_models.LiveDecisionInputItemParam",
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveClientEventType.DECISION_ITEM_CREATE  # type: ignore
+
+
+class LiveClientEventLiveDecisionItemDeleteParam(
+    LiveClientEvent, discriminator="decision.item.delete"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Delete an input item from future decisions without starting an evaluation or changing Live
+    voice context.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required. DECISION_ITEM_DELETE.
+    :vartype type: str or ~azure.ai.projects.models.DECISION_ITEM_DELETE
+    :ivar item_id: Required.
+    :vartype item_id: str
+    """
+
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal[LiveClientEventType.DECISION_ITEM_DELETE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. DECISION_ITEM_DELETE."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        item_id: str,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveClientEventType.DECISION_ITEM_DELETE  # type: ignore
+
+
+class LiveClientEventLiveInputAudioAppendEvent(
+    LiveClientEvent, discriminator="session.input_audio.append"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Send audio to a Live session over its primary WebSocket. WebRTC and SIP sessions send audio
+    over their media transport.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The Live client event type. Always ``session.input_audio.append``. Required.
+     SESSION_INPUT_AUDIO_APPEND.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_INPUT_AUDIO_APPEND
+    :ivar audio: Base64-encoded raw audio in the startup-selected format, without a WAV or other
+     container header. Primary WebSocket only; media transports use their audio track. Audio appends
+     have no acknowledgment. Reflected sideband server events reuse this event type and audio key,
+     with no timestamps or event_id; their audio is always mono PCM16LE at 24 kHz. Required.
+    :vartype audio: str
+    """
+
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal[LiveClientEventType.SESSION_INPUT_AUDIO_APPEND] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Live client event type. Always ``session.input_audio.append``. Required.
+     SESSION_INPUT_AUDIO_APPEND."""
+    audio: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Base64-encoded raw audio in the startup-selected format, without a WAV or other container
+     header. Primary WebSocket only; media transports use their audio track. Audio appends have no
+     acknowledgment. Reflected sideband server events reuse this event type and audio key, with no
+     timestamps or event_id; their audio is always mono PCM16LE at 24 kHz. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        audio: str,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveClientEventType.SESSION_INPUT_AUDIO_APPEND  # type: ignore
+
+
+class LiveClientEventLiveInputAudioMuteParam(
+    LiveClientEvent, discriminator="session.input_audio.mute"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Mute audio input to the Live model without closing the session. The server acknowledges with
+    ``session.input_audio.muted``.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The Live client event type. Always ``session.input_audio.mute``. Required.
+     SESSION_INPUT_AUDIO_MUTE.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_INPUT_AUDIO_MUTE
+    """
+
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal[LiveClientEventType.SESSION_INPUT_AUDIO_MUTE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Live client event type. Always ``session.input_audio.mute``. Required.
+     SESSION_INPUT_AUDIO_MUTE."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveClientEventType.SESSION_INPUT_AUDIO_MUTE  # type: ignore
+
+
+class LiveClientEventLiveInputAudioUnmuteParam(
+    LiveClientEvent, discriminator="session.input_audio.unmute"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Resume audio input to a Live model after muting it. The server acknowledges with
+    ``session.input_audio.unmuted``. An active audio fixture still pauses inference until playback
+    finishes.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The Live client event type. Always ``session.input_audio.unmute``. Required.
+     SESSION_INPUT_AUDIO_UNMUTE.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_INPUT_AUDIO_UNMUTE
+    """
+
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal[LiveClientEventType.SESSION_INPUT_AUDIO_UNMUTE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Live client event type. Always ``session.input_audio.unmute``. Required.
+     SESSION_INPUT_AUDIO_UNMUTE."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveClientEventType.SESSION_INPUT_AUDIO_UNMUTE  # type: ignore
+
+
+class LiveClientEventLiveInstructionsAppendParam(
+    LiveClientEvent, discriminator="session.instructions.append"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Append developer instructions to the Live conversation while it is running, optionally
+    associating them with an existing client delegation. Rejected while an audio fixture is active.
+    These instructions remain in conversation history through compaction and are included in future
+    backend delegations. For external audio, describe content already delivered so the assistant
+    does not repeat it.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The Live client event type. Always ``session.instructions.append``. Required.
+     SESSION_INSTRUCTIONS_APPEND.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_INSTRUCTIONS_APPEND
+    :ivar delegation_id: Required.
+    :vartype delegation_id: str
+    :ivar content: Instruction text to append, limited to 500 tokens. This is a plain string, not
+     an array of content parts. Required.
+    :vartype content: str
+    """
+
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal[LiveClientEventType.SESSION_INSTRUCTIONS_APPEND] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Live client event type. Always ``session.instructions.append``. Required.
+     SESSION_INSTRUCTIONS_APPEND."""
+    delegation_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Instruction text to append, limited to 500 tokens. This is a plain string, not an array of
+     content parts. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        delegation_id: str,
+        content: str,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveClientEventType.SESSION_INSTRUCTIONS_APPEND  # type: ignore
+
+
+class LiveClientEventLiveOutputAudioFixturePlayParam(
+    LiveClientEvent, discriminator="session.output_audio.fixture.play"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Play one complete audio fixture through the session output. Send this event over the primary
+    WebSocket or a server sideband. Audio must be raw mono PCM16 little-endian at 24 kHz,
+    regardless of the session audio format, and at most 30 seconds. The entire payload is validated
+    before model speech is interrupted and input is muted. Only one fixture can be active.
+    fixture.playing acknowledges acceptance and fixture.played reports server mixer drain. These
+    notifications are not exact transport-media boundaries. Input arriving during playback is
+    dropped and not replayed.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required. SESSION_OUTPUT_AUDIO_FIXTURE_PLAY.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_OUTPUT_AUDIO_FIXTURE_PLAY
+    :ivar audio: Base64-encoded raw mono PCM16 audio, little-endian, at 24 kHz. Do not include a
+     WAV or other container header. Required.
+    :vartype audio: str
+    """
+
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal[LiveClientEventType.SESSION_OUTPUT_AUDIO_FIXTURE_PLAY] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. SESSION_OUTPUT_AUDIO_FIXTURE_PLAY."""
+    audio: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Base64-encoded raw mono PCM16 audio, little-endian, at 24 kHz. Do not include a WAV or other
+     container header. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        audio: str,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveClientEventType.SESSION_OUTPUT_AUDIO_FIXTURE_PLAY  # type: ignore
+
+
+class LiveClientEventLiveResponseCreateParam(
+    LiveClientEvent, discriminator="response.create"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request a response from the Live session’s Responses backend, or continue a delegated response
+    waiting for tool results. Requires Responses delegation.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The Live client event type. Always ``response.create``. Required. RESPONSE_CREATE.
+    :vartype type: str or ~azure.ai.projects.models.RESPONSE_CREATE
+    """
+
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal[LiveClientEventType.RESPONSE_CREATE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Live client event type. Always ``response.create``. Required. RESPONSE_CREATE."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveClientEventType.RESPONSE_CREATE  # type: ignore
+
+
+class LiveClientEventLiveResponseItemCreateParam(
+    LiveClientEvent, discriminator="response.item.create"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Add an input item to the Live session’s Responses backend. Requires Responses delegation; use
+    ``response.create`` to request a response.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The Live client event type. Always ``response.item.create``. Required.
+     RESPONSE_ITEM_CREATE.
+    :vartype type: str or ~azure.ai.projects.models.RESPONSE_ITEM_CREATE
+    :ivar item: An input item to append to the Responses backend conversation, such as a user
+     message or a function tool result. Required.
+    :vartype item: dict[str, any]
+    """
+
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal[LiveClientEventType.RESPONSE_ITEM_CREATE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Live client event type. Always ``response.item.create``. Required. RESPONSE_ITEM_CREATE."""
+    item: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An input item to append to the Responses backend conversation, such as a user message or a
+     function tool result. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        item: dict[str, Any],
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveClientEventType.RESPONSE_ITEM_CREATE  # type: ignore
+
+
+class LiveClientEventLiveSessionCloseParam(
+    LiveClientEvent, discriminator="session.close"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request that the Live session close. The terminal ``session.closed`` event contains the close
+    reason and final usage.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The Live client event type. Always ``session.close``. Required. SESSION_CLOSE.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_CLOSE
+    """
+
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal[LiveClientEventType.SESSION_CLOSE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Live client event type. Always ``session.close``. Required. SESSION_CLOSE."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveClientEventType.SESSION_CLOSE  # type: ignore
+
+
+class LiveClientEventLiveSessionUpdateParam(
+    LiveClientEvent, discriminator="session.update"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Update the delegation settings or transcript triggers of an active Live session. The server
+    acknowledges accepted changes with ``session.updated``.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The Live client event type. Always ``session.update``. Required. SESSION_UPDATE.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_UPDATE
+    :ivar session: Sparse delegation and trigger updates. Omitted settings retain their values. The
+     delegation type cannot change. Model, frontend instructions, audio, and startup input are
+     immutable. Required.
+    :vartype session: ~azure.ai.projects.models.LiveSessionUpdateParams
+    """
+
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal[LiveClientEventType.SESSION_UPDATE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Live client event type. Always ``session.update``. Required. SESSION_UPDATE."""
+    session: "_models.LiveSessionUpdateParams" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Sparse delegation and trigger updates. Omitted settings retain their values. The delegation
+     type cannot change. Model, frontend instructions, audio, and startup input are immutable.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        session: "_models.LiveSessionUpdateParams",
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveClientEventType.SESSION_UPDATE  # type: ignore
+
+
+class LiveClientEventLiveThinkingAppendParam(
+    LiveClientEvent, discriminator="session.thinking.append"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Provide silent reasoning or progress context to the Live model, optionally for an existing
+    client delegation. Rejected while an audio fixture is active.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The Live client event type. Always ``session.thinking.append``. Required.
+     SESSION_THINKING_APPEND.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_THINKING_APPEND
+    :ivar delegation_id: Required.
+    :vartype delegation_id: str
+    :ivar content: Silent reasoning or progress context, limited to 500 tokens. It does not
+     directly request speech, but can influence later speech and is not a secrecy boundary.
+     Required.
+    :vartype content: str
+    """
+
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal[LiveClientEventType.SESSION_THINKING_APPEND] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Live client event type. Always ``session.thinking.append``. Required.
+     SESSION_THINKING_APPEND."""
+    delegation_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Silent reasoning or progress context, limited to 500 tokens. It does not directly request
+     speech, but can influence later speech and is not a secrecy boundary. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        delegation_id: str,
+        content: str,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveClientEventType.SESSION_THINKING_APPEND  # type: ignore
+
+
+class LiveCodeInterpreterToolInputParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveCodeInterpreterToolInputParam.
+
+    :ivar type: Required. Default value is "code_interpreter".
+    :vartype type: str
+    """
+
+    type: Literal["code_interpreter"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"code_interpreter\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["code_interpreter"] = "code_interpreter"
+
+
+class LiveComputerToolInputParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveComputerToolInputParam.
+
+    :ivar type: Required. Default value is "computer".
+    :vartype type: str
+    """
+
+    type: Literal["computer"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"computer\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["computer"] = "computer"
+
+
+class LiveContainerNetworkPolicyDisabledParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveContainerNetworkPolicyDisabledParam.
+
+    :ivar type: Disable outbound network access. Always ``disabled``. Required. Default value is
+     "disabled".
+    :vartype type: str
+    """
+
+    type: Literal["disabled"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Disable outbound network access. Always ``disabled``. Required. Default value is \"disabled\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["disabled"] = "disabled"
+
+
+class LiveContainerReferenceParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveContainerReferenceParam.
+
+    :ivar type: References a container created with the /v1/containers endpoint. Required. Default
+     value is "container_reference".
+    :vartype type: str
+    :ivar container_id: The ID of the referenced container. Required.
+    :vartype container_id: str
+    """
+
+    type: Literal["container_reference"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """References a container created with the /v1/containers endpoint. Required. Default value is
+     \"container_reference\"."""
+    container_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the referenced container. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        container_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["container_reference"] = "container_reference"
+
+
+class LiveContextWindowUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The latest measured context-window usage of the Live model. This is separate from billing usage
+    and delegated Responses token usage.
+
+    :ivar usage_ratio: The latest active context token count divided by the Live model context
+     limit. Can decrease after compaction and may lag between measured audio frames. Required.
+    :vartype usage_ratio: float
+    """
+
+    usage_ratio: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The latest active context token count divided by the Live model context limit. Can decrease
+     after compaction and may lag between measured audio frames. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        usage_ratio: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveCustomToolInputParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveCustomToolInputParam.
+
+    :ivar type: Required. Default value is "custom".
+    :vartype type: str
+    """
+
+    type: Literal["custom"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"custom\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["custom"] = "custom"
+
+
+class LiveCustomVoiceParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveCustomVoiceParam.
+
+    :ivar id: Required.
+    :vartype id: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveDataChannelConfigParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Control which Live events an untrusted WebRTC frontend can send and receive over its data
+    channel. These restrictions do not apply to trusted sideband connections.
+
+    :ivar allowed_client_events: Client event types that the frontend data channel may send. Use
+     'all' to allow every client event; an empty array allows none. Omission preserves the existing
+     allow-all behavior. Is either a Literal["all"] type or a [str] type.
+    :vartype allowed_client_events: str or list[str]
+    :ivar allowed_server_events: Server events that may be sent to the frontend data channel. Use
+     'all' to allow every server event; an empty array allows none. Omission preserves the existing
+     allow-all behavior. Responses events use an object with type 'response.event' and a
+     response_event selector. Is either a Literal["all"] type or a [LiveAllowedServerEventParam]
+     type.
+    :vartype allowed_server_events: str or
+     list[~azure.ai.projects.models.LiveAllowedServerEventParam]
+    """
+
+    allowed_client_events: Optional[Union[Literal["all"], list[str]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Client event types that the frontend data channel may send. Use 'all' to allow every client
+     event; an empty array allows none. Omission preserves the existing allow-all behavior. Is
+     either a Literal[\"all\"] type or a [str] type."""
+    allowed_server_events: Optional[Union[Literal["all"], list["_models.LiveAllowedServerEventParam"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Server events that may be sent to the frontend data channel. Use 'all' to allow every server
+     event; an empty array allows none. Omission preserves the existing allow-all behavior.
+     Responses events use an object with type 'response.event' and a response_event selector. Is
+     either a Literal[\"all\"] type or a [LiveAllowedServerEventParam] type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        allowed_client_events: Optional[Union[Literal["all"], list[str]]] = None,
+        allowed_server_events: Optional[Union[Literal["all"], list["_models.LiveAllowedServerEventParam"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveDecisionChoiceParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionChoiceParam.
+
+    :ivar value: Required. Is either a str type or a bool type.
+    :vartype value: str or bool
+    :ivar description:
+    :vartype description: str
+    """
+
+    value: Union[str, bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Is either a str type or a bool type."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Union[str, bool],
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveDecisionQuestion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionQuestion.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LiveDecisionChoiceQuestionParam, LiveDecisionPredicateQuestionParam,
+    LiveDecisionScoreQuestionParam
+
+    :ivar type: Required. Known values are: "choice", "predicate", and "score".
+    :vartype type: str or ~azure.ai.projects.models.LiveDecisionQuestionType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"choice\", \"predicate\", and \"score\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveDecisionChoiceQuestionParam(
+    LiveDecisionQuestion, discriminator="choice"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionChoiceQuestionParam.
+
+    :ivar type: Required. CHOICE.
+    :vartype type: str or ~azure.ai.projects.models.CHOICE
+    :ivar name:
+    :vartype name: str
+    :ivar instructions: Required. Is either a str type or a
+     [Union["_models.LiveDecisionInputTextParam", "_models.LiveDecisionInputImageParam",
+     "_models.LiveDecisionInputJsonParam"]] type.
+    :vartype instructions: str or list[~azure.ai.projects.models.LiveDecisionInputTextParam or
+     ~azure.ai.projects.models.LiveDecisionInputImageParam or
+     ~azure.ai.projects.models.LiveDecisionInputJsonParam]
+    :ivar choices: Required.
+    :vartype choices: list[~azure.ai.projects.models.LiveDecisionChoiceParam]
+    """
+
+    type: Literal[LiveDecisionQuestionType.CHOICE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. CHOICE."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    instructions: Union[
+        str,
+        list[
+            Union[
+                "_models.LiveDecisionInputTextParam",
+                "_models.LiveDecisionInputImageParam",
+                "_models.LiveDecisionInputJsonParam",
+            ]
+        ],
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Is either a str type or a [Union[\"_models.LiveDecisionInputTextParam\",
+     \"_models.LiveDecisionInputImageParam\", \"_models.LiveDecisionInputJsonParam\"]] type."""
+    choices: list["_models.LiveDecisionChoiceParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        instructions: Union[
+            str,
+            list[
+                Union[
+                    "_models.LiveDecisionInputTextParam",
+                    "_models.LiveDecisionInputImageParam",
+                    "_models.LiveDecisionInputJsonParam",
+                ]
+            ],
+        ],
+        choices: list["_models.LiveDecisionChoiceParam"],
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveDecisionQuestionType.CHOICE  # type: ignore
+
+
+class LiveDecisionCompleted(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionCompleted.
+
+    :ivar type: Required. Default value is "decision.completed".
+    :vartype type: str
+    :ivar decision: The native Decision API response, including its model, ordered answers, and
+     token usage. Required.
+    :vartype decision: ~azure.ai.projects.models.DecisionResponse
+    """
+
+    type: Literal["decision.completed"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"decision.completed\"."""
+    decision: "_models.DecisionResponse" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The native Decision API response, including its model, ordered answers, and token usage.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        decision: "_models.DecisionResponse",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["decision.completed"] = "decision.completed"
+
+
+class LiveDecisionInputItemParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionInputItemParam.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LiveDecisionCustomToolCallParam, LiveDecisionCustomToolCallOutputParam,
+    LiveDecisionFunctionCallParam, LiveDecisionFunctionCallOutputParam,
+    LiveDecisionInputItemParamMessage
+
+    :ivar type: Required. Known values are: "message", "function_call", "function_call_output",
+     "custom_tool_call", and "custom_tool_call_output".
+    :vartype type: str or ~azure.ai.projects.models.LiveDecisionInputItemParamType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"message\", \"function_call\", \"function_call_output\",
+     \"custom_tool_call\", and \"custom_tool_call_output\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveDecisionCustomToolCallOutputParam(
+    LiveDecisionInputItemParam, discriminator="custom_tool_call_output"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionCustomToolCallOutputParam.
+
+    :ivar id:
+    :vartype id: str
+    :ivar call_id: The unique ID of the function tool call generated by the model. Required.
+    :vartype call_id: str
+    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
+    :vartype status: str or ~azure.ai.projects.models.LiveFunctionCallItemStatus
+    :ivar type: Required. CUSTOM_TOOL_CALL_OUTPUT.
+    :vartype type: str or ~azure.ai.projects.models.CUSTOM_TOOL_CALL_OUTPUT
+    :ivar output: Required. Is either a str type or a [Union["_models.LiveDecisionInputTextParam",
+     "_models.LiveDecisionInputImageParam"]] type.
+    :vartype output: str or list[~azure.ai.projects.models.LiveDecisionInputTextParam or
+     ~azure.ai.projects.models.LiveDecisionInputImageParam]
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the function tool call generated by the model. Required."""
+    status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
+    type: Literal[LiveDecisionInputItemParamType.CUSTOM_TOOL_CALL_OUTPUT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. CUSTOM_TOOL_CALL_OUTPUT."""
+    output: Union[str, list[Union["_models.LiveDecisionInputTextParam", "_models.LiveDecisionInputImageParam"]]] = (
+        rest_field(visibility=["read", "create", "update", "delete", "query"])
+    )
+    """Required. Is either a str type or a [Union[\"_models.LiveDecisionInputTextParam\",
+     \"_models.LiveDecisionInputImageParam\"]] type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        call_id: str,
+        output: Union[str, list[Union["_models.LiveDecisionInputTextParam", "_models.LiveDecisionInputImageParam"]]],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveDecisionInputItemParamType.CUSTOM_TOOL_CALL_OUTPUT  # type: ignore
+
+
+class LiveDecisionCustomToolCallParam(
+    LiveDecisionInputItemParam, discriminator="custom_tool_call"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionCustomToolCallParam.
+
+    :ivar id:
+    :vartype id: str
+    :ivar call_id: The unique ID of the function tool call generated by the model. Required.
+    :vartype call_id: str
+    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
+    :vartype status: str or ~azure.ai.projects.models.LiveFunctionCallItemStatus
+    :ivar type: The item type. Always ``custom_tool_call``. Required. CUSTOM_TOOL_CALL.
+    :vartype type: str or ~azure.ai.projects.models.CUSTOM_TOOL_CALL
+    :ivar name: The name of the custom tool to call. Required.
+    :vartype name: str
+    :ivar namespace:
+    :vartype namespace: str
+    :ivar input: The input to the custom tool call. Required.
+    :vartype input: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the function tool call generated by the model. Required."""
+    status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
+    type: Literal[LiveDecisionInputItemParamType.CUSTOM_TOOL_CALL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The item type. Always ``custom_tool_call``. Required. CUSTOM_TOOL_CALL."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the custom tool to call. Required."""
+    namespace: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    input: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The input to the custom tool call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        call_id: str,
+        name: str,
+        input: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = None,
+        namespace: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveDecisionInputItemParamType.CUSTOM_TOOL_CALL  # type: ignore
+
+
+class LiveDecisionFunctionCallOutputParam(
+    LiveDecisionInputItemParam, discriminator="function_call_output"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionFunctionCallOutputParam.
+
+    :ivar id:
+    :vartype id: str
+    :ivar call_id: The unique ID of the function tool call generated by the model. Required.
+    :vartype call_id: str
+    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
+    :vartype status: str or ~azure.ai.projects.models.LiveFunctionCallItemStatus
+    :ivar type: The type of the function tool call output. Always ``function_call_output``.
+     Required. FUNCTION_CALL_OUTPUT.
+    :vartype type: str or ~azure.ai.projects.models.FUNCTION_CALL_OUTPUT
+    :ivar output: Required. Is either a str type or a [Union["_models.LiveDecisionInputTextParam",
+     "_models.LiveDecisionInputImageParam"]] type.
+    :vartype output: str or list[~azure.ai.projects.models.LiveDecisionInputTextParam or
+     ~azure.ai.projects.models.LiveDecisionInputImageParam]
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the function tool call generated by the model. Required."""
+    status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
+    type: Literal[LiveDecisionInputItemParamType.FUNCTION_CALL_OUTPUT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the function tool call output. Always ``function_call_output``. Required.
+     FUNCTION_CALL_OUTPUT."""
+    output: Union[str, list[Union["_models.LiveDecisionInputTextParam", "_models.LiveDecisionInputImageParam"]]] = (
+        rest_field(visibility=["read", "create", "update", "delete", "query"])
+    )
+    """Required. Is either a str type or a [Union[\"_models.LiveDecisionInputTextParam\",
+     \"_models.LiveDecisionInputImageParam\"]] type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        call_id: str,
+        output: Union[str, list[Union["_models.LiveDecisionInputTextParam", "_models.LiveDecisionInputImageParam"]]],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveDecisionInputItemParamType.FUNCTION_CALL_OUTPUT  # type: ignore
+
+
+class LiveDecisionFunctionCallParam(
+    LiveDecisionInputItemParam, discriminator="function_call"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionFunctionCallParam.
+
+    :ivar id:
+    :vartype id: str
+    :ivar call_id: The unique ID of the function tool call generated by the model. Required.
+    :vartype call_id: str
+    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
+    :vartype status: str or ~azure.ai.projects.models.LiveFunctionCallItemStatus
+    :ivar type: The item type. Always ``function_call``. Required. FUNCTION_CALL.
+    :vartype type: str or ~azure.ai.projects.models.FUNCTION_CALL
+    :ivar name: Required.
+    :vartype name: str
+    :ivar namespace:
+    :vartype namespace: str
+    :ivar arguments: The function arguments as a JSON string. Required.
+    :vartype arguments: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the function tool call generated by the model. Required."""
+    status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
+    type: Literal[LiveDecisionInputItemParamType.FUNCTION_CALL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The item type. Always ``function_call``. Required. FUNCTION_CALL."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    namespace: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The function arguments as a JSON string. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        call_id: str,
+        name: str,
+        arguments: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = None,
+        namespace: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveDecisionInputItemParamType.FUNCTION_CALL  # type: ignore
+
+
+class LiveDecisionInputImageParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionInputImageParam.
+
+    :ivar type: Required. Default value is "input_image".
+    :vartype type: str
+    :ivar image_url: A base64-encoded image data URL or a publicly accessible HTTP(S) image URL.
+     Required.
+    :vartype image_url: str
+    :ivar detail: Known values are: "low", "high", "auto", and "original".
+    :vartype detail: str or ~azure.ai.projects.models.LiveDetailEnum
+    """
+
+    type: Literal["input_image"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"input_image\"."""
+    image_url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A base64-encoded image data URL or a publicly accessible HTTP(S) image URL. Required."""
+    detail: Optional[Union[str, "_models.LiveDetailEnum"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"low\", \"high\", \"auto\", and \"original\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        image_url: str,
+        detail: Optional[Union[str, "_models.LiveDetailEnum"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["input_image"] = "input_image"
+
+
+class LiveDecisionInputItemParamMessage(LiveDecisionInputItemParam, discriminator="message"):
+    """LiveDecisionInputItemParamMessage.
+
+    :ivar type: Required. MESSAGE.
+    :vartype type: str or ~azure.ai.projects.models.MESSAGE
+    """
+
+    type: Literal[LiveDecisionInputItemParamType.MESSAGE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. MESSAGE."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveDecisionInputItemParamType.MESSAGE  # type: ignore
+
+
+class LiveDecisionInputJsonParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionInputJsonParam.
+
+    :ivar type: Required. Default value is "input_json".
+    :vartype type: str
+    :ivar data: Required. Is either a LiveDecisionJsonObject type or a [LiveDecisionJsonObject]
+     type.
+    :vartype data: ~azure.ai.projects.models.LiveDecisionJsonObject or
+     list[~azure.ai.projects.models.LiveDecisionJsonObject]
+    """
+
+    type: Literal["input_json"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"input_json\"."""
+    data: Union["_models.LiveDecisionJsonObject", list["_models.LiveDecisionJsonObject"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. Is either a LiveDecisionJsonObject type or a [LiveDecisionJsonObject] type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: Union["_models.LiveDecisionJsonObject", list["_models.LiveDecisionJsonObject"]],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["input_json"] = "input_json"
+
+
+class LiveDecisionInputTextParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionInputTextParam.
+
+    :ivar type: Required. Default value is "input_text".
+    :vartype type: str
+    :ivar text: The text input to the model. Required.
+    :vartype text: str
+    """
+
+    type: Literal["input_text"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"input_text\"."""
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The text input to the model. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["input_text"] = "input_text"
+
+
+class LiveDecisionJsonObject(_Model):
+    """LiveDecisionJsonObject."""
+
+
+class LiveDecisionPredicateQuestionParam(
+    LiveDecisionQuestion, discriminator="predicate"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionPredicateQuestionParam.
+
+    :ivar type: Required. PREDICATE.
+    :vartype type: str or ~azure.ai.projects.models.PREDICATE
+    :ivar name:
+    :vartype name: str
+    :ivar instructions: Required. Is either a str type or a
+     [Union["_models.LiveDecisionInputTextParam", "_models.LiveDecisionInputImageParam",
+     "_models.LiveDecisionInputJsonParam"]] type.
+    :vartype instructions: str or list[~azure.ai.projects.models.LiveDecisionInputTextParam or
+     ~azure.ai.projects.models.LiveDecisionInputImageParam or
+     ~azure.ai.projects.models.LiveDecisionInputJsonParam]
+    """
+
+    type: Literal[LiveDecisionQuestionType.PREDICATE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. PREDICATE."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    instructions: Union[
+        str,
+        list[
+            Union[
+                "_models.LiveDecisionInputTextParam",
+                "_models.LiveDecisionInputImageParam",
+                "_models.LiveDecisionInputJsonParam",
+            ]
+        ],
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Is either a str type or a [Union[\"_models.LiveDecisionInputTextParam\",
+     \"_models.LiveDecisionInputImageParam\", \"_models.LiveDecisionInputJsonParam\"]] type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        instructions: Union[
+            str,
+            list[
+                Union[
+                    "_models.LiveDecisionInputTextParam",
+                    "_models.LiveDecisionInputImageParam",
+                    "_models.LiveDecisionInputJsonParam",
+                ]
+            ],
+        ],
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveDecisionQuestionType.PREDICATE  # type: ignore
+
+
+class LiveDecisionQuestionsInputParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Questions evaluated using the current transcript and the session's shared Decision items.
+
+    :ivar questions: Native Decision API questions evaluated together, in order. Required.
+    :vartype questions: list[~azure.ai.projects.models.LiveDecisionQuestion]
+    """
+
+    questions: list["_models.LiveDecisionQuestion"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Native Decision API questions evaluated together, in order. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        questions: list["_models.LiveDecisionQuestion"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveDecisionScoreLevelParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionScoreLevelParam.
+
+    :ivar label: Required.
+    :vartype label: str
+    :ivar description:
+    :vartype description: str
+    """
+
+    label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        label: str,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveDecisionScoreQuestionParam(
+    LiveDecisionQuestion, discriminator="score"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionScoreQuestionParam.
+
+    :ivar type: Required. SCORE.
+    :vartype type: str or ~azure.ai.projects.models.SCORE
+    :ivar name:
+    :vartype name: str
+    :ivar instructions: Required. Is either a str type or a
+     [Union["_models.LiveDecisionInputTextParam", "_models.LiveDecisionInputImageParam",
+     "_models.LiveDecisionInputJsonParam"]] type.
+    :vartype instructions: str or list[~azure.ai.projects.models.LiveDecisionInputTextParam or
+     ~azure.ai.projects.models.LiveDecisionInputImageParam or
+     ~azure.ai.projects.models.LiveDecisionInputJsonParam]
+    :ivar levels: Required.
+    :vartype levels: list[~azure.ai.projects.models.LiveDecisionScoreLevelParam]
+    """
+
+    type: Literal[LiveDecisionQuestionType.SCORE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. SCORE."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    instructions: Union[
+        str,
+        list[
+            Union[
+                "_models.LiveDecisionInputTextParam",
+                "_models.LiveDecisionInputImageParam",
+                "_models.LiveDecisionInputJsonParam",
+            ]
+        ],
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Is either a str type or a [Union[\"_models.LiveDecisionInputTextParam\",
+     \"_models.LiveDecisionInputImageParam\", \"_models.LiveDecisionInputJsonParam\"]] type."""
+    levels: list["_models.LiveDecisionScoreLevelParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        instructions: Union[
+            str,
+            list[
+                Union[
+                    "_models.LiveDecisionInputTextParam",
+                    "_models.LiveDecisionInputImageParam",
+                    "_models.LiveDecisionInputJsonParam",
+                ]
+            ],
+        ],
+        levels: list["_models.LiveDecisionScoreLevelParam"],
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveDecisionQuestionType.SCORE  # type: ignore
+
+
+class LiveSessionUpdateParamsDelegation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Delegation settings to update. The delegation type must match the current session; omitted
+    settings retain their values.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LiveSessionUpdateParamsDelegationLiveClientDelegationParam, LiveDecisionsDelegationUpdateParam,
+    LiveResponsesDelegationUpdateParam
+
+    :ivar type: Required. Known values are: "client", "responses", and "decisions".
+    :vartype type: str or ~azure.ai.projects.models.LiveSessionUpdateParamsDelegationType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"client\", \"responses\", and \"decisions\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveDecisionsDelegationUpdateParam(
+    LiveSessionUpdateParamsDelegation, discriminator="decisions"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionsDelegationUpdateParam.
+
+    :ivar acknowledgement_delay_ms: Milliseconds to wait before requesting an automatic spoken
+     acknowledgement for a delegation. The model may still speak before this delay. Any commentary
+     or thinking appended to the session cancels all pending acknowledgements, including those for
+     other delegations. Defaults to 400 for Decisions sessions and 0 (request immediately) for other
+     sessions. Omission in a session update preserves the current value. Updates apply to subsequent
+     delegations.
+    :vartype acknowledgement_delay_ms: int
+    :ivar type: Required. DECISIONS.
+    :vartype type: str or ~azure.ai.projects.models.DECISIONS
+    :ivar decisions:
+    :vartype decisions: ~azure.ai.projects.models.LiveDecisionsSettingsUpdateParam
+    """
+
+    acknowledgement_delay_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Milliseconds to wait before requesting an automatic spoken acknowledgement for a delegation.
+     The model may still speak before this delay. Any commentary or thinking appended to the session
+     cancels all pending acknowledgements, including those for other delegations. Defaults to 400
+     for Decisions sessions and 0 (request immediately) for other sessions. Omission in a session
+     update preserves the current value. Updates apply to subsequent delegations."""
+    type: Literal[LiveSessionUpdateParamsDelegationType.DECISIONS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. DECISIONS."""
+    decisions: Optional["_models.LiveDecisionsSettingsUpdateParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        acknowledgement_delay_ms: Optional[int] = None,
+        decisions: Optional["_models.LiveDecisionsSettingsUpdateParam"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveSessionUpdateParamsDelegationType.DECISIONS  # type: ignore
+
+
+class LiveDecisionsSettingsInputParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionsSettingsInputParam.
+
+    :ivar questions: Native Decision API questions evaluated together, in order. Required.
+    :vartype questions: list[~azure.ai.projects.models.LiveDecisionQuestion]
+    :ivar model: Required.
+    :vartype model: str
+    """
+
+    questions: list["_models.LiveDecisionQuestion"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Native Decision API questions evaluated together, in order. Required."""
+    model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        questions: list["_models.LiveDecisionQuestion"],
+        model: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveDecisionsSettingsUpdateParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionsSettingsUpdateParam.
+
+    :ivar model:
+    :vartype model: str
+    :ivar questions: Native Decision API questions evaluated together, in order.
+    :vartype questions: list[~azure.ai.projects.models.LiveDecisionQuestion]
+    """
+
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    questions: Optional[list["_models.LiveDecisionQuestion"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Native Decision API questions evaluated together, in order."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: Optional[str] = None,
+        questions: Optional[list["_models.LiveDecisionQuestion"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveDecisionStoredInputItemParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionStoredInputItemParam.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LiveDecisionStoredCustomToolCallParam, LiveDecisionStoredCustomToolCallOutputParam,
+    LiveDecisionStoredFunctionCallParam, LiveDecisionStoredFunctionCallOutputParam,
+    LiveDecisionStoredInputItemParamMessage
+
+    :ivar type: Required. Known values are: "message", "function_call", "function_call_output",
+     "custom_tool_call", and "custom_tool_call_output".
+    :vartype type: str or ~azure.ai.projects.models.LiveDecisionStoredInputItemParamType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"message\", \"function_call\", \"function_call_output\",
+     \"custom_tool_call\", and \"custom_tool_call_output\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveDecisionStoredCustomToolCallOutputParam(
+    LiveDecisionStoredInputItemParam, discriminator="custom_tool_call_output"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """LiveDecisionStoredCustomToolCallOutputParam.
+
+    :ivar id: Required.
+    :vartype id: str
+    :ivar call_id: The unique ID of the function tool call generated by the model. Required.
+    :vartype call_id: str
+    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
+    :vartype status: str or ~azure.ai.projects.models.LiveFunctionCallItemStatus
+    :ivar type: Required. CUSTOM_TOOL_CALL_OUTPUT.
+    :vartype type: str or ~azure.ai.projects.models.CUSTOM_TOOL_CALL_OUTPUT
+    :ivar output: Required. Is either a str type or a [Union["_models.LiveDecisionInputTextParam",
+     "_models.LiveDecisionInputImageParam"]] type.
+    :vartype output: str or list[~azure.ai.projects.models.LiveDecisionInputTextParam or
+     ~azure.ai.projects.models.LiveDecisionInputImageParam]
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the function tool call generated by the model. Required."""
+    status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
+    type: Literal[LiveDecisionStoredInputItemParamType.CUSTOM_TOOL_CALL_OUTPUT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. CUSTOM_TOOL_CALL_OUTPUT."""
+    output: Union[str, list[Union["_models.LiveDecisionInputTextParam", "_models.LiveDecisionInputImageParam"]]] = (
+        rest_field(visibility=["read", "create", "update", "delete", "query"])
+    )
+    """Required. Is either a str type or a [Union[\"_models.LiveDecisionInputTextParam\",
+     \"_models.LiveDecisionInputImageParam\"]] type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        call_id: str,
+        output: Union[str, list[Union["_models.LiveDecisionInputTextParam", "_models.LiveDecisionInputImageParam"]]],
+        status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveDecisionStoredInputItemParamType.CUSTOM_TOOL_CALL_OUTPUT  # type: ignore
+
+
+class LiveDecisionStoredCustomToolCallParam(
+    LiveDecisionStoredInputItemParam, discriminator="custom_tool_call"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionStoredCustomToolCallParam.
+
+    :ivar id: Required.
+    :vartype id: str
+    :ivar call_id: The unique ID of the function tool call generated by the model. Required.
+    :vartype call_id: str
+    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
+    :vartype status: str or ~azure.ai.projects.models.LiveFunctionCallItemStatus
+    :ivar type: The item type. Always ``custom_tool_call``. Required. CUSTOM_TOOL_CALL.
+    :vartype type: str or ~azure.ai.projects.models.CUSTOM_TOOL_CALL
+    :ivar name: The name of the custom tool to call. Required.
+    :vartype name: str
+    :ivar namespace:
+    :vartype namespace: str
+    :ivar input: The input to the custom tool call. Required.
+    :vartype input: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the function tool call generated by the model. Required."""
+    status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
+    type: Literal[LiveDecisionStoredInputItemParamType.CUSTOM_TOOL_CALL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The item type. Always ``custom_tool_call``. Required. CUSTOM_TOOL_CALL."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the custom tool to call. Required."""
+    namespace: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    input: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The input to the custom tool call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        call_id: str,
+        name: str,
+        input: str,
+        status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = None,
+        namespace: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveDecisionStoredInputItemParamType.CUSTOM_TOOL_CALL  # type: ignore
+
+
+class LiveDecisionStoredFunctionCallOutputParam(
+    LiveDecisionStoredInputItemParam, discriminator="function_call_output"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """LiveDecisionStoredFunctionCallOutputParam.
+
+    :ivar id: Required.
+    :vartype id: str
+    :ivar call_id: The unique ID of the function tool call generated by the model. Required.
+    :vartype call_id: str
+    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
+    :vartype status: str or ~azure.ai.projects.models.LiveFunctionCallItemStatus
+    :ivar type: The type of the function tool call output. Always ``function_call_output``.
+     Required. FUNCTION_CALL_OUTPUT.
+    :vartype type: str or ~azure.ai.projects.models.FUNCTION_CALL_OUTPUT
+    :ivar output: Required. Is either a str type or a [Union["_models.LiveDecisionInputTextParam",
+     "_models.LiveDecisionInputImageParam"]] type.
+    :vartype output: str or list[~azure.ai.projects.models.LiveDecisionInputTextParam or
+     ~azure.ai.projects.models.LiveDecisionInputImageParam]
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the function tool call generated by the model. Required."""
+    status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
+    type: Literal[LiveDecisionStoredInputItemParamType.FUNCTION_CALL_OUTPUT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the function tool call output. Always ``function_call_output``. Required.
+     FUNCTION_CALL_OUTPUT."""
+    output: Union[str, list[Union["_models.LiveDecisionInputTextParam", "_models.LiveDecisionInputImageParam"]]] = (
+        rest_field(visibility=["read", "create", "update", "delete", "query"])
+    )
+    """Required. Is either a str type or a [Union[\"_models.LiveDecisionInputTextParam\",
+     \"_models.LiveDecisionInputImageParam\"]] type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        call_id: str,
+        output: Union[str, list[Union["_models.LiveDecisionInputTextParam", "_models.LiveDecisionInputImageParam"]]],
+        status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveDecisionStoredInputItemParamType.FUNCTION_CALL_OUTPUT  # type: ignore
+
+
+class LiveDecisionStoredFunctionCallParam(
+    LiveDecisionStoredInputItemParam, discriminator="function_call"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionStoredFunctionCallParam.
+
+    :ivar id: Required.
+    :vartype id: str
+    :ivar call_id: The unique ID of the function tool call generated by the model. Required.
+    :vartype call_id: str
+    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
+    :vartype status: str or ~azure.ai.projects.models.LiveFunctionCallItemStatus
+    :ivar type: The item type. Always ``function_call``. Required. FUNCTION_CALL.
+    :vartype type: str or ~azure.ai.projects.models.FUNCTION_CALL
+    :ivar name: Required.
+    :vartype name: str
+    :ivar namespace:
+    :vartype namespace: str
+    :ivar arguments: The function arguments as a JSON string. Required.
+    :vartype arguments: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the function tool call generated by the model. Required."""
+    status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
+    type: Literal[LiveDecisionStoredInputItemParamType.FUNCTION_CALL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The item type. Always ``function_call``. Required. FUNCTION_CALL."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    namespace: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The function arguments as a JSON string. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        call_id: str,
+        name: str,
+        arguments: str,
+        status: Optional[Union[str, "_models.LiveFunctionCallItemStatus"]] = None,
+        namespace: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveDecisionStoredInputItemParamType.FUNCTION_CALL  # type: ignore
+
+
+class LiveDecisionStoredInputItemParamMessage(LiveDecisionStoredInputItemParam, discriminator="message"):
+    """LiveDecisionStoredInputItemParamMessage.
+
+    :ivar type: Required. MESSAGE.
+    :vartype type: str or ~azure.ai.projects.models.MESSAGE
+    """
+
+    type: Literal[LiveDecisionStoredInputItemParamType.MESSAGE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. MESSAGE."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveDecisionStoredInputItemParamType.MESSAGE  # type: ignore
+
+
+class LiveDecisionTriggerInputParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveDecisionTriggerInputParam.
+
+    :ivar type: Required. Default value is "decisions".
+    :vartype type: str
+    :ivar event_type: Required. Is either a Literal["session.input_transcript.delta"] type or a
+     Literal["session.output_transcript.delta"] type.
+    :vartype event_type: str or str
+    :ivar decisions: Questions evaluated using the current transcript and the session's shared
+     Decision items. Required.
+    :vartype decisions: ~azure.ai.projects.models.LiveDecisionQuestionsInputParam
+    """
+
+    type: Literal["decisions"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"decisions\"."""
+    event_type: Literal["session.input_transcript.delta", "session.output_transcript.delta"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. Is either a Literal[\"session.input_transcript.delta\"] type or a
+     Literal[\"session.output_transcript.delta\"] type."""
+    decisions: "_models.LiveDecisionQuestionsInputParam" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Questions evaluated using the current transcript and the session's shared Decision items.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_type: Literal["session.input_transcript.delta", "session.output_transcript.delta"],
+        decisions: "_models.LiveDecisionQuestionsInputParam",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["decisions"] = "decisions"
+
+
+class LiveDelegationReasoningInputParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Reasoning options for Responses requests made on behalf of the Live session.
+
+    :ivar effort: Known values are: "none", "minimal", "low", "medium", "high", and "xhigh".
+    :vartype effort: str or ~azure.ai.projects.models.LiveReasoningEffort
+    :ivar summary: Known values are: "concise", "detailed", and "auto".
+    :vartype summary: str or ~azure.ai.projects.models.LiveReasoningSummary
+    """
+
+    effort: Optional[Union[str, "_models.LiveReasoningEffort"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"none\", \"minimal\", \"low\", \"medium\", \"high\", and \"xhigh\"."""
+    summary: Optional[Union[str, "_models.LiveReasoningSummary"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"concise\", \"detailed\", and \"auto\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        effort: Optional[Union[str, "_models.LiveReasoningEffort"]] = None,
+        summary: Optional[Union[str, "_models.LiveReasoningSummary"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveDelegationTextInputParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Text generation options for the Live session’s Responses backend.
+
+    :ivar verbosity: Known values are: "low", "medium", and "high".
+    :vartype verbosity: str or ~azure.ai.projects.models.LiveTextVerbosity
+    """
+
+    verbosity: Optional[Union[str, "_models.LiveTextVerbosity"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"low\", \"medium\", and \"high\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        verbosity: Optional[Union[str, "_models.LiveTextVerbosity"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveFileSearchToolInputParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveFileSearchToolInputParam.
+
+    :ivar type: Required. Default value is "file_search".
+    :vartype type: str
+    """
+
+    type: Literal["file_search"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"file_search\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["file_search"] = "file_search"
+
+
+class LiveFunctionToolChoiceParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveFunctionToolChoiceParam.
+
+    :ivar type: The tool to call. Always ``function``. Required. Default value is "function".
+    :vartype type: str
+    :ivar name: The name of the function tool to call. Required.
+    :vartype name: str
+    """
+
+    type: Literal["function"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tool to call. Always ``function``. Required. Default value is \"function\"."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the function tool to call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["function"] = "function"
+
+
+class LiveFunctionToolInputParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A function tool available to the Responses backend when the Live model delegates a task.
+
+    :ivar type: The tool type. Always ``function``. Required. Default value is "function".
+    :vartype type: str
+    :ivar name: The name the delegated Responses model uses when calling this function. Required.
+    :vartype name: str
+    :ivar description:
+    :vartype description: str
+    :ivar parameters:
+    :vartype parameters: dict[str, any]
+    :ivar strict:
+    :vartype strict: bool
+    """
+
+    type: Literal["function"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tool type. Always ``function``. Required. Default value is \"function\"."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name the delegated Responses model uses when calling this function. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    parameters: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    strict: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: Optional[str] = None,
+        parameters: Optional[dict[str, Any]] = None,
+        strict: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["function"] = "function"
+
+
+class LiveHostedShellContainerAutoParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveHostedShellContainerAutoParam.
+
+    :ivar type: Automatically creates a container for this request. Required. Default value is
+     "container_auto".
+    :vartype type: str
+    :ivar file_ids:
+    :vartype file_ids: list[str]
+    :ivar memory_limit: Known values are: "1g", "4g", "16g", and "64g".
+    :vartype memory_limit: str or ~azure.ai.projects.models.LiveContainerMemoryLimit
+    :ivar network_policy: Is either a LiveContainerNetworkPolicyDisabledParam type or a
+     LiveHostedShellNetworkPolicyAllowlistParam type.
+    :vartype network_policy: ~azure.ai.projects.models.LiveContainerNetworkPolicyDisabledParam or
+     ~azure.ai.projects.models.LiveHostedShellNetworkPolicyAllowlistParam
+    :ivar skills:
+    :vartype skills: list[~azure.ai.projects.models.LiveSkillReferenceParam or
+     ~azure.ai.projects.models.LiveInlineSkillParam]
+    """
+
+    type: Literal["container_auto"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Automatically creates a container for this request. Required. Default value is
+     \"container_auto\"."""
+    file_ids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    memory_limit: Optional[Union[str, "_models.LiveContainerMemoryLimit"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"1g\", \"4g\", \"16g\", and \"64g\"."""
+    network_policy: Optional[
+        Union["_models.LiveContainerNetworkPolicyDisabledParam", "_models.LiveHostedShellNetworkPolicyAllowlistParam"]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Is either a LiveContainerNetworkPolicyDisabledParam type or a
+     LiveHostedShellNetworkPolicyAllowlistParam type."""
+    skills: Optional[list[Union["_models.LiveSkillReferenceParam", "_models.LiveInlineSkillParam"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_ids: Optional[list[str]] = None,
+        memory_limit: Optional[Union[str, "_models.LiveContainerMemoryLimit"]] = None,
+        network_policy: Optional[
+            Union[
+                "_models.LiveContainerNetworkPolicyDisabledParam", "_models.LiveHostedShellNetworkPolicyAllowlistParam"
+            ]
+        ] = None,
+        skills: Optional[list[Union["_models.LiveSkillReferenceParam", "_models.LiveInlineSkillParam"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["container_auto"] = "container_auto"
+
+
+class LiveHostedShellNetworkPolicyAllowlistParam(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """LiveHostedShellNetworkPolicyAllowlistParam.
+
+    :ivar type: Allow outbound network access only to specified domains. Always ``allowlist``.
+     Required. Default value is "allowlist".
+    :vartype type: str
+    :ivar allowed_domains: A list of allowed domains when type is ``allowlist``. Required.
+    :vartype allowed_domains: list[str]
+    """
+
+    type: Literal["allowlist"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Allow outbound network access only to specified domains. Always ``allowlist``. Required.
+     Default value is \"allowlist\"."""
+    allowed_domains: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A list of allowed domains when type is ``allowlist``. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        allowed_domains: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["allowlist"] = "allowlist"
+
+
+class LiveHostedShellToolInputParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A Responses shell tool. Use a hosted container or return local shell results with
+    response.item.create. Domain secrets are not supported.
+
+    :ivar type: Required. Default value is "shell".
+    :vartype type: str
+    :ivar environment: Is one of the following types: LiveHostedShellContainerAutoParam,
+     LiveContainerReferenceParam, LiveLocalEnvironmentParam
+    :vartype environment: ~azure.ai.projects.models.LiveHostedShellContainerAutoParam or
+     ~azure.ai.projects.models.LiveContainerReferenceParam or
+     ~azure.ai.projects.models.LiveLocalEnvironmentParam
+    """
+
+    type: Literal["shell"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"shell\"."""
+    environment: Optional[
+        Union[
+            "_models.LiveHostedShellContainerAutoParam",
+            "_models.LiveContainerReferenceParam",
+            "_models.LiveLocalEnvironmentParam",
+        ]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Is one of the following types: LiveHostedShellContainerAutoParam, LiveContainerReferenceParam,
+     LiveLocalEnvironmentParam"""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        environment: Optional[
+            Union[
+                "_models.LiveHostedShellContainerAutoParam",
+                "_models.LiveContainerReferenceParam",
+                "_models.LiveLocalEnvironmentParam",
+            ]
+        ] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["shell"] = "shell"
+
+
+class LiveImageGenerationToolInputParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveImageGenerationToolInputParam.
+
+    :ivar type: Required. Default value is "image_generation".
+    :vartype type: str
+    """
+
+    type: Literal["image_generation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"image_generation\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["image_generation"] = "image_generation"
+
+
+class LiveInitialItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A developer, user, or assistant message supplied as text history before the Live session
+    starts.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LiveInitialAssistantMessageItemParam, LiveInitialDeveloperMessageItemParam,
+    LiveInitialUserMessageItemParam
+
+    :ivar role: Required. Known values are: "developer", "user", and "assistant".
+    :vartype role: str or ~azure.ai.projects.models.LiveInitialItemType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    role: str = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"developer\", \"user\", and \"assistant\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        role: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveInitialAssistantMessageItemParam(
+    LiveInitialItem, discriminator="assistant"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An assistant message included in the initial text history of a Live session.
+
+    :ivar id:
+    :vartype id: str
+    :ivar type: The history item type. Always ``message``. Default value is "message".
+    :vartype type: str
+    :ivar status: Known values are: "incomplete" and "completed".
+    :vartype status: str or ~azure.ai.projects.models.LiveInitialMessageStatus
+    :ivar role: The author of this history message. Always ``assistant``. Required. ASSISTANT.
+    :vartype role: str or ~azure.ai.projects.models.ASSISTANT
+    :ivar content: The message content. Supply exactly one text part for the initial Live
+     conversation history. Required.
+    :vartype content: list[~azure.ai.projects.models.LiveInitialTextContentPartParam or
+     ~azure.ai.projects.models.LiveInitialOutputTextContentPartParam]
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Optional[Literal["message"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The history item type. Always ``message``. Default value is \"message\"."""
+    status: Optional[Union[str, "_models.LiveInitialMessageStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"incomplete\" and \"completed\"."""
+    role: Literal[LiveInitialItemType.ASSISTANT] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The author of this history message. Always ``assistant``. Required. ASSISTANT."""
+    content: list[Union["_models.LiveInitialTextContentPartParam", "_models.LiveInitialOutputTextContentPartParam"]] = (
+        rest_field(visibility=["read", "create", "update", "delete", "query"])
+    )
+    """The message content. Supply exactly one text part for the initial Live conversation history.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: list[
+            Union["_models.LiveInitialTextContentPartParam", "_models.LiveInitialOutputTextContentPartParam"]
+        ],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        type: Optional[Literal["message"]] = None,
+        status: Optional[Union[str, "_models.LiveInitialMessageStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.role = LiveInitialItemType.ASSISTANT  # type: ignore
+
+
+class LiveInitialDeveloperMessageItemParam(
+    LiveInitialItem, discriminator="developer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A developer message included in the initial text history of a Live session.
+
+    :ivar id:
+    :vartype id: str
+    :ivar type: The history item type. Always ``message``. Default value is "message".
+    :vartype type: str
+    :ivar status: Known values are: "incomplete" and "completed".
+    :vartype status: str or ~azure.ai.projects.models.LiveInitialMessageStatus
+    :ivar role: The author of this history message. Always ``developer``. Required. DEVELOPER.
+    :vartype role: str or ~azure.ai.projects.models.DEVELOPER
+    :ivar content: The message content. Supply exactly one text part for the initial Live
+     conversation history. Required.
+    :vartype content: list[~azure.ai.projects.models.LiveInitialInputTextContentPartParam]
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Optional[Literal["message"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The history item type. Always ``message``. Default value is \"message\"."""
+    status: Optional[Union[str, "_models.LiveInitialMessageStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"incomplete\" and \"completed\"."""
+    role: Literal[LiveInitialItemType.DEVELOPER] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The author of this history message. Always ``developer``. Required. DEVELOPER."""
+    content: list["_models.LiveInitialInputTextContentPartParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The message content. Supply exactly one text part for the initial Live conversation history.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: list["_models.LiveInitialInputTextContentPartParam"],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        type: Optional[Literal["message"]] = None,
+        status: Optional[Union[str, "_models.LiveInitialMessageStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.role = LiveInitialItemType.DEVELOPER  # type: ignore
+
+
+class LiveInitialInputTextContentPartParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Text supplied in a developer or user message when starting a Live session.
+
+    :ivar type: The text content type. Always ``input_text``. Default value is "input_text".
+    :vartype type: str
+    :ivar text: The message text to include in the Live session’s initial conversation history.
+     Required.
+    :vartype text: str
+    """
+
+    type: Optional[Literal["input_text"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The text content type. Always ``input_text``. Default value is \"input_text\"."""
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The message text to include in the Live session’s initial conversation history. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+        type: Optional[Literal["input_text"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveInitialOutputTextContentPartParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Assistant output text supplied as conversation history when starting a Live session.
+
+    :ivar type: The text content type. Always ``output_text``. Required. Default value is
+     "output_text".
+    :vartype type: str
+    :ivar text: The message text to include in the Live session’s initial conversation history.
+     Required.
+    :vartype text: str
+    """
+
+    type: Literal["output_text"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The text content type. Always ``output_text``. Required. Default value is \"output_text\"."""
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The message text to include in the Live session’s initial conversation history. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["output_text"] = "output_text"
+
+
+class LiveInitialSessionAudioOutputParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Settings for speech generated by the Live model. Choose the voice before starting the session.
+
+    :ivar voice: The voice used for Live speech, as a built-in voice name or a custom voice object
+     containing its ID. Defaults to ``marin`` and cannot change after startup. Is one of the
+     following types: str, Literal["alloy"], Literal["ash"], Literal["ballad"], Literal["beacon"],
+     Literal["bossa"], Literal["brise"], Literal["cedar"], Literal["cinder"], Literal["coral"],
+     Literal["delta"], Literal["echo"], Literal["flitz"], Literal["gleam"], Literal["harema"],
+     Literal["juni"], Literal["marin"], Literal["meridian"], Literal["nira"], Literal["noeul"],
+     Literal["nuri"], Literal["quartz"], Literal["ripple"], Literal["sage"], Literal["shida"],
+     Literal["shimmer"], Literal["sillage"], Literal["stone"], Literal["tempo"], Literal["verse"],
+     Literal["vesper"], Literal["willow"], LiveCustomVoiceParam
+    :vartype voice: str or str or str or str or str or str or str or str or str or str or str or
+     str or str or str or str or str or str or str or str or str or str or str or str or str or str
+     or str or str or str or str or str or str or str or
+     ~azure.ai.projects.models.LiveCustomVoiceParam
+    """
+
+    voice: Optional[
+        Union[
+            str,
+            Literal["alloy"],
+            Literal["ash"],
+            Literal["ballad"],
+            Literal["beacon"],
+            Literal["bossa"],
+            Literal["brise"],
+            Literal["cedar"],
+            Literal["cinder"],
+            Literal["coral"],
+            Literal["delta"],
+            Literal["echo"],
+            Literal["flitz"],
+            Literal["gleam"],
+            Literal["harema"],
+            Literal["juni"],
+            Literal["marin"],
+            Literal["meridian"],
+            Literal["nira"],
+            Literal["noeul"],
+            Literal["nuri"],
+            Literal["quartz"],
+            Literal["ripple"],
+            Literal["sage"],
+            Literal["shida"],
+            Literal["shimmer"],
+            Literal["sillage"],
+            Literal["stone"],
+            Literal["tempo"],
+            Literal["verse"],
+            Literal["vesper"],
+            Literal["willow"],
+            "_models.LiveCustomVoiceParam",
+        ]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The voice used for Live speech, as a built-in voice name or a custom voice object containing
+     its ID. Defaults to ``marin`` and cannot change after startup. Is one of the following types:
+     str, Literal[\"alloy\"], Literal[\"ash\"], Literal[\"ballad\"], Literal[\"beacon\"],
+     Literal[\"bossa\"], Literal[\"brise\"], Literal[\"cedar\"], Literal[\"cinder\"],
+     Literal[\"coral\"], Literal[\"delta\"], Literal[\"echo\"], Literal[\"flitz\"],
+     Literal[\"gleam\"], Literal[\"harema\"], Literal[\"juni\"], Literal[\"marin\"],
+     Literal[\"meridian\"], Literal[\"nira\"], Literal[\"noeul\"], Literal[\"nuri\"],
+     Literal[\"quartz\"], Literal[\"ripple\"], Literal[\"sage\"], Literal[\"shida\"],
+     Literal[\"shimmer\"], Literal[\"sillage\"], Literal[\"stone\"], Literal[\"tempo\"],
+     Literal[\"verse\"], Literal[\"vesper\"], Literal[\"willow\"], LiveCustomVoiceParam"""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        voice: Optional[
+            Union[
+                str,
+                Literal["alloy"],
+                Literal["ash"],
+                Literal["ballad"],
+                Literal["beacon"],
+                Literal["bossa"],
+                Literal["brise"],
+                Literal["cedar"],
+                Literal["cinder"],
+                Literal["coral"],
+                Literal["delta"],
+                Literal["echo"],
+                Literal["flitz"],
+                Literal["gleam"],
+                Literal["harema"],
+                Literal["juni"],
+                Literal["marin"],
+                Literal["meridian"],
+                Literal["nira"],
+                Literal["noeul"],
+                Literal["nuri"],
+                Literal["quartz"],
+                Literal["ripple"],
+                Literal["sage"],
+                Literal["shida"],
+                Literal["shimmer"],
+                Literal["sillage"],
+                Literal["stone"],
+                Literal["tempo"],
+                Literal["verse"],
+                Literal["vesper"],
+                Literal["willow"],
+                "_models.LiveCustomVoiceParam",
+            ]
+        ] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveInitialSessionAudioParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Startup audio configuration. Only primary WebSockets accept audio.format; WebRTC and SIP
+    negotiate their media format. Voice and format are immutable after startup.
+
+    :ivar format: Audio encoding and sample rate for audio sent and received over a Live WebSocket
+     connection. WebRTC and SIP negotiate their media format separately.
+    :vartype format: ~azure.ai.projects.models.LiveAudioFormat
+    :ivar output: The voice used for speech generated by the Live model.
+    :vartype output: ~azure.ai.projects.models.LiveInitialSessionAudioOutputParam
+    """
+
+    format: Optional["_models.LiveAudioFormat"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Audio encoding and sample rate for audio sent and received over a Live WebSocket connection.
+     WebRTC and SIP negotiate their media format separately."""
+    output: Optional["_models.LiveInitialSessionAudioOutputParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The voice used for speech generated by the Live model."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        format: Optional["_models.LiveAudioFormat"] = None,
+        output: Optional["_models.LiveInitialSessionAudioOutputParam"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveInitialTextContentPartParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Assistant text supplied as conversation history when starting a Live session.
+
+    :ivar type: The text content type. Always ``text``. Default value is "text".
+    :vartype type: str
+    :ivar text: The message text to include in the Live session’s initial conversation history.
+     Required.
+    :vartype text: str
+    """
+
+    type: Optional[Literal["text"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The text content type. Always ``text``. Default value is \"text\"."""
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The message text to include in the Live session’s initial conversation history. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+        type: Optional[Literal["text"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveInitialUserMessageItemParam(
+    LiveInitialItem, discriminator="user"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A user message included in the initial text history of a Live session.
+
+    :ivar id:
+    :vartype id: str
+    :ivar type: The history item type. Always ``message``. Default value is "message".
+    :vartype type: str
+    :ivar status: Known values are: "incomplete" and "completed".
+    :vartype status: str or ~azure.ai.projects.models.LiveInitialMessageStatus
+    :ivar role: The author of this history message. Always ``user``. Required. USER.
+    :vartype role: str or ~azure.ai.projects.models.USER
+    :ivar content: The message content. Supply exactly one text part for the initial Live
+     conversation history. Required.
+    :vartype content: list[~azure.ai.projects.models.LiveInitialInputTextContentPartParam]
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Optional[Literal["message"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The history item type. Always ``message``. Default value is \"message\"."""
+    status: Optional[Union[str, "_models.LiveInitialMessageStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"incomplete\" and \"completed\"."""
+    role: Literal[LiveInitialItemType.USER] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The author of this history message. Always ``user``. Required. USER."""
+    content: list["_models.LiveInitialInputTextContentPartParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The message content. Supply exactly one text part for the initial Live conversation history.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: list["_models.LiveInitialInputTextContentPartParam"],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        type: Optional[Literal["message"]] = None,
+        status: Optional[Union[str, "_models.LiveInitialMessageStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.role = LiveInitialItemType.USER  # type: ignore
+
+
+class LiveInlineSkillParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveInlineSkillParam.
+
+    :ivar type: Defines an inline skill for this request. Required. Default value is "inline".
+    :vartype type: str
+    :ivar name: The name of the skill. Required.
+    :vartype name: str
+    :ivar description: The description of the skill. Required.
+    :vartype description: str
+    :ivar source: Inline skill payload. Required.
+    :vartype source: ~azure.ai.projects.models.LiveInlineSkillSourceParam
+    """
+
+    type: Literal["inline"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Defines an inline skill for this request. Required. Default value is \"inline\"."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the skill. Required."""
+    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the skill. Required."""
+    source: "_models.LiveInlineSkillSourceParam" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Inline skill payload. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: str,
+        source: "_models.LiveInlineSkillSourceParam",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["inline"] = "inline"
+
+
+class LiveInlineSkillSourceParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Inline skill payload.
+
+    :ivar type: The type of the inline skill source. Must be ``base64``. Required. Default value is
+     "base64".
+    :vartype type: str
+    :ivar media_type: The media type of the inline skill payload. Must be ``application/zip``.
+     Required. Default value is "application/zip".
+    :vartype media_type: str
+    :ivar data: Base64-encoded skill zip bundle. Required.
+    :vartype data: str
+    """
+
+    type: Literal["base64"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of the inline skill source. Must be ``base64``. Required. Default value is \"base64\"."""
+    media_type: Literal["application/zip"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The media type of the inline skill payload. Must be ``application/zip``. Required. Default
+     value is \"application/zip\"."""
+    data: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Base64-encoded skill zip bundle. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["base64"] = "base64"
+        self.media_type: Literal["application/zip"] = "application/zip"
+
+
+class LiveServerEvent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An event sent by the Live API on a primary WebSocket or sideband connection.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LiveServerEventLiveDecisionEvent, LiveServerEventLiveDecisionItemCreated,
+    LiveServerEventLiveDecisionItemDeleted, LiveServerEventLiveErrorEvent,
+    LiveServerEventLiveInfoEvent, LiveServerEventLiveResponseEvent,
+    LiveServerEventLiveSessionClosed, LiveServerEventLiveCommentaryAppended,
+    LiveServerEventLiveDelegationCreated, LiveInputAudioAppend, LiveServerEventLiveInputAudioMuted,
+    LiveServerEventLiveInputAudioUnmuted, LiveServerEventLiveInputTranscriptDelta,
+    LiveServerEventLiveInstructionsAppended, LiveOutputAudioDelta,
+    LiveServerEventLiveOutputAudioFixturePlayed, LiveServerEventLiveOutputAudioFixturePlaying,
+    LiveServerEventLiveOutputTranscriptDelta, LiveServerEventLiveSessionStarted,
+    LiveServerEventLiveThinkingAppended, LiveServerEventLiveSessionUpdated,
+    LiveServerEventLiveSessionUsageUpdated, LiveServerEventLiveTransportAnswered,
+    LiveServerEventLiveTransportDtmfReceived, LiveServerEventLiveTransportDtmfSent,
+    LiveServerEventLiveTransportFailed, LiveServerEventLiveTransportRinging
+
+    :ivar type: Required. Known values are: "session.started", "session.updated",
+     "session.input_audio.muted", "session.input_audio.unmuted",
+     "session.output_audio.fixture.playing", "session.output_audio.fixture.played",
+     "session.instructions.appended", "session.thinking.appended", "session.commentary.appended",
+     "session.input_audio.append", "session.output_audio.delta", "session.input_transcript.delta",
+     "session.output_transcript.delta", "session.delegation.created", "decision.event",
+     "decision.item.created", "decision.item.deleted", "response.event", "session.usage.updated",
+     "session.closed", "error", "info", "transport.dtmf.received", "transport.dtmf.sent",
+     "transport.ringing", "transport.answered", and "transport.failed".
+    :vartype type: str or ~azure.ai.projects.models.LiveServerEventType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"session.started\", \"session.updated\",
+     \"session.input_audio.muted\", \"session.input_audio.unmuted\",
+     \"session.output_audio.fixture.playing\", \"session.output_audio.fixture.played\",
+     \"session.instructions.appended\", \"session.thinking.appended\",
+     \"session.commentary.appended\", \"session.input_audio.append\",
+     \"session.output_audio.delta\", \"session.input_transcript.delta\",
+     \"session.output_transcript.delta\", \"session.delegation.created\", \"decision.event\",
+     \"decision.item.created\", \"decision.item.deleted\", \"response.event\",
+     \"session.usage.updated\", \"session.closed\", \"error\", \"info\",
+     \"transport.dtmf.received\", \"transport.dtmf.sent\", \"transport.ringing\",
+     \"transport.answered\", and \"transport.failed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveInputAudioAppend(
+    LiveServerEvent, discriminator="session.input_audio.append"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Input audio received from the primary transport and reflected to a Live sideband connection
+    before model-input muting.
+
+    :ivar type: The event type, always ``session.input_audio.append``. Required.
+     SESSION_INPUT_AUDIO_APPEND.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_INPUT_AUDIO_APPEND
+    :ivar audio: Base64-encoded raw mono PCM16LE at 24 kHz received from the primary transport,
+     reflected to the sideband before model-input muting. This server event uses the same audio key
+     as the client command, but is not an acknowledgment of it. Required.
+    :vartype audio: str
+    """
+
+    type: Literal[LiveServerEventType.SESSION_INPUT_AUDIO_APPEND] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``session.input_audio.append``. Required. SESSION_INPUT_AUDIO_APPEND."""
+    audio: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Base64-encoded raw mono PCM16LE at 24 kHz received from the primary transport, reflected to the
+     sideband before model-input muting. This server event uses the same audio key as the client
+     command, but is not an acknowledgment of it. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        audio: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_INPUT_AUDIO_APPEND  # type: ignore
+
+
+class LiveLiveError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Details of an error encountered by the Live session, including the affected parameter or client
+    command when available.
+
+    :ivar type: The category of error, such as ``invalid_request_error`` for an invalid Live client
+     command. Required.
+    :vartype type: str
+    :ivar code: A machine-readable code identifying the Live error, such as ``unknown_parameter``.
+     Required.
+    :vartype code: str
+    :ivar message: A human-readable explanation of the Live error. Required.
+    :vartype message: str
+    :ivar param: The parameter that caused the error, when applicable, such as ``session.voice``.
+    :vartype param: str
+    :ivar client_event_id: The event_id of the client command that caused the error, when supplied.
+    :vartype client_event_id: str
+    """
+
+    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The category of error, such as ``invalid_request_error`` for an invalid Live client command.
+     Required."""
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A machine-readable code identifying the Live error, such as ``unknown_parameter``. Required."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable explanation of the Live error. Required."""
+    param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The parameter that caused the error, when applicable, such as ``session.voice``."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command that caused the error, when supplied."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        code: str,
+        message: str,
+        param: Optional[str] = None,
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveLocalEnvironmentParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveLocalEnvironmentParam.
+
+    :ivar type: Use a local computer environment. Required. Default value is "local".
+    :vartype type: str
+    :ivar skills:
+    :vartype skills: list[~azure.ai.projects.models.LiveLocalSkillParam]
+    """
+
+    type: Literal["local"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Use a local computer environment. Required. Default value is \"local\"."""
+    skills: Optional[list["_models.LiveLocalSkillParam"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        skills: Optional[list["_models.LiveLocalSkillParam"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["local"] = "local"
+
+
+class LiveLocalSkillParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveLocalSkillParam.
+
+    :ivar name: The name of the skill. Required.
+    :vartype name: str
+    :ivar description: The description of the skill. Required.
+    :vartype description: str
+    :ivar path: The path to the directory containing the skill. Required.
+    :vartype path: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the skill. Required."""
+    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the skill. Required."""
+    path: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The path to the directory containing the skill. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: str,
+        path: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveMCPToolChoiceParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveMCPToolChoiceParam.
+
+    :ivar type: The tool to call. Always ``mcp``. Required. Default value is "mcp".
+    :vartype type: str
+    :ivar server_label: The label of the MCP server to call. Required.
+    :vartype server_label: str
+    :ivar name:
+    :vartype name: str
+    """
+
+    type: Literal["mcp"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tool to call. Always ``mcp``. Required. Default value is \"mcp\"."""
+    server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The label of the MCP server to call. Required."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        server_label: str,
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["mcp"] = "mcp"
+
+
+class LiveMCPToolInputParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveMCPToolInputParam.
+
+    :ivar type: Required. Default value is "mcp".
+    :vartype type: str
+    """
+
+    type: Literal["mcp"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"mcp\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["mcp"] = "mcp"
+
+
+class LiveNamespaceToolInputParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveNamespaceToolInputParam.
+
+    :ivar type: Required. Default value is "namespace".
+    :vartype type: str
+    """
+
+    type: Literal["namespace"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"namespace\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["namespace"] = "namespace"
+
+
+class LiveOutputAudioDelta(
+    LiveServerEvent, discriminator="session.output_audio.delta"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An audio chunk generated by the Live model. Decode and play primary WebSocket chunks in
+    delivery order using the configured session audio format. Sideband connections receive
+    reflected output audio with timestamps.
+
+    :ivar type: The event type, always ``session.output_audio.delta``. Required.
+     SESSION_OUTPUT_AUDIO_DELTA.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_OUTPUT_AUDIO_DELTA
+    :ivar delta: Base64-encoded raw audio. Primary WebSocket events use the session's configured
+     format; reflected sideband events use mono PCM16LE at 24 kHz. Required.
+    :vartype delta: str
+    :ivar start_ms: Inclusive session-relative start in milliseconds. Required on reflected
+     sideband events; omitted on the primary WebSocket.
+    :vartype start_ms: int
+    :ivar end_ms: Exclusive session-relative end in milliseconds. Required on reflected sideband
+     events; omitted on the primary WebSocket. Dropped output frames leave gaps between reflected
+     ranges.
+    :vartype end_ms: int
+    """
+
+    type: Literal[LiveServerEventType.SESSION_OUTPUT_AUDIO_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``session.output_audio.delta``. Required. SESSION_OUTPUT_AUDIO_DELTA."""
+    delta: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Base64-encoded raw audio. Primary WebSocket events use the session's configured format;
+     reflected sideband events use mono PCM16LE at 24 kHz. Required."""
+    start_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Inclusive session-relative start in milliseconds. Required on reflected sideband events;
+     omitted on the primary WebSocket."""
+    end_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Exclusive session-relative end in milliseconds. Required on reflected sideband events; omitted
+     on the primary WebSocket. Dropped output frames leave gaps between reflected ranges."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        delta: str,
+        start_ms: Optional[int] = None,
+        end_ms: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_OUTPUT_AUDIO_DELTA  # type: ignore
+
+
+class LiveProgrammaticToolInputParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveProgrammaticToolInputParam.
+
+    :ivar type: Required. Default value is "programmatic_tool_calling".
+    :vartype type: str
+    """
+
+    type: Literal["programmatic_tool_calling"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"programmatic_tool_calling\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["programmatic_tool_calling"] = "programmatic_tool_calling"
+
+
+class LiveResponsesDelegationSettingsInputParam(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Model, prompt, and tool settings for tasks delegated by the Live session to a Responses
+    backend.
+
+    :ivar model: The model used for server-owned Responses delegations. Required.
+    :vartype model: str
+    :ivar instructions:
+    :vartype instructions: str
+    :ivar max_output_tokens:
+    :vartype max_output_tokens: int
+    :ivar service_tier: Known values are: "auto", "default", "fast_tier_temp_pilot", "flex",
+     "priority", and "ultrafast".
+    :vartype service_tier: str or ~azure.ai.projects.models.LiveResponsesServiceTier
+    :ivar reasoning:
+    :vartype reasoning: ~azure.ai.projects.models.LiveDelegationReasoningInputParam
+    :ivar text:
+    :vartype text: ~azure.ai.projects.models.LiveDelegationTextInputParam
+    :ivar tools: Tools available to the Responses backend while it handles tasks delegated by the
+     Live model.
+    :vartype tools: list[~azure.ai.projects.models.LiveFunctionToolInputParam or
+     ~azure.ai.projects.models.LiveWebSearchToolInputParam or
+     ~azure.ai.projects.models.LiveFileSearchToolInputParam or
+     ~azure.ai.projects.models.LiveCodeInterpreterToolInputParam or
+     ~azure.ai.projects.models.LiveHostedShellToolInputParam or
+     ~azure.ai.projects.models.LiveImageGenerationToolInputParam or
+     ~azure.ai.projects.models.LiveMCPToolInputParam or
+     ~azure.ai.projects.models.LiveCustomToolInputParam or
+     ~azure.ai.projects.models.LiveNamespaceToolInputParam or
+     ~azure.ai.projects.models.LiveToolSearchToolInputParam or
+     ~azure.ai.projects.models.LiveProgrammaticToolInputParam or
+     ~azure.ai.projects.models.LiveComputerToolInputParam or
+     ~azure.ai.projects.models.LiveApplyPatchToolInputParam]
+    :ivar tool_choice: Controls which tool the Responses backend uses when handling a task
+     delegated by the Live model. Is one of the following types: Union[str,
+     "_models.LiveToolChoiceEnum"], LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam,
+     LiveSpecificFileSearchParam, LiveSpecificWebSearchParam, LiveSpecificWebSearchPreviewParam,
+     LiveSpecificImageGenParam, LiveSpecificComputerParam, LiveSpecificCodeInterpreterParam,
+     LiveSpecificProgrammaticToolCallingParam, LiveSpecificFunctionShellParam,
+     LiveSpecificCustomToolParam, LiveSpecificApplyPatchParam, LiveAllowedToolsChoiceParam
+    :vartype tool_choice: str or ~azure.ai.projects.models.LiveToolChoiceEnum or
+     ~azure.ai.projects.models.LiveFunctionToolChoiceParam or
+     ~azure.ai.projects.models.LiveMCPToolChoiceParam or
+     ~azure.ai.projects.models.LiveSpecificFileSearchParam or
+     ~azure.ai.projects.models.LiveSpecificWebSearchParam or
+     ~azure.ai.projects.models.LiveSpecificWebSearchPreviewParam or
+     ~azure.ai.projects.models.LiveSpecificImageGenParam or
+     ~azure.ai.projects.models.LiveSpecificComputerParam or
+     ~azure.ai.projects.models.LiveSpecificCodeInterpreterParam or
+     ~azure.ai.projects.models.LiveSpecificProgrammaticToolCallingParam or
+     ~azure.ai.projects.models.LiveSpecificFunctionShellParam or
+     ~azure.ai.projects.models.LiveSpecificCustomToolParam or
+     ~azure.ai.projects.models.LiveSpecificApplyPatchParam or
+     ~azure.ai.projects.models.LiveAllowedToolsChoiceParam
+    :ivar parallel_tool_calls:
+    :vartype parallel_tool_calls: bool
+    """
+
+    model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model used for server-owned Responses delegations. Required."""
+    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    max_output_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    service_tier: Optional[Union[str, "_models.LiveResponsesServiceTier"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"auto\", \"default\", \"fast_tier_temp_pilot\", \"flex\", \"priority\", and
+     \"ultrafast\"."""
+    reasoning: Optional["_models.LiveDelegationReasoningInputParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    text: Optional["_models.LiveDelegationTextInputParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    tools: Optional[
+        list[
+            Union[
+                "_models.LiveFunctionToolInputParam",
+                "_models.LiveWebSearchToolInputParam",
+                "_models.LiveFileSearchToolInputParam",
+                "_models.LiveCodeInterpreterToolInputParam",
+                "_models.LiveHostedShellToolInputParam",
+                "_models.LiveImageGenerationToolInputParam",
+                "_models.LiveMCPToolInputParam",
+                "_models.LiveCustomToolInputParam",
+                "_models.LiveNamespaceToolInputParam",
+                "_models.LiveToolSearchToolInputParam",
+                "_models.LiveProgrammaticToolInputParam",
+                "_models.LiveComputerToolInputParam",
+                "_models.LiveApplyPatchToolInputParam",
+            ]
+        ]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tools available to the Responses backend while it handles tasks delegated by the Live model."""
+    tool_choice: Optional[
+        Union[
+            str,
+            "_models.LiveToolChoiceEnum",
+            "_models.LiveFunctionToolChoiceParam",
+            "_models.LiveMCPToolChoiceParam",
+            "_models.LiveSpecificFileSearchParam",
+            "_models.LiveSpecificWebSearchParam",
+            "_models.LiveSpecificWebSearchPreviewParam",
+            "_models.LiveSpecificImageGenParam",
+            "_models.LiveSpecificComputerParam",
+            "_models.LiveSpecificCodeInterpreterParam",
+            "_models.LiveSpecificProgrammaticToolCallingParam",
+            "_models.LiveSpecificFunctionShellParam",
+            "_models.LiveSpecificCustomToolParam",
+            "_models.LiveSpecificApplyPatchParam",
+            "_models.LiveAllowedToolsChoiceParam",
+        ]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Controls which tool the Responses backend uses when handling a task delegated by the Live
+     model. Is one of the following types: Union[str, \"_models.LiveToolChoiceEnum\"],
+     LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam, LiveSpecificFileSearchParam,
+     LiveSpecificWebSearchParam, LiveSpecificWebSearchPreviewParam, LiveSpecificImageGenParam,
+     LiveSpecificComputerParam, LiveSpecificCodeInterpreterParam,
+     LiveSpecificProgrammaticToolCallingParam, LiveSpecificFunctionShellParam,
+     LiveSpecificCustomToolParam, LiveSpecificApplyPatchParam, LiveAllowedToolsChoiceParam"""
+    parallel_tool_calls: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: str,
+        instructions: Optional[str] = None,
+        max_output_tokens: Optional[int] = None,
+        service_tier: Optional[Union[str, "_models.LiveResponsesServiceTier"]] = None,
+        reasoning: Optional["_models.LiveDelegationReasoningInputParam"] = None,
+        text: Optional["_models.LiveDelegationTextInputParam"] = None,
+        tools: Optional[
+            list[
+                Union[
+                    "_models.LiveFunctionToolInputParam",
+                    "_models.LiveWebSearchToolInputParam",
+                    "_models.LiveFileSearchToolInputParam",
+                    "_models.LiveCodeInterpreterToolInputParam",
+                    "_models.LiveHostedShellToolInputParam",
+                    "_models.LiveImageGenerationToolInputParam",
+                    "_models.LiveMCPToolInputParam",
+                    "_models.LiveCustomToolInputParam",
+                    "_models.LiveNamespaceToolInputParam",
+                    "_models.LiveToolSearchToolInputParam",
+                    "_models.LiveProgrammaticToolInputParam",
+                    "_models.LiveComputerToolInputParam",
+                    "_models.LiveApplyPatchToolInputParam",
+                ]
+            ]
+        ] = None,
+        tool_choice: Optional[
+            Union[
+                str,
+                "_models.LiveToolChoiceEnum",
+                "_models.LiveFunctionToolChoiceParam",
+                "_models.LiveMCPToolChoiceParam",
+                "_models.LiveSpecificFileSearchParam",
+                "_models.LiveSpecificWebSearchParam",
+                "_models.LiveSpecificWebSearchPreviewParam",
+                "_models.LiveSpecificImageGenParam",
+                "_models.LiveSpecificComputerParam",
+                "_models.LiveSpecificCodeInterpreterParam",
+                "_models.LiveSpecificProgrammaticToolCallingParam",
+                "_models.LiveSpecificFunctionShellParam",
+                "_models.LiveSpecificCustomToolParam",
+                "_models.LiveSpecificApplyPatchParam",
+                "_models.LiveAllowedToolsChoiceParam",
+            ]
+        ] = None,
+        parallel_tool_calls: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveResponsesDelegationSettingsUpdateInputParam(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Updates to the Responses backend of an existing Live session. Omitted settings retain their
+    current values.
+
+    :ivar model: The Responses backend model to use for subsequent delegated requests. Omit to keep
+     the current backend model.
+    :vartype model: str
+    :ivar instructions:
+    :vartype instructions: str
+    :ivar max_output_tokens:
+    :vartype max_output_tokens: int
+    :ivar service_tier: Known values are: "auto", "default", "fast_tier_temp_pilot", "flex",
+     "priority", and "ultrafast".
+    :vartype service_tier: str or ~azure.ai.projects.models.LiveResponsesServiceTier
+    :ivar reasoning:
+    :vartype reasoning: ~azure.ai.projects.models.LiveDelegationReasoningInputParam
+    :ivar text:
+    :vartype text: ~azure.ai.projects.models.LiveDelegationTextInputParam
+    :ivar tools: Tools available to the Responses backend while it handles tasks delegated by the
+     Live model.
+    :vartype tools: list[~azure.ai.projects.models.LiveFunctionToolInputParam or
+     ~azure.ai.projects.models.LiveWebSearchToolInputParam or
+     ~azure.ai.projects.models.LiveFileSearchToolInputParam or
+     ~azure.ai.projects.models.LiveCodeInterpreterToolInputParam or
+     ~azure.ai.projects.models.LiveHostedShellToolInputParam or
+     ~azure.ai.projects.models.LiveImageGenerationToolInputParam or
+     ~azure.ai.projects.models.LiveMCPToolInputParam or
+     ~azure.ai.projects.models.LiveCustomToolInputParam or
+     ~azure.ai.projects.models.LiveNamespaceToolInputParam or
+     ~azure.ai.projects.models.LiveToolSearchToolInputParam or
+     ~azure.ai.projects.models.LiveProgrammaticToolInputParam or
+     ~azure.ai.projects.models.LiveComputerToolInputParam or
+     ~azure.ai.projects.models.LiveApplyPatchToolInputParam]
+    :ivar tool_choice: Controls which tool the Responses backend uses when handling a task
+     delegated by the Live model. Is one of the following types: Union[str,
+     "_models.LiveToolChoiceEnum"], LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam,
+     LiveSpecificFileSearchParam, LiveSpecificWebSearchParam, LiveSpecificWebSearchPreviewParam,
+     LiveSpecificImageGenParam, LiveSpecificComputerParam, LiveSpecificCodeInterpreterParam,
+     LiveSpecificProgrammaticToolCallingParam, LiveSpecificFunctionShellParam,
+     LiveSpecificCustomToolParam, LiveSpecificApplyPatchParam, LiveAllowedToolsChoiceParam
+    :vartype tool_choice: str or ~azure.ai.projects.models.LiveToolChoiceEnum or
+     ~azure.ai.projects.models.LiveFunctionToolChoiceParam or
+     ~azure.ai.projects.models.LiveMCPToolChoiceParam or
+     ~azure.ai.projects.models.LiveSpecificFileSearchParam or
+     ~azure.ai.projects.models.LiveSpecificWebSearchParam or
+     ~azure.ai.projects.models.LiveSpecificWebSearchPreviewParam or
+     ~azure.ai.projects.models.LiveSpecificImageGenParam or
+     ~azure.ai.projects.models.LiveSpecificComputerParam or
+     ~azure.ai.projects.models.LiveSpecificCodeInterpreterParam or
+     ~azure.ai.projects.models.LiveSpecificProgrammaticToolCallingParam or
+     ~azure.ai.projects.models.LiveSpecificFunctionShellParam or
+     ~azure.ai.projects.models.LiveSpecificCustomToolParam or
+     ~azure.ai.projects.models.LiveSpecificApplyPatchParam or
+     ~azure.ai.projects.models.LiveAllowedToolsChoiceParam
+    :ivar parallel_tool_calls:
+    :vartype parallel_tool_calls: bool
+    """
+
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Responses backend model to use for subsequent delegated requests. Omit to keep the current
+     backend model."""
+    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    max_output_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    service_tier: Optional[Union[str, "_models.LiveResponsesServiceTier"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"auto\", \"default\", \"fast_tier_temp_pilot\", \"flex\", \"priority\", and
+     \"ultrafast\"."""
+    reasoning: Optional["_models.LiveDelegationReasoningInputParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    text: Optional["_models.LiveDelegationTextInputParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    tools: Optional[
+        list[
+            Union[
+                "_models.LiveFunctionToolInputParam",
+                "_models.LiveWebSearchToolInputParam",
+                "_models.LiveFileSearchToolInputParam",
+                "_models.LiveCodeInterpreterToolInputParam",
+                "_models.LiveHostedShellToolInputParam",
+                "_models.LiveImageGenerationToolInputParam",
+                "_models.LiveMCPToolInputParam",
+                "_models.LiveCustomToolInputParam",
+                "_models.LiveNamespaceToolInputParam",
+                "_models.LiveToolSearchToolInputParam",
+                "_models.LiveProgrammaticToolInputParam",
+                "_models.LiveComputerToolInputParam",
+                "_models.LiveApplyPatchToolInputParam",
+            ]
+        ]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Tools available to the Responses backend while it handles tasks delegated by the Live model."""
+    tool_choice: Optional[
+        Union[
+            str,
+            "_models.LiveToolChoiceEnum",
+            "_models.LiveFunctionToolChoiceParam",
+            "_models.LiveMCPToolChoiceParam",
+            "_models.LiveSpecificFileSearchParam",
+            "_models.LiveSpecificWebSearchParam",
+            "_models.LiveSpecificWebSearchPreviewParam",
+            "_models.LiveSpecificImageGenParam",
+            "_models.LiveSpecificComputerParam",
+            "_models.LiveSpecificCodeInterpreterParam",
+            "_models.LiveSpecificProgrammaticToolCallingParam",
+            "_models.LiveSpecificFunctionShellParam",
+            "_models.LiveSpecificCustomToolParam",
+            "_models.LiveSpecificApplyPatchParam",
+            "_models.LiveAllowedToolsChoiceParam",
+        ]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Controls which tool the Responses backend uses when handling a task delegated by the Live
+     model. Is one of the following types: Union[str, \"_models.LiveToolChoiceEnum\"],
+     LiveFunctionToolChoiceParam, LiveMCPToolChoiceParam, LiveSpecificFileSearchParam,
+     LiveSpecificWebSearchParam, LiveSpecificWebSearchPreviewParam, LiveSpecificImageGenParam,
+     LiveSpecificComputerParam, LiveSpecificCodeInterpreterParam,
+     LiveSpecificProgrammaticToolCallingParam, LiveSpecificFunctionShellParam,
+     LiveSpecificCustomToolParam, LiveSpecificApplyPatchParam, LiveAllowedToolsChoiceParam"""
+    parallel_tool_calls: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: Optional[str] = None,
+        instructions: Optional[str] = None,
+        max_output_tokens: Optional[int] = None,
+        service_tier: Optional[Union[str, "_models.LiveResponsesServiceTier"]] = None,
+        reasoning: Optional["_models.LiveDelegationReasoningInputParam"] = None,
+        text: Optional["_models.LiveDelegationTextInputParam"] = None,
+        tools: Optional[
+            list[
+                Union[
+                    "_models.LiveFunctionToolInputParam",
+                    "_models.LiveWebSearchToolInputParam",
+                    "_models.LiveFileSearchToolInputParam",
+                    "_models.LiveCodeInterpreterToolInputParam",
+                    "_models.LiveHostedShellToolInputParam",
+                    "_models.LiveImageGenerationToolInputParam",
+                    "_models.LiveMCPToolInputParam",
+                    "_models.LiveCustomToolInputParam",
+                    "_models.LiveNamespaceToolInputParam",
+                    "_models.LiveToolSearchToolInputParam",
+                    "_models.LiveProgrammaticToolInputParam",
+                    "_models.LiveComputerToolInputParam",
+                    "_models.LiveApplyPatchToolInputParam",
+                ]
+            ]
+        ] = None,
+        tool_choice: Optional[
+            Union[
+                str,
+                "_models.LiveToolChoiceEnum",
+                "_models.LiveFunctionToolChoiceParam",
+                "_models.LiveMCPToolChoiceParam",
+                "_models.LiveSpecificFileSearchParam",
+                "_models.LiveSpecificWebSearchParam",
+                "_models.LiveSpecificWebSearchPreviewParam",
+                "_models.LiveSpecificImageGenParam",
+                "_models.LiveSpecificComputerParam",
+                "_models.LiveSpecificCodeInterpreterParam",
+                "_models.LiveSpecificProgrammaticToolCallingParam",
+                "_models.LiveSpecificFunctionShellParam",
+                "_models.LiveSpecificCustomToolParam",
+                "_models.LiveSpecificApplyPatchParam",
+                "_models.LiveAllowedToolsChoiceParam",
+            ]
+        ] = None,
+        parallel_tool_calls: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveResponsesDelegationUpdateParam(
+    LiveSessionUpdateParamsDelegation, discriminator="responses"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Update the Responses backend for an existing Live session without changing delegation
+    ownership.
+
+    :ivar acknowledgement_delay_ms: Milliseconds to wait before requesting an automatic spoken
+     acknowledgement for a delegation. The model may still speak before this delay. Any commentary
+     or thinking appended to the session cancels all pending acknowledgements, including those for
+     other delegations. Defaults to 400 for Decisions sessions and 0 (request immediately) for other
+     sessions. Omission in a session update preserves the current value. Updates apply to subsequent
+     delegations.
+    :vartype acknowledgement_delay_ms: int
+    :ivar type: The delegation owner. Always ``responses`` for tasks handled by the Responses API.
+     Required. RESPONSES.
+    :vartype type: str or ~azure.ai.projects.models.RESPONSES
+    :ivar responses: Responses backend settings to update. Omitted settings keep their existing
+     values.
+    :vartype responses: ~azure.ai.projects.models.LiveResponsesDelegationSettingsUpdateInputParam
+    """
+
+    acknowledgement_delay_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Milliseconds to wait before requesting an automatic spoken acknowledgement for a delegation.
+     The model may still speak before this delay. Any commentary or thinking appended to the session
+     cancels all pending acknowledgements, including those for other delegations. Defaults to 400
+     for Decisions sessions and 0 (request immediately) for other sessions. Omission in a session
+     update preserves the current value. Updates apply to subsequent delegations."""
+    type: Literal[LiveSessionUpdateParamsDelegationType.RESPONSES] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The delegation owner. Always ``responses`` for tasks handled by the Responses API. Required.
+     RESPONSES."""
+    responses: Optional["_models.LiveResponsesDelegationSettingsUpdateInputParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Responses backend settings to update. Omitted settings keep their existing values."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        acknowledgement_delay_ms: Optional[int] = None,
+        responses: Optional["_models.LiveResponsesDelegationSettingsUpdateInputParam"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveSessionUpdateParamsDelegationType.RESPONSES  # type: ignore
+
+
+class LiveServerEventLiveCommentaryAppended(
+    LiveServerEvent, discriminator="session.commentary.appended"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Returned when a session.commentary.append command is accepted into the Live session timeline.
+    Acknowledges the added commentary without guaranteeing exact wording or completed audio
+    playback.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar start_ms: The start of this event on the Live session timeline, in milliseconds from the
+     beginning of the session. Required.
+    :vartype start_ms: int
+    :ivar end_ms: The end of this event on the Live session timeline, in milliseconds from the
+     beginning of the session. For appended context, this can equal start_ms. Required.
+    :vartype end_ms: int
+    :ivar type: The event type, always ``session.commentary.appended``. Required.
+     SESSION_COMMENTARY_APPENDED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_COMMENTARY_APPENDED
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    start_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The start of this event on the Live session timeline, in milliseconds from the beginning of the
+     session. Required."""
+    end_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The end of this event on the Live session timeline, in milliseconds from the beginning of the
+     session. For appended context, this can equal start_ms. Required."""
+    type: Literal[LiveServerEventType.SESSION_COMMENTARY_APPENDED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``session.commentary.appended``. Required. SESSION_COMMENTARY_APPENDED."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        start_ms: int,
+        end_ms: int,
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_COMMENTARY_APPENDED  # type: ignore
+
+
+class LiveServerEventLiveDecisionEvent(
+    LiveServerEvent, discriminator="decision.event"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A Decision API event for a Live delegation or transcript trigger. For a trigger,
+    source_event_id identifies the transcript delta that caused this evaluation.
+
+    :ivar type: Required. DECISION_EVENT.
+    :vartype type: str or ~azure.ai.projects.models.DECISION_EVENT
+    :ivar event_id: The unique ID of this Live server event. Required.
+    :vartype event_id: str
+    :ivar delegation_id: Required.
+    :vartype delegation_id: str
+    :ivar trigger_id: Required.
+    :vartype trigger_id: str
+    :ivar source_event_type: Required. Is either a Literal["session.input_transcript.delta"] type
+     or a Literal["session.output_transcript.delta"] type.
+    :vartype source_event_type: str or str
+    :ivar source_event_id: Required.
+    :vartype source_event_id: str
+    :ivar event: Required.
+    :vartype event: ~azure.ai.projects.models.LiveDecisionCompleted
+    """
+
+    type: Literal[LiveServerEventType.DECISION_EVENT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. DECISION_EVENT."""
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of this Live server event. Required."""
+    delegation_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    trigger_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    source_event_type: Literal["session.input_transcript.delta", "session.output_transcript.delta"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. Is either a Literal[\"session.input_transcript.delta\"] type or a
+     Literal[\"session.output_transcript.delta\"] type."""
+    source_event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    event: "_models.LiveDecisionCompleted" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        delegation_id: str,
+        trigger_id: str,
+        source_event_type: Literal["session.input_transcript.delta", "session.output_transcript.delta"],
+        source_event_id: str,
+        event: "_models.LiveDecisionCompleted",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.DECISION_EVENT  # type: ignore
+
+
+class LiveServerEventLiveDecisionItemCreated(
+    LiveServerEvent, discriminator="decision.item.created"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An input item was appended for future decisions.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar type: Required. DECISION_ITEM_CREATED.
+    :vartype type: str or ~azure.ai.projects.models.DECISION_ITEM_CREATED
+    :ivar item: Required.
+    :vartype item: ~azure.ai.projects.models.LiveDecisionStoredInputItemParam
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    type: Literal[LiveServerEventType.DECISION_ITEM_CREATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. DECISION_ITEM_CREATED."""
+    item: "_models.LiveDecisionStoredInputItemParam" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        item: "_models.LiveDecisionStoredInputItemParam",
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.DECISION_ITEM_CREATED  # type: ignore
+
+
+class LiveServerEventLiveDecisionItemDeleted(
+    LiveServerEvent, discriminator="decision.item.deleted"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An input item was removed from future decisions.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar type: Required. DECISION_ITEM_DELETED.
+    :vartype type: str or ~azure.ai.projects.models.DECISION_ITEM_DELETED
+    :ivar item_id: Required.
+    :vartype item_id: str
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    type: Literal[LiveServerEventType.DECISION_ITEM_DELETED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. DECISION_ITEM_DELETED."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        item_id: str,
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.DECISION_ITEM_DELETED  # type: ignore
+
+
+class LiveServerEventLiveDelegationCreated(
+    LiveServerEvent, discriminator="session.delegation.created"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Returned when the Live model delegates work to your application, Responses, or Decisions.
+    Contains delegation metadata and the position on the session timeline where the work was
+    delegated.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar type: The event type, always ``session.delegation.created``. Required.
+     SESSION_DELEGATION_CREATED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_DELEGATION_CREATED
+    :ivar offset_ms: The position on the Live session timeline where the delegation was created, in
+     milliseconds from the beginning of the session. Required.
+    :vartype offset_ms: int
+    :ivar delegation: The delegated work identifier and destination. This object contains metadata,
+     not the task text. Required.
+    :vartype delegation: ~azure.ai.projects.models.VoiceAgentLiveDelegationItem
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    type: Literal[LiveServerEventType.SESSION_DELEGATION_CREATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``session.delegation.created``. Required. SESSION_DELEGATION_CREATED."""
+    offset_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The position on the Live session timeline where the delegation was created, in milliseconds
+     from the beginning of the session. Required."""
+    delegation: "_models.VoiceAgentLiveDelegationItem" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The delegated work identifier and destination. This object contains metadata, not the task
+     text. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        offset_ms: int,
+        delegation: "_models.VoiceAgentLiveDelegationItem",
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_DELEGATION_CREATED  # type: ignore
+
+
+class LiveServerEventLiveErrorEvent(
+    LiveServerEvent, discriminator="error"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Reports an error in the Live session, such as an invalid client command. Use
+    error.client_event_id, when present, to identify the command that caused the error.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar type: The event type, always ``error``. Required. ERROR.
+    :vartype type: str or ~azure.ai.projects.models.ERROR
+    :ivar error: Details of the Live error and the client command that caused it, when known.
+     Required.
+    :vartype error: ~azure.ai.projects.models.LiveLiveError
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    type: Literal[LiveServerEventType.ERROR] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``error``. Required. ERROR."""
+    error: "_models.LiveLiveError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Details of the Live error and the client command that caused it, when known. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        error: "_models.LiveLiveError",
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.ERROR  # type: ignore
+
+
+class LiveServerEventLiveInfoEvent(
+    LiveServerEvent, discriminator="info"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An informational notice about the Live session, such as the event permissions applied to a
+    frontend data channel.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar type: The event type, always ``info``. Required. INFO.
+    :vartype type: str or ~azure.ai.projects.models.INFO
+    :ivar code: A machine-readable code for the notice, such as ``data_channel_permissions``.
+     Required.
+    :vartype code: str
+    :ivar message: A human-readable explanation of the Live session notice. Required.
+    :vartype message: str
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    type: Literal[LiveServerEventType.INFO] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``info``. Required. INFO."""
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A machine-readable code for the notice, such as ``data_channel_permissions``. Required."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable explanation of the Live session notice. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        code: str,
+        message: str,
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.INFO  # type: ignore
+
+
+class LiveServerEventLiveInputAudioMuted(
+    LiveServerEvent, discriminator="session.input_audio.muted"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Acknowledges a session.input_audio.mute command. An independent input mute sends silence to the
+    model and preserves sideband audio reflection. Fixture playback does not emit this event.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar type: The event type, always ``session.input_audio.muted``. Required.
+     SESSION_INPUT_AUDIO_MUTED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_INPUT_AUDIO_MUTED
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    type: Literal[LiveServerEventType.SESSION_INPUT_AUDIO_MUTED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``session.input_audio.muted``. Required. SESSION_INPUT_AUDIO_MUTED."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_INPUT_AUDIO_MUTED  # type: ignore
+
+
+class LiveServerEventLiveInputAudioUnmuted(
+    LiveServerEvent, discriminator="session.input_audio.unmuted"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Acknowledges a session.input_audio.unmute command, removing the independent input mute. An
+    active audio fixture still pauses inference until playback finishes. Fixture playback does not
+    emit this event.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar type: The event type, always ``session.input_audio.unmuted``. Required.
+     SESSION_INPUT_AUDIO_UNMUTED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_INPUT_AUDIO_UNMUTED
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    type: Literal[LiveServerEventType.SESSION_INPUT_AUDIO_UNMUTED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``session.input_audio.unmuted``. Required. SESSION_INPUT_AUDIO_UNMUTED."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_INPUT_AUDIO_UNMUTED  # type: ignore
+
+
+class LiveServerEventLiveInputTranscriptDelta(
+    LiveServerEvent, discriminator="session.input_transcript.delta"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A transcript fragment for user input audio in the Live session. Accumulate fragments in
+    delivery order; these events do not define complete turns or include a transcript-done event.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar start_ms: The start of this event on the Live session timeline, in milliseconds from the
+     beginning of the session. Required.
+    :vartype start_ms: int
+    :ivar end_ms: The end of this event on the Live session timeline, in milliseconds from the
+     beginning of the session. For appended context, this can equal start_ms. Required.
+    :vartype end_ms: int
+    :ivar delta: The transcript text fragment for the audio in this time range. Append fragments in
+     delivery order to build the transcript. Required.
+    :vartype delta: str
+    :ivar type: The event type, always ``session.input_transcript.delta``. Required.
+     SESSION_INPUT_TRANSCRIPT_DELTA.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_INPUT_TRANSCRIPT_DELTA
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    start_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The start of this event on the Live session timeline, in milliseconds from the beginning of the
+     session. Required."""
+    end_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The end of this event on the Live session timeline, in milliseconds from the beginning of the
+     session. For appended context, this can equal start_ms. Required."""
+    delta: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The transcript text fragment for the audio in this time range. Append fragments in delivery
+     order to build the transcript. Required."""
+    type: Literal[LiveServerEventType.SESSION_INPUT_TRANSCRIPT_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``session.input_transcript.delta``. Required.
+     SESSION_INPUT_TRANSCRIPT_DELTA."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        start_ms: int,
+        end_ms: int,
+        delta: str,
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_INPUT_TRANSCRIPT_DELTA  # type: ignore
+
+
+class LiveServerEventLiveInstructionsAppended(
+    LiveServerEvent, discriminator="session.instructions.appended"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Returned when a session.instructions.append command is accepted into the Live session timeline.
+    Acknowledges the appended instructions without guaranteeing that the model has acted on them.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar start_ms: The start of this event on the Live session timeline, in milliseconds from the
+     beginning of the session. Required.
+    :vartype start_ms: int
+    :ivar end_ms: The end of this event on the Live session timeline, in milliseconds from the
+     beginning of the session. For appended context, this can equal start_ms. Required.
+    :vartype end_ms: int
+    :ivar type: The event type, always ``session.instructions.appended``. Required.
+     SESSION_INSTRUCTIONS_APPENDED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_INSTRUCTIONS_APPENDED
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    start_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The start of this event on the Live session timeline, in milliseconds from the beginning of the
+     session. Required."""
+    end_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The end of this event on the Live session timeline, in milliseconds from the beginning of the
+     session. For appended context, this can equal start_ms. Required."""
+    type: Literal[LiveServerEventType.SESSION_INSTRUCTIONS_APPENDED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``session.instructions.appended``. Required.
+     SESSION_INSTRUCTIONS_APPENDED."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        start_ms: int,
+        end_ms: int,
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_INSTRUCTIONS_APPENDED  # type: ignore
+
+
+class LiveServerEventLiveOutputAudioFixturePlayed(
+    LiveServerEvent, discriminator="session.output_audio.fixture.played"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The complete audio fixture has drained from the server mixer and normal inference has resumed.
+    Transport buffers may still contain audio; this event does not prove listener-side completion.
+    The optional client_event_id echoes the play command. This event is not emitted for canceled or
+    failed playback.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar type: Required. SESSION_OUTPUT_AUDIO_FIXTURE_PLAYED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_OUTPUT_AUDIO_FIXTURE_PLAYED
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    type: Literal[LiveServerEventType.SESSION_OUTPUT_AUDIO_FIXTURE_PLAYED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. SESSION_OUTPUT_AUDIO_FIXTURE_PLAYED."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_OUTPUT_AUDIO_FIXTURE_PLAYED  # type: ignore
+
+
+class LiveServerEventLiveOutputAudioFixturePlaying(
+    LiveServerEvent, discriminator="session.output_audio.fixture.playing"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The existing playback path has accepted the validated audio fixture. This acknowledgment does
+    not identify when the listener receives the first sample. The optional client_event_id echoes
+    the play command.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar type: Required. SESSION_OUTPUT_AUDIO_FIXTURE_PLAYING.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_OUTPUT_AUDIO_FIXTURE_PLAYING
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    type: Literal[LiveServerEventType.SESSION_OUTPUT_AUDIO_FIXTURE_PLAYING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. SESSION_OUTPUT_AUDIO_FIXTURE_PLAYING."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_OUTPUT_AUDIO_FIXTURE_PLAYING  # type: ignore
+
+
+class LiveServerEventLiveOutputTranscriptDelta(
+    LiveServerEvent, discriminator="session.output_transcript.delta"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A transcript fragment for assistant output audio in the Live session. Accumulate fragments in
+    delivery order; these events do not define complete turns or include a transcript-done event.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar start_ms: The start of this event on the Live session timeline, in milliseconds from the
+     beginning of the session. Required.
+    :vartype start_ms: int
+    :ivar end_ms: The end of this event on the Live session timeline, in milliseconds from the
+     beginning of the session. For appended context, this can equal start_ms. Required.
+    :vartype end_ms: int
+    :ivar delta: The transcript text fragment for the audio in this time range. Append fragments in
+     delivery order to build the transcript. Required.
+    :vartype delta: str
+    :ivar type: The event type, always ``session.output_transcript.delta``. Required.
+     SESSION_OUTPUT_TRANSCRIPT_DELTA.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_OUTPUT_TRANSCRIPT_DELTA
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    start_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The start of this event on the Live session timeline, in milliseconds from the beginning of the
+     session. Required."""
+    end_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The end of this event on the Live session timeline, in milliseconds from the beginning of the
+     session. For appended context, this can equal start_ms. Required."""
+    delta: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The transcript text fragment for the audio in this time range. Append fragments in delivery
+     order to build the transcript. Required."""
+    type: Literal[LiveServerEventType.SESSION_OUTPUT_TRANSCRIPT_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``session.output_transcript.delta``. Required.
+     SESSION_OUTPUT_TRANSCRIPT_DELTA."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        start_ms: int,
+        end_ms: int,
+        delta: str,
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_OUTPUT_TRANSCRIPT_DELTA  # type: ignore
+
+
+class LiveServerEventLiveResponseEvent(
+    LiveServerEvent, discriminator="response.event"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A streaming Responses API event from a backend delegated to by the Live session. Use the outer
+    delegation_id to associate the nested stream with its Live delegation.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar type: The event type, always ``response.event``. Required. RESPONSE_EVENT.
+    :vartype type: str or ~azure.ai.projects.models.RESPONSE_EVENT
+    :ivar delegation_id:
+    :vartype delegation_id: str
+    :ivar event: The nested Responses streaming event. Dispatch on its type field. Response
+     lifecycle snapshots omit input and clear instructions, tools, and output to keep messages
+     small; consume granular output events for the generated content. Required.
+    :vartype event: dict[str, any]
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    type: Literal[LiveServerEventType.RESPONSE_EVENT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``response.event``. Required. RESPONSE_EVENT."""
+    delegation_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    event: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The nested Responses streaming event. Dispatch on its type field. Response lifecycle snapshots
+     omit input and clear instructions, tools, and output to keep messages small; consume granular
+     output events for the generated content. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        event: dict[str, Any],
+        client_event_id: Optional[str] = None,
+        delegation_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.RESPONSE_EVENT  # type: ignore
+
+
+class LiveServerEventLiveSessionClosed(
+    LiveServerEvent, discriminator="session.closed"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Returned after the Live session finishes finalizing, with the close reason, final session
+    snapshot, and cumulative audio usage. A connection closing without this event does not confirm
+    successful finalization.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar type: The event type, always ``session.closed``. Required. SESSION_CLOSED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_CLOSED
+    :ivar reason: Why the Live session ended: ``close_requested`` for an application close or
+     hangup request, ``expired`` for the session duration limit, ``content`` for a safety filter,
+     ``remote_hangup`` for a graceful remote disconnect, or ``connection_lost`` for an unexpected
+     primary or upstream disconnection. Required. Is one of the following types:
+     Literal["close_requested"], Literal["expired"], Literal["content"], Literal["remote_hangup"],
+     Literal["connection_lost"]
+    :vartype reason: str or str or str or str or str
+    :ivar session: Required.
+    :vartype session: ~azure.ai.projects.models.VoiceAgentLiveSessionResource
+    :ivar usage: The final cumulative Live audio usage after session finalization. Required.
+    :vartype usage: ~azure.ai.projects.models.LiveSessionUsage
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    type: Literal[LiveServerEventType.SESSION_CLOSED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``session.closed``. Required. SESSION_CLOSED."""
+    reason: Literal["close_requested", "expired", "content", "remote_hangup", "connection_lost"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Why the Live session ended: ``close_requested`` for an application close or hangup request,
+     ``expired`` for the session duration limit, ``content`` for a safety filter, ``remote_hangup``
+     for a graceful remote disconnect, or ``connection_lost`` for an unexpected primary or upstream
+     disconnection. Required. Is one of the following types: Literal[\"close_requested\"],
+     Literal[\"expired\"], Literal[\"content\"], Literal[\"remote_hangup\"],
+     Literal[\"connection_lost\"]"""
+    session: "_models.VoiceAgentLiveSessionResource" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+    usage: "_models.LiveSessionUsage" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The final cumulative Live audio usage after session finalization. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        reason: Literal["close_requested", "expired", "content", "remote_hangup", "connection_lost"],
+        session: "_models.VoiceAgentLiveSessionResource",
+        usage: "_models.LiveSessionUsage",
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_CLOSED  # type: ignore
+
+
+class LiveServerEventLiveSessionStarted(
+    LiveServerEvent, discriminator="session.started"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Returned when a Live session has started. Contains the resolved session configuration,
+    including server defaults.
+
+    :ivar type: The event type, always ``session.started``. Required. SESSION_STARTED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_STARTED
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar session: Required.
+    :vartype session: ~azure.ai.projects.models.VoiceAgentLiveSessionResource
+    :ivar conversation_id: Stored conversation ID when effective store is true. Use
+     protocols/voice/live/conversations; this ID differs from session.id.
+    :vartype conversation_id: str
+    """
+
+    type: Literal[LiveServerEventType.SESSION_STARTED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``session.started``. Required. SESSION_STARTED."""
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    session: "_models.VoiceAgentLiveSessionResource" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+    conversation_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Stored conversation ID when effective store is true. Use protocols/voice/live/conversations;
+     this ID differs from session.id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        session: "_models.VoiceAgentLiveSessionResource",
+        client_event_id: Optional[str] = None,
+        conversation_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_STARTED  # type: ignore
+
+
+class LiveServerEventLiveSessionUpdated(
+    LiveServerEvent, discriminator="session.updated"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Returned when a Live session update is accepted. Contains the resolved session configuration
+    after the update.
+
+    :ivar type: The event type, always ``session.updated``. Required. SESSION_UPDATED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_UPDATED
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar session: Required.
+    :vartype session: ~azure.ai.projects.models.VoiceAgentLiveSessionResource
+    """
+
+    type: Literal[LiveServerEventType.SESSION_UPDATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``session.updated``. Required. SESSION_UPDATED."""
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    session: "_models.VoiceAgentLiveSessionResource" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        session: "_models.VoiceAgentLiveSessionResource",
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_UPDATED  # type: ignore
+
+
+class LiveServerEventLiveSessionUsageUpdated(
+    LiveServerEvent, discriminator="session.usage.updated"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Reports cumulative Live audio usage and, when available, the most recent context-window usage.
+    Delegated Responses token usage is reported separately in response.event events.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar type: The event type, always ``session.usage.updated``. Required. SESSION_USAGE_UPDATED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_USAGE_UPDATED
+    :ivar usage: The cumulative Live audio usage so far. Required.
+    :vartype usage: ~azure.ai.projects.models.LiveSessionUsage
+    :ivar context_window: The latest measured Live context-window usage. Omitted when the context
+     limit is unknown.
+    :vartype context_window: ~azure.ai.projects.models.LiveContextWindowUsage
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    type: Literal[LiveServerEventType.SESSION_USAGE_UPDATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``session.usage.updated``. Required. SESSION_USAGE_UPDATED."""
+    usage: "_models.LiveSessionUsage" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The cumulative Live audio usage so far. Required."""
+    context_window: Optional["_models.LiveContextWindowUsage"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The latest measured Live context-window usage. Omitted when the context limit is unknown."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        usage: "_models.LiveSessionUsage",
+        client_event_id: Optional[str] = None,
+        context_window: Optional["_models.LiveContextWindowUsage"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_USAGE_UPDATED  # type: ignore
+
+
+class LiveServerEventLiveThinkingAppended(
+    LiveServerEvent, discriminator="session.thinking.appended"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Returned when a session.thinking.append command is accepted into the Live session timeline.
+    Acknowledges the added reasoning context without guaranteeing any spoken output.
+
+    :ivar event_id: The unique ID of the Live server event. Required.
+    :vartype event_id: str
+    :ivar client_event_id: The event_id of the client command associated with this server event,
+     when supplied.
+    :vartype client_event_id: str
+    :ivar start_ms: The start of this event on the Live session timeline, in milliseconds from the
+     beginning of the session. Required.
+    :vartype start_ms: int
+    :ivar end_ms: The end of this event on the Live session timeline, in milliseconds from the
+     beginning of the session. For appended context, this can equal start_ms. Required.
+    :vartype end_ms: int
+    :ivar type: The event type, always ``session.thinking.appended``. Required.
+     SESSION_THINKING_APPENDED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_THINKING_APPENDED
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live server event. Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command associated with this server event, when supplied."""
+    start_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The start of this event on the Live session timeline, in milliseconds from the beginning of the
+     session. Required."""
+    end_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The end of this event on the Live session timeline, in milliseconds from the beginning of the
+     session. For appended context, this can equal start_ms. Required."""
+    type: Literal[LiveServerEventType.SESSION_THINKING_APPENDED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, always ``session.thinking.appended``. Required. SESSION_THINKING_APPENDED."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        start_ms: int,
+        end_ms: int,
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.SESSION_THINKING_APPENDED  # type: ignore
+
+
+class LiveServerEventLiveTransportAnswered(
+    LiveServerEvent, discriminator="transport.answered"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The outbound SIP provider leg answered and media is established. Delivered only to sideband
+    observers.
+
+    :ivar event_id: Required.
+    :vartype event_id: str
+    :ivar session_id: The canonical Live session ID. Required.
+    :vartype session_id: str
+    :ivar type: Required. TRANSPORT_ANSWERED.
+    :vartype type: str or ~azure.ai.projects.models.TRANSPORT_ANSWERED
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    session_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The canonical Live session ID. Required."""
+    type: Literal[LiveServerEventType.TRANSPORT_ANSWERED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. TRANSPORT_ANSWERED."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        session_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.TRANSPORT_ANSWERED  # type: ignore
+
+
+class LiveServerEventLiveTransportDtmfReceived(
+    LiveServerEvent, discriminator="transport.dtmf.received"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A SIP DTMF keypress received from the caller. Delivered only to sideband observers.
+
+    :ivar type: Required. TRANSPORT_DTMF_RECEIVED.
+    :vartype type: str or ~azure.ai.projects.models.TRANSPORT_DTMF_RECEIVED
+    :ivar event_id: Required.
+    :vartype event_id: str
+    :ivar event: Required.
+    :vartype event: str
+    """
+
+    type: Literal[LiveServerEventType.TRANSPORT_DTMF_RECEIVED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. TRANSPORT_DTMF_RECEIVED."""
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    event: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        event: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.TRANSPORT_DTMF_RECEIVED  # type: ignore
+
+
+class LiveServerEventLiveTransportDtmfSent(
+    LiveServerEvent, discriminator="transport.dtmf.sent"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A SIP DTMF keypress successfully sent to the SIP trunk. Delivered only to sideband observers;
+    this is not a client command.
+
+    :ivar type: Required. TRANSPORT_DTMF_SENT.
+    :vartype type: str or ~azure.ai.projects.models.TRANSPORT_DTMF_SENT
+    :ivar event_id: Required.
+    :vartype event_id: str
+    :ivar event: Required.
+    :vartype event: str
+    :ivar client_event_id: The event_id of the client command, when supplied.
+    :vartype client_event_id: str
+    """
+
+    type: Literal[LiveServerEventType.TRANSPORT_DTMF_SENT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. TRANSPORT_DTMF_SENT."""
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    event: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    client_event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event_id of the client command, when supplied."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        event: str,
+        client_event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.TRANSPORT_DTMF_SENT  # type: ignore
+
+
+class LiveServerEventLiveTransportFailed(
+    LiveServerEvent, discriminator="transport.failed"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An asynchronous outbound SIP setup failure. Delivered only to sideband observers.
+
+    :ivar event_id: Required.
+    :vartype event_id: str
+    :ivar session_id: The canonical Live session ID. Required.
+    :vartype session_id: str
+    :ivar type: Required. TRANSPORT_FAILED.
+    :vartype type: str or ~azure.ai.projects.models.TRANSPORT_FAILED
+    :ivar error: Required.
+    :vartype error: ~azure.ai.projects.models.LiveTransportCallError
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    session_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The canonical Live session ID. Required."""
+    type: Literal[LiveServerEventType.TRANSPORT_FAILED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. TRANSPORT_FAILED."""
+    error: "_models.LiveTransportCallError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        session_id: str,
+        error: "_models.LiveTransportCallError",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.TRANSPORT_FAILED  # type: ignore
+
+
+class LiveServerEventLiveTransportRinging(
+    LiveServerEvent, discriminator="transport.ringing"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The outbound SIP provider leg is ringing or providing early media. Delivered only to sideband
+    observers.
+
+    :ivar event_id: Required.
+    :vartype event_id: str
+    :ivar session_id: The canonical Live session ID. Required.
+    :vartype session_id: str
+    :ivar type: Required. TRANSPORT_RINGING.
+    :vartype type: str or ~azure.ai.projects.models.TRANSPORT_RINGING
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    session_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The canonical Live session ID. Required."""
+    type: Literal[LiveServerEventType.TRANSPORT_RINGING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. TRANSPORT_RINGING."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        session_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveServerEventType.TRANSPORT_RINGING  # type: ignore
+
+
+class LiveSessionAudioFormatPCMAParam(
+    LiveAudioFormat, discriminator="audio/pcma"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Raw, mono G.711 A-law audio for a Live WebSocket connection.
+
+    :ivar type: The audio encoding. Always ``audio/pcma``. Required. AUDIO_PCMA.
+    :vartype type: str or ~azure.ai.projects.models.AUDIO_PCMA
+    :ivar rate: Audio sample rate in hertz. G.711 audio uses 8000 Hz. Required.
+    :vartype rate: int
+    """
+
+    type: Literal[LiveAudioFormatType.AUDIO_PCMA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The audio encoding. Always ``audio/pcma``. Required. AUDIO_PCMA."""
+    rate: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Audio sample rate in hertz. G.711 audio uses 8000 Hz. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rate: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveAudioFormatType.AUDIO_PCMA  # type: ignore
+
+
+class LiveSessionAudioFormatPCMParam(
+    LiveAudioFormat, discriminator="audio/pcm"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Raw, mono 16-bit little-endian PCM audio for a Live WebSocket connection.
+
+    :ivar type: The audio encoding. Always ``audio/pcm``. Required. AUDIO_PCM.
+    :vartype type: str or ~azure.ai.projects.models.AUDIO_PCM
+    :ivar rate: Audio sample rate in hertz. Live WebSocket PCM audio supports 16000 or 24000 Hz.
+     Required. Is either a Literal[16000] type or a Literal[24000] type.
+    :vartype rate: int or int
+    """
+
+    type: Literal[LiveAudioFormatType.AUDIO_PCM] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The audio encoding. Always ``audio/pcm``. Required. AUDIO_PCM."""
+    rate: Literal[16000, 24000] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Audio sample rate in hertz. Live WebSocket PCM audio supports 16000 or 24000 Hz. Required. Is
+     either a Literal[16000] type or a Literal[24000] type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rate: Literal[16000, 24000],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveAudioFormatType.AUDIO_PCM  # type: ignore
+
+
+class LiveSessionAudioFormatPCMUParam(
+    LiveAudioFormat, discriminator="audio/pcmu"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Raw, mono G.711 μ-law audio for a Live WebSocket connection.
+
+    :ivar type: The audio encoding. Always ``audio/pcmu``. Required. AUDIO_PCMU.
+    :vartype type: str or ~azure.ai.projects.models.AUDIO_PCMU
+    :ivar rate: Audio sample rate in hertz. G.711 audio uses 8000 Hz. Required.
+    :vartype rate: int
+    """
+
+    type: Literal[LiveAudioFormatType.AUDIO_PCMU] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The audio encoding. Always ``audio/pcmu``. Required. AUDIO_PCMU."""
+    rate: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Audio sample rate in hertz. G.711 audio uses 8000 Hz. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rate: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveAudioFormatType.AUDIO_PCMU  # type: ignore
+
+
+class LiveSessionCreateParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Initial configuration for a Live session, including its model, conversation instructions,
+    audio, and delegated task handling.
+
+    :ivar model: Required. "gpt-live-1"
+    :vartype model: str or ~azure.ai.projects.models.ModelIdsLive
+    :ivar instructions:
+    :vartype instructions: str
+    :ivar input: Ordered text-only history supplied before startup. Supports developer, user, and
+     assistant messages with one text part each; at most 128 messages and a configured
+     rendered-token limit (8,192 by default).
+    :vartype input: list[~azure.ai.projects.models.LiveInitialItem]
+    :ivar audio: Startup audio configuration. Only primary WebSockets accept audio.format; WebRTC
+     and SIP negotiate their media format. Voice and format are immutable after startup.
+    :vartype audio: ~azure.ai.projects.models.LiveInitialSessionAudioParam
+    :ivar delegation:
+    :vartype delegation: ~azure.ai.projects.models.LiveSessionCreateParamsDelegation
+    :ivar triggers: At most one Decisions trigger per transcript event type. Triggers run
+     independently of delegation. On update, omit triggers to keep the current configuration, send a
+     list to replace it, or send an empty list to disable triggers.
+    :vartype triggers: list[~azure.ai.projects.models.LiveDecisionTriggerInputParam]
+    :ivar store: Whether to store the session for later forking and recording download. Defaults to
+     false for new sessions.
+    :vartype store: bool
+    :ivar client: Startup-only capabilities for an untrusted frontend attached to a unified WebRTC
+     session. Trusted sideband connections are unaffected.
+    :vartype client: ~azure.ai.projects.models.LiveClientConfigParam
+    """
+
+    model: Union[str, "_models.ModelIdsLive"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. \"gpt-live-1\""""
+    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    input: Optional[list["_models.LiveInitialItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ordered text-only history supplied before startup. Supports developer, user, and assistant
+     messages with one text part each; at most 128 messages and a configured rendered-token limit
+     (8,192 by default)."""
+    audio: Optional["_models.LiveInitialSessionAudioParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Startup audio configuration. Only primary WebSockets accept audio.format; WebRTC and SIP
+     negotiate their media format. Voice and format are immutable after startup."""
+    delegation: Optional["_models.LiveSessionCreateParamsDelegation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    triggers: Optional[list["_models.LiveDecisionTriggerInputParam"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """At most one Decisions trigger per transcript event type. Triggers run independently of
+     delegation. On update, omit triggers to keep the current configuration, send a list to replace
+     it, or send an empty list to disable triggers."""
+    store: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether to store the session for later forking and recording download. Defaults to false for
+     new sessions."""
+    client: Optional["_models.LiveClientConfigParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Startup-only capabilities for an untrusted frontend attached to a unified WebRTC session.
+     Trusted sideband connections are unaffected."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: Union[str, "_models.ModelIdsLive"],
+        instructions: Optional[str] = None,
+        input: Optional[list["_models.LiveInitialItem"]] = None,
+        audio: Optional["_models.LiveInitialSessionAudioParam"] = None,
+        delegation: Optional["_models.LiveSessionCreateParamsDelegation"] = None,
+        triggers: Optional[list["_models.LiveDecisionTriggerInputParam"]] = None,
+        store: Optional[bool] = None,
+        client: Optional["_models.LiveClientConfigParam"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveSessionCreateParamsDelegation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Who handles tasks delegated by the Live model. Omitted or null selects your application; use
+    ``responses`` or ``decisions`` to delegate to the corresponding API.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LiveSessionCreateParamsDelegationLiveClientDelegationParam,
+    LiveSessionCreateParamsDelegationLiveDecisionsDelegationParam,
+    LiveSessionCreateParamsDelegationLiveResponsesDelegationParam
+
+    :ivar type: Required. Known values are: "client", "responses", and "decisions".
+    :vartype type: str or ~azure.ai.projects.models.LiveSessionCreateParamsDelegationType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"client\", \"responses\", and \"decisions\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveSessionCreateParamsDelegationLiveClientDelegationParam(
+    LiveSessionCreateParamsDelegation, discriminator="client"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Delegate tasks to your application. The Live session emits delegation events that your backend
+    handles.
+
+    :ivar acknowledgement_delay_ms: Milliseconds to wait before requesting an automatic spoken
+     acknowledgement for a delegation. The model may still speak before this delay. Any commentary
+     or thinking appended to the session cancels all pending acknowledgements, including those for
+     other delegations. Defaults to 400 for Decisions sessions and 0 (request immediately) for other
+     sessions. Omission in a session update preserves the current value. Updates apply to subsequent
+     delegations.
+    :vartype acknowledgement_delay_ms: int
+    :ivar type: The delegation owner. Always ``client`` for tasks handled by your application.
+     Required. CLIENT.
+    :vartype type: str or ~azure.ai.projects.models.CLIENT
+    """
+
+    acknowledgement_delay_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Milliseconds to wait before requesting an automatic spoken acknowledgement for a delegation.
+     The model may still speak before this delay. Any commentary or thinking appended to the session
+     cancels all pending acknowledgements, including those for other delegations. Defaults to 400
+     for Decisions sessions and 0 (request immediately) for other sessions. Omission in a session
+     update preserves the current value. Updates apply to subsequent delegations."""
+    type: Literal[LiveSessionCreateParamsDelegationType.CLIENT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The delegation owner. Always ``client`` for tasks handled by your application. Required.
+     CLIENT."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        acknowledgement_delay_ms: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveSessionCreateParamsDelegationType.CLIENT  # type: ignore
+
+
+class LiveSessionCreateParamsDelegationLiveDecisionsDelegationParam(
+    LiveSessionCreateParamsDelegation, discriminator="decisions"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """LiveSessionCreateParamsDelegationLiveDecisionsDelegationParam.
+
+    :ivar acknowledgement_delay_ms: Milliseconds to wait before requesting an automatic spoken
+     acknowledgement for a delegation. The model may still speak before this delay. Any commentary
+     or thinking appended to the session cancels all pending acknowledgements, including those for
+     other delegations. Defaults to 400. Updates apply to subsequent delegations.
+    :vartype acknowledgement_delay_ms: int
+    :ivar type: Required. DECISIONS.
+    :vartype type: str or ~azure.ai.projects.models.DECISIONS
+    :ivar decisions: Required.
+    :vartype decisions: ~azure.ai.projects.models.LiveDecisionsSettingsInputParam
+    """
+
+    acknowledgement_delay_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Milliseconds to wait before requesting an automatic spoken acknowledgement for a delegation.
+     The model may still speak before this delay. Any commentary or thinking appended to the session
+     cancels all pending acknowledgements, including those for other delegations. Defaults to 400.
+     Updates apply to subsequent delegations."""
+    type: Literal[LiveSessionCreateParamsDelegationType.DECISIONS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. DECISIONS."""
+    decisions: "_models.LiveDecisionsSettingsInputParam" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        decisions: "_models.LiveDecisionsSettingsInputParam",
+        acknowledgement_delay_ms: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveSessionCreateParamsDelegationType.DECISIONS  # type: ignore
+
+
+class LiveSessionCreateParamsDelegationLiveResponsesDelegationParam(
+    LiveSessionCreateParamsDelegation, discriminator="responses"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Delegate tasks to a Responses model managed by the Live session.
+
+    :ivar acknowledgement_delay_ms: Milliseconds to wait before requesting an automatic spoken
+     acknowledgement for a delegation. The model may still speak before this delay. Any commentary
+     or thinking appended to the session cancels all pending acknowledgements, including those for
+     other delegations. Defaults to 400 for Decisions sessions and 0 (request immediately) for other
+     sessions. Omission in a session update preserves the current value. Updates apply to subsequent
+     delegations.
+    :vartype acknowledgement_delay_ms: int
+    :ivar type: The delegation owner. Always ``responses`` for tasks handled by the Responses API.
+     Required. RESPONSES.
+    :vartype type: str or ~azure.ai.projects.models.RESPONSES
+    :ivar responses: Backend model, prompt, and tools used when the Live session delegates a task
+     to Responses. Required.
+    :vartype responses: ~azure.ai.projects.models.LiveResponsesDelegationSettingsInputParam
+    """
+
+    acknowledgement_delay_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Milliseconds to wait before requesting an automatic spoken acknowledgement for a delegation.
+     The model may still speak before this delay. Any commentary or thinking appended to the session
+     cancels all pending acknowledgements, including those for other delegations. Defaults to 400
+     for Decisions sessions and 0 (request immediately) for other sessions. Omission in a session
+     update preserves the current value. Updates apply to subsequent delegations."""
+    type: Literal[LiveSessionCreateParamsDelegationType.RESPONSES] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The delegation owner. Always ``responses`` for tasks handled by the Responses API. Required.
+     RESPONSES."""
+    responses: "_models.LiveResponsesDelegationSettingsInputParam" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Backend model, prompt, and tools used when the Live session delegates a task to Responses.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        responses: "_models.LiveResponsesDelegationSettingsInputParam",
+        acknowledgement_delay_ms: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveSessionCreateParamsDelegationType.RESPONSES  # type: ignore
+
+
+class LiveSessionStartEvent(
+    LiveClientEvent, discriminator="session.start"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Start a Live session on a primary WebSocket. Send this event before other commands and wait for
+    ``session.started``.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The Live client event type. Always ``session.start``. Required. SESSION_START.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_START
+    :ivar session: Initial configuration for a primary WebSocket. Send session.start first and wait
+     for session.started before application commands. WebRTC creation already starts the session; do
+     not send this event again on its data channel. Required.
+    :vartype session: ~azure.ai.projects.models.LiveSessionCreateParams
+    """
+
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal[LiveClientEventType.SESSION_START] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The Live client event type. Always ``session.start``. Required. SESSION_START."""
+    session: "_models.LiveSessionCreateParams" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Initial configuration for a primary WebSocket. Send session.start first and wait for
+     session.started before application commands. WebRTC creation already starts the session; do not
+     send this event again on its data channel. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        session: "_models.LiveSessionCreateParams",
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveClientEventType.SESSION_START  # type: ignore
+
+
+class LiveSessionUpdateParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Changes to an active Live session's delegation settings and transcript triggers.
+
+    :ivar delegation:
+    :vartype delegation: ~azure.ai.projects.models.LiveSessionUpdateParamsDelegation
+    :ivar triggers: At most one Decisions trigger per transcript event type. Triggers run
+     independently of delegation. On update, omit triggers to keep the current configuration, send a
+     list to replace it, or send an empty list to disable triggers.
+    :vartype triggers: list[~azure.ai.projects.models.LiveDecisionTriggerInputParam]
+    """
+
+    delegation: Optional["_models.LiveSessionUpdateParamsDelegation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    triggers: Optional[list["_models.LiveDecisionTriggerInputParam"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """At most one Decisions trigger per transcript event type. Triggers run independently of
+     delegation. On update, omit triggers to keep the current configuration, send a list to replace
+     it, or send an empty list to disable triggers."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        delegation: Optional["_models.LiveSessionUpdateParamsDelegation"] = None,
+        triggers: Optional[list["_models.LiveDecisionTriggerInputParam"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveSessionUpdateParamsDelegationLiveClientDelegationParam(
+    LiveSessionUpdateParamsDelegation, discriminator="client"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Delegate tasks to your application. The Live session emits delegation events that your backend
+    handles.
+
+    :ivar acknowledgement_delay_ms: Milliseconds to wait before requesting an automatic spoken
+     acknowledgement for a delegation. The model may still speak before this delay. Any commentary
+     or thinking appended to the session cancels all pending acknowledgements, including those for
+     other delegations. Defaults to 400 for Decisions sessions and 0 (request immediately) for other
+     sessions. Omission in a session update preserves the current value. Updates apply to subsequent
+     delegations.
+    :vartype acknowledgement_delay_ms: int
+    :ivar type: The delegation owner. Always ``client`` for tasks handled by your application.
+     Required. CLIENT.
+    :vartype type: str or ~azure.ai.projects.models.CLIENT
+    """
+
+    acknowledgement_delay_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Milliseconds to wait before requesting an automatic spoken acknowledgement for a delegation.
+     The model may still speak before this delay. Any commentary or thinking appended to the session
+     cancels all pending acknowledgements, including those for other delegations. Defaults to 400
+     for Decisions sessions and 0 (request immediately) for other sessions. Omission in a session
+     update preserves the current value. Updates apply to subsequent delegations."""
+    type: Literal[LiveSessionUpdateParamsDelegationType.CLIENT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The delegation owner. Always ``client`` for tasks handled by your application. Required.
+     CLIENT."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        acknowledgement_delay_ms: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = LiveSessionUpdateParamsDelegationType.CLIENT  # type: ignore
+
+
+class LiveSessionUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Cumulative audio duration for a Live session. Values are totals for the session, not increments
+    to sum across usage events.
+
+    :ivar seconds: The cumulative Live audio duration in seconds. Do not sum this value across
+     usage events. Required.
+    :vartype seconds: float
+    """
+
+    seconds: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The cumulative Live audio duration in seconds. Do not sum this value across usage events.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        seconds: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveSkillReferenceParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveSkillReferenceParam.
+
+    :ivar type: References a skill created with the /v1/skills endpoint. Required. Default value is
+     "skill_reference".
+    :vartype type: str
+    :ivar skill_id: The ID of the referenced skill. Required.
+    :vartype skill_id: str
+    :ivar version:
+    :vartype version: str
+    """
+
+    type: Literal["skill_reference"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """References a skill created with the /v1/skills endpoint. Required. Default value is
+     \"skill_reference\"."""
+    skill_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the referenced skill. Required."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        skill_id: str,
+        version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["skill_reference"] = "skill_reference"
+
+
+class LiveSpecificApplyPatchParam(_Model):  # pylint: disable=docstring-missing-param
+    """Specific apply patch tool choice.
+
+    :ivar type: The tool to call. Always ``apply_patch``. Required. Default value is "apply_patch".
+    :vartype type: str
+    """
+
+    type: Literal["apply_patch"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tool to call. Always ``apply_patch``. Required. Default value is \"apply_patch\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["apply_patch"] = "apply_patch"
+
+
+class LiveSpecificCodeInterpreterParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveSpecificCodeInterpreterParam.
+
+    :ivar type: The tool to call. Always ``code_interpreter``. Required. Default value is
+     "code_interpreter".
+    :vartype type: str
+    """
+
+    type: Literal["code_interpreter"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tool to call. Always ``code_interpreter``. Required. Default value is \"code_interpreter\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["code_interpreter"] = "code_interpreter"
+
+
+class LiveSpecificComputerParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveSpecificComputerParam.
+
+    :ivar type: The tool to call. Always ``computer``. Required. Default value is "computer".
+    :vartype type: str
+    """
+
+    type: Literal["computer"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tool to call. Always ``computer``. Required. Default value is \"computer\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["computer"] = "computer"
+
+
+class LiveSpecificCustomToolParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveSpecificCustomToolParam.
+
+    :ivar type: The tool to call. Always ``custom``. Required. Default value is "custom".
+    :vartype type: str
+    :ivar name: The name of the custom tool to call. Required.
+    :vartype name: str
+    """
+
+    type: Literal["custom"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tool to call. Always ``custom``. Required. Default value is \"custom\"."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the custom tool to call. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["custom"] = "custom"
+
+
+class LiveSpecificFileSearchParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveSpecificFileSearchParam.
+
+    :ivar type: The tool to call. Always ``file_search``. Required. Default value is "file_search".
+    :vartype type: str
+    """
+
+    type: Literal["file_search"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tool to call. Always ``file_search``. Required. Default value is \"file_search\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["file_search"] = "file_search"
+
+
+class LiveSpecificFunctionShellParam(_Model):  # pylint: disable=docstring-missing-param
+    """Specific shell tool choice.
+
+    :ivar type: The tool to call. Always ``shell``. Required. Default value is "shell".
+    :vartype type: str
+    """
+
+    type: Literal["shell"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tool to call. Always ``shell``. Required. Default value is \"shell\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["shell"] = "shell"
+
+
+class LiveSpecificImageGenParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveSpecificImageGenParam.
+
+    :ivar type: The tool to call. Always ``image_generation``. Required. Default value is
+     "image_generation".
+    :vartype type: str
+    """
+
+    type: Literal["image_generation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tool to call. Always ``image_generation``. Required. Default value is \"image_generation\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["image_generation"] = "image_generation"
+
+
+class LiveSpecificProgrammaticToolCallingParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveSpecificProgrammaticToolCallingParam.
+
+    :ivar type: The tool to call. Always ``programmatic_tool_calling``. Required. Default value is
+     "programmatic_tool_calling".
+    :vartype type: str
+    """
+
+    type: Literal["programmatic_tool_calling"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tool to call. Always ``programmatic_tool_calling``. Required. Default value is
+     \"programmatic_tool_calling\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["programmatic_tool_calling"] = "programmatic_tool_calling"
+
+
+class LiveSpecificWebSearchParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveSpecificWebSearchParam.
+
+    :ivar type: The tool to call. Always ``web_search``. Required. Default value is "web_search".
+    :vartype type: str
+    """
+
+    type: Literal["web_search"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tool to call. Always ``web_search``. Required. Default value is \"web_search\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["web_search"] = "web_search"
+
+
+class LiveSpecificWebSearchPreviewParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveSpecificWebSearchPreviewParam.
+
+    :ivar type: The tool to call. Always ``web_search_preview``. Required. Default value is
+     "web_search_preview".
+    :vartype type: str
+    """
+
+    type: Literal["web_search_preview"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tool to call. Always ``web_search_preview``. Required. Default value is
+     \"web_search_preview\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["web_search_preview"] = "web_search_preview"
+
+
+class LiveToolSearchToolInputParam(_Model):  # pylint: disable=docstring-missing-param
+    """LiveToolSearchToolInputParam.
+
+    :ivar type: Required. Default value is "tool_search".
+    :vartype type: str
+    """
+
+    type: Literal["tool_search"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"tool_search\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["tool_search"] = "tool_search"
+
+
+class LiveTransportCallError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LiveTransportCallError.
+
+    :ivar type: Required. Default value is "call_error".
+    :vartype type: str
+    :ivar code: The call setup failure code. Required.
+    :vartype code: str
+    :ivar message: Required.
+    :vartype message: str
+    :ivar param: The parameter related to the error, if any. Empty when no parameter applies.
+    :vartype param: str
+    """
+
+    type: Literal["call_error"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"call_error\"."""
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The call setup failure code. Required."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The parameter related to the error, if any. Empty when no parameter applies."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        param: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["call_error"] = "call_error"
+
+
+class LiveWebSearchToolInputParam(_Model):  # pylint: disable=docstring-missing-param
+    """A web search tool available to the Live session’s Responses backend.
+
+    :ivar type: The tool type. Always ``web_search``. Required. Default value is "web_search".
+    :vartype type: str
+    """
+
+    type: Literal["web_search"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tool type. Always ``web_search``. Required. Default value is \"web_search\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["web_search"] = "web_search"
 
 
 class LocalSkillParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -13719,11 +19770,11 @@ class McpProtocolConfiguration(_Model):
     """Configuration specific to the MCP protocol."""
 
 
-class MCPTool(Tool, discriminator="mcp"):  # pylint: disable=docstring-keyword-should-match-keyword-only
+class MCPTool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MCP tool.
 
-    :ivar type: The type of the MCP tool. Always ``mcp``. Required. MCP.
-    :vartype type: str or ~azure.ai.projects.models.MCP
+    :ivar type: The type of the MCP tool. Always ``mcp``. Required. Default value is "mcp".
+    :vartype type: str
     :ivar server_label: A label for this MCP server, used to identify it in tool calls. Required.
     :vartype server_label: str
     :ivar server_url: The URL for the MCP server. One of ``server_url``, ``connector_id``, or
@@ -13731,7 +19782,10 @@ class MCPTool(Tool, discriminator="mcp"):  # pylint: disable=docstring-keyword-s
     :vartype server_url: str
     :ivar connector_id: Identifier for service connectors, like those available in ChatGPT. One of
      ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service
-     connectors `here </docs/guides/tools-remote-mcp#connectors>`_. Currently supported
+     connectors `here
+     <https://developers.openai.com/api/docs/guides/tools-connectors-mcp#connectors>`_. This field
+     is deprecated for models released after September 1, 2026. Use ``server_url`` to connect to a
+     remote MCP server, or ``tunnel_id`` to connect through a Secure MCP Tunnel. Currently supported
      ``connector_id`` values are:
 
      * Dropbox: `connector_dropbox`
@@ -13777,8 +19831,8 @@ class MCPTool(Tool, discriminator="mcp"):  # pylint: disable=docstring-keyword-s
     :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     """
 
-    type: Literal[ToolType.MCP] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the MCP tool. Always ``mcp``. Required. MCP."""
+    type: Literal["mcp"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of the MCP tool. Always ``mcp``. Required. Default value is \"mcp\"."""
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A label for this MCP server, used to identify it in tool calls. Required."""
     server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -13798,8 +19852,11 @@ class MCPTool(Tool, discriminator="mcp"):  # pylint: disable=docstring-keyword-s
     ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Identifier for service connectors, like those available in ChatGPT. One of ``server_url``,
       ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service connectors `here
-      </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
- 
+      <https://developers.openai.com/api/docs/guides/tools-connectors-mcp#connectors>`_. This field
+      is deprecated for models released after September 1, 2026. Use ``server_url`` to connect to a
+      remote MCP server, or ``tunnel_id`` to connect through a Secure MCP Tunnel. Currently supported
+      ``connector_id`` values are:
+
       * Dropbox: `connector_dropbox`
       * Gmail: `connector_gmail`
       * Google Calendar: `connector_googlecalendar`
@@ -13882,7 +19939,7 @@ class MCPTool(Tool, discriminator="mcp"):  # pylint: disable=docstring-keyword-s
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.MCP  # type: ignore
+        self.type: Literal["mcp"] = "mcp"
 
 
 class MCPToolboxTool(ToolboxTool, discriminator="mcp"):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -13905,7 +19962,10 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):  # pylint: disable=docst
     :vartype server_url: str
     :ivar connector_id: Identifier for service connectors, like those available in ChatGPT. One of
      ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service
-     connectors `here </docs/guides/tools-remote-mcp#connectors>`_. Currently supported
+     connectors `here
+     <https://developers.openai.com/api/docs/guides/tools-connectors-mcp#connectors>`_. This field
+     is deprecated for models released after September 1, 2026. Use ``server_url`` to connect to a
+     remote MCP server, or ``tunnel_id`` to connect through a Secure MCP Tunnel. Currently supported
      ``connector_id`` values are:
 
      * Dropbox: `connector_dropbox`
@@ -13969,8 +20029,11 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):  # pylint: disable=docst
     ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Identifier for service connectors, like those available in ChatGPT. One of ``server_url``,
       ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service connectors `here
-      </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
- 
+      <https://developers.openai.com/api/docs/guides/tools-connectors-mcp#connectors>`_. This field
+      is deprecated for models released after September 1, 2026. Use ``server_url`` to connect to a
+      remote MCP server, or ``tunnel_id`` to connect through a Secure MCP Tunnel. Currently supported
+      ``connector_id`` values are:
+
       * Dropbox: `connector_dropbox`
       * Gmail: `connector_gmail`
       * Google Calendar: `connector_googlecalendar`
@@ -15112,6 +21175,8 @@ class MicrosoftFabricPreviewTool(
 class MisalignmentErrorDetailsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MisalignmentErrorDetailsResource.
 
+    :ivar review_target:
+    :vartype review_target: str
     :ivar error_type: An optional classification; clients must accept additional values. Known
      values are: "potentially_unintended_data_transfer", "potentially_unintended_data_access",
      "potentially_unintended_destructive_activity", and "other".
@@ -15122,6 +21187,7 @@ class MisalignmentErrorDetailsResource(_Model):  # pylint: disable=docstring-key
     :vartype steer: ~azure.ai.projects.models.MisalignmentSteer
     """
 
+    review_target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     error_type: Optional[Union[str, "_models.MisalignmentErrorType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -15139,6 +21205,7 @@ class MisalignmentErrorDetailsResource(_Model):  # pylint: disable=docstring-key
     def __init__(
         self,
         *,
+        review_target: Optional[str] = None,
         error_type: Optional[Union[str, "_models.MisalignmentErrorType"]] = None,
         detailed_explanation: Optional[str] = None,
         steer: Optional["_models.MisalignmentSteer"] = None,
@@ -16238,6 +22305,34 @@ class OtlpTelemetryEndpoint(
         self.kind = TelemetryEndpointKind.OTLP  # type: ignore
 
 
+class OutputTokensDetailsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """OutputTokensDetailsResource.
+
+    :ivar reasoning_tokens: Required.
+    :vartype reasoning_tokens: int
+    """
+
+    reasoning_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        reasoning_tokens: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class PendingUploadRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a request for a pending upload.
 
@@ -16409,35 +22504,6 @@ class ProceduralMemoryItem(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = MemoryItemKind.PROCEDURAL  # type: ignore
-
-
-class ProgrammaticToolCallingParam(Tool, discriminator="programmatic_tool_calling"):
-    """ProgrammaticToolCallingParam.
-
-    :ivar type: The type of the tool. Always ``programmatic_tool_calling``. Required.
-     PROGRAMMATIC_TOOL_CALLING.
-    :vartype type: str or ~azure.ai.projects.models.PROGRAMMATIC_TOOL_CALLING
-    """
-
-    type: Literal[ToolType.PROGRAMMATIC_TOOL_CALLING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the tool. Always ``programmatic_tool_calling``. Required.
-     PROGRAMMATIC_TOOL_CALLING."""
-
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.PROGRAMMATIC_TOOL_CALLING  # type: ignore
 
 
 class PromptAgentDefinition(
@@ -17301,8 +23367,9 @@ class RealtimeClientEventConversationItemCreate(
     """Add a new Item to the Conversation's context, including messages, function calls, and function
     call responses. This event can be used both to populate a "history" of the conversation and to
     add new items mid-stream, but has the current limitation that it cannot populate assistant
-    audio messages. If successful, the server will respond with a ``conversation.item.created``
-    event, otherwise an ``error`` event will be sent.
+    audio messages. If successful, the server will emit a ``conversation.item.added`` event and,
+    when the item is finalized, a ``conversation.item.done`` event. Otherwise, an ``error`` event
+    will be sent.
 
     :ivar event_id: Optional client-generated ID used to identify this event.
     :vartype event_id: str
@@ -17640,7 +23707,7 @@ class RealtimeClientEventOutputAudioBufferClear(
     to stop generating audio and emit a ``output_audio_buffer.cleared`` event. This event should be
     preceded by a ``response.cancel`` client event to stop the generation of the current response.
     `Learn more
-    </docs/guides/realtime-conversations#client-and-server-events-for-audio-in-webrtc>`_.
+    <https://developers.openai.com/api/docs/guides/realtime-conversations#client-and-server-events-for-audio-in-webrtc>`_.
 
     :ivar event_id: The unique ID of the client event used for error handling.
     :vartype event_id: str
@@ -17779,18 +23846,19 @@ class RealtimeConversationItem(_Model):  # pylint: disable=docstring-keyword-sho
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     RealtimeConversationItemFunctionCall, RealtimeConversationItemFunctionCallOutput,
     RealtimeMCPApprovalRequest, RealtimeMCPApprovalResponse, RealtimeMCPToolCall,
-    RealtimeMCPListTools, RealtimeConversationItemMessage
+    RealtimeMCPListTools, RealtimeConversationItemMessage, VoiceAgentSystemToolItem
 
     :ivar type: Required. Known values are: "function_call", "function_call_output",
-     "mcp_approval_response", "mcp_list_tools", "mcp_call", "mcp_approval_request", and "message".
+     "mcp_approval_response", "mcp_list_tools", "mcp_call", "mcp_approval_request", "message", and
+     "system_tool".
     :vartype type: str or ~azure.ai.projects.models.RealtimeConversationItemType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Required. Known values are: \"function_call\", \"function_call_output\",
-     \"mcp_approval_response\", \"mcp_list_tools\", \"mcp_call\", \"mcp_approval_request\", and
-     \"message\"."""
+     \"mcp_approval_response\", \"mcp_list_tools\", \"mcp_call\", \"mcp_approval_request\",
+     \"message\", and \"system_tool\"."""
 
     @overload
     def __init__(
@@ -18822,6 +24890,560 @@ class RealtimeReasoning(_Model):  # pylint: disable=docstring-keyword-should-mat
         super().__init__(*args, **kwargs)
 
 
+class RealtimeResponseInputAudio(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Realtime response input audio.
+
+    :ivar type: Required. Default value is "input_audio".
+    :vartype type: str
+    :ivar audio: Base64 audio bytes in the session input audio format. Required.
+    :vartype audio: str
+    :ivar transcript: Optional text to associate with the input audio.
+    :vartype transcript: str
+    """
+
+    type: Literal["input_audio"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"input_audio\"."""
+    audio: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Base64 audio bytes in the session input audio format. Required."""
+    transcript: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional text to associate with the input audio."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        audio: str,
+        transcript: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["input_audio"] = "input_audio"
+
+
+class RealtimeResponseInputFunctionCall(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Realtime response input function call.
+
+    :ivar id:
+    :vartype id: str
+    :ivar type: Required. Default value is "function_call".
+    :vartype type: str
+    :ivar status: Is either a Literal["completed"] type or a Literal["incomplete"] type.
+    :vartype status: str or str
+    :ivar call_id: Required.
+    :vartype call_id: str
+    :ivar name: Required.
+    :vartype name: str
+    :ivar arguments: Required.
+    :vartype arguments: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal["function_call"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"function_call\"."""
+    status: Optional[Literal["completed", "incomplete"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is either a Literal[\"completed\"] type or a Literal[\"incomplete\"] type."""
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        call_id: str,
+        name: str,
+        arguments: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        status: Optional[Literal["completed", "incomplete"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["function_call"] = "function_call"
+
+
+class RealtimeResponseInputFunctionCallOutput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Realtime response input function call output.
+
+    :ivar id:
+    :vartype id: str
+    :ivar type: Required. Default value is "function_call_output".
+    :vartype type: str
+    :ivar status: Is either a Literal["completed"] type or a Literal["incomplete"] type.
+    :vartype status: str or str
+    :ivar call_id: Required.
+    :vartype call_id: str
+    :ivar output: Required.
+    :vartype output: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal["function_call_output"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"function_call_output\"."""
+    status: Optional[Literal["completed", "incomplete"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is either a Literal[\"completed\"] type or a Literal[\"incomplete\"] type."""
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        call_id: str,
+        output: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        status: Optional[Literal["completed", "incomplete"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["function_call_output"] = "function_call_output"
+
+
+class RealtimeResponseInputImage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Realtime response input image.
+
+    :ivar type: Required. Default value is "input_image".
+    :vartype type: str
+    :ivar image_url: A base64 data URL with an image MIME type; use PNG or JPEG. Required.
+    :vartype image_url: str
+    :ivar detail: Is one of the following types: Literal["low"], Literal["high"], Literal["auto"]
+    :vartype detail: str or str or str
+    """
+
+    type: Literal["input_image"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"input_image\"."""
+    image_url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A base64 data URL with an image MIME type; use PNG or JPEG. Required."""
+    detail: Optional[Literal["low", "high", "auto"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is one of the following types: Literal[\"low\"], Literal[\"high\"], Literal[\"auto\"]"""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        image_url: str,
+        detail: Optional[Literal["low", "high", "auto"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["input_image"] = "input_image"
+
+
+class RealtimeResponseInputMessage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Realtime response input message.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    RealtimeResponseInputMessageAssistant, RealtimeResponseInputMessageDeveloper,
+    RealtimeResponseInputMessageSystem, RealtimeResponseInputMessageUser
+
+    :ivar role: Required. Known values are: "system", "developer", "user", and "assistant".
+    :vartype role: str or ~azure.ai.projects.models.RealtimeResponseInputMessageType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    role: str = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"system\", \"developer\", \"user\", and \"assistant\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        role: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RealtimeResponseInputMessageAssistant(
+    RealtimeResponseInputMessage, discriminator="assistant"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Realtime response input assistant message.
+
+    :ivar id: An optional client ID. The value ``root`` is reserved.
+    :vartype id: str
+    :ivar type: Required. Default value is "message".
+    :vartype type: str
+    :ivar status: Optional input status. Omission or null defaults to completed. Is either a
+     Literal["completed"] type or a Literal["incomplete"] type.
+    :vartype status: str or str
+    :ivar role: Required. ASSISTANT.
+    :vartype role: str or ~azure.ai.projects.models.ASSISTANT
+    :ivar content: Required.
+    :vartype content: list[~azure.ai.projects.models.RealtimeResponseInputMessageAssistantContent]
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional client ID. The value ``root`` is reserved."""
+    type: Literal["message"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"message\"."""
+    status: Optional[Literal["completed", "incomplete"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional input status. Omission or null defaults to completed. Is either a
+     Literal[\"completed\"] type or a Literal[\"incomplete\"] type."""
+    role: Literal[RealtimeResponseInputMessageType.ASSISTANT] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. ASSISTANT."""
+    content: list["_models.RealtimeResponseInputMessageAssistantContent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: list["_models.RealtimeResponseInputMessageAssistantContent"],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        status: Optional[Literal["completed", "incomplete"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.role = RealtimeResponseInputMessageType.ASSISTANT  # type: ignore
+        self.type: Literal["message"] = "message"
+
+
+class RealtimeResponseInputMessageAssistantContent(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """RealtimeResponseInputMessageAssistantContent.
+
+    :ivar type: Required. Default value is "output_text".
+    :vartype type: str
+    :ivar text: Required.
+    :vartype text: str
+    """
+
+    type: Literal["output_text"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"output_text\"."""
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["output_text"] = "output_text"
+
+
+class RealtimeResponseInputMessageDeveloper(
+    RealtimeResponseInputMessage, discriminator="developer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Realtime response input developer message.
+
+    :ivar id: An optional client ID. The value ``root`` is reserved.
+    :vartype id: str
+    :ivar type: Required. Default value is "message".
+    :vartype type: str
+    :ivar status: Optional input status. Omission or null defaults to completed. Is either a
+     Literal["completed"] type or a Literal["incomplete"] type.
+    :vartype status: str or str
+    :ivar role: Required. DEVELOPER.
+    :vartype role: str or ~azure.ai.projects.models.DEVELOPER
+    :ivar content: Required.
+    :vartype content: list[~azure.ai.projects.models.RealtimeResponseInputText]
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional client ID. The value ``root`` is reserved."""
+    type: Literal["message"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"message\"."""
+    status: Optional[Literal["completed", "incomplete"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional input status. Omission or null defaults to completed. Is either a
+     Literal[\"completed\"] type or a Literal[\"incomplete\"] type."""
+    role: Literal[RealtimeResponseInputMessageType.DEVELOPER] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. DEVELOPER."""
+    content: list["_models.RealtimeResponseInputText"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: list["_models.RealtimeResponseInputText"],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        status: Optional[Literal["completed", "incomplete"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.role = RealtimeResponseInputMessageType.DEVELOPER  # type: ignore
+        self.type: Literal["message"] = "message"
+
+
+class RealtimeResponseInputMessageSystem(
+    RealtimeResponseInputMessage, discriminator="system"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Realtime response input system message.
+
+    :ivar id: An optional client ID. The value ``root`` is reserved.
+    :vartype id: str
+    :ivar type: Required. Default value is "message".
+    :vartype type: str
+    :ivar status: Optional input status. Omission or null defaults to completed. Is either a
+     Literal["completed"] type or a Literal["incomplete"] type.
+    :vartype status: str or str
+    :ivar role: Required. SYSTEM.
+    :vartype role: str or ~azure.ai.projects.models.SYSTEM
+    :ivar content: Required.
+    :vartype content: list[~azure.ai.projects.models.RealtimeResponseInputText]
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional client ID. The value ``root`` is reserved."""
+    type: Literal["message"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"message\"."""
+    status: Optional[Literal["completed", "incomplete"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional input status. Omission or null defaults to completed. Is either a
+     Literal[\"completed\"] type or a Literal[\"incomplete\"] type."""
+    role: Literal[RealtimeResponseInputMessageType.SYSTEM] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. SYSTEM."""
+    content: list["_models.RealtimeResponseInputText"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: list["_models.RealtimeResponseInputText"],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        status: Optional[Literal["completed", "incomplete"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.role = RealtimeResponseInputMessageType.SYSTEM  # type: ignore
+        self.type: Literal["message"] = "message"
+
+
+class RealtimeResponseInputMessageUser(
+    RealtimeResponseInputMessage, discriminator="user"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Realtime response input user message.
+
+    :ivar id: An optional client ID. The value ``root`` is reserved.
+    :vartype id: str
+    :ivar type: Required. Default value is "message".
+    :vartype type: str
+    :ivar status: Optional input status. Omission or null defaults to completed. Is either a
+     Literal["completed"] type or a Literal["incomplete"] type.
+    :vartype status: str or str
+    :ivar role: Required. USER.
+    :vartype role: str or ~azure.ai.projects.models.USER
+    :ivar content: Required.
+    :vartype content: list[~azure.ai.projects.models.RealtimeResponseInputText or
+     ~azure.ai.projects.models.RealtimeResponseInputAudio or
+     ~azure.ai.projects.models.RealtimeResponseInputImage]
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional client ID. The value ``root`` is reserved."""
+    type: Literal["message"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"message\"."""
+    status: Optional[Literal["completed", "incomplete"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional input status. Omission or null defaults to completed. Is either a
+     Literal[\"completed\"] type or a Literal[\"incomplete\"] type."""
+    role: Literal[RealtimeResponseInputMessageType.USER] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. USER."""
+    content: list[
+        Union[
+            "_models.RealtimeResponseInputText",
+            "_models.RealtimeResponseInputAudio",
+            "_models.RealtimeResponseInputImage",
+        ]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: list[
+            Union[
+                "_models.RealtimeResponseInputText",
+                "_models.RealtimeResponseInputAudio",
+                "_models.RealtimeResponseInputImage",
+            ]
+        ],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        status: Optional[Literal["completed", "incomplete"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.role = RealtimeResponseInputMessageType.USER  # type: ignore
+        self.type: Literal["message"] = "message"
+
+
+class RealtimeResponseInputText(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Realtime response input text.
+
+    :ivar type: Required. Default value is "input_text".
+    :vartype type: str
+    :ivar text: Required.
+    :vartype text: str
+    """
+
+    type: Literal["input_text"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"input_text\"."""
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["input_text"] = "input_text"
+
+
+class RealtimeResponseItemReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Reference an existing item in this Realtime session as response.create input. Item references
+    are only accepted in the response input array, not as new conversation items.
+
+    :ivar type: The type of this item. Always ``item_reference``. Required. Default value is
+     "item_reference".
+    :vartype type: str
+    :ivar id: The ID of an existing item in the same Realtime session. Required.
+    :vartype id: str
+    """
+
+    type: Literal["item_reference"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of this item. Always ``item_reference``. Required. Default value is
+     \"item_reference\"."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of an existing item in the same Realtime session. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["item_reference"] = "item_reference"
+
+
 class RealtimeResponseStatusDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RealtimeResponseStatusDetails.
 
@@ -18876,10 +25498,13 @@ class RealtimeResponseStatusDetailsError(_Model):  # pylint: disable=docstring-k
     :vartype type: str
     :ivar code:
     :vartype code: str
+    :ivar message:
+    :vartype message: str
     """
 
     type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
     def __init__(
@@ -18887,6 +25512,7 @@ class RealtimeResponseStatusDetailsError(_Model):  # pylint: disable=docstring-k
         *,
         type: Optional[str] = None,
         code: Optional[str] = None,
+        message: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -19076,7 +25702,8 @@ class RealtimeServerEvent(_Model):  # pylint: disable=docstring-keyword-should-m
     RealtimeServerEventInputAudioBufferCleared, RealtimeServerEventInputAudioBufferCommitted,
     RealtimeServerEventInputAudioBufferSpeechStarted,
     RealtimeServerEventInputAudioBufferSpeechStopped,
-    RealtimeServerEventInputAudioBufferTimeoutTriggered, RealtimeServerEventMCPListToolsCompleted,
+    RealtimeServerEventInputAudioBufferTimeoutTriggered,
+    VoiceAgentServerEventInputCollectionStatus, RealtimeServerEventMCPListToolsCompleted,
     RealtimeServerEventMCPListToolsFailed, RealtimeServerEventMCPListToolsInProgress,
     RealtimeServerEventOutputAudioBufferCleared, RealtimeServerEventRateLimitsUpdated,
     VoiceAgentServerEventResponseAnimationBlendshapesDelta,
@@ -19094,15 +25721,25 @@ class RealtimeServerEvent(_Model):  # pylint: disable=docstring-keyword-should-m
     RealtimeServerEventResponseAudioDone, RealtimeServerEventResponseAudioTranscriptDelta,
     RealtimeServerEventResponseAudioTranscriptDone, RealtimeServerEventResponseOutputItemAdded,
     RealtimeServerEventResponseOutputItemDone, RealtimeServerEventResponseTextDelta,
-    RealtimeServerEventResponseTextDone, VoiceAgentServerEventResponseVideoDelta,
+    RealtimeServerEventResponseTextDone, VoiceAgentServerEventSystemToolArgumentsDelta,
+    VoiceAgentServerEventSystemToolArgumentsDone, VoiceAgentServerEventResponseVideoDelta,
     VoiceAgentServerEventRtcCallError, VoiceAgentServerEventRtcCallSdpCreated,
     VoiceAgentServerEventSessionAvatarConnecting, VoiceAgentServerEventSessionAvatarSwitchToIdle,
     VoiceAgentServerEventSessionAvatarSwitchToSpeaking, RealtimeServerEventSessionCreated,
-    VoiceAgentServerEventSessionSubagentAborted, VoiceAgentServerEventSessionSubagentCompleted,
-    VoiceAgentServerEventSessionSubagentStarted, RealtimeServerEventSessionUpdated,
-    VoiceAgentServerEventWarning
+    VoiceAgentServerEventSessionHandoffAborted, VoiceAgentServerEventSessionHandoffCompleted,
+    VoiceAgentServerEventSessionHandoffStarted, VoiceAgentServerEventSessionSubagentAborted,
+    VoiceAgentServerEventSessionSubagentCompleted, VoiceAgentServerEventSessionSubagentStarted,
+    RealtimeServerEventSessionUpdated, VoiceAgentServerEventWarning
 
-    :ivar type: Required. Known values are: "conversation.created", "conversation.item.created",
+    :ivar type: Required. Known values are: "warning", "session.subagent.started",
+     "session.subagent.completed", "session.subagent.aborted", "session.avatar.connecting",
+     "session.avatar.switch_to_speaking", "session.avatar.switch_to_idle", "rtc.call.sdp.created",
+     "rtc.call.error", "response.audio_timestamp.delta", "response.audio_timestamp.done",
+     "response.animation_blendshapes.delta", "response.animation_blendshapes.done",
+     "response.animation_viseme.delta", "response.animation_viseme.done", "response.video.delta",
+     "response.system_tool_arguments.delta", "response.system_tool_arguments.done",
+     "input_collection.status", "session.handoff.started", "session.handoff.completed",
+     "session.handoff.aborted", "conversation.created", "conversation.item.created",
      "conversation.item.deleted", "conversation.item.input_audio_transcription.completed",
      "conversation.item.input_audio_transcription.delta",
      "conversation.item.input_audio_transcription.failed", "conversation.item.retrieved",
@@ -19121,20 +25758,22 @@ class RealtimeServerEvent(_Model):  # pylint: disable=docstring-keyword-should-m
      "conversation.item.input_audio_transcription.segment", "mcp_list_tools.in_progress",
      "mcp_list_tools.completed", "mcp_list_tools.failed", "response.mcp_call_arguments.delta",
      "response.mcp_call_arguments.done", "response.mcp_call.in_progress",
-     "response.mcp_call.completed", "response.mcp_call.failed", "warning",
-     "session.subagent.started", "session.subagent.completed", "session.subagent.aborted",
-     "session.avatar.connecting", "session.avatar.switch_to_speaking",
-     "session.avatar.switch_to_idle", "rtc.call.sdp.created", "rtc.call.error",
-     "response.audio_timestamp.delta", "response.audio_timestamp.done",
-     "response.animation_blendshapes.delta", "response.animation_blendshapes.done",
-     "response.animation_viseme.delta", "response.animation_viseme.done", and
-     "response.video.delta".
+     "response.mcp_call.completed", and "response.mcp_call.failed".
     :vartype type: str or ~azure.ai.projects.models.RealtimeServerEventType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"conversation.created\", \"conversation.item.created\",
+    """Required. Known values are: \"warning\", \"session.subagent.started\",
+     \"session.subagent.completed\", \"session.subagent.aborted\", \"session.avatar.connecting\",
+     \"session.avatar.switch_to_speaking\", \"session.avatar.switch_to_idle\",
+     \"rtc.call.sdp.created\", \"rtc.call.error\", \"response.audio_timestamp.delta\",
+     \"response.audio_timestamp.done\", \"response.animation_blendshapes.delta\",
+     \"response.animation_blendshapes.done\", \"response.animation_viseme.delta\",
+     \"response.animation_viseme.done\", \"response.video.delta\",
+     \"response.system_tool_arguments.delta\", \"response.system_tool_arguments.done\",
+     \"input_collection.status\", \"session.handoff.started\", \"session.handoff.completed\",
+     \"session.handoff.aborted\", \"conversation.created\", \"conversation.item.created\",
      \"conversation.item.deleted\", \"conversation.item.input_audio_transcription.completed\",
      \"conversation.item.input_audio_transcription.delta\",
      \"conversation.item.input_audio_transcription.failed\", \"conversation.item.retrieved\",
@@ -19153,14 +25792,7 @@ class RealtimeServerEvent(_Model):  # pylint: disable=docstring-keyword-should-m
      \"conversation.item.input_audio_transcription.segment\", \"mcp_list_tools.in_progress\",
      \"mcp_list_tools.completed\", \"mcp_list_tools.failed\", \"response.mcp_call_arguments.delta\",
      \"response.mcp_call_arguments.done\", \"response.mcp_call.in_progress\",
-     \"response.mcp_call.completed\", \"response.mcp_call.failed\", \"warning\",
-     \"session.subagent.started\", \"session.subagent.completed\", \"session.subagent.aborted\",
-     \"session.avatar.connecting\", \"session.avatar.switch_to_speaking\",
-     \"session.avatar.switch_to_idle\", \"rtc.call.sdp.created\", \"rtc.call.error\",
-     \"response.audio_timestamp.delta\", \"response.audio_timestamp.done\",
-     \"response.animation_blendshapes.delta\", \"response.animation_blendshapes.done\",
-     \"response.animation_viseme.delta\", \"response.animation_viseme.done\", and
-     \"response.video.delta\"."""
+     \"response.mcp_call.completed\", and \"response.mcp_call.failed\"."""
 
     @overload
     def __init__(
@@ -19810,7 +26442,7 @@ class RealtimeServerEventConversationItemTruncated(
 
 class RealtimeServerEventError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Returned when an error occurs, which could be a client problem or a server problem. Most errors
-    are recoverable and the session will stay open, we recommend to implementors to monitor and log
+    are recoverable and the session will stay open, we recommend to implementers to monitor and log
     error messages by default.
 
     :ivar event_id: The unique ID of the server event. Required.
@@ -20287,7 +26919,7 @@ class RealtimeServerEventOutputAudioBufferCleared(
     VAD mode when the user has interrupted (``input_audio_buffer.speech_started``), or when the
     client has emitted the ``output_audio_buffer.clear`` event to manually cut off the current
     audio response. `Learn more
-    </docs/guides/realtime-conversations#client-and-server-events-for-audio-in-webrtc>`_.
+    <https://developers.openai.com/api/docs/guides/realtime-conversations#client-and-server-events-for-audio-in-webrtc>`_.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str
@@ -22160,6 +28792,58 @@ class ResponseUsageOutputTokensDetails(_Model):  # pylint: disable=docstring-key
         super().__init__(*args, **kwargs)
 
 
+class ResponseUsageResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ResponseUsageResource.
+
+    :ivar input_tokens: Required.
+    :vartype input_tokens: int
+    :ivar input_tokens_details: Required.
+    :vartype input_tokens_details: ~azure.ai.projects.models.InputTokensDetailsResource
+    :ivar output_tokens: Required.
+    :vartype output_tokens: int
+    :ivar output_tokens_details: Required.
+    :vartype output_tokens_details: ~azure.ai.projects.models.OutputTokensDetailsResource
+    :ivar total_tokens: Required.
+    :vartype total_tokens: int
+    """
+
+    input_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    input_tokens_details: "_models.InputTokensDetailsResource" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+    output_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    output_tokens_details: "_models.OutputTokensDetailsResource" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+    total_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        input_tokens: int,
+        input_tokens_details: "_models.InputTokensDetailsResource",
+        output_tokens: int,
+        output_tokens_details: "_models.OutputTokensDetailsResource",
+        total_tokens: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Routine(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A routine definition returned by the service.
 
@@ -22768,6 +29452,44 @@ class ScheduleRun(_Model):  # pylint: disable=docstring-keyword-should-match-key
         super().__init__(*args, **kwargs)
 
 
+class ScoreProbabilityResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """ScoreProbabilityResource.
+
+    :ivar value: Required.
+    :vartype value: int
+    :ivar label: Required.
+    :vartype label: str
+    :ivar probability: Required.
+    :vartype probability: float
+    """
+
+    value: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    probability: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: int,
+        label: str,
+        probability: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SessionConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Session defaults applied to sessions created for a hosted agent version.
 
@@ -23164,6 +29886,260 @@ class SimulationSeedDataGenerationJobConfiguration(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = DataGenerationJobType.SIMULATION_SEED  # type: ignore
+
+
+class TelephonyBinding(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A telephony binding owned by a voice agent.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SipTelephonyBinding, TeamsPhoneExtensibilityTelephonyBinding, TwilioTelephonyBinding
+
+    :ivar id: The service-generated binding identifier. Required.
+    :vartype id: str
+    :ivar provider: The telephony provider. Required. Known values are:
+     "teams_phone_extensibility", "twilio", and "sip".
+    :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
+    :ivar label: The optional display label for the binding.
+    :vartype label: str
+    :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
+    :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
+    :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
+     provider. For SIP bindings, this is a SIP URI. Required.
+    :vartype incoming_call_url: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The service-generated binding identifier. Required."""
+    provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\", \"twilio\",
+     and \"sip\"."""
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Foundry connection name for the telephony provider. Required."""
+    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The optional display label for the binding."""
+    status: Union[str, "_models.TelephonyBindingStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The lifecycle status. Required. Known values are: \"active\" and \"suspended\"."""
+    incoming_call_url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The service-generated webhook URL to configure with the telephony provider. For SIP bindings,
+     this is a SIP URI. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        provider: str,
+        connection_name: str,
+        status: Union[str, "_models.TelephonyBindingStatus"],
+        incoming_call_url: str,
+        label: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SipTelephonyBinding(
+    TelephonyBinding, discriminator="sip"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A SIP binding.
+
+    :ivar id: The service-generated binding identifier. Required.
+    :vartype id: str
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
+    :ivar label: The optional display label for the binding.
+    :vartype label: str
+    :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
+    :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
+    :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
+     provider. For SIP bindings, this is a SIP URI. Required.
+    :vartype incoming_call_url: str
+    :ivar provider: Required. Session Initiation Protocol.
+    :vartype provider: str or ~azure.ai.projects.models.SIP
+    :ivar phone_number: For UI display only.
+    :vartype phone_number: str
+    :ivar allowed_calling_numbers: Omit or send [] to allow any caller. Entries match the entire
+     normalized E.164 caller number.
+    :vartype allowed_calling_numbers: list[str]
+    """
+
+    provider: Literal[TelephonyProvider.SIP] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Session Initiation Protocol."""
+    phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """For UI display only."""
+    allowed_calling_numbers: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Omit or send [] to allow any caller. Entries match the entire normalized E.164 caller number."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        connection_name: str,
+        status: Union[str, "_models.TelephonyBindingStatus"],
+        incoming_call_url: str,
+        label: Optional[str] = None,
+        phone_number: Optional[str] = None,
+        allowed_calling_numbers: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.provider = TelephonyProvider.SIP  # type: ignore
+
+
+class TelephonyBindingListItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A telephony binding returned in a list, including its entity tag.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SipTelephonyBindingListItem, TeamsPhoneExtensibilityTelephonyBindingListItem,
+    TwilioTelephonyBindingListItem
+
+    :ivar id: The service-generated binding identifier. Required.
+    :vartype id: str
+    :ivar provider: The telephony provider. Required. Known values are:
+     "teams_phone_extensibility", "twilio", and "sip".
+    :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
+    :ivar label: The optional display label for the binding.
+    :vartype label: str
+    :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
+    :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
+    :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
+     provider. For SIP bindings, this is a SIP URI. Required.
+    :vartype incoming_call_url: str
+    :ivar etag: The entity tag to send in the ``If-Match`` header when updating or deleting this
+     binding. Required.
+    :vartype etag: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The service-generated binding identifier. Required."""
+    provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\", \"twilio\",
+     and \"sip\"."""
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Foundry connection name for the telephony provider. Required."""
+    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The optional display label for the binding."""
+    status: Union[str, "_models.TelephonyBindingStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The lifecycle status. Required. Known values are: \"active\" and \"suspended\"."""
+    incoming_call_url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The service-generated webhook URL to configure with the telephony provider. For SIP bindings,
+     this is a SIP URI. Required."""
+    etag: str = rest_field(visibility=["read"])
+    """The entity tag to send in the ``If-Match`` header when updating or deleting this binding.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        provider: str,
+        connection_name: str,
+        status: Union[str, "_models.TelephonyBindingStatus"],
+        incoming_call_url: str,
+        label: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SipTelephonyBindingListItem(
+    TelephonyBindingListItem, discriminator="sip"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A SIP binding returned in a list, including its entity tag.
+
+    :ivar id: The service-generated binding identifier. Required.
+    :vartype id: str
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
+    :ivar label: The optional display label for the binding.
+    :vartype label: str
+    :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
+    :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
+    :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
+     provider. For SIP bindings, this is a SIP URI. Required.
+    :vartype incoming_call_url: str
+    :ivar etag: The entity tag to send in the ``If-Match`` header when updating or deleting this
+     binding. Required.
+    :vartype etag: str
+    :ivar provider: Required. Session Initiation Protocol.
+    :vartype provider: str or ~azure.ai.projects.models.SIP
+    :ivar phone_number: For UI display only.
+    :vartype phone_number: str
+    :ivar allowed_calling_numbers: Omit or send [] to allow any caller. Entries match the entire
+     normalized E.164 caller number.
+    :vartype allowed_calling_numbers: list[str]
+    """
+
+    provider: Literal[TelephonyProvider.SIP] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Session Initiation Protocol."""
+    phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """For UI display only."""
+    allowed_calling_numbers: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Omit or send [] to allow any caller. Entries match the entire normalized E.164 caller number."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        connection_name: str,
+        status: Union[str, "_models.TelephonyBindingStatus"],
+        incoming_call_url: str,
+        label: Optional[str] = None,
+        phone_number: Optional[str] = None,
+        allowed_calling_numbers: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.provider = TelephonyProvider.SIP  # type: ignore
 
 
 class SipTelephonyTransferDestination(
@@ -23972,68 +30948,6 @@ class TaxonomySubCategory(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
-class TelephonyBinding(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A telephony binding owned by a voice agent.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TeamsPhoneExtensibilityTelephonyBinding, TwilioTelephonyBinding
-
-    :ivar id: The service-generated binding identifier. Required.
-    :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
-     and "twilio".
-    :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
-    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
-    :vartype connection_name: str
-    :ivar label: The optional display label for the binding.
-    :vartype label: str
-    :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
-    :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
-    :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
-     provider. Required.
-    :vartype incoming_call_url: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The service-generated binding identifier. Required."""
-    provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
-    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
-     \"twilio\"."""
-    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Foundry connection name for the telephony provider. Required."""
-    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The optional display label for the binding."""
-    status: Union[str, "_models.TelephonyBindingStatus"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The lifecycle status. Required. Known values are: \"active\" and \"suspended\"."""
-    incoming_call_url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The service-generated webhook URL to configure with the telephony provider. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        provider: str,
-        connection_name: str,
-        status: Union[str, "_models.TelephonyBindingStatus"],
-        incoming_call_url: str,
-        label: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class TeamsPhoneExtensibilityTelephonyBinding(
     TelephonyBinding, discriminator="teams_phone_extensibility"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -24048,7 +30962,7 @@ class TeamsPhoneExtensibilityTelephonyBinding(
     :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
     :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
     :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
-     provider. Required.
+     provider. For SIP bindings, this is a SIP URI. Required.
     :vartype incoming_call_url: str
     :ivar provider: The Microsoft Teams Phone extensibility provider. Required. Microsoft Teams
      Phone extensibility.
@@ -24093,74 +31007,6 @@ class TeamsPhoneExtensibilityTelephonyBinding(
         self.provider = TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY  # type: ignore
 
 
-class TelephonyBindingListItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A telephony binding returned in a list, including its entity tag.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TeamsPhoneExtensibilityTelephonyBindingListItem, TwilioTelephonyBindingListItem
-
-    :ivar id: The service-generated binding identifier. Required.
-    :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
-     and "twilio".
-    :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
-    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
-    :vartype connection_name: str
-    :ivar label: The optional display label for the binding.
-    :vartype label: str
-    :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
-    :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
-    :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
-     provider. Required.
-    :vartype incoming_call_url: str
-    :ivar etag: The entity tag to send in the ``If-Match`` header when updating or deleting this
-     binding. Required.
-    :vartype etag: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The service-generated binding identifier. Required."""
-    provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
-    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
-     \"twilio\"."""
-    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Foundry connection name for the telephony provider. Required."""
-    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The optional display label for the binding."""
-    status: Union[str, "_models.TelephonyBindingStatus"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The lifecycle status. Required. Known values are: \"active\" and \"suspended\"."""
-    incoming_call_url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The service-generated webhook URL to configure with the telephony provider. Required."""
-    etag: str = rest_field(visibility=["read"])
-    """The entity tag to send in the ``If-Match`` header when updating or deleting this binding.
-     Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        provider: str,
-        connection_name: str,
-        status: Union[str, "_models.TelephonyBindingStatus"],
-        incoming_call_url: str,
-        label: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class TeamsPhoneExtensibilityTelephonyBindingListItem(
     TelephonyBindingListItem, discriminator="teams_phone_extensibility"
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
@@ -24175,7 +31021,7 @@ class TeamsPhoneExtensibilityTelephonyBindingListItem(
     :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
     :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
     :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
-     provider. Required.
+     provider. For SIP bindings, this is a SIP URI. Required.
     :vartype incoming_call_url: str
     :ivar etag: The entity tag to send in the ``If-Match`` header when updating or deleting this
      binding. Required.
@@ -24296,8 +31142,8 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
     :ivar destination: The phone destination to call. Required.
     :vartype destination: ~azure.ai.projects.models.TelephonyOutboundDestination
     :ivar connection_name: The Foundry connection name in the current project used to originate the
-     call. Its category selects Twilio or Azure Communication Services / Teams Phone extensibility.
-     No inbound telephony binding is required. Required.
+     call. Its category selects Twilio, Azure Communication Services / Teams Phone extensibility, or
+     SIP. No inbound telephony binding is required. Required.
     :vartype connection_name: str
     :ivar source: The caller identity used to originate the call. For a Twilio connection, provide
      an authorized E.164 phone number. For an Azure Communication Services / Teams Phone
@@ -24359,7 +31205,7 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
     """The phone destination to call. Required."""
     connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name in the current project used to originate the call. Its category
-     selects Twilio or Azure Communication Services / Teams Phone extensibility. No inbound
+     selects Twilio, Azure Communication Services / Teams Phone extensibility, or SIP. No inbound
      telephony binding is required. Required."""
     source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The caller identity used to originate the call. For a Twilio connection, provide an authorized
@@ -24686,8 +31532,8 @@ class TelephonyCallRecord(_Model):  # pylint: disable=docstring-keyword-should-m
 
     :ivar id: The service-generated call identifier. Required.
     :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
-     and "twilio".
+    :ivar provider: The telephony provider. Required. Known values are:
+     "teams_phone_extensibility", "twilio", and "sip".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
     :ivar provider_call_id: The provider-assigned call identifier, when available.
     :vartype provider_call_id: str
@@ -24752,8 +31598,8 @@ class TelephonyCallRecord(_Model):  # pylint: disable=docstring-keyword-should-m
     provider: Union[str, "_models.TelephonyProvider"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
-     \"twilio\"."""
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\", \"twilio\",
+     and \"sip\"."""
     provider_call_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The provider-assigned call identifier, when available."""
     caller_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -24873,8 +31719,8 @@ class TelephonyCallSummary(_Model):  # pylint: disable=docstring-keyword-should-
 
     :ivar id: The service-generated call identifier. Required.
     :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
-     and "twilio".
+    :ivar provider: The telephony provider. Required. Known values are:
+     "teams_phone_extensibility", "twilio", and "sip".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
     :ivar provider_call_id: The provider-assigned call identifier, when available.
     :vartype provider_call_id: str
@@ -24930,8 +31776,8 @@ class TelephonyCallSummary(_Model):  # pylint: disable=docstring-keyword-should-
     provider: Union[str, "_models.TelephonyProvider"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
-     \"twilio\"."""
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\", \"twilio\",
+     and \"sip\"."""
     provider_call_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The provider-assigned call identifier, when available."""
     caller_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -25403,11 +32249,12 @@ class TelephonyTransferTargets(_Model):  # pylint: disable=docstring-keyword-sho
 class TextResponseFormat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An object specifying the format that the model must output. Configuring ``{ "type":
     "json_schema" }`` enables Structured Outputs, which ensures the model will match your supplied
-    JSON schema. Learn more in the `Structured Outputs guide </docs/guides/structured-outputs>`_.
-    The default format is ``{ "type": "text" }`` with no additional options. *Not recommended for
-    gpt-4o and newer models:** Setting to ``{ "type": "json_object" }`` enables the older JSON
-    mode, which ensures the message the model generates is valid JSON. Using ``json_schema`` is
-    preferred for models that support it.
+    JSON schema. Learn more in the `Structured Outputs guide
+    <https://developers.openai.com/api/docs/guides/structured-outputs>`_. The default format is ``{
+    "type": "text" }`` with no additional options. *Not recommended for gpt-4o and newer models:**
+    Setting to ``{ "type": "json_object" }`` enables the older JSON mode, which ensures the message
+    the model generates is valid JSON. Using ``json_schema`` is preferred for models that support
+    it.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     TextResponseFormatJsonObject, TextResponseFormatJsonSchema, TextResponseFormatText
@@ -25582,6 +32429,42 @@ class TimerRoutineTrigger(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = RoutineTriggerType.TIMER  # type: ignore
+
+
+class ToolApplyPatchToolParam(
+    Tool, discriminator="apply_patch"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Apply patch tool.
+
+    :ivar type: The type of the tool. Always ``apply_patch``. Required. APPLY_PATCH.
+    :vartype type: str or ~azure.ai.projects.models.APPLY_PATCH
+    :ivar allowed_callers:
+    :vartype allowed_callers: list[str or ~azure.ai.projects.models.CallableToolAllowedCaller]
+    """
+
+    type: Literal[ToolType.APPLY_PATCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the tool. Always ``apply_patch``. Required. APPLY_PATCH."""
+    allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.APPLY_PATCH  # type: ignore
 
 
 class ToolboxObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -26006,7 +32889,7 @@ class ToolboxVersionObject(_Model):  # pylint: disable=docstring-keyword-should-
     """Set of 16 key-value pairs that can be attached to an object. This can be
      useful for storing additional information about the object in a structured
      format, and querying for objects via API or the dashboard.
-     
+
      Keys are strings with a maximum length of 64 characters. Values are strings
      with a maximum length of 512 characters. Required."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -26122,9 +33005,9 @@ class ToolChoiceAllowed(
     tools: list[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required. A list of tool definitions that the model should be allowed to call. For the
      Responses API, the list of tool definitions might look like:
-     
+
      .. code-block:: json
-     
+
         [
           { \"type\": \"function\", \"name\": \"get_weather\" },
           { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
@@ -26484,6 +33367,153 @@ class ToolChoiceWebSearchPreview20250311(ToolChoiceParam, discriminator="web_sea
         self.type = ToolChoiceParamType.WEB_SEARCH_PREVIEW_2025_03_11  # type: ignore
 
 
+class ToolCodeInterpreterTool(
+    Tool, discriminator="code_interpreter"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Code interpreter.
+
+    :ivar type: The type of the code interpreter tool. Always ``code_interpreter``. Required.
+     CODE_INTERPRETER.
+    :vartype type: str or ~azure.ai.projects.models.CODE_INTERPRETER
+    :ivar allowed_callers:
+    :vartype allowed_callers: list[str or ~azure.ai.projects.models.CallableToolAllowedCaller]
+    :ivar container: The code interpreter container. Can be a container ID or an object that
+     specifies uploaded file IDs to make available to your code, along with an optional
+     ``memory_limit`` setting. If not provided, the service assumes auto. Is either a str type or a
+     AutoCodeInterpreterToolParam type.
+    :vartype container: str or ~azure.ai.projects.models.AutoCodeInterpreterToolParam
+    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
+    :vartype name: str
+    :ivar description: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype description: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    """
+
+    type: Literal[ToolType.CODE_INTERPRETER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the code interpreter tool. Always ``code_interpreter``. Required. CODE_INTERPRETER."""
+    allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    container: Optional[Union[str, "_models.AutoCodeInterpreterToolParam"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The code interpreter container. Can be a container ID or an object that specifies uploaded file
+     IDs to make available to your code, along with an optional ``memory_limit`` setting. If not
+     provided, the service assumes auto. Is either a str type or a AutoCodeInterpreterToolParam
+     type."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = None,
+        container: Optional[Union[str, "_models.AutoCodeInterpreterToolParam"]] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.CODE_INTERPRETER  # type: ignore
+
+
+class ToolComputerTool(Tool, discriminator="computer"):
+    """Computer.
+
+    :ivar type: The type of the computer tool. Always ``computer``. Required. COMPUTER.
+    :vartype type: str or ~azure.ai.projects.models.COMPUTER
+    """
+
+    type: Literal[ToolType.COMPUTER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the computer tool. Always ``computer``. Required. COMPUTER."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.COMPUTER  # type: ignore
+
+
+class ToolComputerUsePreviewTool(
+    Tool, discriminator="computer_use_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Computer use preview.
+
+    :ivar type: The type of the computer use tool. Always ``computer_use_preview``. Required.
+     COMPUTER_USE_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.COMPUTER_USE_PREVIEW
+    :ivar environment: The type of computer environment to control. Required. Known values are:
+     "windows", "mac", "linux", "ubuntu", and "browser".
+    :vartype environment: str or ~azure.ai.projects.models.ComputerEnvironment
+    :ivar display_width: The width of the computer display. Required.
+    :vartype display_width: int
+    :ivar display_height: The height of the computer display. Required.
+    :vartype display_height: int
+    """
+
+    type: Literal[ToolType.COMPUTER_USE_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the computer use tool. Always ``computer_use_preview``. Required.
+     COMPUTER_USE_PREVIEW."""
+    environment: Union[str, "_models.ComputerEnvironment"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of computer environment to control. Required. Known values are: \"windows\", \"mac\",
+     \"linux\", \"ubuntu\", and \"browser\"."""
+    display_width: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The width of the computer display. Required."""
+    display_height: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The height of the computer display. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        environment: Union[str, "_models.ComputerEnvironment"],
+        display_width: int,
+        display_height: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.COMPUTER_USE_PREVIEW  # type: ignore
+
+
 class ToolConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Per-tool configuration that controls tool visibility and search behavior.
 
@@ -26523,6 +33553,71 @@ class ToolConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
         super().__init__(*args, **kwargs)
 
 
+class ToolCustomToolParam(Tool, discriminator="custom"):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Custom tool.
+
+    :ivar type: The type of the custom tool. Always ``custom``. Required. CUSTOM.
+    :vartype type: str or ~azure.ai.projects.models.CUSTOM
+    :ivar name: The name of the custom tool, used to identify it in tool calls. Required.
+    :vartype name: str
+    :ivar async_property: Whether the tool response can be returned asynchronously versus
+     immediately returned on next response creation.
+    :vartype async_property: bool
+    :ivar description: Optional description of the custom tool, used to provide more context.
+    :vartype description: str
+    :ivar format: The input format for the custom tool. Default is unconstrained text.
+    :vartype format: ~azure.ai.projects.models.CustomToolParamFormat
+    :ivar defer_loading: Whether this tool should be deferred and discovered via tool search.
+    :vartype defer_loading: bool
+    :ivar allowed_callers:
+    :vartype allowed_callers: list[str or ~azure.ai.projects.models.CallableToolAllowedCaller]
+    """
+
+    type: Literal[ToolType.CUSTOM] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the custom tool. Always ``custom``. Required. CUSTOM."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the custom tool, used to identify it in tool calls. Required."""
+    async_property: Optional[bool] = rest_field(
+        name="async", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the tool response can be returned asynchronously versus immediately returned on next
+     response creation."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional description of the custom tool, used to provide more context."""
+    format: Optional["_models.CustomToolParamFormat"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The input format for the custom tool. Default is unconstrained text."""
+    defer_loading: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this tool should be deferred and discovered via tool search."""
+    allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        async_property: Optional[bool] = None,
+        description: Optional[str] = None,
+        format: Optional["_models.CustomToolParamFormat"] = None,
+        defer_loading: Optional[bool] = None,
+        allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.CUSTOM  # type: ignore
+
+
 class ToolDescription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Description of a tool that can be used by an agent.
 
@@ -26554,6 +33649,662 @@ class ToolDescription(_Model):  # pylint: disable=docstring-keyword-should-match
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ToolFileSearchTool(
+    Tool, discriminator="file_search"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """File search.
+
+    :ivar type: The type of the file search tool. Always ``file_search``. Required. FILE_SEARCH.
+    :vartype type: str or ~azure.ai.projects.models.FILE_SEARCH
+    :ivar vector_store_ids: The IDs of the vector stores to search. Required.
+    :vartype vector_store_ids: list[str]
+    :ivar max_num_results: The maximum number of results to return. This number should be between 1
+     and 50 inclusive.
+    :vartype max_num_results: int
+    :ivar ranking_options: Ranking options for search.
+    :vartype ranking_options: ~azure.ai.projects.models.RankingOptions
+    :ivar filters: Is either a ComparisonFilter type or a CompoundFilter type.
+    :vartype filters: ~azure.ai.projects.models.ComparisonFilter or
+     ~azure.ai.projects.models.CompoundFilter
+    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
+    :vartype name: str
+    :ivar description: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype description: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    """
+
+    type: Literal[ToolType.FILE_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the file search tool. Always ``file_search``. Required. FILE_SEARCH."""
+    vector_store_ids: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The IDs of the vector stores to search. Required."""
+    max_num_results: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The maximum number of results to return. This number should be between 1 and 50 inclusive."""
+    ranking_options: Optional["_models.RankingOptions"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ranking options for search."""
+    filters: Optional["_unions.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Is either a ComparisonFilter type or a CompoundFilter type."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        vector_store_ids: list[str],
+        max_num_results: Optional[int] = None,
+        ranking_options: Optional["_models.RankingOptions"] = None,
+        filters: Optional["_unions.Filters"] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.FILE_SEARCH  # type: ignore
+
+
+class ToolFunctionShellToolParam(
+    Tool, discriminator="shell"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Shell tool.
+
+    :ivar type: The type of the shell tool. Always ``shell``. Required. SHELL.
+    :vartype type: str or ~azure.ai.projects.models.SHELL
+    :ivar environment:
+    :vartype environment: ~azure.ai.projects.models.FunctionShellToolParamEnvironment
+    :ivar allowed_callers:
+    :vartype allowed_callers: list[str or ~azure.ai.projects.models.CallableToolAllowedCaller]
+    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
+    :vartype name: str
+    :ivar description: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype description: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    """
+
+    type: Literal[ToolType.SHELL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the shell tool. Always ``shell``. Required. SHELL."""
+    environment: Optional["_models.FunctionShellToolParamEnvironment"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        environment: Optional["_models.FunctionShellToolParamEnvironment"] = None,
+        allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.SHELL  # type: ignore
+
+
+class ToolFunctionTool(Tool, discriminator="function"):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Function.
+
+    :ivar type: The type of the function tool. Always ``function``. Required. FUNCTION.
+    :vartype type: str or ~azure.ai.projects.models.FUNCTION
+    :ivar name: The name of the function to call. Required.
+    :vartype name: str
+    :ivar async_property:
+    :vartype async_property: bool
+    :ivar description:
+    :vartype description: str
+    :ivar parameters: Required.
+    :vartype parameters: dict[str, any]
+    :ivar output_schema:
+    :vartype output_schema: dict[str, any]
+    :ivar strict: Required.
+    :vartype strict: bool
+    :ivar defer_loading: Whether this function is deferred and loaded via tool search.
+    :vartype defer_loading: bool
+    :ivar allowed_callers:
+    :vartype allowed_callers: list[str or ~azure.ai.projects.models.CallableToolAllowedCaller]
+    """
+
+    type: Literal[ToolType.FUNCTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the function tool. Always ``function``. Required. FUNCTION."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the function to call. Required."""
+    async_property: Optional[bool] = rest_field(
+        name="async", visibility=["read", "create", "update", "delete", "query"]
+    )
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    parameters: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    output_schema: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    strict: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    defer_loading: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this function is deferred and loaded via tool search."""
+    allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        parameters: dict[str, Any],
+        strict: bool,
+        async_property: Optional[bool] = None,
+        description: Optional[str] = None,
+        output_schema: Optional[dict[str, Any]] = None,
+        defer_loading: Optional[bool] = None,
+        allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.FUNCTION  # type: ignore
+
+
+class ToolImageGenTool(
+    Tool, discriminator="image_generation"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Image generation tool.
+
+    :ivar type: The type of the image generation tool. Always ``image_generation``. Required.
+     IMAGE_GENERATION.
+    :vartype type: str or ~azure.ai.projects.models.IMAGE_GENERATION
+    :ivar model: Is one of the following types: Literal["gpt-image-1"],
+     Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], Literal["gpt-image-2"],
+     Literal["gpt-image-2-2026-04-21"], Literal["gpt-image-2.5-sunburst"],
+     Literal["gpt-image-2.5-sunburst-2026-09-08"], Literal["gpt-image-2.5-flare"],
+     Literal["gpt-image-2.5-flare-2026-09-08"], str
+    :vartype model: str or str or str or str or str or str or str or str or str or str
+    :ivar quality: The quality of the generated image. The GPT image models support ``low``,
+     ``medium``, and ``high``. ``gpt-image-2.5-sunburst`` and ``gpt-image-2.5-flare``, including
+     their ``2026-09-08`` snapshots, also support ``xhigh`` and ``max``. Default: ``auto``. Is one
+     of the following types: Literal["low"], Literal["medium"], Literal["high"], Literal["xhigh"],
+     Literal["max"], Literal["auto"]
+    :vartype quality: str or str or str or str or str or str
+    :ivar size: The size of the generated images. For ``gpt-image-2``, ``gpt-image-2-2026-04-21``,
+     ``gpt-image-2.5-sunburst``, ``gpt-image-2.5-sunburst-2026-09-08``, ``gpt-image-2.5-flare``, and
+     ``gpt-image-2.5-flare-2026-09-08``, arbitrary resolutions are supported as ``WIDTHxHEIGHT``
+     strings, for example ``1536x864``. Width and height must both be divisible by 16 and the
+     requested aspect ratio must be between 1:3 and 3:1. Resolutions above ``2560x1440`` are
+     experimental, and the maximum supported resolution is ``3840x2160``. The requested size must
+     also satisfy the model's current pixel and edge limits. The standard sizes ``1024x1024``,
+     ``1536x1024``, and ``1024x1536`` are supported by the GPT image models; ``auto`` is supported
+     for models that allow automatic sizing. Is one of the following types: Literal["1024x1024"],
+     Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str
+    :vartype size: str or str or str or str or str
+    :ivar output_format: The output format of the generated image. One of ``png``, ``webp``, or
+     ``jpeg``. Default: ``png``. Is one of the following types: Literal["png"], Literal["webp"],
+     Literal["jpeg"]
+    :vartype output_format: str or str or str
+    :ivar output_compression: Compression level for the output image. Default: 100.
+    :vartype output_compression: int
+    :ivar moderation: Moderation level for the generated image. Default: ``auto``. Is either a
+     Literal["auto"] type or a Literal["low"] type.
+    :vartype moderation: str or str
+    :ivar background: Set the background of the generated image. One of ``transparent``,
+     ``opaque``, or ``auto``. ``gpt-image-2.5-sunburst`` and ``gpt-image-2.5-flare``, including
+     their ``2026-09-08`` snapshots, support ``opaque`` and ``transparent`` backgrounds. Transparent
+     backgrounds are available for supported GPT Image models. For ``gpt-image-2`` and
+     ``gpt-image-2-2026-04-21``, this support is in preview. When using ``transparent``, set the
+     output format to ``png`` or ``webp``. Default: ``auto``. Is one of the following types:
+     Literal["transparent"], Literal["opaque"], Literal["auto"]
+    :vartype background: str or str or str
+    :ivar input_fidelity: Known values are: "high" and "low".
+    :vartype input_fidelity: str or ~azure.ai.projects.models.InputFidelity
+    :ivar input_image_mask: Optional mask for inpainting. Contains ``image_url`` (string, optional)
+     and ``file_id`` (string, optional).
+    :vartype input_image_mask: ~azure.ai.projects.models.ImageGenToolInputImageMask
+    :ivar partial_images: Number of partial images to generate in streaming mode, from 0 (default
+     value) to 3.
+    :vartype partial_images: int
+    :ivar action: Whether to generate a new image or edit an existing image. Default: ``auto``.
+     Known values are: "generate", "edit", and "auto".
+    :vartype action: str or ~azure.ai.projects.models.ImageGenAction
+    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
+    :vartype name: str
+    :ivar description: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype description: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    """
+
+    type: Literal[ToolType.IMAGE_GENERATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the image generation tool. Always ``image_generation``. Required. IMAGE_GENERATION."""
+    model: Optional[
+        Union[
+            Literal["gpt-image-1"],
+            Literal["gpt-image-1-mini"],
+            Literal["gpt-image-1.5"],
+            Literal["gpt-image-2"],
+            Literal["gpt-image-2-2026-04-21"],
+            Literal["gpt-image-2.5-sunburst"],
+            Literal["gpt-image-2.5-sunburst-2026-09-08"],
+            Literal["gpt-image-2.5-flare"],
+            Literal["gpt-image-2.5-flare-2026-09-08"],
+            str,
+        ]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Is one of the following types: Literal[\"gpt-image-1\"], Literal[\"gpt-image-1-mini\"],
+     Literal[\"gpt-image-1.5\"], Literal[\"gpt-image-2\"], Literal[\"gpt-image-2-2026-04-21\"],
+     Literal[\"gpt-image-2.5-sunburst\"], Literal[\"gpt-image-2.5-sunburst-2026-09-08\"],
+     Literal[\"gpt-image-2.5-flare\"], Literal[\"gpt-image-2.5-flare-2026-09-08\"], str"""
+    quality: Optional[Literal["low", "medium", "high", "xhigh", "max", "auto"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The quality of the generated image. The GPT image models support ``low``, ``medium``, and
+     ``high``. ``gpt-image-2.5-sunburst`` and ``gpt-image-2.5-flare``, including their
+     ``2026-09-08`` snapshots, also support ``xhigh`` and ``max``. Default: ``auto``. Is one of the
+     following types: Literal[\"low\"], Literal[\"medium\"], Literal[\"high\"], Literal[\"xhigh\"],
+     Literal[\"max\"], Literal[\"auto\"]"""
+    size: Optional[Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]] = (
+        rest_field(visibility=["read", "create", "update", "delete", "query"])
+    )
+    """The size of the generated images. For ``gpt-image-2``, ``gpt-image-2-2026-04-21``,
+     ``gpt-image-2.5-sunburst``, ``gpt-image-2.5-sunburst-2026-09-08``, ``gpt-image-2.5-flare``, and
+     ``gpt-image-2.5-flare-2026-09-08``, arbitrary resolutions are supported as ``WIDTHxHEIGHT``
+     strings, for example ``1536x864``. Width and height must both be divisible by 16 and the
+     requested aspect ratio must be between 1:3 and 3:1. Resolutions above ``2560x1440`` are
+     experimental, and the maximum supported resolution is ``3840x2160``. The requested size must
+     also satisfy the model's current pixel and edge limits. The standard sizes ``1024x1024``,
+     ``1536x1024``, and ``1024x1536`` are supported by the GPT image models; ``auto`` is supported
+     for models that allow automatic sizing. Is one of the following types: Literal[\"1024x1024\"],
+     Literal[\"1024x1536\"], Literal[\"1536x1024\"], Literal[\"auto\"], str"""
+    output_format: Optional[Literal["png", "webp", "jpeg"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The output format of the generated image. One of ``png``, ``webp``, or ``jpeg``. Default:
+     ``png``. Is one of the following types: Literal[\"png\"], Literal[\"webp\"], Literal[\"jpeg\"]"""
+    output_compression: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Compression level for the output image. Default: 100."""
+    moderation: Optional[Literal["auto", "low"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Moderation level for the generated image. Default: ``auto``. Is either a Literal[\"auto\"] type
+     or a Literal[\"low\"] type."""
+    background: Optional[Literal["transparent", "opaque", "auto"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set the background of the generated image. One of ``transparent``, ``opaque``, or ``auto``.
+     ``gpt-image-2.5-sunburst`` and ``gpt-image-2.5-flare``, including their ``2026-09-08``
+     snapshots, support ``opaque`` and ``transparent`` backgrounds. Transparent backgrounds are
+     available for supported GPT Image models. For ``gpt-image-2`` and ``gpt-image-2-2026-04-21``,
+     this support is in preview. When using ``transparent``, set the output format to ``png`` or
+     ``webp``. Default: ``auto``. Is one of the following types: Literal[\"transparent\"],
+     Literal[\"opaque\"], Literal[\"auto\"]"""
+    input_fidelity: Optional[Union[str, "_models.InputFidelity"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"high\" and \"low\"."""
+    input_image_mask: Optional["_models.ImageGenToolInputImageMask"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional mask for inpainting. Contains ``image_url`` (string, optional) and ``file_id``
+     (string, optional)."""
+    partial_images: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of partial images to generate in streaming mode, from 0 (default value) to 3."""
+    action: Optional[Union[str, "_models.ImageGenAction"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to generate a new image or edit an existing image. Default: ``auto``. Known values are:
+     \"generate\", \"edit\", and \"auto\"."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: Optional[
+            Union[
+                Literal["gpt-image-1"],
+                Literal["gpt-image-1-mini"],
+                Literal["gpt-image-1.5"],
+                Literal["gpt-image-2"],
+                Literal["gpt-image-2-2026-04-21"],
+                Literal["gpt-image-2.5-sunburst"],
+                Literal["gpt-image-2.5-sunburst-2026-09-08"],
+                Literal["gpt-image-2.5-flare"],
+                Literal["gpt-image-2.5-flare-2026-09-08"],
+                str,
+            ]
+        ] = None,
+        quality: Optional[Literal["low", "medium", "high", "xhigh", "max", "auto"]] = None,
+        size: Optional[
+            Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]
+        ] = None,
+        output_format: Optional[Literal["png", "webp", "jpeg"]] = None,
+        output_compression: Optional[int] = None,
+        moderation: Optional[Literal["auto", "low"]] = None,
+        background: Optional[Literal["transparent", "opaque", "auto"]] = None,
+        input_fidelity: Optional[Union[str, "_models.InputFidelity"]] = None,
+        input_image_mask: Optional["_models.ImageGenToolInputImageMask"] = None,
+        partial_images: Optional[int] = None,
+        action: Optional[Union[str, "_models.ImageGenAction"]] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.IMAGE_GENERATION  # type: ignore
+
+
+class ToolLocalShellToolParam(
+    Tool, discriminator="local_shell"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Local shell tool.
+
+    :ivar type: The type of the local shell tool. Always ``local_shell``. Required. LOCAL_SHELL.
+    :vartype type: str or ~azure.ai.projects.models.LOCAL_SHELL
+    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
+    :vartype name: str
+    :ivar description: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype description: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    """
+
+    type: Literal[ToolType.LOCAL_SHELL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the local shell tool. Always ``local_shell``. Required. LOCAL_SHELL."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.LOCAL_SHELL  # type: ignore
+
+
+class ToolMcpTool(Tool, discriminator="mcp"):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """MCP tool.
+
+    :ivar type: The type of the MCP tool. Always ``mcp``. Required. MCP.
+    :vartype type: str or ~azure.ai.projects.models.MCP
+    :ivar server_label: A label for this MCP server, used to identify it in tool calls. Required.
+    :vartype server_label: str
+    :ivar server_url: The URL for the MCP server. One of ``server_url``, ``connector_id``, or
+     ``tunnel_id`` must be provided.
+    :vartype server_url: str
+    :ivar connector_id: Identifier for service connectors, like those available in ChatGPT. One of
+     ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service
+     connectors `here
+     <https://developers.openai.com/api/docs/guides/tools-connectors-mcp#connectors>`_. This field
+     is deprecated for models released after September 1, 2026. Use ``server_url`` to connect to a
+     remote MCP server, or ``tunnel_id`` to connect through a Secure MCP Tunnel. Currently supported
+     ``connector_id`` values are:
+
+     * Dropbox: `connector_dropbox`
+     * Gmail: `connector_gmail`
+     * Google Calendar: `connector_googlecalendar`
+     * Google Drive: `connector_googledrive`
+     * Microsoft Teams: `connector_microsoftteams`
+     * Outlook Calendar: `connector_outlookcalendar`
+     * Outlook Email: `connector_outlookemail`
+     * SharePoint: `connector_sharepoint`. Is one of the following types:
+       Literal["connector_dropbox"], Literal["connector_gmail"], Literal["connector_googlecalendar"],
+       Literal["connector_googledrive"], Literal["connector_microsoftteams"],
+       Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
+       Literal["connector_sharepoint"]
+
+    :vartype connector_id: str or str or str or str or str or str or str or str
+    :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
+     ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
+    :vartype tunnel_id: str
+    :ivar authorization: An OAuth access token that can be used with a remote MCP server, either
+     with a custom MCP server URL or a service connector. Your application must handle the OAuth
+     authorization flow and provide the token here.
+    :vartype authorization: str
+    :ivar server_description: Optional description of the MCP server, used to provide more context.
+    :vartype server_description: str
+    :ivar headers:
+    :vartype headers: dict[str, str]
+    :ivar allowed_tools: Is either a [str] type or a MCPToolFilter type.
+    :vartype allowed_tools: list[str] or ~azure.ai.projects.models.MCPToolFilter
+    :ivar allowed_callers:
+    :vartype allowed_callers: list[str or ~azure.ai.projects.models.CallableToolAllowedCaller]
+    :ivar require_approval: Is one of the following types: MCPToolRequireApproval,
+     Literal["always"], Literal["never"]
+    :vartype require_approval: ~azure.ai.projects.models.MCPToolRequireApproval or str or str
+    :ivar defer_loading: Whether this MCP tool is deferred and discovered via tool search.
+    :vartype defer_loading: bool
+    :ivar project_connection_id: The connection ID in the project for the MCP server. The
+     connection stores authentication and other connection details needed to connect to the MCP
+     server.
+    :vartype project_connection_id: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    """
+
+    type: Literal[ToolType.MCP] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the MCP tool. Always ``mcp``. Required. MCP."""
+    server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A label for this MCP server, used to identify it in tool calls. Required."""
+    server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL for the MCP server. One of ``server_url``, ``connector_id``, or ``tunnel_id`` must be
+     provided."""
+    connector_id: Optional[
+        Literal[
+            "connector_dropbox",
+            "connector_gmail",
+            "connector_googlecalendar",
+            "connector_googledrive",
+            "connector_microsoftteams",
+            "connector_outlookcalendar",
+            "connector_outlookemail",
+            "connector_sharepoint",
+        ]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Identifier for service connectors, like those available in ChatGPT. One of ``server_url``,
+      ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service connectors `here
+      <https://developers.openai.com/api/docs/guides/tools-connectors-mcp#connectors>`_. This field
+      is deprecated for models released after September 1, 2026. Use ``server_url`` to connect to a
+      remote MCP server, or ``tunnel_id`` to connect through a Secure MCP Tunnel. Currently supported
+      ``connector_id`` values are:
+
+      * Dropbox: `connector_dropbox`
+      * Gmail: `connector_gmail`
+      * Google Calendar: `connector_googlecalendar`
+      * Google Drive: `connector_googledrive`
+      * Microsoft Teams: `connector_microsoftteams`
+      * Outlook Calendar: `connector_outlookcalendar`
+      * Outlook Email: `connector_outlookemail`
+      * SharePoint: `connector_sharepoint`. Is one of the following types:
+        Literal[\"connector_dropbox\"], Literal[\"connector_gmail\"],
+        Literal[\"connector_googlecalendar\"], Literal[\"connector_googledrive\"],
+        Literal[\"connector_microsoftteams\"], Literal[\"connector_outlookcalendar\"],
+        Literal[\"connector_outlookemail\"], Literal[\"connector_sharepoint\"]"""
+    tunnel_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Secure MCP Tunnel ID to use instead of a direct server URL. One of ``server_url``,
+     ``connector_id``, or ``tunnel_id`` must be provided."""
+    authorization: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An OAuth access token that can be used with a remote MCP server, either with a custom MCP
+     server URL or a service connector. Your application must handle the OAuth authorization flow
+     and provide the token here."""
+    server_description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional description of the MCP server, used to provide more context."""
+    headers: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    allowed_tools: Optional[Union[list[str], "_models.MCPToolFilter"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is either a [str] type or a MCPToolFilter type."""
+    allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    require_approval: Optional[Union["_models.MCPToolRequireApproval", Literal["always"], Literal["never"]]] = (
+        rest_field(visibility=["read", "create", "update", "delete", "query"])
+    )
+    """Is one of the following types: MCPToolRequireApproval, Literal[\"always\"], Literal[\"never\"]"""
+    defer_loading: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this MCP tool is deferred and discovered via tool search."""
+    project_connection_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The connection ID in the project for the MCP server. The connection stores authentication and
+     other connection details needed to connect to the MCP server."""
+    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        server_label: str,
+        server_url: Optional[str] = None,
+        connector_id: Optional[
+            Literal[
+                "connector_dropbox",
+                "connector_gmail",
+                "connector_googlecalendar",
+                "connector_googledrive",
+                "connector_microsoftteams",
+                "connector_outlookcalendar",
+                "connector_outlookemail",
+                "connector_sharepoint",
+            ]
+        ] = None,
+        tunnel_id: Optional[str] = None,
+        authorization: Optional[str] = None,
+        server_description: Optional[str] = None,
+        headers: Optional[dict[str, str]] = None,
+        allowed_tools: Optional[Union[list[str], "_models.MCPToolFilter"]] = None,
+        allowed_callers: Optional[list[Union[str, "_models.CallableToolAllowedCaller"]]] = None,
+        require_approval: Optional[Union["_models.MCPToolRequireApproval", Literal["always"], Literal["never"]]] = None,
+        defer_loading: Optional[bool] = None,
+        project_connection_id: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.MCP  # type: ignore
+
+
+class ToolProgrammaticToolCallingParam(Tool, discriminator="programmatic_tool_calling"):
+    """ToolProgrammaticToolCallingParam.
+
+    :ivar type: The type of the tool. Always ``programmatic_tool_calling``. Required.
+     PROGRAMMATIC_TOOL_CALLING.
+    :vartype type: str or ~azure.ai.projects.models.PROGRAMMATIC_TOOL_CALLING
+    """
+
+    type: Literal[ToolType.PROGRAMMATIC_TOOL_CALLING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the tool. Always ``programmatic_tool_calling``. Required.
+     PROGRAMMATIC_TOOL_CALLING."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.PROGRAMMATIC_TOOL_CALLING  # type: ignore
 
 
 class ToolProjectConnection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -26626,7 +34377,7 @@ class ToolSearchToolboxTool(
         self.type = ToolboxToolType.TOOLBOX_SEARCH  # type: ignore
 
 
-class ToolSearchToolParam(
+class ToolToolSearchToolParam(
     Tool, discriminator="tool_search"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tool search tool.
@@ -26719,6 +34470,157 @@ class ToolUseFineTuningDataGenerationJobConfiguration(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = DataGenerationJobType.TOOL_USE  # type: ignore
+
+
+class ToolWebSearchPreviewTool(
+    Tool, discriminator="web_search_preview"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Web search preview.
+
+    :ivar type: The type of the web search tool. One of ``web_search_preview`` or
+     ``web_search_preview_2025_03_11``. Required. WEB_SEARCH_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH_PREVIEW
+    :ivar user_location:
+    :vartype user_location: ~azure.ai.projects.models.ApproximateLocation
+    :ivar search_context_size: High level guidance for the amount of context window space to use
+     for the search. One of ``low``, ``medium``, or ``high``. ``medium`` is the default. Known
+     values are: "low", "medium", and "high".
+    :vartype search_context_size: str or ~azure.ai.projects.models.SearchContextSize
+    :ivar search_content_types:
+    :vartype search_content_types: list[str or ~azure.ai.projects.models.SearchContentType]
+    """
+
+    type: Literal[ToolType.WEB_SEARCH_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the web search tool. One of ``web_search_preview`` or
+     ``web_search_preview_2025_03_11``. Required. WEB_SEARCH_PREVIEW."""
+    user_location: Optional["_models.ApproximateLocation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    search_context_size: Optional[Union[str, "_models.SearchContextSize"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """High level guidance for the amount of context window space to use for the search. One of
+     ``low``, ``medium``, or ``high``. ``medium`` is the default. Known values are: \"low\",
+     \"medium\", and \"high\"."""
+    search_content_types: Optional[list[Union[str, "_models.SearchContentType"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user_location: Optional["_models.ApproximateLocation"] = None,
+        search_context_size: Optional[Union[str, "_models.SearchContextSize"]] = None,
+        search_content_types: Optional[list[Union[str, "_models.SearchContentType"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.WEB_SEARCH_PREVIEW  # type: ignore
+
+
+class ToolWebSearchTool(
+    Tool, discriminator="web_search"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Web search.
+
+    :ivar type: The type of the web search tool. One of ``web_search`` or
+     ``web_search_2025_08_26``. Required. WEB_SEARCH.
+    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH
+    :ivar external_web_access: Allow live internet access for web search. Defaults to true when
+     omitted. When false, the web search tool runs in offline/cache-only mode and will not fetch new
+     external content.
+    :vartype external_web_access: bool
+    :ivar filters:
+    :vartype filters: ~azure.ai.projects.models.WebSearchToolFilters
+    :ivar user_location: The approximate location of the user. If omitted or null, defaults to the
+     United States. To avoid this fallback, pass ``{"type": "approximate"}`` without location
+     fields. To localize results, provide the relevant location fields.
+    :vartype user_location: ~azure.ai.projects.models.WebSearchApproximateLocation
+    :ivar search_context_size: High level guidance for the amount of context window space to use
+     for the search. One of ``low``, ``medium``, or ``high``. ``medium`` is the default. Is one of
+     the following types: Literal["low"], Literal["medium"], Literal["high"]
+    :vartype search_context_size: str or str or str
+    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
+    :vartype name: str
+    :ivar description: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype description: str
+    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
+     version.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar custom_search_configuration: The project connections attached to this tool. There can be
+     a maximum of 1 connection resource attached to the tool.
+    :vartype custom_search_configuration: ~azure.ai.projects.models.WebSearchConfiguration
+    """
+
+    type: Literal[ToolType.WEB_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the web search tool. One of ``web_search`` or ``web_search_2025_08_26``. Required.
+     WEB_SEARCH."""
+    external_web_access: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Allow live internet access for web search. Defaults to true when omitted. When false, the web
+     search tool runs in offline/cache-only mode and will not fetch new external content."""
+    filters: Optional["_models.WebSearchToolFilters"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    user_location: Optional["_models.WebSearchApproximateLocation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The approximate location of the user. If omitted or null, defaults to the United States. To
+     avoid this fallback, pass ``{\"type\": \"approximate\"}`` without location fields. To localize
+     results, provide the relevant location fields."""
+    search_context_size: Optional[Literal["low", "medium", "high"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """High level guidance for the amount of context window space to use for the search. One of
+     ``low``, ``medium``, or ``high``. ``medium`` is the default. Is one of the following types:
+     Literal[\"low\"], Literal[\"medium\"], Literal[\"high\"]"""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deprecated. This property is deprecated and will be removed in a future version."""
+    custom_search_configuration: Optional["_models.WebSearchConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The project connections attached to this tool. There can be a maximum of 1 connection resource
+     attached to the tool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        external_web_access: Optional[bool] = None,
+        filters: Optional["_models.WebSearchToolFilters"] = None,
+        user_location: Optional["_models.WebSearchApproximateLocation"] = None,
+        search_context_size: Optional[Literal["low", "medium", "high"]] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+        custom_search_configuration: Optional["_models.WebSearchConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.WEB_SEARCH  # type: ignore
 
 
 class TracesDataGenerationJobConfiguration(
@@ -27094,7 +34996,7 @@ class TwilioTelephonyBinding(
     :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
     :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
     :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
-     provider. Required.
+     provider. For SIP bindings, this is a SIP URI. Required.
     :vartype incoming_call_url: str
     :ivar provider: The Twilio provider. Required. Twilio Programmable Voice.
     :vartype provider: str or ~azure.ai.projects.models.TWILIO
@@ -27145,7 +35047,7 @@ class TwilioTelephonyBindingListItem(
     :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
     :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
     :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
-     provider. Required.
+     provider. For SIP bindings, this is a SIP URI. Required.
     :vartype incoming_call_url: str
     :ivar etag: The entity tag to send in the ``If-Match`` header when updating or deleting this
      binding. Required.
@@ -27227,13 +35129,16 @@ class UpdateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
     :ivar label: The replacement display label. Omit it to preserve the current value; use null to
      clear it.
     :vartype label: str
-    :ivar connection_name: The replacement Foundry connection name. This property is valid only for
-     a Teams Phone extensibility binding; a Twilio binding's connection is immutable.
+    :ivar connection_name: The replacement Foundry connection name. This property is valid for
+     Teams Phone extensibility and SIP bindings; a Twilio binding's connection is immutable.
     :vartype connection_name: str
-    :ivar phone_number: The replacement Teams Phone extensibility display phone number. Omit it to
-     preserve the current value; use null to clear it. This property is valid only for a Teams Phone
-     extensibility binding.
+    :ivar phone_number: The replacement Teams Phone extensibility or SIP display phone number. Omit
+     it to preserve the current value; use null to clear it. This property is valid only for Teams
+     Phone extensibility and SIP bindings.
     :vartype phone_number: str
+    :ivar allowed_calling_numbers: SIP only. Omit to preserve the restriction; send [] to allow any
+     caller.
+    :vartype allowed_calling_numbers: list[str]
     """
 
     status: Optional[Union[str, "_models.TelephonyBindingStatus"]] = rest_field(
@@ -27243,12 +35148,16 @@ class UpdateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
     label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The replacement display label. Omit it to preserve the current value; use null to clear it."""
     connection_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The replacement Foundry connection name. This property is valid only for a Teams Phone
-     extensibility binding; a Twilio binding's connection is immutable."""
+    """The replacement Foundry connection name. This property is valid for Teams Phone extensibility
+     and SIP bindings; a Twilio binding's connection is immutable."""
     phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The replacement Teams Phone extensibility display phone number. Omit it to preserve the current
-     value; use null to clear it. This property is valid only for a Teams Phone extensibility
-     binding."""
+    """The replacement Teams Phone extensibility or SIP display phone number. Omit it to preserve the
+     current value; use null to clear it. This property is valid only for Teams Phone extensibility
+     and SIP bindings."""
+    allowed_calling_numbers: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SIP only. Omit to preserve the restriction; send [] to allow any caller."""
 
     @overload
     def __init__(
@@ -27258,6 +35167,7 @@ class UpdateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
         label: Optional[str] = None,
         connection_name: Optional[str] = None,
         phone_number: Optional[str] = None,
+        allowed_calling_numbers: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -27832,8 +35742,10 @@ class VoiceAgentAudioInputConfig(_Model):  # pylint: disable=docstring-keyword-s
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Output audio configuration for a voice agent.
+class VoiceAgentVoiceConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Voice output configuration. Inline subagents use it directly as their voice override, and the
+    session-level
+    output audio configuration extends it.
     Provider-specific fields are selected by ``voice_type``:
 
     * `openai`: `voice` and `speed`.
@@ -27843,12 +35755,8 @@ class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-
     * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
     * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus `personal_voice_model`; the
       voice name is derived from the avatar.
-    * `azure-realtime-native`: `voice` and `speed`. `format` and `output_audio_timestamp_types` apply to every voice
-      type.
+    * `azure-realtime-native`: `voice` and `speed`.
 
-    :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
-     PCM.
-    :vartype format: ~azure.ai.projects.models.RealtimeAudioFormats
     :ivar voice: The voice name or identifier. Applies to ``openai``, ``azure-standard``,
      ``azure-custom``, ``azure-personal``, and ``azure-realtime-native``. It does not apply to
      ``avatar-voice-sync``, which derives the voice name from the avatar.
@@ -27888,16 +35796,8 @@ class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-
     :ivar personal_voice_model: The Azure personal or avatar voice model. Applies only when
      ``voice_type`` is ``azure-personal`` or ``avatar-voice-sync``.
     :vartype personal_voice_model: str
-    :ivar output_audio_timestamp_types: Timestamp kinds to include with output audio. Applies to
-     every ``voice_type``.
-    :vartype output_audio_timestamp_types: list[str or
-     ~azure.ai.projects.models.VoiceAgentAudioTimestampType]
     """
 
-    format: Optional["_models.RealtimeAudioFormats"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz PCM."""
     voice: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The voice name or identifier. Applies to ``openai``, ``azure-standard``, ``azure-custom``,
      ``azure-personal``, and ``azure-realtime-native``. It does not apply to ``avatar-voice-sync``,
@@ -27941,16 +35841,11 @@ class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-
     personal_voice_model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Azure personal or avatar voice model. Applies only when ``voice_type`` is
      ``azure-personal`` or ``avatar-voice-sync``."""
-    output_audio_timestamp_types: Optional[list[Union[str, "_models.VoiceAgentAudioTimestampType"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Timestamp kinds to include with output audio. Applies to every ``voice_type``."""
 
     @overload
     def __init__(
         self,
         *,
-        format: Optional["_models.RealtimeAudioFormats"] = None,
         voice: Optional[str] = None,
         voice_type: Optional[Union[str, "_models.VoiceType"]] = None,
         voice_locale: Optional[str] = None,
@@ -27964,6 +35859,99 @@ class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-
         volume: Optional[str] = None,
         custom_voice_endpoint_id: Optional[str] = None,
         personal_voice_model: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentAudioOutputConfig(VoiceAgentVoiceConfig):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Output audio configuration for a voice agent. Extends the voice configuration with the
+    session-level ``format`` and ``output_audio_timestamp_types`` settings, which apply to every
+    voice type.
+
+    :ivar voice: The voice name or identifier. Applies to ``openai``, ``azure-standard``,
+     ``azure-custom``, ``azure-personal``, and ``azure-realtime-native``. It does not apply to
+     ``avatar-voice-sync``, which derives the voice name from the avatar.
+    :vartype voice: str
+    :ivar voice_type: The voice implementation. Known values are: "openai", "azure-standard",
+     "azure-custom", "azure-personal", "avatar-voice-sync", and "azure-realtime-native".
+    :vartype voice_type: str or ~azure.ai.projects.models.VoiceType
+    :ivar voice_locale: The enforced BCP-47 output locale. Applies to ``azure-standard``,
+     ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype voice_locale: str
+    :ivar speed: The numeric output speed multiplier. Applies to all known ``voice_type`` values
+     and defaults to 1.
+    :vartype speed: float
+    :ivar voice_temperature: The voice variation temperature. Applies to ``azure-standard``,
+     ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype voice_temperature: float
+    :ivar custom_lexicon_url: The URL of a custom pronunciation lexicon. Applies to
+     ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype custom_lexicon_url: str
+    :ivar custom_text_normalization_url: The URL of a custom text-normalization configuration.
+     Applies to ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype custom_text_normalization_url: str
+    :ivar prefer_locales: Preferred BCP-47 locales for multilingual synthesis. Applies to
+     ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype prefer_locales: list[str]
+    :ivar style: The voice speaking style. Applies only when ``voice_type`` is ``azure-standard``.
+    :vartype style: str
+    :ivar pitch: The voice pitch adjustment. Applies to ``azure-standard``, ``azure-custom``,
+     ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype pitch: str
+    :ivar volume: The voice volume adjustment. Applies to ``azure-standard``, ``azure-custom``,
+     ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype volume: str
+    :ivar custom_voice_endpoint_id: The Azure custom-voice deployment endpoint identifier. Applies
+     only when ``voice_type`` is ``azure-custom``.
+    :vartype custom_voice_endpoint_id: str
+    :ivar personal_voice_model: The Azure personal or avatar voice model. Applies only when
+     ``voice_type`` is ``azure-personal`` or ``avatar-voice-sync``.
+    :vartype personal_voice_model: str
+    :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
+     PCM.
+    :vartype format: ~azure.ai.projects.models.RealtimeAudioFormats
+    :ivar output_audio_timestamp_types: Timestamp kinds to include with output audio. Applies to
+     every ``voice_type``.
+    :vartype output_audio_timestamp_types: list[str or
+     ~azure.ai.projects.models.VoiceAgentAudioTimestampType]
+    """
+
+    format: Optional["_models.RealtimeAudioFormats"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz PCM."""
+    output_audio_timestamp_types: Optional[list[Union[str, "_models.VoiceAgentAudioTimestampType"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Timestamp kinds to include with output audio. Applies to every ``voice_type``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        voice: Optional[str] = None,
+        voice_type: Optional[Union[str, "_models.VoiceType"]] = None,
+        voice_locale: Optional[str] = None,
+        speed: Optional[float] = None,
+        voice_temperature: Optional[float] = None,
+        custom_lexicon_url: Optional[str] = None,
+        custom_text_normalization_url: Optional[str] = None,
+        prefer_locales: Optional[list[str]] = None,
+        style: Optional[str] = None,
+        pitch: Optional[str] = None,
+        volume: Optional[str] = None,
+        custom_voice_endpoint_id: Optional[str] = None,
+        personal_voice_model: Optional[str] = None,
+        format: Optional["_models.RealtimeAudioFormats"] = None,
         output_audio_timestamp_types: Optional[list[Union[str, "_models.VoiceAgentAudioTimestampType"]]] = None,
     ) -> None: ...
 
@@ -28620,6 +36608,75 @@ class VoiceAgentAzureSemanticVadTurnDetection(
         self.type = VoiceAgentTurnDetectionType.AZURE_SEMANTIC_VAD  # type: ignore
 
 
+class VoiceAgentBaseDefinition(
+    AgentDefinition, discriminator="voice"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Shared voice-agent settings; protocol-specific fields remain flat on each subtype. Creates and
+    updates produce immutable versions. Each version selects its own protocol, so a new version can
+    switch between Realtime and Live.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VoiceAgentLiveDefinition, VoiceAgentDefinition
+
+    :ivar rai_config: Configuration for Responsible AI (RAI) content filtering and safety features.
+    :vartype rai_config: ~azure.ai.projects.models.RaiConfig
+    :ivar kind: Always voice. Required. VOICE.
+    :vartype kind: str or ~azure.ai.projects.models.VOICE
+    :ivar sub_protocol: The voice protocol for this agent version. Null and unknown values are
+     invalid. Required. Known values are: "realtime" and "live".
+    :vartype sub_protocol: str or ~azure.ai.projects.models.VoiceAgentSubProtocol
+    :ivar instructions: Frontend instructions, templated with structured_inputs. Backend
+     instructions belong in delegation.responses.
+    :vartype instructions: str
+    :ivar structured_inputs: Template inputs for session instructions and supported greetings.
+    :vartype structured_inputs: dict[str, ~azure.ai.projects.models.StructuredInputDefinition]
+    :ivar store: Persists conversation content and audio in Foundry, not native Live recordings.
+     Defaults to false.
+    :vartype store: bool
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: Literal[AgentKind.VOICE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Always voice. Required. VOICE."""
+    sub_protocol: str = rest_discriminator(
+        name="sub_protocol", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The voice protocol for this agent version. Null and unknown values are invalid. Required. Known
+     values are: \"realtime\" and \"live\"."""
+    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Frontend instructions, templated with structured_inputs. Backend instructions belong in
+     delegation.responses."""
+    structured_inputs: Optional[dict[str, "_models.StructuredInputDefinition"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Template inputs for session instructions and supported greetings."""
+    store: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Persists conversation content and audio in Foundry, not native Live recordings. Defaults to
+     false."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        sub_protocol: str,
+        rai_config: Optional["_models.RaiConfig"] = None,
+        instructions: Optional[str] = None,
+        structured_inputs: Optional[dict[str, "_models.StructuredInputDefinition"]] = None,
+        store: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = AgentKind.VOICE  # type: ignore
+
+
 class VoiceAgentClientEventRtcCallSdpCreate(
     RealtimeClientEvent, discriminator="rtc.call.sdp.create"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -28756,8 +36813,348 @@ class VoiceAgentClientEventSessionUpdate(_Model):  # pylint: disable=docstring-k
         super().__init__(*args, **kwargs)
 
 
+class VoiceAgentCollectDtmfStartArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Arguments for starting DTMF collection on a model call.
+
+    :ivar secret: Required; no default. True returns a private reference, false returns the value.
+     Privacy cannot be downgraded after collection starts. Required.
+    :vartype secret: bool
+    :ivar output_variable_name: Preferred bare name for the output variable, required for ``secret:
+     true`` and forbidden otherwise.
+    :vartype output_variable_name: str
+    :ivar timeout_seconds: Total deadline in seconds (1-300), including receiver setup. Overrides
+     the Agent timeout; if both are omitted, defaults to 60. Duplicate calls do not reset it.
+    :vartype timeout_seconds: int
+    :ivar completion_mode: Required typed object selecting one completion policy and its
+     parameters, not an array of simultaneous rules. Required. Is one of the following types:
+     VoiceAgentDtmfFixedLengthCompletionMode, VoiceAgentDtmfTerminatorCompletionMode,
+     VoiceAgentDtmfInterDigitSilenceCompletionMode
+    :vartype completion_mode: ~azure.ai.projects.models.VoiceAgentDtmfFixedLengthCompletionMode or
+     ~azure.ai.projects.models.VoiceAgentDtmfTerminatorCompletionMode or
+     ~azure.ai.projects.models.VoiceAgentDtmfInterDigitSilenceCompletionMode
+    :ivar first_digit_timeout_seconds: The maximum wait for the first digit in integer seconds,
+     starting at receiver readiness and bounded by the remaining total deadline. Omit for fifteen
+     seconds.
+    :vartype first_digit_timeout_seconds: int
+    """
+
+    secret: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required; no default. True returns a private reference, false returns the value. Privacy cannot
+     be downgraded after collection starts. Required."""
+    output_variable_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Preferred bare name for the output variable, required for ``secret: true`` and forbidden
+     otherwise."""
+    timeout_seconds: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Total deadline in seconds (1-300), including receiver setup. Overrides the Agent timeout; if
+     both are omitted, defaults to 60. Duplicate calls do not reset it."""
+    completion_mode: "_unions.VoiceAgentDtmfCompletionMode" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required typed object selecting one completion policy and its parameters, not an array of
+     simultaneous rules. Required. Is one of the following types:
+     VoiceAgentDtmfFixedLengthCompletionMode, VoiceAgentDtmfTerminatorCompletionMode,
+     VoiceAgentDtmfInterDigitSilenceCompletionMode"""
+    first_digit_timeout_seconds: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The maximum wait for the first digit in integer seconds, starting at receiver readiness and
+     bounded by the remaining total deadline. Omit for fifteen seconds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        secret: bool,
+        completion_mode: "_unions.VoiceAgentDtmfCompletionMode",
+        output_variable_name: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+        first_digit_timeout_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentTool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A tool usable by a voice agent.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VoiceAgentFunctionTool, VoiceAgentMcpTool, VoiceAgentSystemTool, VoiceAgentToolboxTool
+
+    :ivar type: The tool kind. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The tool kind. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentSystemTool(
+    VoiceAgentTool, discriminator="system"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A service-managed control that acts on the active voice session without customer code or
+    external authentication.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VoiceAgentCollectDtmfSystemTool, VoiceAgentCollectSmsSystemTool,
+    VoiceAgentDigitRecognitionSystemTool, VoiceAgentEndConversationSystemTool,
+    VoiceAgentLanguageDetectionSystemTool, VoiceAgentSendDtmfSystemTool,
+    VoiceAgentSendSmsSystemTool, VoiceAgentTransferSystemTool
+
+    :ivar type: The type of the tool. Always ``system``. Required. Default value is "system".
+    :vartype type: str
+    :ivar name: The service-managed control action. Known values are stable; additional values may
+     be added over time. Required. Known values are: "end_conversation", "language_detection",
+     "digit_recognition", "transfer", "collect_sms", "collect_dtmf", "send_dtmf", and "send_sms".
+    :vartype name: str or ~azure.ai.projects.models.VoiceAgentSystemToolName
+    :ivar description: An optional description of the system tool.
+    :vartype description: str
+    :ivar timeout_seconds: Execution timeout, from 1 to 300 seconds. If omitted, the service
+     defaults to 60 seconds.
+    :vartype timeout_seconds: ~datetime.timedelta
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: Literal["system"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the tool. Always ``system``. Required. Default value is \"system\"."""
+    name: str = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])
+    """The service-managed control action. Known values are stable; additional values may be added
+     over time. Required. Known values are: \"end_conversation\", \"language_detection\",
+     \"digit_recognition\", \"transfer\", \"collect_sms\", \"collect_dtmf\", \"send_dtmf\", and
+     \"send_sms\"."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional description of the system tool."""
+    timeout_seconds: Optional[datetime.timedelta] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-seconds-int"
+    )
+    """Execution timeout, from 1 to 300 seconds. If omitted, the service defaults to 60 seconds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: Optional[str] = None,
+        timeout_seconds: Optional[datetime.timedelta] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "system"  # type: ignore
+
+
+class VoiceAgentCollectDtmfSystemTool(
+    VoiceAgentSystemTool, discriminator="collect_dtmf"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Collects keypad digits on the current call.
+
+    :ivar type: The type of the tool. Always ``system``. Required. Default value is "system".
+    :vartype type: str
+    :ivar description: An optional description of the system tool.
+    :vartype description: str
+    :ivar timeout_seconds: Execution timeout, from 1 to 300 seconds. If omitted, the service
+     defaults to 60 seconds.
+    :vartype timeout_seconds: ~datetime.timedelta
+    :ivar name: The service-managed control action. Always ``collect_dtmf``. Required. Collects
+     keypad digits on the current call.
+    :vartype name: str or ~azure.ai.projects.models.COLLECT_DTMF
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    name: Literal[VoiceAgentSystemToolName.COLLECT_DTMF] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The service-managed control action. Always ``collect_dtmf``. Required. Collects keypad digits
+     on the current call."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        timeout_seconds: Optional[datetime.timedelta] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.name = VoiceAgentSystemToolName.COLLECT_DTMF  # type: ignore
+
+
+class VoiceAgentCollectionStartArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Arguments for starting a collection on a model call.
+
+    :ivar secret: Required; no default. True returns a private reference, false returns the value.
+     Privacy cannot be downgraded after collection starts. Required.
+    :vartype secret: bool
+    :ivar output_variable_name: Preferred bare name for the output variable, required for ``secret:
+     true`` and forbidden otherwise.
+    :vartype output_variable_name: str
+    :ivar timeout_seconds: Total deadline in seconds (1-300), including receiver setup. Overrides
+     the Agent timeout; if both are omitted, defaults to 60. Duplicate calls do not reset it.
+    :vartype timeout_seconds: int
+    """
+
+    secret: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required; no default. True returns a private reference, false returns the value. Privacy cannot
+     be downgraded after collection starts. Required."""
+    output_variable_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Preferred bare name for the output variable, required for ``secret: true`` and forbidden
+     otherwise."""
+    timeout_seconds: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Total deadline in seconds (1-300), including receiver setup. Overrides the Agent timeout; if
+     both are omitted, defaults to 60. Duplicate calls do not reset it."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        secret: bool,
+        output_variable_name: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentCollectSmsStartArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Model-call SMS collection arguments, validated before receiver setup. The model supplies the
+    sender, not the collected SMS.
+
+    :ivar secret: Required; no default. True returns a private reference, false returns the value.
+     Privacy cannot be downgraded after collection starts. Required.
+    :vartype secret: bool
+    :ivar output_variable_name: Preferred bare name for the output variable, required for ``secret:
+     true`` and forbidden otherwise.
+    :vartype output_variable_name: str
+    :ivar timeout_seconds: Total deadline in seconds (1-300), including receiver setup. Overrides
+     the Agent timeout; if both are omitted, defaults to 60. Duplicate calls do not reset it.
+    :vartype timeout_seconds: int
+    :ivar from_phone_number: The expected SMS sender in canonical E.164 form, explicitly selected
+     at start without Caller ID fallback. This is routing, not authenticated identity. Required.
+    :vartype from_phone_number: str
+    """
+
+    secret: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required; no default. True returns a private reference, false returns the value. Privacy cannot
+     be downgraded after collection starts. Required."""
+    output_variable_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Preferred bare name for the output variable, required for ``secret: true`` and forbidden
+     otherwise."""
+    timeout_seconds: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Total deadline in seconds (1-300), including receiver setup. Overrides the Agent timeout; if
+     both are omitted, defaults to 60. Duplicate calls do not reset it."""
+    from_phone_number: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The expected SMS sender in canonical E.164 form, explicitly selected at start without Caller ID
+     fallback. This is routing, not authenticated identity. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        secret: bool,
+        from_phone_number: str,
+        output_variable_name: Optional[str] = None,
+        timeout_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentCollectSmsSystemTool(
+    VoiceAgentSystemTool, discriminator="collect_sms"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Collects one complete SMS from an explicitly selected sender.
+
+    :ivar type: The type of the tool. Always ``system``. Required. Default value is "system".
+    :vartype type: str
+    :ivar description: An optional description of the system tool.
+    :vartype description: str
+    :ivar timeout_seconds: Execution timeout, from 1 to 300 seconds. If omitted, the service
+     defaults to 60 seconds.
+    :vartype timeout_seconds: ~datetime.timedelta
+    :ivar name: The service-managed control action. Always ``collect_sms``. Required. Collects one
+     complete SMS from an explicitly selected sender.
+    :vartype name: str or ~azure.ai.projects.models.COLLECT_SMS
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    name: Literal[VoiceAgentSystemToolName.COLLECT_SMS] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The service-managed control action. Always ``collect_sms``. Required. Collects one complete SMS
+     from an explicitly selected sender."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        timeout_seconds: Optional[datetime.timedelta] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.name = VoiceAgentSystemToolName.COLLECT_SMS  # type: ignore
+
+
 class VoiceAgentDefinition(
-    AgentDefinition, discriminator="voice"
+    VoiceAgentBaseDefinition, discriminator="realtime"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The voice agent definition. Its configuration (model, instructions, audio, tools, and optional
     avatar) drives a managed speech-to-speech experience. Establish realtime voice sessions through
@@ -28766,9 +37163,18 @@ class VoiceAgentDefinition(
 
     :ivar rai_config: Configuration for Responsible AI (RAI) content filtering and safety features.
     :vartype rai_config: ~azure.ai.projects.models.RaiConfig
-    :ivar kind: The kind discriminator for a voice agent definition. Always ``voice``. Required.
-     VOICE.
+    :ivar kind: Always voice. Required. VOICE.
     :vartype kind: str or ~azure.ai.projects.models.VOICE
+    :ivar instructions: Frontend instructions, templated with structured_inputs. Backend
+     instructions belong in delegation.responses.
+    :vartype instructions: str
+    :ivar structured_inputs: Template inputs for session instructions and supported greetings.
+    :vartype structured_inputs: dict[str, ~azure.ai.projects.models.StructuredInputDefinition]
+    :ivar store: Persists conversation content and audio in Foundry, not native Live recordings.
+     Defaults to false.
+    :vartype store: bool
+    :ivar sub_protocol: Selects the Realtime protocol. Required. REALTIME.
+    :vartype sub_protocol: str or ~azure.ai.projects.models.REALTIME
     :ivar model_type: How the model backing this voice agent is served. Required with ``model`` for
      a model-backed voice agent and omitted when ``conversation_engine`` is provided. This is
      independent of the architecture (realtime or cascaded), which the service derives from the
@@ -28785,10 +37191,6 @@ class VoiceAgentDefinition(
      ``required``, because the engine owns the conversation logic. The initial implementation
      supports a hosted-agent engine.
     :vartype conversation_engine: ~azure.ai.projects.models.VoiceConversationEngine
-    :ivar instructions: A system (or developer) message inserted into the model's context. Supports
-     template substitution via ``structured_inputs``, rendered per session before the live session
-     starts.
-    :vartype instructions: str
     :ivar greeting: Optional session-start greeting. Template mode speaks exact rendered text;
      LLM-generated mode asks the session model to author the opening response and may use configured
      tools.
@@ -28829,24 +37231,17 @@ class VoiceAgentDefinition(
      ~azure.ai.projects.models.ToolChoiceMCP
     :ivar parallel_tool_calls: Whether the model may call multiple tools in parallel.
     :vartype parallel_tool_calls: bool
-    :ivar structured_inputs: Set of structured inputs that participate in prompt template
-     substitution, rendered per session before the live session starts.
-    :vartype structured_inputs: dict[str, ~azure.ai.projects.models.StructuredInputDefinition]
-    :ivar subagent_config: Optional configuration for sibling Foundry text agents that this voice
-     agent may consult as background specialists.
+    :ivar subagent_config: Optional subagent configuration. Set ``subagent_type`` to ``delegate``
+     for delegated background specialists or ``inline`` for inline voice subagents.
     :vartype subagent_config: ~azure.ai.projects.models.VoiceAgentSubagentConfig
-    :ivar store: Whether conversations with this agent are persisted. A single, all-or-nothing
-     persistence switch that defaults to ``false`` (privacy-safe: off by default). When ``true``,
-     Foundry persists the full conversation — the transcript/event timeline and raw audio. When
-     ``false``, nothing is persisted and no conversation is surfaced. There is no separate
-     audio-logging control; audio is persisted only as part of this switch. Latency/performance
-     telemetry (e.g. time-to-first-audio, inter-token latency, interruption) is observability-only
-     (customer trace / App Insights) and is not part of the persisted conversation content.
-    :vartype store: bool
+    :ivar post_call: Optional post-call delivery configuration. After each session ends, the
+     service notifies the configured destinations.
+    :vartype post_call: ~azure.ai.projects.models.VoiceAgentPostCallConfig
     """
 
-    kind: Literal[AgentKind.VOICE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The kind discriminator for a voice agent definition. Always ``voice``. Required. VOICE."""
+    __mapping__: dict[str, _Model] = {}
+    sub_protocol: Literal[VoiceAgentSubProtocol.REALTIME] = rest_discriminator(name="sub_protocol", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Selects the Realtime protocol. Required. REALTIME."""
     model_type: Optional[Union[str, "_models.VoiceModelType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -28867,9 +37262,6 @@ class VoiceAgentDefinition(
      ``tool_choice`` must be omitted, and ``greeting.tool_choice`` cannot be ``required``, because
      the engine owns the conversation logic. The initial implementation supports a hosted-agent
      engine."""
-    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A system (or developer) message inserted into the model's context. Supports template
-     substitution via ``structured_inputs``, rendered per session before the live session starts."""
     greeting: Optional["_models.VoiceAgentGreetingConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -28927,34 +37319,28 @@ class VoiceAgentDefinition(
      Literal[\"none\"], Literal[\"auto\"], Literal[\"required\"], ToolChoiceFunction, ToolChoiceMCP"""
     parallel_tool_calls: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether the model may call multiple tools in parallel."""
-    structured_inputs: Optional[dict[str, "_models.StructuredInputDefinition"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Set of structured inputs that participate in prompt template substitution, rendered per session
-     before the live session starts."""
     subagent_config: Optional["_models.VoiceAgentSubagentConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Optional configuration for sibling Foundry text agents that this voice agent may consult as
-     background specialists."""
-    store: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether conversations with this agent are persisted. A single, all-or-nothing persistence
-     switch that defaults to ``false`` (privacy-safe: off by default). When ``true``, Foundry
-     persists the full conversation — the transcript/event timeline and raw audio. When ``false``,
-     nothing is persisted and no conversation is surfaced. There is no separate audio-logging
-     control; audio is persisted only as part of this switch. Latency/performance telemetry (e.g.
-     time-to-first-audio, inter-token latency, interruption) is observability-only (customer trace /
-     App Insights) and is not part of the persisted conversation content."""
+    """Optional subagent configuration. Set ``subagent_type`` to ``delegate`` for delegated background
+     specialists or ``inline`` for inline voice subagents."""
+    post_call: Optional["_models.VoiceAgentPostCallConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional post-call delivery configuration. After each session ends, the service notifies the
+     configured destinations."""
 
     @overload
     def __init__(
         self,
         *,
         rai_config: Optional["_models.RaiConfig"] = None,
+        instructions: Optional[str] = None,
+        structured_inputs: Optional[dict[str, "_models.StructuredInputDefinition"]] = None,
+        store: Optional[bool] = None,
         model_type: Optional[Union[str, "_models.VoiceModelType"]] = None,
         model: Optional[str] = None,
         conversation_engine: Optional["_models.VoiceConversationEngine"] = None,
-        instructions: Optional[str] = None,
         greeting: Optional["_models.VoiceAgentGreetingConfig"] = None,
         audio: Optional["_models.VoiceAgentAudioConfig"] = None,
         soundscape: Optional["_models.VoiceAgentSoundscapeConfig"] = None,
@@ -28966,9 +37352,8 @@ class VoiceAgentDefinition(
         tools: Optional[list["_models.VoiceAgentTool"]] = None,
         tool_choice: Optional["_unions.VoiceAgentToolChoice"] = None,
         parallel_tool_calls: Optional[bool] = None,
-        structured_inputs: Optional[dict[str, "_models.StructuredInputDefinition"]] = None,
         subagent_config: Optional["_models.VoiceAgentSubagentConfig"] = None,
-        store: Optional[bool] = None,
+        post_call: Optional["_models.VoiceAgentPostCallConfig"] = None,
     ) -> None: ...
 
     @overload
@@ -28980,7 +37365,248 @@ class VoiceAgentDefinition(
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind = AgentKind.VOICE  # type: ignore
+        self.sub_protocol = VoiceAgentSubProtocol.REALTIME  # type: ignore
+
+
+class VoiceAgentSubagentConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration for delegated background specialists or inline voice subagents. For compatibility
+    with existing delegate configurations, the service treats an omitted ``subagent_type`` as
+    ``delegate``.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VoiceAgentDelegateSubagentConfig, VoiceAgentInlineSubagentConfig
+
+    :ivar subagent_type: The subagent mode. Required. Known values are: "delegate" and "inline".
+    :vartype subagent_type: str or ~azure.ai.projects.models.VoiceAgentSubagentType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    subagent_type: str = rest_discriminator(
+        name="subagent_type", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The subagent mode. Required. Known values are: \"delegate\" and \"inline\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subagent_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentDelegateSubagentConfig(
+    VoiceAgentSubagentConfig, discriminator="delegate"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration for referenced Foundry agents invoked as delegated background specialists.
+
+    :ivar subagent_type: The subagent mode for delegated background specialists. Required.
+     Referenced Foundry agents invoked as delegated background specialists.
+    :vartype subagent_type: str or ~azure.ai.projects.models.DELEGATE
+    :ivar subagents: The sibling Foundry text agents, in the same project, that this Voice Agent
+     may consult. Required.
+    :vartype subagents: list[~azure.ai.projects.models.VoiceAgentSubagent]
+    """
+
+    subagent_type: Literal[VoiceAgentSubagentType.DELEGATE] = rest_discriminator(name="subagent_type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The subagent mode for delegated background specialists. Required. Referenced Foundry agents
+     invoked as delegated background specialists."""
+    subagents: list["_models.VoiceAgentSubagent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The sibling Foundry text agents, in the same project, that this Voice Agent may consult.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subagents: list["_models.VoiceAgentSubagent"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.subagent_type = VoiceAgentSubagentType.DELEGATE  # type: ignore
+
+
+class VoiceAgentDigitRecognitionSystemTool(
+    VoiceAgentSystemTool, discriminator="digit_recognition"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Retrieves the unchanged transcript of the last user audio turn.
+
+    :ivar type: The type of the tool. Always ``system``. Required. Default value is "system".
+    :vartype type: str
+    :ivar description: An optional description of the system tool.
+    :vartype description: str
+    :ivar timeout_seconds: Execution timeout, from 1 to 300 seconds. If omitted, the service
+     defaults to 60 seconds.
+    :vartype timeout_seconds: ~datetime.timedelta
+    :ivar name: The service-managed control action. Always ``digit_recognition``. Required.
+     Retrieves the unchanged transcript of the last user audio turn.
+    :vartype name: str or ~azure.ai.projects.models.DIGIT_RECOGNITION
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    name: Literal[VoiceAgentSystemToolName.DIGIT_RECOGNITION] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The service-managed control action. Always ``digit_recognition``. Required. Retrieves the
+     unchanged transcript of the last user audio turn."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        timeout_seconds: Optional[datetime.timedelta] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.name = VoiceAgentSystemToolName.DIGIT_RECOGNITION  # type: ignore
+
+
+class VoiceAgentDtmfFixedLengthCompletionMode(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Complete immediately after exactly length digits. Other modes' fields are not accepted.
+
+    :ivar inter_digit_timeout_seconds: Seconds between digits, reset after each digit; defaults to
+     5.
+    :vartype inter_digit_timeout_seconds: int
+    :ivar type: Select fixed-length completion. Required. Default value is "fixed_length".
+    :vartype type: str
+    :ivar length: The number of digits to collect; defaults to six. There is no terminator or
+     separate minimum/maximum pair.
+    :vartype length: int
+    """
+
+    inter_digit_timeout_seconds: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Seconds between digits, reset after each digit; defaults to 5."""
+    type: Literal["fixed_length"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Select fixed-length completion. Required. Default value is \"fixed_length\"."""
+    length: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of digits to collect; defaults to six. There is no terminator or separate
+     minimum/maximum pair."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        inter_digit_timeout_seconds: Optional[int] = None,
+        length: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["fixed_length"] = "fixed_length"
+
+
+class VoiceAgentDtmfInterDigitSilenceCompletionMode(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Completes after nonempty input and an inter-digit pause, within service limits. No key or count
+    is configured; total deadline expiry takes precedence.
+
+    :ivar inter_digit_timeout_seconds: Seconds between digits, reset after each digit; defaults to
+     5.
+    :vartype inter_digit_timeout_seconds: int
+    :ivar type: Select silence completion. Required. Default value is "inter_digit_silence".
+    :vartype type: str
+    """
+
+    inter_digit_timeout_seconds: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Seconds between digits, reset after each digit; defaults to 5."""
+    type: Literal["inter_digit_silence"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Select silence completion. Required. Default value is \"inter_digit_silence\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        inter_digit_timeout_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["inter_digit_silence"] = "inter_digit_silence"
+
+
+class VoiceAgentDtmfTerminatorCompletionMode(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Completes when the configured end key follows nonempty digits within service limits. No digit
+    count or length bounds are configured.
+
+    :ivar inter_digit_timeout_seconds: Seconds between digits, reset after each digit; defaults to
+     5.
+    :vartype inter_digit_timeout_seconds: int
+    :ivar type: Select confirmation-key completion. Required. Default value is "terminator".
+    :vartype type: str
+    :ivar terminator: Required confirmation key; excluded from the collected value. Required. Known
+     values are: "#" and "*".
+    :vartype terminator: str or ~azure.ai.projects.models.VoiceAgentDtmfTerminator
+    """
+
+    inter_digit_timeout_seconds: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Seconds between digits, reset after each digit; defaults to 5."""
+    type: Literal["terminator"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Select confirmation-key completion. Required. Default value is \"terminator\"."""
+    terminator: Union[str, "_models.VoiceAgentDtmfTerminator"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required confirmation key; excluded from the collected value. Required. Known values are: \"#\"
+     and \"*\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        terminator: Union[str, "_models.VoiceAgentDtmfTerminator"],
+        inter_digit_timeout_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["terminator"] = "terminator"
 
 
 class VoiceAgentEchoCancellation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -29030,85 +37656,6 @@ class VoiceAgentEchoCancellation(_Model):  # pylint: disable=docstring-keyword-s
         self.type: Literal["server_echo_cancellation"] = "server_echo_cancellation"
 
 
-class VoiceAgentTool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A tool usable by a voice agent.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    VoiceAgentFunctionTool, VoiceAgentMcpTool, VoiceAgentSystemTool, VoiceAgentToolboxTool
-
-    :ivar type: The tool kind. Required. Default value is None.
-    :vartype type: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The tool kind. Required. Default value is None."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class VoiceAgentSystemTool(
-    VoiceAgentTool, discriminator="system"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A service-managed control that acts on the active voice session without customer code or
-    external authentication.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    VoiceAgentEndConversationSystemTool
-
-    :ivar type: The type of the tool. Always ``system``. Required. Default value is "system".
-    :vartype type: str
-    :ivar name: The service-managed control action. Known values are stable; additional values may
-     be added over time. Required. "end_conversation"
-    :vartype name: str or ~azure.ai.projects.models.VoiceAgentSystemToolName
-    :ivar description: An optional description of the system tool.
-    :vartype description: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    type: Literal["system"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the tool. Always ``system``. Required. Default value is \"system\"."""
-    name: str = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])
-    """The service-managed control action. Known values are stable; additional values may be added
-     over time. Required. \"end_conversation\""""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An optional description of the system tool."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        description: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = "system"  # type: ignore
-
-
 class VoiceAgentEndConversationSystemTool(
     VoiceAgentSystemTool, discriminator="end_conversation"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -29118,6 +37665,9 @@ class VoiceAgentEndConversationSystemTool(
     :vartype type: str
     :ivar description: An optional description of the system tool.
     :vartype description: str
+    :ivar timeout_seconds: Execution timeout, from 1 to 300 seconds. If omitted, the service
+     defaults to 60 seconds.
+    :vartype timeout_seconds: ~datetime.timedelta
     :ivar name: The service-managed control action. Always ``end_conversation``. Required. Ends the
      active conversation.
     :vartype name: str or ~azure.ai.projects.models.END_CONVERSATION
@@ -29133,6 +37683,7 @@ class VoiceAgentEndConversationSystemTool(
         self,
         *,
         description: Optional[str] = None,
+        timeout_seconds: Optional[datetime.timedelta] = None,
     ) -> None: ...
 
     @overload
@@ -29195,6 +37746,73 @@ class VoiceAgentEndOfUtteranceDetection(_Model):  # pylint: disable=docstring-ke
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class VoiceAgentPostCallDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A post-call destination.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VoiceAgentEventGridPostCallDestination, VoiceAgentRoutinePostCallDestination
+
+    :ivar type: The destination type. Required. Known values are: "event_grid" and "routine".
+    :vartype type: str or ~azure.ai.projects.models.VoiceAgentPostCallDestinationType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The destination type. Required. Known values are: \"event_grid\" and \"routine\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentEventGridPostCallDestination(
+    VoiceAgentPostCallDestination, discriminator="event_grid"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An Event Grid connection that receives post-call events.
+
+    :ivar type: Required. An Event Grid connection.
+    :vartype type: str or ~azure.ai.projects.models.EVENT_GRID
+    :ivar connection_name: The name of the Event Grid connection. Required.
+    :vartype connection_name: str
+    """
+
+    type: Literal[VoiceAgentPostCallDestinationType.EVENT_GRID] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. An Event Grid connection."""
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the Event Grid connection. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentPostCallDestinationType.EVENT_GRID  # type: ignore
 
 
 class VoiceAgentFunctionTool(
@@ -29278,6 +37896,386 @@ class VoiceAgentGreetingConfig(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
+class VoiceAgentHandoffCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """One allowed outgoing handoff from an inline voice subagent.
+
+    :ivar id: The handoff condition identifier. Required.
+    :vartype id: str
+    :ivar target: The target subagent identifier or ``$entrypoint``. The containing subagent
+     supplies the source. Required.
+    :vartype target: str
+    :ivar condition: Natural-language routing guidance supplied alongside the active subagent
+     instructions, from 1 through 500 characters. This is not an executable Boolean predicate.
+     Required.
+    :vartype condition: str
+    :ivar cancel_on_interruption: Whether user interruption before commit cancels the pending
+     handoff. If omitted, the service defaults to false.
+    :vartype cancel_on_interruption: bool
+    :ivar delay_ms: The minimum delay before target activation, in milliseconds, from 0 through
+     10000. If omitted, the service defaults to 0.
+    :vartype delay_ms: ~datetime.timedelta
+    :ivar transfer_message: Optional deterministic source-voice announcement played before target
+     activation. Supported by cascaded pipelines and realtime pipelines using local Azure TTS;
+     model-native realtime voice requires omission or null. At most 500 characters. If omitted or
+     null, no announcement is played.
+    :vartype transfer_message: str
+    :ivar target_response: Whether Voice Live automatically starts a response after target
+     activation. If omitted, the service defaults to ``auto``. Known values are: "auto" and "none".
+    :vartype target_response: str or ~azure.ai.projects.models.VoiceAgentHandoffTargetResponse
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The handoff condition identifier. Required."""
+    target: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target subagent identifier or ``$entrypoint``. The containing subagent supplies the source.
+     Required."""
+    condition: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Natural-language routing guidance supplied alongside the active subagent instructions, from 1
+     through 500 characters. This is not an executable Boolean predicate. Required."""
+    cancel_on_interruption: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether user interruption before commit cancels the pending handoff. If omitted, the service
+     defaults to false."""
+    delay_ms: Optional[datetime.timedelta] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
+    )
+    """The minimum delay before target activation, in milliseconds, from 0 through 10000. If omitted,
+     the service defaults to 0."""
+    transfer_message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional deterministic source-voice announcement played before target activation. Supported by
+     cascaded pipelines and realtime pipelines using local Azure TTS; model-native realtime voice
+     requires omission or null. At most 500 characters. If omitted or null, no announcement is
+     played."""
+    target_response: Optional[Union[str, "_models.VoiceAgentHandoffTargetResponse"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether Voice Live automatically starts a response after target activation. If omitted, the
+     service defaults to ``auto``. Known values are: \"auto\" and \"none\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        target: str,
+        condition: str,
+        cancel_on_interruption: Optional[bool] = None,
+        delay_ms: Optional[datetime.timedelta] = None,
+        transfer_message: Optional[str] = None,
+        target_response: Optional[Union[str, "_models.VoiceAgentHandoffTargetResponse"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentHandoffEdgeState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Non-sensitive topology metadata for one compiled handoff edge.
+
+    :ivar id: The edge identifier. Required.
+    :vartype id: str
+    :ivar source: The source node identifier or ``$entrypoint``. Required.
+    :vartype source: str
+    :ivar target: The target node identifier or ``$entrypoint``. Required.
+    :vartype target: str
+    :ivar cancel_on_interruption: Whether user interruption before commit cancels the pending
+     handoff.
+    :vartype cancel_on_interruption: bool
+    :ivar delay_ms: The minimum delay before target activation, in milliseconds.
+    :vartype delay_ms: ~datetime.timedelta
+    :ivar transfer_message: The deterministic source-voice announcement played before target
+     activation.
+    :vartype transfer_message: str
+    :ivar target_response: Whether Voice Live automatically starts a response after target
+     activation. Known values are: "auto" and "none".
+    :vartype target_response: str or ~azure.ai.projects.models.VoiceAgentHandoffTargetResponse
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The edge identifier. Required."""
+    source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source node identifier or ``$entrypoint``. Required."""
+    target: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target node identifier or ``$entrypoint``. Required."""
+    cancel_on_interruption: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether user interruption before commit cancels the pending handoff."""
+    delay_ms: Optional[datetime.timedelta] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
+    )
+    """The minimum delay before target activation, in milliseconds."""
+    transfer_message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The deterministic source-voice announcement played before target activation."""
+    target_response: Optional[Union[str, "_models.VoiceAgentHandoffTargetResponse"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether Voice Live automatically starts a response after target activation. Known values are:
+     \"auto\" and \"none\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        source: str,
+        target: str,
+        cancel_on_interruption: Optional[bool] = None,
+        delay_ms: Optional[datetime.timedelta] = None,
+        transfer_message: Optional[str] = None,
+        target_response: Optional[Union[str, "_models.VoiceAgentHandoffTargetResponse"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentHandoffNodeState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Non-sensitive topology metadata for one compiled handoff node.
+
+    :ivar id: The node identifier or ``$entrypoint``. Required.
+    :vartype id: str
+    :ivar display_description: The display-only node description. This value is not provided to the
+     model. Required.
+    :vartype display_description: str
+    :ivar implicit: Whether this is the implicit ``$entrypoint`` node.
+    :vartype implicit: bool
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The node identifier or ``$entrypoint``. Required."""
+    display_description: str = rest_field(
+        name="description", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The display-only node description. This value is not provided to the model. Required."""
+    implicit: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this is the implicit ``$entrypoint`` node."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        display_description: str,
+        implicit: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentHandoffPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Session-wide limits shared by all handoff conditions in one Voice Agent session.
+
+    :ivar max_transfers: The maximum number of successfully completed handoffs in one session, from
+     1 through 100. If omitted, the service defaults to 16.
+    :vartype max_transfers: int
+    :ivar max_attempts: The maximum number of attempted handoffs, from 1 through 100. If omitted,
+     the service uses ``max_transfers``. The service requires this value to be greater than or equal
+     to ``max_transfers``.
+    :vartype max_attempts: int
+    """
+
+    max_transfers: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The maximum number of successfully completed handoffs in one session, from 1 through 100. If
+     omitted, the service defaults to 16."""
+    max_attempts: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The maximum number of attempted handoffs, from 1 through 100. If omitted, the service uses
+     ``max_transfers``. The service requires this value to be greater than or equal to
+     ``max_transfers``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_transfers: Optional[int] = None,
+        max_attempts: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentHandoffState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The effective topology and runtime state of a voice-agent handoff graph.
+
+    :ivar pipeline_family: The immutable execution pipeline family. Required. Known values are:
+     "cascaded" and "realtime".
+    :vartype pipeline_family: str or ~azure.ai.projects.models.VoiceAgentHandoffPipelineFamily
+    :ivar active_node_id: The currently committed node identifier or ``$entrypoint``. Required.
+    :vartype active_node_id: str
+    :ivar node_generation: The monotonically increasing generation of the committed active-node
+     configuration. Required.
+    :vartype node_generation: int
+    :ivar transfer_count: The number of successfully completed handoffs. Required.
+    :vartype transfer_count: int
+    :ivar attempt_count: The number of unique reserved handoff attempts. Required.
+    :vartype attempt_count: int
+    :ivar available_edge_ids: The edge identifiers currently available from the active node.
+     Required.
+    :vartype available_edge_ids: list[str]
+    :ivar transfer_tool: The generated handoff function visible to the active model, or null when
+     no route is available. Required.
+    :vartype transfer_tool: ~azure.ai.projects.models.VoiceAgentFunctionTool
+    :ivar nodes: The compiled handoff nodes, including the implicit or explicit ``$entrypoint``.
+     Required.
+    :vartype nodes: list[~azure.ai.projects.models.VoiceAgentHandoffNodeState]
+    :ivar edges: The compiled handoff edges. Required.
+    :vartype edges: list[~azure.ai.projects.models.VoiceAgentHandoffEdgeState]
+    """
+
+    pipeline_family: Union[str, "_models.VoiceAgentHandoffPipelineFamily"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The immutable execution pipeline family. Required. Known values are: \"cascaded\" and
+     \"realtime\"."""
+    active_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The currently committed node identifier or ``$entrypoint``. Required."""
+    node_generation: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The monotonically increasing generation of the committed active-node configuration. Required."""
+    transfer_count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of successfully completed handoffs. Required."""
+    attempt_count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of unique reserved handoff attempts. Required."""
+    available_edge_ids: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The edge identifiers currently available from the active node. Required."""
+    transfer_tool: "_models.VoiceAgentFunctionTool" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The generated handoff function visible to the active model, or null when no route is available.
+     Required."""
+    nodes: list["_models.VoiceAgentHandoffNodeState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compiled handoff nodes, including the implicit or explicit ``$entrypoint``. Required."""
+    edges: list["_models.VoiceAgentHandoffEdgeState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compiled handoff edges. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        pipeline_family: Union[str, "_models.VoiceAgentHandoffPipelineFamily"],
+        active_node_id: str,
+        node_generation: int,
+        transfer_count: int,
+        attempt_count: int,
+        available_edge_ids: list[str],
+        transfer_tool: "_models.VoiceAgentFunctionTool",
+        nodes: list["_models.VoiceAgentHandoffNodeState"],
+        edges: list["_models.VoiceAgentHandoffEdgeState"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentHandoffVoiceAdaptation(_Model):  # pylint: disable=docstring-missing-param
+    """Voice-optimized instruction adaptation applied while a handoff node is active.
+
+    :ivar type: The adaptation strategy. Currently only ``auto`` is supported. Required. Default
+     value is "auto".
+    :vartype type: str
+    """
+
+    type: Literal["auto"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The adaptation strategy. Currently only ``auto`` is supported. Required. Default value is
+     \"auto\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["auto"] = "auto"
+
+
+class VoiceAgentInlineSubagentConfig(
+    VoiceAgentSubagentConfig, discriminator="inline"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration for inline voice subagents that may become active through Handoff.
+
+    :ivar subagent_type: The subagent mode for inline voice subagents. Required. Inline voice
+     behaviors that may become active through Handoff.
+    :vartype subagent_type: str or ~azure.ai.projects.models.INLINE
+    :ivar subagents: Inline voice subagents owned and versioned with the parent Voice Agent.
+     ``$entrypoint`` must be first, followed by at least one specialist and at most 31 additional
+     subagents. Each subagent declares its outgoing ``handoff_conditions``; condition identifiers
+     and the 128-condition limit apply across the entire Agent. Required.
+    :vartype subagents: list[~azure.ai.projects.models.InlineVoiceSubagent]
+    :ivar handoff_policy: Session-wide Handoff limits. Requires ``$entrypoint`` with at least one
+     outgoing condition. When omitted, the service permits up to 16 completed and 16 attempted
+     handoffs.
+    :vartype handoff_policy: ~azure.ai.projects.models.VoiceAgentHandoffPolicy
+    """
+
+    subagent_type: Literal[VoiceAgentSubagentType.INLINE] = rest_discriminator(name="subagent_type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The subagent mode for inline voice subagents. Required. Inline voice behaviors that may become
+     active through Handoff."""
+    subagents: list["_models.InlineVoiceSubagent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Inline voice subagents owned and versioned with the parent Voice Agent. ``$entrypoint`` must be
+     first, followed by at least one specialist and at most 31 additional subagents. Each subagent
+     declares its outgoing ``handoff_conditions``; condition identifiers and the 128-condition limit
+     apply across the entire Agent. Required."""
+    handoff_policy: Optional["_models.VoiceAgentHandoffPolicy"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Session-wide Handoff limits. Requires ``$entrypoint`` with at least one outgoing condition.
+     When omitted, the service permits up to 16 completed and 16 attempted handoffs."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subagents: list["_models.InlineVoiceSubagent"],
+        handoff_policy: Optional["_models.VoiceAgentHandoffPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.subagent_type = VoiceAgentSubagentType.INLINE  # type: ignore
+
+
 class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for transcribing input audio, including the transcription model, Custom Speech
     deployments, and phrase hints. When ``model`` is ``azure-speech-streaming``, transcription is
@@ -29299,10 +38297,11 @@ class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword
      ``gpt-transcribe`` and ``gpt-live-transcribe``.
     :vartype keywords: list[str]
     :ivar prompt: An optional text to guide the model's style or continue a previous audio segment.
-     For ``whisper-1``, the `prompt is a list of keywords </docs/guides/speech-to-text#prompting>`_.
-     For ``gpt-4o-transcribe`` models (excluding ``gpt-4o-transcribe-diarize``), the prompt is a
-     free text string, for example "expect words related to technology". Prompt is not supported
-     with ``gpt-realtime-whisper`` in GA Realtime sessions.
+     For ``whisper-1``, the `prompt is a list of keywords
+     <https://developers.openai.com/api/docs/guides/speech-to-text#prompting>`_. For
+     ``gpt-4o-transcribe`` models (excluding ``gpt-4o-transcribe-diarize``), the prompt is a free
+     text string, for example "expect words related to technology". Prompt is not supported with
+     ``gpt-realtime-whisper`` in GA Realtime sessions.
     :vartype prompt: str
     :ivar delay: Controls how long the model waits before emitting transcription text. Higher
      values can improve transcription accuracy at the cost of latency. Only supported with
@@ -29347,7 +38346,8 @@ class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword
      ``gpt-live-transcribe``."""
     prompt: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An optional text to guide the model's style or continue a previous audio segment. For
-     ``whisper-1``, the `prompt is a list of keywords </docs/guides/speech-to-text#prompting>`_. For
+     ``whisper-1``, the `prompt is a list of keywords
+     <https://developers.openai.com/api/docs/guides/speech-to-text#prompting>`_. For
      ``gpt-4o-transcribe`` models (excluding ``gpt-4o-transcribe-diarize``), the prompt is a free
      text string, for example \"expect words related to technology\". Prompt is not supported with
      ``gpt-realtime-whisper`` in GA Realtime sessions."""
@@ -29455,6 +38455,1015 @@ class VoiceAgentInterimResponseConfig(_Model):  # pylint: disable=docstring-keyw
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class VoiceAgentLanguageDetectionArguments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Decoded model-generated language-switch arguments, not a new client ingress. Unsupported speech
+    components do not gain language support from this tool.
+
+    :ivar language: Target language in lowercase ISO 639-1 format, such as es or fr. Required.
+    :vartype language: str
+    :ivar reason: Non-blank reason for switching the conversation language. Required.
+    :vartype reason: str
+    """
+
+    language: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Target language in lowercase ISO 639-1 format, such as es or fr. Required."""
+    reason: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Non-blank reason for switching the conversation language. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        language: str,
+        reason: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentLanguageDetectionSystemTool(
+    VoiceAgentSystemTool, discriminator="language_detection"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Switches supported conversation language settings.
+
+    :ivar type: The type of the tool. Always ``system``. Required. Default value is "system".
+    :vartype type: str
+    :ivar description: An optional description of the system tool.
+    :vartype description: str
+    :ivar timeout_seconds: Execution timeout, from 1 to 300 seconds. If omitted, the service
+     defaults to 60 seconds.
+    :vartype timeout_seconds: ~datetime.timedelta
+    :ivar name: The service-managed control action. Always ``language_detection``. Required.
+     Switches supported conversation language settings.
+    :vartype name: str or ~azure.ai.projects.models.LANGUAGE_DETECTION
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    name: Literal[VoiceAgentSystemToolName.LANGUAGE_DETECTION] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The service-managed control action. Always ``language_detection``. Required. Switches supported
+     conversation language settings."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        timeout_seconds: Optional[datetime.timedelta] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.name = VoiceAgentSystemToolName.LANGUAGE_DETECTION  # type: ignore
+
+
+class VoiceAgentLiveDelegation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Who handles delegated work for a Live voice agent.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VoiceAgentLiveClientDelegation, VoiceAgentLiveManagedAgentDelegation,
+    VoiceAgentLiveResponsesDelegation
+
+    :ivar type: The delegation owner. Required. Known values are: "client", "responses", and
+     "foundry_managed_agent".
+    :vartype type: str or ~azure.ai.projects.models.VoiceAgentLiveDelegationType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The delegation owner. Required. Known values are: \"client\", \"responses\", and
+     \"foundry_managed_agent\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentLiveClientDelegation(
+    VoiceAgentLiveDelegation, discriminator="client"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Delegates work to the application using native client delegation.
+
+    :ivar acknowledgement_delay_ms: Milliseconds to wait before requesting an automatic spoken
+     acknowledgement for a delegation. The model may still speak before this delay. Any commentary
+     or thinking appended to the session cancels all pending acknowledgements, including those for
+     other delegations. Defaults to 400 for Decisions sessions and 0 (request immediately) for other
+     sessions. Omission in a session update preserves the current value. Updates apply to subsequent
+     delegations.
+    :vartype acknowledgement_delay_ms: int
+    :ivar type: Required. The application handles delegated work.
+    :vartype type: str or ~azure.ai.projects.models.CLIENT
+    """
+
+    acknowledgement_delay_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Milliseconds to wait before requesting an automatic spoken acknowledgement for a delegation.
+     The model may still speak before this delay. Any commentary or thinking appended to the session
+     cancels all pending acknowledgements, including those for other delegations. Defaults to 400
+     for Decisions sessions and 0 (request immediately) for other sessions. Omission in a session
+     update preserves the current value. Updates apply to subsequent delegations."""
+    type: Literal[VoiceAgentLiveDelegationType.CLIENT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. The application handles delegated work."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        acknowledgement_delay_ms: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentLiveDelegationType.CLIENT  # type: ignore
+
+
+class VoiceAgentLiveConversationItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A stored speech segment or delegation. Speech segments are not native turns or proof of
+    playback; delegation results are separate from spoken transcripts.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VoiceAgentLiveDelegationConversationItem, VoiceAgentLiveInputConversationItem,
+    VoiceAgentLiveOutputConversationItem
+
+    :ivar type: The persisted item kind. Required. Known values are: "input", "output", and
+     "delegation".
+    :vartype type: str or ~azure.ai.projects.models.VoiceAgentLiveConversationItemType
+    :ivar id: Item ID used for retrieval. Foundry assigns speech IDs; delegation IDs retain their
+     native value. Required.
+    :vartype id: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The persisted item kind. Required. Known values are: \"input\", \"output\", and \"delegation\"."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Item ID used for retrieval. Foundry assigns speech IDs; delegation IDs retain their native
+     value. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentLiveDelegationConversationItem(
+    VoiceAgentLiveConversationItem, discriminator="delegation"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A stored delegation using native fields with Foundry-specific targets. Its id is the native
+    delegation ID.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VoiceAgentLiveClientDelegationConversationItem,
+    VoiceAgentLiveFoundryManagedAgentDelegationItem,
+    VoiceAgentLiveResponsesDelegationConversationItem
+
+    :ivar id: Item ID used for retrieval. Foundry assigns speech IDs; delegation IDs retain their
+     native value. Required.
+    :vartype id: str
+    :ivar response_id: The ID of the Responses API response associated with a Responses delegation.
+     Omitted for client delegations.
+    :vartype response_id: str
+    :ivar type: Required. DELEGATION.
+    :vartype type: str or ~azure.ai.projects.models.DELEGATION
+    :ivar target: The configured delegation owner. Required. Known values are: "responses",
+     "client", and "foundry_managed_agent".
+    :vartype target: str or ~azure.ai.projects.models.VoiceAgentLiveDelegationTarget
+    :ivar created_at: Observed delegation creation time, in Unix seconds. Required.
+    :vartype created_at: ~datetime.datetime
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    response_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the Responses API response associated with a Responses delegation. Omitted for client
+     delegations."""
+    type: Literal[VoiceAgentLiveConversationItemType.DELEGATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. DELEGATION."""
+    target: str = rest_discriminator(name="target", visibility=["read", "create", "update", "delete", "query"])
+    """The configured delegation owner. Required. Known values are: \"responses\", \"client\", and
+     \"foundry_managed_agent\"."""
+    created_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """Observed delegation creation time, in Unix seconds. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        target: str,
+        created_at: datetime.datetime,
+        response_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentLiveConversationItemType.DELEGATION  # type: ignore
+
+
+class VoiceAgentLiveClientDelegationConversationItem(
+    VoiceAgentLiveDelegationConversationItem, discriminator="client"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Results supplied by the application for client delegation.
+
+    :ivar id: Item ID used for retrieval. Foundry assigns speech IDs; delegation IDs retain their
+     native value. Required.
+    :vartype id: str
+    :ivar response_id: The ID of the Responses API response associated with a Responses delegation.
+     Omitted for client delegations.
+    :vartype response_id: str
+    :ivar type: Required. DELEGATION.
+    :vartype type: str or ~azure.ai.projects.models.DELEGATION
+    :ivar created_at: Observed delegation creation time, in Unix seconds. Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar target: Required. CLIENT.
+    :vartype target: str or ~azure.ai.projects.models.CLIENT
+    :ivar commentary: Guidance for Live to communicate to the user, when accepted.
+    :vartype commentary: str
+    :ivar thinking: Accepted background context, not private reasoning or a request to speak.
+    :vartype thinking: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    target: Literal[VoiceAgentLiveDelegationTarget.CLIENT] = rest_discriminator(name="target", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. CLIENT."""
+    commentary: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Guidance for Live to communicate to the user, when accepted."""
+    thinking: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Accepted background context, not private reasoning or a request to speak."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        created_at: datetime.datetime,
+        response_id: Optional[str] = None,
+        commentary: Optional[str] = None,
+        thinking: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.target = VoiceAgentLiveDelegationTarget.CLIENT  # type: ignore
+
+
+class VoiceAgentLiveConversation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A Live session persisted when effective store is true. Uses voice-conversation lifecycle and
+    retention; items are retrieved separately.
+
+    :ivar id: The unique id of the conversation. Required.
+    :vartype id: str
+    :ivar object: The object type. Always ``voice.conversation``. Required. Default value is
+     "voice.conversation".
+    :vartype object: str
+    :ivar status: The lifecycle status of the conversation. Required. Known values are:
+     "in_progress", "completed", and "failed".
+    :vartype status: str or ~azure.ai.projects.models.VoiceConversationStatus
+    :ivar created_at: The Unix timestamp (in seconds) for when the conversation was created.
+     Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar completed_at: The Unix timestamp (in seconds) for when session and persistence
+     finalization reached the terminal ``completed`` or ``failed`` status. Absent while ``status``
+     is ``in_progress``.
+    :vartype completed_at: ~datetime.datetime
+    :ivar metadata: A set of key-value pairs attached to the conversation.
+    :vartype metadata: dict[str, str]
+    :ivar last_error: The terminal error that prevented persistence finalization. Present only when
+     ``status`` is ``failed``.
+    :vartype last_error: ~azure.ai.projects.models.ApiError
+    :ivar usage: Cumulative Live audio usage, excluding delegated-model tokens. May be absent after
+     abnormal close.
+    :vartype usage: ~azure.ai.projects.models.LiveSessionUsage
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique id of the conversation. Required."""
+    object: Literal["voice.conversation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type. Always ``voice.conversation``. Required. Default value is
+     \"voice.conversation\"."""
+    status: Union[str, "_models.VoiceConversationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The lifecycle status of the conversation. Required. Known values are: \"in_progress\",
+     \"completed\", and \"failed\"."""
+    created_at: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The Unix timestamp (in seconds) for when the conversation was created. Required."""
+    completed_at: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
+    )
+    """The Unix timestamp (in seconds) for when session and persistence finalization reached the
+     terminal ``completed`` or ``failed`` status. Absent while ``status`` is ``in_progress``."""
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A set of key-value pairs attached to the conversation."""
+    last_error: Optional["_models.ApiError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The terminal error that prevented persistence finalization. Present only when ``status`` is
+     ``failed``."""
+    usage: Optional["_models.LiveSessionUsage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Cumulative Live audio usage, excluding delegated-model tokens. May be absent after abnormal
+     close."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        status: Union[str, "_models.VoiceConversationStatus"],
+        created_at: datetime.datetime,
+        completed_at: Optional[datetime.datetime] = None,
+        metadata: Optional[dict[str, str]] = None,
+        last_error: Optional["_models.ApiError"] = None,
+        usage: Optional["_models.LiveSessionUsage"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.object: Literal["voice.conversation"] = "voice.conversation"
+
+
+class VoiceAgentLiveDefinition(
+    VoiceAgentBaseDefinition, discriminator="live"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Live voice agent definition. Its configuration (model, instructions, audio, and delegation)
+    drives a managed speech-to-speech experience using a Foundry GPT Live deployment. Establish
+    Live voice sessions through ``GET
+    /agents/{agent_name}/endpoint/protocols/voice/live/sessions``. Every create or update produces
+    a new immutable version.
+
+    :ivar rai_config: Configuration for Responsible AI (RAI) content filtering and safety features.
+    :vartype rai_config: ~azure.ai.projects.models.RaiConfig
+    :ivar kind: Always voice. Required. VOICE.
+    :vartype kind: str or ~azure.ai.projects.models.VOICE
+    :ivar instructions: Frontend instructions, templated with structured_inputs. Backend
+     instructions belong in delegation.responses.
+    :vartype instructions: str
+    :ivar structured_inputs: Template inputs for session instructions and supported greetings.
+    :vartype structured_inputs: dict[str, ~azure.ai.projects.models.StructuredInputDefinition]
+    :ivar store: Persists conversation content and audio in Foundry, not native Live recordings.
+     Defaults to false.
+    :vartype store: bool
+    :ivar sub_protocol: Selects the Live protocol. Required. LIVE.
+    :vartype sub_protocol: str or ~azure.ai.projects.models.LIVE
+    :ivar model_type: Uses a Foundry model deployment. Required. The service uses the customer's
+     own Foundry deployment named by ``model``.
+    :vartype model_type: str or ~azure.ai.projects.models.SELF_DEPLOYED
+    :ivar model: The GPT Live deployment name. Required.
+    :vartype model: str
+    :ivar greeting: Template-only startup greeting, rendered with session structured inputs.
+     Foundry-only; not sent in native Live settings.
+    :vartype greeting: ~azure.ai.projects.models.VoiceAgentTemplateGreetingConfig
+    :ivar audio: Startup audio formats and output voice.
+    :vartype audio: ~azure.ai.projects.models.LiveInitialSessionAudioParam
+    :ivar delegation: Delegation settings. Omit for client mode. responses.model is a backend
+     deployment name in the Live resource, not a model catalog ID.
+    :vartype delegation: ~azure.ai.projects.models.VoiceAgentLiveDelegation
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    sub_protocol: Literal[VoiceAgentSubProtocol.LIVE] = rest_discriminator(name="sub_protocol", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Selects the Live protocol. Required. LIVE."""
+    model_type: Literal[VoiceModelType.SELF_DEPLOYED] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Uses a Foundry model deployment. Required. The service uses the customer's own Foundry
+     deployment named by ``model``."""
+    model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The GPT Live deployment name. Required."""
+    greeting: Optional["_models.VoiceAgentTemplateGreetingConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Template-only startup greeting, rendered with session structured inputs. Foundry-only; not sent
+     in native Live settings."""
+    audio: Optional["_models.LiveInitialSessionAudioParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Startup audio formats and output voice."""
+    delegation: Optional["_models.VoiceAgentLiveDelegation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Delegation settings. Omit for client mode. responses.model is a backend deployment name in the
+     Live resource, not a model catalog ID."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_type: Literal[VoiceModelType.SELF_DEPLOYED],
+        model: str,
+        rai_config: Optional["_models.RaiConfig"] = None,
+        instructions: Optional[str] = None,
+        structured_inputs: Optional[dict[str, "_models.StructuredInputDefinition"]] = None,
+        store: Optional[bool] = None,
+        greeting: Optional["_models.VoiceAgentTemplateGreetingConfig"] = None,
+        audio: Optional["_models.LiveInitialSessionAudioParam"] = None,
+        delegation: Optional["_models.VoiceAgentLiveDelegation"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.sub_protocol = VoiceAgentSubProtocol.LIVE  # type: ignore
+
+
+class VoiceAgentLiveDelegationItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Live delegation trigger metadata reported to Foundry clients. This object contains metadata,
+    not the task text.
+
+    :ivar id: The unique ID of the delegation. Use this as delegation_id when replying to
+     client-owned work or correlating backend events. Required.
+    :vartype id: str
+    :ivar type: The object type, always ``delegation``. Required. Default value is "delegation".
+    :vartype type: str
+    :ivar response_id: The ID of the Responses API response associated with a Responses delegation.
+     Omitted for client delegations.
+    :vartype response_id: str
+    :ivar target: Where the work is handled. foundry_managed_agent sessions report
+     foundry_managed_agent; GPT Live itself uses client. Required. Known values are: "responses",
+     "client", and "foundry_managed_agent".
+    :vartype target: str or ~azure.ai.projects.models.VoiceAgentLiveDelegationTarget
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the delegation. Use this as delegation_id when replying to client-owned work
+     or correlating backend events. Required."""
+    type: Literal["delegation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type, always ``delegation``. Required. Default value is \"delegation\"."""
+    response_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the Responses API response associated with a Responses delegation. Omitted for client
+     delegations."""
+    target: Union[str, "_models.VoiceAgentLiveDelegationTarget"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Where the work is handled. foundry_managed_agent sessions report foundry_managed_agent; GPT
+     Live itself uses client. Required. Known values are: \"responses\", \"client\", and
+     \"foundry_managed_agent\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        target: Union[str, "_models.VoiceAgentLiveDelegationTarget"],
+        response_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["delegation"] = "delegation"
+
+
+class VoiceAgentLiveDelegationResultItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Persisted guidance accepted by Live. The service populates commentary, thinking, or both. Agent
+    delegation section markers are removed before storage.
+
+    :ivar commentary: Guidance for Live to communicate to the user.
+    :vartype commentary: str
+    :ivar thinking: Background context, not private reasoning or a request to speak.
+    :vartype thinking: str
+    """
+
+    commentary: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Guidance for Live to communicate to the user."""
+    thinking: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Background context, not private reasoning or a request to speak."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        commentary: Optional[str] = None,
+        thinking: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentLiveFoundryManagedAgentDelegationItem(
+    VoiceAgentLiveDelegationConversationItem, discriminator="foundry_managed_agent"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Stored prompt-agent delegation state and accepted results.
+
+    :ivar id: Item ID used for retrieval. Foundry assigns speech IDs; delegation IDs retain their
+     native value. Required.
+    :vartype id: str
+    :ivar response_id: The ID of the Responses API response associated with a Responses delegation.
+     Omitted for client delegations.
+    :vartype response_id: str
+    :ivar type: Required. DELEGATION.
+    :vartype type: str or ~azure.ai.projects.models.DELEGATION
+    :ivar created_at: Observed delegation creation time, in Unix seconds. Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar target: Required. FOUNDRY_MANAGED_AGENT.
+    :vartype target: str or ~azure.ai.projects.models.FOUNDRY_MANAGED_AGENT
+    :ivar agent_name: Target agent name in the same project. Required.
+    :vartype agent_name: str
+    :ivar agent_version: Target version pinned at connection start. Required.
+    :vartype agent_version: str
+    :ivar offset_ms: Native delegation offset from session start, in milliseconds. Required.
+    :vartype offset_ms: ~datetime.timedelta
+    :ivar backend_conversation_id: Backend conversation ID, distinct from the voice conversation
+     and Live session IDs.
+    :vartype backend_conversation_id: str
+    :ivar output: Accepted guidance in order; empty until a result is accepted. Entries have no
+     individual IDs, are noncumulative, and are independent of backend output_index. Partial results
+     survive failure or cancellation. Required.
+    :vartype output: list[~azure.ai.projects.models.VoiceAgentLiveDelegationResultItem]
+    :ivar delegation_context: Task context sent to the target agent, not the full request body.
+    :vartype delegation_context: str
+    :ivar status: The persisted delegation outcome. Required. Known values are: "in_progress",
+     "completed", "failed", "incomplete", and "cancelled".
+    :vartype status: str or ~azure.ai.projects.models.VoiceAgentLiveDelegationStatus
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    target: Literal[VoiceAgentLiveDelegationTarget.FOUNDRY_MANAGED_AGENT] = rest_discriminator(name="target", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. FOUNDRY_MANAGED_AGENT."""
+    agent_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Target agent name in the same project. Required."""
+    agent_version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Target version pinned at connection start. Required."""
+    offset_ms: datetime.timedelta = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
+    )
+    """Native delegation offset from session start, in milliseconds. Required."""
+    backend_conversation_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Backend conversation ID, distinct from the voice conversation and Live session IDs."""
+    output: list["_models.VoiceAgentLiveDelegationResultItem"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Accepted guidance in order; empty until a result is accepted. Entries have no individual IDs,
+     are noncumulative, and are independent of backend output_index. Partial results survive failure
+     or cancellation. Required."""
+    delegation_context: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Task context sent to the target agent, not the full request body."""
+    status: Union[str, "_models.VoiceAgentLiveDelegationStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The persisted delegation outcome. Required. Known values are: \"in_progress\", \"completed\",
+     \"failed\", \"incomplete\", and \"cancelled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        created_at: datetime.datetime,
+        agent_name: str,
+        agent_version: str,
+        offset_ms: datetime.timedelta,
+        output: list["_models.VoiceAgentLiveDelegationResultItem"],
+        status: Union[str, "_models.VoiceAgentLiveDelegationStatus"],
+        response_id: Optional[str] = None,
+        backend_conversation_id: Optional[str] = None,
+        delegation_context: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.target = VoiceAgentLiveDelegationTarget.FOUNDRY_MANAGED_AGENT  # type: ignore
+
+
+class VoiceAgentLiveInputConversationItem(
+    VoiceAgentLiveConversationItem, discriminator="input"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A stored user speech segment.
+
+    :ivar id: Item ID used for retrieval. Foundry assigns speech IDs; delegation IDs retain their
+     native value. Required.
+    :vartype id: str
+    :ivar type: Required. INPUT.
+    :vartype type: str or ~azure.ai.projects.models.INPUT
+    :ivar transcription: Captured user transcription, when available.
+    :vartype transcription: str
+    :ivar audio: Captured audio metadata; audio.item_id matches this item's id.
+    :vartype audio: ~azure.ai.projects.models.VoiceAudioItem
+    """
+
+    type: Literal[VoiceAgentLiveConversationItemType.INPUT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. INPUT."""
+    transcription: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Captured user transcription, when available."""
+    audio: Optional["_models.VoiceAudioItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Captured audio metadata; audio.item_id matches this item's id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        transcription: Optional[str] = None,
+        audio: Optional["_models.VoiceAudioItem"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentLiveConversationItemType.INPUT  # type: ignore
+
+
+class VoiceAgentLiveManagedAgentDelegation(
+    VoiceAgentLiveDelegation, discriminator="foundry_managed_agent"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Delegates to a same-project prompt agent using native client delegation. Requires [thinking]
+    and/or [commentary] output sections.
+
+    :ivar type: Canonical delegation type; legacy managed_prompt_agent values are returned as
+     foundry_managed_agent. Required. A prompt agent in the same project handles delegated work.
+    :vartype type: str or ~azure.ai.projects.models.FOUNDRY_MANAGED_AGENT
+    :ivar agent_name: Name of a prompt agent in the same project. Required.
+    :vartype agent_name: str
+    :ivar agent_version: Agent version, pinned per connection. Omit to select the active version.
+    :vartype agent_version: str
+    """
+
+    type: Literal[VoiceAgentLiveDelegationType.FOUNDRY_MANAGED_AGENT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Canonical delegation type; legacy managed_prompt_agent values are returned as
+     foundry_managed_agent. Required. A prompt agent in the same project handles delegated work."""
+    agent_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of a prompt agent in the same project. Required."""
+    agent_version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Agent version, pinned per connection. Omit to select the active version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        agent_name: str,
+        agent_version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentLiveDelegationType.FOUNDRY_MANAGED_AGENT  # type: ignore
+
+
+class VoiceAgentLiveOutputConversationItem(
+    VoiceAgentLiveConversationItem, discriminator="output"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A stored assistant speech segment.
+
+    :ivar id: Item ID used for retrieval. Foundry assigns speech IDs; delegation IDs retain their
+     native value. Required.
+    :vartype id: str
+    :ivar type: Required. OUTPUT.
+    :vartype type: str or ~azure.ai.projects.models.OUTPUT
+    :ivar transcription: Captured assistant transcription, not backend output or commentary
+     guidance.
+    :vartype transcription: str
+    :ivar audio: Captured audio metadata; audio.item_id matches this item's id.
+    :vartype audio: ~azure.ai.projects.models.VoiceAudioItem
+    """
+
+    type: Literal[VoiceAgentLiveConversationItemType.OUTPUT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. OUTPUT."""
+    transcription: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Captured assistant transcription, not backend output or commentary guidance."""
+    audio: Optional["_models.VoiceAudioItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Captured audio metadata; audio.item_id matches this item's id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        transcription: Optional[str] = None,
+        audio: Optional["_models.VoiceAudioItem"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentLiveConversationItemType.OUTPUT  # type: ignore
+
+
+class VoiceAgentLiveResponsesDelegation(
+    VoiceAgentLiveDelegation, discriminator="responses"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Delegates work to a Responses backend using native Responses settings.
+
+    :ivar acknowledgement_delay_ms: Milliseconds to wait before requesting an automatic spoken
+     acknowledgement for a delegation. The model may still speak before this delay. Any commentary
+     or thinking appended to the session cancels all pending acknowledgements, including those for
+     other delegations. Defaults to 400 for Decisions sessions and 0 (request immediately) for other
+     sessions. Omission in a session update preserves the current value. Updates apply to subsequent
+     delegations.
+    :vartype acknowledgement_delay_ms: int
+    :ivar responses: Backend model, prompt, and tools used when the Live session delegates a task
+     to Responses. Required.
+    :vartype responses: ~azure.ai.projects.models.LiveResponsesDelegationSettingsInputParam
+    :ivar type: Required. A Responses backend handles delegated work.
+    :vartype type: str or ~azure.ai.projects.models.RESPONSES
+    """
+
+    acknowledgement_delay_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Milliseconds to wait before requesting an automatic spoken acknowledgement for a delegation.
+     The model may still speak before this delay. Any commentary or thinking appended to the session
+     cancels all pending acknowledgements, including those for other delegations. Defaults to 400
+     for Decisions sessions and 0 (request immediately) for other sessions. Omission in a session
+     update preserves the current value. Updates apply to subsequent delegations."""
+    responses: "_models.LiveResponsesDelegationSettingsInputParam" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Backend model, prompt, and tools used when the Live session delegates a task to Responses.
+     Required."""
+    type: Literal[VoiceAgentLiveDelegationType.RESPONSES] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. A Responses backend handles delegated work."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        responses: "_models.LiveResponsesDelegationSettingsInputParam",
+        acknowledgement_delay_ms: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentLiveDelegationType.RESPONSES  # type: ignore
+
+
+class VoiceAgentLiveResponsesDelegationConversationItem(
+    VoiceAgentLiveDelegationConversationItem, discriminator="responses"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Stored Responses delegation output, separate from Live speech.
+
+    :ivar id: Item ID used for retrieval. Foundry assigns speech IDs; delegation IDs retain their
+     native value. Required.
+    :vartype id: str
+    :ivar response_id: The ID of the Responses API response associated with a Responses delegation.
+     Omitted for client delegations.
+    :vartype response_id: str
+    :ivar type: Required. DELEGATION.
+    :vartype type: str or ~azure.ai.projects.models.DELEGATION
+    :ivar created_at: Observed delegation creation time, in Unix seconds. Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar target: Required. RESPONSES.
+    :vartype target: str or ~azure.ai.projects.models.RESPONSES
+    :ivar output: Final backend text, omitted when unavailable; excludes raw tool output.
+    :vartype output: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    target: Literal[VoiceAgentLiveDelegationTarget.RESPONSES] = rest_discriminator(name="target", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. RESPONSES."""
+    output: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Final backend text, omitted when unavailable; excludes raw tool output."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        created_at: datetime.datetime,
+        response_id: Optional[str] = None,
+        output: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.target = VoiceAgentLiveDelegationTarget.RESPONSES  # type: ignore
+
+
+class VoiceAgentLiveSessionResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Live session resource reported to Foundry clients. GPT Live runs native client delegation for
+    foundry_managed_agent sessions; Foundry reports the effective owner.
+
+    :ivar model: Required. "gpt-live-1"
+    :vartype model: str or ~azure.ai.projects.models.ModelIdsLive
+    :ivar instructions:
+    :vartype instructions: str
+    :ivar input: Ordered text-only history supplied before startup. Supports developer, user, and
+     assistant messages with one text part each; at most 128 messages and a configured
+     rendered-token limit (8,192 by default).
+    :vartype input: list[~azure.ai.projects.models.LiveInitialItem]
+    :ivar audio: Startup audio configuration. Only primary WebSockets accept audio.format; WebRTC
+     and SIP negotiate their media format. Voice and format are immutable after startup.
+    :vartype audio: ~azure.ai.projects.models.LiveInitialSessionAudioParam
+    :ivar triggers: At most one Decisions trigger per transcript event type. Triggers run
+     independently of delegation. On update, omit triggers to keep the current configuration, send a
+     list to replace it, or send an empty list to disable triggers.
+    :vartype triggers: list[~azure.ai.projects.models.LiveDecisionTriggerInputParam]
+    :ivar store: Whether to store the session for later forking and recording download. Defaults to
+     false for new sessions.
+    :vartype store: bool
+    :ivar client: Startup-only capabilities for an untrusted frontend attached to a unified WebRTC
+     session. Trusted sideband connections are unaffected.
+    :vartype client: ~azure.ai.projects.models.LiveClientConfigParam
+    :ivar id: The unique ID of the Live session. Use this ID for sideband connections, forking, and
+     recording download. Required.
+    :vartype id: str
+    :ivar expires_at: The Unix timestamp, in seconds, at which the Live session expires. Required.
+    :vartype expires_at: int
+    :ivar status: The status of the session snapshot. Always ``active``, including the final
+     snapshot in session.closed; use the event type to determine that the session has closed.
+     Required. Default value is "active".
+    :vartype status: str
+    :ivar delegation: Delegation owner. foundry_managed_agent sessions report the pinned target,
+     including the resolved agent_version.
+    :vartype delegation: ~azure.ai.projects.models.VoiceAgentLiveDelegation
+    """
+
+    model: Union[str, "_models.ModelIdsLive"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. \"gpt-live-1\""""
+    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    input: Optional[list["_models.LiveInitialItem"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ordered text-only history supplied before startup. Supports developer, user, and assistant
+     messages with one text part each; at most 128 messages and a configured rendered-token limit
+     (8,192 by default)."""
+    audio: Optional["_models.LiveInitialSessionAudioParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Startup audio configuration. Only primary WebSockets accept audio.format; WebRTC and SIP
+     negotiate their media format. Voice and format are immutable after startup."""
+    triggers: Optional[list["_models.LiveDecisionTriggerInputParam"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """At most one Decisions trigger per transcript event type. Triggers run independently of
+     delegation. On update, omit triggers to keep the current configuration, send a list to replace
+     it, or send an empty list to disable triggers."""
+    store: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether to store the session for later forking and recording download. Defaults to false for
+     new sessions."""
+    client: Optional["_models.LiveClientConfigParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Startup-only capabilities for an untrusted frontend attached to a unified WebRTC session.
+     Trusted sideband connections are unaffected."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique ID of the Live session. Use this ID for sideband connections, forking, and recording
+     download. Required."""
+    expires_at: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Unix timestamp, in seconds, at which the Live session expires. Required."""
+    status: Literal["active"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status of the session snapshot. Always ``active``, including the final snapshot in
+     session.closed; use the event type to determine that the session has closed. Required. Default
+     value is \"active\"."""
+    delegation: Optional["_models.VoiceAgentLiveDelegation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Delegation owner. foundry_managed_agent sessions report the pinned target, including the
+     resolved agent_version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: Union[str, "_models.ModelIdsLive"],
+        id: str,  # pylint: disable=redefined-builtin
+        expires_at: int,
+        instructions: Optional[str] = None,
+        input: Optional[list["_models.LiveInitialItem"]] = None,
+        audio: Optional["_models.LiveInitialSessionAudioParam"] = None,
+        triggers: Optional[list["_models.LiveDecisionTriggerInputParam"]] = None,
+        store: Optional[bool] = None,
+        client: Optional["_models.LiveClientConfigParam"] = None,
+        delegation: Optional["_models.VoiceAgentLiveDelegation"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.status: Literal["active"] = "active"
 
 
 class VoiceAgentLlmGeneratedGreetingConfig(
@@ -29715,6 +39724,46 @@ class VoiceAgentNoiseReduction(_Model):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
+class VoiceAgentPostCallConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Post-call delivery configuration.
+
+    :ivar destinations: The destinations to notify. Required.
+    :vartype destinations: list[~azure.ai.projects.models.VoiceAgentPostCallDestination]
+    :ivar include: Additional content to include in each delivery. The transcript is always
+     delivered. ``audio`` is not supported in this preview; the service rejects it when the agent
+     version is saved.
+    :vartype include: list[str or ~azure.ai.projects.models.VoiceAgentPostCallIncludeOption]
+    """
+
+    destinations: list["_models.VoiceAgentPostCallDestination"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The destinations to notify. Required."""
+    include: Optional[list[Union[str, "_models.VoiceAgentPostCallIncludeOption"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional content to include in each delivery. The transcript is always delivered. ``audio``
+     is not supported in this preview; the service rejects it when the agent version is saved."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        destinations: list["_models.VoiceAgentPostCallDestination"],
+        include: Optional[list[Union[str, "_models.VoiceAgentPostCallIncludeOption"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class VoiceAgentRealtimeResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A live realtime response returned by the voice-agent service in both ``response.created`` and
     ``response.done`` events.
@@ -29879,7 +39928,10 @@ class VoiceAgentResponseCreateParams(_Model):  # pylint: disable=docstring-keywo
      context for this Response instead of using the default conversation. An empty array ``[]`` will
      clear the context for this Response. Note that this can include references to items that
      previously appeared in the session using their id.
-    :vartype input: list[~azure.ai.projects.models.RealtimeConversationItem]
+    :vartype input: list[~azure.ai.projects.models.RealtimeResponseInputMessage or
+     ~azure.ai.projects.models.RealtimeResponseInputFunctionCall or
+     ~azure.ai.projects.models.RealtimeResponseInputFunctionCallOutput or
+     ~azure.ai.projects.models.RealtimeResponseItemReference]
     :ivar output_modalities: Modalities that the response may return.
     :vartype output_modalities: list[str or ~azure.ai.projects.models.VoiceOutputModality]
     :ivar audio: Response-specific audio settings.
@@ -29932,7 +39984,7 @@ class VoiceAgentResponseCreateParams(_Model):  # pylint: disable=docstring-keywo
      response which will not add items to default conversation. Is one of the following types:
      Literal[\"auto\"], Literal[\"none\"], str"""
     metadata: Optional["_models.Metadata"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    input: Optional[list["_models.RealtimeConversationItem"]] = rest_field(
+    input: Optional[list["_unions.RealtimeResponseInputItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Input items to include in the prompt for the model. Using this field creates a new context for
@@ -29970,7 +40022,7 @@ class VoiceAgentResponseCreateParams(_Model):  # pylint: disable=docstring-keywo
         max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
         conversation: Optional[Union[Literal["auto"], Literal["none"], str]] = None,
         metadata: Optional["_models.Metadata"] = None,
-        input: Optional[list["_models.RealtimeConversationItem"]] = None,
+        input: Optional[list["_unions.RealtimeResponseInputItem"]] = None,
         output_modalities: Optional[list[Union[str, "_models.VoiceOutputModality"]]] = None,
         audio: Optional["_models.PickPropertiesVoiceAgentAudioConfig"] = None,
         pre_generated_assistant_message: Optional["_models.RealtimeConversationItem"] = None,
@@ -29986,6 +40038,41 @@ class VoiceAgentResponseCreateParams(_Model):  # pylint: disable=docstring-keywo
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class VoiceAgentRoutinePostCallDestination(
+    VoiceAgentPostCallDestination, discriminator="routine"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A routine that is dispatched with the post-call event.
+
+    :ivar type: Required. A routine.
+    :vartype type: str or ~azure.ai.projects.models.ROUTINE
+    :ivar name: The name of the routine. Required.
+    :vartype name: str
+    """
+
+    type: Literal[VoiceAgentPostCallDestinationType.ROUTINE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. A routine."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the routine. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentPostCallDestinationType.ROUTINE  # type: ignore
 
 
 class VoiceAgentRtcCallErrorDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -30080,6 +40167,182 @@ class VoiceAgentSemanticVadTurnDetection(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = VoiceAgentTurnDetectionType.SEMANTIC_VAD  # type: ignore
+
+
+class VoiceAgentSendDtmfSystemTool(
+    VoiceAgentSystemTool, discriminator="send_dtmf"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Sends literal or templated keypad digits.
+
+    :ivar type: The type of the tool. Always ``system``. Required. Default value is "system".
+    :vartype type: str
+    :ivar description: An optional description of the system tool.
+    :vartype description: str
+    :ivar timeout_seconds: Execution timeout, from 1 to 300 seconds. If omitted, the service
+     defaults to 60 seconds.
+    :vartype timeout_seconds: ~datetime.timedelta
+    :ivar name: The service-managed control action. Always ``send_dtmf``. Required. Sends literal
+     or templated keypad digits.
+    :vartype name: str or ~azure.ai.projects.models.SEND_DTMF
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    name: Literal[VoiceAgentSystemToolName.SEND_DTMF] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The service-managed control action. Always ``send_dtmf``. Required. Sends literal or templated
+     keypad digits."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        timeout_seconds: Optional[datetime.timedelta] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.name = VoiceAgentSystemToolName.SEND_DTMF  # type: ignore
+
+
+class VoiceAgentSendSmsSystemTool(
+    VoiceAgentSystemTool, discriminator="send_sms"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Sends a text message from the Agent's SMS-capable number.
+
+    :ivar type: The type of the tool. Always ``system``. Required. Default value is "system".
+    :vartype type: str
+    :ivar description: An optional description of the system tool.
+    :vartype description: str
+    :ivar timeout_seconds: Execution timeout, from 1 to 300 seconds. If omitted, the service
+     defaults to 60 seconds.
+    :vartype timeout_seconds: ~datetime.timedelta
+    :ivar name: The service-managed control action. Always ``send_sms``. Required. Sends a text
+     message from the Agent's SMS-capable number.
+    :vartype name: str or ~azure.ai.projects.models.SEND_SMS
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    name: Literal[VoiceAgentSystemToolName.SEND_SMS] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The service-managed control action. Always ``send_sms``. Required. Sends a text message from
+     the Agent's SMS-capable number."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        timeout_seconds: Optional[datetime.timedelta] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.name = VoiceAgentSystemToolName.SEND_SMS  # type: ignore
+
+
+class VoiceAgentServerEventInputCollectionStatus(
+    RealtimeServerEvent, discriminator="input_collection.status"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Reports collection or telephony outcomes for a model call.
+
+    :ivar type: The event type. Always ``input_collection.status``. Required. An asynchronous
+     collection or telephony-operation outcome.
+    :vartype type: str or ~azure.ai.projects.models.INPUT_COLLECTION_STATUS
+    :ivar event_id: An optional event identifier.
+    :vartype event_id: str
+    :ivar call_id: The originating system-tool invocation. Required.
+    :vartype call_id: str
+    :ivar collection_id: The collection operation identifier, when this outcome concerns a
+     collection.
+    :vartype collection_id: str
+    :ivar request_id: The current receiver request identifier, when applicable.
+    :vartype request_id: str
+    :ivar channel: The collection receiver, omitted for telephony-operation feedback. Known values
+     are: "sms" and "dtmf".
+    :vartype channel: str or ~azure.ai.projects.models.VoiceAgentInputCollectionChannel
+    :ivar status: The reported outcome. Generation completion of a system-tool item is separate.
+     Required. Known values are: "accepted", "listening", "completed", "expired", "cancelled",
+     "failed", "busy", "invalid_input", "invalid_arguments", "stale_collection",
+     "unsupported_channel", "dispatch_failed", "provider_accepted", "transfer_not_answered",
+     "provider_failed_or_unsupported", "provider_result_uncertain", and "provider_not_executed".
+    :vartype status: str or ~azure.ai.projects.models.VoiceAgentInputCollectionStatus
+    :ivar value: Completed ASCII digits, including leading zeros, only for ``secret: false``;
+     absent for private collection and telephony-operation feedback.
+    :vartype value: str
+    :ivar output_ref: Actual bare variable name from successful private collection, not its value.
+     May be suffixed on collision; reference it with ``{{name}}``.
+    :vartype output_ref: str
+    """
+
+    type: Literal[VoiceAgentServerEventTypeExtension.INPUT_COLLECTION_STATUS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type. Always ``input_collection.status``. Required. An asynchronous collection or
+     telephony-operation outcome."""
+    event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional event identifier."""
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The originating system-tool invocation. Required."""
+    collection_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The collection operation identifier, when this outcome concerns a collection."""
+    request_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The current receiver request identifier, when applicable."""
+    channel: Optional[Union[str, "_models.VoiceAgentInputCollectionChannel"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The collection receiver, omitted for telephony-operation feedback. Known values are: \"sms\"
+     and \"dtmf\"."""
+    status: Union[str, "_models.VoiceAgentInputCollectionStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reported outcome. Generation completion of a system-tool item is separate. Required. Known
+     values are: \"accepted\", \"listening\", \"completed\", \"expired\", \"cancelled\", \"failed\",
+     \"busy\", \"invalid_input\", \"invalid_arguments\", \"stale_collection\",
+     \"unsupported_channel\", \"dispatch_failed\", \"provider_accepted\", \"transfer_not_answered\",
+     \"provider_failed_or_unsupported\", \"provider_result_uncertain\", and
+     \"provider_not_executed\"."""
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Completed ASCII digits, including leading zeros, only for ``secret: false``; absent for private
+     collection and telephony-operation feedback."""
+    output_ref: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Actual bare variable name from successful private collection, not its value. May be suffixed on
+     collision; reference it with ``{{name}}``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        call_id: str,
+        status: Union[str, "_models.VoiceAgentInputCollectionStatus"],
+        event_id: Optional[str] = None,
+        collection_id: Optional[str] = None,
+        request_id: Optional[str] = None,
+        channel: Optional[Union[str, "_models.VoiceAgentInputCollectionChannel"]] = None,
+        value: Optional[str] = None,
+        output_ref: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentServerEventTypeExtension.INPUT_COLLECTION_STATUS  # type: ignore
 
 
 class VoiceAgentServerEventResponseAnimationBlendshapesDelta(
@@ -30718,6 +40981,270 @@ class VoiceAgentServerEventSessionAvatarSwitchToSpeaking(
         self.type = RealtimeServerEventType.SESSION_AVATAR_SWITCH_TO_SPEAKING  # type: ignore
 
 
+class VoiceAgentServerEventSessionHandoffAborted(
+    RealtimeServerEvent, discriminator="session.handoff.aborted"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The ``session.handoff.aborted`` server event.
+
+    :ivar event_id: The server-generated event identifier. Required.
+    :vartype event_id: str
+    :ivar handoff_id: The server-generated handoff attempt identifier. Required.
+    :vartype handoff_id: str
+    :ivar edge_id: The configured edge selected for this handoff. Required.
+    :vartype edge_id: str
+    :ivar from_node_id: The source node identifier or ``$entrypoint``. Required.
+    :vartype from_node_id: str
+    :ivar to_node_id: The target node identifier or ``$entrypoint``. Required.
+    :vartype to_node_id: str
+    :ivar from_model: The model active before the handoff. Required.
+    :vartype from_model: str
+    :ivar to_model: The model prepared for the target behavior. Required.
+    :vartype to_model: str
+    :ivar tool_call_id: The function-call identifier that initiated the handoff. Required.
+    :vartype tool_call_id: str
+    :ivar node_generation: The source generation for started or aborted events, and the committed
+     target generation for completed events. Required.
+    :vartype node_generation: int
+    :ivar reason: Why the handoff ended before target commit. Required. Known values are:
+     "user_interruption" and "error".
+    :vartype reason: str or ~azure.ai.projects.models.VoiceAgentHandoffAbortReason
+    :ivar error: The handoff failure detail when ``reason`` is ``error``.
+    :vartype error: ~azure.ai.projects.models.RealtimeServerEventErrorError
+    :ivar type: The event type. Always ``session.handoff.aborted``. Required.
+     SESSION_HANDOFF_ABORTED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_HANDOFF_ABORTED
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated event identifier. Required."""
+    handoff_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated handoff attempt identifier. Required."""
+    edge_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The configured edge selected for this handoff. Required."""
+    from_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source node identifier or ``$entrypoint``. Required."""
+    to_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target node identifier or ``$entrypoint``. Required."""
+    from_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model active before the handoff. Required."""
+    to_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model prepared for the target behavior. Required."""
+    tool_call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The function-call identifier that initiated the handoff. Required."""
+    node_generation: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source generation for started or aborted events, and the committed target generation for
+     completed events. Required."""
+    reason: Union[str, "_models.VoiceAgentHandoffAbortReason"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Why the handoff ended before target commit. Required. Known values are: \"user_interruption\"
+     and \"error\"."""
+    error: Optional["_models.RealtimeServerEventErrorError"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The handoff failure detail when ``reason`` is ``error``."""
+    type: Literal[VoiceAgentServerEventTypeExtension.SESSION_HANDOFF_ABORTED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type. Always ``session.handoff.aborted``. Required. SESSION_HANDOFF_ABORTED."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        handoff_id: str,
+        edge_id: str,
+        from_node_id: str,
+        to_node_id: str,
+        from_model: str,
+        to_model: str,
+        tool_call_id: str,
+        node_generation: int,
+        reason: Union[str, "_models.VoiceAgentHandoffAbortReason"],
+        error: Optional["_models.RealtimeServerEventErrorError"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentServerEventTypeExtension.SESSION_HANDOFF_ABORTED  # type: ignore
+
+
+class VoiceAgentServerEventSessionHandoffCompleted(
+    RealtimeServerEvent, discriminator="session.handoff.completed"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The ``session.handoff.completed`` server event.
+
+    :ivar event_id: The server-generated event identifier. Required.
+    :vartype event_id: str
+    :ivar handoff_id: The server-generated handoff attempt identifier. Required.
+    :vartype handoff_id: str
+    :ivar edge_id: The configured edge selected for this handoff. Required.
+    :vartype edge_id: str
+    :ivar from_node_id: The source node identifier or ``$entrypoint``. Required.
+    :vartype from_node_id: str
+    :ivar to_node_id: The target node identifier or ``$entrypoint``. Required.
+    :vartype to_node_id: str
+    :ivar from_model: The model active before the handoff. Required.
+    :vartype from_model: str
+    :ivar to_model: The model prepared for the target behavior. Required.
+    :vartype to_model: str
+    :ivar tool_call_id: The function-call identifier that initiated the handoff. Required.
+    :vartype tool_call_id: str
+    :ivar node_generation: The source generation for started or aborted events, and the committed
+     target generation for completed events. Required.
+    :vartype node_generation: int
+    :ivar prepare_duration_ms: The target-preparation duration. Required.
+    :vartype prepare_duration_ms: ~datetime.timedelta
+    :ivar duration_ms: The total handoff duration. Required.
+    :vartype duration_ms: ~datetime.timedelta
+    :ivar type: The event type. Always ``session.handoff.completed``. Required.
+     SESSION_HANDOFF_COMPLETED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_HANDOFF_COMPLETED
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated event identifier. Required."""
+    handoff_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated handoff attempt identifier. Required."""
+    edge_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The configured edge selected for this handoff. Required."""
+    from_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source node identifier or ``$entrypoint``. Required."""
+    to_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target node identifier or ``$entrypoint``. Required."""
+    from_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model active before the handoff. Required."""
+    to_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model prepared for the target behavior. Required."""
+    tool_call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The function-call identifier that initiated the handoff. Required."""
+    node_generation: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source generation for started or aborted events, and the committed target generation for
+     completed events. Required."""
+    prepare_duration_ms: datetime.timedelta = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
+    )
+    """The target-preparation duration. Required."""
+    duration_ms: datetime.timedelta = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
+    )
+    """The total handoff duration. Required."""
+    type: Literal[VoiceAgentServerEventTypeExtension.SESSION_HANDOFF_COMPLETED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type. Always ``session.handoff.completed``. Required. SESSION_HANDOFF_COMPLETED."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        handoff_id: str,
+        edge_id: str,
+        from_node_id: str,
+        to_node_id: str,
+        from_model: str,
+        to_model: str,
+        tool_call_id: str,
+        node_generation: int,
+        prepare_duration_ms: datetime.timedelta,
+        duration_ms: datetime.timedelta,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentServerEventTypeExtension.SESSION_HANDOFF_COMPLETED  # type: ignore
+
+
+class VoiceAgentServerEventSessionHandoffStarted(
+    RealtimeServerEvent, discriminator="session.handoff.started"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The ``session.handoff.started`` server event.
+
+    :ivar event_id: The server-generated event identifier. Required.
+    :vartype event_id: str
+    :ivar handoff_id: The server-generated handoff attempt identifier. Required.
+    :vartype handoff_id: str
+    :ivar edge_id: The configured edge selected for this handoff. Required.
+    :vartype edge_id: str
+    :ivar from_node_id: The source node identifier or ``$entrypoint``. Required.
+    :vartype from_node_id: str
+    :ivar to_node_id: The target node identifier or ``$entrypoint``. Required.
+    :vartype to_node_id: str
+    :ivar from_model: The model active before the handoff. Required.
+    :vartype from_model: str
+    :ivar to_model: The model prepared for the target behavior. Required.
+    :vartype to_model: str
+    :ivar tool_call_id: The function-call identifier that initiated the handoff. Required.
+    :vartype tool_call_id: str
+    :ivar node_generation: The source generation for started or aborted events, and the committed
+     target generation for completed events. Required.
+    :vartype node_generation: int
+    :ivar type: The event type. Always ``session.handoff.started``. Required.
+     SESSION_HANDOFF_STARTED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_HANDOFF_STARTED
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated event identifier. Required."""
+    handoff_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated handoff attempt identifier. Required."""
+    edge_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The configured edge selected for this handoff. Required."""
+    from_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source node identifier or ``$entrypoint``. Required."""
+    to_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target node identifier or ``$entrypoint``. Required."""
+    from_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model active before the handoff. Required."""
+    to_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model prepared for the target behavior. Required."""
+    tool_call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The function-call identifier that initiated the handoff. Required."""
+    node_generation: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source generation for started or aborted events, and the committed target generation for
+     completed events. Required."""
+    type: Literal[VoiceAgentServerEventTypeExtension.SESSION_HANDOFF_STARTED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type. Always ``session.handoff.started``. Required. SESSION_HANDOFF_STARTED."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        handoff_id: str,
+        edge_id: str,
+        from_node_id: str,
+        to_node_id: str,
+        from_model: str,
+        to_model: str,
+        tool_call_id: str,
+        node_generation: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentServerEventTypeExtension.SESSION_HANDOFF_STARTED  # type: ignore
+
+
 class VoiceAgentServerEventSessionSubagentAborted(
     RealtimeServerEvent, discriminator="session.subagent.aborted"
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
@@ -30878,6 +41405,147 @@ class VoiceAgentServerEventSessionSubagentStarted(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = RealtimeServerEventType.SESSION_SUBAGENT_STARTED  # type: ignore
+
+
+class VoiceAgentServerEventSystemToolArgumentsDelta(
+    RealtimeServerEvent, discriminator="response.system_tool_arguments.delta"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """An incremental model-argument fragment for a service-managed system tool.
+
+    :ivar type: The event type. Always ``response.system_tool_arguments.delta``. Required. An
+     incremental fragment of model-generated system-tool arguments.
+    :vartype type: str or ~azure.ai.projects.models.RESPONSE_SYSTEM_TOOL_ARGUMENTS_DELTA
+    :ivar event_id: The unique identifier of this server event. Required.
+    :vartype event_id: str
+    :ivar response_id: The response containing the tool invocation. Required.
+    :vartype response_id: str
+    :ivar item_id: The generated tool item's identifier. Required.
+    :vartype item_id: str
+    :ivar output_index: The item's zero-based position in the response output. Required.
+    :vartype output_index: int
+    :ivar call_id: The invocation identifier. Required.
+    :vartype call_id: str
+    :ivar delta: An incremental JSON fragment of the intent arguments. Required.
+    :vartype delta: str
+    :ivar obfuscation: Optional padding metadata with no application semantics.
+    :vartype obfuscation: str
+    """
+
+    type: Literal[VoiceAgentServerEventTypeExtension.RESPONSE_SYSTEM_TOOL_ARGUMENTS_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type. Always ``response.system_tool_arguments.delta``. Required. An incremental
+     fragment of model-generated system-tool arguments."""
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique identifier of this server event. Required."""
+    response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The response containing the tool invocation. Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The generated tool item's identifier. Required."""
+    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The item's zero-based position in the response output. Required."""
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The invocation identifier. Required."""
+    delta: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An incremental JSON fragment of the intent arguments. Required."""
+    obfuscation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional padding metadata with no application semantics."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        response_id: str,
+        item_id: str,
+        output_index: int,
+        call_id: str,
+        delta: str,
+        obfuscation: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentServerEventTypeExtension.RESPONSE_SYSTEM_TOOL_ARGUMENTS_DELTA  # type: ignore
+
+
+class VoiceAgentServerEventSystemToolArgumentsDone(
+    RealtimeServerEvent, discriminator="response.system_tool_arguments.done"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The completed intent arguments for a system tool, not provider success or a request for a
+    customer function result.
+
+    :ivar type: The event type. Always ``response.system_tool_arguments.done``. Required. The
+     complete model-generated system-tool arguments, not a provider outcome.
+    :vartype type: str or ~azure.ai.projects.models.RESPONSE_SYSTEM_TOOL_ARGUMENTS_DONE
+    :ivar event_id: The unique identifier of this server event. Required.
+    :vartype event_id: str
+    :ivar response_id: The response containing the tool invocation. Required.
+    :vartype response_id: str
+    :ivar item_id: The generated tool item's identifier. Required.
+    :vartype item_id: str
+    :ivar output_index: The item's zero-based position in the response output. Required.
+    :vartype output_index: int
+    :ivar call_id: The invocation identifier. Required.
+    :vartype call_id: str
+    :ivar name: The invoked built-in capability. Required. Known values are: "end_conversation",
+     "language_detection", "digit_recognition", "transfer", "collect_sms", "collect_dtmf",
+     "send_dtmf", and "send_sms".
+    :vartype name: str or ~azure.ai.projects.models.VoiceAgentSystemToolName
+    :ivar arguments: The complete, unexpanded model arguments as a JSON string. Required.
+    :vartype arguments: str
+    """
+
+    type: Literal[VoiceAgentServerEventTypeExtension.RESPONSE_SYSTEM_TOOL_ARGUMENTS_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type. Always ``response.system_tool_arguments.done``. Required. The complete
+     model-generated system-tool arguments, not a provider outcome."""
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique identifier of this server event. Required."""
+    response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The response containing the tool invocation. Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The generated tool item's identifier. Required."""
+    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The item's zero-based position in the response output. Required."""
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The invocation identifier. Required."""
+    name: Union[str, "_models.VoiceAgentSystemToolName"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The invoked built-in capability. Required. Known values are: \"end_conversation\",
+     \"language_detection\", \"digit_recognition\", \"transfer\", \"collect_sms\", \"collect_dtmf\",
+     \"send_dtmf\", and \"send_sms\"."""
+    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The complete, unexpanded model arguments as a JSON string. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        response_id: str,
+        item_id: str,
+        output_index: int,
+        call_id: str,
+        name: Union[str, "_models.VoiceAgentSystemToolName"],
+        arguments: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentServerEventTypeExtension.RESPONSE_SYSTEM_TOOL_ARGUMENTS_DONE  # type: ignore
 
 
 class VoiceAgentServerEventWarning(
@@ -31130,6 +41798,8 @@ class VoiceAgentSessionResponseConfig(_Model):  # pylint: disable=docstring-keyw
     :vartype interim_response: ~azure.ai.projects.models.VoiceAgentInterimResponseConfig
     :ivar greeting: A proactive assistant greeting started after session configuration.
     :vartype greeting: ~azure.ai.projects.models.VoiceAgentGreetingConfig
+    :ivar handoff: The effective handoff topology and runtime state, when handoff is configured.
+    :vartype handoff: ~azure.ai.projects.models.VoiceAgentHandoffState
     :ivar object: The object type. Always ``realtime.session``. Required. Default value is
      "realtime.session".
     :vartype object: str
@@ -31197,6 +41867,10 @@ class VoiceAgentSessionResponseConfig(_Model):  # pylint: disable=docstring-keyw
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A proactive assistant greeting started after session configuration."""
+    handoff: Optional["_models.VoiceAgentHandoffState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The effective handoff topology and runtime state, when handoff is configured."""
     object: Literal["realtime.session"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type. Always ``realtime.session``. Required. Default value is \"realtime.session\"."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -31229,6 +41903,7 @@ class VoiceAgentSessionResponseConfig(_Model):  # pylint: disable=docstring-keyw
         metadata: Optional[dict[str, str]] = None,
         interim_response: Optional["_models.VoiceAgentInterimResponseConfig"] = None,
         greeting: Optional["_models.VoiceAgentGreetingConfig"] = None,
+        handoff: Optional["_models.VoiceAgentHandoffState"] = None,
         expires_at: Optional[datetime.datetime] = None,
     ) -> None: ...
 
@@ -31664,38 +42339,6 @@ class VoiceAgentSubagent(_Model):  # pylint: disable=docstring-keyword-should-ma
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentSubagentConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Configuration for sibling Foundry text agents that a voice agent may consult.
-
-    :ivar subagents: The sibling Foundry text agents, in the same project, that this voice agent
-     may consult. Required.
-    :vartype subagents: list[~azure.ai.projects.models.VoiceAgentSubagent]
-    """
-
-    subagents: list["_models.VoiceAgentSubagent"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The sibling Foundry text agents, in the same project, that this voice agent may consult.
-     Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        subagents: list["_models.VoiceAgentSubagent"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class VoiceAgentSubagentResponsePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Policy for delivering responses while a voice agent waits for a subagent.
 
@@ -31764,6 +42407,90 @@ class VoiceAgentSubagentResponsePolicy(_Model):  # pylint: disable=docstring-key
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class VoiceAgentSystemToolItem(
+    RealtimeConversationItem, discriminator="system_tool"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Service-generated system-tool intent, not a provider result. Clients cannot create it or
+    complete it with ``function_call_output``.
+
+    :ivar type: The output-item kind. Always ``system_tool``. Required. A service-managed
+     system-tool intent, not a provider result.
+    :vartype type: str or ~azure.ai.projects.models.SYSTEM_TOOL
+    :ivar id: The identifier of the generated item.
+    :vartype id: str
+    :ivar object: The realtime item marker. Default value is "realtime.item".
+    :vartype object: str
+    :ivar status: The generation status of the item, not the provider execution outcome. Required.
+     Known values are: "in_progress", "completed", and "incomplete".
+    :vartype status: str or ~azure.ai.projects.models.VoiceAgentSystemToolItemStatus
+    :ivar name: The built-in capability invoked by the model. Required. Known values are:
+     "end_conversation", "language_detection", "digit_recognition", "transfer", "collect_sms",
+     "collect_dtmf", "send_dtmf", and "send_sms".
+    :vartype name: str or ~azure.ai.projects.models.VoiceAgentSystemToolName
+    :ivar call_id: The invocation identifier used for correlation and duplicate suppression.
+     Required.
+    :vartype call_id: str
+    :ivar arguments: Original JSON-encoded intent: literals remain visible and references stay
+     unexpanded. Excludes private values, resolved arguments and executor-only settings. Required.
+    :vartype arguments: str
+    :ivar created_at: The Unix timestamp (in seconds) for when the item was persisted.
+    :vartype created_at: ~datetime.datetime
+    :ivar response_id: The id of the response that produced this item, when applicable.
+    :vartype response_id: str
+    """
+
+    type: Literal[RealtimeConversationItemType.SYSTEM_TOOL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The output-item kind. Always ``system_tool``. Required. A service-managed system-tool intent,
+     not a provider result."""
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identifier of the generated item."""
+    object: Optional[Literal["realtime.item"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The realtime item marker. Default value is \"realtime.item\"."""
+    status: Union[str, "_models.VoiceAgentSystemToolItemStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The generation status of the item, not the provider execution outcome. Required. Known values
+     are: \"in_progress\", \"completed\", and \"incomplete\"."""
+    name: Union[str, "_models.VoiceAgentSystemToolName"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The built-in capability invoked by the model. Required. Known values are: \"end_conversation\",
+     \"language_detection\", \"digit_recognition\", \"transfer\", \"collect_sms\", \"collect_dtmf\",
+     \"send_dtmf\", and \"send_sms\"."""
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The invocation identifier used for correlation and duplicate suppression. Required."""
+    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Original JSON-encoded intent: literals remain visible and references stay unexpanded. Excludes
+     private values, resolved arguments and executor-only settings. Required."""
+    created_at: Optional[datetime.datetime] = rest_field(visibility=["read"], format="unix-timestamp")
+    """The Unix timestamp (in seconds) for when the item was persisted."""
+    response_id: Optional[str] = rest_field(visibility=["read"])
+    """The id of the response that produced this item, when applicable."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Union[str, "_models.VoiceAgentSystemToolItemStatus"],
+        name: Union[str, "_models.VoiceAgentSystemToolName"],
+        call_id: str,
+        arguments: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        object: Optional[Literal["realtime.item"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = RealtimeConversationItemType.SYSTEM_TOOL  # type: ignore
 
 
 class VoiceAgentTemplateGreetingConfig(
@@ -31942,6 +42669,193 @@ class VoiceAgentTranscriptionWord(_Model):  # pylint: disable=docstring-keyword-
         text: str,
         offset_milliseconds: datetime.timedelta,
         duration_milliseconds: datetime.timedelta,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentTransferDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The canonical system-tool transfer destination.
+
+    :ivar type: The destination format: phone_number for an E.164 number, teams for a Teams
+     identifier, or sip for a SIP URI. Required. Known values are: "phone_number", "teams", and
+     "sip".
+    :vartype type: str or ~azure.ai.projects.models.VoiceAgentTransferDestinationType
+    :ivar value: The concrete address. Phone numbers use E.164; Teams and SIP identifiers are
+     validated against the selected provider's capabilities. Required.
+    :vartype value: str
+    """
+
+    type: Union[str, "_models.VoiceAgentTransferDestinationType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The destination format: phone_number for an E.164 number, teams for a Teams identifier, or sip
+     for a SIP URI. Required. Known values are: \"phone_number\", \"teams\", and \"sip\"."""
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The concrete address. Phone numbers use E.164; Teams and SIP identifiers are validated against
+     the selected provider's capabilities. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.VoiceAgentTransferDestinationType"],
+        value: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentTransferRouting(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The configured transfer routing policy. The model selects a target name, not destinations or
+    routing settings.
+
+    :ivar strategy: The routing strategy. Current native Telephony transfer supports ACS sequential
+     and random routing only. Required. Known values are: "sequential", "random", and "parallel".
+    :vartype strategy: str or ~azure.ai.projects.models.VoiceAgentTransferStrategy
+    :ivar ring_timeout_seconds: Per-destination ring timeout in seconds, from 1 to 300. If omitted,
+     the service defaults to 20 seconds. Must not exceed the tool's timeout_seconds. ACS allows at
+     most 180 seconds.
+    :vartype ring_timeout_seconds: int
+    """
+
+    strategy: Union[str, "_models.VoiceAgentTransferStrategy"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The routing strategy. Current native Telephony transfer supports ACS sequential and random
+     routing only. Required. Known values are: \"sequential\", \"random\", and \"parallel\"."""
+    ring_timeout_seconds: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Per-destination ring timeout in seconds, from 1 to 300. If omitted, the service defaults to 20
+     seconds. Must not exceed the tool's timeout_seconds. ACS allows at most 180 seconds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        strategy: Union[str, "_models.VoiceAgentTransferStrategy"],
+        ring_timeout_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentTransferSystemTool(
+    VoiceAgentSystemTool, discriminator="transfer"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Requests a transfer to an explicitly configured logical target.
+
+    :ivar type: The type of the tool. Always ``system``. Required. Default value is "system".
+    :vartype type: str
+    :ivar description: An optional description of the system tool.
+    :vartype description: str
+    :ivar timeout_seconds: Execution timeout, from 1 to 300 seconds. If omitted, the service
+     defaults to 60 seconds.
+    :vartype timeout_seconds: ~datetime.timedelta
+    :ivar name: The service-managed control action. Always ``transfer``. Required. Requests a
+     transfer to an explicitly configured logical target.
+    :vartype name: str or ~azure.ai.projects.models.TRANSFER
+    :ivar require_handoff: Require a non-blank handoff summary in each model-generated transfer
+     call. Defaults to false; does not guarantee delivery to the recipient.
+    :vartype require_handoff: bool
+    :ivar targets: The non-empty set of logical targets that the model may select. Required.
+    :vartype targets: list[~azure.ai.projects.models.VoiceAgentTransferTarget]
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    name: Literal[VoiceAgentSystemToolName.TRANSFER] = rest_discriminator(name="name", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The service-managed control action. Always ``transfer``. Required. Requests a transfer to an
+     explicitly configured logical target."""
+    require_handoff: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Require a non-blank handoff summary in each model-generated transfer call. Defaults to false;
+     does not guarantee delivery to the recipient."""
+    targets: list["_models.VoiceAgentTransferTarget"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The non-empty set of logical targets that the model may select. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        targets: list["_models.VoiceAgentTransferTarget"],
+        description: Optional[str] = None,
+        timeout_seconds: Optional[datetime.timedelta] = None,
+        require_handoff: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.name = VoiceAgentSystemToolName.TRANSFER  # type: ignore
+
+
+class VoiceAgentTransferTarget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A configured logical transfer target. Only its name and description are model-visible;
+    destinations and routing are executor settings.
+
+    :ivar name: The non-blank logical target name. Names must be unique after trimming within the
+     transfer tool. Required.
+    :vartype name: str
+    :ivar description: A description that helps the model select this target.
+    :vartype description: str
+    :ivar destinations: The concrete destinations for this transfer target. Required.
+    :vartype destinations: list[~azure.ai.projects.models.VoiceAgentTransferDestination]
+    :ivar routing: The trusted routing policy for this target. Required.
+    :vartype routing: ~azure.ai.projects.models.VoiceAgentTransferRouting
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The non-blank logical target name. Names must be unique after trimming within the transfer
+     tool. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A description that helps the model select this target."""
+    destinations: list["_models.VoiceAgentTransferDestination"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The concrete destinations for this transfer target. Required."""
+    routing: "_models.VoiceAgentTransferRouting" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The trusted routing policy for this target. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        destinations: list["_models.VoiceAgentTransferDestination"],
+        routing: "_models.VoiceAgentTransferRouting",
+        description: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -32833,150 +43747,6 @@ class WebSearchConfiguration(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class WebSearchPreviewTool(
-    Tool, discriminator="web_search_preview"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Web search preview.
-
-    :ivar type: The type of the web search tool. One of ``web_search_preview`` or
-     ``web_search_preview_2025_03_11``. Required. WEB_SEARCH_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH_PREVIEW
-    :ivar user_location:
-    :vartype user_location: ~azure.ai.projects.models.ApproximateLocation
-    :ivar search_context_size: High level guidance for the amount of context window space to use
-     for the search. One of ``low``, ``medium``, or ``high``. ``medium`` is the default. Known
-     values are: "low", "medium", and "high".
-    :vartype search_context_size: str or ~azure.ai.projects.models.SearchContextSize
-    :ivar search_content_types:
-    :vartype search_content_types: list[str or ~azure.ai.projects.models.SearchContentType]
-    """
-
-    type: Literal[ToolType.WEB_SEARCH_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the web search tool. One of ``web_search_preview`` or
-     ``web_search_preview_2025_03_11``. Required. WEB_SEARCH_PREVIEW."""
-    user_location: Optional["_models.ApproximateLocation"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    search_context_size: Optional[Union[str, "_models.SearchContextSize"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """High level guidance for the amount of context window space to use for the search. One of
-     ``low``, ``medium``, or ``high``. ``medium`` is the default. Known values are: \"low\",
-     \"medium\", and \"high\"."""
-    search_content_types: Optional[list[Union[str, "_models.SearchContentType"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-
-    @overload
-    def __init__(
-        self,
-        *,
-        user_location: Optional["_models.ApproximateLocation"] = None,
-        search_context_size: Optional[Union[str, "_models.SearchContextSize"]] = None,
-        search_content_types: Optional[list[Union[str, "_models.SearchContentType"]]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.WEB_SEARCH_PREVIEW  # type: ignore
-
-
-class WebSearchTool(Tool, discriminator="web_search"):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Web search.
-
-    :ivar type: The type of the web search tool. One of ``web_search`` or
-     ``web_search_2025_08_26``. Required. WEB_SEARCH.
-    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH
-    :ivar external_web_access: Allow live internet access for web search. Defaults to true when
-     omitted. When false, the web search tool runs in offline/cache-only mode and will not fetch new
-     external content.
-    :vartype external_web_access: bool
-    :ivar filters:
-    :vartype filters: ~azure.ai.projects.models.WebSearchToolFilters
-    :ivar user_location:
-    :vartype user_location: ~azure.ai.projects.models.WebSearchApproximateLocation
-    :ivar search_context_size: High level guidance for the amount of context window space to use
-     for the search. One of ``low``, ``medium``, or ``high``. ``medium`` is the default. Is one of
-     the following types: Literal["low"], Literal["medium"], Literal["high"]
-    :vartype search_context_size: str or str or str
-    :ivar name: Deprecated. This property is deprecated and will be removed in a future version.
-    :vartype name: str
-    :ivar description: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype description: str
-    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
-    :ivar custom_search_configuration: The project connections attached to this tool. There can be
-     a maximum of 1 connection resource attached to the tool.
-    :vartype custom_search_configuration: ~azure.ai.projects.models.WebSearchConfiguration
-    """
-
-    type: Literal[ToolType.WEB_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the web search tool. One of ``web_search`` or ``web_search_2025_08_26``. Required.
-     WEB_SEARCH."""
-    external_web_access: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Allow live internet access for web search. Defaults to true when omitted. When false, the web
-     search tool runs in offline/cache-only mode and will not fetch new external content."""
-    filters: Optional["_models.WebSearchToolFilters"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    user_location: Optional["_models.WebSearchApproximateLocation"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    search_context_size: Optional[Literal["low", "medium", "high"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """High level guidance for the amount of context window space to use for the search. One of
-     ``low``, ``medium``, or ``high``. ``medium`` is the default. Is one of the following types:
-     Literal[\"low\"], Literal[\"medium\"], Literal[\"high\"]"""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Deprecated. This property is deprecated and will be removed in a future version."""
-    custom_search_configuration: Optional["_models.WebSearchConfiguration"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The project connections attached to this tool. There can be a maximum of 1 connection resource
-     attached to the tool."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        external_web_access: Optional[bool] = None,
-        filters: Optional["_models.WebSearchToolFilters"] = None,
-        user_location: Optional["_models.WebSearchApproximateLocation"] = None,
-        search_context_size: Optional[Literal["low", "medium", "high"]] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
-        custom_search_configuration: Optional["_models.WebSearchConfiguration"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.WEB_SEARCH  # type: ignore
-
-
 class WebSearchToolboxTool(
     ToolboxTool, discriminator="web_search"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -32998,7 +43768,9 @@ class WebSearchToolboxTool(
     :vartype external_web_access: bool
     :ivar filters:
     :vartype filters: ~azure.ai.projects.models.WebSearchToolFilters
-    :ivar user_location:
+    :ivar user_location: The approximate location of the user. If omitted or null, defaults to the
+     United States. To avoid this fallback, pass ``{"type": "approximate"}`` without location
+     fields. To localize results, provide the relevant location fields.
     :vartype user_location: ~azure.ai.projects.models.WebSearchApproximateLocation
     :ivar search_context_size: High level guidance for the amount of context window space to use
      for the search. One of ``low``, ``medium``, or ``high``. ``medium`` is the default. Is one of
@@ -33020,6 +43792,9 @@ class WebSearchToolboxTool(
     user_location: Optional["_models.WebSearchApproximateLocation"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """The approximate location of the user. If omitted or null, defaults to the United States. To
+     avoid this fallback, pass ``{\"type\": \"approximate\"}`` without location fields. To localize
+     results, provide the relevant location fields."""
     search_context_size: Optional[Literal["low", "medium", "high"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )

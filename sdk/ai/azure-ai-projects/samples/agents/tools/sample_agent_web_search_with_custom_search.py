@@ -46,7 +46,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    WebSearchTool,
+    ToolWebSearchTool,
     WebSearchConfiguration,
 )
 
@@ -56,7 +56,7 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
-tool = WebSearchTool(
+tool = ToolWebSearchTool(
     custom_search_configuration=WebSearchConfiguration(
         project_connection_id=os.environ["BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID"],
         instance_name=os.environ["BING_CUSTOM_SEARCH_INSTANCE_NAME"],

@@ -10,7 +10,7 @@ import base64
 import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolImageGenTool
 from azure.core.exceptions import ResourceNotFoundError
 
 
@@ -23,7 +23,7 @@ class TestAgentImageGeneration(TestBase):
         Test agent with Image Generation tool.
 
         This test verifies that an agent can:
-        1. Use ImageGenTool to generate images from text prompts
+        1. Use ToolImageGenTool to generate images from text prompts
         2. Return base64-encoded image data
         3. Decode and validate the image format
 
@@ -35,7 +35,7 @@ class TestAgentImageGeneration(TestBase):
         POST   /agents/{agent_name}/versions                 project_client.agents.create_version()
 
         # Test focus:
-        POST   /openai/responses                             openai_client.responses.create() (with ImageGenTool)
+        POST   /openai/responses                             openai_client.responses.create() (with ToolImageGenTool)
 
         # Teardown:
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
@@ -67,7 +67,7 @@ class TestAgentImageGeneration(TestBase):
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="Generate images based on user prompts",
-                    tools=[ImageGenTool(model=image_model, quality="low", size="1024x1024")],  # type: ignore
+                    tools=[ToolImageGenTool(model=image_model, quality="low", size="1024x1024")],  # type: ignore
                 ),
                 description="Agent for testing image generation.",
             )

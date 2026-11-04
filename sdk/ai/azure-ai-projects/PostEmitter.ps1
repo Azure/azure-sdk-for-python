@@ -106,7 +106,7 @@ foreach ($f in $files) {
     $wrapped = @()
     foreach ($line in $out) {
         if ($line.Length -le 120 -or $line -notmatch '^(\s*)\*\s+(.+)$') {
-            $wrapped += $line
+            $wrapped += $line.TrimEnd()
             continue
         }
 

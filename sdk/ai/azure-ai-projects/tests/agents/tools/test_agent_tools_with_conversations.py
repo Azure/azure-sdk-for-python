@@ -16,9 +16,9 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 from azure.ai.projects.models import (
-    FunctionTool,
-    FileSearchTool,
-    CodeInterpreterTool,
+    ToolFunctionTool,
+    ToolFileSearchTool,
+    ToolCodeInterpreterTool,
     AutoCodeInterpreterToolParam,
     PromptAgentDefinition,
 )
@@ -30,7 +30,7 @@ class TestAgentToolsWithConversations(TestBase):
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_function_tool_with_conversation(self, **kwargs):  # pylint: disable=too-many-statements
         """
-        Test using FunctionTool within a conversation.
+        Test using ToolFunctionTool within a conversation.
 
         This tests:
         - Creating a conversation
@@ -46,7 +46,7 @@ class TestAgentToolsWithConversations(TestBase):
             project_client.get_openai_client() as openai_client,
         ):
             # Define a calculator function
-            calculator = FunctionTool(
+            calculator = ToolFunctionTool(
                 name="calculator",
                 description="Perform basic arithmetic operations",
                 parameters={
@@ -192,7 +192,7 @@ class TestAgentToolsWithConversations(TestBase):
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_file_search_with_conversation(self, **kwargs):
         """
-        Test using FileSearchTool within a conversation.
+        Test using ToolFileSearchTool within a conversation.
 
         This tests:
         - Server-side tool execution within conversation
@@ -249,7 +249,7 @@ Widget C:
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a product search assistant. Answer questions about products.",
-                    tools=[FileSearchTool(vector_store_ids=[vector_store.id])],
+                    tools=[ToolFileSearchTool(vector_store_ids=[vector_store.id])],
                 ),
                 description="Search agent for conversation testing.",
             )
@@ -309,7 +309,7 @@ Widget C:
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_code_interpreter_with_conversation(self, **kwargs):
         """
-        Test using CodeInterpreterTool within a conversation.
+        Test using ToolCodeInterpreterTool within a conversation.
 
         This tests:
         - Server-side code execution within conversation
@@ -329,7 +329,7 @@ Widget C:
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a data analysis assistant. Use Python to perform calculations.",
-                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[]))],
+                    tools=[ToolCodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[]))],
                 ),
                 description="Code interpreter agent for conversation testing.",
             )
@@ -391,7 +391,7 @@ Widget C:
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_code_interpreter_with_file_in_conversation(self, **kwargs):
         """
-        Test using CodeInterpreterTool with file upload within a conversation.
+        Test using ToolCodeInterpreterTool with file upload within a conversation.
 
         This test reproduces the 500 error seen in the sample when using
         code interpreter with uploaded files in conversations.
@@ -428,7 +428,9 @@ Widget C:
                 definition=PromptAgentDefinition(
                     model=model,
                     instructions="You are a helpful assistant.",
-                    tools=[CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[uploaded_file.id]))],
+                    tools=[
+                        ToolCodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[uploaded_file.id]))
+                    ],
                 ),
                 description="Code interpreter agent for data analysis and visualization.",
             )

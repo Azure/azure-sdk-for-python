@@ -29,7 +29,7 @@ from dotenv import load_dotenv
 from util import create_version_with_endpoint
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolCodeInterpreterTool
 
 load_dotenv()
 
@@ -45,7 +45,7 @@ with (
         definition=PromptAgentDefinition(
             model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant.",
-            tools=[CodeInterpreterTool()],
+            tools=[ToolCodeInterpreterTool()],
         ),
         description="Code interpreter agent for data analysis and visualization.",
     ),

@@ -1,5 +1,27 @@
 # Release History
 
+## 2.11.0 (Unreleased)
+
+### Features Added
+
+* Added GPT Live agent configuration, delegation, session, event, and Decisions models. `VoiceAgentLiveDefinition` uses self-deployed models with `VoiceAgentLiveClientDelegation` or `VoiceAgentLiveResponsesDelegation` for persisted delegation settings; native session-update models remain separate.
+* Added persisted Live conversation, item, and audio REST operations under `beta.voice_agents.live_conversations`.
+* Added `VoiceAgentLiveSessionResource` and `VoiceAgentLiveDelegationItem` so Live lifecycle and delegation events preserve effective Foundry-managed ownership and resolved agent versions.
+* Added optional `VoiceAgentDefinition.post_call` configuration for routine and Event Grid destinations.
+* Added SIP telephony binding models.
+* Added Voice Agent handoff, subagent, and system-tool configuration and event models for transfers, DTMF/SMS, input collection, and language and digit recognition.
+
+### Breaking Changes
+
+Breaking changes in preview classes:
+
+* `VoiceAgentDefinition` now derives from `VoiceAgentBaseDefinition` with a required `sub_protocol` discriminator initialized to `realtime`.
+* Several existing OpenAI tool models now have `Tool`-prefixed names. Use `ToolMcpTool` and `ToolCustomToolParam` where a `Tool` subtype is required; `MCPTool` and `CustomToolParam` are standalone models.
+
+### Sample updates
+
+* Updated existing agent-tool and evaluation samples to use the generated `Tool`-prefixed models.
+
 ## 2.10.0 (2026-10-30)
 
 ### Features Added

@@ -11,7 +11,7 @@ DESCRIPTION:
     report the Python version and working-directory contents of the shell tool's
     auto-provisioned, network-isolated container.
 
-    The agent reaches the toolbox through an `MCPTool` pointed at the toolbox's
+    The agent reaches the toolbox through a `ToolMcpTool` pointed at the toolbox's
     versioned `/mcp` URL, the same way any other toolbox tool is consumed. The
     sample prints the tools exposed by the MCP server, each shell command's
     arguments and output, and the agent's final response.
@@ -38,7 +38,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    MCPTool,
+    ToolMcpTool,
     PromptAgentDefinition,
     ShellToolboxTool,
     ToolboxShellContainerAutoEnvironment,
@@ -80,7 +80,7 @@ with (
         toolbox_mcp_url = f"{endpoint}/toolboxes/{TOOLBOX_NAME}/versions/{toolbox_version.version}/mcp?api-version=v1"
         token = credential.get_token("https://ai.azure.com/.default").token
 
-        toolbox_mcp_tool = MCPTool(
+        toolbox_mcp_tool = ToolMcpTool(
             server_label=TOOLBOX_MCP_LABEL,
             server_url=toolbox_mcp_url,
             authorization=token,

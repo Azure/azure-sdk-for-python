@@ -34,7 +34,7 @@ from openai.types.responses.response_input_param import FunctionCallOutput, Resp
 from util import create_version_with_endpoint_async
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolFunctionTool
 
 load_dotenv()
 
@@ -49,7 +49,7 @@ async def get_horoscope(sign: str) -> str:
 
 async def main():
     # Define a function tool for the model to use
-    func_tool = FunctionTool(
+    func_tool = ToolFunctionTool(
         name="get_horoscope",
         parameters={
             "type": "object",

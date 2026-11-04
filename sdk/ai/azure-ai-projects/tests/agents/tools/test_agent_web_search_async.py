@@ -8,7 +8,7 @@
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, WebSearchPreviewTool, ApproximateLocation
+from azure.ai.projects.models import PromptAgentDefinition, ToolWebSearchPreviewTool, ApproximateLocation
 
 
 class TestAgentWebSearchAsync(TestBase):
@@ -32,7 +32,7 @@ class TestAgentWebSearchAsync(TestBase):
                     model=model,
                     instructions="You are a helpful assistant that can search the web for current information.",
                     tools=[
-                        WebSearchPreviewTool(
+                        ToolWebSearchPreviewTool(
                             user_location=ApproximateLocation(country="US", city="Seattle", region="Washington")
                         )
                     ],

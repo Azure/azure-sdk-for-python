@@ -15,6 +15,7 @@ can all be verified without a live service or a recorded transport.
 import json
 import inspect
 import logging
+from typing import Literal
 from unittest.mock import MagicMock, patch
 from urllib.parse import parse_qs, urlparse
 
@@ -22,6 +23,7 @@ import pytest
 from azure.core.credentials import AccessToken
 from websockets.typing import Subprotocol
 
+from azure.ai.projects import models
 from azure.ai.projects._realtime import (
     BetaRealtime,
     BetaRealtimeConnectionManager,
@@ -36,6 +38,49 @@ from azure.ai.projects.models import (
 )
 
 _ENDPOINT = "https://my-account.services.ai.azure.com/api/projects/my-project"
+
+
+@pytest.mark.parametrize(
+    "definition_type,arguments,expected_annotation,expected_payload",
+    [
+        (
+            models.VoiceAgentDefinition,
+            {"model": "deployment-test"},
+            Literal[models.VoiceAgentSubProtocol.REALTIME],
+            {"model": "deployment-test", "kind": "voice", "sub_protocol": "realtime"},
+        ),
+        (
+            models.VoiceAgentLiveDefinition,
+            {"model": "deployment-test", "model_type": models.VoiceModelType.SELF_DEPLOYED},
+            Literal[models.VoiceAgentSubProtocol.LIVE],
+            {"model": "deployment-test", "kind": "voice", "sub_protocol": "live", "model_type": "self_deployed"},
+        ),
+    ],
+)
+def test_voice_protocol_discriminator_annotations_and_constructor_payloads(
+    definition_type, arguments, expected_annotation, expected_payload
+):
+    assert definition_type.__annotations__["sub_protocol"] == expected_annotation
+    assert definition_type(**arguments).as_dict() == expected_payload
+
+
+@pytest.mark.parametrize(
+    "protocol,expected_type",
+    [
+        ("realtime", models.VoiceAgentDefinition),
+        ("live", models.VoiceAgentLiveDefinition),
+    ],
+)
+def test_generated_voice_discriminator_preserves_concrete_readback(protocol, expected_type):
+    definition = {
+        "kind": "voice",
+        "sub_protocol": protocol,
+        "model": "deployment-test",
+        "model_type": "self_deployed" if protocol == "live" else "managed",
+    }
+    version = models.AgentVersionDetails({"name": "agent-test", "version": "1", "definition": definition})
+    assert type(version.definition) is expected_type
+    assert version.definition.as_dict() == definition
 
 
 class _FakeCredential:

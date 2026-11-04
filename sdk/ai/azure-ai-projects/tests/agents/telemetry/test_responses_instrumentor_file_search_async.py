@@ -25,7 +25,7 @@ from azure.ai.projects.telemetry._utils import (
     _set_use_message_events,
     RESPONSES_PROVIDER,
 )
-from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolFileSearchTool
 from azure.core.settings import settings
 
 settings.tracing_implementation = "OpenTelemetry"
@@ -98,7 +98,7 @@ Return Policy: 30-day return policy with no questions asked
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can search through uploaded documents to answer questions.",
-                    tools=[FileSearchTool(vector_store_ids=[vector_store.id])],
+                    tools=[ToolFileSearchTool(vector_store_ids=[vector_store.id])],
                 ),
             )
 
@@ -309,7 +309,7 @@ Return Policy: 30-day return policy with no questions asked
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can search through uploaded documents to answer questions.",
-                    tools=[FileSearchTool(vector_store_ids=[vector_store.id])],
+                    tools=[ToolFileSearchTool(vector_store_ids=[vector_store.id])],
                 ),
             )
 
@@ -518,7 +518,7 @@ Return Policy: 30-day return policy with no questions asked
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can search through uploaded documents to answer questions.",
-                    tools=[FileSearchTool(vector_store_ids=[vector_store.id])],
+                    tools=[ToolFileSearchTool(vector_store_ids=[vector_store.id])],
                 ),
             )
 
@@ -725,7 +725,7 @@ Return Policy: 30-day return policy with no questions asked
                 definition=PromptAgentDefinition(
                     model=deployment_name,
                     instructions="You are a helpful assistant that can search through uploaded documents to answer questions.",
-                    tools=[FileSearchTool(vector_store_ids=[vector_store.id])],
+                    tools=[ToolFileSearchTool(vector_store_ids=[vector_store.id])],
                 ),
             )
 

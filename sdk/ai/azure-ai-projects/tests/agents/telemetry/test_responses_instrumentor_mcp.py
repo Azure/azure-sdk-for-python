@@ -24,7 +24,7 @@ from azure.ai.projects.telemetry._utils import (
     _set_use_message_events,
     RESPONSES_PROVIDER,
 )
-from azure.ai.projects.models import PromptAgentDefinition, MCPTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolMcpTool
 from azure.core.settings import settings
 
 settings.tracing_implementation = "OpenTelemetry"
@@ -69,7 +69,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
             openai_client = project_client.get_openai_client()
 
             # Create MCP tool
-            mcp_tool = MCPTool(
+            mcp_tool = ToolMcpTool(
                 server_label="api-specs",
                 server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
                 require_approval="always",
@@ -401,7 +401,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
             openai_client = project_client.get_openai_client()
 
             # Create MCP tool
-            mcp_tool = MCPTool(
+            mcp_tool = ToolMcpTool(
                 server_label="api-specs",
                 server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
                 require_approval="always",
@@ -720,7 +720,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
             openai_client = project_client.get_openai_client()
 
             # Create MCP tool
-            mcp_tool = MCPTool(
+            mcp_tool = ToolMcpTool(
                 server_label="api-specs",
                 server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
                 require_approval="always",
@@ -998,7 +998,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
             openai_client = project_client.get_openai_client()
 
             # Create MCP tool
-            mcp_tool = MCPTool(
+            mcp_tool = ToolMcpTool(
                 server_label="api-specs",
                 server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
                 require_approval="always",

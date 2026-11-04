@@ -26,7 +26,7 @@ from azure.ai.projects.telemetry._utils import (
     _set_use_simple_tool_format,
     RESPONSES_PROVIDER,
 )
-from azure.ai.projects.models import PromptAgentDefinition, FunctionTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolFunctionTool
 from azure.core.settings import settings
 
 settings.tracing_implementation = "OpenTelemetry"
@@ -981,7 +981,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
-            func_tool = FunctionTool(
+            func_tool = ToolFunctionTool(
                 name="get_weather",
                 parameters={
                     "type": "object",
@@ -1240,7 +1240,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
-            func_tool = FunctionTool(
+            func_tool = ToolFunctionTool(
                 name="get_weather",
                 parameters={
                     "type": "object",
@@ -1564,7 +1564,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
-            func_tool = FunctionTool(
+            func_tool = ToolFunctionTool(
                 name="get_weather",
                 parameters={
                     "type": "object",
@@ -1800,7 +1800,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
-            func_tool = FunctionTool(
+            func_tool = ToolFunctionTool(
                 name="get_weather",
                 parameters={
                     "type": "object",
@@ -2118,7 +2118,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
-            func_tool = FunctionTool(
+            func_tool = ToolFunctionTool(
                 name="get_weather",
                 parameters={
                     "type": "object",
@@ -2268,7 +2268,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
-            func_tool = FunctionTool(
+            func_tool = ToolFunctionTool(
                 name="get_weather",
                 parameters={
                     "type": "object",
@@ -4700,7 +4700,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
-            function_tool = FunctionTool(
+            function_tool = ToolFunctionTool(
                 name="get_weather",
                 description="Get the current weather for a location.",
                 parameters={
@@ -4818,7 +4818,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):  # pylint: disabl
             deployment_name = kwargs.get("foundry_model_name")
 
             # Define a function tool
-            function_tool = FunctionTool(
+            function_tool = ToolFunctionTool(
                 name="get_weather",
                 description="Get the current weather for a location.",
                 parameters={

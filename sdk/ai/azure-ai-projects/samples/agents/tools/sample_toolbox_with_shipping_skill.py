@@ -39,7 +39,7 @@ from util import create_version_with_endpoint
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    MCPTool,
+    ToolMcpTool,
     PromptAgentDefinition,
     SkillInlineContent,
     ToolSearchToolboxTool,
@@ -106,7 +106,7 @@ with (
         print(f"Created toolbox `{toolbox_version.name}` (version {toolbox_version.version}).")
 
         toolbox_mcp_url = f"{endpoint}/toolboxes/{TOOLBOX_NAME}/versions/{toolbox_version.version}/mcp?api-version=v1"
-        toolbox_mcp_tool = MCPTool(
+        toolbox_mcp_tool = ToolMcpTool(
             server_label=TOOLBOX_MCP_LABEL,
             server_url=toolbox_mcp_url,
             authorization=credential.get_token("https://ai.azure.com/.default").token,

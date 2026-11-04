@@ -12,7 +12,7 @@ DESCRIPTION:
 
     A toolbox version that includes 'ToolSearchToolboxTool' exposes only
     two meta tools at its '/mcp' endpoint -- 'tool_search' and 'call_tool'
-    -- and defers every other tool behind them. The agent uses an 'MCPTool'
+    -- and defers every other tool behind them. The agent uses a 'ToolMcpTool'
     pointed at the toolbox's versioned '/mcp' URL to discover and invoke
     those inner tools.
 
@@ -43,7 +43,7 @@ from util import create_version_with_endpoint_async
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    MCPTool,
+    ToolMcpTool,
     MCPToolboxTool,
     ToolSearchToolboxTool,
     PromptAgentDefinition,
@@ -84,7 +84,7 @@ async def main() -> None:
         toolbox_mcp_url = f"{endpoint}/toolboxes/{TOOLBOX_NAME}/versions/{toolbox_version.version}/mcp?api-version=v1"
         token = (await credential.get_token("https://ai.azure.com/.default")).token
 
-        toolbox_mcp_tool = MCPTool(
+        toolbox_mcp_tool = ToolMcpTool(
             server_label=TOOLBOX_MCP_LABEL,
             server_url=toolbox_mcp_url,
             authorization=token,

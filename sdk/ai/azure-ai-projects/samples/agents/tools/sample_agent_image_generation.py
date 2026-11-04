@@ -7,11 +7,11 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI Agent with image generation capabilities
-    using the ImageGenTool and synchronous Azure AI Projects client. The Agent can generate
+    using the ToolImageGenTool and synchronous Azure AI Projects client. The Agent can generate
     images based on text prompts and save them to files.
 
     The sample shows:
-    - Creating an Agent with ImageGenTool configured for image generation
+    - Creating an Agent with ToolImageGenTool configured for image generation
     - Making requests to generate images from text prompts
     - Extracting base64-encoded image data from the response
     - Decoding and saving the generated image to a local file
@@ -34,11 +34,11 @@ USAGE:
        used by the Agent for understanding and responding to prompts. This is NOT the image generation model.
     3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
     4) IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g. gpt-image-1)
-       used by the ImageGenTool.
+       used by the ToolImageGenTool.
 
     NOTE:
     - Image generation requires a separate (e.g. gpt-image-1) deployment which is specified when constructing
-      the `ImageGenTool`, as well as providing it in the `x-ms-oai-image-generation-deployment` header when
+      the `ToolImageGenTool`, as well as providing it in the `x-ms-oai-image-generation-deployment` header when
       calling `.responses.create`.
     - The generated image will be saved as "happy-dogs.png" in the OS temporary directory.
 """
@@ -52,7 +52,7 @@ from util import create_version_with_endpoint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolImageGenTool
 
 load_dotenv()
 
@@ -60,7 +60,7 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 image_generation_model = os.environ["IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME"]
 
-tool = ImageGenTool(
+tool = ToolImageGenTool(
     model=image_generation_model,  # Model such as "gpt-image-1"
     quality="low",
     size="1024x1024",

@@ -43,7 +43,7 @@ from computer_use_util import (  # pylint: disable=import-error
 )
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, ComputerUsePreviewTool
+from azure.ai.projects.models import PromptAgentDefinition, ToolComputerUsePreviewTool
 
 load_dotenv()
 
@@ -61,7 +61,7 @@ except FileNotFoundError:
     print("Failed to load required screenshot assets. Please ensure the asset files exist in ../assets/")
     exit(1)  # pylint: disable=consider-using-sys-exit
 
-tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
+tool = ToolComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
 
 with (
     DefaultAzureCredential() as credential,

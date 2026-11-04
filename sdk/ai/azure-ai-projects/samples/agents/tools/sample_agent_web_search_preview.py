@@ -39,7 +39,7 @@ from util import create_version_with_endpoint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, WebSearchPreviewTool, ApproximateLocation
+from azure.ai.projects.models import PromptAgentDefinition, ToolWebSearchPreviewTool, ApproximateLocation
 
 load_dotenv()
 
@@ -47,7 +47,7 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 
-tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
+tool = ToolWebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,

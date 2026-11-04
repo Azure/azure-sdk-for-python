@@ -29,7 +29,7 @@ import tempfile
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, AutoCodeInterpreterToolParam
+from azure.ai.projects.models import PromptAgentDefinition, ToolCodeInterpreterTool, AutoCodeInterpreterToolParam
 
 load_dotenv()
 
@@ -50,7 +50,7 @@ with (
     with open(asset_file_path, "rb") as f:
         file = openai_client.files.create(purpose="assistants", file=f)
 
-    tool = CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))
+    tool = ToolCodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))
 
     print(f"File uploaded (id: {file.id})")
 
