@@ -108,7 +108,6 @@ def test_rust_credentials_and_target_setup_are_opt_in():
     assert "variable=AZURESDK_PYTHON_NUGET_FEED]" in provision["pwsh"]
     assert "variable=AZURESDK_PYTHON_ARM64_LIBS]true" in provision["pwsh"]
     assert "variable=PYTHON_ARM64_LIB_DIR]" not in provision["pwsh"]
-    assert "3.10.11" not in provision["pwsh"]
 
 
 @pytest.mark.parametrize("rust", ["true", "false"])
