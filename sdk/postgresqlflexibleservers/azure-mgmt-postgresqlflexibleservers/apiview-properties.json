@@ -38,10 +38,6 @@
         "azure.mgmt.postgresqlflexibleservers.models.DatabaseMigrationState": "Microsoft.DBforPostgreSQL.DatabaseMigrationState",
         "azure.mgmt.postgresqlflexibleservers.models.DatabaseProperties": "Microsoft.DBforPostgreSQL.DatabaseProperties",
         "azure.mgmt.postgresqlflexibleservers.models.DataEncryption": "Microsoft.DBforPostgreSQL.DataEncryption",
-        "azure.mgmt.postgresqlflexibleservers.models.DbAgent": "Microsoft.DBforPostgreSQL.DbAgent",
-        "azure.mgmt.postgresqlflexibleservers.models.DbAgentForUpdate": "Microsoft.DBforPostgreSQL.DbAgentForUpdate",
-        "azure.mgmt.postgresqlflexibleservers.models.DbAgentForUpdateProperties": "Microsoft.DBforPostgreSQL.DbAgentForUpdateProperties",
-        "azure.mgmt.postgresqlflexibleservers.models.DbAgentProperties": "Microsoft.DBforPostgreSQL.DbAgentProperties",
         "azure.mgmt.postgresqlflexibleservers.models.DbLevelValidationStatus": "Microsoft.DBforPostgreSQL.DbLevelValidationStatus",
         "azure.mgmt.postgresqlflexibleservers.models.DbServerMetadata": "Microsoft.DBforPostgreSQL.DbServerMetadata",
         "azure.mgmt.postgresqlflexibleservers.models.DelegatedSubnetUsage": "Microsoft.DBforPostgreSQL.DelegatedSubnetUsage",
@@ -152,7 +148,6 @@
         "azure.mgmt.postgresqlflexibleservers.models.Cancel": "Microsoft.DBforPostgreSQL.Cancel",
         "azure.mgmt.postgresqlflexibleservers.models.MigrationListFilter": "Microsoft.DBforPostgreSQL.MigrationListFilter",
         "azure.mgmt.postgresqlflexibleservers.models.MigrationNameAvailabilityReason": "Microsoft.DBforPostgreSQL.MigrationNameAvailabilityReason",
-        "azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion": "Microsoft.DBforPostgreSQL.PostgresMajorVersion",
         "azure.mgmt.postgresqlflexibleservers.models.ServerState": "Microsoft.DBforPostgreSQL.ServerState",
         "azure.mgmt.postgresqlflexibleservers.models.StorageAutoGrow": "Microsoft.DBforPostgreSQL.StorageAutoGrow",
         "azure.mgmt.postgresqlflexibleservers.models.AzureManagedDiskPerformanceTier": "Microsoft.DBforPostgreSQL.AzureManagedDiskPerformanceTier",
@@ -184,9 +179,6 @@
         "azure.mgmt.postgresqlflexibleservers.models.MaintenanceType": "Microsoft.DBforPostgreSQL.MaintenanceType",
         "azure.mgmt.postgresqlflexibleservers.models.MaintenanceEventStatus": "Microsoft.DBforPostgreSQL.MaintenanceEventStatus",
         "azure.mgmt.postgresqlflexibleservers.models.MaintenanceEventStatusFilter": "Microsoft.DBforPostgreSQL.MaintenanceEventStatusFilter",
-        "azure.mgmt.postgresqlflexibleservers.models.DbAgentState": "Microsoft.DBforPostgreSQL.DbAgentState",
-        "azure.mgmt.postgresqlflexibleservers.models.DbAgentProvisioningState": "Microsoft.DBforPostgreSQL.DbAgentProvisioningState",
-        "azure.mgmt.postgresqlflexibleservers.models.DbAgentForUpdateState": "Microsoft.DBforPostgreSQL.DbAgentForUpdateState",
         "azure.mgmt.postgresqlflexibleservers.models.PrincipalType": "Microsoft.DBforPostgreSQL.PrincipalType",
         "azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus": "Microsoft.DBforPostgreSQL.CapabilityStatus",
         "azure.mgmt.postgresqlflexibleservers.models.HighAvailabilityMode": "Microsoft.DBforPostgreSQL.HighAvailabilityMode",
@@ -300,12 +292,6 @@
         "azure.mgmt.postgresqlflexibleservers.aio.operations.MajorVersionUpgradePrecheckOperations.get": "Microsoft.DBforPostgreSQL.MajorVersionUpgradePrecheck.get",
         "azure.mgmt.postgresqlflexibleservers.operations.MajorVersionUpgradePrecheckOperations.list": "Microsoft.DBforPostgreSQL.MajorVersionUpgradePrecheck.list",
         "azure.mgmt.postgresqlflexibleservers.aio.operations.MajorVersionUpgradePrecheckOperations.list": "Microsoft.DBforPostgreSQL.MajorVersionUpgradePrecheck.list",
-        "azure.mgmt.postgresqlflexibleservers.operations.DbAgentsOperations.list": "Microsoft.DBforPostgreSQL.DbAgents.list",
-        "azure.mgmt.postgresqlflexibleservers.aio.operations.DbAgentsOperations.list": "Microsoft.DBforPostgreSQL.DbAgents.list",
-        "azure.mgmt.postgresqlflexibleservers.operations.DbAgentsOperations.get": "Microsoft.DBforPostgreSQL.DbAgents.get",
-        "azure.mgmt.postgresqlflexibleservers.aio.operations.DbAgentsOperations.get": "Microsoft.DBforPostgreSQL.DbAgents.get",
-        "azure.mgmt.postgresqlflexibleservers.operations.DbAgentsOperations.begin_create_or_update": "Microsoft.DBforPostgreSQL.DbAgents.createOrUpdate",
-        "azure.mgmt.postgresqlflexibleservers.aio.operations.DbAgentsOperations.begin_create_or_update": "Microsoft.DBforPostgreSQL.DbAgents.createOrUpdate",
         "azure.mgmt.postgresqlflexibleservers.operations.AdministratorsMicrosoftEntraOperations.get": "Microsoft.DBforPostgreSQL.AdministratorMicrosoftEntras.get",
         "azure.mgmt.postgresqlflexibleservers.aio.operations.AdministratorsMicrosoftEntraOperations.get": "Microsoft.DBforPostgreSQL.AdministratorMicrosoftEntras.get",
         "azure.mgmt.postgresqlflexibleservers.operations.AdministratorsMicrosoftEntraOperations.begin_create_or_update": "Microsoft.DBforPostgreSQL.AdministratorMicrosoftEntras.createOrUpdate",
@@ -361,5 +347,5 @@
         "azure.mgmt.postgresqlflexibleservers.operations.VirtualNetworkSubnetUsageOperations.list": "Microsoft.DBforPostgreSQL.VirtualNetworkSubnetUsageOperationGroup.list",
         "azure.mgmt.postgresqlflexibleservers.aio.operations.VirtualNetworkSubnetUsageOperations.list": "Microsoft.DBforPostgreSQL.VirtualNetworkSubnetUsageOperationGroup.list"
     },
-    "CrossLanguageVersion": "e39844f38b0c"
+    "CrossLanguageVersion": "ed9da1dd95bd"
 }
