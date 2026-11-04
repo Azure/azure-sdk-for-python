@@ -72,6 +72,8 @@ from ._enums import (
     VersionIndicatorType,
     VersionSelectorType,
     VoiceAgentPostCallDestinationType,
+    VoiceAgentServerEventTypeExtension,
+    VoiceAgentSubagentType,
     VoiceAgentSystemToolName,
     VoiceAgentTurnDetectionType,
 )
@@ -7647,6 +7649,100 @@ class CreateAsyncResponse(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
+class CreateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The request to create a telephony binding.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    CreateSipTelephonyBindingRequest, CreateTeamsPhoneExtensibilityTelephonyBindingRequest,
+    CreateTwilioTelephonyBindingRequest
+
+    :ivar provider: The telephony provider. Required. Known values are:
+     "teams_phone_extensibility", "twilio", and "sip".
+    :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
+    :ivar label: An optional display label for the binding.
+    :vartype label: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\", \"twilio\",
+     and \"sip\"."""
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Foundry connection name for the telephony provider. Required."""
+    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional display label for the binding."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        provider: str,
+        connection_name: str,
+        label: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CreateSipTelephonyBindingRequest(
+    CreateTelephonyBindingRequest, discriminator="sip"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The request to create an inbound SIP binding.
+
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
+    :ivar label: An optional display label for the binding.
+    :vartype label: str
+    :ivar provider: Required. Session Initiation Protocol.
+    :vartype provider: str or ~azure.ai.projects.models.SIP
+    :ivar phone_number: For UI display only.
+    :vartype phone_number: str
+    :ivar allowed_calling_numbers: Omit or send [] to allow any caller. Entries match the entire
+     normalized E.164 caller number.
+    :vartype allowed_calling_numbers: list[str]
+    """
+
+    provider: Literal[TelephonyProvider.SIP] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Session Initiation Protocol."""
+    phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """For UI display only."""
+    allowed_calling_numbers: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Omit or send [] to allow any caller. Entries match the entire normalized E.164 caller number."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_name: str,
+        label: Optional[str] = None,
+        phone_number: Optional[str] = None,
+        allowed_calling_numbers: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.provider = TelephonyProvider.SIP  # type: ignore
+
+
 class CreateSkillVersionFromFilesBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Multipart request body for creating a skill version from files. Accepts either a single zip
     file or multiple individual skill files (directory upload). For zip uploads, the server
@@ -7673,50 +7769,6 @@ class CreateSkillVersionFromFilesBody(_Model):  # pylint: disable=docstring-keyw
         *,
         files: list[FileType],
         default: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CreateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The request to create a telephony binding.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    CreateTeamsPhoneExtensibilityTelephonyBindingRequest, CreateTwilioTelephonyBindingRequest
-
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
-     and "twilio".
-    :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
-    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
-    :vartype connection_name: str
-    :ivar label: An optional display label for the binding.
-    :vartype label: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
-    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
-     \"twilio\"."""
-    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Foundry connection name for the telephony provider. Required."""
-    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An optional display label for the binding."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        provider: str,
-        connection_name: str,
-        label: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -7785,8 +7837,8 @@ class CreateTelephonyCallJobRequest(_Model):  # pylint: disable=docstring-keywor
     :ivar destination: The phone destination to call. Required.
     :vartype destination: ~azure.ai.projects.models.TelephonyOutboundDestination
     :ivar connection_name: The Foundry connection name in the current project used to originate the
-     call. Its category selects Twilio or Azure Communication Services / Teams Phone extensibility.
-     No inbound telephony binding is required. Required.
+     call. Its category selects Twilio, Azure Communication Services / Teams Phone extensibility, or
+     SIP. No inbound telephony binding is required. Required.
     :vartype connection_name: str
     :ivar source: The caller identity used to originate the call. For a Twilio connection, provide
      an authorized E.164 phone number. For an Azure Communication Services / Teams Phone
@@ -7813,7 +7865,7 @@ class CreateTelephonyCallJobRequest(_Model):  # pylint: disable=docstring-keywor
     """The phone destination to call. Required."""
     connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name in the current project used to originate the call. Its category
-     selects Twilio or Azure Communication Services / Teams Phone extensibility. No inbound
+     selects Twilio, Azure Communication Services / Teams Phone extensibility, or SIP. No inbound
      telephony binding is required. Required."""
     source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The caller identity used to originate the call. For a Twilio connection, provide an authorized
@@ -12861,6 +12913,172 @@ class InlineSkillSourceParam(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
         self.type: Literal["base64"] = "base64"
         self.media_type: Literal["application/zip"] = "application/zip"
+
+
+class InlineVoiceSubagent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """One inline voice subagent owned and versioned with its parent Voice Agent, not a separate Agent
+    resource.
+
+    :ivar id: The subagent identifier. New Handoff authoring requires ``$entrypoint`` as the first
+     subagent; other values use the normal handoff ID grammar. Required.
+    :vartype id: str
+    :ivar source: The definition source. This phase supports only ``inline``; referenced Agent
+     resources are deferred. Required. Default value is "inline".
+    :vartype source: str
+    :ivar interface: The interaction interface. This phase supports only ``voice``; text delegation
+     is deferred. Required. Default value is "voice".
+    :vartype interface: str
+    :ivar display_description: A non-empty display-only description of the specialist behavior.
+     This value is not provided to the model. Required.
+    :vartype display_description: str
+    :ivar model: The target model for a cascaded graph. Realtime graphs reject this property and
+     retain the connection model.
+    :vartype model: str
+    :ivar instructions: Subagent-specific instructions. With default inheritance, non-empty
+     instructions follow the original top-level instructions. Omission, null, or an empty string
+     adds nothing after that base. With inheritance disabled, only this value applies.
+    :vartype instructions: str
+    :ivar inherit_base_instructions: Whether the subagent inherits the original top-level
+     instructions before applying its own non-empty instructions. Defaults to true; set to false to
+     opt out.
+    :vartype inherit_base_instructions: bool
+    :ivar tools: Customer tools available to this subagent. Omission or null selects an empty
+     customer tool set.
+    :vartype tools: list[~azure.ai.projects.models.VoiceAgentTool]
+    :ivar tool_choice: Tool-selection behavior for this subagent. If omitted, the service defaults
+     to auto. Null also selects auto. Is one of the following types: Literal["none"],
+     Literal["auto"], Literal["required"], ToolChoiceFunction, ToolChoiceMCP
+    :vartype tool_choice: str or str or str or ~azure.ai.projects.models.ToolChoiceFunction or
+     ~azure.ai.projects.models.ToolChoiceMCP
+    :ivar audio_output: The output voice configuration activated for this subagent, using the same
+     flat voice fields as the top-level audio output. Omission inherits the entrypoint
+     configuration; a supplied object replaces the voice-specific settings.
+    :vartype audio_output: ~azure.ai.projects.models.VoiceAgentVoiceConfig
+    :ivar temperature: The sampling temperature for a compatible subagent model, from 0 through 2.
+    :vartype temperature: float
+    :ivar max_response_output_tokens: The maximum output-token count for one response while this
+     subagent is active. Is either a int type or a Literal["inf"] type.
+    :vartype max_response_output_tokens: int or str
+    :ivar reasoning_effort: Reasoning effort for a compatible subagent model. Known values are:
+     "none", "minimal", "low", "medium", "high", and "xhigh".
+    :vartype reasoning_effort: str or ~azure.ai.projects.models.VoiceAgentHandoffReasoningEffort
+    :ivar voice_adaptation: Voice-optimized instruction adaptation for this subagent. Null disables
+     adaptation.
+    :vartype voice_adaptation: ~azure.ai.projects.models.VoiceAgentHandoffVoiceAdaptation
+    :ivar interim_response: Interim-response settings for this subagent. Null disables interim
+     responses.
+    :vartype interim_response: ~azure.ai.projects.models.VoiceAgentInterimResponseConfig
+    :ivar parallel_tool_calls: Whether this subagent may call customer tools in parallel. If
+     omitted, the service defaults to false. Subagents with outgoing handoff conditions must use
+     ``false``.
+    :vartype parallel_tool_calls: bool
+    :ivar handoff_conditions: Outgoing handoffs from this subagent. The containing subagent
+     supplies each condition's source. The service permits at most 128 conditions across the entire
+     Agent.
+    :vartype handoff_conditions: list[~azure.ai.projects.models.VoiceAgentHandoffCondition]
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The subagent identifier. New Handoff authoring requires ``$entrypoint`` as the first subagent;
+     other values use the normal handoff ID grammar. Required."""
+    source: Literal["inline"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The definition source. This phase supports only ``inline``; referenced Agent resources are
+     deferred. Required. Default value is \"inline\"."""
+    interface: Literal["voice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The interaction interface. This phase supports only ``voice``; text delegation is deferred.
+     Required. Default value is \"voice\"."""
+    display_description: str = rest_field(
+        name="description", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A non-empty display-only description of the specialist behavior. This value is not provided to
+     the model. Required."""
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target model for a cascaded graph. Realtime graphs reject this property and retain the
+     connection model."""
+    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Subagent-specific instructions. With default inheritance, non-empty instructions follow the
+     original top-level instructions. Omission, null, or an empty string adds nothing after that
+     base. With inheritance disabled, only this value applies."""
+    inherit_base_instructions: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the subagent inherits the original top-level instructions before applying its own
+     non-empty instructions. Defaults to true; set to false to opt out."""
+    tools: Optional[list["_models.VoiceAgentTool"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Customer tools available to this subagent. Omission or null selects an empty customer tool set."""
+    tool_choice: Optional["_unions.VoiceAgentToolChoice"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Tool-selection behavior for this subagent. If omitted, the service defaults to auto. Null also
+     selects auto. Is one of the following types: Literal[\"none\"], Literal[\"auto\"],
+     Literal[\"required\"], ToolChoiceFunction, ToolChoiceMCP"""
+    audio_output: Optional["_models.VoiceAgentVoiceConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The output voice configuration activated for this subagent, using the same flat voice fields as
+     the top-level audio output. Omission inherits the entrypoint configuration; a supplied object
+     replaces the voice-specific settings."""
+    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The sampling temperature for a compatible subagent model, from 0 through 2."""
+    max_response_output_tokens: Optional["_unions.VoiceAgentHandoffMaxOutputTokens"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum output-token count for one response while this subagent is active. Is either a int
+     type or a Literal[\"inf\"] type."""
+    reasoning_effort: Optional[Union[str, "_models.VoiceAgentHandoffReasoningEffort"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reasoning effort for a compatible subagent model. Known values are: \"none\", \"minimal\",
+     \"low\", \"medium\", \"high\", and \"xhigh\"."""
+    voice_adaptation: Optional["_models.VoiceAgentHandoffVoiceAdaptation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Voice-optimized instruction adaptation for this subagent. Null disables adaptation."""
+    interim_response: Optional["_models.VoiceAgentInterimResponseConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Interim-response settings for this subagent. Null disables interim responses."""
+    parallel_tool_calls: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this subagent may call customer tools in parallel. If omitted, the service defaults to
+     false. Subagents with outgoing handoff conditions must use ``false``."""
+    handoff_conditions: Optional[list["_models.VoiceAgentHandoffCondition"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Outgoing handoffs from this subagent. The containing subagent supplies each condition's source.
+     The service permits at most 128 conditions across the entire Agent."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        display_description: str,
+        model: Optional[str] = None,
+        instructions: Optional[str] = None,
+        inherit_base_instructions: Optional[bool] = None,
+        tools: Optional[list["_models.VoiceAgentTool"]] = None,
+        tool_choice: Optional["_unions.VoiceAgentToolChoice"] = None,
+        audio_output: Optional["_models.VoiceAgentVoiceConfig"] = None,
+        temperature: Optional[float] = None,
+        max_response_output_tokens: Optional["_unions.VoiceAgentHandoffMaxOutputTokens"] = None,
+        reasoning_effort: Optional[Union[str, "_models.VoiceAgentHandoffReasoningEffort"]] = None,
+        voice_adaptation: Optional["_models.VoiceAgentHandoffVoiceAdaptation"] = None,
+        interim_response: Optional["_models.VoiceAgentInterimResponseConfig"] = None,
+        parallel_tool_calls: Optional[bool] = None,
+        handoff_conditions: Optional[list["_models.VoiceAgentHandoffCondition"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.source: Literal["inline"] = "inline"
+        self.interface: Literal["voice"] = "voice"
 
 
 class Insight(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -19099,9 +19317,10 @@ class RealtimeServerEvent(_Model):  # pylint: disable=docstring-keyword-should-m
     VoiceAgentServerEventRtcCallError, VoiceAgentServerEventRtcCallSdpCreated,
     VoiceAgentServerEventSessionAvatarConnecting, VoiceAgentServerEventSessionAvatarSwitchToIdle,
     VoiceAgentServerEventSessionAvatarSwitchToSpeaking, RealtimeServerEventSessionCreated,
-    VoiceAgentServerEventSessionSubagentAborted, VoiceAgentServerEventSessionSubagentCompleted,
-    VoiceAgentServerEventSessionSubagentStarted, RealtimeServerEventSessionUpdated,
-    VoiceAgentServerEventWarning
+    VoiceAgentServerEventSessionHandoffAborted, VoiceAgentServerEventSessionHandoffCompleted,
+    VoiceAgentServerEventSessionHandoffStarted, VoiceAgentServerEventSessionSubagentAborted,
+    VoiceAgentServerEventSessionSubagentCompleted, VoiceAgentServerEventSessionSubagentStarted,
+    RealtimeServerEventSessionUpdated, VoiceAgentServerEventWarning
 
     :ivar type: Required. Known values are: "conversation.created", "conversation.item.created",
      "conversation.item.deleted", "conversation.item.input_audio_transcription.completed",
@@ -19128,8 +19347,10 @@ class RealtimeServerEvent(_Model):  # pylint: disable=docstring-keyword-should-m
      "session.avatar.switch_to_idle", "rtc.call.sdp.created", "rtc.call.error",
      "response.audio_timestamp.delta", "response.audio_timestamp.done",
      "response.animation_blendshapes.delta", "response.animation_blendshapes.done",
-     "response.animation_viseme.delta", "response.animation_viseme.done", and
-     "response.video.delta".
+     "response.animation_viseme.delta", "response.animation_viseme.done", "response.video.delta",
+     "response.system_tool_arguments.delta", "response.system_tool_arguments.done",
+     "input_collection.status", "session.handoff.started", "session.handoff.completed", and
+     "session.handoff.aborted".
     :vartype type: str or ~azure.ai.projects.models.RealtimeServerEventType
     """
 
@@ -19160,8 +19381,10 @@ class RealtimeServerEvent(_Model):  # pylint: disable=docstring-keyword-should-m
      \"session.avatar.switch_to_idle\", \"rtc.call.sdp.created\", \"rtc.call.error\",
      \"response.audio_timestamp.delta\", \"response.audio_timestamp.done\",
      \"response.animation_blendshapes.delta\", \"response.animation_blendshapes.done\",
-     \"response.animation_viseme.delta\", \"response.animation_viseme.done\", and
-     \"response.video.delta\"."""
+     \"response.animation_viseme.delta\", \"response.animation_viseme.done\",
+     \"response.video.delta\", \"response.system_tool_arguments.delta\",
+     \"response.system_tool_arguments.done\", \"input_collection.status\",
+     \"session.handoff.started\", \"session.handoff.completed\", and \"session.handoff.aborted\"."""
 
     @overload
     def __init__(
@@ -23167,6 +23390,260 @@ class SimulationSeedDataGenerationJobConfiguration(
         self.type = DataGenerationJobType.SIMULATION_SEED  # type: ignore
 
 
+class TelephonyBinding(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A telephony binding owned by a voice agent.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SipTelephonyBinding, TeamsPhoneExtensibilityTelephonyBinding, TwilioTelephonyBinding
+
+    :ivar id: The service-generated binding identifier. Required.
+    :vartype id: str
+    :ivar provider: The telephony provider. Required. Known values are:
+     "teams_phone_extensibility", "twilio", and "sip".
+    :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
+    :ivar label: The optional display label for the binding.
+    :vartype label: str
+    :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
+    :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
+    :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
+     provider. For SIP bindings, this is a SIP URI. Required.
+    :vartype incoming_call_url: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The service-generated binding identifier. Required."""
+    provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\", \"twilio\",
+     and \"sip\"."""
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Foundry connection name for the telephony provider. Required."""
+    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The optional display label for the binding."""
+    status: Union[str, "_models.TelephonyBindingStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The lifecycle status. Required. Known values are: \"active\" and \"suspended\"."""
+    incoming_call_url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The service-generated webhook URL to configure with the telephony provider. For SIP bindings,
+     this is a SIP URI. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        provider: str,
+        connection_name: str,
+        status: Union[str, "_models.TelephonyBindingStatus"],
+        incoming_call_url: str,
+        label: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SipTelephonyBinding(
+    TelephonyBinding, discriminator="sip"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A SIP binding.
+
+    :ivar id: The service-generated binding identifier. Required.
+    :vartype id: str
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
+    :ivar label: The optional display label for the binding.
+    :vartype label: str
+    :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
+    :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
+    :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
+     provider. For SIP bindings, this is a SIP URI. Required.
+    :vartype incoming_call_url: str
+    :ivar provider: Required. Session Initiation Protocol.
+    :vartype provider: str or ~azure.ai.projects.models.SIP
+    :ivar phone_number: For UI display only.
+    :vartype phone_number: str
+    :ivar allowed_calling_numbers: Omit or send [] to allow any caller. Entries match the entire
+     normalized E.164 caller number.
+    :vartype allowed_calling_numbers: list[str]
+    """
+
+    provider: Literal[TelephonyProvider.SIP] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Session Initiation Protocol."""
+    phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """For UI display only."""
+    allowed_calling_numbers: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Omit or send [] to allow any caller. Entries match the entire normalized E.164 caller number."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        connection_name: str,
+        status: Union[str, "_models.TelephonyBindingStatus"],
+        incoming_call_url: str,
+        label: Optional[str] = None,
+        phone_number: Optional[str] = None,
+        allowed_calling_numbers: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.provider = TelephonyProvider.SIP  # type: ignore
+
+
+class TelephonyBindingListItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A telephony binding returned in a list, including its entity tag.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SipTelephonyBindingListItem, TeamsPhoneExtensibilityTelephonyBindingListItem,
+    TwilioTelephonyBindingListItem
+
+    :ivar id: The service-generated binding identifier. Required.
+    :vartype id: str
+    :ivar provider: The telephony provider. Required. Known values are:
+     "teams_phone_extensibility", "twilio", and "sip".
+    :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
+    :ivar label: The optional display label for the binding.
+    :vartype label: str
+    :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
+    :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
+    :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
+     provider. For SIP bindings, this is a SIP URI. Required.
+    :vartype incoming_call_url: str
+    :ivar etag: The entity tag to send in the ``If-Match`` header when updating or deleting this
+     binding. Required.
+    :vartype etag: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The service-generated binding identifier. Required."""
+    provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\", \"twilio\",
+     and \"sip\"."""
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Foundry connection name for the telephony provider. Required."""
+    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The optional display label for the binding."""
+    status: Union[str, "_models.TelephonyBindingStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The lifecycle status. Required. Known values are: \"active\" and \"suspended\"."""
+    incoming_call_url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The service-generated webhook URL to configure with the telephony provider. For SIP bindings,
+     this is a SIP URI. Required."""
+    etag: str = rest_field(visibility=["read"])
+    """The entity tag to send in the ``If-Match`` header when updating or deleting this binding.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        provider: str,
+        connection_name: str,
+        status: Union[str, "_models.TelephonyBindingStatus"],
+        incoming_call_url: str,
+        label: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SipTelephonyBindingListItem(
+    TelephonyBindingListItem, discriminator="sip"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A SIP binding returned in a list, including its entity tag.
+
+    :ivar id: The service-generated binding identifier. Required.
+    :vartype id: str
+    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
+    :vartype connection_name: str
+    :ivar label: The optional display label for the binding.
+    :vartype label: str
+    :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
+    :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
+    :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
+     provider. For SIP bindings, this is a SIP URI. Required.
+    :vartype incoming_call_url: str
+    :ivar etag: The entity tag to send in the ``If-Match`` header when updating or deleting this
+     binding. Required.
+    :vartype etag: str
+    :ivar provider: Required. Session Initiation Protocol.
+    :vartype provider: str or ~azure.ai.projects.models.SIP
+    :ivar phone_number: For UI display only.
+    :vartype phone_number: str
+    :ivar allowed_calling_numbers: Omit or send [] to allow any caller. Entries match the entire
+     normalized E.164 caller number.
+    :vartype allowed_calling_numbers: list[str]
+    """
+
+    provider: Literal[TelephonyProvider.SIP] = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Session Initiation Protocol."""
+    phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """For UI display only."""
+    allowed_calling_numbers: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Omit or send [] to allow any caller. Entries match the entire normalized E.164 caller number."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        connection_name: str,
+        status: Union[str, "_models.TelephonyBindingStatus"],
+        incoming_call_url: str,
+        label: Optional[str] = None,
+        phone_number: Optional[str] = None,
+        allowed_calling_numbers: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.provider = TelephonyProvider.SIP  # type: ignore
+
+
 class SipTelephonyTransferDestination(
     TelephonyTransferDestination, discriminator="sip"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -23973,68 +24450,6 @@ class TaxonomySubCategory(_Model):  # pylint: disable=docstring-keyword-should-m
         super().__init__(*args, **kwargs)
 
 
-class TelephonyBinding(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A telephony binding owned by a voice agent.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TeamsPhoneExtensibilityTelephonyBinding, TwilioTelephonyBinding
-
-    :ivar id: The service-generated binding identifier. Required.
-    :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
-     and "twilio".
-    :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
-    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
-    :vartype connection_name: str
-    :ivar label: The optional display label for the binding.
-    :vartype label: str
-    :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
-    :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
-    :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
-     provider. Required.
-    :vartype incoming_call_url: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The service-generated binding identifier. Required."""
-    provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
-    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
-     \"twilio\"."""
-    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Foundry connection name for the telephony provider. Required."""
-    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The optional display label for the binding."""
-    status: Union[str, "_models.TelephonyBindingStatus"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The lifecycle status. Required. Known values are: \"active\" and \"suspended\"."""
-    incoming_call_url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The service-generated webhook URL to configure with the telephony provider. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        provider: str,
-        connection_name: str,
-        status: Union[str, "_models.TelephonyBindingStatus"],
-        incoming_call_url: str,
-        label: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class TeamsPhoneExtensibilityTelephonyBinding(
     TelephonyBinding, discriminator="teams_phone_extensibility"
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -24049,7 +24464,7 @@ class TeamsPhoneExtensibilityTelephonyBinding(
     :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
     :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
     :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
-     provider. Required.
+     provider. For SIP bindings, this is a SIP URI. Required.
     :vartype incoming_call_url: str
     :ivar provider: The Microsoft Teams Phone extensibility provider. Required. Microsoft Teams
      Phone extensibility.
@@ -24094,74 +24509,6 @@ class TeamsPhoneExtensibilityTelephonyBinding(
         self.provider = TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY  # type: ignore
 
 
-class TelephonyBindingListItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A telephony binding returned in a list, including its entity tag.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    TeamsPhoneExtensibilityTelephonyBindingListItem, TwilioTelephonyBindingListItem
-
-    :ivar id: The service-generated binding identifier. Required.
-    :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
-     and "twilio".
-    :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
-    :ivar connection_name: The Foundry connection name for the telephony provider. Required.
-    :vartype connection_name: str
-    :ivar label: The optional display label for the binding.
-    :vartype label: str
-    :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
-    :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
-    :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
-     provider. Required.
-    :vartype incoming_call_url: str
-    :ivar etag: The entity tag to send in the ``If-Match`` header when updating or deleting this
-     binding. Required.
-    :vartype etag: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The service-generated binding identifier. Required."""
-    provider: str = rest_discriminator(name="provider", visibility=["read", "create", "update", "delete", "query"])
-    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
-     \"twilio\"."""
-    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Foundry connection name for the telephony provider. Required."""
-    label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The optional display label for the binding."""
-    status: Union[str, "_models.TelephonyBindingStatus"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The lifecycle status. Required. Known values are: \"active\" and \"suspended\"."""
-    incoming_call_url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The service-generated webhook URL to configure with the telephony provider. Required."""
-    etag: str = rest_field(visibility=["read"])
-    """The entity tag to send in the ``If-Match`` header when updating or deleting this binding.
-     Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        provider: str,
-        connection_name: str,
-        status: Union[str, "_models.TelephonyBindingStatus"],
-        incoming_call_url: str,
-        label: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class TeamsPhoneExtensibilityTelephonyBindingListItem(
     TelephonyBindingListItem, discriminator="teams_phone_extensibility"
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
@@ -24176,7 +24523,7 @@ class TeamsPhoneExtensibilityTelephonyBindingListItem(
     :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
     :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
     :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
-     provider. Required.
+     provider. For SIP bindings, this is a SIP URI. Required.
     :vartype incoming_call_url: str
     :ivar etag: The entity tag to send in the ``If-Match`` header when updating or deleting this
      binding. Required.
@@ -24297,8 +24644,8 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
     :ivar destination: The phone destination to call. Required.
     :vartype destination: ~azure.ai.projects.models.TelephonyOutboundDestination
     :ivar connection_name: The Foundry connection name in the current project used to originate the
-     call. Its category selects Twilio or Azure Communication Services / Teams Phone extensibility.
-     No inbound telephony binding is required. Required.
+     call. Its category selects Twilio, Azure Communication Services / Teams Phone extensibility, or
+     SIP. No inbound telephony binding is required. Required.
     :vartype connection_name: str
     :ivar source: The caller identity used to originate the call. For a Twilio connection, provide
      an authorized E.164 phone number. For an Azure Communication Services / Teams Phone
@@ -24360,7 +24707,7 @@ class TelephonyCallJob(_Model):  # pylint: disable=docstring-keyword-should-matc
     """The phone destination to call. Required."""
     connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Foundry connection name in the current project used to originate the call. Its category
-     selects Twilio or Azure Communication Services / Teams Phone extensibility. No inbound
+     selects Twilio, Azure Communication Services / Teams Phone extensibility, or SIP. No inbound
      telephony binding is required. Required."""
     source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The caller identity used to originate the call. For a Twilio connection, provide an authorized
@@ -24687,8 +25034,8 @@ class TelephonyCallRecord(_Model):  # pylint: disable=docstring-keyword-should-m
 
     :ivar id: The service-generated call identifier. Required.
     :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
-     and "twilio".
+    :ivar provider: The telephony provider. Required. Known values are:
+     "teams_phone_extensibility", "twilio", and "sip".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
     :ivar provider_call_id: The provider-assigned call identifier, when available.
     :vartype provider_call_id: str
@@ -24753,8 +25100,8 @@ class TelephonyCallRecord(_Model):  # pylint: disable=docstring-keyword-should-m
     provider: Union[str, "_models.TelephonyProvider"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
-     \"twilio\"."""
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\", \"twilio\",
+     and \"sip\"."""
     provider_call_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The provider-assigned call identifier, when available."""
     caller_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -24874,8 +25221,8 @@ class TelephonyCallSummary(_Model):  # pylint: disable=docstring-keyword-should-
 
     :ivar id: The service-generated call identifier. Required.
     :vartype id: str
-    :ivar provider: The telephony provider. Required. Known values are: "teams_phone_extensibility"
-     and "twilio".
+    :ivar provider: The telephony provider. Required. Known values are:
+     "teams_phone_extensibility", "twilio", and "sip".
     :vartype provider: str or ~azure.ai.projects.models.TelephonyProvider
     :ivar provider_call_id: The provider-assigned call identifier, when available.
     :vartype provider_call_id: str
@@ -24931,8 +25278,8 @@ class TelephonyCallSummary(_Model):  # pylint: disable=docstring-keyword-should-
     provider: Union[str, "_models.TelephonyProvider"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\" and
-     \"twilio\"."""
+    """The telephony provider. Required. Known values are: \"teams_phone_extensibility\", \"twilio\",
+     and \"sip\"."""
     provider_call_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The provider-assigned call identifier, when available."""
     caller_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -27095,7 +27442,7 @@ class TwilioTelephonyBinding(
     :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
     :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
     :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
-     provider. Required.
+     provider. For SIP bindings, this is a SIP URI. Required.
     :vartype incoming_call_url: str
     :ivar provider: The Twilio provider. Required. Twilio Programmable Voice.
     :vartype provider: str or ~azure.ai.projects.models.TWILIO
@@ -27146,7 +27493,7 @@ class TwilioTelephonyBindingListItem(
     :ivar status: The lifecycle status. Required. Known values are: "active" and "suspended".
     :vartype status: str or ~azure.ai.projects.models.TelephonyBindingStatus
     :ivar incoming_call_url: The service-generated webhook URL to configure with the telephony
-     provider. Required.
+     provider. For SIP bindings, this is a SIP URI. Required.
     :vartype incoming_call_url: str
     :ivar etag: The entity tag to send in the ``If-Match`` header when updating or deleting this
      binding. Required.
@@ -27228,13 +27575,16 @@ class UpdateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
     :ivar label: The replacement display label. Omit it to preserve the current value; use null to
      clear it.
     :vartype label: str
-    :ivar connection_name: The replacement Foundry connection name. This property is valid only for
-     a Teams Phone extensibility binding; a Twilio binding's connection is immutable.
+    :ivar connection_name: The replacement Foundry connection name. This property is valid for
+     Teams Phone extensibility and SIP bindings; a Twilio binding's connection is immutable.
     :vartype connection_name: str
-    :ivar phone_number: The replacement Teams Phone extensibility display phone number. Omit it to
-     preserve the current value; use null to clear it. This property is valid only for a Teams Phone
-     extensibility binding.
+    :ivar phone_number: The replacement Teams Phone extensibility or SIP display phone number. Omit
+     it to preserve the current value; use null to clear it. This property is valid only for Teams
+     Phone extensibility and SIP bindings.
     :vartype phone_number: str
+    :ivar allowed_calling_numbers: SIP only. Omit to preserve the restriction; send [] to allow any
+     caller.
+    :vartype allowed_calling_numbers: list[str]
     """
 
     status: Optional[Union[str, "_models.TelephonyBindingStatus"]] = rest_field(
@@ -27244,12 +27594,16 @@ class UpdateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
     label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The replacement display label. Omit it to preserve the current value; use null to clear it."""
     connection_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The replacement Foundry connection name. This property is valid only for a Teams Phone
-     extensibility binding; a Twilio binding's connection is immutable."""
+    """The replacement Foundry connection name. This property is valid for Teams Phone extensibility
+     and SIP bindings; a Twilio binding's connection is immutable."""
     phone_number: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The replacement Teams Phone extensibility display phone number. Omit it to preserve the current
-     value; use null to clear it. This property is valid only for a Teams Phone extensibility
-     binding."""
+    """The replacement Teams Phone extensibility or SIP display phone number. Omit it to preserve the
+     current value; use null to clear it. This property is valid only for Teams Phone extensibility
+     and SIP bindings."""
+    allowed_calling_numbers: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SIP only. Omit to preserve the restriction; send [] to allow any caller."""
 
     @overload
     def __init__(
@@ -27259,6 +27613,7 @@ class UpdateTelephonyBindingRequest(_Model):  # pylint: disable=docstring-keywor
         label: Optional[str] = None,
         connection_name: Optional[str] = None,
         phone_number: Optional[str] = None,
+        allowed_calling_numbers: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -27833,8 +28188,10 @@ class VoiceAgentAudioInputConfig(_Model):  # pylint: disable=docstring-keyword-s
         super().__init__(*args, **kwargs)
 
 
-class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Output audio configuration for a voice agent.
+class VoiceAgentVoiceConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Voice output configuration. Inline subagents use it directly as their voice override, and the
+    session-level
+    output audio configuration extends it.
     Provider-specific fields are selected by ``voice_type``:
 
     * `openai`: `voice` and `speed`.
@@ -27844,12 +28201,8 @@ class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-
     * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
     * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus `personal_voice_model`; the
       voice name is derived from the avatar.
-    * `azure-realtime-native`: `voice` and `speed`. `format` and `output_audio_timestamp_types` apply to every voice
-      type.
+    * `azure-realtime-native`: `voice` and `speed`.
 
-    :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
-     PCM.
-    :vartype format: ~azure.ai.projects.models.RealtimeAudioFormats
     :ivar voice: The voice name or identifier. Applies to ``openai``, ``azure-standard``,
      ``azure-custom``, ``azure-personal``, and ``azure-realtime-native``. It does not apply to
      ``avatar-voice-sync``, which derives the voice name from the avatar.
@@ -27889,16 +28242,8 @@ class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-
     :ivar personal_voice_model: The Azure personal or avatar voice model. Applies only when
      ``voice_type`` is ``azure-personal`` or ``avatar-voice-sync``.
     :vartype personal_voice_model: str
-    :ivar output_audio_timestamp_types: Timestamp kinds to include with output audio. Applies to
-     every ``voice_type``.
-    :vartype output_audio_timestamp_types: list[str or
-     ~azure.ai.projects.models.VoiceAgentAudioTimestampType]
     """
 
-    format: Optional["_models.RealtimeAudioFormats"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz PCM."""
     voice: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The voice name or identifier. Applies to ``openai``, ``azure-standard``, ``azure-custom``,
      ``azure-personal``, and ``azure-realtime-native``. It does not apply to ``avatar-voice-sync``,
@@ -27942,16 +28287,11 @@ class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-
     personal_voice_model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Azure personal or avatar voice model. Applies only when ``voice_type`` is
      ``azure-personal`` or ``avatar-voice-sync``."""
-    output_audio_timestamp_types: Optional[list[Union[str, "_models.VoiceAgentAudioTimestampType"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Timestamp kinds to include with output audio. Applies to every ``voice_type``."""
 
     @overload
     def __init__(
         self,
         *,
-        format: Optional["_models.RealtimeAudioFormats"] = None,
         voice: Optional[str] = None,
         voice_type: Optional[Union[str, "_models.VoiceType"]] = None,
         voice_locale: Optional[str] = None,
@@ -27965,6 +28305,99 @@ class VoiceAgentAudioOutputConfig(_Model):  # pylint: disable=docstring-keyword-
         volume: Optional[str] = None,
         custom_voice_endpoint_id: Optional[str] = None,
         personal_voice_model: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentAudioOutputConfig(VoiceAgentVoiceConfig):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Output audio configuration for a voice agent. Extends the voice configuration with the
+    session-level ``format`` and ``output_audio_timestamp_types`` settings, which apply to every
+    voice type.
+
+    :ivar voice: The voice name or identifier. Applies to ``openai``, ``azure-standard``,
+     ``azure-custom``, ``azure-personal``, and ``azure-realtime-native``. It does not apply to
+     ``avatar-voice-sync``, which derives the voice name from the avatar.
+    :vartype voice: str
+    :ivar voice_type: The voice implementation. Known values are: "openai", "azure-standard",
+     "azure-custom", "azure-personal", "avatar-voice-sync", and "azure-realtime-native".
+    :vartype voice_type: str or ~azure.ai.projects.models.VoiceType
+    :ivar voice_locale: The enforced BCP-47 output locale. Applies to ``azure-standard``,
+     ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype voice_locale: str
+    :ivar speed: The numeric output speed multiplier. Applies to all known ``voice_type`` values
+     and defaults to 1.
+    :vartype speed: float
+    :ivar voice_temperature: The voice variation temperature. Applies to ``azure-standard``,
+     ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype voice_temperature: float
+    :ivar custom_lexicon_url: The URL of a custom pronunciation lexicon. Applies to
+     ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype custom_lexicon_url: str
+    :ivar custom_text_normalization_url: The URL of a custom text-normalization configuration.
+     Applies to ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype custom_text_normalization_url: str
+    :ivar prefer_locales: Preferred BCP-47 locales for multilingual synthesis. Applies to
+     ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype prefer_locales: list[str]
+    :ivar style: The voice speaking style. Applies only when ``voice_type`` is ``azure-standard``.
+    :vartype style: str
+    :ivar pitch: The voice pitch adjustment. Applies to ``azure-standard``, ``azure-custom``,
+     ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype pitch: str
+    :ivar volume: The voice volume adjustment. Applies to ``azure-standard``, ``azure-custom``,
+     ``azure-personal``, and ``avatar-voice-sync``.
+    :vartype volume: str
+    :ivar custom_voice_endpoint_id: The Azure custom-voice deployment endpoint identifier. Applies
+     only when ``voice_type`` is ``azure-custom``.
+    :vartype custom_voice_endpoint_id: str
+    :ivar personal_voice_model: The Azure personal or avatar voice model. Applies only when
+     ``voice_type`` is ``azure-personal`` or ``avatar-voice-sync``.
+    :vartype personal_voice_model: str
+    :ivar format: The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz
+     PCM.
+    :vartype format: ~azure.ai.projects.models.RealtimeAudioFormats
+    :ivar output_audio_timestamp_types: Timestamp kinds to include with output audio. Applies to
+     every ``voice_type``.
+    :vartype output_audio_timestamp_types: list[str or
+     ~azure.ai.projects.models.VoiceAgentAudioTimestampType]
+    """
+
+    format: Optional["_models.RealtimeAudioFormats"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The output audio format. Applies to every ``voice_type`` and defaults to 24 kHz PCM."""
+    output_audio_timestamp_types: Optional[list[Union[str, "_models.VoiceAgentAudioTimestampType"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Timestamp kinds to include with output audio. Applies to every ``voice_type``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        voice: Optional[str] = None,
+        voice_type: Optional[Union[str, "_models.VoiceType"]] = None,
+        voice_locale: Optional[str] = None,
+        speed: Optional[float] = None,
+        voice_temperature: Optional[float] = None,
+        custom_lexicon_url: Optional[str] = None,
+        custom_text_normalization_url: Optional[str] = None,
+        prefer_locales: Optional[list[str]] = None,
+        style: Optional[str] = None,
+        pitch: Optional[str] = None,
+        volume: Optional[str] = None,
+        custom_voice_endpoint_id: Optional[str] = None,
+        personal_voice_model: Optional[str] = None,
+        format: Optional["_models.RealtimeAudioFormats"] = None,
         output_audio_timestamp_types: Optional[list[Union[str, "_models.VoiceAgentAudioTimestampType"]]] = None,
     ) -> None: ...
 
@@ -28833,8 +29266,8 @@ class VoiceAgentDefinition(
     :ivar structured_inputs: Set of structured inputs that participate in prompt template
      substitution, rendered per session before the live session starts.
     :vartype structured_inputs: dict[str, ~azure.ai.projects.models.StructuredInputDefinition]
-    :ivar subagent_config: Optional configuration for sibling Foundry text agents that this voice
-     agent may consult as background specialists.
+    :ivar subagent_config: Optional subagent configuration. Set ``subagent_type`` to ``delegate``
+     for delegated background specialists or ``inline`` for inline voice subagents.
     :vartype subagent_config: ~azure.ai.projects.models.VoiceAgentSubagentConfig
     :ivar post_call: Optional post-call delivery configuration. After each session ends, the
      service notifies the configured destinations.
@@ -28939,8 +29372,8 @@ class VoiceAgentDefinition(
     subagent_config: Optional["_models.VoiceAgentSubagentConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Optional configuration for sibling Foundry text agents that this voice agent may consult as
-     background specialists."""
+    """Optional subagent configuration. Set ``subagent_type`` to ``delegate`` for delegated background
+     specialists or ``inline`` for inline voice subagents."""
     post_call: Optional["_models.VoiceAgentPostCallConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -28991,6 +29424,83 @@ class VoiceAgentDefinition(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = AgentKind.VOICE  # type: ignore
+
+
+class VoiceAgentSubagentConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration for delegated background specialists or inline voice subagents. For compatibility
+    with existing delegate configurations, the service treats an omitted ``subagent_type`` as
+    ``delegate``.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VoiceAgentDelegateSubagentConfig, VoiceAgentInlineSubagentConfig
+
+    :ivar subagent_type: The subagent mode. Required. Known values are: "delegate" and "inline".
+    :vartype subagent_type: str or ~azure.ai.projects.models.VoiceAgentSubagentType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    subagent_type: str = rest_discriminator(
+        name="subagent_type", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The subagent mode. Required. Known values are: \"delegate\" and \"inline\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subagent_type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentDelegateSubagentConfig(
+    VoiceAgentSubagentConfig, discriminator="delegate"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration for referenced Foundry agents invoked as delegated background specialists.
+
+    :ivar subagent_type: The subagent mode for delegated background specialists. Required.
+     Referenced Foundry agents invoked as delegated background specialists.
+    :vartype subagent_type: str or ~azure.ai.projects.models.DELEGATE
+    :ivar subagents: The sibling Foundry text agents, in the same project, that this Voice Agent
+     may consult. Required.
+    :vartype subagents: list[~azure.ai.projects.models.VoiceAgentSubagent]
+    """
+
+    subagent_type: Literal[VoiceAgentSubagentType.DELEGATE] = rest_discriminator(name="subagent_type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The subagent mode for delegated background specialists. Required. Referenced Foundry agents
+     invoked as delegated background specialists."""
+    subagents: list["_models.VoiceAgentSubagent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The sibling Foundry text agents, in the same project, that this Voice Agent may consult.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subagents: list["_models.VoiceAgentSubagent"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.subagent_type = VoiceAgentSubagentType.DELEGATE  # type: ignore
 
 
 class VoiceAgentEchoCancellation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -29353,6 +29863,386 @@ class VoiceAgentGreetingConfig(_Model):  # pylint: disable=docstring-keyword-sho
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class VoiceAgentHandoffCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """One allowed outgoing handoff from an inline voice subagent.
+
+    :ivar id: The handoff condition identifier. Required.
+    :vartype id: str
+    :ivar target: The target subagent identifier or ``$entrypoint``. The containing subagent
+     supplies the source. Required.
+    :vartype target: str
+    :ivar condition: Natural-language routing guidance supplied alongside the active subagent
+     instructions, from 1 through 500 characters. This is not an executable Boolean predicate.
+     Required.
+    :vartype condition: str
+    :ivar cancel_on_interruption: Whether user interruption before commit cancels the pending
+     handoff. If omitted, the service defaults to false.
+    :vartype cancel_on_interruption: bool
+    :ivar delay_ms: The minimum delay before target activation, in milliseconds, from 0 through
+     10000. If omitted, the service defaults to 0.
+    :vartype delay_ms: ~datetime.timedelta
+    :ivar transfer_message: Optional deterministic source-voice announcement played before target
+     activation. Supported by cascaded pipelines and realtime pipelines using local Azure TTS;
+     model-native realtime voice requires omission or null. At most 500 characters. If omitted or
+     null, no announcement is played.
+    :vartype transfer_message: str
+    :ivar target_response: Whether Voice Live automatically starts a response after target
+     activation. If omitted, the service defaults to ``auto``. Known values are: "auto" and "none".
+    :vartype target_response: str or ~azure.ai.projects.models.VoiceAgentHandoffTargetResponse
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The handoff condition identifier. Required."""
+    target: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target subagent identifier or ``$entrypoint``. The containing subagent supplies the source.
+     Required."""
+    condition: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Natural-language routing guidance supplied alongside the active subagent instructions, from 1
+     through 500 characters. This is not an executable Boolean predicate. Required."""
+    cancel_on_interruption: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether user interruption before commit cancels the pending handoff. If omitted, the service
+     defaults to false."""
+    delay_ms: Optional[datetime.timedelta] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
+    )
+    """The minimum delay before target activation, in milliseconds, from 0 through 10000. If omitted,
+     the service defaults to 0."""
+    transfer_message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional deterministic source-voice announcement played before target activation. Supported by
+     cascaded pipelines and realtime pipelines using local Azure TTS; model-native realtime voice
+     requires omission or null. At most 500 characters. If omitted or null, no announcement is
+     played."""
+    target_response: Optional[Union[str, "_models.VoiceAgentHandoffTargetResponse"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether Voice Live automatically starts a response after target activation. If omitted, the
+     service defaults to ``auto``. Known values are: \"auto\" and \"none\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        target: str,
+        condition: str,
+        cancel_on_interruption: Optional[bool] = None,
+        delay_ms: Optional[datetime.timedelta] = None,
+        transfer_message: Optional[str] = None,
+        target_response: Optional[Union[str, "_models.VoiceAgentHandoffTargetResponse"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentHandoffEdgeState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Non-sensitive topology metadata for one compiled handoff edge.
+
+    :ivar id: The edge identifier. Required.
+    :vartype id: str
+    :ivar source: The source node identifier or ``$entrypoint``. Required.
+    :vartype source: str
+    :ivar target: The target node identifier or ``$entrypoint``. Required.
+    :vartype target: str
+    :ivar cancel_on_interruption: Whether user interruption before commit cancels the pending
+     handoff.
+    :vartype cancel_on_interruption: bool
+    :ivar delay_ms: The minimum delay before target activation, in milliseconds.
+    :vartype delay_ms: ~datetime.timedelta
+    :ivar transfer_message: The deterministic source-voice announcement played before target
+     activation.
+    :vartype transfer_message: str
+    :ivar target_response: Whether Voice Live automatically starts a response after target
+     activation. Known values are: "auto" and "none".
+    :vartype target_response: str or ~azure.ai.projects.models.VoiceAgentHandoffTargetResponse
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The edge identifier. Required."""
+    source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source node identifier or ``$entrypoint``. Required."""
+    target: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target node identifier or ``$entrypoint``. Required."""
+    cancel_on_interruption: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether user interruption before commit cancels the pending handoff."""
+    delay_ms: Optional[datetime.timedelta] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
+    )
+    """The minimum delay before target activation, in milliseconds."""
+    transfer_message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The deterministic source-voice announcement played before target activation."""
+    target_response: Optional[Union[str, "_models.VoiceAgentHandoffTargetResponse"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether Voice Live automatically starts a response after target activation. Known values are:
+     \"auto\" and \"none\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        source: str,
+        target: str,
+        cancel_on_interruption: Optional[bool] = None,
+        delay_ms: Optional[datetime.timedelta] = None,
+        transfer_message: Optional[str] = None,
+        target_response: Optional[Union[str, "_models.VoiceAgentHandoffTargetResponse"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentHandoffNodeState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Non-sensitive topology metadata for one compiled handoff node.
+
+    :ivar id: The node identifier or ``$entrypoint``. Required.
+    :vartype id: str
+    :ivar display_description: The display-only node description. This value is not provided to the
+     model. Required.
+    :vartype display_description: str
+    :ivar implicit: Whether this is the implicit ``$entrypoint`` node.
+    :vartype implicit: bool
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The node identifier or ``$entrypoint``. Required."""
+    display_description: str = rest_field(
+        name="description", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The display-only node description. This value is not provided to the model. Required."""
+    implicit: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this is the implicit ``$entrypoint`` node."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        display_description: str,
+        implicit: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentHandoffPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Session-wide limits shared by all handoff conditions in one Voice Agent session.
+
+    :ivar max_transfers: The maximum number of successfully completed handoffs in one session, from
+     1 through 100. If omitted, the service defaults to 16.
+    :vartype max_transfers: int
+    :ivar max_attempts: The maximum number of attempted handoffs, from 1 through 100. If omitted,
+     the service uses ``max_transfers``. The service requires this value to be greater than or equal
+     to ``max_transfers``.
+    :vartype max_attempts: int
+    """
+
+    max_transfers: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The maximum number of successfully completed handoffs in one session, from 1 through 100. If
+     omitted, the service defaults to 16."""
+    max_attempts: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The maximum number of attempted handoffs, from 1 through 100. If omitted, the service uses
+     ``max_transfers``. The service requires this value to be greater than or equal to
+     ``max_transfers``."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_transfers: Optional[int] = None,
+        max_attempts: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentHandoffState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The effective topology and runtime state of a voice-agent handoff graph.
+
+    :ivar pipeline_family: The immutable execution pipeline family. Required. Known values are:
+     "cascaded" and "realtime".
+    :vartype pipeline_family: str or ~azure.ai.projects.models.VoiceAgentHandoffPipelineFamily
+    :ivar active_node_id: The currently committed node identifier or ``$entrypoint``. Required.
+    :vartype active_node_id: str
+    :ivar node_generation: The monotonically increasing generation of the committed active-node
+     configuration. Required.
+    :vartype node_generation: int
+    :ivar transfer_count: The number of successfully completed handoffs. Required.
+    :vartype transfer_count: int
+    :ivar attempt_count: The number of unique reserved handoff attempts. Required.
+    :vartype attempt_count: int
+    :ivar available_edge_ids: The edge identifiers currently available from the active node.
+     Required.
+    :vartype available_edge_ids: list[str]
+    :ivar transfer_tool: The generated handoff function visible to the active model, or null when
+     no route is available. Required.
+    :vartype transfer_tool: ~azure.ai.projects.models.VoiceAgentFunctionTool
+    :ivar nodes: The compiled handoff nodes, including the implicit or explicit ``$entrypoint``.
+     Required.
+    :vartype nodes: list[~azure.ai.projects.models.VoiceAgentHandoffNodeState]
+    :ivar edges: The compiled handoff edges. Required.
+    :vartype edges: list[~azure.ai.projects.models.VoiceAgentHandoffEdgeState]
+    """
+
+    pipeline_family: Union[str, "_models.VoiceAgentHandoffPipelineFamily"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The immutable execution pipeline family. Required. Known values are: \"cascaded\" and
+     \"realtime\"."""
+    active_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The currently committed node identifier or ``$entrypoint``. Required."""
+    node_generation: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The monotonically increasing generation of the committed active-node configuration. Required."""
+    transfer_count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of successfully completed handoffs. Required."""
+    attempt_count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The number of unique reserved handoff attempts. Required."""
+    available_edge_ids: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The edge identifiers currently available from the active node. Required."""
+    transfer_tool: "_models.VoiceAgentFunctionTool" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The generated handoff function visible to the active model, or null when no route is available.
+     Required."""
+    nodes: list["_models.VoiceAgentHandoffNodeState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compiled handoff nodes, including the implicit or explicit ``$entrypoint``. Required."""
+    edges: list["_models.VoiceAgentHandoffEdgeState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The compiled handoff edges. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        pipeline_family: Union[str, "_models.VoiceAgentHandoffPipelineFamily"],
+        active_node_id: str,
+        node_generation: int,
+        transfer_count: int,
+        attempt_count: int,
+        available_edge_ids: list[str],
+        transfer_tool: "_models.VoiceAgentFunctionTool",
+        nodes: list["_models.VoiceAgentHandoffNodeState"],
+        edges: list["_models.VoiceAgentHandoffEdgeState"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VoiceAgentHandoffVoiceAdaptation(_Model):  # pylint: disable=docstring-missing-param
+    """Voice-optimized instruction adaptation applied while a handoff node is active.
+
+    :ivar type: The adaptation strategy. Currently only ``auto`` is supported. Required. Default
+     value is "auto".
+    :vartype type: str
+    """
+
+    type: Literal["auto"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The adaptation strategy. Currently only ``auto`` is supported. Required. Default value is
+     \"auto\"."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["auto"] = "auto"
+
+
+class VoiceAgentInlineSubagentConfig(
+    VoiceAgentSubagentConfig, discriminator="inline"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Configuration for inline voice subagents that may become active through Handoff.
+
+    :ivar subagent_type: The subagent mode for inline voice subagents. Required. Inline voice
+     behaviors that may become active through Handoff.
+    :vartype subagent_type: str or ~azure.ai.projects.models.INLINE
+    :ivar subagents: Inline voice subagents owned and versioned with the parent Voice Agent.
+     ``$entrypoint`` must be first, followed by at least one specialist and at most 31 additional
+     subagents. Each subagent declares its outgoing ``handoff_conditions``; condition identifiers
+     and the 128-condition limit apply across the entire Agent. Required.
+    :vartype subagents: list[~azure.ai.projects.models.InlineVoiceSubagent]
+    :ivar handoff_policy: Session-wide Handoff limits. Requires ``$entrypoint`` with at least one
+     outgoing condition. When omitted, the service permits up to 16 completed and 16 attempted
+     handoffs.
+    :vartype handoff_policy: ~azure.ai.projects.models.VoiceAgentHandoffPolicy
+    """
+
+    subagent_type: Literal[VoiceAgentSubagentType.INLINE] = rest_discriminator(name="subagent_type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The subagent mode for inline voice subagents. Required. Inline voice behaviors that may become
+     active through Handoff."""
+    subagents: list["_models.InlineVoiceSubagent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Inline voice subagents owned and versioned with the parent Voice Agent. ``$entrypoint`` must be
+     first, followed by at least one specialist and at most 31 additional subagents. Each subagent
+     declares its outgoing ``handoff_conditions``; condition identifiers and the 128-condition limit
+     apply across the entire Agent. Required."""
+    handoff_policy: Optional["_models.VoiceAgentHandoffPolicy"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Session-wide Handoff limits. Requires ``$entrypoint`` with at least one outgoing condition.
+     When omitted, the service permits up to 16 completed and 16 attempted handoffs."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subagents: list["_models.InlineVoiceSubagent"],
+        handoff_policy: Optional["_models.VoiceAgentHandoffPolicy"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.subagent_type = VoiceAgentSubagentType.INLINE  # type: ignore
 
 
 class VoiceAgentInputTranscription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -30870,6 +31760,270 @@ class VoiceAgentServerEventSessionAvatarSwitchToSpeaking(
         self.type = RealtimeServerEventType.SESSION_AVATAR_SWITCH_TO_SPEAKING  # type: ignore
 
 
+class VoiceAgentServerEventSessionHandoffAborted(
+    RealtimeServerEvent, discriminator="session.handoff.aborted"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The ``session.handoff.aborted`` server event.
+
+    :ivar event_id: The server-generated event identifier. Required.
+    :vartype event_id: str
+    :ivar handoff_id: The server-generated handoff attempt identifier. Required.
+    :vartype handoff_id: str
+    :ivar edge_id: The configured edge selected for this handoff. Required.
+    :vartype edge_id: str
+    :ivar from_node_id: The source node identifier or ``$entrypoint``. Required.
+    :vartype from_node_id: str
+    :ivar to_node_id: The target node identifier or ``$entrypoint``. Required.
+    :vartype to_node_id: str
+    :ivar from_model: The model active before the handoff. Required.
+    :vartype from_model: str
+    :ivar to_model: The model prepared for the target behavior. Required.
+    :vartype to_model: str
+    :ivar tool_call_id: The function-call identifier that initiated the handoff. Required.
+    :vartype tool_call_id: str
+    :ivar node_generation: The source generation for started or aborted events, and the committed
+     target generation for completed events. Required.
+    :vartype node_generation: int
+    :ivar reason: Why the handoff ended before target commit. Required. Known values are:
+     "user_interruption" and "error".
+    :vartype reason: str or ~azure.ai.projects.models.VoiceAgentHandoffAbortReason
+    :ivar error: The handoff failure detail when ``reason`` is ``error``.
+    :vartype error: ~azure.ai.projects.models.RealtimeServerEventErrorError
+    :ivar type: The event type. Always ``session.handoff.aborted``. Required.
+     SESSION_HANDOFF_ABORTED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_HANDOFF_ABORTED
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated event identifier. Required."""
+    handoff_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated handoff attempt identifier. Required."""
+    edge_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The configured edge selected for this handoff. Required."""
+    from_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source node identifier or ``$entrypoint``. Required."""
+    to_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target node identifier or ``$entrypoint``. Required."""
+    from_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model active before the handoff. Required."""
+    to_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model prepared for the target behavior. Required."""
+    tool_call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The function-call identifier that initiated the handoff. Required."""
+    node_generation: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source generation for started or aborted events, and the committed target generation for
+     completed events. Required."""
+    reason: Union[str, "_models.VoiceAgentHandoffAbortReason"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Why the handoff ended before target commit. Required. Known values are: \"user_interruption\"
+     and \"error\"."""
+    error: Optional["_models.RealtimeServerEventErrorError"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The handoff failure detail when ``reason`` is ``error``."""
+    type: Literal[VoiceAgentServerEventTypeExtension.SESSION_HANDOFF_ABORTED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type. Always ``session.handoff.aborted``. Required. SESSION_HANDOFF_ABORTED."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        handoff_id: str,
+        edge_id: str,
+        from_node_id: str,
+        to_node_id: str,
+        from_model: str,
+        to_model: str,
+        tool_call_id: str,
+        node_generation: int,
+        reason: Union[str, "_models.VoiceAgentHandoffAbortReason"],
+        error: Optional["_models.RealtimeServerEventErrorError"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentServerEventTypeExtension.SESSION_HANDOFF_ABORTED  # type: ignore
+
+
+class VoiceAgentServerEventSessionHandoffCompleted(
+    RealtimeServerEvent, discriminator="session.handoff.completed"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The ``session.handoff.completed`` server event.
+
+    :ivar event_id: The server-generated event identifier. Required.
+    :vartype event_id: str
+    :ivar handoff_id: The server-generated handoff attempt identifier. Required.
+    :vartype handoff_id: str
+    :ivar edge_id: The configured edge selected for this handoff. Required.
+    :vartype edge_id: str
+    :ivar from_node_id: The source node identifier or ``$entrypoint``. Required.
+    :vartype from_node_id: str
+    :ivar to_node_id: The target node identifier or ``$entrypoint``. Required.
+    :vartype to_node_id: str
+    :ivar from_model: The model active before the handoff. Required.
+    :vartype from_model: str
+    :ivar to_model: The model prepared for the target behavior. Required.
+    :vartype to_model: str
+    :ivar tool_call_id: The function-call identifier that initiated the handoff. Required.
+    :vartype tool_call_id: str
+    :ivar node_generation: The source generation for started or aborted events, and the committed
+     target generation for completed events. Required.
+    :vartype node_generation: int
+    :ivar prepare_duration_ms: The target-preparation duration. Required.
+    :vartype prepare_duration_ms: ~datetime.timedelta
+    :ivar duration_ms: The total handoff duration. Required.
+    :vartype duration_ms: ~datetime.timedelta
+    :ivar type: The event type. Always ``session.handoff.completed``. Required.
+     SESSION_HANDOFF_COMPLETED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_HANDOFF_COMPLETED
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated event identifier. Required."""
+    handoff_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated handoff attempt identifier. Required."""
+    edge_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The configured edge selected for this handoff. Required."""
+    from_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source node identifier or ``$entrypoint``. Required."""
+    to_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target node identifier or ``$entrypoint``. Required."""
+    from_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model active before the handoff. Required."""
+    to_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model prepared for the target behavior. Required."""
+    tool_call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The function-call identifier that initiated the handoff. Required."""
+    node_generation: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source generation for started or aborted events, and the committed target generation for
+     completed events. Required."""
+    prepare_duration_ms: datetime.timedelta = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
+    )
+    """The target-preparation duration. Required."""
+    duration_ms: datetime.timedelta = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-milliseconds-int"
+    )
+    """The total handoff duration. Required."""
+    type: Literal[VoiceAgentServerEventTypeExtension.SESSION_HANDOFF_COMPLETED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type. Always ``session.handoff.completed``. Required. SESSION_HANDOFF_COMPLETED."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        handoff_id: str,
+        edge_id: str,
+        from_node_id: str,
+        to_node_id: str,
+        from_model: str,
+        to_model: str,
+        tool_call_id: str,
+        node_generation: int,
+        prepare_duration_ms: datetime.timedelta,
+        duration_ms: datetime.timedelta,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentServerEventTypeExtension.SESSION_HANDOFF_COMPLETED  # type: ignore
+
+
+class VoiceAgentServerEventSessionHandoffStarted(
+    RealtimeServerEvent, discriminator="session.handoff.started"
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The ``session.handoff.started`` server event.
+
+    :ivar event_id: The server-generated event identifier. Required.
+    :vartype event_id: str
+    :ivar handoff_id: The server-generated handoff attempt identifier. Required.
+    :vartype handoff_id: str
+    :ivar edge_id: The configured edge selected for this handoff. Required.
+    :vartype edge_id: str
+    :ivar from_node_id: The source node identifier or ``$entrypoint``. Required.
+    :vartype from_node_id: str
+    :ivar to_node_id: The target node identifier or ``$entrypoint``. Required.
+    :vartype to_node_id: str
+    :ivar from_model: The model active before the handoff. Required.
+    :vartype from_model: str
+    :ivar to_model: The model prepared for the target behavior. Required.
+    :vartype to_model: str
+    :ivar tool_call_id: The function-call identifier that initiated the handoff. Required.
+    :vartype tool_call_id: str
+    :ivar node_generation: The source generation for started or aborted events, and the committed
+     target generation for completed events. Required.
+    :vartype node_generation: int
+    :ivar type: The event type. Always ``session.handoff.started``. Required.
+     SESSION_HANDOFF_STARTED.
+    :vartype type: str or ~azure.ai.projects.models.SESSION_HANDOFF_STARTED
+    """
+
+    event_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated event identifier. Required."""
+    handoff_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The server-generated handoff attempt identifier. Required."""
+    edge_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The configured edge selected for this handoff. Required."""
+    from_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source node identifier or ``$entrypoint``. Required."""
+    to_node_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target node identifier or ``$entrypoint``. Required."""
+    from_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model active before the handoff. Required."""
+    to_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model prepared for the target behavior. Required."""
+    tool_call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The function-call identifier that initiated the handoff. Required."""
+    node_generation: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source generation for started or aborted events, and the committed target generation for
+     completed events. Required."""
+    type: Literal[VoiceAgentServerEventTypeExtension.SESSION_HANDOFF_STARTED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type. Always ``session.handoff.started``. Required. SESSION_HANDOFF_STARTED."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event_id: str,
+        handoff_id: str,
+        edge_id: str,
+        from_node_id: str,
+        to_node_id: str,
+        from_model: str,
+        to_model: str,
+        tool_call_id: str,
+        node_generation: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VoiceAgentServerEventTypeExtension.SESSION_HANDOFF_STARTED  # type: ignore
+
+
 class VoiceAgentServerEventSessionSubagentAborted(
     RealtimeServerEvent, discriminator="session.subagent.aborted"
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
@@ -31282,6 +32436,8 @@ class VoiceAgentSessionResponseConfig(_Model):  # pylint: disable=docstring-keyw
     :vartype interim_response: ~azure.ai.projects.models.VoiceAgentInterimResponseConfig
     :ivar greeting: A proactive assistant greeting started after session configuration.
     :vartype greeting: ~azure.ai.projects.models.VoiceAgentGreetingConfig
+    :ivar handoff: The effective handoff topology and runtime state, when handoff is configured.
+    :vartype handoff: ~azure.ai.projects.models.VoiceAgentHandoffState
     :ivar object: The object type. Always ``realtime.session``. Required. Default value is
      "realtime.session".
     :vartype object: str
@@ -31349,6 +32505,10 @@ class VoiceAgentSessionResponseConfig(_Model):  # pylint: disable=docstring-keyw
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A proactive assistant greeting started after session configuration."""
+    handoff: Optional["_models.VoiceAgentHandoffState"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The effective handoff topology and runtime state, when handoff is configured."""
     object: Literal["realtime.session"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object type. Always ``realtime.session``. Required. Default value is \"realtime.session\"."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -31381,6 +32541,7 @@ class VoiceAgentSessionResponseConfig(_Model):  # pylint: disable=docstring-keyw
         metadata: Optional[dict[str, str]] = None,
         interim_response: Optional["_models.VoiceAgentInterimResponseConfig"] = None,
         greeting: Optional["_models.VoiceAgentGreetingConfig"] = None,
+        handoff: Optional["_models.VoiceAgentHandoffState"] = None,
         expires_at: Optional[datetime.datetime] = None,
     ) -> None: ...
 
@@ -31803,38 +32964,6 @@ class VoiceAgentSubagent(_Model):  # pylint: disable=docstring-keyword-should-ma
         agent_version: Optional[str] = None,
         response_policy: Optional["_models.VoiceAgentSubagentResponsePolicy"] = None,
         invoke_timeout_seconds: Optional[datetime.timedelta] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class VoiceAgentSubagentConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Configuration for sibling Foundry text agents that a voice agent may consult.
-
-    :ivar subagents: The sibling Foundry text agents, in the same project, that this voice agent
-     may consult. Required.
-    :vartype subagents: list[~azure.ai.projects.models.VoiceAgentSubagent]
-    """
-
-    subagents: list["_models.VoiceAgentSubagent"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The sibling Foundry text agents, in the same project, that this voice agent may consult.
-     Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        subagents: list["_models.VoiceAgentSubagent"],
     ) -> None: ...
 
     @overload

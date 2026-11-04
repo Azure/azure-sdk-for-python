@@ -1432,6 +1432,18 @@ class RealtimeServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESPONSE_ANIMATION_VISEME_DONE."""
     RESPONSE_VIDEO_DELTA = "response.video.delta"
     """RESPONSE_VIDEO_DELTA."""
+    RESPONSE_SYSTEM_TOOL_ARGUMENTS_DELTA = "response.system_tool_arguments.delta"
+    """An incremental fragment of model-generated system-tool arguments."""
+    RESPONSE_SYSTEM_TOOL_ARGUMENTS_DONE = "response.system_tool_arguments.done"
+    """The complete model-generated system-tool arguments, not a provider outcome."""
+    INPUT_COLLECTION_STATUS = "input_collection.status"
+    """An asynchronous collection or telephony-operation outcome."""
+    SESSION_HANDOFF_STARTED = "session.handoff.started"
+    """SESSION_HANDOFF_STARTED."""
+    SESSION_HANDOFF_COMPLETED = "session.handoff.completed"
+    """SESSION_HANDOFF_COMPLETED."""
+    SESSION_HANDOFF_ABORTED = "session.handoff.aborted"
+    """SESSION_HANDOFF_ABORTED."""
 
 
 class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2143,6 +2155,8 @@ class TelephonyProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Microsoft Teams Phone extensibility."""
     TWILIO = "twilio"
     """Twilio Programmable Voice."""
+    SIP = "sip"
+    """Session Initiation Protocol."""
 
 
 class TelephonyTransferDestinationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2466,6 +2480,50 @@ class VoiceAgentEndOfUtteranceThresholdLevel(str, Enum, metaclass=CaseInsensitiv
     """The service-selected sensitivity threshold."""
 
 
+class VoiceAgentHandoffAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Why a server-managed handoff ended before target commit."""
+
+    USER_INTERRUPTION = "user_interruption"
+    """USER_INTERRUPTION."""
+    ERROR = "error"
+    """ERROR."""
+
+
+class VoiceAgentHandoffPipelineFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The immutable pipeline family selected for a voice-agent handoff graph."""
+
+    CASCADED = "cascaded"
+    """CASCADED."""
+    REALTIME = "realtime"
+    """REALTIME."""
+
+
+class VoiceAgentHandoffReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reasoning effort applied by a compatible handoff-node model."""
+
+    NONE = "none"
+    """NONE."""
+    MINIMAL = "minimal"
+    """MINIMAL."""
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
+    XHIGH = "xhigh"
+    """XHIGH."""
+
+
+class VoiceAgentHandoffTargetResponse(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether Voice Live automatically starts a response after a handoff target becomes active."""
+
+    AUTO = "auto"
+    """AUTO."""
+    NONE = "none"
+    """NONE."""
+
+
 class VoiceAgentInputTranscriptionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The input-audio transcription model identifier. This is a model name, not a Foundry deployment
     name. Mirrors the transcription models supported by the managed voice backend, covering the
@@ -2565,6 +2623,55 @@ class VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """Removes recognized profanity from the transcript."""
 
 
+class VoiceAgentServerEventTypeExtension(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of VoiceAgentServerEventTypeExtension."""
+
+    WARNING = "warning"
+    """WARNING."""
+    SESSION_SUBAGENT_STARTED = "session.subagent.started"
+    """SESSION_SUBAGENT_STARTED."""
+    SESSION_SUBAGENT_COMPLETED = "session.subagent.completed"
+    """SESSION_SUBAGENT_COMPLETED."""
+    SESSION_SUBAGENT_ABORTED = "session.subagent.aborted"
+    """SESSION_SUBAGENT_ABORTED."""
+    SESSION_AVATAR_CONNECTING = "session.avatar.connecting"
+    """SESSION_AVATAR_CONNECTING."""
+    SESSION_AVATAR_SWITCH_TO_SPEAKING = "session.avatar.switch_to_speaking"
+    """SESSION_AVATAR_SWITCH_TO_SPEAKING."""
+    SESSION_AVATAR_SWITCH_TO_IDLE = "session.avatar.switch_to_idle"
+    """SESSION_AVATAR_SWITCH_TO_IDLE."""
+    RTC_CALL_SDP_CREATED = "rtc.call.sdp.created"
+    """RTC_CALL_SDP_CREATED."""
+    RTC_CALL_ERROR = "rtc.call.error"
+    """RTC_CALL_ERROR."""
+    RESPONSE_AUDIO_TIMESTAMP_DELTA = "response.audio_timestamp.delta"
+    """RESPONSE_AUDIO_TIMESTAMP_DELTA."""
+    RESPONSE_AUDIO_TIMESTAMP_DONE = "response.audio_timestamp.done"
+    """RESPONSE_AUDIO_TIMESTAMP_DONE."""
+    RESPONSE_ANIMATION_BLENDSHAPES_DELTA = "response.animation_blendshapes.delta"
+    """RESPONSE_ANIMATION_BLENDSHAPES_DELTA."""
+    RESPONSE_ANIMATION_BLENDSHAPES_DONE = "response.animation_blendshapes.done"
+    """RESPONSE_ANIMATION_BLENDSHAPES_DONE."""
+    RESPONSE_ANIMATION_VISEME_DELTA = "response.animation_viseme.delta"
+    """RESPONSE_ANIMATION_VISEME_DELTA."""
+    RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
+    """RESPONSE_ANIMATION_VISEME_DONE."""
+    RESPONSE_VIDEO_DELTA = "response.video.delta"
+    """RESPONSE_VIDEO_DELTA."""
+    RESPONSE_SYSTEM_TOOL_ARGUMENTS_DELTA = "response.system_tool_arguments.delta"
+    """An incremental fragment of model-generated system-tool arguments."""
+    RESPONSE_SYSTEM_TOOL_ARGUMENTS_DONE = "response.system_tool_arguments.done"
+    """The complete model-generated system-tool arguments, not a provider outcome."""
+    INPUT_COLLECTION_STATUS = "input_collection.status"
+    """An asynchronous collection or telephony-operation outcome."""
+    SESSION_HANDOFF_STARTED = "session.handoff.started"
+    """SESSION_HANDOFF_STARTED."""
+    SESSION_HANDOFF_COMPLETED = "session.handoff.completed"
+    """SESSION_HANDOFF_COMPLETED."""
+    SESSION_HANDOFF_ABORTED = "session.handoff.aborted"
+    """SESSION_HANDOFF_ABORTED."""
+
+
 class VoiceAgentSessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Additional fields that a voice-agent session may include in service outputs."""
 
@@ -2610,6 +2717,15 @@ class VoiceAgentSubagentAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """The consultation was replaced by a newer request."""
     FAILED = "failed"
     """The consultation failed."""
+
+
+class VoiceAgentSubagentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The subagent configuration mode. Additional modes may be added over time."""
+
+    DELEGATE = "delegate"
+    """Referenced Foundry agents invoked as delegated background specialists."""
+    INLINE = "inline"
+    """Inline voice behaviors that may become active through Handoff."""
 
 
 class VoiceAgentSystemToolName(str, Enum, metaclass=CaseInsensitiveEnumMeta):

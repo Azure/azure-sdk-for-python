@@ -15,7 +15,8 @@ VoiceAgentToolChoice: TypeAlias = Union[
     Literal["none"], Literal["auto"], Literal["required"], "_models.ToolChoiceFunction", "_models.ToolChoiceMCP"
 ]
 VoiceAgentMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
+VoiceAgentHandoffMaxOutputTokens: TypeAlias = Union[int, Literal["inf"]]
 RoutineRunStatus: TypeAlias = str
-VoiceAgentSessionUpdate: TypeAlias = "_models.VoiceAgentSessionUpdateConfig"
 VoiceAgentSessionResponse: TypeAlias = "_models.VoiceAgentSessionResponseConfig"
+VoiceAgentSessionUpdate: TypeAlias = "_models.VoiceAgentSessionUpdateConfig"
 GenerateAgentRequest: TypeAlias = "_models.GenerateVoiceAgentRequest"

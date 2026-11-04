@@ -2162,7 +2162,9 @@ class AgentsOperations:  # pylint: disable=docstring-missing-param,too-many-publ
         Each SSE frame contains:
 
         * `event`: always `"log"`
-        * `data`: a plain-text log line (currently JSON-formatted, but the schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)
+        * `data`: a plain-text log line (currently JSON-formatted, but the schema
+          is not contractual and may include additional keys or change format
+          over time — clients should treat it as an opaque string)
 
         Example SSE frames:
 
@@ -18613,8 +18615,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         :param agent_name: The name of the voice agent whose bindings are listed. Required.
         :type agent_name: str
-        :keyword provider: Filters bindings by provider. Known values are: "teams_phone_extensibility"
-         and "twilio". Default value is None.
+        :keyword provider: Filters bindings by provider. Known values are: "teams_phone_extensibility",
+         "twilio", and "sip". Default value is None.
         :paramtype provider: str or ~azure.ai.projects.models.TelephonyProvider
         :keyword status: Filters bindings by lifecycle status. Known values are: "active" and
          "suspended". Default value is None.
@@ -19075,8 +19077,8 @@ class BetaVoiceAgentsTelephonyOperations:  # pylint: disable=docstring-missing-p
 
         :param agent_name: The name of the voice agent whose calls are listed. Required.
         :type agent_name: str
-        :keyword provider: Filters calls by provider. Known values are: "teams_phone_extensibility" and
-         "twilio". Default value is None.
+        :keyword provider: Filters calls by provider. Known values are: "teams_phone_extensibility",
+         "twilio", and "sip". Default value is None.
         :paramtype provider: str or ~azure.ai.projects.models.TelephonyProvider
         :keyword status: Filters calls by lifecycle status. Known values are: "in_progress", "success",
          and "failed". Default value is None.
