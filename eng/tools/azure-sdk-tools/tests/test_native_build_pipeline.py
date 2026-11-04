@@ -45,6 +45,15 @@ def run_powershell(script, **environment):
     )
 
 
+def test_build_authenticates_feed_before_python_bootstrap():
+    steps = load_template("steps/build-package-artifacts.yml")["steps"]
+    authenticate = next(step for step in steps if step.get("template") == "auth-dev-feed.yml")
+    python = next(step for step in steps if step.get("task") == "UsePythonVersion@0")
+    venv = next(step for step in steps if step.get("template", "").endswith("/use-venv.yml"))
+
+    assert steps.index(authenticate) < steps.index(python) < steps.index(venv)
+
+
 def test_rust_support_is_disabled_by_default_and_forwarded():
     archetype = load_template("stages/archetype-sdk-client.yml")
     jobs = load_template("jobs/ci.yml")
