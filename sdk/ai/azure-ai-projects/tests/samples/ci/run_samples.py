@@ -182,6 +182,7 @@ def main() -> int:
         PYTHONIOENCODING="utf-8",
     )
     environment.pop("MCP_GITHUB_PAT", None)
+    environment.pop("PROJ_CONN_OPEN_API_KEY", None)
     environment.pop("SYSTEM_ACCESSTOKEN", None)
     environment["PYTHONPATH"] = os.pathsep.join(
         (str(arguments.package_root), str(Path(__file__).resolve().parent), environment.get("PYTHONPATH", ""))
