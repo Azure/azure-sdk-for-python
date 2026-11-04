@@ -49,7 +49,10 @@
   - Added model `PrivateLinkResourceProperties`
   - Added enum `SourceType`
   - Added operation group `ClustersOperations`
+  - Operation group `ClustersOperations` added method `begin_unlink_migrated_endpoint`
   - Added operation group `MigrationsOperations`
+  - Operation group `MigrationsOperations` added method `begin_undo`
+  - Operation group `MigrationsOperations` added method `begin_unlink_migrated_endpoint`
 
 ### Breaking Changes
 
