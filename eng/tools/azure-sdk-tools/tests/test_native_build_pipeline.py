@@ -108,6 +108,50 @@ def test_rust_credentials_and_target_setup_are_opt_in():
         step for step in build["steps"] if step.get("displayName") == "Pre-provision CPython for cibuildwheel"
     )
     assert provision["env"]["INSTALL_MS_RUST_TOOLCHAIN"] == "${{ format('{0}', parameters.InstallMsRustToolchain) }}"
+    assert "variable=AZURESDK_PYTHON_NUGET_FEED]" in provision["pwsh"]
+    assert "variable=AZURESDK_PYTHON_ARM64_LIBS]true" in provision["pwsh"]
+    assert "variable=PYTHON_ARM64_LIB_DIR]" not in provision["pwsh"]
+    assert "3.10.11" not in provision["pwsh"]
+
+
+@pytest.mark.parametrize("rust", ["true", "false"])
+def test_windows_provisioning_configuration(tmp_path, rust):
+    build = load_template("steps/build-package-artifacts.yml")
+    provision = next(
+        step for step in build["steps"] if step.get("displayName") == "Pre-provision CPython for cibuildwheel"
+    )
+    assert provision["condition"] == (
+        "and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))"
+    )
+    script = provision["pwsh"].replace("$(Agent.TempDirectory)", str(tmp_path))
+    result = run_powershell(script, INSTALL_MS_RUST_TOOLCHAIN=rust)
+    assert result.returncode == 0, result.stderr
+    assert "variable=CIBW_CACHE_PATH]" in result.stdout
+    assert (
+        "variable=AZURESDK_PYTHON_NUGET_FEED]"
+        "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+    ) in result.stdout
+    assert ("variable=AZURESDK_PYTHON_ARM64_LIBS]true" in result.stdout) is (rust == "true")
+    assert "variable=PYTHON_ARM64_LIB_DIR]" not in result.stdout
+
+
+def test_dev_requirements_share_selected_target_provisioning(tmp_path):
+    steps = [step for step in load_template("jobs/live.tests.yml")["jobs"][0]["steps"] if isinstance(step, dict)]
+    provision = next(step for step in steps if step.get("displayName") == "Pre-provision CPython for cibuildwheel")
+    assert provision["condition"] == (
+        "and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))"
+    )
+    configure = next(
+        step for step in steps if step.get("displayName") == "Configure cibuildwheel for dev requirement builds"
+    )
+    assert "variable=CIBW_ARCHS]native" in configure["pwsh"]
+    assert "nuget install" not in provision["pwsh"]
+    assert "3.10.11" not in provision["pwsh"]
+    result = run_powershell(provision["pwsh"].replace("$(Agent.TempDirectory)", str(tmp_path)))
+    assert result.returncode == 0, result.stderr
+    assert "variable=CIBW_CACHE_PATH]" in result.stdout
+    assert "variable=AZURESDK_PYTHON_NUGET_FEED]" in result.stdout
+    assert "variable=AZURESDK_PYTHON_ARM64_LIBS]" not in result.stdout
 
 
 @pytest.mark.parametrize("sign_binaries", [False, True])

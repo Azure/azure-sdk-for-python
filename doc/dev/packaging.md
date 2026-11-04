@@ -194,8 +194,18 @@ inside each container. The pipeline forwards `PIP_INDEX_URL`,
 `MSRUSTUP_ACCESS_TOKEN`, `MSRUSTUP_FEED_URL`, and the
 `CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_*` index, token, and credential-provider
 variables. Credentials stay in the build environment, not checked-in files.
-On Windows, `PYTHON_ARM64_LIB_DIR` points to the pre-provisioned ARM64 Python
-import libraries; a package can use it as `PYO3_CROSS_LIB_DIR` for cross-compilation.
+On Windows, `sdk_build` provisions only the package's selected CPython targets
+from the approved Azure SDK NuGet feed. Exact interpreter versions and package
+names come from the installed `cibuildwheel`, including native interpreters needed
+to cross-compile ARM64 wheels. Package build/skip selectors and architecture
+settings remain authoritative; cp310-only packages are not expanded.
+Live-test dev-requirement builds use the same provisioning while retaining their
+native-architecture restriction.
+For Microsoft Rust toolchain builds, `PYTHON_ARM64_LIB_DIR` and
+`PYO3_CROSS_LIB_DIR` are set only for ARM64 targets, using that target's Python
+import libraries. A temporary cibuildwheel configuration preserves the resolved
+package environment and hooks without changing the checked-in package configuration
+or setting a single library path for the entire job.
 
 This opt-in does not provision Rust for source-installing test, documentation,
 or analysis jobs. Prepare those jobs separately before enabling a Rust package,
