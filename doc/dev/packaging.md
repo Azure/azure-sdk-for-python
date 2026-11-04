@@ -198,8 +198,8 @@ On Windows, `sdk_build` provisions only the package's selected CPython targets
 from the approved Azure SDK NuGet feed. Exact interpreter versions and package
 names come from the installed `cibuildwheel`, including native interpreters needed
 to cross-compile ARM64 wheels.
-For Microsoft Rust toolchain builds, `PYTHON_ARM64_LIB_DIR` and
-`PYO3_CROSS_LIB_DIR` are set only for ARM64 targets, using that target's Python
+For Microsoft Rust toolchain builds, `PYTHON_ARM64_LIB_DIR` and a temporary
+`PYO3_CONFIG_FILE` are set only for ARM64 targets, using that target's Python
 import libraries. A temporary cibuildwheel configuration preserves the resolved
 package environment and hooks without changing the checked-in package configuration
 or setting a single library path for the entire job.
