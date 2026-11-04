@@ -90,6 +90,10 @@ def selected_options(package, config="", environment=None):
     return Options(platform="windows", command_line_arguments=arguments, env=environment or os.environ)
 
 
+def read_pyo3_config(path):
+    return dict(line.split("=", 1) for line in path.read_text(encoding="utf-8").splitlines())
+
+
 def test_selected_versions_and_matching_arm64_libraries(provision, monkeypatch):
     package, calls = provision
     write_config(package)
@@ -107,6 +111,7 @@ def test_selected_versions_and_matching_arm64_libraries(provision, monkeypatch):
     monkeypatch.setenv("CIBW_ENVIRONMENT", 'KEEP="pipeline" EXTRA="$PYTHON_VERSION"')
     original = (package / "pyproject.toml").read_bytes()
     before = os.environ.copy()
+    pyo3_configs = []
 
     with windows_wheels.windows_wheel_config(package) as (arguments, kwargs):
         assert arguments[0] == "--config-file"
@@ -130,13 +135,26 @@ def test_selected_versions_and_matching_arm64_libraries(provision, monkeypatch):
                     / "libs"
                 )
                 assert Path(environment["PYTHON_ARM64_LIB_DIR"]) == expected
-                assert Path(environment["PYO3_CROSS_LIB_DIR"]) == expected
+                assert "PYO3_CROSS_LIB_DIR" not in environment
+                pyo3_config = Path(environment["PYO3_CONFIG_FILE"])
+                pyo3_configs.append(pyo3_config)
+                assert pyo3_config.is_file()
+                target = read_pyo3_config(pyo3_config)
+                major, minor = configuration.version.split(".")[:2]
+                assert target["version"] == f"{major}.{minor}"
+                assert Path(target["lib_dir"]) == expected
+                assert target["ext_suffix"] == f".cp{major}{minor}-win_arm64.pyd"
+                assert target["build_flags"] == ""
+                assert "abiflags" not in target
             else:
                 assert "PYO3_CROSS_LIB_DIR" not in environment
                 assert "PYTHON_ARM64_LIB_DIR" not in environment
+                assert "PYO3_CONFIG_FILE" not in environment
         assert os.environ == before
 
     assert not config.exists()
+    assert pyo3_configs
+    assert not any(path.exists() for path in pyo3_configs)
     assert (package / "pyproject.toml").read_bytes() == original
     expected = {(configuration.version, configuration.arch) for configuration in configurations}
     actual = {
@@ -181,8 +199,8 @@ def test_package_overrides_and_windows_environment_are_preserved(provision, monk
             expected = original.build_options(configuration.identifier).environment.as_dictionary(previous)
             actual = options.build_options(configuration.identifier).environment.as_dictionary(previous)
             if configuration.arch == "ARM64":
-                actual.pop("PYO3_CROSS_LIB_DIR")
                 actual.pop("PYTHON_ARM64_LIB_DIR")
+                actual.pop("PYO3_CONFIG_FILE")
                 expected.pop("PYTHON_ARM64_LIB_DIR", None)
             assert actual == expected
 
@@ -225,9 +243,16 @@ def test_free_threaded_package_and_libraries_match(provision, monkeypatch):
     with windows_wheels.windows_wheel_config(package) as (arguments, kwargs):
         options = selected_options(package, arguments[1], kwargs["env"])
         environment = options.build_options(configuration.identifier).environment.as_dictionary({})
-        libraries = Path(environment["PYO3_CROSS_LIB_DIR"])
+        libraries = Path(environment["PYTHON_ARM64_LIB_DIR"])
         assert libraries.parent.parent.name == "pythonarm64-freethreaded.3.14.8"
         assert (libraries / "python314t.lib").is_file()
+        assert "PYO3_CROSS_LIB_DIR" not in environment
+        target = read_pyo3_config(Path(environment["PYO3_CONFIG_FILE"]))
+        assert target["version"] == "3.14"
+        assert Path(target["lib_dir"]) == libraries
+        assert target["build_flags"] == "Py_GIL_DISABLED"
+        assert target["abiflags"] == "t"
+        assert target["ext_suffix"] == ".cp314t-win_arm64.pyd"
     assert {command[2] for command in calls} == {"python-freethreaded", "pythonarm64-freethreaded"}
 
 

@@ -25,6 +25,30 @@ else:
     import tomli as tomllib
 
 
+def _write_pyo3_config(directory, configuration, libraries):
+    """Write target Python metadata so Maturin does not inspect the host Python."""
+    major, minor = configuration.version.split(".")[:2]
+    free_threaded = "t-" in configuration.identifier
+    abi_flags = "t" if free_threaded else ""
+    build_flags = "Py_GIL_DISABLED" if free_threaded else ""
+    config = [
+        "implementation=CPython",
+        f"version={major}.{minor}",
+        "shared=true",
+        f"build_flags={build_flags}",
+        "suppress_build_script_link_lines=false",
+        "pointer_width=64",
+        f"lib_dir={libraries.as_posix()}",
+        f"ext_suffix=.cp{major}{minor}{abi_flags}-win_arm64.pyd",
+    ]
+    # Maturin 1.15 derives the free-threaded wheel ABI tag from this field.
+    if free_threaded:
+        config.append("abiflags=t")
+    path = directory / f"pyo3-{configuration.identifier}.txt"
+    path.write_text("\n".join(config) + "\n", encoding="utf-8")
+    return path
+
+
 @contextmanager
 def windows_wheel_config(package_dir):
     """Yield cibuildwheel arguments/environment, leaving non-pipeline builds unchanged."""
@@ -106,20 +130,27 @@ def windows_wheel_config(package_dir):
     # Preserve each target's resolved environment, adding its matching Python
     # import-library path only to ARM64 targets.
     overrides = config.setdefault("tool", {}).setdefault("cibuildwheel", {}).setdefault("overrides", [])
-    for configuration in configurations:
-        with options.reader.identifier(configuration.identifier):
-            environment = options.reader.get("environment", option_format=EnvironmentFormat())
-        if configuration.identifier in arm64_libraries:
-            libraries = shlex.quote(arm64_libraries[configuration.identifier].as_posix())
-            environment += f" PYTHON_ARM64_LIB_DIR={libraries} PYO3_CROSS_LIB_DIR={libraries}"
-        overrides.append({"select": configuration.identifier, "environment": environment})
-
-    environment = os.environ.copy()
-    environment.pop("CIBW_ENVIRONMENT", None)
-    environment.pop("CIBW_ENVIRONMENT_WINDOWS", None)
     # Keep the generated config alive while cibuildwheel runs. TemporaryDirectory
-    # removes it when the caller leaves the context, including after a build failure.
+    # removes it and the PyO3 target configs after success or failure.
     with TemporaryDirectory(prefix="azsdk-cibw-") as directory:
-        config_path = Path(directory) / "pyproject.toml"
+        directory = Path(directory)
+        for configuration in configurations:
+            with options.reader.identifier(configuration.identifier):
+                environment = options.reader.get("environment", option_format=EnvironmentFormat())
+            if configuration.identifier in arm64_libraries:
+                libraries = arm64_libraries[configuration.identifier]
+                pyo3_config = _write_pyo3_config(directory, configuration, libraries)
+                # PYTHON_ARM64_LIB_DIR supports other Rust build tooling. Maturin
+                # reads the explicit target metadata instead of inspecting AMD64 Python.
+                environment += (
+                    f" PYTHON_ARM64_LIB_DIR={shlex.quote(libraries.as_posix())}"
+                    f" PYO3_CONFIG_FILE={shlex.quote(pyo3_config.as_posix())}"
+                )
+            overrides.append({"select": configuration.identifier, "environment": environment})
+
+        environment = os.environ.copy()
+        environment.pop("CIBW_ENVIRONMENT", None)
+        environment.pop("CIBW_ENVIRONMENT_WINDOWS", None)
+        config_path = directory / "pyproject.toml"
         config_path.write_text(tomli_w.dumps(config), encoding="utf-8")
         yield ["--config-file", str(config_path)], {"env": environment}
