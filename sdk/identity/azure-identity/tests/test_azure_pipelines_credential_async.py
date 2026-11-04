@@ -178,7 +178,8 @@ async def test_azure_pipelines_credential_in_chain(get_token_method):
 @pytest.mark.asyncio
 @pytest.mark.live_test_only("Requires Azure Pipelines environment with configured service connection")
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
-async def test_azure_pipelines_credential_authentication(get_token_method):
+@pytest.mark.parametrize("use_custom_transport", [False, True])
+async def test_azure_pipelines_credential_authentication(get_token_method, use_custom_transport):
     system_access_token = os.environ.get("SYSTEM_ACCESSTOKEN", "")
     service_connection_id = os.environ.get("AZURE_SERVICE_CONNECTION_ID", "")
     tenant_id = os.environ.get("AZURE_SERVICE_CONNECTION_TENANT_ID", "")
@@ -186,19 +187,31 @@ async def test_azure_pipelines_credential_authentication(get_token_method):
 
     scope = "https://vault.azure.net/.default"
 
-    if not all([service_connection_id, tenant_id, client_id]):
-        pytest.skip("This test requires environment variables to be set")
+    if not all(
+        [system_access_token, os.environ.get(SYSTEM_OIDCREQUESTURI), service_connection_id, tenant_id, client_id]
+    ):
+        pytest.skip("This test requires Azure Pipelines OIDC and service connection environment variables")
 
+    transport = AioHttpTransport() if use_custom_transport else None
     credential = AzurePipelinesCredential(
         system_access_token=system_access_token,
         tenant_id=tenant_id,
         client_id=client_id,
         service_connection_id=service_connection_id,
+        transport=transport,
     )
 
-    token = await getattr(credential, get_token_method)(scope)
+    async with credential:
+        session = transport.session if transport is not None else None
+        if transport is not None:
+            assert session is not None
+        token = await getattr(credential, get_token_method)(scope)
+
     assert token.token
     assert isinstance(token.expires_on, int)
+    if transport is not None:
+        assert session.closed
+        assert transport.session is None
 
 
 @pytest.mark.asyncio
@@ -212,17 +225,24 @@ async def test_azure_pipelines_credential_authentication_invalid_token(get_token
 
     scope = "https://vault.azure.net/.default"
 
-    if not all([service_connection_id, tenant_id, client_id]):
-        pytest.skip("This test requires environment variables to be set")
+    if not all([os.environ.get(SYSTEM_OIDCREQUESTURI), service_connection_id, tenant_id, client_id]):
+        pytest.skip("This test requires Azure Pipelines OIDC and service connection environment variables")
 
+    transport = AioHttpTransport()
     credential = AzurePipelinesCredential(
         system_access_token=system_access_token,
         tenant_id=tenant_id,
         client_id=client_id,
         service_connection_id=service_connection_id,
+        transport=transport,
     )
 
     with pytest.raises(ClientAuthenticationError) as ex:
-        await getattr(credential, get_token_method)(scope)
+        async with credential:
+            session = transport.session
+            assert session is not None
+            await getattr(credential, get_token_method)(scope)
 
     assert ex.value.status_code == 401
+    assert session.closed
+    assert transport.session is None
