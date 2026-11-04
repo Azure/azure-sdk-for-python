@@ -1,5 +1,20 @@
 # Release History
 
+## 10.1.0 (2026-10-26)
+
+### Features Added
+
+  - Client `HybridComputeManagementClient` added operation group `vm_applications`
+  - Enum `IdentityKeyStore` added member `TPM_TRANSITION`
+  - Model `MachineUpdateProperties` added property `client_public_key`
+  - Added model `VmApplication`
+  - Added model `VmApplicationInstanceView`
+  - Added model `VmApplicationInstanceViewAction`
+  - Added model `VmApplicationProperties`
+  - Added model `VmApplicationUpdate`
+  - Added model `VmApplicationUpdateProperties`
+  - Added operation group `VmApplicationsOperations`
+
 ## 10.0.0 (2026-07-24)
 
 ### Features Added
