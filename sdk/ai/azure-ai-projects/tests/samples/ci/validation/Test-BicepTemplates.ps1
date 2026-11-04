@@ -287,7 +287,7 @@ if ($searchScript['properties']['cleanupPreference'] -cne 'Always' -or
 $embedding = @($searchResources | Where-Object Type -ceq 'Microsoft.CognitiveServices/accounts/deployments')[0].Definition
 if ($embedding['properties']['model']['name'] -cne 'text-embedding-3-small' -or
     $embedding['properties']['model']['version'] -cne '1' -or
-    $embedding['sku']['name'] -cne 'Standard' -or $embedding['sku']['capacity'] -ne 10 -or
+    $embedding['sku']['name'] -cne 'GlobalStandard' -or $embedding['sku']['capacity'] -ne 10 -or
     $searchTemplate['variables']['dimensions'] -ne 1536) {
     throw 'Search index dimensions must match the pinned embedding model deployment.'
 }

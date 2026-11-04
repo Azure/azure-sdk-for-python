@@ -212,7 +212,7 @@ ports the Search content provisioning from `foundry-project-pool` into the uncon
 resource bundle. It reuses the Standard setup's S1 Search service, storage account,
 AAD-authenticated project connection and pre-existing Search UAMI. Semantic search uses
 the free tier. It adds a private `documents` container and a `text-embedding-3-small`
-version `1` deployment with Standard capacity `10` and `1536` dimensions. The region must
+version `1` deployment with GlobalStandard capacity `10` and `1536` dimensions. The region must
 support that embedding deployment and have its own remaining model quota; the chat-model
 preflight does not check embedding quota. ARM validates this additional deployment.
 The Search module waits for the chat-model/MCP module before deploying its embedding

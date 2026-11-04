@@ -43,7 +43,7 @@ resource embedding 'Microsoft.CognitiveServices/accounts/deployments@2025-10-01-
   parent: account
   name: 'text-embedding-3-small'
   sku: {
-    name: 'Standard'
+    name: 'GlobalStandard'
     capacity: 10
   }
   properties: {
