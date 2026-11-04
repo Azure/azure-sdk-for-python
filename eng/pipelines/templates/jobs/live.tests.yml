@@ -185,8 +185,8 @@ jobs:
         displayName: 'Configure cibuildwheel for dev requirement builds'
         condition: and(succeeded(), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))
 
-      # Use the same selected-target provisioning as artifact builds. CIBW_ARCHS=native
-      # still limits dev-requirement builds to the host architecture.
+      # Download the Python versions selected by cibuildwheel from the approved feed.
+      # This test job builds only for the current machine's architecture, not ARM64.
       - task: NuGetAuthenticate@1
         displayName: 'Authenticate to NuGet feed'
         condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['CIBUILDWHEEL_DEV_REQ'], 'true'))

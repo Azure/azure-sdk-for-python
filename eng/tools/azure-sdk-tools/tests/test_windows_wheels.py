@@ -41,6 +41,8 @@ def provision(tmp_path, monkeypatch):
     calls = []
 
     def install(command, **kwargs):
+        if command[0] != "nuget":
+            return RUN(command, **kwargs)
         assert kwargs == {"check": True}
         assert command[command.index("-Source") + 1] == FEED
         assert "https://api.nuget.org/v3/index.json" not in command
@@ -151,10 +153,15 @@ def test_cp310_only_and_cache_reuse(provision, monkeypatch, archs, rust):
     package, calls = provision
     write_config(package, build="cp310-*", archs=archs)
     monkeypatch.setenv("AZURESDK_PYTHON_ARM64_LIBS", rust)
+    options = selected_options(package)
+    configurations = WINDOWS.get_python_configurations(options.globals.build_selector, options.globals.architectures)
+    expected_versions = {configuration.version for configuration in configurations}
+    assert configurations
+    assert all(configuration.identifier.startswith("cp310-") for configuration in configurations)
     for _ in range(2):
         with windows_wheels.windows_wheel_config(package) as (arguments, kwargs):
             assert bool(arguments) is (rust == "true" and "ARM64" in archs)
-    assert {command[command.index("-Version") + 1] for command in calls} == {"3.10.11"}
+    assert {command[command.index("-Version") + 1] for command in calls} == expected_versions
     assert {command[2] for command in calls} == ({"python", "pythonarm64"} if "ARM64" in archs else {"python"})
     assert len(calls) == (2 if "ARM64" in archs else 1)
 

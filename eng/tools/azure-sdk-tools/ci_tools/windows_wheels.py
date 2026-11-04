@@ -28,6 +28,8 @@ else:
 @contextmanager
 def windows_wheel_config(package_dir):
     """Yield cibuildwheel arguments/environment, leaving non-pipeline builds unchanged."""
+    # The pipeline sets this variable after authenticating to the approved feed.
+    # Keep ordinary local builds and non-Windows builds on cibuildwheel's normal path.
     feed = os.environ.get("AZURESDK_PYTHON_NUGET_FEED")
     if sys.platform != "win32" or not feed:
         yield [], {}
@@ -41,7 +43,8 @@ def windows_wheel_config(package_dir):
     arguments = CommandLineArguments.defaults()
     arguments.package_dir = Path(package_dir)
     options = Options(platform="windows", command_line_arguments=arguments, env=os.environ)
-    # Get combinations of Python version and CPU architecture from cibuildwheel options
+    # Let cibuildwheel combine package config and CIBW_* variables. This keeps
+    # build, skip, requires-python, and architecture selection in one authority.
     configurations = windows.get_python_configurations(options.globals.build_selector, options.globals.architectures)
     cache = Path(os.environ["CIBW_CACHE_PATH"]) / "nuget-cpython"
     cache.mkdir(parents=True, exist_ok=True)
@@ -52,9 +55,13 @@ def windows_wheel_config(package_dir):
         if not configuration.identifier.startswith("cp"):
             continue
         architectures = [configuration.arch]
+        # An ARM64 wheel built on an AMD64 agent needs two Python packages:
+        # ARM64 provides the target import libraries, while AMD64 runs the build tools.
         if configuration.arch == "ARM64" and platform.machine() != "ARM64":
             architectures.append(platform.machine())
         for arch in architectures:
+            # Ask cibuildwheel for its NuGet package name so free-threaded and
+            # architecture naming stays aligned with the installed version.
             package = windows.get_nuget_args(configuration.version, arch, "t-" in configuration.identifier, cache)[0]
             tools = cache / f"{package}.{configuration.version}" / "tools"
             if tools not in installed:
@@ -78,6 +85,7 @@ def windows_wheel_config(package_dir):
                     raise RuntimeError(f"Expected CPython executable at {tools / 'python.exe'}")
                 installed.add(tools)
             if arch == "ARM64" and os.environ.get("AZURESDK_PYTHON_ARM64_LIBS", "").lower() == "true":
+                # PyO3 must link against the target Python's import library
                 libraries = tools / "libs"
                 suffix = "t" if "t-" in configuration.identifier else ""
                 library = libraries / f"python{''.join(configuration.version.split('.')[:2])}{suffix}.lib"
@@ -86,6 +94,8 @@ def windows_wheel_config(package_dir):
                 arm64_libraries[configuration.identifier] = libraries
 
     if not arm64_libraries:
+        # Interpreter packages are now cached for cibuildwheel. A temporary
+        # config is only needed when target-specific ARM64 library paths are required.
         yield [], {}
         return
 
@@ -93,10 +103,10 @@ def windows_wheel_config(package_dir):
     if options.config_file_path:
         with options.config_file_path.open("rb") as source:
             config = tomllib.load(source)
+    # Preserve each target's resolved environment, adding its matching Python
+    # import-library path only to ARM64 targets.
     overrides = config.setdefault("tool", {}).setdefault("cibuildwheel", {}).setdefault("overrides", [])
     for configuration in configurations:
-        # Freeze the resolved environment, including environment-variable and package
-        # overrides, before adding target-specific paths. Do not evaluate build-time commands.
         with options.reader.identifier(configuration.identifier):
             environment = options.reader.get("environment", option_format=EnvironmentFormat())
         if configuration.identifier in arm64_libraries:
@@ -107,6 +117,8 @@ def windows_wheel_config(package_dir):
     environment = os.environ.copy()
     environment.pop("CIBW_ENVIRONMENT", None)
     environment.pop("CIBW_ENVIRONMENT_WINDOWS", None)
+    # Keep the generated config alive while cibuildwheel runs. TemporaryDirectory
+    # removes it when the caller leaves the context, including after a build failure.
     with TemporaryDirectory(prefix="azsdk-cibw-") as directory:
         config_path = Path(directory) / "pyproject.toml"
         config_path.write_text(tomli_w.dumps(config), encoding="utf-8")
