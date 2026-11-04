@@ -197,10 +197,7 @@ variables. Credentials stay in the build environment, not checked-in files.
 On Windows, `sdk_build` provisions only the package's selected CPython targets
 from the approved Azure SDK NuGet feed. Exact interpreter versions and package
 names come from the installed `cibuildwheel`, including native interpreters needed
-to cross-compile ARM64 wheels. Package build/skip selectors and architecture
-settings remain authoritative; cp310-only packages are not expanded.
-Live-test dev-requirement builds use the same provisioning while retaining their
-native-architecture restriction.
+to cross-compile ARM64 wheels.
 For Microsoft Rust toolchain builds, `PYTHON_ARM64_LIB_DIR` and
 `PYO3_CROSS_LIB_DIR` are set only for ARM64 targets, using that target's Python
 import libraries. A temporary cibuildwheel configuration preserves the resolved
