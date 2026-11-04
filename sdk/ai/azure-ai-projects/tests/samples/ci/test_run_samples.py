@@ -73,6 +73,22 @@ def test_command_executes_pytest_live_without_recording():
     assert state == original
 
 
+def test_function_deployment_outputs_become_live_sample_options():
+    state = ready_state()
+    environment = {
+        "FUNCTION_APP_NAME": "example-function",
+        "FUNCTION_APP_URL": "https://example-function.azurewebsites.net",
+        "STORAGE_INPUT_QUEUE_NAME": "weather-input-queue",
+        "STORAGE_OUTPUT_QUEUE_NAME": "weather-output-queue",
+        "STORAGE_QUEUE_SERVICE_ENDPOINT": "https://example.queue.core.windows.net",
+    }
+    state["plan"]["environmentBindings"].extend(environment)
+    state["environment"].update(environment)
+    command = build_command(state, Path("results.xml"))
+    for name, value in environment.items():
+        assert f"--{name.lower().replace('_', '-')}={value}" in command
+
+
 @pytest.mark.parametrize("status", ["Provisioning", "CleanedUp", "Failed", None])
 def test_incomplete_provisioning_is_rejected(status):
     state = ready_state()
@@ -293,6 +309,9 @@ def test_external_validation_endpoint_is_env_only_in_real_runner_invocation(tmp_
     assert environment["AZURE_TEST_USE_CLI_AUTH"] == "true"
     assert environment["AZURE_TOKEN_CREDENTIALS"] == "AzureCliCredential"
     assert environment["PYTHON_DOTENV_DISABLED"] == "true"
+    assert set(json.loads(environment["AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES"])) == set(
+        state["plan"]["environmentBindings"]
+    )
     assert "MCP_GITHUB_PAT" not in environment
     assert "SYSTEM_ACCESSTOKEN" not in environment
     assert all(endpoint not in argument and "llm-validation-project-endpoint" not in argument for argument in command)
