@@ -124,7 +124,10 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
             self.storage.close()
 
     def _log_to_envelope(self, readable_log_record: ReadableLogRecord) -> TelemetryItem:
-        envelope = _convert_log_to_envelope(readable_log_record)
+        envelope = _convert_log_to_envelope(
+            readable_log_record,
+            increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+        )
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
@@ -161,7 +164,9 @@ def _log_data_is_event(readable_log_record: ReadableLogRecord) -> bool:
 # pylint: disable=protected-access
 # pylint: disable=too-many-statements
 # pylint: disable=too-many-branches
-def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> TelemetryItem:
+def _convert_log_to_envelope(
+    readable_log_record: ReadableLogRecord, *, increase_truncation_limit: bool = False
+) -> TelemetryItem:
     log_record = readable_log_record.log_record
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
@@ -194,7 +199,9 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
     if location_ip:
         tags[ContextTagKeys.AI_LOCATION_IP] = location_ip  # type: ignore
     properties = _utils._filter_custom_properties(
-        log_record.attributes, lambda key, val: not _is_ignored_attribute(key)  # type: ignore
+        log_record.attributes,
+        lambda key, val: not _is_ignored_attribute(key),  # type: ignore
+        increase_truncation_limit=increase_truncation_limit,
     )
     measurements = _utils._filter_custom_measurements(log_record.attributes)
     availability_data = _get_availability_data(log_record)

@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import asyncio
+import base64
 import os
 import pytest
 from unittest import mock
@@ -32,6 +33,9 @@ from devtools_testutils import (
     test_proxy,
     add_oauth_response_sanitizer,
     add_general_regex_sanitizer,
+    add_general_string_sanitizer,
+    add_body_key_sanitizer,
+    add_remove_header_sanitizer,
     remove_batch_sanitizers,
     set_custom_default_matcher,
 )
@@ -51,6 +55,28 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=keyvault_tenant_id, value="00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=keyvault_subscription_id, value="00000000-0000-0000-0000-000000000000")
     add_oauth_response_sanitizer()
+    add_remove_header_sanitizer(headers="x-ms-keyvault-network-info")
+    add_body_key_sanitizer(
+        json_path="$.value",
+        value=base64.b64encode(b"sanitized-backup-payload").decode(),
+        condition={"uriRegex": r"/certificates/(?:[^/?]+/backup|restore)(?:\?|$)"},
+    )
+    import_condition = {"uriRegex": r"/certificates/[^/?]+/import(?:\?|$)"}
+    add_body_key_sanitizer(
+        json_path="$.value",
+        value=base64.b64encode(b"sanitized-import-payload").decode(),
+        condition=import_condition,
+    )
+    add_body_key_sanitizer(json_path="$.pwd", value="SANITIZED", condition=import_condition)
+
+    # Map historical fixture addresses one-to-one without weakening contact or SAN assertions.
+    for original, replacement in (
+        ("john.doe@domain.com", "john.doe@example.invalid"),
+        ("admin@contoso.com", "admin@contoso.example.invalid"),
+        ("admin2@contoso.com", "admin2@contoso.example.invalid"),
+        ("admin@microsoft.com", "admin@microsoft.example.invalid"),
+    ):
+        add_general_string_sanitizer(target=original, value=replacement)
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id

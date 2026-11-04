@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2027-01-01",
+  "apiVersions": {
+    "Microsoft.HybridConnectivity": "2027-01-01"
+  },
+  "commit": "47515ad36204e02e14c3b62414beebca92abb4a2",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/hybridconnectivity/HybridConnectivity.Management",
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
+}

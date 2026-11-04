@@ -20,6 +20,10 @@ scoring:
 stimuli:
   - name: trigger-generate-python-sdk-locally
     prompt: "Generate the Python SDK locally from my TypeSpec project at specification/compute/resource-manager/Microsoft.Compute/ComputeRP/tspconfig.yaml."
+    environment:
+      skills:
+        - ..
+        - ../../azsdk-common-sdk-breaking-change
     graders:
       - type: skill-invocation
         config:
@@ -28,7 +32,12 @@ stimuli:
   # Should NOT trigger
   - name: anti-trigger-mitigate-breaking-change
     prompt: "Fix the SDK breaking changes"
+    environment:
+      skills:
+        - ..
+        - ../../azsdk-common-sdk-breaking-change
     graders:
       - type: skill-invocation
         config:
+          required: ["azsdk-common-sdk-breaking-change"]
           disallowed: ["azsdk-common-generate-sdk-locally"]

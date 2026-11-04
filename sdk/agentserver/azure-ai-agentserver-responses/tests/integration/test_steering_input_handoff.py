@@ -30,7 +30,7 @@ def test_queued_turn_executes_after_steering_cancellation(
 ) -> None:
     monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
     monkeypatch.setenv("AGENTSERVER_TASKS_BACKEND", "local")
-    set_resilient_tasks_enabled(True)
+    set_resilient_tasks_enabled(False)
     host = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
             resilient_background=resilient_background,

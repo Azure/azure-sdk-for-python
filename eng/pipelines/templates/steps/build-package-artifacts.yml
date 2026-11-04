@@ -17,6 +17,9 @@ parameters:
   - name: ArtifactSuffix
     type: string
     default: 'linux'
+  - name: SbomGenerationTimeoutInMinutes
+    type: number
+    default: 30
   - name: BuildTargetingString
     type: string
     default: '*'
@@ -250,15 +253,18 @@ steps:
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)/release_artifact'
         ArtifactName: 'release_artifact'
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
 
   - ${{ if eq(parameters.ArtifactSuffix, '') }}:
     - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'packages'
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
 
   - ${{ if ne(parameters.ArtifactSuffix, '') }}:
     - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'packages_${{ parameters.ArtifactSuffix }}'
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}

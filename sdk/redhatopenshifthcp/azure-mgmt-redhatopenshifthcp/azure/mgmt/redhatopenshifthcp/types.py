@@ -24,6 +24,7 @@ if TYPE_CHECKING:
         ExternalAuthProvisioningState,
         IngressType,
         KeyVaultVisibility,
+        KmsKeyVaultType,
         ManagedServiceIdentityType,
         NetworkType,
         OsDiskType,
@@ -58,16 +59,29 @@ class ApiProfile(TypedDict, total=False):
     """The list of authorized IPv4 CIDR blocks allowed to access the API server. Maximum 500 entries."""
 
 
+class ClusterActiveVersion(TypedDict, total=False):
+    """ClusterActiveVersion represents a version of a resource.
+
+    :ivar version: The version of the resource. Specified in major.minor, same as the input.
+     Required.
+    :vartype version: str
+    """
+
+    version: Required[str]
+    """The version of the resource. Specified in major.minor, same as the input. Required."""
+
+
 class ClusterAutoscalingProfile(TypedDict, total=False):
     """ClusterAutoscaling specifies auto-scaling behavior that applies to all NodePools associated
     with a control plane.
 
-    :ivar maxNodesTotal: maxNodesTotal is the maximum allowable number of nodes for the Autoscaler
-     scale out to be operational. The autoscaler will not grow the cluster beyond this number. If
-     omitted, the autoscaler will not have a maximum limit.
+    :ivar maxNodesTotal: maxNodesTotal is the maximum allowable number of nodes. The autoscaler
+     will not grow the cluster beyond this number. If omitted, the autoscaler will not have a
+     maximum limit.
     :vartype maxNodesTotal: int
-    :ivar maxPodGracePeriodSeconds: maxPodGracePeriod is the maximum seconds to wait for graceful
-     pod termination before scaling down a NodePool. The default is 600 seconds.
+    :ivar maxPodGracePeriodSeconds: maxPodGracePeriodSeconds is the maximum amount of time in
+     seconds to wait for graceful pod termination before scaling down a NodePool. The default is 600
+     seconds.
     :vartype maxPodGracePeriodSeconds: int
     :ivar maxNodeProvisionTimeSeconds: maxNodeProvisionTimeSeconds is the maximum time to wait for
      node provisioning before considering the provisioning to be unsuccessful. The default is 900
@@ -82,12 +96,11 @@ class ClusterAutoscalingProfile(TypedDict, total=False):
     """
 
     maxNodesTotal: int
-    """maxNodesTotal is the maximum allowable number of nodes for the Autoscaler scale out to be
-     operational. The autoscaler will not grow the cluster beyond this number. If omitted, the
-     autoscaler will not have a maximum limit."""
+    """maxNodesTotal is the maximum allowable number of nodes. The autoscaler will not grow the
+     cluster beyond this number. If omitted, the autoscaler will not have a maximum limit."""
     maxPodGracePeriodSeconds: int
-    """maxPodGracePeriod is the maximum seconds to wait for graceful pod termination before scaling
-     down a NodePool. The default is 600 seconds."""
+    """maxPodGracePeriodSeconds is the maximum amount of time in seconds to wait for graceful pod
+     termination before scaling down a NodePool. The default is 600 seconds."""
     maxNodeProvisionTimeSeconds: int
     """maxNodeProvisionTimeSeconds is the maximum time to wait for node provisioning before
      considering the provisioning to be unsuccessful. The default is 900 seconds, or 15 minutes."""
@@ -116,6 +129,25 @@ class ClusterImageRegistryProfile(TypedDict, total=False):
      means the ImageStream-backed image registry will be run as pods on worker nodes in the cluster.
      Disabled means the ImageStream-backed image registry will not be present in the cluster. The
      default is Enabled. Known values are: \"Enabled\" and \"Disabled\"."""
+
+
+class ClusterResourceStatus(TypedDict, total=False):
+    """ClusterResourceStatus represents the observed status of the cluster resource.
+
+    :ivar conditions: The conditions on the resource.
+    :vartype conditions: list["Condition"]
+    :ivar activeVersions: The observed active versions of the cluster. During upgrades, both the
+     previous and target versions may be active simultaneously until the rollout completes, so this
+     array can contain more than one entry. The ordering of entries has no meaning.
+    :vartype activeVersions: list["ClusterActiveVersion"]
+    """
+
+    conditions: list["Condition"]
+    """The conditions on the resource."""
+    activeVersions: list["ClusterActiveVersion"]
+    """The observed active versions of the cluster. During upgrades, both the previous and target
+     versions may be active simultaneously until the rollout completes, so this array can contain
+     more than one entry. The ordering of entries has no meaning."""
 
 
 class Condition(TypedDict, total=False):
@@ -164,6 +196,19 @@ class ConsoleProfile(TypedDict, total=False):
     """The cluster web console URL endpoint. Required."""
 
 
+class ContainerRegistryProfile(TypedDict, total=False):
+    """Azure Container Registry configuration for a cluster. Configures how worker nodes authenticate
+    container image pulls from Azure Container Registry (ACR).
+
+    :ivar managedIdentity: The user-assigned managed identity used for container registry image
+     pulls.
+    :vartype managedIdentity: str
+    """
+
+    managedIdentity: str
+    """The user-assigned managed identity used for container registry image pulls."""
+
+
 class CustomerManagedEncryptionProfile(TypedDict, total=False):
     """Customer managed encryption key profile.
 
@@ -188,18 +233,17 @@ class DnsProfile(TypedDict, total=False):
 
     :ivar baseDomain: BaseDomain is the base DNS domain of the cluster.
     :vartype baseDomain: str
-    :ivar baseDomainPrefix: BaseDomainPrefix is the unique name of the cluster representing the
-     OpenShift's cluster name. BaseDomainPrefix is the name that will appear in the cluster's DNS,
-     provisioned cloud providers resources.
+    :ivar baseDomainPrefix: BaseDomainPrefix is the base domain prefix for the cluster ingress. It
+     will be used to configure ingress in the cluster through the subdomain
+     "BaseDomainPrefix.BaseDomain".
     :vartype baseDomainPrefix: str
     """
 
     baseDomain: str
     """BaseDomain is the base DNS domain of the cluster."""
     baseDomainPrefix: str
-    """BaseDomainPrefix is the unique name of the cluster representing the OpenShift's cluster name.
-     BaseDomainPrefix is the name that will appear in the cluster's DNS, provisioned cloud providers
-     resources."""
+    """BaseDomainPrefix is the base domain prefix for the cluster ingress. It will be used to
+     configure ingress in the cluster through the subdomain \"BaseDomainPrefix.BaseDomain\"."""
 
 
 class EtcdDataEncryptionProfile(TypedDict, total=False):
@@ -389,7 +433,7 @@ class ExternalAuthProperties(TypedDict, total=False):
      "Canceled", "Accepted", "Deleting", "Provisioning", "Updating", and "AwaitingSecret".
     :vartype provisioningState: Union[str, "ExternalAuthProvisioningState"]
     :ivar status: Status of the external auth resource.
-    :vartype status: "ResourceStatus"
+    :vartype status: "ExternalAuthResourceStatus"
     :ivar issuer: Token Issuer profile. Required.
     :vartype issuer: "TokenIssuerProfile"
     :ivar clients: External Auth OIDC clients There must not be more than 20 entries and entries
@@ -403,7 +447,7 @@ class ExternalAuthProperties(TypedDict, total=False):
     provisioningState: Union[str, "ExternalAuthProvisioningState"]
     """Provisioning state. Known values are: \"Succeeded\", \"Failed\", \"Canceled\", \"Accepted\",
      \"Deleting\", \"Provisioning\", \"Updating\", and \"AwaitingSecret\"."""
-    status: "ResourceStatus"
+    status: "ExternalAuthResourceStatus"
     """Status of the external auth resource."""
     issuer: Required["TokenIssuerProfile"]
     """Token Issuer profile. Required."""
@@ -412,6 +456,17 @@ class ExternalAuthProperties(TypedDict, total=False):
      namespace/name pairs."""
     claim: Required["ExternalAuthClaimProfile"]
     """External Auth claim This configures how claims are validated and applied. Required."""
+
+
+class ExternalAuthResourceStatus(TypedDict, total=False):
+    """ExternalAuthResourceStatus represents the observed status of the external auth resource.
+
+    :ivar conditions: The conditions on the resource.
+    :vartype conditions: list["Condition"]
+    """
+
+    conditions: list["Condition"]
+    """The conditions on the resource."""
 
 
 class GroupClaimProfile(TypedDict, total=False):
@@ -426,7 +481,7 @@ class GroupClaimProfile(TypedDict, total=False):
 
     :ivar claim: Claim name of the external profile. Required.
     :vartype claim: str
-    :ivar prefix: Prefix for the claim external profile If this is specified prefixPolicy will be
+    :ivar prefix: Prefix for the claim external profile. If this is specified, prefixPolicy will be
      set to "Prefix" by default.
     :vartype prefix: str
     """
@@ -434,7 +489,7 @@ class GroupClaimProfile(TypedDict, total=False):
     claim: Required[str]
     """Claim name of the external profile. Required."""
     prefix: str
-    """Prefix for the claim external profile If this is specified prefixPolicy will be set to
+    """Prefix for the claim external profile. If this is specified, prefixPolicy will be set to
      \"Prefix\" by default."""
 
 
@@ -544,13 +599,13 @@ class HcpOpenShiftClusterProperties(TypedDict, total=False):
      Valid values are in minutes and from 0 to 10080 minutes (1 week).
      0 means that the MachinePool can be drained without any time limitation.
 
-     This is the value is used a default for all NodePools. It can be overridden
+     This value is used as a default for all NodePools. It can be overridden
      by specifying nodeDrainTimeoutMinutes for a given NodePool.
     :vartype nodeDrainTimeoutMinutes: int
     :ivar clusterImageRegistry: OpenShift internal image registry.
     :vartype clusterImageRegistry: "ClusterImageRegistryProfile"
     :ivar status: Status of the cluster resource.
-    :vartype status: "ResourceStatus"
+    :vartype status: "ClusterResourceStatus"
     :ivar cryptoRestrictions: Cryptographic restrictions for kernel and userspace libraries. Known
      values are: "None" and "FIPS".
     :vartype cryptoRestrictions: Union[str, "CryptoRestrictions"]
@@ -593,11 +648,11 @@ class HcpOpenShiftClusterProperties(TypedDict, total=False):
      Valid values are in minutes and from 0 to 10080 minutes (1 week).
      0 means that the MachinePool can be drained without any time limitation.
      
-     This is the value is used a default for all NodePools. It can be overridden
+     This value is used as a default for all NodePools. It can be overridden
      by specifying nodeDrainTimeoutMinutes for a given NodePool."""
     clusterImageRegistry: "ClusterImageRegistryProfile"
     """OpenShift internal image registry."""
-    status: "ResourceStatus"
+    status: "ClusterResourceStatus"
     """Status of the cluster resource."""
     cryptoRestrictions: Union[str, "CryptoRestrictions"]
     """Cryptographic restrictions for kernel and userspace libraries. Known values are: \"None\" and
@@ -714,6 +769,9 @@ class KmsEncryptionProfile(TypedDict, total=False):
     :vartype visibility: Union[str, "KeyVaultVisibility"]
     :ivar activeKey: The details of the active key. Required.
     :vartype activeKey: "KmsKey"
+    :ivar keyVaultType: The type of keyvault used for KMS encryption. Defaults to KeyVault when
+     absent. Known values are: "KeyVault" and "ManagedHSM".
+    :vartype keyVaultType: Union[str, "KmsKeyVaultType"]
     """
 
     vaultName: Required[str]
@@ -723,6 +781,9 @@ class KmsEncryptionProfile(TypedDict, total=False):
      \"Private\"."""
     activeKey: Required["KmsKey"]
     """The details of the active key. Required."""
+    keyVaultType: Union[str, "KmsKeyVaultType"]
+    """The type of keyvault used for KMS encryption. Defaults to KeyVault when absent. Known values
+     are: \"KeyVault\" and \"ManagedHSM\"."""
 
 
 class KmsKey(TypedDict, total=False):
@@ -844,6 +905,18 @@ class NodePool(TrackedResource):
     """The managed service identities assigned to this resource."""
 
 
+class NodePoolActiveVersion(TypedDict, total=False):
+    """NodePoolActiveVersion represents a version of a resource.
+
+    :ivar version: The version of the resource. Specified in major.minor.patch, same as the input.
+     Required.
+    :vartype version: str
+    """
+
+    version: Required[str]
+    """The version of the resource. Specified in major.minor.patch, same as the input. Required."""
+
+
 class NodePoolAutoScaling(TypedDict, total=False):
     """Node pool autoscaling.
 
@@ -878,7 +951,7 @@ class NodePoolAutoScaling(TypedDict, total=False):
 class NodePoolPlatformProfile(TypedDict, total=False):
     """Azure node pool platform configuration.
 
-    :ivar subnetId: The Azure resource ID of the worker subnet Note that a subnet cannot be reused
+    :ivar subnetId: The Azure resource ID of the worker subnet. Note that a subnet cannot be reused
      between ARO-HCP Clusters, however the same subnet can be used for NodePools of the same
      cluster.
     :vartype subnetId: str
@@ -901,7 +974,7 @@ class NodePoolPlatformProfile(TypedDict, total=False):
     """
 
     subnetId: str
-    """The Azure resource ID of the worker subnet Note that a subnet cannot be reused between ARO-HCP
+    """The Azure resource ID of the worker subnet. Note that a subnet cannot be reused between ARO-HCP
      Clusters, however the same subnet can be used for NodePools of the same cluster."""
     vmSize: Required[str]
     """The VM size according to the documentation:
@@ -938,12 +1011,17 @@ class NodePoolProperties(TypedDict, total=False):
      * Maximum: 200 (only when availabilityZone is not specified)
      * No maximum when availabilityZone is specified.
     :vartype replicas: int
-    :ivar autoRepair: Auto-repair.
+    :ivar autoRepair: autoRepair specifies whether health checks should be enabled for machines in
+     the NodePool. Enabling this feature will cause the controller to automatically delete unhealthy
+     machines. The unhealthy criteria are determined by checking the Node Ready condition and a
+     timeout that might vary depending on the platform provider. autoRepair will not take action
+     when more than 2 Nodes are unhealthy at the same time, giving time for the cluster to stabilize
+     or for the user to manually intervene.
     :vartype autoRepair: bool
     :ivar autoScaling: Representation of a autoscaling in a node pool.
     :vartype autoScaling: "NodePoolAutoScaling"
-    :ivar labels: Kubernetes labels to propagate to the NodePool Nodes Note that when the labels
-     are updated this is only applied to newly create nodes in the Nodepool, existing node labels
+    :ivar labels: Kubernetes labels to propagate to the NodePool Nodes. Note that when the labels
+     are updated this is only applied to newly created nodes in the NodePool, existing node labels
      remain unchanged.
     :vartype labels: list["Label"]
     :ivar taints: Taints for the nodes.
@@ -961,7 +1039,7 @@ class NodePoolProperties(TypedDict, total=False):
      If unset the cluster nodeDrainTimeoutMinutes value is used as a default.
     :vartype nodeDrainTimeoutMinutes: int
     :ivar status: Status of the node pool resource.
-    :vartype status: "ResourceStatus"
+    :vartype status: "NodePoolResourceStatus"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -978,12 +1056,18 @@ class NodePoolProperties(TypedDict, total=False):
       * Maximum: 200 (only when availabilityZone is not specified)
       * No maximum when availabilityZone is specified."""
     autoRepair: bool
-    """Auto-repair."""
+    """autoRepair specifies whether health checks should be enabled for machines in the NodePool.
+     Enabling this feature will cause the controller to automatically delete unhealthy machines. The
+     unhealthy criteria are determined by checking the Node Ready condition and a timeout that might
+     vary depending on the platform provider. autoRepair will not take action when more than 2 Nodes
+     are unhealthy at the same time, giving time for the cluster to stabilize or for the user to
+     manually intervene."""
     autoScaling: "NodePoolAutoScaling"
     """Representation of a autoscaling in a node pool."""
     labels: list["Label"]
-    """Kubernetes labels to propagate to the NodePool Nodes Note that when the labels are updated this
-     is only applied to newly create nodes in the Nodepool, existing node labels remain unchanged."""
+    """Kubernetes labels to propagate to the NodePool Nodes. Note that when the labels are updated
+     this is only applied to newly created nodes in the NodePool, existing node labels remain
+     unchanged."""
     taints: list["Taint"]
     """Taints for the nodes."""
     nodeDrainTimeoutMinutes: int
@@ -998,8 +1082,27 @@ class NodePoolProperties(TypedDict, total=False):
      0 means that the NodePool can be drained without any time limitation.
      
      If unset the cluster nodeDrainTimeoutMinutes value is used as a default."""
-    status: "ResourceStatus"
+    status: "NodePoolResourceStatus"
     """Status of the node pool resource."""
+
+
+class NodePoolResourceStatus(TypedDict, total=False):
+    """NodePoolResourceStatus represents the observed status of the nodepool resource.
+
+    :ivar conditions: The conditions on the resource.
+    :vartype conditions: list["Condition"]
+    :ivar activeVersions: The observed active versions of the node pool. During upgrades, it is
+     common for multiple versions to be active at the same time while old nodes are drained and
+     replaced. The ordering of entries has no meaning.
+    :vartype activeVersions: list["NodePoolActiveVersion"]
+    """
+
+    conditions: list["Condition"]
+    """The conditions on the resource."""
+    activeVersions: list["NodePoolActiveVersion"]
+    """The observed active versions of the node pool. During upgrades, it is common for multiple
+     versions to be active at the same time while old nodes are drained and replaced. The ordering
+     of entries has no meaning."""
 
 
 class NodePoolVersionProfile(TypedDict, total=False):
@@ -1011,6 +1114,9 @@ class NodePoolVersionProfile(TypedDict, total=False):
      Each version belongs to only a single set.
 
      If not specified, the default value is 'stable'.
+
+     This property is intended to be updateable, but that support is not yet
+     complete. Until then, changing this value after node pool creation is rejected.
     :vartype channelGroup: str
     """
 
@@ -1020,7 +1126,10 @@ class NodePoolVersionProfile(TypedDict, total=False):
     """ChannelGroup is the name of the set to which this version belongs.
      Each version belongs to only a single set.
      
-     If not specified, the default value is 'stable'."""
+     If not specified, the default value is 'stable'.
+     
+     This property is intended to be updateable, but that support is not yet
+     complete. Until then, changing this value after node pool creation is rejected."""
 
 
 class OperatorsAuthenticationProfile(TypedDict, total=False):
@@ -1098,7 +1207,7 @@ class OsDiskProfile(TypedDict, total=False):
 class PlatformProfile(TypedDict, total=False):
     """Azure specific configuration.
 
-    :ivar managedResourceGroup: Resource group name to put cluster resources
+    :ivar managedResourceGroup: The name of the resource group to put cluster resources in.
 
      If not specified then a unique name is generated from the
      following pattern
@@ -1109,7 +1218,7 @@ class PlatformProfile(TypedDict, total=False):
      (up to 45 characters) followed by a 16-byte universally unique
      identifier per RFC 4122.
     :vartype managedResourceGroup: str
-    :ivar subnetId: The Azure resource ID of the worker subnet Note that a subnet cannot be reused
+    :ivar subnetId: The Azure resource ID of the worker subnet. Note that a subnet cannot be reused
      between ARO-HCP Clusters. Required.
     :vartype subnetId: str
     :ivar vnetIntegrationSubnetId: The Azure resource ID of a subnet that enables direct, private
@@ -1127,13 +1236,16 @@ class PlatformProfile(TypedDict, total=False):
     :ivar operatorsAuthentication: The configuration that the operators of the cluster have to
      authenticate to Azure. Required.
     :vartype operatorsAuthentication: "OperatorsAuthenticationProfile"
+    :ivar containerRegistry: Azure Container Registry configuration for authenticating image pulls
+     on the cluster's worker nodes.
+    :vartype containerRegistry: "ContainerRegistryProfile"
     :ivar issuerUrl: URL for the OIDC provider to be used for authentication to authenticate
      against user Azure cloud account. Required.
     :vartype issuerUrl: str
     """
 
     managedResourceGroup: str
-    """Resource group name to put cluster resources
+    """The name of the resource group to put cluster resources in.
      
      If not specified then a unique name is generated from the
      following pattern
@@ -1144,7 +1256,7 @@ class PlatformProfile(TypedDict, total=False):
      (up to 45 characters) followed by a 16-byte universally unique
      identifier per RFC 4122."""
     subnetId: Required[str]
-    """The Azure resource ID of the worker subnet Note that a subnet cannot be reused between ARO-HCP
+    """The Azure resource ID of the worker subnet. Note that a subnet cannot be reused between ARO-HCP
      Clusters. Required."""
     vnetIntegrationSubnetId: Required[str]
     """The Azure resource ID of a subnet that enables direct, private network connectivity between the
@@ -1158,20 +1270,12 @@ class PlatformProfile(TypedDict, total=False):
      Note that NSGs cannot be reused for other ARO-HCP clusters. Required."""
     operatorsAuthentication: Required["OperatorsAuthenticationProfile"]
     """The configuration that the operators of the cluster have to authenticate to Azure. Required."""
+    containerRegistry: "ContainerRegistryProfile"
+    """Azure Container Registry configuration for authenticating image pulls on the cluster's worker
+     nodes."""
     issuerUrl: Required[str]
     """URL for the OIDC provider to be used for authentication to authenticate against user Azure
      cloud account. Required."""
-
-
-class ResourceStatus(TypedDict, total=False):
-    """ResourceStatus represents the observed status of the resource.
-
-    :ivar conditions: The conditions on the resource.
-    :vartype conditions: list["Condition"]
-    """
-
-    conditions: list["Condition"]
-    """The conditions on the resource."""
 
 
 class SystemData(TypedDict, total=False):
@@ -1272,13 +1376,13 @@ class TokenIssuerProfile(TypedDict, total=False):
 
      issuerURL must use the 'https' scheme. Required.
     :vartype url: str
-    :ivar audiences: This configures the acceptable audiences the JWT token, issued by the identity
-     provider, must be issued to. At least one of the entries must match the
-     'aud' claim in the JWT token.
+    :ivar audiences: This configures the acceptable audiences for JWT tokens issued by the identity
+     provider.
+     At least one of the entries must match the 'aud' claim in the JWT token.
 
-     audiences must contain at least one entry and must not exceed ten entries. Required.
+     Audiences must contain at least one entry and must not exceed ten entries. Required.
     :vartype audiences: list[str]
-    :ivar ca: The issuer of the token
+    :ivar ca: The issuer of the token.
 
      Certificate bundle to use to validate server certificates for the configured URL.
      It must be PEM encoded and when not specified, the system trust is used.
@@ -1292,13 +1396,12 @@ class TokenIssuerProfile(TypedDict, total=False):
      
      issuerURL must use the 'https' scheme. Required."""
     audiences: Required[list[str]]
-    """This configures the acceptable audiences the JWT token, issued by the identity
-     provider, must be issued to. At least one of the entries must match the
-     'aud' claim in the JWT token.
+    """This configures the acceptable audiences for JWT tokens issued by the identity provider.
+     At least one of the entries must match the 'aud' claim in the JWT token.
      
-     audiences must contain at least one entry and must not exceed ten entries. Required."""
+     Audiences must contain at least one entry and must not exceed ten entries. Required."""
     ca: str
-    """The issuer of the token
+    """The issuer of the token.
      
      Certificate bundle to use to validate server certificates for the configured URL.
      It must be PEM encoded and when not specified, the system trust is used."""
@@ -1376,7 +1479,7 @@ class UsernameClaimProfile(TypedDict, total=False):
 
     :ivar claim: Claim name of the external profile. Required.
     :vartype claim: str
-    :ivar prefix: Prefix for the claim external profile Must be set when the prefixPolicy field is
+    :ivar prefix: Prefix for the claim external profile. Must be set when the prefixPolicy field is
      set to 'Prefix' and must be unset otherwise.
     :vartype prefix: str
     :ivar prefixPolicy: Prefix policy is an optional field that configures how a prefix should be
@@ -1406,7 +1509,7 @@ class UsernameClaimProfile(TypedDict, total=False):
     claim: Required[str]
     """Claim name of the external profile. Required."""
     prefix: str
-    """Prefix for the claim external profile Must be set when the prefixPolicy field is set to
+    """Prefix for the claim external profile. Must be set when the prefixPolicy field is set to
      'Prefix' and must be unset otherwise."""
     prefixPolicy: Union[str, "UsernameClaimPrefixPolicy"]
     """Prefix policy is an optional field that configures how a prefix should be
@@ -1441,6 +1544,9 @@ class VersionProfile(TypedDict, total=False):
      Each version belongs to only a single set.
 
      If not specified, the default value is 'stable'.
+
+     This property is intended to be updateable, but that support is not yet
+     complete. Until then, changing this value after cluster creation is rejected.
     :vartype channelGroup: str
     """
 
@@ -1450,4 +1556,7 @@ class VersionProfile(TypedDict, total=False):
     """ChannelGroup is the name of the set to which this version belongs.
      Each version belongs to only a single set.
      
-     If not specified, the default value is 'stable'."""
+     If not specified, the default value is 'stable'.
+     
+     This property is intended to be updateable, but that support is not yet
+     complete. Until then, changing this value after cluster creation is rejected."""

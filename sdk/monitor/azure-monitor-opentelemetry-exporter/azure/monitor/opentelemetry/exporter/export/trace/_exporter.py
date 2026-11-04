@@ -185,7 +185,10 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         # coming from the SDK are not JSON-serializable as-is.
         attributes: Dict[str, str] = {}
         if resource:
-            attributes = _utils._filter_custom_properties(dict(resource.attributes))  # type: ignore[arg-type]
+            attributes = _utils._filter_custom_properties(
+                dict(resource.attributes),  # type: ignore[arg-type]
+                increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+            )
         envelope = _utils._create_telemetry_item(time_ns())
         envelope.name = _METRIC_ENVELOPE_NAME
         envelope.tags.update(_utils._populate_part_a_fields(resource))  # pylint: disable=W0212
@@ -210,14 +213,20 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         return envelope
 
     def _span_to_envelope(self, span: ReadableSpan) -> TelemetryItem:
-        envelope = _convert_span_to_envelope(span)
+        envelope = _convert_span_to_envelope(
+            span,
+            increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+        )
         envelope.instrumentation_key = self._instrumentation_key
         return envelope  # type: ignore
 
     def _span_events_to_envelopes(self, span: ReadableSpan) -> Sequence[TelemetryItem]:
         if not span or len(span.events) == 0:
             return []
-        envelopes = _convert_span_events_to_envelopes(span)
+        envelopes = _convert_span_events_to_envelopes(
+            span,
+            increase_truncation_limit=self._is_experimental_feature_enabled("gen_ai_input_output_limit_increase"),
+        )
         for envelope in envelopes:
             envelope.instrumentation_key = self._instrumentation_key
         return envelopes
@@ -252,7 +261,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
 # pylint: disable=too-many-locals
 # mypy: disable-error-code="assignment,attr-defined,index,operator,union-attr"
 @no_type_check
-def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
+def _convert_span_to_envelope(span: ReadableSpan, *, increase_truncation_limit: bool = False) -> TelemetryItem:
     # Update instrumentation bitmap if span was generated from instrumentation
     _check_instrumentation_span(span)
     duration = 0
@@ -532,7 +541,9 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         envelope.sample_rate = span.attributes[_SAMPLE_RATE_KEY]
 
     data.properties = _utils._filter_custom_properties(
-        span.attributes, lambda key, val: not _is_standard_attribute(key)
+        span.attributes,
+        lambda key, val: not _is_standard_attribute(key),
+        increase_truncation_limit=increase_truncation_limit,
     )
 
     # Standard metrics special properties
@@ -558,7 +569,9 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
 
 
 # pylint: disable=protected-access
-def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryItem]:
+def _convert_span_events_to_envelopes(
+    span: ReadableSpan, *, increase_truncation_limit: bool = False
+) -> Sequence[TelemetryItem]:
     envelopes = []
     for event in span.events:
         envelope = _utils._create_telemetry_item(event.timestamp)
@@ -577,7 +590,9 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
             envelope.sample_rate = span.attributes[_SAMPLE_RATE_KEY]
 
         properties = _utils._filter_custom_properties(
-            event.attributes, lambda key, val: not _is_standard_attribute(key)
+            event.attributes,
+            lambda key, val: not _is_standard_attribute(key),
+            increase_truncation_limit=increase_truncation_limit,
         )
         measurements = _utils._filter_custom_measurements(event.attributes)
         if event.name == "exception":

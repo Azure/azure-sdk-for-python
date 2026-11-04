@@ -27,6 +27,7 @@ from starlette.types import Message, Send
 
 from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
     FoundryAgentRequestContext,
+    FoundryOriginalSubject,
     flush_spans,
     flush_spans_async,
     reset_request_context,
@@ -652,6 +653,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             platform_context=PlatformContext(
                 user_id_key=ctx.user_id,
                 call_id=ctx.call_id,
+                original_subject=FoundryOriginalSubject.from_headers(request.headers),
             ),
             prefetched_history_ids=ctx.prefetched_history_ids,
             steerable=self._runtime_options.steerable_conversations,
@@ -794,35 +796,57 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         return available
 
     def _execution_error_response(
-        self, ctx: _ExecutionContext, error: _HandlerError | _ServerShuttingDown, agent_session_id: str | None
+        self,
+        ctx: _ExecutionContext,
+        error: _HandlerError | _ServerShuttingDown | TaskConflictError,
+        agent_session_id: str | None,
     ) -> JSONResponse:
         """Map rejected admission or handler failure to its HTTP response.
 
         :param ctx: The create request's execution context.
         :type ctx: _ExecutionContext
-        :param error: A shutdown rejection or developer-handler failure.
-        :type error: _HandlerError | _ServerShuttingDown
+        :param error: A shutdown rejection, conversation lock conflict, or developer-handler failure.
+        :type error: _HandlerError | _ServerShuttingDown | TaskConflictError
         :param agent_session_id: The response's session identifier.
         :type agent_session_id: str | None
-        :return: The existing shutdown or handler-error response.
+        :return: The existing shutdown, conflict, or handler-error response.
         :rtype: JSONResponse
         """
         headers = self._session_headers(agent_session_id)
         if isinstance(error, _ServerShuttingDown):
             ctx.span.end(None)
             return _service_unavailable("Server is shutting down.", headers)
-        logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=error.original)
+        if isinstance(error, _HandlerError):
+            logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=error.original)
+            return JSONResponse(
+                {
+                    "error": {
+                        "message": "internal server error",
+                        "type": "server_error",
+                        "code": "server_error",
+                        "param": None,
+                    }
+                },
+                status_code=500,
+                headers=_apply_error_source_headers(headers, ERROR_SOURCE_UPSTREAM),
+            )
+        # Only current_status is public; never expose the internal chain identity.
+        logger.info(
+            "Conversation lock conflict for %s: task is %s",
+            ctx.response_id,
+            error.current_status,
+        )
         return JSONResponse(
             {
                 "error": {
-                    "message": "internal server error",
-                    "type": "server_error",
-                    "code": "server_error",
+                    "message": f"Conversation is locked \u2014 task is {error.current_status}",
+                    "type": "conflict",
+                    "code": "conversation_locked",
                     "param": None,
                 }
             },
-            status_code=500,
-            headers=_apply_error_source_headers(headers, ERROR_SOURCE_UPSTREAM),
+            status_code=409,
+            headers=headers,
         )
 
     async def _reclaim_empty_replay(self, response_id: str, context: PlatformContext, replay: EventStream) -> bool:
@@ -936,15 +960,25 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             parsed, payload, env_session_id=config_session_id, agent_reference=agent_reference
         )
 
-        ctx = self._build_execution_context(
-            parsed=parsed,
-            response_id=response_id,
-            agent_reference=agent_reference,
-            agent_session_id=agent_session_id,
-            agent_session_guid=config_session_guid or None,
-            span=span,
-            request=request,
-        )
+        try:
+            ctx = self._build_execution_context(
+                parsed=parsed,
+                response_id=response_id,
+                agent_reference=agent_reference,
+                agent_session_id=agent_session_id,
+                agent_session_guid=config_session_guid or None,
+                span=span,
+                request=request,
+            )
+        except ValueError as exc:
+            logger.warning("Invalid platform request context", exc_info=True)
+            span.end(exc)
+            return _error_response(
+                exc,
+                self._session_headers(agent_session_id),
+                request_id=scope_request_id,
+                error_source=ERROR_SOURCE_PLATFORM,
+            )
 
         logger.info(
             "Creating response %s: streaming=%s background=%s store=%s model=%s "
@@ -998,6 +1032,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             call_id=ctx.call_id or None,
             user_id=ctx.user_id or None,
             session_id=agent_session_id,
+            original_subject=(
+                ctx.context.platform_context.original_subject if ctx.context is not None else None
+            ),
         )
         platform_ctx_token = set_request_context(platform_context)
 
@@ -1141,27 +1178,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 }
             }
             return JSONResponse(err_body, status_code=409, headers=self._session_headers(agent_session_id))
-        except TaskConflictError as exc:
-            # Spec 023 — under the spec-022 narrow surface, TaskConflictError
-            # carries only ``current_status``; the task_id is not part of
-            # the public exception API. The endpoint already knows the
-            # response_id (logged separately); the chain identity is not
-            # exposed to the client error body.
-            logger.info(
-                "Conversation lock conflict for %s: task is %s",
-                ctx.response_id,
-                exc.current_status,
-            )
-            err_body = {
-                "error": {
-                    "message": f"Conversation is locked — task is {exc.current_status}",
-                    "type": "conflict",
-                    "code": "conversation_locked",
-                    "param": None,
-                }
-            }
-            return JSONResponse(err_body, status_code=409, headers=self._session_headers(agent_session_id))
-        except (_HandlerError, _ServerShuttingDown) as exc:
+        except (_HandlerError, _ServerShuttingDown, TaskConflictError) as exc:
             return self._execution_error_response(ctx, exc, agent_session_id)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             if is_platform_error(exc):

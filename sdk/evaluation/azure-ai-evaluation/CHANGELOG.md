@@ -1,6 +1,23 @@
 # Release History
 
-## 1.18.10 (Unreleased)
+## 1.18.11 (Unreleased)
+
+### Features Added
+
+- `CoherenceEvaluator`, `FluencyEvaluator`, `GroundednessEvaluator`, `IntentResolutionEvaluator`, `RelevanceEvaluator`, `ResponseCompletenessEvaluator`, `RetrievalEvaluator`, `SimilarityEvaluator`, `ToolCallAccuracyEvaluator`, `TaskAdherenceEvaluator`, `_TaskCompletionEvaluator`, `_ToolCallSuccessEvaluator`, `_ToolInputAccuracyEvaluator`, `_ToolOutputUtilizationEvaluator` and `_ToolSelectionEvaluator` accept a Decision model configuration (`type="decision"`) and use the same rubrics as their Microsoft Foundry catalog versions. Chat model behavior is unchanged. With a Decision model, `GroundednessEvaluator` reports a plain text response without context as not applicable rather than grounding the response in itself, and `TaskAdherenceEvaluator` reports the requested `threshold` (default 0) and `_TaskCompletionEvaluator` a default threshold of 1, as their catalog versions do. The tool evaluators prepare tool calls as their chat versions do, which can differ from the catalog versions.
+- `QAEvaluator` accepts a Decision model configuration and passes `credential` and the Decision execution controls to its model-based evaluators, which run on separate threads, so the credential must be synchronous. With a chat model they are not passed, as before.
+- The binary evaluators (task adherence, task completion, tool call success, tool input accuracy, tool output utilization and tool selection) accept a `probability_threshold` keyword. For Decision models it sets the probability at or above which the score is 1 (default 0.75) and overrides the value in `model_config`; chat models ignore it with a warning.
+- Conversation inputs are handled as before with a Decision model: evaluators that accept them score each user and assistant turn separately and aggregate the results. The catalog's whole-conversation rubrics are not included.
+- A failed Decision request names a recognized reason in `decision_model.error_kind` of the error's properties, which is kept on failed result rows, and in the error message, for example `The decision model returned HTTP 422 (context_window_exceeded).` The provider states these reasons for an HTTP 422 only in text, which is never exposed: `context_window_exceeded` when the evidence and one question exceed the model's context window, `request_token_limit_exceeded` when the evidence and all questions exceed the model's request limit, `question_limit_exceeded` and `invalid_question`. A request over `max_request_bytes` or `max_state_question_bytes`, which is not sent, has the kind `request_bytes_exceeded`.
+
+### Bugs Fixed
+
+- `_ToolCallSuccessEvaluator` no longer scores successful tool calls 0 when a chat judge model, such as gpt-4.1 or gpt-4o, puts `score` and `status` inside `properties`. The example outputs in its prompt are now valid JSON, and `score`, `status` and `reason` are read from `properties` when the output has none at the top level. A missing score is no longer reported as 0, and any score other than 0 or 1 raises a system-classified `EvaluationException`, as `_ToolInputAccuracyEvaluator` does.
+- `_ToolCallSuccessEvaluator` reports a list of messages that holds no tool calls, such as one that contains only text or only MCP approval messages, as not applicable without calling the chat or Decision judge model. A `tool_calls`, `function_call` or `tool_call_id` field that is None or empty, as in OpenAI's `model_dump()` of a reply without tool calls, does not count as a tool call. Strings, text that contains `[TOOL_CALL]` or `[TOOL_RESULT]`, and messages with any other content are still sent to the judge model.
+- `evaluate()` computes `<evaluator>.binary_aggregate` over the rows whose result is `pass` or `fail`. Other rows, such as not applicable or errored rows, used to count as failures, although the mean score leaves them out. An evaluator without `pass` or `fail` rows, including a custom evaluator whose results have other values, has no `binary_aggregate`, as one without scores has no mean.
+- An evaluator's inputs keep the order in which its `__call__` overloads declare them, instead of the order of a Python `set`, which varies with the process's hash seed. An evaluator that sends these inputs to a Decision model unchanged, as several Microsoft Foundry catalog evaluators do, could list the same fields in a different order in each process, and the Decision model could answer the same input differently. The built-in evaluators in this package already send their Decision inputs in a fixed order.
+
+## 1.18.10 (2026-10-22)
 
 ### Features Added
 
@@ -11,8 +28,6 @@
 - Decision requests provide context-aware per-attempt and terminal execution observations with optional OpenTelemetry metrics. Validated shared and independent execution summaries and their distinct usage scopes are preserved in failed-row metadata.
 - Decision HTTP errors include the provider's nested `error.code` when it starts with an ASCII letter and contains only letters, digits, dots, underscores, or hyphens, up to 128 characters. This is provider-controlled diagnostic text, not a guarantee that the code is free of sensitive data. Messages, details, and raw response bodies are not exposed.
 - Decision native async HTTP supports overall deadlines and cancellation during response body reads. TLS uses Python/OpenSSL trust settings such as `SSL_CERT_FILE`, not `REQUESTS_CA_BUNDLE`; shared Prompty transport behavior is unchanged.
-
-### Breaking Changes
 
 ### Bugs Fixed
 

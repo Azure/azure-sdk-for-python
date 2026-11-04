@@ -881,6 +881,55 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.target, "az.ai.inference")
         self.assertEqual(len(envelope.data.base_data.properties), 1)
 
+    def test_span_to_envelope_gen_ai_messages_attributes_length(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+        messages_length = 1024 * 1024
+        messages_value = "m" * messages_length
+        oversized_messages_value = "o" * (4 * 1024 * 1024 + 1000)
+        other_value = "t" * (1024 * 1024)
+
+        span = trace._Span(
+            name="chat",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "gen_ai.system": "az.ai.inference",
+                "gen_ai.input.messages": messages_value,
+                "gen_ai.output.messages": oversized_messages_value,
+                "gen_ai.tool.call.result": other_value,
+                "custom.attribute": other_value,
+            },
+            kind=SpanKind.CLIENT,
+        )
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        span._status = Status(status_code=StatusCode.UNSET)
+        # Without the experimental feature, existing truncation limits apply
+        envelope = exporter._span_to_envelope(span)
+
+        properties = envelope.data.base_data.properties
+        self.assertEqual(len(properties["gen_ai.input.messages"]), 256 * 1024)
+        self.assertEqual(len(properties["gen_ai.output.messages"]), 256 * 1024)
+        self.assertEqual(len(properties["gen_ai.tool.call.result"]), 256 * 1024)
+        self.assertEqual(len(properties["custom.attribute"]), 8 * 1024)
+
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features",
+            frozenset({"gen_ai_input_output_limit_increase"}),
+        ):
+            envelope = exporter._span_to_envelope(span)
+
+        properties = envelope.data.base_data.properties
+        self.assertEqual(properties["gen_ai.input.messages"], messages_value)
+        self.assertEqual(len(properties["gen_ai.output.messages"]), 4 * 1024 * 1024)
+        self.assertEqual(len(properties["gen_ai.tool.call.result"]), 256 * 1024)
+        self.assertEqual(len(properties["custom.attribute"]), 8 * 1024)
+
     def test_span_to_envelope_client_internal_gen_ai_type(self):
         exporter = self._exporter
         start_time = 1575494316027613500
