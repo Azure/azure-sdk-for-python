@@ -45,6 +45,11 @@
       "roleName": "Storage Queue Data Contributor"
     },
     {
+      "target": "project",
+      "roleDefinitionId": "78cf819f-0969-4ebe-8759-015c6efcd5bf",
+      "roleName": "Playwright Workspace Contributor"
+    },
+    {
       "target": "search",
       "roleDefinitionId": "7ca78c08-252a-4471-8644-bb5ff32d4ba0",
       "roleName": "Search Service Contributor"

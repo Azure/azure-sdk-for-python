@@ -332,6 +332,55 @@ if ($roleUpdateResources.Count -ne 1 -or
 }
 Write-Host 'Search module compiled; keyless execution, bootstrap roles, embedding dimensions and non-secret outputs verified.'
 
+$browserTemplate = Invoke-BicepCompilation -Path (Join-Path $infra 'browser-automation.bicep')
+$browserResources = @(Get-ArmResources -Template $browserTemplate)
+Assert-NoArmRoleAssignments -Resources $browserResources
+$workspaces = @($browserResources | Where-Object Type -ceq 'Microsoft.LoadTestService/playwrightWorkspaces')
+$browserConnections = @($browserResources | Where-Object Type -ceq 'Microsoft.CognitiveServices/accounts/projects/connections')
+if ($browserResources.Count -ne 2 -or $workspaces.Count -ne 1 -or $browserConnections.Count -ne 1) {
+    throw 'Browser automation must create only a native workspace and project connection, with no identities or scripts.'
+}
+$workspace = $workspaces[0].Definition
+if ($workspace['apiVersion'] -cne '2025-09-01' -or
+    $workspace['location'] -cne "[parameters('location')]" -or
+    $workspace['properties']['localAuth'] -cne 'Disabled' -or
+    $workspace['properties']['regionalAffinity'] -cne 'Enabled' -or
+    $browserTemplate['parameters']['workspaceName']['minLength'] -ne 3 -or
+    $browserTemplate['parameters']['workspaceName']['maxLength'] -ne 24) {
+    throw 'Browser workspace must use the admitted region, valid name bounds, regional affinity and no local authentication.'
+}
+$browserConnection = $browserConnections[0].Definition
+$browserProperties = $browserConnection['properties']
+$workspaceId = "[resourceId('Microsoft.LoadTestService/playwrightWorkspaces', parameters('workspaceName'))]"
+$expectedTarget = "[format('{0}/mcp', replace(reference($($workspaceId.Trim('[', ']')), '2025-09-01').dataplaneUri, '.api.playwright.microsoft.com', '.mcp.playwright.microsoft.com'))]"
+if ($browserConnection['apiVersion'] -cne '2025-04-01-preview' -or
+    $browserProperties['category'] -cne 'PlaywrightWorkspace' -or
+    $browserProperties['authType'] -cne 'ProjectManagedIdentity' -or
+    $browserProperties['audience'] -cne 'https://mcp.playwright.microsoft.com' -or
+    $browserProperties['isSharedToAll'] -ne $true -or
+    -not $browserProperties.Contains('credentials') -or $null -ne $browserProperties['credentials'] -or
+    $browserProperties['metadata']['resourceId'] -cne $workspaceId -or
+    $browserProperties['target'] -cne $expectedTarget -or
+    @($browserConnection['dependsOn']).Count -ne 1 -or
+    @($browserConnection['dependsOn'])[0] -cne $workspaceId) {
+    throw 'Browser connection must wait for its workspace, derive its MCP target and use only project managed-identity authentication.'
+}
+$browserOutputNames = @($browserTemplate['outputs']['environment']['value'].Keys | Sort-Object)
+$expectedBrowserNames = @('BROWSER_AUTOMATION_PROJECT_CONNECTION_ID',
+    'BROWSER_AUTOMATION_PROJECT_CONNECTION_NAME', 'PLAYWRIGHT_SERVICE_RESOURCE_ID' | Sort-Object)
+$browserPlanNames = @(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $infra 'browser-automation.bicep') | Sort-Object)
+if (($browserOutputNames -join ',') -cne ($expectedBrowserNames -join ',') -or
+    ($browserOutputNames -join ',') -cne ($browserPlanNames -join ',') -or
+    ($browserTemplate | ConvertTo-Json -Depth 100 -Compress) -match 'listKeys|listAccessTokens|apiKey|sessionId|liveView') {
+    throw 'Browser outputs must contain only discoverable ARM IDs and the connection name, never keys or session data.'
+}
+$browserGrants = @($identityConfiguration['roleAssignments'] |
+    Where-Object { $_.target -ceq 'project' -and $_.roleName -ceq 'Playwright Workspace Contributor' })
+if ($browserGrants.Count -ne 1 -or $browserGrants[0].roleDefinitionId -cne '78cf819f-0969-4ebe-8759-015c6efcd5bf') {
+    throw 'The existing project UAMI needs exactly one Playwright Workspace Contributor bootstrap grant.'
+}
+Write-Host 'Browser module compiled; native keyless workspace, project connection, bootstrap role and non-secret outputs verified.'
+
 # The root is the extensibility boundary: modules and bindings must stay in sync.
 $bundle = Invoke-BicepCompilation -Path (Join-Path $infra 'main.bicep')
 $bundleResources = @(Get-ArmResources -Template $bundle)
@@ -354,7 +403,24 @@ if ($searchModules.Count -ne 1 -or
         @($searchModules[0].Definition['dependsOn'])) {
     throw 'Search embedding deployment must wait for the chat-model module to avoid concurrent Foundry account operations.'
 }
-Write-Host 'Complete resource bundle compiled; serialized models, unconditional modules, environment contract and zero worker IAM verified.'
+$browserModules = @($bundleResources | Where-Object {
+    $_.Type -ieq 'Microsoft.Resources/deployments' -and $_.Definition['name'] -ceq 'browser-automation'
+})
+if ($browserModules.Count -ne 1 -or
+    @($browserModules[0].Definition['dependsOn']).Count -ne 1 -or
+    @($browserModules[0].Definition['dependsOn'])[0] -cne
+        "[resourceId('Microsoft.Resources/deployments', 'standard-setup')]" -or
+    $browserModules[0].Definition['properties']['parameters']['workspaceName']['value'] -cne
+        "[format('pw-{0}', uniqueString(resourceGroup().id, parameters('ownerToken')))]") {
+    throw 'Browser provisioning must depend only on Standard setup and retain the full run-unique workspace-name hash.'
+}
+foreach ($name in $expectedBrowserNames) {
+    if ($name -cnotin $compiledNames -or
+        -not ([string] $bundle['outputs']['environment']['value'][$name]).Contains("'browser-automation'")) {
+        throw 'Every browser environment binding must be exposed by the root from the browser module.'
+    }
+}
+Write-Host 'Complete resource bundle compiled; serialized models, independent browser provisioning, unconditional modules, environment contract and zero worker IAM verified.'
 
 # Optional, separate provenance check. The parent downloader remains responsible
 # for fetching the original 14 pinned files; this checker never downloads or patches them.
