@@ -1479,7 +1479,8 @@ async def test_after_restore_rejects_reserved_override_keys(
 
     assert response.status_code == 400
     assert response.json()["error"]["code"] == "invalid_after_restore_request"
-    assert denied_key in response.json()["error"]["message"]
+    # The deny rule must be what rejects the key, not the operator allow list.
+    assert f"{denied_key!r} is reserved" in response.json()["error"]["message"]
     assert os.environ.get(denied_key) == previous
     assert "CUSTOM_VALUE" not in os.environ
     assert agent._lifecycle.assigned_session_id is None  # pylint: disable=protected-access
@@ -1518,7 +1519,7 @@ async def test_after_restore_rejects_reserved_key_present_at_startup(
         )
 
     assert response.status_code == 400
-    assert denied_key in response.json()["error"]["message"]
+    assert f"{denied_key!r} is reserved" in response.json()["error"]["message"]
     assert os.environ[denied_key] == "captured"
     assert agent._lifecycle.assigned_session_id is None  # pylint: disable=protected-access
 
