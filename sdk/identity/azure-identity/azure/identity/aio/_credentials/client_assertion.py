@@ -2,7 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Callable, Optional
+import inspect
+from typing import Any, Awaitable, Callable, Optional, Union
 
 from azure.core.credentials import AccessTokenInfo
 from .._internal import AadClient, AsyncContextManager
@@ -17,9 +18,9 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
 
     :param str tenant_id: ID of the principal's tenant. Also called its "directory" ID.
     :param str client_id: The principal's client ID
-    :param func: A callable that returns a string assertion. The credential will call this every time it
-        acquires a new token.
-    :paramtype func: Callable[[], str]
+    :param func: A callable that returns a string assertion or an awaitable that returns a string assertion.
+        The credential will call this every time it acquires a new token.
+    :paramtype func: Callable[[], Union[str, Awaitable[str]]]
 
     :keyword str authority: Authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud (which is the default).
@@ -41,7 +42,9 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
             :caption: Create a ClientAssertionCredential.
     """
 
-    def __init__(self, tenant_id: str, client_id: str, func: Callable[[], str], **kwargs: Any) -> None:
+    def __init__(
+        self, tenant_id: str, client_id: str, func: Callable[[], Union[str, Awaitable[str]]], **kwargs: Any
+    ) -> None:
         self._func = func
         authority = kwargs.pop("authority", None)
         cache = kwargs.pop("cache", None)
@@ -71,5 +74,7 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         assertion = self._func()
+        if inspect.isawaitable(assertion):
+            assertion = await assertion
         token = await self._client.obtain_token_by_jwt_assertion(scopes, assertion, **kwargs)
         return token
