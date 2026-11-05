@@ -68,6 +68,8 @@ _MAX_LIFECYCLE_BODY_BYTES = 1024 * 1024
 _MAX_ENV_OVERRIDE_COUNT = 256
 _MAX_ENV_KEY_LENGTH = 256
 _MAX_ENV_VALUE_LENGTH = 32 * 1024
+# Hard per-entry ceiling for ``KEY=VALUE\0`` enforced by the Windows process environment block.
+_MAX_ENV_ENTRY_BYTES = 32767
 _MAX_ENV_OVERRIDES_TOTAL_BYTES = 256 * 1024
 _ENV_KEY_PATTERN = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 
@@ -187,7 +189,16 @@ def _is_denied_env_key(key: str) -> bool:
 
 
 def _encoded_env_entry_size(key: str, value: str) -> int:
-    """Return the encoded environment entry size, including separator and terminator."""
+    """Return the encoded environment entry size, including separator and terminator.
+
+    :param key: Environment variable name.
+    :type key: str
+    :param value: Environment variable value.
+    :type value: str
+    :return: Encoded size of ``KEY=VALUE\\0`` in bytes.
+    :rtype: int
+    :raises ValueError: When the key or value is malformed or oversized.
+    """
     try:
         encoded_key = key.encode("utf-8", "strict")
         encoded_value = value.encode("utf-8", "strict")
@@ -197,7 +208,10 @@ def _encoded_env_entry_size(key: str, value: str) -> int:
         raise ValueError(f"environment override {key!r} has an invalid key")
     if len(encoded_value) > _MAX_ENV_VALUE_LENGTH or "\0" in value:
         raise ValueError(f"environment override {key!r} has an invalid value")
-    return len(encoded_key) + len(encoded_value) + 2
+    entry_size = len(encoded_key) + len(encoded_value) + 2
+    if entry_size > _MAX_ENV_ENTRY_BYTES:
+        raise ValueError(f"environment override {key!r} is too large")
+    return entry_size
 
 
 def _validate_env_overrides(
@@ -209,6 +223,10 @@ def _validate_env_overrides(
 
     :param overrides: Raw ``session_env_overrides`` value from the request body.
     :type overrides: Any
+    :param allowed_keys: Environment variable names the operator has allowed to be overridden.
+    :type allowed_keys: frozenset[str]
+    :param session_id: Session identifier used for diagnostics.
+    :type session_id: str
     :return: The validated overrides.
     :rtype: dict[str, str]
     :raises ValueError: When any entry is malformed, oversized, or denied.
@@ -385,7 +403,7 @@ class _PlatformHeaderMiddleware:
 _SENTINEL_ACCESS_LOG = object()
 
 
-class AgentServerHost(Starlette):
+class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attributes
     """Agent server host framework for Azure AI Hosted Agent containers.
 
     A :class:`~starlette.applications.Starlette` subclass providing the
@@ -1075,7 +1093,9 @@ class AgentServerHost(Starlette):
             self._lifecycle.before_snapshot_completed = True
             return JSONResponse({"status": "ok"})
 
-    async def _after_restore_endpoint(self, request: Request) -> Response:
+    async def _after_restore_endpoint(  # pylint: disable=too-many-return-statements,too-many-statements
+        self, request: Request
+    ) -> Response:
         unauthorized = AgentServerHost._authorize_lifecycle_request(self, request)
         if unauthorized is not None:
             return unauthorized

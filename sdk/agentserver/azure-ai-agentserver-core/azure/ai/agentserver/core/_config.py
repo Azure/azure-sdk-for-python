@@ -125,9 +125,9 @@ class AgentConfig:  # pylint: disable=too-many-instance-attributes
     def from_env(cls, *, hosted: Optional[bool] = None) -> Self:
         """Create an ``AgentConfig`` by reading all platform environment variables.
 
-        :param hosted: Optional startup-captured hosted posture. When provided,
+        :keyword hosted: Optional startup-captured hosted posture. When provided,
             use it instead of re-reading ``FOUNDRY_HOSTING_ENVIRONMENT``.
-        :type hosted: Optional[bool]
+        :paramtype hosted: Optional[bool]
         :return: A frozen config with resolved values.
         :rtype: AgentConfig
         """

@@ -1609,6 +1609,7 @@ async def test_after_restore_accepts_platform_allowlisted_key(
         {"CUSTOM_VALUE": "has\0nul"},
         {"K" * 257: "value"},
         {"CUSTOM_VALUE": "v" * (32 * 1024 + 1)},
+        {"K" * 256: "v" * (32767 - 256 - 1)},
         {"CUSTOM_VALUE": "é" * 20_000},
         {f"CUSTOM_{index}": "value" for index in range(257)},
     ],
@@ -1633,7 +1634,7 @@ async def test_after_restore_rejects_malformed_or_oversized_overrides(
 
 
 @pytest.mark.asyncio
-async def test_after_restore_rejects_unencodable_override_before_assignment(
+async def test_after_restore_rejects_non_utf8_override_before_assignment(
     client: httpx.AsyncClient,
     agent: AgentServerHost,
 ) -> None:
@@ -1688,13 +1689,15 @@ async def test_after_restore_rejects_oversized_total_environment(
 @pytest.mark.asyncio
 async def test_after_restore_accepts_boundary_sized_overrides(client: httpx.AsyncClient) -> None:
     key = "K" * 256
+    # Largest value that still fits the 32767-byte ``KEY=VALUE\0`` entry limit.
+    value = "v" * (32767 - len(key) - 2)
     overrides = {f"CUSTOM_{index}": "value" for index in range(255)}
-    overrides[key] = "v" * (32 * 1024)
+    overrides[key] = value
 
     response = await client.post("/_agent/after-restore", json=_after_restore_payload(overrides=overrides))
 
     assert response.status_code == 200
-    assert os.environ[key] == "v" * (32 * 1024)
+    assert os.environ[key] == value
 
 
 @pytest.mark.asyncio
