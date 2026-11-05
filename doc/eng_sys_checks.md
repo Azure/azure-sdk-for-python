@@ -112,6 +112,8 @@ Starting with [this pr](https://github.com/Azure/azure-sdk-for-python/pull/28345
 
 We default to **enabling** most of our checks like `pylint`, `mypy`, etc. Due to that, most `pyproject.toml` settings will likely be **disabling** checks.
 
+`apistub` cannot be disabled per package when selected for dispatch. If its effective setting is false, either through `apistub = false` in `[tool.azure-sdk-build]` or a `<PACKAGE_NAME>_APISTUB` environment override, dispatch fails with a configuration error instead of skipping API stub generation. Remove the disabling setting or set it to `true`. Other per-check opt-outs, the existing `ci_enabled` rules, and queue-time build controls are unchanged.
+
 Here's an example:
 
 ```toml
