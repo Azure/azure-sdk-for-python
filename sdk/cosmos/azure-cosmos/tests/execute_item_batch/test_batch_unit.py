@@ -117,6 +117,24 @@ def test_conditions_patch_and_caller_snapshot_rust(batch_client):
     assert prepared.partition_key.values == ("bank", "branch")
 
 
+@pytest.mark.parametrize(
+    "operations, escaped",
+    [
+        ([("read", ("caf\u00e9",)), ("delete", ("caf\u00e9",))], True),
+        ([("read", ("caf\u00e9",)), ("upsert", ({"id": "caf\u00e9", "pk": "bank"},))], False),
+    ],
+)
+def test_compact_utf8_batch_escapes_only_bodyless_batches_rust(operations, escaped):
+    """Compact UTF-8 applies only when a batch carries an item body, as in legacy."""
+    backend = BatchBackend()
+    context = ItemClientContext(backend, defaults=ItemClientDefaults(enable_compact_utf8_item_writes=True))
+    container = ContainerProxy(MagicMock(), "dbs/db", "orders", _item_context=context)
+    container.execute_item_batch(operations, "bank")
+    body = backend.send.call_args.args[0].body_bytes
+    assert (b"caf\\u00e9" in body) is escaped
+    assert ("caf\u00e9".encode("utf-8") in body) is not escaped
+
+
 @pytest.mark.parametrize("status", [400, 404, 409, 412])
 def test_atomic_error_contract_rust(batch_client, status):
     call, backend, context = batch_client
@@ -191,3 +209,11 @@ def test_copied_batch_assertions_match_originals_rust(surface, filename):
 
     assert len(methods(original)) == 9
     assert methods(original) == methods(copied)
+
+
+def test_telemetry_test_names_have_rust_suffix_rust():
+    path = Path(__file__).with_name("test_batch_telemetry_unit.py")
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    names = [node.name for node in tree.body if isinstance(node, ast.FunctionDef) and node.name.startswith("test_")]
+    assert len(names) == 9
+    assert all(name.endswith("_rust") for name in names)

@@ -47,13 +47,17 @@ def prepare_batch(
     proxy._item_context.defaults.apply_to_options(options)
     headers, settings = build_request_headers_and_settings(options)
     body = _format_batch_operations(deepcopy(operations))
+    # Match legacy: read/delete-only batches carry no item body and stay escaped.
+    compact_utf8 = proxy._item_context.defaults.enable_compact_utf8_item_writes and any(
+        isinstance(operation, dict) and "resourceBody" in operation for operation in body
+    )
     prepared = PreparedRequest(
         op=OP_EXECUTE_ITEM_BATCH,
         container_link=proxy.container_link,
         partition_key=normalize_partition_key(normalize_item_partition_key(partition_key, False)),
         body_bytes=serialize_body_to_bytes(
             body,
-            ensure_ascii=not proxy._item_context.defaults.enable_compact_utf8_item_writes,
+            ensure_ascii=not compact_utf8,
             allow_nan=False,
         ),
         headers=headers,

@@ -141,7 +141,7 @@ def operation_spans(recording):
 
 @pytest.mark.parametrize("mode", ["enabled", "disabled", "handler-only", "sampled-out", "no-handlers"])
 @pytest.mark.parametrize("timeout", [None, 10])
-def test_batch_span_owns_preparation_result_and_hook(batch, recording, mode, timeout):
+def test_batch_span_owns_preparation_result_and_hook_rust(batch, recording, mode, timeout):
     h = batch
     if mode in ("disabled", "handler-only"):
         settings.tracing_enabled = False
@@ -194,7 +194,7 @@ def test_batch_span_owns_preparation_result_and_hook(batch, recording, mode, tim
 
 
 @pytest.mark.parametrize("status", [400, 404, 409, 412])
-def test_failed_operation_marks_public_span_not_successful_request(batch, recording, status):
+def test_failed_operation_marks_public_span_not_successful_request_rust(batch, recording, status):
     results = [{"statusCode": 424}, {"statusCode": status}, {"statusCode": 424}]
     batch.response = (
         207,
@@ -221,7 +221,7 @@ def test_failed_operation_marks_public_span_not_successful_request(batch, record
     ["request", "metadata", "transport", "timeout", "parse", "hook", "no-cause"],
 )
 @pytest.mark.parametrize("timeout", [None, 10])
-def test_errors_keep_type_cause_headers_and_no_replay(batch, recording, failure, timeout):
+def test_errors_keep_type_cause_headers_and_no_replay_rust(batch, recording, failure, timeout):
     h, hook = batch, Mock()
     if failure == "request":
         h.response, expected = (
@@ -269,7 +269,7 @@ def test_errors_keep_type_cause_headers_and_no_replay(batch, recording, failure,
 
 
 @pytest.mark.parametrize("detail", ["missing", "malformed", "reporting", "invalid-response"])
-def test_reporting_failure_does_not_replace_batch_result(batch, recording, monkeypatch, detail):
+def test_reporting_failure_does_not_replace_batch_result_rust(batch, recording, monkeypatch, detail):
     h = batch
     if detail == "missing":
         h.transform = lambda value: (value[0], None)
@@ -296,7 +296,7 @@ def test_reporting_failure_does_not_replace_batch_result(batch, recording, monke
     assert "cosmos.poc.retained_request_count" not in operation_spans(recording)[0].attributes
 
 
-def test_invalid_input_creates_no_attempts(batch, recording):
+def test_invalid_input_creates_no_attempts_rust(batch, recording):
     with pytest.raises(TypeError, match="response_hook must be callable"):
         batch.call(response_hook=object())
     assert not batch.calls
@@ -304,7 +304,7 @@ def test_invalid_input_creates_no_attempts(batch, recording):
     assert not attempt_spans(recording)
 
 
-def test_disabled_batch_does_not_import_opentelemetry(batch, monkeypatch):
+def test_disabled_batch_does_not_import_opentelemetry_rust(batch, monkeypatch):
     settings.tracing_enabled = False
     batch.proxy._item_context = replace(batch.proxy._item_context, telemetry_handlers=())
     original_import = builtins.__import__
@@ -318,14 +318,14 @@ def test_disabled_batch_does_not_import_opentelemetry(batch, monkeypatch):
     assert not batch.calls[0][1] and not batch.seen
 
 
-def test_batch_does_not_export_item_body_or_partition_key(batch, recording):
+def test_batch_does_not_export_item_body_or_partition_key_rust(batch, recording):
     batch.call()
     for span in (*operation_spans(recording), *attempt_spans(recording)):
         text = repr(span.attributes) + repr(span.events)
         assert "order-17" not in text and "customer-17" not in text
 
 
-def test_nested_hook_keeps_separate_completion(batch, recording):
+def test_nested_hook_keeps_separate_completion_rust(batch, recording):
     if batch.asynchronous:
         pytest.skip("Synchronous nested batch inside a synchronous hook")
     batch.proxy._item_context = replace(
@@ -345,7 +345,7 @@ def test_nested_hook_keeps_separate_completion(batch, recording):
 
 
 @pytest.mark.parametrize("timeout", [None, 10])
-def test_cancellation_drains_authorized_batch(batch, recording, timeout):
+def test_cancellation_drains_authorized_batch_rust(batch, recording, timeout):
     if not batch.asynchronous:
         pytest.skip("Async cancellation")
 

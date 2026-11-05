@@ -14,7 +14,7 @@ from unittest.mock import patch
 
 import pytest
 
-from config import settings
+from config import clients, settings
 from azure.cosmos import CosmosClient, exceptions, PartitionKey, DatabaseProxy
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 
@@ -56,7 +56,7 @@ class TestTransactionalBatch(unittest.TestCase):
         cls.addClassCleanup(cls.key_client.close)
         cls.key_database = cls.key_client.create_database(cls.TEST_DATABASE_ID)
         cls.addClassCleanup(cls.key_client.delete_database, cls.TEST_DATABASE_ID)
-        cls.client = CosmosClient(cls.host, cls.masterKey, _backend=cls.backend)
+        cls.client = clients.create_data_client(_backend=cls.backend)
         cls.addClassCleanup(cls.client.close)
         cls.test_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         if cls.backend == "rust":

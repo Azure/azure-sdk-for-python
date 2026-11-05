@@ -1,0 +1,43 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.17, pytest-9.0.3, pluggy-1.6.0
+rootdir: C:\Users\dikshibahl\source\repos\azure-sdk-for-python\sdk\cosmos\azure-cosmos
+configfile: pytest.ini
+plugins: asyncio-1.4.0, cov-7.1.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 6 items
+
+tests\upsert_item\aio\test_query_async.py ...                            [ 50%]
+tests\upsert_item\aio\test_query_cross_partition_async.py .              [ 66%]
+tests\upsert_item\sync\test_change_feed.py .                             [ 83%]
+tests\upsert_item\aio\test_change_feed_async.py .                        [100%]
+
+============================== warnings summary ===============================
+.venv\Lib\site-packages\_pytest\config\__init__.py:1434
+  C:\Users\dikshibahl\source\repos\azure-sdk-for-python\sdk\cosmos\azure-cosmos\.venv\Lib\site-packages\_pytest\config\__init__.py:1434: PytestConfigWarning: Unknown config option: timeout
+  
+    self._warn_or_fail_if_strict(f"Unknown config option: {key}\n")
+
+.venv\Lib\site-packages\_pytest\config\__init__.py:1434
+  C:\Users\dikshibahl\source\repos\azure-sdk-for-python\sdk\cosmos\azure-cosmos\.venv\Lib\site-packages\_pytest\config\__init__.py:1434: PytestConfigWarning: Unknown config option: timeout_method
+  
+    self._warn_or_fail_if_strict(f"Unknown config option: {key}\n")
+
+tests\upsert_item\sync\test_change_feed.py:55
+  C:\Users\dikshibahl\source\repos\azure-sdk-for-python\sdk\cosmos\azure-cosmos\tests\upsert_item\sync\test_change_feed.py:55: PytestUnknownMarkWarning: Unknown pytest.mark.unittest - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.unittest
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=================================== PASSES ====================================
+_________ TestQueryAsync.test_cosmos_query_retryable_error_async_rust _________
+------------------------------ Captured log call ------------------------------
+WARNING  asyncio:base_events.py:2056 Executing <Task pending name='Task-2' coro=<TestQueryAsync.test_cosmos_query_retryable_error_async_rust() running at C:\Users\dikshibahl\source\repos\azure-sdk-for-python\sdk\cosmos\azure-cosmos\tests\upsert_item\aio\test_query_async.py:154> wait_for=<Future pending cb=[<builtins.PyDoneCallback object at 0x0000019A67EE2670>(), Task.task_wakeup()] created at C:\Users\dikshibahl\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py:460> cb=[_run_until_complete_cb() at C:\Users\dikshibahl\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py:181] created at C:\Users\dikshibahl\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py:101> took 0.390 seconds
+WARNING  asyncio:base_events.py:2056 Executing <Task pending name='Task-4' coro=<TestQueryAsync.test_cosmos_query_retryable_error_async_rust.<locals>.query_items() running at C:\Users\dikshibahl\source\repos\azure-sdk-for-python\sdk\cosmos\azure-cosmos\tests\upsert_item\aio\test_query_async.py:134> wait_for=<Future pending cb=[<builtins.PyDoneCallback object at 0x0000019A695147F0>(), Task.task_wakeup()] created at C:\Users\dikshibahl\AppData\Local\Programs\Python\Python313\Lib\asyncio\base_events.py:460> cb=[gather.<locals>._done_callback() at C:\Users\dikshibahl\AppData\Local\Programs\Python\Python313\Lib\asyncio\tasks.py:829] created at C:\Users\dikshibahl\AppData\Local\Programs\Python\Python313\Lib\asyncio\tasks.py:757> took 0.116 seconds
+WARNING  asyncio:base_events.py:2056 Executing <Task finished name='Task-2' coro=<TestQueryAsync.test_cosmos_query_retryable_error_async_rust() done, defined at C:\Users\dikshibahl\source\repos\azure-sdk-for-python\sdk\cosmos\azure-cosmos\tests\upsert_item\aio\test_query_async.py:119> result=None created at C:\Users\dikshibahl\AppData\Local\Programs\Python\Python313\Lib\asyncio\runners.py:101> took 0.231 seconds
+=========================== short test summary info ===========================
+PASSED tests/upsert_item/aio/test_query_async.py::TestQueryAsync::test_cosmos_query_retryable_error_async_rust
+PASSED tests/upsert_item/aio/test_query_async.py::TestQueryAsync::test_full_pk_continuation_emits_legacy_by_default_async_rust
+PASSED tests/upsert_item/aio/test_query_async.py::TestQueryAsync::test_full_pk_legacy_replay_resumes_same_page_async_rust
+PASSED tests/upsert_item/aio/test_query_cross_partition_async.py::TestQueryCrossPartitionAsync::test_paging_with_continuation_token_async_rust
+PASSED tests/upsert_item/sync/test_change_feed.py::TestChangeFeed::test_query_change_feed_with_start_time_rust
+PASSED tests/upsert_item/aio/test_change_feed_async.py::TestChangeFeedAsync::test_query_change_feed_with_start_time_rust
+================== 6 passed, 3 warnings in 61.54s (0:01:01) ===================

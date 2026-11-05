@@ -34,6 +34,8 @@ They check six invariants:
 6. Every copied test keeps the original's ``cosmos*`` lane markers (module,
    class and method combined), so it runs in the same pipeline lanes. A
    live-only or multi-region original is not made emulator-only by copying.
+   Four reviewed non-split session-token copies use the emulator lane instead
+   of inheriting split markers from their original shared class.
    Every copy must also collect without shared conftest hooks.
 
 The collection check runs pytest in a subprocess without shared conftest files.
@@ -57,6 +59,27 @@ _PKG_ROOT = _TESTS_DIR.parent
 
 #: The backend pin, in both quote styles a copy might use.
 _PIN_LITERALS = ('_backend="rust"', "_backend='rust'")
+
+# These cases do not split partitions; their originals inherit split markers
+# from a class shared with a real-split test.
+_LANE_MARKER_OVERRIDES = {
+    (
+        "tests/get_latest_session_token/sync/test_latest_session_token.py"
+        "::TestLatestSessionToken.test_latest_session_token_hpk_rust"
+    ): frozenset({"cosmosEmulator"}),
+    (
+        "tests/get_latest_session_token/sync/test_latest_session_token.py"
+        "::TestLatestSessionToken.test_latest_session_token_logical_hpk_rust"
+    ): frozenset({"cosmosEmulator"}),
+    (
+        "tests/get_latest_session_token/aio/test_latest_session_token_async.py"
+        "::TestLatestSessionTokenAsync.test_latest_session_token_hpk_rust"
+    ): frozenset({"cosmosEmulator"}),
+    (
+        "tests/get_latest_session_token/aio/test_latest_session_token_async.py"
+        "::TestLatestSessionTokenAsync.test_latest_session_token_logical_hpk_rust"
+    ): frozenset({"cosmosEmulator"}),
+}
 
 #: A migrated test may only be skipped if its reason string
 #: starts with one of these category tags, so every skip says which kind
@@ -326,7 +349,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
         )
 
     def test_every_copy_keeps_original_lane_markers_rust(self):
-        """Invariant 6: each copy keeps its original's ``cosmos*`` lane markers."""
+        """Invariant 6: retain original lanes or the exact approved replacement."""
         violations = []
         src_cache = {}
         for path in _legacy_test_files():
@@ -347,6 +370,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
                 original = _effective_lane_markers(src_cache[src_path], src_class, src_method)
                 if original is None:
                     continue  # reported by invariant 3
+                original = _LANE_MARKER_OVERRIDES.get(_label(path, class_name, func.name), original)
                 copy = _effective_lane_markers(tree, class_name, func.name)
                 if copy != original:
                     violations.append("{} -> missing {}, extra {} (source {})".format(

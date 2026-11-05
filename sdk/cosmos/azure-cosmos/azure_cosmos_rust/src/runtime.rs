@@ -745,8 +745,11 @@ fn fault_rules_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Arc<FaultI
             (None, Some("ResponseTimeout")) if sub_status == 0 => {
                 result.with_error(FaultInjectionErrorType::ResponseTimeout)
             }
+            (None, Some("ResponseTimeoutAfterService")) if sub_status == 0 => {
+                result.with_error(FaultInjectionErrorType::ResponseTimeoutAfterService)
+            }
             _ => return Err(PyValueError::new_err(
-                "fault rule requires status_code 100..599 or error_type ConnectionError/ResponseTimeout, not both; transport errors cannot have sub_status",
+                "fault rule requires status_code 100..599 or error_type ConnectionError/ResponseTimeout/ResponseTimeoutAfterService, not both; transport errors cannot have sub_status",
             )),
         };
         if delay_ms != 0 {
@@ -1097,7 +1100,11 @@ invalid = [
             rule.setattr("response_headers", headers).unwrap();
             rule.setattr("status_code", py.None()).unwrap();
             rule.setattr("sub_status", 0).unwrap();
-            for error_type in ["ConnectionError", "ResponseTimeout"] {
+            for error_type in [
+                "ConnectionError",
+                "ResponseTimeout",
+                "ResponseTimeoutAfterService",
+            ] {
                 rule.setattr("error_type", error_type).unwrap();
                 assert!(fault_rules_from_config(&config).unwrap_err().to_string().contains("response_headers"));
             }
@@ -1626,6 +1633,15 @@ config = SimpleNamespace(fault_injection_rules=(rule,))
             let response_fingerprint = config_fingerprint(Some(&config)).unwrap();
             assert_ne!(before, response_fingerprint);
             assert_ne!(connection_fingerprint, response_fingerprint);
+            rule.setattr("error_type", "ResponseTimeoutAfterService").unwrap();
+            let rules = fault_rules_from_config(&config).unwrap();
+            assert_eq!(
+                rules[0].result().error_type(),
+                Some(FaultInjectionErrorType::ResponseTimeoutAfterService)
+            );
+            assert!(rules[0].result().custom_response().is_none());
+            assert_eq!(rules[0].result().delay(), Some(Duration::from_secs(2)));
+            assert_ne!(response_fingerprint, config_fingerprint(Some(&config)).unwrap());
             rule.setattr("status_code", 503).unwrap();
             assert!(fault_rules_from_config(&config).is_err());
             rule.setattr("status_code", py.None()).unwrap();

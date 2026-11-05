@@ -198,25 +198,9 @@ RETIRED_SESSION_TOKEN_SOURCES = {
         "tests/get_latest_session_token/sync/test_session_token_helpers_owned.py"
         "::TestSessionTokenHelpers.test_invalid_feed_range_rust"
     ),
-    "tests/test_partition_split_scenarios.py::TestPartitionSplitScenarios.test_latest_session_token_hpk": (
-        "tests/get_latest_session_token/sync/test_latest_session_token.py"
-        "::TestLatestSessionToken.test_latest_session_token_hpk_rust"
-    ),
-    "tests/test_partition_split_scenarios.py::TestPartitionSplitScenarios.test_latest_session_token_logical_hpk": (
-        "tests/get_latest_session_token/sync/test_latest_session_token.py"
-        "::TestLatestSessionToken.test_latest_session_token_logical_hpk_rust"
-    ),
-    "tests/test_partition_split_scenarios_async.py::TestPartitionSplitScenariosAsync.test_latest_session_token_hpk": (
-        "tests/get_latest_session_token/aio/test_latest_session_token_async.py"
-        "::TestLatestSessionTokenAsync.test_latest_session_token_hpk_rust"
-    ),
-    "tests/test_partition_split_scenarios_async.py::TestPartitionSplitScenariosAsync.test_latest_session_token_logical_hpk": (
-        "tests/get_latest_session_token/aio/test_latest_session_token_async.py"
-        "::TestLatestSessionTokenAsync.test_latest_session_token_logical_hpk_rust"
-    ),
 }
 
-# Data provenance is separate: this is not a tenth retired test method.
+# Data provenance is separate from retired test methods.
 RETIRED_SESSION_TOKEN_SUPPORT_SOURCES = {
     "tests/test_session_token_helpers.py::create_split_ranges": (
         "tests/get_latest_session_token/_fixtures.py::create_split_ranges"

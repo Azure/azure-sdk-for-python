@@ -1,0 +1,169 @@
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
+"""Legacy upsert (and upsert-then-delete) exclusion matrix, run through the real Rust calls.
+
+Uses the shared test database and prefix-key container, like the original.
+The original verified each request's region from Python request logs, which
+Rust requests never reach, so that final check is skipped after the calls.
+"""
+
+import time
+import uuid
+
+import pytest
+
+from config import clients, settings
+
+CONFIG = settings.TestSettings()
+DATABASE_ID = CONFIG.TEST_DATABASE_ID
+CONTAINER_ID = CONFIG.TEST_MULTI_PARTITION_PREFIX_PK_CONTAINER_ID
+PARTITION_KEY = CONFIG.TEST_CONTAINER_PREFIX_PARTITION_KEY
+ITEM_ID = 'doc1'
+PARTITION_KEY_VALUES = [f'value{i+1}' for i in range(len(PARTITION_KEY))]
+PARTITION_KEY_ITEMS = dict(zip(PARTITION_KEY, PARTITION_KEY_VALUES))
+TEST_ITEM = {'id': ITEM_ID}
+TEST_ITEM.update(PARTITION_KEY_ITEMS)
+
+L0 = "Default"
+L1 = settings.TestSettings.WRITE_LOCATION
+L2 = settings.TestSettings.READ_LOCATION
+L3 = "East US 2"
+
+CLIENT_ONLY_TEST_DATA = [
+    # preferred_locations, client_excluded_locations, excluded_locations_request
+    [[L1, L2], [], None],
+    [[L1, L2], [L1], None],
+    [[L1, L2], [L1, L2], None],
+    [[L1, L2], [L3], None],
+]
+
+CLIENT_AND_REQUEST_TEST_DATA = [
+    # preferred_locations, client_excluded_locations, excluded_locations_request
+    [[L1, L2], [], [L1]],
+    [[L1, L2], [L1], [L1]],
+    [[L1, L2], [L1, L2], [L1]],
+    [[L1, L2], [L1], [L1, L2]],
+    [[L1, L2], [L1, L2], [L1, L2]],
+    [[L1, L2], [L1], [L2]],
+    [[L1, L2], [L1, L2], [L3]],
+    [[L1, L2], [L1, L2], []],
+]
+
+REGION_NOT_OBSERVABLE = (
+    "driver-gap: the Rust upsert_item/delete_item bindings do not report the region of each "
+    "attempt; the original read request URLs from a Python logging handler that Rust requests "
+    "never reach, and client.client_connection._global_endpoint_manager does not exist on Rust. "
+    "The calls above ran with these exclusions and succeeded."
+)
+
+
+def get_test_data_with_expected_output(_client_only_output_data, _client_and_request_output_data):
+    # Same as the original with TEST_DATA_TYPE == TestDataType.ALL_TESTS.
+    all_input_test_data = CLIENT_ONLY_TEST_DATA + CLIENT_AND_REQUEST_TEST_DATA
+    all_output_data = _client_only_output_data + _client_and_request_output_data
+    return [input_data + [output_data] for input_data, output_data in
+            zip(all_input_test_data, all_output_data)]
+
+
+def read_item_test_data():
+    client_only_output_data = [[L1], [L2], [L1], [L1]]
+    client_and_request_output_data = [[L2], [L2], [L2], [L1], [L1], [L1], [L1], [L1]]
+    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
+
+
+def write_item_test_data():
+    client_only_output_data = [[L1], [L2], [L0], [L1]]
+    client_and_request_output_data = [[L2], [L2], [L2], [L0], [L0], [L1], [L1], [L1]]
+    return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
+
+
+def read_and_write_item_test_data():
+    read_item = read_item_test_data()
+    write_item = write_item_test_data()
+
+    # Combine the expected_locations of read and write item
+    for i in range(len(read_item)):
+        read_item[i][-1] += write_item[i][-1]
+    return read_item
+
+
+def create_item_with_excluded_locations(container, body, excluded_locations):
+    if excluded_locations is None:
+        container.create_item(body=body)
+    else:
+        container.create_item(body=body, excluded_locations=excluded_locations)
+
+
+def init_container(preferred_locations, client_excluded_locations):
+    client = clients.create_data_client(
+        _backend="rust",
+        preferred_locations=preferred_locations,
+        excluded_locations=client_excluded_locations,
+    )
+    db = client.get_database_client(DATABASE_ID)
+    container = db.get_container_client(CONTAINER_ID)
+    return client, db, container
+
+
+@pytest.fixture(scope="class", autouse=True)
+def setup_and_teardown():
+    with clients.create_data_client(_backend="rust") as client:
+        container = client.get_database_client(DATABASE_ID).get_container_client(CONTAINER_ID)
+        container.upsert_item(body=TEST_ITEM)
+    # Waiting some time for the new items to be replicated to other regions
+    time.sleep(3)
+    yield
+
+
+@pytest.mark.cosmosCircuitBreaker
+@pytest.mark.cosmosMultiRegion
+@pytest.mark.cosmosAADCircuitBreaker
+class TestExcludedLocations:
+    @pytest.mark.parametrize('test_data', read_and_write_item_test_data())
+    def test_upsert_item_rust(self, test_data):
+        # Source: tests/test_excluded_locations.py::TestExcludedLocations.test_upsert_item
+        # Init test variables
+        preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
+
+        # The original repeated this for multiple_write_locations in [True, False]. Rust-backed
+        # clients reject that switch ("Closed by design: Rust owns endpoint discovery and
+        # multi-write routing", docs/V5/api-review/RUST_PARITY_PUSHBACKS.md), so one pass runs.
+        # Client setup and create an item
+        client, db, container = init_container(preferred_locations, client_excluded_locations)
+        with client:
+            # API call: upsert_item
+            body = {'id': f'doc2-{str(uuid.uuid4())}'}
+            body.update(PARTITION_KEY_ITEMS)
+            if request_excluded_locations is None:
+                container.upsert_item(body=body)
+            else:
+                container.upsert_item(body=body, excluded_locations=request_excluded_locations)
+
+            # get location from mock_handler
+            pytest.skip(REGION_NOT_OBSERVABLE)
+
+    @pytest.mark.parametrize('test_data', write_item_test_data())
+    def test_delete_item_rust(self, test_data):
+        # Source: tests/test_excluded_locations.py::TestExcludedLocations.test_delete_item
+        # Init test variables
+        preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
+
+        # Single pass for the same reason as test_upsert_item_rust above.
+        # Client setup
+        client, db, container = init_container(preferred_locations, client_excluded_locations)
+        with client:
+            # create before delete
+            item_id = f'doc2-{str(uuid.uuid4())}'
+            body = {'id': item_id}
+            body.update(PARTITION_KEY_ITEMS)
+            create_item_with_excluded_locations(container, body, request_excluded_locations)
+
+            # API call: delete_item
+            container.upsert_item(body)
+            if request_excluded_locations is None:
+                container.delete_item(item_id, PARTITION_KEY_VALUES)
+            else:
+                container.delete_item(item_id, PARTITION_KEY_VALUES, excluded_locations=request_excluded_locations)
+
+            # Verify endpoint locations
+            pytest.skip(REGION_NOT_OBSERVABLE)

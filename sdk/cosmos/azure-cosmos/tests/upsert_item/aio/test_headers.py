@@ -14,13 +14,16 @@ Run: ``pytest --noconftest tests/upsert_item/aio/test_headers.py -v``
 import importlib
 import os
 import unittest
+from contextlib import contextmanager
+from copy import copy
 from unittest.mock import patch
+from urllib.parse import urlsplit
 import uuid
 
 import pytest
 
 from azure.cosmos.aio import CosmosClient
-from azure.cosmos import PartitionKey, http_constants
+from azure.cosmos import PartitionKey, exceptions, http_constants
 
 
 HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
@@ -71,3 +74,85 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
                 call.args[1].headers[http_constants.HttpHeaders.ThroughputBucket],
                 str(request_throughput_bucket_number),
             )
+
+    @property
+    def data_database(self):
+        # The original's data-plane database proxy; this file's single Rust key client serves both planes.
+        return self.database
+
+    @pytest.mark.skip(reason="driver-gap: delete_all_items_by_partition_key has no Rust driver operation "
+                             "(known gap 19); on the Rust client the call raises NotImplementedError from its "
+                             "container-metadata preload, so the throughput bucket cannot be sent.")
+    async def test_container_delete_all_items_by_partition_key_throughput_bucket_async_rust(self):
+        # Source: tests/test_headers_async.py::TestHeadersAsync.test_container_delete_all_items_by_partition_key_throughput_bucket_async
+        # Control-plane container creation.
+        created_collection_ref = await self.database.create_container(
+            id='test_delete_all_items_by_partition_key_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path='/pk', kind='Hash'))
+        data_collection = self.data_database.get_container_client(created_collection_ref.id)
+
+        # Create two partition keys
+        partition_key1 = "{}-{}".format("Partition Key 1", str(uuid.uuid4()))
+        partition_key2 = "{}-{}".format("Partition Key 2", str(uuid.uuid4()))
+
+        # add items for partition key 1
+        for i in range(1, 3):
+            await data_collection.upsert_item(
+                dict(id="item{}".format(i), pk=partition_key1))
+
+        # add items for partition key 2
+        pk2_item = await data_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2))
+
+        try:
+            # delete all items for partition key 1
+            # Known gap 6: raw_request_hook removed; outgoing headers not observable (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-6). capture_requests patches the legacy Python transport, which a Rust-run operation does not use.
+            # Known gap 19: `delete_all_items_by_partition_key()`: driver support requested; issue filed (docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-19). No Rust driver path; the uncached container-metadata preload raises NotImplementedError before any request is sent.
+            with _capture_requests(data_collection, resource_type='operations') as requests:
+                await data_collection.delete_all_items_by_partition_key(
+                    partition_key1,
+                    throughput_bucket=request_throughput_bucket_number)
+            for request in requests:
+                _assert_request_throughput_bucket(request)
+        except exceptions.CosmosHttpResponseError as e:
+            error_text = " ".join(
+                message for message in (getattr(e, "http_error_message", None), str(e))
+                if message
+            ).lower()
+            if e.status_code == 400 and "partition key delete feature is disabled" in error_text:
+                pytest.skip("environment-gap: delete_all_items_by_partition_key is not enabled for this account")
+            raise
+        finally:
+            await self.database.delete_container(created_collection_ref.id)
+
+
+def _assert_request_throughput_bucket(response):
+    assert (response.headers[http_constants.HttpHeaders.ThroughputBucket]
+            == str(request_throughput_bucket_number))
+
+
+@contextmanager
+def _capture_requests(client, resource_type="docs"):
+    """Snapshot outgoing requests without exposing instrumentation as SDK options."""
+    transport = client.client_connection.pipeline_client._pipeline._transport
+    original_send = transport.send
+    requests = []
+
+    def capture(request):
+        if request.headers.get(http_constants.HttpHeaders.IsQueryPlanRequest):
+            return
+        segments = urlsplit(request.url).path.strip("/").split("/")
+        # Container metadata reads must not count as container operations when
+        # the operation under test targets a different resource.
+        if segments[::2][-1] != resource_type:
+            return
+        snapshot = copy(request)
+        snapshot.headers = request.headers.copy()
+        requests.append(snapshot)
+
+    async def send_async(request, **kwargs):
+        capture(request)
+        return await original_send(request, **kwargs)
+
+    with patch.object(transport, "send", side_effect=send_async):
+        yield requests
+    assert requests, "The operation did not send a matching request"

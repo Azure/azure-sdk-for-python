@@ -66,6 +66,7 @@ _RUST_FAULT_OPERATION_TYPES = frozenset(
         "UpsertItem",
         "ReplaceItem",
         "DeleteItem",
+        "PatchItem",
         "BatchItem",
         "ChangeFeedItem",
         "MetadataReadContainer",
@@ -222,6 +223,8 @@ def _prepare_fault_injection_rules(
     it does not send the read or inject the failure itself.
     ConnectionError and ResponseTimeout instead inject transport failures
     without fabricating an HTTP response or expiring the operation budget.
+    ResponseTimeoutAfterService discards a successful service response; a write
+    may already have committed. Its optional delay runs after that response.
     response_headers supplies synthetic HTTP headers, such as
     x-ms-retry-after-ms, rather than delaying the response itself. Header names
     are case-insensitive; use sub_status instead of an x-ms-substatus header.
@@ -272,8 +275,12 @@ def _prepare_fault_injection_rules(
 
         status_code = rule.get("status_code")
         error_type = rule.get("error_type")
-        if error_type is not None and error_type not in ("ConnectionError", "ResponseTimeout"):
-            raise ValueError("fault rule error_type must be ConnectionError, ResponseTimeout, or None.")
+        if error_type is not None and error_type not in (
+            "ConnectionError", "ResponseTimeout", "ResponseTimeoutAfterService"
+        ):
+            raise ValueError(
+                "fault rule error_type must be ConnectionError, ResponseTimeout, ResponseTimeoutAfterService, or None."
+            )
         if error_type is not None and (status_code is not None or rule.get("sub_status", 0) != 0):
             raise ValueError("fault rule error_type cannot be combined with status_code or sub_status.")
         if error_type is None and (

@@ -73,7 +73,7 @@ def test_unknown_rule_fields_do_not_silently_change_the_test_rust(field):
         ("probability", True), ("probability", -1), ("probability", 2),
         ("probability", float("nan")), ("probability", float("inf")),
         ("probability", 10**1000),
-        ("operation_type", []), ("operation_type", "PatchItem"),
+        ("operation_type", []), ("operation_type", "ExecuteStoredProcedure"),
     ],
 )
 def test_invalid_values_raise_value_error_before_native_conversion_rust(field, value):
@@ -116,7 +116,7 @@ def test_native_integer_boundaries_are_preserved_without_mutating_inputs_rust():
     assert rule == before
 
 
-@pytest.mark.parametrize("error_type", ["ConnectionError", "ResponseTimeout"])
+@pytest.mark.parametrize("error_type", ["ConnectionError", "ResponseTimeout", "ResponseTimeoutAfterService"])
 def test_transport_fault_has_no_synthetic_response_rust(error_type):
     rule = {"id": "transport", "operation_type": "ReadItem", "error_type": error_type}
     before = dict(rule)
@@ -129,11 +129,11 @@ def test_transport_fault_has_no_synthetic_response_rust(error_type):
     assert "status_code" not in rule
 
 
-@pytest.mark.parametrize("error_type", ["ConnectionError", "ResponseTimeout"])
+@pytest.mark.parametrize("error_type", ["ConnectionError", "ResponseTimeout", "ResponseTimeoutAfterService"])
 @pytest.mark.parametrize("extra", [
     {"status_code": 502}, {"sub_status": 1}, {"response_body": b"body"},
     {"response_headers": {"x-ms-retry-after-ms": "1000"}},
-    {"error_type": "ResponseTimeoutAfterService"},
+    {"error_type": "UnknownTransportError"},
     {"error_type": ""}, {"error_type": []}, {"error_type": True},
 ])
 def test_transport_fault_rejects_ambiguous_or_unsupported_rules_rust(error_type, extra):

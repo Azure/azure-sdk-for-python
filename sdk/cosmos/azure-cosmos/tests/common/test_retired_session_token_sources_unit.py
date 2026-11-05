@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Only approved duplicate token tests retire; grouped split coverage stays."""
+"""Retired token sources and excluded split originals retain their Rust copies."""
 
 import ast
 from pathlib import Path
@@ -16,6 +16,7 @@ from common._retired_test_sources import (
     RETIRED_TEST_SOURCES,
     RETIRED_THROUGHPUT_SOURCES,
 )
+from config import collection
 from get_latest_session_token._fixtures import create_split_ranges
 
 
@@ -23,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[2]
 TOKEN_TESTS = ROOT / "tests" / "get_latest_session_token"
 
 
-def test_only_approved_nine_methods_and_21_cases_retired_rust():
+def test_only_approved_five_methods_and_17_cases_retired_rust():
     approved = {
         "tests/test_session_token_helpers.py::TestSessionTokenHelpers": (
             "test_get_session_token_update",
@@ -32,26 +33,20 @@ def test_only_approved_nine_methods_and_21_cases_retired_rust():
             "test_simulated_splits_merges",
             "test_invalid_feed_range",
         ),
-        "tests/test_partition_split_scenarios.py::TestPartitionSplitScenarios": (
-            "test_latest_session_token_hpk", "test_latest_session_token_logical_hpk",
-        ),
-        "tests/test_partition_split_scenarios_async.py::TestPartitionSplitScenariosAsync": (
-            "test_latest_session_token_hpk", "test_latest_session_token_logical_hpk",
-        ),
     }
     assert set(RETIRED_SESSION_TOKEN_SOURCES) == {
         f"{source}.{method}" for source, methods in approved.items() for method in methods
     }
-    assert len(RETIRED_SESSION_TOKEN_SOURCES) == 9
-    assert len(set(RETIRED_SESSION_TOKEN_SOURCES.values())) == 9
+    assert len(RETIRED_SESSION_TOKEN_SOURCES) == 5
+    assert len(set(RETIRED_SESSION_TOKEN_SOURCES.values())) == 5
     assert len(create_split_ranges()) == 13
-    assert len(RETIRED_SESSION_TOKEN_SOURCES) - 1 + len(create_split_ranges()) == 21
+    assert len(RETIRED_SESSION_TOKEN_SOURCES) - 1 + len(create_split_ranges()) == 17
     assert not set(RETIRED_SESSION_TOKEN_SOURCES).intersection(RETIRED_THROUGHPUT_SOURCES)
     assert RETIRED_TEST_SOURCES == {
         **RETIRED_THROUGHPUT_SOURCES, **RETIRED_SESSION_TOKEN_SOURCES, **RETIRED_QUERY_SOURCES,
         **RETIRED_CONNECTION_STRING_SOURCES,
     }
-    assert len(RETIRED_TEST_SOURCES) == 42 + len(RETIRED_QUERY_SOURCES) + len(RETIRED_CONNECTION_STRING_SOURCES)
+    assert len(RETIRED_TEST_SOURCES) == 38 + len(RETIRED_QUERY_SOURCES) + len(RETIRED_CONNECTION_STRING_SOURCES)
     assert not (ROOT / "tests" / "test_session_token_helpers.py").exists()
 
 
@@ -85,17 +80,64 @@ def test_retired_method_resolves_to_exact_retained_rust_test_rust(reference, rep
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-def test_original_grouped_split_and_required_write_helpers_remain_rust(asynchronous):
+def test_original_split_sources_remain_excluded_with_rust_copies_rust(asynchronous):
     suffix = "_async" if asynchronous else ""
     path = ROOT / "tests" / f"test_partition_split_scenarios{suffix}.py"
     tree = ast.parse(path.read_text(encoding="utf-8"))
     cls = "TestPartitionSplitScenariosAsync" if asynchronous else "TestPartitionSplitScenarios"
     assert [(name, method.name) for name, method in enforcer._iter_test_functions(tree)] == [
-        (cls, f"test_change_feed_session_token_and_read_items_after_split{suffix}")
+        (cls, f"test_change_feed_session_token_and_read_items_after_split{suffix}"),
+        (cls, "test_latest_session_token_hpk"),
+        (cls, "test_latest_session_token_logical_hpk"),
     ]
+    assert collection.exclude_module(path)
     for helper in ("create_items_logical_pk", "create_items_physical_pk"):
         assert enforcer._class_method_exists(tree, cls, helper + suffix)
     assert enforcer._class_method_exists(tree, cls, "asyncSetUp" if asynchronous else "setUpClass")
+
+    surface = "aio" if asynchronous else "sync"
+    retained = TOKEN_TESTS / surface / f"test_latest_session_token{suffix}.py"
+    assert not collection.exclude_module(retained)
+    text = retained.read_text(encoding="utf-8")
+    assert text.count('_backend="rust"') == 1
+    originals = {method.name: method for _, method in enforcer._iter_test_functions(tree)}
+    copies = {
+        method.name: method
+        for _, method in enforcer._iter_test_functions(ast.parse(text))
+    }
+    for name in ("test_latest_session_token_hpk", "test_latest_session_token_logical_hpk"):
+        reference = f"tests/{path.name}::{cls}.{name}"
+        assert reference not in RETIRED_TEST_SOURCES
+        copied = copies[f"{name}_rust"]
+        assert enforcer._source_ref(copied, text.splitlines()) == reference
+        assert ast.dump(ast.Module(body=copied.body, type_ignores=[])) == ast.dump(
+            ast.Module(body=originals[name].body, type_ignores=[])
+        )
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+@pytest.mark.parametrize("markers", [
+    "",
+    "@pytest.mark.cosmosSplit",
+    "@pytest.mark.cosmosEmulator\n@pytest.mark.cosmosSplit",
+])
+def test_non_split_copies_require_exact_emulator_markers_rust(monkeypatch, tmp_path, asynchronous, markers):
+    suffix = "_async" if asynchronous else ""
+    original = Path("tests") / f"test_partition_split_scenarios{suffix}.py"
+    surface = "aio" if asynchronous else "sync"
+    copied = Path("tests") / "get_latest_session_token" / surface / f"test_latest_session_token{suffix}.py"
+    for relative in (original, copied):
+        destination = tmp_path / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        text = (ROOT / relative).read_text(encoding="utf-8")
+        if relative == copied:
+            text = text.replace("@pytest.mark.cosmosEmulator", markers)
+        destination.write_text(text, encoding="utf-8")
+    monkeypatch.setattr(enforcer, "_PKG_ROOT", tmp_path)
+    monkeypatch.setattr(enforcer, "_legacy_test_files", lambda: [tmp_path / copied])
+    check_name = "test_every_copy_keeps_original_lane_markers_rust"
+    with pytest.raises(AssertionError, match="cosmos.*lane markers"):
+        getattr(enforcer.LegacyMigrationEnforcerTests(check_name), check_name)()
 
 
 def test_retired_split_data_has_owned_provenance_not_an_extra_test_rust():

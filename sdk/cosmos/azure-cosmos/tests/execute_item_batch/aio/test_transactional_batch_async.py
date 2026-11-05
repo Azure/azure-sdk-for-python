@@ -14,7 +14,7 @@ from unittest.mock import patch
 
 import pytest
 
-from config import settings
+from config import clients, settings
 from azure.cosmos import exceptions, PartitionKey
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
@@ -58,7 +58,7 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
         self.key_database = await self.key_client.create_database(self.TEST_DATABASE_ID)
         self.addAsyncCleanup(self.key_client.delete_database, self.TEST_DATABASE_ID)
 
-        self.client = CosmosClient(self.host, self.masterKey, _backend=self.backend)
+        self.client = clients.create_data_client_async(_backend=self.backend)
         self.addAsyncCleanup(self.client.close)
         await self.client.__aenter__()
         self.test_database = self.client.get_database_client(self.TEST_DATABASE_ID)
