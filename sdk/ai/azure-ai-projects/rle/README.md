@@ -50,3 +50,11 @@ The wheel is built from SDK source commit
 changed from `2.7.0b7` to `2.7.2b1`. Existing wheel versions and checksums are
 preserved. Live dual-token gateway/training qualification remains incomplete;
 this artifact is a preview, not a PyPI release.
+
+## Standalone queued V3 development wheel
+
+The [queued V3 development artifact](wheels/2.7.0b7.dev20261104+queuedv3.3/README.md)
+is an explicitly selected wheel with [build provenance](wheels/2.7.0b7.dev20261104+queuedv3.3/provenance.json).
+It is not added to the approved registry and does not change `latest` or the
+installer's defaults. Use an immutable wheel URL with its recorded SHA-256.
+This is artifact distribution only, not an upstream SDK source merge.
