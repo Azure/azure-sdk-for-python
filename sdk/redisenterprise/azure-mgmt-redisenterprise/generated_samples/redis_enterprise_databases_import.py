@@ -43,6 +43,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-06-01-preview/RedisEnterpriseDatabasesImport.json
+# x-ms-original-file: 2026-09-01/RedisEnterpriseDatabasesImport.json
 if __name__ == "__main__":
     main()
