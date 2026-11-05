@@ -72,9 +72,10 @@ The wheel is built from merged SDK source
 `4f82d3c33e5e55614aeb167bce2ff1980ceba64e` in
 `sujit-kamireddy/azure-sdk-for-python`, with only the staged package version
 overridden from `2.7.0b7.dev20261104+queuedv3.3` to `2.7.3b1`.
-See [build provenance](wheels/2.7.3b1/provenance.json). Existing wheel versions
-and checksums are preserved; this is distribution, not an upstream source merge
-or a PyPI publication.
+The wheel is 600811 bytes with SHA-256
+`a3823cc9e9e9386746523137db58a6ff00833f41aa60cec281bee374085a66d8`.
+Existing wheel versions and checksums are preserved; this is distribution,
+not an upstream source merge or a PyPI publication.
 
 The registry selects `2.7.3b1` as `latest`; to pin explicitly:
 
