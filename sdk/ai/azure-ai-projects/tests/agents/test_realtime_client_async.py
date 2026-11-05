@@ -275,9 +275,9 @@ class TestAsyncRealtimeConnectionRecv:
             "content_index": 0,
             "future_field": {"enabled": False, "count": 0},
         }
-        expected = dict(payload)
         if event_type == "response.audio_timestamp.delta":
-            expected["timestamp_type"] = "word"
+            payload["timestamp_type"] = "word"
+        expected = dict(payload)
         transport = _make_fake_ws()
         transport.receive = AsyncMock(return_value=_make_fake_msg(aiohttp.WSMsgType.TEXT, json.dumps(payload)))
         patcher, _ = _patch_client_session(transport)

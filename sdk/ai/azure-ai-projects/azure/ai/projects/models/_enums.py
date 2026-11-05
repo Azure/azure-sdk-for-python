@@ -1544,6 +1544,10 @@ class RealtimeAudioFormatsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RealtimeClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of RealtimeClientEventType."""
 
+    SESSION_AVATAR_CONNECT = "session.avatar.connect"
+    """SESSION_AVATAR_CONNECT."""
+    RTC_CALL_SDP_CREATE = "rtc.call.sdp.create"
+    """RTC_CALL_SDP_CREATE."""
     CONVERSATION_ITEM_CREATE = "conversation.item.create"
     """CONVERSATION_ITEM_CREATE."""
     CONVERSATION_ITEM_DELETE = "conversation.item.delete"
@@ -1566,10 +1570,6 @@ class RealtimeClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESPONSE_CREATE."""
     SESSION_UPDATE = "session.update"
     """SESSION_UPDATE."""
-    SESSION_AVATAR_CONNECT = "session.avatar.connect"
-    """SESSION_AVATAR_CONNECT."""
-    RTC_CALL_SDP_CREATE = "rtc.call.sdp.create"
-    """RTC_CALL_SDP_CREATE."""
 
 
 class RealtimeConversationItemMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1586,6 +1586,8 @@ class RealtimeConversationItemMessageType(str, Enum, metaclass=CaseInsensitiveEn
 class RealtimeConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of RealtimeConversationItemType."""
 
+    SYSTEM_TOOL = "system_tool"
+    """A service-managed system-tool intent, not a provider result."""
     FUNCTION_CALL = "function_call"
     """FUNCTION_CALL."""
     FUNCTION_CALL_OUTPUT = "function_call_output"
@@ -1600,8 +1602,6 @@ class RealtimeConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """MCP_APPROVAL_REQUEST."""
     MESSAGE = "message"
     """MESSAGE."""
-    SYSTEM_TOOL = "system_tool"
-    """A service-managed system-tool intent, not a provider result."""
 
 
 class RealtimeMcpErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2098,13 +2098,18 @@ class TelemetryTransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """gRPC transport protocol."""
 
 
-class TelephonyBindingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The lifecycle status of a telephony binding."""
+class TelephonyAddressType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Extensible endpoint address kinds. Address type describes the endpoint independently of the
+    provider.
+    """
 
-    ACTIVE = "active"
-    """The binding accepts new inbound calls."""
-    SUSPENDED = "suspended"
-    """The binding remains configured but rejects new inbound calls."""
+    PHONE_NUMBER = "phone_number"
+    """An E.164 phone number."""
+    TEAMS = "teams"
+    """A Microsoft Teams identity. Source addresses require a nonempty resource-account object GUID;
+    transfer destinations also support 28:orgid:{guid}."""
+    SIP = "sip"
+    """A SIP or SIPS destination for transfer."""
 
 
 class TelephonyCallDurationBasis(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2472,11 +2477,51 @@ class TelephonyCallTraceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Trace creation failed."""
 
 
-class TelephonyOutboundDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of destination for an outbound call."""
+class TelephonyCampaignOperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of asynchronous work associated with a Campaign."""
 
-    PHONE_NUMBER = "phone_number"
-    """An E.164 phone number."""
+    VALIDATION = "validation"
+    """Input validation and complete CallJob generation for a PUT."""
+    CANCEL = "cancel"
+    """Stop future dispatch and drain admitted work."""
+    DELETE = "delete"
+    """Cascade cleanup of Campaign task resources."""
+
+
+class TelephonyCampaignScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mutually exclusive ways to determine each recipient's earliest dispatch time."""
+
+    IMMEDIATE = "immediate"
+    """Eligible automatically after successful preparation."""
+    SCHEDULED = "scheduled"
+    """One common earliest dispatch time."""
+    RECIPIENT = "recipient"
+    """A separate earliest dispatch time for each recipient."""
+
+
+class TelephonyCampaignStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Campaign execution state, separate from preparation/cancel/delete LROs. All recipients terminal
+    means completed, not necessarily successful.
+    """
+
+    VALIDATING = "validating"
+    """Validating recipients and generating CallJobs; no dialing until preparation succeeds."""
+    RUNNING = "running"
+    """Preparation complete; jobs execute subject to schedule, capacity and retries."""
+    CANCELLING = "cancelling"
+    """New dispatch stopped while admitted work drains; connected calls finish naturally. Cancellation
+    failure leaves dispatch stopped."""
+    COMPLETED = "completed"
+    """All recipients terminal, including failed/expired jobs. Deletion waits for admitted work to
+    stop."""
+    FAILED = "failed"
+    """Preparation failed without dialing and workers have stopped. Allows deletion or full
+    replacement."""
+    CANCELLED = "cancelled"
+    """Cancellation complete. Can be deleted; unfinished work cannot restart."""
+    DELETING = "deleting"
+    """Cleanup in progress; dialing and name reuse stay blocked until success, including after cleanup
+    failure."""
 
 
 class TelephonyOutboundRetryPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2497,19 +2542,6 @@ class TelephonyProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Twilio Programmable Voice."""
     SIP = "sip"
     """Session Initiation Protocol."""
-
-
-class TelephonyTransferDestinationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of telephony transfer destination. Known values are stable; additional values may be
-    added over time.
-    """
-
-    PSTN = "pstn"
-    """A public switched telephone network destination."""
-    TEAMS = "teams"
-    """A Microsoft Teams user or resource-account destination."""
-    SIP = "sip"
-    """A Session Initiation Protocol destination."""
 
 
 class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2783,6 +2815,22 @@ class VoiceAgentAvatarType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PHOTO_AVATAR."""
 
 
+class VoiceAgentClientEventTypeExtension(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of VoiceAgentClientEventTypeExtension."""
+
+    SESSION_AVATAR_CONNECT = "session.avatar.connect"
+    """SESSION_AVATAR_CONNECT."""
+    RTC_CALL_SDP_CREATE = "rtc.call.sdp.create"
+    """RTC_CALL_SDP_CREATE."""
+
+
+class VoiceAgentConversationItemTypeExtension(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Additional item kinds used by the Voice Agent service."""
+
+    SYSTEM_TOOL = "system_tool"
+    """A service-managed system-tool intent, not a provider result."""
+
+
 class VoiceAgentDtmfTerminator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The two non-numeric keypad keys permitted as confirmation terminators."""
 
@@ -2827,6 +2875,15 @@ class VoiceAgentEndOfUtteranceThresholdLevel(str, Enum, metaclass=CaseInsensitiv
     """The high sensitivity threshold."""
     DEFAULT = "default"
     """The service-selected sensitivity threshold."""
+
+
+class VoiceAgentGreetingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The greeting modes supported by a voice agent."""
+
+    TEMPLATE = "template"
+    """Speak a deterministic greeting rendered from a text template."""
+    LLM_GENERATED = "llm_generated"
+    """Generate the greeting with the session model from an opening-turn prompt."""
 
 
 class VoiceAgentHandoffAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2972,6 +3029,15 @@ class VoiceAgentInterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumM
     """TOOL."""
 
 
+class VoiceAgentInterimResponseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The interim-response implementations supported by a voice agent."""
+
+    STATIC_INTERIM_RESPONSE = "static_interim_response"
+    """Select a static interim response from configured text."""
+    LLM_INTERIM_RESPONSE = "llm_interim_response"
+    """Generate an interim response with a language model."""
+
+
 class VoiceAgentLiveConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of a persisted Live conversation item."""
 
@@ -3073,6 +3139,15 @@ class VoiceAgentProfanityFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """Includes recognized profanity in the transcript, subject to mandatory service masking policies."""
     REMOVED = "removed"
     """Removes recognized profanity from the transcript."""
+
+
+class VoiceAgentRtcCallErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The error categories reported for WebRTC signaling failures."""
+
+    INVALID_REQUEST_ERROR = "invalid_request_error"
+    """A client-side signaling fault, such as a malformed SDP offer."""
+    SERVER_ERROR = "server_error"
+    """A service-side signaling failure."""
 
 
 class VoiceAgentServerEventTypeExtension(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3236,6 +3311,19 @@ class VoiceAgentToolResponseScheduling(str, Enum, metaclass=CaseInsensitiveEnumM
     """Create a follow-up response only when no response is active."""
 
 
+class VoiceAgentToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The tool kinds supported by a voice agent."""
+
+    FUNCTION = "function"
+    """A native function tool executed by the client."""
+    MCP = "mcp"
+    """A tool exposed by an MCP server."""
+    SYSTEM = "system"
+    """A service-managed control that acts on the active voice session."""
+    TOOLBOX = "toolbox"
+    """A reference to a Foundry toolbox."""
+
+
 class VoiceAgentTransferDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The supported address formats for a system-tool transfer destination."""
 
@@ -3310,6 +3398,13 @@ class VoiceAudioRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Audio produced by the user."""
     AGENT = "agent"
     """Audio produced by the agent."""
+
+
+class VoiceConversationEngineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The conversation engine types supported by a voice agent."""
+
+    HOSTED_AGENT = "hosted_agent"
+    """Use a hosted Foundry agent to handle the conversation."""
 
 
 class VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

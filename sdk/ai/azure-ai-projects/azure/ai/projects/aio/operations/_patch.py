@@ -34,6 +34,8 @@ from .._live import (
     LiveClientEvent,
     LiveServerEvent,
 )
+
+# Nested operation groups are re-exported here rather than in the generated package exports.
 from ._operations import (
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,

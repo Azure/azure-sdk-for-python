@@ -2357,7 +2357,7 @@ namespace azure.ai.projects.aio.operations
         async def create_binding(
                 self,
                 agent_name: str,
-                telephony_binding: CreateTelephonyBindingRequest,
+                binding: TelephonyBinding,
                 *,
                 content_type: str = "application/json",
                 **kwargs: Any
@@ -2367,7 +2367,7 @@ namespace azure.ai.projects.aio.operations
         async def create_binding(
                 self,
                 agent_name: str,
-                telephony_binding: JSON,
+                binding: JSON,
                 *,
                 content_type: str = "application/json",
                 **kwargs: Any
@@ -2377,7 +2377,7 @@ namespace azure.ai.projects.aio.operations
         async def create_binding(
                 self,
                 agent_name: str,
-                telephony_binding: IO[bytes],
+                binding: IO[bytes],
                 *,
                 content_type: str = "application/json",
                 **kwargs: Any
@@ -2387,7 +2387,7 @@ namespace azure.ai.projects.aio.operations
         async def create_call_job(
                 self,
                 agent_name: str,
-                body: CreateTelephonyCallJobRequest,
+                job: TelephonyCallJobCreate,
                 *,
                 content_type: str = "application/json",
                 idempotency_key: str,
@@ -2398,7 +2398,7 @@ namespace azure.ai.projects.aio.operations
         async def create_call_job(
                 self,
                 agent_name: str,
-                body: JSON,
+                job: JSON,
                 *,
                 content_type: str = "application/json",
                 idempotency_key: str,
@@ -2409,7 +2409,7 @@ namespace azure.ai.projects.aio.operations
         async def create_call_job(
                 self,
                 agent_name: str,
-                body: IO[bytes],
+                job: IO[bytes],
                 *,
                 content_type: str = "application/json",
                 idempotency_key: str,
@@ -2424,6 +2424,14 @@ namespace azure.ai.projects.aio.operations
                 *,
                 etag: str,
                 match_condition: MatchConditions,
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def delete_call_job(
+                self,
+                agent_name: str,
+                call_job_id: str,
                 **kwargs: Any
             ) -> None: ...
 
@@ -2475,9 +2483,21 @@ namespace azure.ai.projects.aio.operations
                 limit: Optional[int] = ...,
                 order: Optional[Union[str, PageOrder]] = ...,
                 provider: Optional[Union[str, TelephonyProvider]] = ...,
-                status: Optional[Union[str, TelephonyBindingStatus]] = ...,
                 **kwargs: Any
             ) -> AsyncItemPaged[TelephonyBindingListItem]: ...
+
+        @distributed_trace
+        def list_call_jobs(
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                campaign_name: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                status: Optional[Union[str, TelephonyCallJobStatus]] = ...,
+                **kwargs: Any
+            ) -> AsyncItemPaged[TelephonyCallJob]: ...
 
         @distributed_trace
         def list_calls(
@@ -5405,6 +5425,23 @@ namespace azure.ai.projects.models
             ) -> AsyncUpdateMemoriesLROPoller: ...
 
 
+    class azure.ai.projects.models.AtTimeSchedule(TelephonyCampaignSchedule, discriminator='scheduled'):
+        expires_at: datetime
+        scheduled_at: datetime
+        type: Literal[TelephonyCampaignScheduleType.SCHEDULED]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                expires_at: Optional[datetime] = ...,
+                scheduled_at: datetime
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ANSI_ATTACK = "ansi_attack"
         ASCII_ART = "ascii_art"
@@ -6513,27 +6550,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.CreateSipTelephonyBindingRequest(CreateTelephonyBindingRequest, discriminator='sip'):
-        allowed_calling_numbers: Optional[list[str]]
-        connection_name: str
-        label: str
-        phone_number: Optional[str]
-        provider: Literal[TelephonyProvider.SIP]
-
-        @overload
-        def __init__(
-                self,
-                *,
-                allowed_calling_numbers: Optional[list[str]] = ...,
-                connection_name: str,
-                label: Optional[str] = ...,
-                phone_number: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.CreateSkillVersionFromFilesBody(_Model):
         default: Optional[bool]
         files: list[Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]]
@@ -6544,71 +6560,6 @@ namespace azure.ai.projects.models
                 *,
                 default: Optional[bool] = ...,
                 files: list[FileType]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.CreateTeamsPhoneExtensibilityTelephonyBindingRequest(CreateTelephonyBindingRequest, discriminator='teams_phone_extensibility'):
-        connection_name: str
-        label: str
-        phone_number: Optional[str]
-        provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY]
-        resource_account_object_id: str
-
-        @overload
-        def __init__(
-                self,
-                *,
-                connection_name: str,
-                label: Optional[str] = ...,
-                phone_number: Optional[str] = ...,
-                resource_account_object_id: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.CreateTelephonyBindingRequest(_Model):
-        connection_name: str
-        label: Optional[str]
-        provider: str
-
-        @overload
-        def __init__(
-                self,
-                *,
-                connection_name: str,
-                label: Optional[str] = ...,
-                provider: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.CreateTelephonyCallJobRequest(_Model):
-        connection_name: str
-        destination: TelephonyOutboundDestination
-        purpose: Optional[str]
-        retry_policy: Optional[TelephonyOutboundRetryPolicy]
-        schedule: Optional[TelephonyCallJobSchedule]
-        source: str
-        structured_inputs: Optional[dict[str, Any]]
-
-        @overload
-        def __init__(
-                self,
-                *,
-                connection_name: str,
-                destination: TelephonyOutboundDestination,
-                purpose: Optional[str] = ...,
-                retry_policy: Optional[TelephonyOutboundRetryPolicy] = ...,
-                schedule: Optional[TelephonyCallJobSchedule] = ...,
-                source: str,
-                structured_inputs: Optional[dict[str, Any]] = ...
             ) -> None: ...
 
         @overload
@@ -6632,25 +6583,6 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.CreateTranscriptionResponseJsonUsageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DURATION = "duration"
         TOKENS = "tokens"
-
-
-    class azure.ai.projects.models.CreateTwilioTelephonyBindingRequest(CreateTelephonyBindingRequest, discriminator='twilio'):
-        connection_name: str
-        label: str
-        phone_number: str
-        provider: Literal[TelephonyProvider.TWILIO]
-
-        @overload
-        def __init__(
-                self,
-                *,
-                connection_name: str,
-                label: Optional[str] = ...,
-                phone_number: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -7031,14 +6963,14 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.DatasetReference(_Model):
         name: str
-        version: str
+        version: Optional[str]
 
         @overload
         def __init__(
                 self,
                 *,
                 name: str,
-                version: str
+                version: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -7836,14 +7768,14 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.EvaluatorGenerationArtifacts(_Model):
-        dataset: DatasetReference
+        dataset: VersionedDatasetReference
         kinds: list[str]
 
         @overload
         def __init__(
                 self,
                 *,
-                dataset: DatasetReference,
+                dataset: VersionedDatasetReference,
                 kinds: list[str]
             ) -> None: ...
 
@@ -8245,6 +8177,23 @@ namespace azure.ai.projects.models
                 ranking_options: Optional[RankingOptions] = ...,
                 tool_configs: Optional[dict[str, ToolConfig]] = ...,
                 vector_store_ids: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.FixedIntervalRetryPolicy(TelephonyOutboundRetryPolicy, discriminator='fixed_interval'):
+        interval: timedelta
+        max_attempts: int
+        type: Literal[TelephonyOutboundRetryPolicyType.FIXED_INTERVAL]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                interval: timedelta,
+                max_attempts: Optional[int] = ...
             ) -> None: ...
 
         @overload
@@ -8773,6 +8722,21 @@ namespace azure.ai.projects.models
                 *,
                 file_id: Optional[str] = ...,
                 image_url: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ImmediateSchedule(TelephonyCampaignSchedule, discriminator='immediate'):
+        expires_at: datetime
+        type: Literal[TelephonyCampaignScheduleType.IMMEDIATE]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                expires_at: Optional[datetime] = ...
             ) -> None: ...
 
         @overload
@@ -12859,21 +12823,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.PSTNTelephonyTransferDestination(TelephonyTransferDestination, discriminator='pstn'):
-        kind: Literal[TelephonyTransferDestinationKind.PSTN]
-        value: str
-
-        @overload
-        def __init__(
-                self,
-                *,
-                value: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ASC = "asc"
         DESC = "desc"
@@ -12921,6 +12870,36 @@ namespace azure.ai.projects.models
         BLOB_REFERENCE = "BlobReference"
         NONE = "None"
         TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
+
+
+    class azure.ai.projects.models.PerRecipientSchedule(TelephonyCampaignSchedule, discriminator='recipient'):
+        expires_at: datetime
+        type: Literal[TelephonyCampaignScheduleType.RECIPIENT]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                expires_at: Optional[datetime] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.PhoneNumber(TelephonyAddress, discriminator='phone_number'):
+        type: Literal[TelephonyAddressType.PHONE_NUMBER]
+        value: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                value: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.PickPropertiesVoiceAgentAudioConfig(_Model):
@@ -16174,6 +16153,21 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.SipAddress(TelephonyAddress, discriminator='sip'):
+        type: Literal[TelephonyAddressType.SIP]
+        value: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                value: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.SipTelephonyBinding(TelephonyBinding, discriminator='sip'):
         allowed_calling_numbers: Optional[list[str]]
         connection_name: str
@@ -16182,7 +16176,6 @@ namespace azure.ai.projects.models
         label: str
         phone_number: Optional[str]
         provider: Literal[TelephonyProvider.SIP]
-        status: Union[str, TelephonyBindingStatus]
 
         @overload
         def __init__(
@@ -16190,11 +16183,8 @@ namespace azure.ai.projects.models
                 *,
                 allowed_calling_numbers: Optional[list[str]] = ...,
                 connection_name: str,
-                id: str,
-                incoming_call_url: str,
                 label: Optional[str] = ...,
-                phone_number: Optional[str] = ...,
-                status: Union[str, TelephonyBindingStatus]
+                phone_number: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -16210,7 +16200,6 @@ namespace azure.ai.projects.models
         label: str
         phone_number: Optional[str]
         provider: Literal[TelephonyProvider.SIP]
-        status: Union[str, TelephonyBindingStatus]
 
         @overload
         def __init__(
@@ -16221,23 +16210,7 @@ namespace azure.ai.projects.models
                 id: str,
                 incoming_call_url: str,
                 label: Optional[str] = ...,
-                phone_number: Optional[str] = ...,
-                status: Union[str, TelephonyBindingStatus]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.SipTelephonyTransferDestination(TelephonyTransferDestination, discriminator='sip'):
-        kind: Literal[TelephonyTransferDestinationKind.SIP]
-        value: str
-
-        @overload
-        def __init__(
-                self,
-                *,
-                value: str
+                phone_number: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -16560,6 +16533,21 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.TeamsAddress(TelephonyAddress, discriminator='teams'):
+        type: Literal[TelephonyAddressType.TEAMS]
+        value: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                value: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.TeamsPhoneExtensibilityTelephonyBinding(TelephonyBinding, discriminator='teams_phone_extensibility'):
         connection_name: str
         id: str
@@ -16568,19 +16556,15 @@ namespace azure.ai.projects.models
         phone_number: Optional[str]
         provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY]
         resource_account_object_id: str
-        status: Union[str, TelephonyBindingStatus]
 
         @overload
         def __init__(
                 self,
                 *,
                 connection_name: str,
-                id: str,
-                incoming_call_url: str,
                 label: Optional[str] = ...,
                 phone_number: Optional[str] = ...,
-                resource_account_object_id: str,
-                status: Union[str, TelephonyBindingStatus]
+                resource_account_object_id: str
             ) -> None: ...
 
         @overload
@@ -16596,7 +16580,6 @@ namespace azure.ai.projects.models
         phone_number: Optional[str]
         provider: Literal[TelephonyProvider.TEAMS_PHONE_EXTENSIBILITY]
         resource_account_object_id: str
-        status: Union[str, TelephonyBindingStatus]
 
         @overload
         def __init__(
@@ -16607,23 +16590,7 @@ namespace azure.ai.projects.models
                 incoming_call_url: str,
                 label: Optional[str] = ...,
                 phone_number: Optional[str] = ...,
-                resource_account_object_id: str,
-                status: Union[str, TelephonyBindingStatus]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.TeamsTelephonyTransferDestination(TelephonyTransferDestination, discriminator='teams'):
-        kind: Literal[TelephonyTransferDestinationKind.TEAMS]
-        value: str
-
-        @overload
-        def __init__(
-                self,
-                *,
-                value: str
+                resource_account_object_id: str
             ) -> None: ...
 
         @overload
@@ -16695,24 +16662,42 @@ namespace azure.ai.projects.models
         HTTP = "Http"
 
 
+    class azure.ai.projects.models.TelephonyAddress(_Model):
+        type: str
+        value: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                type: str,
+                value: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TelephonyAddressType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PHONE_NUMBER = "phone_number"
+        SIP = "sip"
+        TEAMS = "teams"
+
+
     class azure.ai.projects.models.TelephonyBinding(_Model):
         connection_name: str
         id: str
         incoming_call_url: str
         label: Optional[str]
         provider: str
-        status: Union[str, TelephonyBindingStatus]
 
         @overload
         def __init__(
                 self,
                 *,
                 connection_name: str,
-                id: str,
-                incoming_call_url: str,
                 label: Optional[str] = ...,
-                provider: str,
-                status: Union[str, TelephonyBindingStatus]
+                provider: str
             ) -> None: ...
 
         @overload
@@ -16726,7 +16711,6 @@ namespace azure.ai.projects.models
         incoming_call_url: str
         label: Optional[str]
         provider: str
-        status: Union[str, TelephonyBindingStatus]
 
         @overload
         def __init__(
@@ -16736,17 +16720,11 @@ namespace azure.ai.projects.models
                 id: str,
                 incoming_call_url: str,
                 label: Optional[str] = ...,
-                provider: str,
-                status: Union[str, TelephonyBindingStatus]
+                provider: str
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.TelephonyBindingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        ACTIVE = "active"
-        SUSPENDED = "suspended"
 
 
     class azure.ai.projects.models.TelephonyCallDurationBasis(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -16790,18 +16768,18 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.TelephonyCallJob(_Model):
         agent_name: str
         attempt_count: int
+        campaign_name: Optional[str]
         cancellation: Optional[TelephonyCallJobCancellation]
         connection_name: str
         created_at: datetime
-        destination: TelephonyOutboundDestination
+        destination: TelephonyAddress
         id: str
         next_attempt_at: Optional[datetime]
-        object: Literal["call_job"]
         purpose: Optional[str]
         retry_policy: TelephonyOutboundRetryPolicy
         revision: int
         schedule: Optional[TelephonyCallJobSchedule]
-        source: str
+        source: TelephonyAddress
         status: Union[str, TelephonyCallJobStatus]
         structured_inputs: Optional[dict[str, Any]]
         terminal_reason: Optional[Union[str, TelephonyCallJobTerminalReason]]
@@ -16811,23 +16789,13 @@ namespace azure.ai.projects.models
         def __init__(
                 self,
                 *,
-                agent_name: str,
-                attempt_count: int,
-                cancellation: Optional[TelephonyCallJobCancellation] = ...,
                 connection_name: str,
-                created_at: datetime,
-                destination: TelephonyOutboundDestination,
-                id: str,
-                next_attempt_at: Optional[datetime] = ...,
+                destination: TelephonyAddress,
                 purpose: Optional[str] = ...,
                 retry_policy: TelephonyOutboundRetryPolicy,
-                revision: int,
                 schedule: Optional[TelephonyCallJobSchedule] = ...,
-                source: str,
-                status: Union[str, TelephonyCallJobStatus],
-                structured_inputs: Optional[dict[str, Any]] = ...,
-                terminal_reason: Optional[Union[str, TelephonyCallJobTerminalReason]] = ...,
-                updated_at: datetime
+                source: TelephonyAddress,
+                structured_inputs: Optional[dict[str, Any]] = ...
             ) -> None: ...
 
         @overload
@@ -16848,6 +16816,32 @@ namespace azure.ai.projects.models
                 requested_at: datetime,
                 requested_by: str,
                 revision: int
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TelephonyCallJobCreate(_Model):
+        connection_name: str
+        destination: TelephonyAddress
+        purpose: Optional[str]
+        retry_policy: Optional[TelephonyOutboundRetryPolicy]
+        schedule: Optional[TelephonyCallJobSchedule]
+        source: TelephonyAddress
+        structured_inputs: Optional[dict[str, Any]]
+
+        @overload
+        def __init__(
+                self,
+                *,
+                connection_name: str,
+                destination: TelephonyAddress,
+                purpose: Optional[str] = ...,
+                retry_policy: Optional[TelephonyOutboundRetryPolicy] = ...,
+                schedule: Optional[TelephonyCallJobSchedule] = ...,
+                source: TelephonyAddress,
+                structured_inputs: Optional[dict[str, Any]] = ...
             ) -> None: ...
 
         @overload
@@ -17206,37 +17200,123 @@ namespace azure.ai.projects.models
         PENDING = "pending"
 
 
-    class azure.ai.projects.models.TelephonyOutboundDestination(_Model):
-        type: Union[str, TelephonyOutboundDestinationType]
-        value: str
+    class azure.ai.projects.models.TelephonyCampaign(_Model):
+        connection_name: str
+        created_at: datetime
+        error: Optional[ApiError]
+        etag: str
+        finished_at: Optional[datetime]
+        locked_agent_version: Optional[str]
+        name: str
+        operation_id: str
+        progress: TelephonyCampaignProgress
+        recipient_dataset: Optional[DatasetReference]
+        recipients: Optional[list[TelephonyRecipient]]
+        retry_policy: Optional[TelephonyOutboundRetryPolicy]
+        schedule: Optional[TelephonyCampaignSchedule]
+        source: TelephonyAddress
+        status: Union[str, TelephonyCampaignStatus]
+        updated_at: datetime
 
         @overload
         def __init__(
                 self,
                 *,
-                type: Union[str, TelephonyOutboundDestinationType],
-                value: str
+                connection_name: str,
+                recipient_dataset: Optional[DatasetReference] = ...,
+                recipients: Optional[list[TelephonyRecipient]] = ...,
+                retry_policy: Optional[TelephonyOutboundRetryPolicy] = ...,
+                schedule: Optional[TelephonyCampaignSchedule] = ...,
+                source: TelephonyAddress
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.TelephonyOutboundDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        PHONE_NUMBER = "phone_number"
+    class azure.ai.projects.models.TelephonyCampaignOperation(_Model):
+        created_at: datetime
+        error: Optional[ApiError]
+        finished_at: Optional[datetime]
+        id: str
+        kind: Union[str, TelephonyCampaignOperationKind]
+        status: Union[str, JobStatus]
 
 
-    class azure.ai.projects.models.TelephonyOutboundFixedIntervalRetryPolicy(TelephonyOutboundRetryPolicy, discriminator='fixed_interval'):
-        interval: timedelta
-        max_attempts: int
-        type: Literal[TelephonyOutboundRetryPolicyType.FIXED_INTERVAL]
+    class azure.ai.projects.models.TelephonyCampaignOperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCEL = "cancel"
+        DELETE = "delete"
+        VALIDATION = "validation"
+
+
+    class azure.ai.projects.models.TelephonyCampaignProgress(_Model):
+        active: int
+        cancelled: int
+        completed: int
+        expired: int
+        failed: int
+        pending: int
+        total_recipients: Optional[int]
 
         @overload
         def __init__(
                 self,
                 *,
-                interval: timedelta,
-                max_attempts: Optional[int] = ...
+                active: int,
+                cancelled: int,
+                completed: int,
+                expired: int,
+                failed: int,
+                pending: int,
+                total_recipients: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TelephonyCampaignSchedule(_Model):
+        expires_at: Optional[datetime]
+        type: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                expires_at: Optional[datetime] = ...,
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.TelephonyCampaignScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        IMMEDIATE = "immediate"
+        RECIPIENT = "recipient"
+        SCHEDULED = "scheduled"
+
+
+    class azure.ai.projects.models.TelephonyCampaignStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCELLED = "cancelled"
+        CANCELLING = "cancelling"
+        COMPLETED = "completed"
+        DELETING = "deleting"
+        FAILED = "failed"
+        RUNNING = "running"
+        VALIDATING = "validating"
+
+
+    class azure.ai.projects.models.TelephonyCampaignValidationError(_Model):
+        error: ApiError
+        row_number: int
+
+        @overload
+        def __init__(
+                self,
+                *,
+                error: ApiError,
+                row_number: int
             ) -> None: ...
 
         @overload
@@ -17269,29 +17349,27 @@ namespace azure.ai.projects.models
         TWILIO = "twilio"
 
 
-    class azure.ai.projects.models.TelephonyTransferDestination(_Model):
-        kind: str
+    class azure.ai.projects.models.TelephonyRecipient(_Model):
+        destination: TelephonyAddress
+        scheduled_at: Optional[datetime]
+        structured_inputs: Optional[dict[str, Any]]
 
         @overload
         def __init__(
                 self,
                 *,
-                kind: str
+                destination: TelephonyAddress,
+                scheduled_at: Optional[datetime] = ...,
+                structured_inputs: Optional[dict[str, Any]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.TelephonyTransferDestinationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        PSTN = "pstn"
-        SIP = "sip"
-        TEAMS = "teams"
-
-
     class azure.ai.projects.models.TelephonyTransferTarget(_Model):
         description: str
-        destination: TelephonyTransferDestination
+        destination: TelephonyAddress
         name: str
 
         @overload
@@ -17299,7 +17377,7 @@ namespace azure.ai.projects.models
                 self,
                 *,
                 description: str,
-                destination: TelephonyTransferDestination,
+                destination: TelephonyAddress,
                 name: str
             ) -> None: ...
 
@@ -18182,18 +18260,14 @@ namespace azure.ai.projects.models
         label: str
         phone_number: str
         provider: Literal[TelephonyProvider.TWILIO]
-        status: Union[str, TelephonyBindingStatus]
 
         @overload
         def __init__(
                 self,
                 *,
                 connection_name: str,
-                id: str,
-                incoming_call_url: str,
                 label: Optional[str] = ...,
-                phone_number: str,
-                status: Union[str, TelephonyBindingStatus]
+                phone_number: str
             ) -> None: ...
 
         @overload
@@ -18208,7 +18282,6 @@ namespace azure.ai.projects.models
         label: str
         phone_number: str
         provider: Literal[TelephonyProvider.TWILIO]
-        status: Union[str, TelephonyBindingStatus]
 
         @overload
         def __init__(
@@ -18218,8 +18291,7 @@ namespace azure.ai.projects.models
                 id: str,
                 incoming_call_url: str,
                 label: Optional[str] = ...,
-                phone_number: str,
-                status: Union[str, TelephonyBindingStatus]
+                phone_number: str
             ) -> None: ...
 
         @overload
@@ -18260,7 +18332,6 @@ namespace azure.ai.projects.models
         connection_name: Optional[str]
         label: Optional[str]
         phone_number: Optional[str]
-        status: Optional[Union[str, TelephonyBindingStatus]]
 
         @overload
         def __init__(
@@ -18269,8 +18340,7 @@ namespace azure.ai.projects.models
                 allowed_calling_numbers: Optional[list[str]] = ...,
                 connection_name: Optional[str] = ...,
                 label: Optional[str] = ...,
-                phone_number: Optional[str] = ...,
-                status: Optional[Union[str, TelephonyBindingStatus]] = ...
+                phone_number: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -18481,6 +18551,22 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FIXED_RATIO = "FixedRatio"
+
+
+    class azure.ai.projects.models.VersionedDatasetReference(_Model):
+        name: str
+        version: str
+
+        @overload
+        def __init__(
+                self,
+                *,
+                name: str,
+                version: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.VoiceAgentAnimationConfig(_Model):
@@ -18872,7 +18958,7 @@ namespace azure.ai.projects.models
         event_id: Optional[str]
         sdp_offer: str
         session: Optional[VoiceAgentSessionUpdateConfig]
-        type: Literal[RealtimeClientEventType.RTC_CALL_SDP_CREATE]
+        type: Literal[VoiceAgentClientEventTypeExtension.RTC_CALL_SDP_CREATE]
 
         @overload
         def __init__(
@@ -18890,7 +18976,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentClientEventSessionAvatarConnect(RealtimeClientEvent, discriminator='session.avatar.connect'):
         client_sdp: str
         event_id: Optional[str]
-        type: Literal[RealtimeClientEventType.SESSION_AVATAR_CONNECT]
+        type: Literal[VoiceAgentClientEventTypeExtension.SESSION_AVATAR_CONNECT]
 
         @overload
         def __init__(
@@ -18922,6 +19008,11 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceAgentClientEventTypeExtension(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        RTC_CALL_SDP_CREATE = "rtc.call.sdp.create"
+        SESSION_AVATAR_CONNECT = "session.avatar.connect"
+
+
     class azure.ai.projects.models.VoiceAgentCollectDtmfStartArguments(_Model):
         completion_mode: VoiceAgentDtmfCompletionMode
         first_digit_timeout_seconds: Optional[int]
@@ -18948,7 +19039,7 @@ namespace azure.ai.projects.models
         description: str
         name: Literal[VoiceAgentSystemToolName.COLLECT_DTMF]
         timeout_seconds: timedelta
-        type: str
+        type: Union[str, azure.ai.projects.models.SYSTEM]
 
         @overload
         def __init__(
@@ -18986,7 +19077,7 @@ namespace azure.ai.projects.models
         description: str
         name: Literal[VoiceAgentSystemToolName.COLLECT_SMS]
         timeout_seconds: timedelta
-        type: str
+        type: Union[str, azure.ai.projects.models.SYSTEM]
 
         @overload
         def __init__(
@@ -19016,6 +19107,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentConversationItemTypeExtension(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        SYSTEM_TOOL = "system_tool"
 
 
     class azure.ai.projects.models.VoiceAgentDefinition(VoiceAgentBaseDefinition, discriminator='realtime'):
@@ -19091,7 +19186,7 @@ namespace azure.ai.projects.models
         description: str
         name: Literal[VoiceAgentSystemToolName.DIGIT_RECOGNITION]
         timeout_seconds: timedelta
-        type: str
+        type: Union[str, azure.ai.projects.models.SYSTEM]
 
         @overload
         def __init__(
@@ -19185,7 +19280,7 @@ namespace azure.ai.projects.models
         description: str
         name: Literal[VoiceAgentSystemToolName.END_CONVERSATION]
         timeout_seconds: timedelta
-        type: str
+        type: Union[str, azure.ai.projects.models.SYSTEM]
 
         @overload
         def __init__(
@@ -19250,7 +19345,7 @@ namespace azure.ai.projects.models
         description: Optional[str]
         name: str
         parameters: Optional[RealtimeFunctionToolParameters]
-        type: Literal["function"]
+        type: Literal[VoiceAgentToolType.FUNCTION]
 
         @overload
         def __init__(
@@ -19277,6 +19372,11 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentGreetingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        LLM_GENERATED = "llm_generated"
+        TEMPLATE = "template"
 
 
     class azure.ai.projects.models.VoiceAgentHandoffAbortReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -19537,6 +19637,11 @@ namespace azure.ai.projects.models
         TOOL = "tool"
 
 
+    class azure.ai.projects.models.VoiceAgentInterimResponseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        LLM_INTERIM_RESPONSE = "llm_interim_response"
+        STATIC_INTERIM_RESPONSE = "static_interim_response"
+
+
     class azure.ai.projects.models.VoiceAgentLanguageDetectionArguments(_Model):
         language: str
         reason: str
@@ -19557,7 +19662,7 @@ namespace azure.ai.projects.models
         description: str
         name: Literal[VoiceAgentSystemToolName.LANGUAGE_DETECTION]
         timeout_seconds: timedelta
-        type: str
+        type: Union[str, azure.ai.projects.models.SYSTEM]
 
         @overload
         def __init__(
@@ -19945,7 +20050,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentLlmGeneratedGreetingConfig(VoiceAgentGreetingConfig, discriminator='llm_generated'):
         prompt: str
         tool_choice: Optional[VoiceAgentToolChoice]
-        type: Literal["llm_generated"]
+        type: Literal[VoiceAgentGreetingMode.LLM_GENERATED]
 
         @overload
         def __init__(
@@ -19965,7 +20070,7 @@ namespace azure.ai.projects.models
         max_completion_tokens: Optional[int]
         model: Optional[str]
         triggers: Union[list[str, VoiceAgentInterimResponseTrigger]]
-        type: Literal["llm_interim_response"]
+        type: Literal[VoiceAgentInterimResponseType.LLM_INTERIM_RESPONSE]
 
         @overload
         def __init__(
@@ -19995,7 +20100,7 @@ namespace azure.ai.projects.models
         server_label: str
         server_url: Optional[str]
         tool_configs: Optional[dict[str, ToolConfig]]
-        type: Literal["mcp"]
+        type: Literal[VoiceAgentToolType.MCP]
 
         @overload
         def __init__(
@@ -20176,7 +20281,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentRtcCallErrorDetails(_Model):
         code: Optional[str]
         message: str
-        type: str
+        type: Union[str, VoiceAgentRtcCallErrorType]
 
         @overload
         def __init__(
@@ -20184,11 +20289,16 @@ namespace azure.ai.projects.models
                 *,
                 code: Optional[str] = ...,
                 message: str,
-                type: str
+                type: Union[str, VoiceAgentRtcCallErrorType]
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.VoiceAgentRtcCallErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INVALID_REQUEST_ERROR = "invalid_request_error"
+        SERVER_ERROR = "server_error"
 
 
     class azure.ai.projects.models.VoiceAgentSemanticVadTurnDetection(VoiceAgentTurnDetectionConfig, discriminator='semantic_vad'):
@@ -20216,7 +20326,7 @@ namespace azure.ai.projects.models
         description: str
         name: Literal[VoiceAgentSystemToolName.SEND_DTMF]
         timeout_seconds: timedelta
-        type: str
+        type: Union[str, azure.ai.projects.models.SYSTEM]
 
         @overload
         def __init__(
@@ -20234,7 +20344,7 @@ namespace azure.ai.projects.models
         description: str
         name: Literal[VoiceAgentSystemToolName.SEND_SMS]
         timeout_seconds: timedelta
-        type: str
+        type: Union[str, azure.ai.projects.models.SYSTEM]
 
         @overload
         def __init__(
@@ -20285,7 +20395,7 @@ namespace azure.ai.projects.models
         item_id: str
         output_index: int
         response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_ANIMATION_BLENDSHAPES_DELTA]
+        type: Literal[VoiceAgentServerEventTypeExtension.RESPONSE_ANIMATION_BLENDSHAPES_DELTA]
 
         @overload
         def __init__(
@@ -20309,7 +20419,7 @@ namespace azure.ai.projects.models
         item_id: str
         output_index: int
         response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_ANIMATION_BLENDSHAPES_DONE]
+        type: Literal[VoiceAgentServerEventTypeExtension.RESPONSE_ANIMATION_BLENDSHAPES_DONE]
 
         @overload
         def __init__(
@@ -20332,7 +20442,7 @@ namespace azure.ai.projects.models
         item_id: str
         output_index: int
         response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_ANIMATION_VISEME_DELTA]
+        type: Literal[VoiceAgentServerEventTypeExtension.RESPONSE_ANIMATION_VISEME_DELTA]
         viseme_id: int
 
         @overload
@@ -20358,7 +20468,7 @@ namespace azure.ai.projects.models
         item_id: str
         output_index: int
         response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_ANIMATION_VISEME_DONE]
+        type: Literal[VoiceAgentServerEventTypeExtension.RESPONSE_ANIMATION_VISEME_DONE]
 
         @overload
         def __init__(
@@ -20384,8 +20494,8 @@ namespace azure.ai.projects.models
         output_index: int
         response_id: str
         text: str
-        timestamp_type: Literal["word"]
-        type: Literal[RealtimeServerEventType.RESPONSE_AUDIO_TIMESTAMP_DELTA]
+        timestamp_type: Literal[VoiceAgentAudioTimestampType.WORD]
+        type: Literal[VoiceAgentServerEventTypeExtension.RESPONSE_AUDIO_TIMESTAMP_DELTA]
 
         @overload
         def __init__(
@@ -20398,7 +20508,8 @@ namespace azure.ai.projects.models
                 item_id: str,
                 output_index: int,
                 response_id: str,
-                text: str
+                text: str,
+                timestamp_type: Literal[VoiceAgentAudioTimestampType.WORD]
             ) -> None: ...
 
         @overload
@@ -20411,7 +20522,7 @@ namespace azure.ai.projects.models
         item_id: str
         output_index: int
         response_id: str
-        type: Literal[RealtimeServerEventType.RESPONSE_AUDIO_TIMESTAMP_DONE]
+        type: Literal[VoiceAgentServerEventTypeExtension.RESPONSE_AUDIO_TIMESTAMP_DONE]
 
         @overload
         def __init__(
@@ -20433,7 +20544,7 @@ namespace azure.ai.projects.models
         delta: str
         event_id: str
         output_index: int
-        type: Literal[RealtimeServerEventType.RESPONSE_VIDEO_DELTA]
+        type: Literal[VoiceAgentServerEventTypeExtension.RESPONSE_VIDEO_DELTA]
 
         @overload
         def __init__(
@@ -20454,7 +20565,7 @@ namespace azure.ai.projects.models
         event_id: Optional[str]
         operation: Optional[str]
         rtc_call_id: Optional[str]
-        type: Literal[RealtimeServerEventType.RTC_CALL_ERROR]
+        type: Literal[VoiceAgentServerEventTypeExtension.RTC_CALL_ERROR]
 
         @overload
         def __init__(
@@ -20474,7 +20585,7 @@ namespace azure.ai.projects.models
         event_id: str
         rtc_call_id: str
         sdp_answer: str
-        type: Literal[RealtimeServerEventType.RTC_CALL_SDP_CREATED]
+        type: Literal[VoiceAgentServerEventTypeExtension.RTC_CALL_SDP_CREATED]
 
         @overload
         def __init__(
@@ -20492,7 +20603,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentServerEventSessionAvatarConnecting(RealtimeServerEvent, discriminator='session.avatar.connecting'):
         event_id: str
         server_sdp: str
-        type: Literal[RealtimeServerEventType.SESSION_AVATAR_CONNECTING]
+        type: Literal[VoiceAgentServerEventTypeExtension.SESSION_AVATAR_CONNECTING]
 
         @overload
         def __init__(
@@ -20509,7 +20620,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentServerEventSessionAvatarSwitchToIdle(RealtimeServerEvent, discriminator='session.avatar.switch_to_idle'):
         event_id: str
         turn_id: Optional[str]
-        type: Literal[RealtimeServerEventType.SESSION_AVATAR_SWITCH_TO_IDLE]
+        type: Literal[VoiceAgentServerEventTypeExtension.SESSION_AVATAR_SWITCH_TO_IDLE]
 
         @overload
         def __init__(
@@ -20526,7 +20637,7 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.VoiceAgentServerEventSessionAvatarSwitchToSpeaking(RealtimeServerEvent, discriminator='session.avatar.switch_to_speaking'):
         event_id: str
         turn_id: Optional[str]
-        type: Literal[RealtimeServerEventType.SESSION_AVATAR_SWITCH_TO_SPEAKING]
+        type: Literal[VoiceAgentServerEventTypeExtension.SESSION_AVATAR_SWITCH_TO_SPEAKING]
 
         @overload
         def __init__(
@@ -20647,7 +20758,7 @@ namespace azure.ai.projects.models
         event_id: str
         reason: Union[str, VoiceAgentSubagentAbortReason]
         subagent_name: str
-        type: Literal[RealtimeServerEventType.SESSION_SUBAGENT_ABORTED]
+        type: Literal[VoiceAgentServerEventTypeExtension.SESSION_SUBAGENT_ABORTED]
 
         @overload
         def __init__(
@@ -20669,7 +20780,7 @@ namespace azure.ai.projects.models
         consultation_id: str
         event_id: str
         subagent_name: str
-        type: Literal[RealtimeServerEventType.SESSION_SUBAGENT_COMPLETED]
+        type: Literal[VoiceAgentServerEventTypeExtension.SESSION_SUBAGENT_COMPLETED]
 
         @overload
         def __init__(
@@ -20690,7 +20801,7 @@ namespace azure.ai.projects.models
         consultation_id: str
         event_id: str
         subagent_name: str
-        type: Literal[RealtimeServerEventType.SESSION_SUBAGENT_STARTED]
+        type: Literal[VoiceAgentServerEventTypeExtension.SESSION_SUBAGENT_STARTED]
 
         @overload
         def __init__(
@@ -20787,7 +20898,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VoiceAgentServerEventWarning(RealtimeServerEvent, discriminator='warning'):
         event_id: str
-        type: Literal[RealtimeServerEventType.WARNING]
+        type: Literal[VoiceAgentServerEventTypeExtension.WARNING]
         warning: VoiceAgentServerEventWarningDetails
 
         @overload
@@ -21069,7 +21180,7 @@ namespace azure.ai.projects.models
         latency_threshold_ms: timedelta
         texts: Optional[list[str]]
         triggers: Union[list[str, VoiceAgentInterimResponseTrigger]]
-        type: Literal["static_interim_response"]
+        type: Literal[VoiceAgentInterimResponseType.STATIC_INTERIM_RESPONSE]
 
         @overload
         def __init__(
@@ -21169,7 +21280,7 @@ namespace azure.ai.projects.models
         description: Optional[str]
         name: str
         timeout_seconds: Optional[timedelta]
-        type: Literal["system"]
+        type: Literal[VoiceAgentToolType.SYSTEM]
 
         @overload
         def __init__(
@@ -21193,7 +21304,7 @@ namespace azure.ai.projects.models
         object: Optional[Literal["item"]]
         response_id: Optional[str]
         status: Union[str, VoiceAgentSystemToolItemStatus]
-        type: Literal[RealtimeConversationItemType.SYSTEM_TOOL]
+        type: Literal[VoiceAgentConversationItemTypeExtension.SYSTEM_TOOL]
 
         @overload
         def __init__(
@@ -21230,7 +21341,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VoiceAgentTemplateGreetingConfig(VoiceAgentGreetingConfig, discriminator='template'):
         text: str
-        type: Literal["template"]
+        type: Literal[VoiceAgentGreetingMode.TEMPLATE]
 
         @overload
         def __init__(
@@ -21264,11 +21375,18 @@ namespace azure.ai.projects.models
         WHEN_IDLE = "when_idle"
 
 
+    class azure.ai.projects.models.VoiceAgentToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FUNCTION = "function"
+        MCP = "mcp"
+        SYSTEM = "system"
+        TOOLBOX = "toolbox"
+
+
     class azure.ai.projects.models.VoiceAgentToolboxTool(VoiceAgentTool, discriminator='toolbox'):
         response_scheduling: Optional[Union[str, VoiceAgentToolResponseScheduling]]
         toolbox_name: str
         toolbox_version: str
-        type: Literal["toolbox"]
+        type: Literal[VoiceAgentToolType.TOOLBOX]
 
         @overload
         def __init__(
@@ -21375,7 +21493,7 @@ namespace azure.ai.projects.models
         require_handoff: Optional[bool]
         targets: list[VoiceAgentTransferTarget]
         timeout_seconds: timedelta
-        type: str
+        type: Union[str, azure.ai.projects.models.SYSTEM]
 
         @overload
         def __init__(
@@ -21566,6 +21684,10 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.VoiceConversationEngineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        HOSTED_AGENT = "hosted_agent"
+
+
     class azure.ai.projects.models.VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         COMPLETED = "completed"
         FAILED = "failed"
@@ -21606,7 +21728,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VoiceHostedAgentConversationEngine(VoiceConversationEngine, discriminator='hosted_agent'):
         name: str
-        type: Literal["hosted_agent"]
+        type: Literal[VoiceConversationEngineType.HOSTED_AGENT]
         version: Optional[str]
 
         @overload
@@ -21660,14 +21782,19 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.VoiceRecordingChannelLayout(_Model):
-        left: Literal["user"]
-        right: Literal["agent"]
+        left: Literal[VoiceAudioRole.USER]
+        right: Literal[VoiceAudioRole.AGENT]
 
+        @overload
         def __init__(
                 self,
-                *args: Any,
-                **kwargs: Any
+                *,
+                left: Literal[VoiceAudioRole.USER],
+                right: Literal[VoiceAudioRole.AGENT]
             ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.VoiceResponse(_Model):
@@ -24269,7 +24396,7 @@ namespace azure.ai.projects.operations
         def create_binding(
                 self,
                 agent_name: str,
-                telephony_binding: CreateTelephonyBindingRequest,
+                binding: TelephonyBinding,
                 *,
                 content_type: str = "application/json",
                 **kwargs: Any
@@ -24279,7 +24406,7 @@ namespace azure.ai.projects.operations
         def create_binding(
                 self,
                 agent_name: str,
-                telephony_binding: JSON,
+                binding: JSON,
                 *,
                 content_type: str = "application/json",
                 **kwargs: Any
@@ -24289,7 +24416,7 @@ namespace azure.ai.projects.operations
         def create_binding(
                 self,
                 agent_name: str,
-                telephony_binding: IO[bytes],
+                binding: IO[bytes],
                 *,
                 content_type: str = "application/json",
                 **kwargs: Any
@@ -24299,7 +24426,7 @@ namespace azure.ai.projects.operations
         def create_call_job(
                 self,
                 agent_name: str,
-                body: CreateTelephonyCallJobRequest,
+                job: TelephonyCallJobCreate,
                 *,
                 content_type: str = "application/json",
                 idempotency_key: str,
@@ -24310,7 +24437,7 @@ namespace azure.ai.projects.operations
         def create_call_job(
                 self,
                 agent_name: str,
-                body: JSON,
+                job: JSON,
                 *,
                 content_type: str = "application/json",
                 idempotency_key: str,
@@ -24321,7 +24448,7 @@ namespace azure.ai.projects.operations
         def create_call_job(
                 self,
                 agent_name: str,
-                body: IO[bytes],
+                job: IO[bytes],
                 *,
                 content_type: str = "application/json",
                 idempotency_key: str,
@@ -24336,6 +24463,14 @@ namespace azure.ai.projects.operations
                 *,
                 etag: str,
                 match_condition: MatchConditions,
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def delete_call_job(
+                self,
+                agent_name: str,
+                call_job_id: str,
                 **kwargs: Any
             ) -> None: ...
 
@@ -24387,9 +24522,21 @@ namespace azure.ai.projects.operations
                 limit: Optional[int] = ...,
                 order: Optional[Union[str, PageOrder]] = ...,
                 provider: Optional[Union[str, TelephonyProvider]] = ...,
-                status: Optional[Union[str, TelephonyBindingStatus]] = ...,
                 **kwargs: Any
             ) -> ItemPaged[TelephonyBindingListItem]: ...
+
+        @distributed_trace
+        def list_call_jobs(
+                self,
+                agent_name: str,
+                *,
+                before: Optional[str] = ...,
+                campaign_name: Optional[str] = ...,
+                limit: Optional[int] = ...,
+                order: Optional[Union[str, PageOrder]] = ...,
+                status: Optional[Union[str, TelephonyCallJobStatus]] = ...,
+                **kwargs: Any
+            ) -> ItemPaged[TelephonyCallJob]: ...
 
         @distributed_trace
         def list_calls(

@@ -339,9 +339,9 @@ class TestRealtimeConnectionRecv:
             "content_index": 0,
             "future_field": {"enabled": False, "count": 0},
         }
-        expected = dict(payload)
         if event_type == "response.audio_timestamp.delta":
-            expected["timestamp_type"] = "word"
+            payload["timestamp_type"] = "word"
+        expected = dict(payload)
         transport = MagicMock()
         transport.recv.return_value = json.dumps(payload)
         with patch("websockets.sync.client.connect", return_value=transport):

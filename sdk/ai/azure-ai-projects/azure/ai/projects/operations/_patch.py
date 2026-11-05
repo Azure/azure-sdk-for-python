@@ -30,6 +30,8 @@ from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
+
+# Nested operation groups are re-exported here rather than in the generated package exports.
 from ._operations import (
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
