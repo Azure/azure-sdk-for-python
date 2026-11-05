@@ -24,7 +24,7 @@ from azure.ai.projects import models
 
 
 _SAMPLE_DIRECTORY = Path(__file__).resolve().parents[2] / "samples" / "agents" / "voice"
-_SYNC_SCENARIOS = ("connection", "text_conversation", "function_tool")
+_ASYNC_SCENARIOS = ("connection", "text_conversation", "function_tool")
 
 
 def _load_module(monkeypatch, filename):
@@ -111,6 +111,8 @@ def sample_environment(monkeypatch):
     async_client.agents.delete_version = AsyncMock()
     async_connection = async_client.beta.voice_agents.live.connect.return_value.__aenter__.return_value
     async_connection.recv = AsyncMock()
+    async_connection.session.update = AsyncMock()
+    async_connection.session.instructions.append = AsyncMock()
     async_connection.session.close = AsyncMock()
     async_connection.session.input_audio.append = AsyncMock()
     async_connection.session.commentary.append = AsyncMock()
@@ -129,46 +131,49 @@ def sample_environment(monkeypatch):
     )
 
 
-@pytest.mark.parametrize("scenario", _SYNC_SCENARIOS)
-def test_sync_samples_delete_only_the_owned_version_on_failure(monkeypatch, sample_environment, scenario):
-    sample = _load_module(monkeypatch, f"sample_voice_agent_live_{scenario}.py")
-    client = sample_environment.client
-    connection = sample_environment.connection
+@pytest.mark.parametrize("scenario", _ASYNC_SCENARIOS)
+@pytest.mark.asyncio
+async def test_async_samples_delete_only_the_owned_version_on_failure(monkeypatch, sample_environment, scenario):
+    sample = _load_module(monkeypatch, f"sample_voice_agent_live_{scenario}_async.py")
+    client = sample_environment.async_client
+    connection = sample_environment.async_connection
     connection.recv.side_effect = RuntimeError("offline receive failure")
     connection.session.close.side_effect = ConnectionError("offline cleanup failure")
 
     with pytest.raises(RuntimeError, match="offline receive failure"):
-        sample.main()
+        await sample.main()
 
     agent_name = client.agents.create_version.call_args.kwargs["agent_name"]
     assert agent_name.startswith("live-offline-")
     client.beta.voice_agents.live.connect.assert_called_once_with(
         agent_name=agent_name, agent_version="owned-version", store=False
     )
-    client.agents.delete_version.assert_called_once_with(agent_name=agent_name, agent_version="owned-version")
+    client.agents.delete_version.assert_awaited_once_with(agent_name=agent_name, agent_version="owned-version")
     client.agents.delete.assert_not_called()
-    connection.session.close.assert_called_once()
+    connection.session.close.assert_awaited_once()
     connection.session.start.assert_not_called()
     connection.response.cancel.assert_not_called()
     client.beta.voice_agents.realtime.connect.assert_not_called()
-    client.beta.voice_agents.live.connect.return_value.__exit__.assert_called_once()
+    client.beta.voice_agents.live.connect.return_value.__aexit__.assert_awaited_once()
 
 
-@pytest.mark.parametrize("scenario", _SYNC_SCENARIOS)
-def test_failed_agent_creation_does_not_delete_an_existing_version(monkeypatch, sample_environment, scenario):
-    sample = _load_module(monkeypatch, f"sample_voice_agent_live_{scenario}.py")
-    sample_environment.client.agents.create_version.side_effect = RuntimeError("create failed")
+@pytest.mark.parametrize("scenario", _ASYNC_SCENARIOS)
+@pytest.mark.asyncio
+async def test_failed_agent_creation_does_not_delete_an_existing_version(monkeypatch, sample_environment, scenario):
+    sample = _load_module(monkeypatch, f"sample_voice_agent_live_{scenario}_async.py")
+    sample_environment.async_client.agents.create_version.side_effect = RuntimeError("create failed")
 
     with pytest.raises(RuntimeError, match="create failed"):
-        sample.main()
+        await sample.main()
 
-    sample_environment.client.agents.delete_version.assert_not_called()
-    sample_environment.client.beta.voice_agents.live.connect.assert_not_called()
+    sample_environment.async_client.agents.delete_version.assert_not_called()
+    sample_environment.async_client.beta.voice_agents.live.connect.assert_not_called()
 
 
-def test_connection_waits_for_start_and_confirms_graceful_close(monkeypatch, sample_environment, capsys):
-    sample = _load_module(monkeypatch, "sample_voice_agent_live_connection.py")
-    connection = sample_environment.connection
+@pytest.mark.asyncio
+async def test_connection_waits_for_start_and_confirms_graceful_close(monkeypatch, sample_environment, capsys):
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_connection_async.py")
+    connection = sample_environment.async_connection
     connection.recv.side_effect = [
         {"type": "future.event"},
         _started(),
@@ -177,9 +182,9 @@ def test_connection_waits_for_start_and_confirms_graceful_close(monkeypatch, sam
         _closed(),
     ]
 
-    sample.main()
+    await sample.main()
 
-    definition = sample_environment.client.agents.create_version.call_args.kwargs["definition"]
+    definition = sample_environment.async_client.agents.create_version.call_args.kwargs["definition"]
     assert isinstance(definition, models.VoiceAgentLiveDefinition)
     assert definition.model == "live-deployment-test"
     assert definition.sub_protocol == "live"
@@ -190,25 +195,29 @@ def test_connection_waits_for_start_and_confirms_graceful_close(monkeypatch, sam
     session = connection.session.update.call_args.kwargs["session"]
     assert isinstance(session, models.LiveSessionUpdateParams)
     assert isinstance(session.delegation, models.LiveSessionUpdateParamsDelegationLiveClientDelegationParam)
-    connection.session.instructions.append.assert_called_once_with(
+    connection.session.instructions.append.assert_awaited_once_with(
         content="Keep responses brief. Do not invent external facts.", delegation_id=None
     )
-    connection.session.input_audio.append.assert_called_once_with(audio=bytes(2400))
+    connection.session.input_audio.append.assert_awaited_once_with(audio=bytes(2400))
     assert "Live session started: session-test" in capsys.readouterr().out
 
 
-def test_context_ack_wait_sends_paced_silence_despite_receive_timeouts(monkeypatch, sample_environment):
+@pytest.mark.asyncio
+async def test_context_ack_wait_sends_paced_silence_despite_receive_timeouts(monkeypatch, sample_environment):
     helper = sample_environment.helper
     clock = SimpleNamespace(now=0.0)
     monkeypatch.setattr(helper, "time", SimpleNamespace(monotonic=lambda: clock.now))
-    connection = sample_environment.connection
+    connection = sample_environment.async_connection
     sent = []
     connection.session.input_audio.append.side_effect = lambda *, audio: sent.append((clock.now, audio))
     calls = []
 
-    def receive(*, timeout):
+    async def wait_for(awaitable, *, timeout):
         calls.append(timeout)
         clock.now += timeout
+        return await awaitable
+
+    def receive():
         if len(calls) == 1:
             raise TimeoutError
         if len(calls) == 2:
@@ -216,7 +225,8 @@ def test_context_ack_wait_sends_paced_silence_despite_receive_timeouts(monkeypat
         return {"type": "session.instructions.appended"}
 
     connection.recv.side_effect = receive
-    event = helper.wait_for_event_with_audio_clock(connection, "session.instructions.appended")
+    monkeypatch.setattr(helper.asyncio, "wait_for", wait_for)
+    event = await helper.wait_for_event_with_audio_clock_async(connection, "session.instructions.appended")
 
     assert event["type"] == "session.instructions.appended"
     assert [when for when, _ in sent] == pytest.approx([0.0, 0.05, 0.1])
@@ -224,45 +234,51 @@ def test_context_ack_wait_sends_paced_silence_despite_receive_timeouts(monkeypat
     assert calls == pytest.approx([0.05, 0.05, 0.05])
 
 
-def test_context_ack_wait_does_not_send_audio_for_every_fast_server_event(monkeypatch, sample_environment):
+@pytest.mark.asyncio
+async def test_context_ack_wait_does_not_send_audio_for_every_fast_server_event(monkeypatch, sample_environment):
     helper = sample_environment.helper
     monkeypatch.setattr(helper, "time", SimpleNamespace(monotonic=lambda: 0.0))
-    connection = sample_environment.connection
+    connection = sample_environment.async_connection
     connection.recv.side_effect = [
         {"type": "future.event"},
         {"type": "session.usage.updated"},
         {"type": "session.instructions.appended"},
     ]
 
-    helper.wait_for_event_with_audio_clock(connection, "session.instructions.appended")
+    await helper.wait_for_event_with_audio_clock_async(connection, "session.instructions.appended")
 
-    connection.session.input_audio.append.assert_called_once_with(audio=bytes(2400))
+    connection.session.input_audio.append.assert_awaited_once_with(audio=bytes(2400))
 
 
-def test_context_ack_wait_keeps_one_overall_deadline(monkeypatch, sample_environment):
+@pytest.mark.asyncio
+async def test_context_ack_wait_keeps_one_overall_deadline(monkeypatch, sample_environment):
     helper = sample_environment.helper
     clock = SimpleNamespace(now=0.0)
     monkeypatch.setattr(helper, "time", SimpleNamespace(monotonic=lambda: clock.now))
-    connection = sample_environment.connection
+    connection = sample_environment.async_connection
 
-    def receive(*, timeout):
+    async def wait_for(awaitable, *, timeout):
         clock.now += timeout
-        raise TimeoutError
+        return await awaitable
 
-    connection.recv.side_effect = receive
+    connection.recv.side_effect = TimeoutError
+    monkeypatch.setattr(helper.asyncio, "wait_for", wait_for)
     with pytest.raises(TimeoutError, match="session.instructions.appended"):
-        helper.wait_for_event_with_audio_clock(connection, "session.instructions.appended", timeout=0.1)
+        await helper.wait_for_event_with_audio_clock_async(connection, "session.instructions.appended", timeout=0.1)
 
     assert connection.session.input_audio.append.call_count == 2
     assert connection.recv.call_count == 2
 
 
-def test_context_ack_wait_surfaces_audio_send_failure(sample_environment):
-    connection = sample_environment.connection
+@pytest.mark.asyncio
+async def test_context_ack_wait_surfaces_audio_send_failure(sample_environment):
+    connection = sample_environment.async_connection
     connection.session.input_audio.append.side_effect = ConnectionError("clock send failed")
 
     with pytest.raises(ConnectionError, match="clock send failed"):
-        sample_environment.helper.wait_for_event_with_audio_clock(connection, "session.instructions.appended")
+        await sample_environment.helper.wait_for_event_with_audio_clock_async(
+            connection, "session.instructions.appended"
+        )
     connection.recv.assert_not_called()
 
 
@@ -273,42 +289,47 @@ def test_context_ack_wait_surfaces_audio_send_failure(sample_environment):
         ({"type": "session.closed", "reason": "server_failure"}, "closed before"),
     ],
 )
-def test_context_ack_wait_does_not_hide_service_errors(sample_environment, event, message):
-    connection = sample_environment.connection
+@pytest.mark.asyncio
+async def test_context_ack_wait_does_not_hide_service_errors(sample_environment, event, message):
+    connection = sample_environment.async_connection
     connection.recv.return_value = event
 
     with pytest.raises(RuntimeError, match=message):
-        sample_environment.helper.wait_for_event_with_audio_clock(connection, "session.instructions.appended")
+        await sample_environment.helper.wait_for_event_with_audio_clock_async(
+            connection, "session.instructions.appended"
+        )
 
 
-def test_text_uses_responses_delegation_and_granular_text(monkeypatch, sample_environment, capsys):
-    sample = _load_module(monkeypatch, "sample_voice_agent_live_text_conversation.py")
-    connection = sample_environment.connection
+@pytest.mark.asyncio
+async def test_text_uses_responses_delegation_and_granular_text(monkeypatch, sample_environment, capsys):
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_text_conversation_async.py")
+    connection = sample_environment.async_connection
     connection.recv.side_effect = [_started(), *_text_response("Seattle has a rainy climate."), _closed()]
 
-    sample.main()
+    await sample.main()
 
-    definition = sample_environment.client.agents.create_version.call_args.kwargs["definition"]
+    definition = sample_environment.async_client.agents.create_version.call_args.kwargs["definition"]
     assert isinstance(definition.delegation, models.VoiceAgentLiveResponsesDelegation)
     assert definition.delegation.responses.model == "backend-deployment-test"
     item = connection.response.item.create.call_args.kwargs["item"]
     assert item["type"] == "message" and item["role"] == "user"
     assert item["content"][0]["type"] == "input_text"
-    connection.response.create.assert_called_once_with()
+    connection.response.create.assert_awaited_once_with()
     assert "Responses backend: Seattle has a rainy climate." in capsys.readouterr().out
 
 
-def test_text_rejects_empty_backend_completion(monkeypatch, sample_environment):
-    sample = _load_module(monkeypatch, "sample_voice_agent_live_text_conversation.py")
-    sample_environment.connection.recv.side_effect = [
+@pytest.mark.asyncio
+async def test_text_rejects_empty_backend_completion(monkeypatch, sample_environment):
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_text_conversation_async.py")
+    sample_environment.async_connection.recv.side_effect = [
         _started(),
         _response("response.completed", response={"status": "completed", "output": []}),
     ]
 
     with pytest.raises(RuntimeError, match="without returning any output text"):
-        sample.main()
+        await sample.main()
 
-    sample_environment.client.agents.delete_version.assert_called_once()
+    sample_environment.async_client.agents.delete_version.assert_awaited_once()
 
 
 @pytest.mark.parametrize("event_type", ["error", "response.failed", "response.incomplete", "response.cancelled"])
@@ -373,8 +394,9 @@ async def test_async_close_timeout_preserves_the_original_error(monkeypatch, sam
     sample_environment.async_connection.session.close.assert_awaited_once()
 
 
-def test_function_tool_waits_for_each_completed_cycle(monkeypatch, sample_environment, capsys):
-    sample = _load_module(monkeypatch, "sample_voice_agent_live_function_tool.py")
+@pytest.mark.asyncio
+async def test_function_tool_waits_for_each_completed_cycle(monkeypatch, sample_environment, capsys):
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_function_tool_async.py")
     call = {
         "id": "fc-item-test",
         "type": "function_call",
@@ -383,7 +405,7 @@ def test_function_tool_waits_for_each_completed_cycle(monkeypatch, sample_enviro
         "arguments": '{"city":"Seattle"}',
         "status": "completed",
     }
-    connection = sample_environment.connection
+    connection = sample_environment.async_connection
     connection.recv.side_effect = [
         _started(),
         _response("response.output_item.added", item={**call, "arguments": "", "status": "in_progress"}),
@@ -402,7 +424,7 @@ def test_function_tool_waits_for_each_completed_cycle(monkeypatch, sample_enviro
         _closed(),
     ]
 
-    sample.main()
+    await sample.main()
 
     submitted = connection.response.item.create.call_args_list
     assert len(submitted) == 2
@@ -443,7 +465,7 @@ def test_completed_function_call_requires_its_canonical_call_id(sample_environme
 
 @pytest.mark.parametrize("arguments", ['{"city":1}', '{"city":"Seattle","extra":true}', '["Seattle"]'])
 def test_function_tool_rejects_invalid_arguments(monkeypatch, sample_environment, arguments):
-    sample = _load_module(monkeypatch, "sample_voice_agent_live_function_tool.py")
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_function_tool_async.py")
     with pytest.raises(ValueError, match="exactly one string argument"):
         sample._execute_tool({"name": "get_weather", "arguments": arguments})
 
@@ -778,11 +800,12 @@ async def test_continuous_reply_activity_does_not_extend_the_overall_audio_deadl
 
 
 def _text_sample(monkeypatch, sample_environment):
-    sample = _load_module(monkeypatch, "sample_voice_agent_live_text_conversation.py")
-    return sample, sample_environment.client, sample_environment.connection
+    sample = _load_module(monkeypatch, "sample_voice_agent_live_text_conversation_async.py")
+    return sample, sample_environment.async_client, sample_environment.async_connection
 
 
-def test_text_sample_reuses_one_session_and_waits_for_each_turn(monkeypatch, sample_environment, capsys):
+@pytest.mark.asyncio
+async def test_text_sample_reuses_one_session_and_waits_for_each_turn(monkeypatch, sample_environment, capsys):
     sample, client, connection = _text_sample(monkeypatch, sample_environment)
     prompts = ["My name is Ada.", "What is my name?"]
     monkeypatch.setattr(sample, "TEXT_PROMPTS", prompts)
@@ -804,57 +827,60 @@ def test_text_sample_reuses_one_session_and_waits_for_each_turn(monkeypatch, sam
     connection.recv.side_effect = receive
     connection.response.item.create.side_effect = submit
 
-    sample.main()
+    await sample.main()
 
     assert submitted == prompts
     assert completed == 2
     assert connection.response.create.call_count == 2
     assert connection.session.close.call_count == 1
     client.beta.voice_agents.live.connect.assert_called_once()
-    client.agents.create_version.assert_called_once()
-    client.agents.delete_version.assert_called_once()
+    client.agents.create_version.assert_awaited_once()
+    client.agents.delete_version.assert_awaited_once()
     client.agents.delete.assert_not_called()
     connection.session.start.assert_not_called()
     connection.response.cancel.assert_not_called()
-    client.beta.voice_agents.live.connect.return_value.__exit__.assert_called_once()
+    client.beta.voice_agents.live.connect.return_value.__aexit__.assert_awaited_once()
     output = capsys.readouterr().out
     assert output.count("Responses backend: Hello, Ada.\n") == 1
     assert output.count("Responses backend: Your name is Ada.\n") == 1
 
 
-def test_text_sample_keeps_the_original_single_prompt_default(monkeypatch, sample_environment):
+@pytest.mark.asyncio
+async def test_text_sample_keeps_the_original_single_prompt_default(monkeypatch, sample_environment):
     sample, client, connection = _text_sample(monkeypatch, sample_environment)
     connection.recv.side_effect = [_started(), *_text_response("Seattle has a rainy climate."), _closed()]
 
-    sample.main()
+    await sample.main()
 
     definition = client.agents.create_version.call_args.kwargs["definition"]
     assert isinstance(definition.delegation, models.VoiceAgentLiveResponsesDelegation)
     assert definition.delegation.responses.model == "backend-deployment-test"
-    connection.response.item.create.assert_called_once_with(
+    connection.response.item.create.assert_awaited_once_with(
         item={
             "type": "message",
             "role": "user",
             "content": [{"type": "input_text", "text": "Why is Seattle known for rain? Answer in one short sentence."}],
         }
     )
-    connection.response.create.assert_called_once()
+    connection.response.create.assert_awaited_once()
 
 
 @pytest.mark.parametrize("prompts", [[], [""], ["first", " "], "not-a-prompt-list"])
-def test_text_sample_rejects_empty_or_invalid_scripted_prompts(monkeypatch, sample_environment, prompts):
+@pytest.mark.asyncio
+async def test_text_sample_rejects_empty_or_invalid_scripted_prompts(monkeypatch, sample_environment, prompts):
     sample, client, _ = _text_sample(monkeypatch, sample_environment)
     monkeypatch.setattr(sample, "TEXT_PROMPTS", prompts)
 
     with pytest.raises(ValueError, match="prompt"):
-        sample.main()
+        await sample.main()
 
     client.agents.create_version.assert_not_called()
     client.beta.voice_agents.live.connect.assert_not_called()
     client.agents.delete_version.assert_not_called()
 
 
-def test_text_sample_stops_on_a_later_backend_failure_and_cleans_up(monkeypatch, sample_environment):
+@pytest.mark.asyncio
+async def test_text_sample_stops_on_a_later_backend_failure_and_cleans_up(monkeypatch, sample_environment):
     sample, client, connection = _text_sample(monkeypatch, sample_environment)
     monkeypatch.setattr(sample, "TEXT_PROMPTS", ["first", "second", "must not be sent"])
     connection.recv.side_effect = [
@@ -864,17 +890,18 @@ def test_text_sample_stops_on_a_later_backend_failure_and_cleans_up(monkeypatch,
     ]
 
     with pytest.raises(RuntimeError, match="Responses backend response.failed"):
-        sample.main()
+        await sample.main()
 
     assert connection.response.item.create.call_count == 2
     assert connection.response.create.call_count == 2
-    connection.session.close.assert_called_once()
+    connection.session.close.assert_awaited_once()
     agent_name = client.agents.create_version.call_args.kwargs["agent_name"]
-    client.agents.delete_version.assert_called_once_with(agent_name=agent_name, agent_version="owned-version")
+    client.agents.delete_version.assert_awaited_once_with(agent_name=agent_name, agent_version="owned-version")
 
 
 @pytest.mark.parametrize("empty", [True, False], ids=["empty-text", "unexpected-tool"])
-def test_text_sample_rejects_non_text_backend_completions(monkeypatch, sample_environment, empty):
+@pytest.mark.asyncio
+async def test_text_sample_rejects_non_text_backend_completions(monkeypatch, sample_environment, empty):
     sample, client, connection = _text_sample(monkeypatch, sample_environment)
     monkeypatch.setattr(sample, "TEXT_PROMPTS", ["one", "must not be sent"])
     events = [_started()]
@@ -889,10 +916,10 @@ def test_text_sample_rejects_non_text_backend_completions(monkeypatch, sample_en
     connection.recv.side_effect = events
 
     with pytest.raises(RuntimeError, match="without returning any output text|unexpectedly requested"):
-        sample.main()
+        await sample.main()
 
-    connection.response.item.create.assert_called_once()
-    client.agents.delete_version.assert_called_once()
+    connection.response.item.create.assert_awaited_once()
+    client.agents.delete_version.assert_awaited_once()
 
 
 @pytest.mark.asyncio

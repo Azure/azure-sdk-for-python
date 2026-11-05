@@ -9,6 +9,7 @@
 
 ### Sample updates
 
+* Simplified Voice Agent examples to one sample per scenario: synchronous REST and asynchronous WebSocket workflows.
 * Added GPT Live samples for session setup, text conversations, function tools, WAV and microphone audio, and stored-conversation readback. The REST sample creates and cleans up a conversation when no ID is supplied, or reads an existing conversation without changing it. Audio downloads use a unique user-temporary folder.
 
 ## 2.10.0 (2026-10-30)

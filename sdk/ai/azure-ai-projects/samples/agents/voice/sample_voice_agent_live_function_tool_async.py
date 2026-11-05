@@ -27,8 +27,10 @@ USAGE:
 from __future__ import annotations
 
 import asyncio
+import json
 import os
 import time
+from typing import Any, Mapping
 
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
@@ -44,7 +46,22 @@ from live_sample_utils import (
     sample_agent_name,
     wait_for_event_async,
 )
-from sample_voice_agent_live_function_tool import _execute_tool
+
+
+def get_weather(city: str) -> str:
+    """Return deterministic sample weather, rather than calling an external service."""
+    if city.strip().casefold() != "seattle":
+        raise ValueError("This sample only provides weather data for Seattle.")
+    return json.dumps({"city": "Seattle", "condition": "sunny", "temperature_f": 72})
+
+
+def _execute_tool(call: Mapping[str, Any]) -> str:
+    if call.get("name") != "get_weather":
+        raise RuntimeError(f"Unexpected backend function: {call.get('name')}")
+    arguments = json.loads(call["arguments"])
+    if not isinstance(arguments, dict) or set(arguments) != {"city"} or not isinstance(arguments["city"], str):
+        raise ValueError("get_weather requires exactly one string argument named city.")
+    return get_weather(arguments["city"])
 
 
 async def _run_tool_turn(project_client: AIProjectClient, agent_name: str, agent_version: str) -> str:

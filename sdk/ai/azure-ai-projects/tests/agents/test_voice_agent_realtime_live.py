@@ -195,7 +195,7 @@ class TestVoiceAgentRealtimeLive(TestBase):
         Configures the agent with a ``get_weather`` function tool, sends a prompt that should
         trigger it, executes the tool call locally when the service asks for it, and sends the
         result back so the agent can finish its reply -- mirroring
-        ``samples/agents/voice/sample_voice_agent_live_function_tool.py``, which this test
+        ``samples/agents/voice/sample_voice_agent_realtime_function_tool_async.py``, which this test
         adapts into an automated assertion-based form.
         """
         print("\n")

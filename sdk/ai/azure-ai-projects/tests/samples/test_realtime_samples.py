@@ -26,11 +26,8 @@ _ENDPOINT = "https://example.invalid/api/projects/offline"
 _AGENT_NAME = "realtime-offline"
 _OWNED_VERSION = "owned-realtime-version"
 _CONVERSATION_ID = "conversation-offline"
-_TEXT_SAMPLES = (
-    "sample_voice_agent_realtime_text_conversation.py",
-    "sample_voice_agent_realtime_text_conversation_async.py",
-)
-_TOOL_SAMPLE = "sample_voice_agent_realtime_function_tool.py"
+_TEXT_SAMPLES = ("sample_voice_agent_realtime_text_conversation_async.py",)
+_TOOL_SAMPLE = "sample_voice_agent_realtime_function_tool_async.py"
 
 
 def _load_sample(monkeypatch, filename):
@@ -278,12 +275,12 @@ class _SampleHarness:
         self.actions.append(("response.cancel", kwargs))
 
     async def run(self):
-        if self.is_async:
+        if self.is_async and self.is_text:
             await self.sample.text_conversation()
         elif self.is_text:
             self.sample.text_conversation()
         else:
-            self.sample.main()
+            await self.sample.main()
 
     def assert_call(self, mock, *args, **kwargs):
         if self.is_async:
@@ -329,7 +326,7 @@ class _SampleHarness:
         self.client_factory.assert_called_once_with(endpoint=_ENDPOINT, credential=self.credential, allow_preview=True)
 
 
-@pytest.fixture(params=_TEXT_SAMPLES, ids=["sync-text", "async-text"])
+@pytest.fixture(params=_TEXT_SAMPLES, ids=["async-text"])
 def text_sample(monkeypatch, request):
     return _SampleHarness(monkeypatch, request.param)
 
@@ -339,7 +336,7 @@ def tool_sample(monkeypatch):
     return _SampleHarness(monkeypatch, _TOOL_SAMPLE)
 
 
-@pytest.fixture(params=(*_TEXT_SAMPLES, _TOOL_SAMPLE), ids=["sync-text", "async-text", "function-tool"])
+@pytest.fixture(params=(*_TEXT_SAMPLES, _TOOL_SAMPLE), ids=["async-text", "function-tool"])
 def entrypoint_sample(monkeypatch, request):
     return _SampleHarness(monkeypatch, request.param)
 

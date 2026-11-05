@@ -25,8 +25,6 @@ _SCENARIOS = ("text_conversation", "function_tool")
 
 
 def _load_sample(monkeypatch, scenario):
-    if scenario == "function_tool":
-        _load_module(monkeypatch, "sample_voice_agent_live_function_tool.py")
     return _load_module(monkeypatch, f"sample_voice_agent_live_{scenario}_async.py")
 
 

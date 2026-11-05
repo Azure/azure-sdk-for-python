@@ -11,7 +11,7 @@ DESCRIPTION:
     advance the Live timeline while it acknowledges the appended instructions.
 
 USAGE:
-    python sample_voice_agent_live_connection.py
+    python sample_voice_agent_live_connection_async.py
 
     pip install "azure-ai-projects[voice]" azure-identity python-dotenv
 
@@ -24,34 +24,36 @@ USAGE:
     wait for session.started rather than sending session.start.
 """
 
+import asyncio
 import os
 
 from dotenv import load_dotenv
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient, models
+from azure.identity.aio import DefaultAzureCredential
+from azure.ai.projects.aio import AIProjectClient
+from azure.ai.projects import models
 
 from live_sample_utils import (
     audio_settings,
-    close_session,
+    close_session_async,
     sample_agent_name,
-    wait_for_event,
-    wait_for_event_with_audio_clock,
+    wait_for_event_async,
+    wait_for_event_with_audio_clock_async,
 )
 
 
-def main() -> None:
+async def main() -> None:
     load_dotenv()
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     model = os.environ["FOUNDRY_VOICE_AGENT_MODEL"]
     agent_name = sample_agent_name("connection")
 
-    with (
+    async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     ):
         created_version = None
         try:
-            created_version = project_client.agents.create_version(
+            created_version = await project_client.agents.create_version(
                 agent_name=agent_name,
                 definition=models.VoiceAgentLiveDefinition(
                     model=model,
@@ -62,31 +64,31 @@ def main() -> None:
                     store=False,
                 ),
             )
-            with project_client.beta.voice_agents.live.connect(
+            async with project_client.beta.voice_agents.live.connect(
                 agent_name=agent_name, agent_version=created_version.version, store=False
             ) as connection:
                 try:
-                    started = wait_for_event(connection, "session.started")
+                    started = await wait_for_event_async(connection, "session.started")
                     print(f"Live session started: {started['session']['id']}")
-                    connection.session.update(
+                    await connection.session.update(
                         session=models.LiveSessionUpdateParams(
                             delegation=models.LiveSessionUpdateParamsDelegationLiveClientDelegationParam()
                         )
                     )
-                    wait_for_event(connection, "session.updated")
-                    connection.session.instructions.append(
+                    await wait_for_event_async(connection, "session.updated")
+                    await connection.session.instructions.append(
                         content="Keep responses brief. Do not invent external facts.", delegation_id=None
                     )
-                    wait_for_event_with_audio_clock(connection, "session.instructions.appended")
+                    await wait_for_event_with_audio_clock_async(connection, "session.instructions.appended")
                     print("Confirmed session.updated and session.instructions.appended.")
                 finally:
                     # session.close is a command; leaving the context closes the transport.
-                    close_session(connection)
+                    await close_session_async(connection)
         finally:
             if created_version is not None:
-                project_client.agents.delete_version(agent_name=agent_name, agent_version=created_version.version)
+                await project_client.agents.delete_version(agent_name=agent_name, agent_version=created_version.version)
                 print(f"Deleted sample agent version: {created_version.version}")
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

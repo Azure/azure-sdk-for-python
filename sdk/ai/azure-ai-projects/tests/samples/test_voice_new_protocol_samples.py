@@ -21,10 +21,25 @@ from azure.core.exceptions import ResourceNotFoundError
 
 _SAMPLES = Path(__file__).parents[2] / "samples" / "agents" / "voice"
 _WEBSOCKET_SAMPLES = (
+    "sample_voice_agent_live_connection_async.py",
+    "sample_voice_agent_live_audio_conversation_async.py",
     "sample_voice_agent_live_text_conversation_async.py",
     "sample_voice_agent_live_function_tool_async.py",
     "sample_voice_agent_live_managed_agent_async.py",
+    "sample_voice_agent_realtime_text_conversation_async.py",
+    "sample_voice_agent_realtime_function_tool_async.py",
+    "sample_voice_agent_realtime_audio_conversation_async.py",
     "sample_voice_agent_realtime_interruption_async.py",
+)
+_REST_SAMPLES = (
+    "sample_voice_agent_basic.py",
+    "sample_voice_agent_generate.py",
+    "sample_voice_agent_versions.py",
+    "sample_voice_agent_with_tools.py",
+    "sample_voice_agent_read_conversation.py",
+    "sample_voice_agent_read_conversation_audio.py",
+    "sample_voice_agent_live_read_conversation.py",
+    "sample_voice_agent_read_generated_audio.py",
 )
 
 
@@ -37,15 +52,27 @@ def _environment(monkeypatch):
 
 
 @pytest.mark.parametrize("filename", _WEBSOCKET_SAMPLES)
-def test_new_websocket_samples_are_async_only(filename):
+def test_websocket_samples_are_async_only_without_synchronous_duplicates(filename):
     tree = ast.parse((_SAMPLES / filename).read_text(encoding="utf-8"))
     assert filename.endswith("_async.py")
-    assert any(isinstance(node, ast.AsyncFunctionDef) and node.name == "main" for node in tree.body)
+    assert any(
+        isinstance(node, ast.AsyncFunctionDef) and node.name in ("main", "text_conversation", "audio_conversation")
+        for node in tree.body
+    )
     assert any(isinstance(node, ast.ImportFrom) and node.module == "azure.ai.projects.aio" for node in tree.body)
-    assert not (_SAMPLES / filename.replace("_async.py", ".py")).exists() or filename in (
-        "sample_voice_agent_live_text_conversation_async.py",
-        "sample_voice_agent_live_function_tool_async.py",
-    ), "Do not add a synchronous duplicate of the new WebSocket workflow."
+    assert not (_SAMPLES / filename.replace("_async.py", ".py")).exists()
+
+
+@pytest.mark.parametrize("filename", _REST_SAMPLES)
+def test_rest_samples_are_sync_only_without_asynchronous_duplicates(filename):
+    tree = ast.parse((_SAMPLES / filename).read_text(encoding="utf-8"))
+    assert not any(isinstance(node, (ast.AsyncFunctionDef, ast.AsyncWith, ast.Await)) for node in ast.walk(tree))
+    assert not (_SAMPLES / filename.replace(".py", "_async.py")).exists()
+
+
+def test_every_voice_sample_has_one_protocol_style():
+    actual = {path.name for path in _SAMPLES.glob("sample_*.py")}
+    assert actual == set(_REST_SAMPLES) | set(_WEBSOCKET_SAMPLES)
 
 
 def test_new_rest_sample_is_sync_and_does_not_open_a_websocket():
