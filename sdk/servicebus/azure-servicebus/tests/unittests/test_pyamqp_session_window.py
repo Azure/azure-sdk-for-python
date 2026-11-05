@@ -5,6 +5,7 @@
 
 """Regression tests for pyAMQP session window accounting (azure-sdk-for-python#49232)."""
 
+import asyncio
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -176,3 +177,40 @@ async def test_async_negative_incoming_window_recovers_before_transfer_handler_e
 def test_unsigned_encoders_reject_negative_values(encoder, value):
     with pytest.raises(ValueError, match="invalid"):
         encoder(bytearray(), value)
+
+@pytest.mark.asyncio
+async def test_async_incoming_transfer_delivered_before_flow_cancellation():
+    """Transfer must reach the link even if replenish flow is cancelled."""
+    connection = MagicMock(name="connection")
+    connection._process_outgoing_frame = AsyncMock(name="_process_outgoing_frame")
+    session = AsyncSession(
+        connection,
+        channel=0,
+        incoming_window=1,
+        outgoing_window=4,
+        network_trace=False,
+        network_trace_params={},
+    )
+    session.state = SessionState.MAPPED
+    session.next_incoming_id = 0
+    session.remote_outgoing_window = 2
+
+    delivered = []
+
+    async def deliver(frame):
+        delivered.append(frame)
+
+    link = MagicMock(name="link")
+    link._incoming_transfer = AsyncMock(side_effect=deliver)
+    session._input_handles[0] = link
+
+    async def cancel_flow(frame=None):
+        raise asyncio.CancelledError()
+
+    session._outgoing_flow = cancel_flow  # type: ignore
+
+    with pytest.raises(asyncio.CancelledError):
+        await session._incoming_transfer((0, b"payload"))
+
+    assert delivered == [(0, b"payload")]
+    assert session.incoming_window == session.target_incoming_window == 1

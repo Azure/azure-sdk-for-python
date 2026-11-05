@@ -323,9 +323,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self.next_incoming_id += 1
         self.remote_outgoing_window -= 1
         self.incoming_window -= 1
-        if self.incoming_window <= 0:
-            self.incoming_window = self.target_incoming_window
-            await self._outgoing_flow()
         try:
             await self._input_handles[frame[0]]._incoming_transfer(frame)  # pylint: disable=protected-access
         except KeyError:
@@ -340,6 +337,12 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     """Handle is not currently associated with an attached link""",
                 )
             )
+        finally:
+            # Replenish after delivering the transfer so a cancellation during
+            # await _outgoing_flow() cannot drop an already-read frame.
+            if self.incoming_window <= 0:
+                self.incoming_window = self.target_incoming_window
+                await self._outgoing_flow()
 
     async def _outgoing_disposition(self, frame):
         await self._connection._process_outgoing_frame(self.channel, frame)  # pylint: disable=protected-access
