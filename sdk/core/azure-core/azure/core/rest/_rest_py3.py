@@ -155,7 +155,9 @@ class HttpRequest(HttpRequestBackcompatMixin):
         if files:
             default_headers, self._files = set_multipart_body(files)
         if data:
-            default_headers, self._data = set_urlencoded_body(data, has_files=bool(files))
+            # `files` being explicitly passed (even empty) means the payload is multipart,
+            # so the urlencoded content-type must not be set. See #39163.
+            default_headers, self._data = set_urlencoded_body(data, has_files=files is not None)
         return default_headers
 
     @property

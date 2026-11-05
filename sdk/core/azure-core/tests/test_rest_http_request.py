@@ -221,6 +221,13 @@ def test_urlencoded_content():
     }
 
 
+def test_multipart_request_with_empty_files_does_not_get_urlencoded_content_type():
+    # files being explicitly passed (even empty) means the payload is multipart, see #39163,
+    # so the urlencoded content-type must not be set
+    request = HttpRequest("POST", url="http://example.org", data={"Hello": "world!"}, files={})
+    assert "Content-Type" not in request.headers
+
+
 @pytest.mark.parametrize(("key"), (1, 2.3, None))
 def test_multipart_invalid_key(key):
 
