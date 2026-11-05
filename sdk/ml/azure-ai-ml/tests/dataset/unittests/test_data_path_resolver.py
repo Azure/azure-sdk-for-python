@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 from unittest.mock import Mock, patch
+from urllib.parse import urlsplit
 
 import pytest
 import yaml
@@ -119,7 +120,12 @@ def test_named_onelake_artifact_and_subpath(operations):
     store.artifact.name = "lake/Files"
     store.endpoint = "onelake.dfs.fabric.microsoft.com"
     result = _DataPathResolver(operations, False).resolve("azureml://datastores/fabric/paths/data.csv")
-    assert result.uri == "abfss://workspace@onelake.dfs.fabric.microsoft.com/lake.lakehouse/Files/data.csv"
+    resolved = urlsplit(result.uri)
+    assert resolved.scheme == "abfss"
+    assert resolved.netloc == "@".join((store.one_lake_workspace_name, store.endpoint))
+    assert resolved.path == "/lake.lakehouse/Files/data.csv"
+    assert not resolved.query
+    assert not resolved.fragment
 
 
 @pytest.mark.parametrize(
