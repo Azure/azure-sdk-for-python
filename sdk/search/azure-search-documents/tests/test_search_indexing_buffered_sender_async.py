@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+from types import MappingProxyType
 from unittest import mock
 
 import pytest
@@ -15,7 +16,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError, ServiceResponseTimeoutError
 
 from azure.search.documents import RequestEntityTooLargeError
-from azure.search.documents.aio import SearchIndexingBufferedSender
+from azure.search.documents.aio import SearchClient, SearchIndexingBufferedSender
 from azure.search.documents.models import IndexingResult
 
 SEARCH_ENDPOINT = "https://my-search-service.search.windows.net"
@@ -53,6 +54,37 @@ def create_indexing_result(document_key=DOCUMENT_KEY, *, succeeded=True, status_
 
 
 class TestSearchIndexingBufferedSenderConstructorAsync:
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        ("audience", "explicit_scopes", "expected"),
+        [
+            (None, None, ["https://search.azure.com/.default"]),
+            ("https://search.azure.us/", None, ["https://search.azure.us/.default"]),
+            ("https://search.azure.us/", ["https://custom/.default"], ["https://custom/.default"]),
+        ],
+    )
+    async def test_constructor_preserves_audience_and_explicit_scope_precedence(
+        self, audience, explicit_scopes, expected
+    ):
+        credential = mock.Mock(spec=["get_token"])
+        credential.get_token = mock.AsyncMock()
+        options = {"audience": audience}
+        if explicit_scopes is not None:
+            options["credential_scopes"] = explicit_scopes
+        sender = SearchIndexingBufferedSender(
+            SEARCH_ENDPOINT, INDEX_NAME, credential, auto_flush=False, api_version=API_VERSION, **options
+        )
+        try:
+            assert isinstance(sender._client, SearchClient)
+            assert sender._client._config.credential_scopes == expected
+            assert sender._client._config.endpoint == SEARCH_ENDPOINT
+            assert sender._client._config.api_version == API_VERSION
+            credential.get_token.assert_not_called()
+            if explicit_scopes is not None:
+                assert explicit_scopes == expected
+        finally:
+            await sender._client.close()
+
     @pytest.mark.asyncio
     async def test_constructor_uses_default_buffering_settings(self):
         sender = SearchIndexingBufferedSender(SEARCH_ENDPOINT, INDEX_NAME, CREDENTIAL, window=100)
@@ -191,8 +223,85 @@ class TestSearchIndexingBufferedSenderQueueingAsync:
 
         mock_process.assert_awaited_once_with(raise_error=False)
 
+    @pytest.mark.asyncio
+    async def test_auto_flush_task_does_not_cancel_itself_during_yielding_request(self):
+        request_completed = asyncio.Event()
+
+        async def yielding_index_documents(*args, **kwargs):
+            await asyncio.sleep(0.01)
+            request_completed.set()
+            return []
+
+        sender = SearchIndexingBufferedSender(
+            SEARCH_ENDPOINT, INDEX_NAME, CREDENTIAL, auto_flush=True, auto_flush_interval=0.01
+        )
+        sender._index_key = "HotelId"
+        try:
+            with mock.patch.object(sender._client, "index_documents", side_effect=yielding_index_documents):
+                task = sender._auto_flush_task
+                await asyncio.wait_for(task, timeout=5)
+                assert request_completed.is_set()
+                assert not task.cancelled()
+        finally:
+            if sender._auto_flush_task is not None:
+                sender._auto_flush_task.cancel()
+                with contextlib.suppress(asyncio.CancelledError):
+                    await sender._auto_flush_task
+
 
 class TestSearchIndexingBufferedSenderProcessingAsync:
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("shared_resource", [None, "transport", "pipeline", "both"])
+    @pytest.mark.parametrize("failure", [None, "lookup", "fields"])
+    async def test_process_preserves_schema_options_and_client_ownership(self, shared_resource, failure):
+        scopes = ["https://custom/.default"]
+        options = {"audience": "https://search.azure.us/", "credential_scopes": scopes}
+        if shared_resource in ("transport", "both"):
+            options["transport"] = mock.Mock()
+        if shared_resource in ("pipeline", "both"):
+            options["pipeline"] = mock.Mock()
+        sender = create_sender(api_version=API_VERSION, **options)
+        field = mock.Mock(key=True)
+        field.name = "HotelId"
+        with mock.patch("azure.search.documents.aio._patch.SearchIndexClient") as factory, mock.patch.object(
+            sender, "_index_documents_actions", new_callable=mock.AsyncMock, return_value=[]
+        ) as index_actions:
+            schema = factory.return_value
+            schema.get_index = mock.AsyncMock()
+            schema.close = mock.AsyncMock()
+            if failure == "lookup":
+                schema.get_index.side_effect = RuntimeError("schema unavailable")
+            else:
+                schema.get_index.return_value.fields = None if failure == "fields" else [field]
+            assert await sender._process() is False
+        factory.assert_called_once_with(SEARCH_ENDPOINT, CREDENTIAL, api_version=API_VERSION, **options)
+        schema.get_index.assert_awaited_once_with(INDEX_NAME)
+        index_actions.assert_awaited_once()
+        if shared_resource is None:
+            schema.close.assert_awaited_once_with()
+        else:
+            schema.close.assert_not_awaited()
+        for resource in ("transport", "pipeline"):
+            if resource in options:
+                options[resource].close.assert_not_called()
+        assert scopes == ["https://custom/.default"]
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("raise_error", [False, True])
+    async def test_process_requeues_every_action_before_returning_or_raising(self, raise_error):
+        sender = create_sender()
+        sender._index_key = "HotelId"
+        await sender.upload_documents([create_hotel_document(str(key)) for key in range(3)])
+        failure = HttpResponseError("indexing request failed")
+        with mock.patch.object(sender, "_index_documents_actions", new_callable=mock.AsyncMock, side_effect=failure):
+            if raise_error:
+                with pytest.raises(HttpResponseError) as error:
+                    await sender._process(raise_error=True)
+                assert error.value is failure
+            else:
+                assert await sender._process(raise_error=False) is True
+        assert [action.as_dict()["HotelId"] for action in sender.actions] == ["0", "1", "2"]
+
     @pytest.mark.asyncio
     async def test_flush_detects_key_field_and_reports_success_callbacks(self):
         on_progress = mock.AsyncMock()
@@ -292,6 +401,18 @@ class TestSearchIndexingBufferedSenderProcessingAsync:
 
 
 class TestSearchIndexingBufferedSenderIndexingAsync:
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("mapping_type", [dict, MappingProxyType])
+    async def test_index_documents_accepts_wire_batch_mappings(self, mapping_type):
+        sender = create_sender()
+        action = {"@search.action": "upload", **create_hotel_document()}
+        expected = [create_indexing_result()]
+        with mock.patch.object(
+            sender._client, "index_documents", new_callable=mock.AsyncMock, return_value=expected
+        ) as operation:
+            assert await sender.index_documents(mapping_type({"value": [action]})) == expected
+        assert [item.as_dict() for item in operation.call_args.kwargs["batch"].actions] == [action]
+
     @pytest.mark.asyncio
     async def test_context_manager_enters_client_and_closes_on_exit(self):
         sender = create_sender()

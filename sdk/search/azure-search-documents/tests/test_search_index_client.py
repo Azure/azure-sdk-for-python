@@ -10,6 +10,7 @@ from unittest import mock
 
 import pytest
 
+from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
 from azure.core.paging import ItemPaged
 
@@ -57,6 +58,39 @@ def _index_response_stub(name="hotels"):
     response.one_lake_security_source = None
     response.e_tag = '"etag"'
     return response
+
+
+class TestSearchIndexClientDelete:
+    @pytest.mark.parametrize("resource", ["index", "synonym_map", "alias", "knowledge_base", "knowledge_source"])
+    def test_delete_resource_by_name_preserves_condition_and_etag(self, resource):
+        with _client() as client:
+            with mock.patch.object(client, "_delete_" + resource) as operation:
+                getattr(client, "delete_" + resource)(
+                    "owned-resource", match_condition=MatchConditions.IfPresent, etag='"etag"'
+                )
+        operation.assert_called_once_with(
+            name="owned-resource", match_condition=MatchConditions.IfPresent, etag='"etag"'
+        )
+
+
+class TestSearchIndexClientKnowledgeBase:
+    def test_create_or_update_knowledge_base_accepts_ga_model_constructor(self):
+        from azure.search.documents.indexes import types
+        from azure.search.documents.indexes.models import KnowledgeBaseAzureOpenAIModel, KnowledgeBaseModelKind
+
+        model = types.KnowledgeBaseModel(
+            kind=KnowledgeBaseModelKind.AZURE_OPEN_AI,
+            azureOpenAIParameters={"resourceUri": "https://example.openai.azure.com", "deploymentId": "query"},
+        )
+        base = types.KnowledgeBase(name="owned-base", knowledgeSources=[], models=[model])
+        with _client() as client:
+            with mock.patch.object(client, "_create_or_update_knowledge_base") as operation:
+                client.create_or_update_knowledge_base(base)
+
+        submitted = operation.call_args.kwargs["knowledge_base"]
+        assert operation.call_args.kwargs["name"] == "owned-base"
+        assert isinstance(submitted.models[0], KnowledgeBaseAzureOpenAIModel)
+        assert submitted.as_dict()["models"] == [model]
 
 
 class TestListIndexes:

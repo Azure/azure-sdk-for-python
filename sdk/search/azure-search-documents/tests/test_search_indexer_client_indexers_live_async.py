@@ -109,7 +109,7 @@ class TestSearchIndexerClientIndexerAsync(AzureRecordedTestCase):
     async def test_create_indexer_returns_created_resource(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        indexer_name = "indexer-create"
+        indexer_name = self.get_resource_name("indexer-create")
         client = make_indexer_client(endpoint)
         index_client = make_index_client(endpoint)
 
@@ -138,7 +138,7 @@ class TestSearchIndexerClientIndexerAsync(AzureRecordedTestCase):
     async def test_get_indexer_returns_created_resource(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        indexer_name = "indexer-get"
+        indexer_name = self.get_resource_name("indexer-get")
         client = make_indexer_client(endpoint)
         index_client = make_index_client(endpoint)
 
@@ -167,8 +167,8 @@ class TestSearchIndexerClientIndexerAsync(AzureRecordedTestCase):
     async def test_get_indexers_and_names_return_created_resources(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        first_indexer_name = "indexer-list-first"
-        second_indexer_name = "indexer-list-second"
+        first_indexer_name = self.get_resource_name("indexer-list-first")
+        second_indexer_name = self.get_resource_name("indexer-list-second")
         client = make_indexer_client(endpoint)
         index_client = make_index_client(endpoint)
 
@@ -200,7 +200,7 @@ class TestSearchIndexerClientIndexerAsync(AzureRecordedTestCase):
     async def test_create_or_update_indexer_replaces_existing_resource(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        indexer_name = "indexer-create-or-update"
+        indexer_name = self.get_resource_name("indexer-create-or-update")
         client = make_indexer_client(endpoint)
         index_client = make_index_client(endpoint)
 
@@ -230,7 +230,7 @@ class TestSearchIndexerClientIndexerAsync(AzureRecordedTestCase):
     async def test_create_or_update_indexer_if_unchanged_uses_model_etag(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        indexer_name = "indexer-create-or-update-if-unchanged"
+        indexer_name = self.get_resource_name("indexer-create-or-update-if-unchanged")
         client = make_indexer_client(endpoint)
         index_client = make_index_client(endpoint)
 
@@ -257,7 +257,7 @@ class TestSearchIndexerClientIndexerAsync(AzureRecordedTestCase):
     async def test_delete_indexer_accepts_name(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        indexer_name = "indexer-delete"
+        indexer_name = self.get_resource_name("indexer-delete")
         client = make_indexer_client(endpoint)
         index_client = make_index_client(endpoint)
 
@@ -283,7 +283,7 @@ class TestSearchIndexerClientIndexerAsync(AzureRecordedTestCase):
     async def test_delete_indexer_if_unchanged_uses_model_etag(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        indexer_name = "indexer-delete-if-unchanged"
+        indexer_name = self.get_resource_name("indexer-delete-if-unchanged")
         client = make_indexer_client(endpoint)
         index_client = make_index_client(endpoint)
 
@@ -311,7 +311,7 @@ class TestSearchIndexerClientIndexerAsync(AzureRecordedTestCase):
     async def test_reset_indexer_accepts_name(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        indexer_name = "indexer-reset"
+        indexer_name = self.get_resource_name("indexer-reset")
         client = make_indexer_client(endpoint)
         index_client = make_index_client(endpoint)
 
@@ -340,7 +340,7 @@ class TestSearchIndexerClientIndexerAsync(AzureRecordedTestCase):
     async def test_run_indexer_updates_status(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        indexer_name = "indexer-run"
+        indexer_name = self.get_resource_name("indexer-run")
         client = make_indexer_client(endpoint)
         index_client = make_index_client(endpoint)
 
@@ -369,7 +369,7 @@ class TestSearchIndexerClientIndexerAsync(AzureRecordedTestCase):
     async def test_get_indexer_status_returns_status_resource(self, endpoint, **kwargs):
         storage_connection_string = kwargs.get("search_storage_connection_string")
         storage_container_name = kwargs.get("search_storage_container_name")
-        indexer_name = "indexer-status"
+        indexer_name = self.get_resource_name("indexer-status")
         client = make_indexer_client(endpoint)
         index_client = make_index_client(endpoint)
 

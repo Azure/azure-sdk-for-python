@@ -9,6 +9,7 @@ from __future__ import annotations
 from unittest import mock
 
 import pytest
+from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential
 
@@ -61,6 +62,43 @@ def _index_response_stub(name="hotels"):
     response.one_lake_security_source = None
     response.e_tag = '"etag"'
     return response
+
+
+@pytest.mark.asyncio
+class TestSearchIndexClientDeleteAsync:
+    @pytest.mark.parametrize("resource", ["index", "synonym_map", "alias", "knowledge_base", "knowledge_source"])
+    async def test_delete_resource_by_name_preserves_condition_and_etag(self, resource):
+        async with _client() as client:
+            with mock.patch.object(client, "_delete_" + resource, new_callable=mock.AsyncMock) as operation:
+                await getattr(client, "delete_" + resource)(
+                    "owned-resource", match_condition=MatchConditions.IfPresent, etag='"etag"'
+                )
+        operation.assert_awaited_once_with(
+            name="owned-resource", match_condition=MatchConditions.IfPresent, etag='"etag"'
+        )
+
+
+@pytest.mark.asyncio
+class TestSearchIndexClientKnowledgeBaseAsync:
+    async def test_create_or_update_knowledge_base_accepts_ga_model_constructor(self):
+        from azure.search.documents.indexes import types
+        from azure.search.documents.indexes.models import KnowledgeBaseAzureOpenAIModel, KnowledgeBaseModelKind
+
+        model = types.KnowledgeBaseModel(
+            kind=KnowledgeBaseModelKind.AZURE_OPEN_AI,
+            azureOpenAIParameters={"resourceUri": "https://example.openai.azure.com", "deploymentId": "query"},
+        )
+        base = types.KnowledgeBase(name="owned-base", knowledgeSources=[], models=[model])
+        async with _client() as client:
+            with mock.patch.object(
+                client, "_create_or_update_knowledge_base", new_callable=mock.AsyncMock
+            ) as operation:
+                await client.create_or_update_knowledge_base(base)
+
+        submitted = operation.call_args.kwargs["knowledge_base"]
+        assert operation.call_args.kwargs["name"] == "owned-base"
+        assert isinstance(submitted.models[0], KnowledgeBaseAzureOpenAIModel)
+        assert submitted.as_dict()["models"] == [model]
 
 
 @pytest.mark.asyncio

@@ -6,6 +6,7 @@
 
 - Added `ApiVersion.V2026_11_01_PREVIEW` and made `2026-11-01-preview` the default.
   Previously advertised API versions remain selectable.
+- Restored explicit `ApiVersion.V2026_10_01` selection without changing the November default.
 - Below operations and models are added for graph querying, index configuration, and retrieval:
   - `SearchClient.graph` (synchronous and asynchronous), including typed provenance,
     diagnostics, evidence, statistics, and explain results.
@@ -44,6 +45,9 @@
   from indexed knowledge sources other than search-index knowledge sources.
 - The service removes `query_hint_processing` from knowledge-base activity models
   other than search-index activity models.
+- `KnowledgeBaseRetrievalClient.retrieve_stream` and its asynchronous equivalent now
+  yield typed payloads directly instead of `KnowledgeBaseRetrievalEvent` envelopes,
+  matching the October GA contract.
 
 ### Bugs Fixed
 
@@ -52,6 +56,16 @@
   those fields to random scoring.
 - Corrected generated File-ingestion poller namespace references through the
   package's reproducible post-generation workaround.
+- Preserved all buffered indexing actions after request failures and prevented
+  asynchronous auto-flush from cancelling its own task.
+- Kept batch wire values synchronized and accepted dictionary batches, including
+  custom error mappings during oversized-batch splitting.
+- Preserved the first search response's metadata and continuation across page iteration.
+- Corrected semantic answer and caption enum encoding and threshold separators.
+- Forwarded conditional-delete options for resource names and extra field-helper properties.
+- Preserved buffered client audience, API version, transport options, and schema-client ownership.
+- Restored registered GA model-name aliases, TypedDict and sequence inputs, constructor overloads,
+  and the callable `indexes.types.KnowledgeBaseModel` alias.
 
 ## 12.1.0b2 (2026-08-27)
 

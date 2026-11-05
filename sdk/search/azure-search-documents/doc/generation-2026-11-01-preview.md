@@ -64,6 +64,86 @@ The spec revision above advances the original pin
 `2c0ca3a8b788bc866d2312b72bc05b49b048973d` only for topic-graph descriptions and
 an example correction; it does not change the wire contract or SDK version.
 
+## Retrieval stream contract
+
+With the generation inputs recorded above, both generated `retrieve_stream`
+methods pass a typed `Stream` or `AsyncStream` to `cls`, not an iterator of raw
+bytes. Genuine November recording reproduced `TypeError` when the handwritten
+wrapper fed those already-deserialized events into its SSE byte decoder.
+An initial response-byte workaround avoided that exception but retained the
+wrong public event-envelope contract. It has been superseded: both handwritten
+`retrieve_stream` overrides are removed, exposing the generated typed streams
+and their direct payload models, matching the intended October GA behavior.
+The November operation retains Work IQ authorization forwarding and terminal
+event handling. Legacy parser helpers remain importable but are not used by
+the public operation.
+
+Unit tests exercise the real generated operation through a mocked pipeline,
+including payload variants, terminal stopping, callbacks, authorization headers,
+and response closure. Both existing SSE recordings replay with direct typed
+payload assertions, and the corresponding samples use those payloads directly.
+This is SDK-owned compatibility, not a service-spec change or emitter defect.
+
+## October GA compatibility carry-forward
+
+The Python comparison baseline is PR #49365 at
+`a4610424b2d91b6e5f13e78dbcc8b6fcac57ac5f`, an intended GA change rather than
+evidence of a published release. The preview retains its November default and
+pinned specification. SDK-owned carry-forward includes explicit October API
+selection, enum aliases, buffered retry and task ownership, canonical batch
+storage, non-destructive paging metadata, semantic encoding, conditional
+deletes, field-helper options, dictionary batch inputs, error-map forwarding,
+buffered client options and schema-client ownership, and handwritten input
+annotations. Vector sequences are normalized to a list of polymorphic models
+in the shared request builder, as in the GA baseline.
+
+GA's
+`indexes.types.KnowledgeBaseModel = Union[KnowledgeBaseAzureOpenAIModel]`
+simplifies to a callable TypedDict, whereas November's three-member union is
+not callable. The approved policy restores that GA alias contract, even though
+it narrows preview-only typing. The additional spec variants explain the
+generated union; this is not a confirmed emitter bug. The customization tool
+restored the single-member alias and added an idempotent exact-match rule to
+the existing post-generation rewriter. Keep this compatibility rule until
+unmodified generated output preserves the GA constructor and type contract.
+Sync/async client regressions exercise constructing and submitting a knowledge
+base using that alias; a static caller probe checks the same inputs.
+
+The final customized preview was compared with the exact GA source revision
+above using the same APIView parser (0.3.31) for both locally built wheels and
+the repository's APIView-to-code-report converter and breaking-change tracker.
+The initial tracker run flagged four enum aliases and seventeen scoring-model
+properties. The enum findings exposed genuine GA regressions: aliases assigned
+after enum creation supported attribute access but were absent from
+`__members__`, causing enum-name lookup to fail. The customization now follows
+GA's runtime enum declaration with `CaseInsensitiveEnumMeta`, registering
+`GPT_5_MINI`, `GPT_5_NANO`, `GPT_5_4_MINI`, and `GPT_5_4_NANO` inside the class.
+This restores attribute identity, registered and case-insensitive name lookup,
+and canonical names while retaining every generated November member.
+Regression tests cover those contracts and preservation of November values.
+
+The refreshed wheel and API snapshot no longer produce the four enum findings.
+The seventeen remaining scoring-property findings are false positives: the
+properties are inherited from generated and compatibility bases and remain
+usable in runtime and MyPy caller probes. No breaking-check suppressions were
+added to the repository.
+
+Runtime comparison covered 623 SDK exports across twelve public modules,
+including inherited members, parameter shapes, and registered enum names and
+values. After the enum repair, these checks find zero confirmed GA-to-preview
+API breaks across the checked surface. They do not prove all service behavior
+or possible typing changes compatible. The MCP detector separately returned
+clean, but did not identify an explicit comparison baseline; the exact-ref
+comparison above is the basis for this compatibility conclusion.
+
+Source changes were requested through `azsdk_customized_code_update` with
+`editScope="CustomCode"`. Some timed-out requests applied partial edits.
+Other requests applied patches but returned `BuildAfterPatchesFailed` during
+global Python dependency setup, independently of local package-venv results.
+Regression-test authoring was handled separately after the tool classified it
+outside its automated customization phase. Local wheel builds and comparative
+API snapshots succeeded independently of the MCP build verdict.
+
 ## Documentation diagnostics
 
 Public CI build 6992015 fails Sphinx on `QueryDebugMode.AGENTIC` with
@@ -94,9 +174,9 @@ package's [environment template](https://github.com/Azure/azure-sdk-for-python/b
 Before recording, confirm:
 
 - A dedicated disposable Search service supports the November preview, semantic
-  ranking, knowledge bases/sources, and File ingestion. The live-test preparer
-  deletes existing indexes, knowledge resources, synonym maps, aliases, indexers,
-  data sources, and skillsets; do not point it at a shared or production service.
+  ranking, knowledge bases/sources, and File ingestion. Service-wide cleanup
+  has been removed from the live-test preparer; tests use their own resource
+  names. Still use only an explicitly authorized test service, not production.
 - `SEARCH_SERVICE_ENDPOINT` and `SEARCH_SERVICE_NAME` identify that service.
   The signed-in principal needs Search Service Contributor and Search Index Data
   Contributor, as in the [test-resource template](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/test-resources.bicep).
@@ -116,5 +196,7 @@ using `AzureKeyCredential` additionally require their documented API key.
 
 Only after the environment is approved, set `AZURE_TEST_RUN_LIVE=true` and leave
 `AZURE_SKIP_LIVE_RECORDING` unset/false, run the live tests, and inspect sanitized
-recordings before updating the package's asset tag. No live run or resource
-provisioning was performed for this CI repair.
+recordings before updating the package's asset tag. The authorized PPE recordings
+have been refreshed and published to `Azure/azure-sdk-assets`, and `assets.json`
+references the published tag. Four new model-backed live cases are deferred;
+all 470 remaining unit and playback tests pass without exclusions.

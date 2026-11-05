@@ -194,6 +194,14 @@ REPLACEMENTS = (
         '                deserialized.get("value", []),\n'
         "            )",
     ),
+    Replacement(
+        "azure/search/documents/indexes/types.py",
+        "keep the approved GA KnowledgeBaseModel alias",
+        "KnowledgeBaseModel = Union[\n"
+        "    KnowledgeBaseAzureOpenAIModel, KnowledgeBaseMicrosoftRetriever1Model, KnowledgeBaseOpenAICompatibleModel\n"
+        "]\n",
+        "KnowledgeBaseModel = Union[KnowledgeBaseAzureOpenAIModel]\n",
+    ),
 )
 
 

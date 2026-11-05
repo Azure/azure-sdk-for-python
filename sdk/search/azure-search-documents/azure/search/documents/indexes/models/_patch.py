@@ -8,7 +8,9 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Literal, Mapping, Optional, Union, overload
+from azure.core import CaseInsensitiveEnumMeta
 from ._models import SearchField as _SearchField
 from ._models import SearchIndexerDataSourceConnection as _SearchIndexerDataSourceConnection
 from ._models import KnowledgeBase as _KnowledgeBase
@@ -28,8 +30,6 @@ from ._enums import (
 )
 
 if TYPE_CHECKING:
-    from enum import Enum
-
     from ._models import (
         AzureActiveDirectoryApplicationCredentials,
         DataChangeDetectionPolicy,
@@ -38,7 +38,8 @@ if TYPE_CHECKING:
         SearchIndexerDataContainer,
         SearchIndexerDataIdentity,
     )
-    from ._enums import ScoringFunctionInterpolation, SearchIndexerDataSourceType
+    from .. import types as _types
+    from ._enums import IndexerPermissionOption, ScoringFunctionInterpolation, SearchIndexerDataSourceType
 
 
 class ScoringFunction(_ScoringFunction):
@@ -157,14 +158,19 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         *,
         name: str,
         type: Union[str, "SearchIndexerDataSourceType"],
-        credentials: "DataSourceCredentials",
-        container: "SearchIndexerDataContainer",
+        credentials: Union["DataSourceCredentials", "_types.DataSourceCredentials"],
+        container: Union["SearchIndexerDataContainer", "_types.SearchIndexerDataContainer"],
         description: Optional[str] = None,
-        identity: Optional["SearchIndexerDataIdentity"] = None,
-        data_change_detection_policy: Optional["DataChangeDetectionPolicy"] = None,
-        data_deletion_detection_policy: Optional["DataDeletionDetectionPolicy"] = None,
+        identity: Optional[Union["SearchIndexerDataIdentity", "_types.SearchIndexerDataIdentity"]] = None,
+        data_change_detection_policy: Optional[
+            Union["DataChangeDetectionPolicy", "_types.DataChangeDetectionPolicy"]
+        ] = None,
+        data_deletion_detection_policy: Optional[
+            Union["DataDeletionDetectionPolicy", "_types.DataDeletionDetectionPolicy"]
+        ] = None,
         e_tag: Optional[str] = None,
-        encryption_key: Optional["SearchResourceEncryptionKey"] = None,
+        encryption_key: Optional[Union["SearchResourceEncryptionKey", "_types.SearchResourceEncryptionKey"]] = None,
+        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
     ) -> None: ...
 
     @overload
@@ -174,13 +180,18 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
         name: str,
         type: Union[str, "SearchIndexerDataSourceType"],
         connection_string: str,
-        container: "SearchIndexerDataContainer",
+        container: Union["SearchIndexerDataContainer", "_types.SearchIndexerDataContainer"],
         description: Optional[str] = None,
-        identity: Optional["SearchIndexerDataIdentity"] = None,
-        data_change_detection_policy: Optional["DataChangeDetectionPolicy"] = None,
-        data_deletion_detection_policy: Optional["DataDeletionDetectionPolicy"] = None,
+        identity: Optional[Union["SearchIndexerDataIdentity", "_types.SearchIndexerDataIdentity"]] = None,
+        data_change_detection_policy: Optional[
+            Union["DataChangeDetectionPolicy", "_types.DataChangeDetectionPolicy"]
+        ] = None,
+        data_deletion_detection_policy: Optional[
+            Union["DataDeletionDetectionPolicy", "_types.DataDeletionDetectionPolicy"]
+        ] = None,
         e_tag: Optional[str] = None,
-        encryption_key: Optional["SearchResourceEncryptionKey"] = None,
+        encryption_key: Optional[Union["SearchResourceEncryptionKey", "_types.SearchResourceEncryptionKey"]] = None,
+        indexer_permission_options: Optional[List[Union[str, "IndexerPermissionOption"]]] = None,
     ) -> None: ...
 
     @overload
@@ -204,8 +215,12 @@ class SearchResourceEncryptionKey(_SearchResourceEncryptionKey):
         key_name: Optional[str] = None,
         vault_uri: Optional[str] = None,
         key_version: Optional[str] = None,
-        access_credentials: Optional["AzureActiveDirectoryApplicationCredentials"] = None,
-        identity: Optional["SearchIndexerDataIdentity"] = None,
+        access_credentials: Optional[
+            Union["AzureActiveDirectoryApplicationCredentials", "_types.AzureActiveDirectoryApplicationCredentials"]
+        ] = None,
+        identity: Optional[Union["SearchIndexerDataIdentity", "_types.SearchIndexerDataIdentity"]] = None,
+        application_id: Optional[str] = None,
+        application_secret: Optional[str] = None,
         is_service_level_key: Optional[bool] = None,
     ) -> None: ...
 
@@ -291,6 +306,44 @@ else:
     SearchFieldDataType.ComplexType = SearchFieldDataType.COMPLEX  # type: ignore[attr-defined]
 
 
+# AzureOpenAIModelName with backward-compatible GPT_5* aliases
+# pylint: disable=enum-must-be-uppercase
+class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Azure Open AI model name that will be called."""
+
+    TEXT_EMBEDDING_ADA002 = "text-embedding-ada-002"
+    TEXT_EMBEDDING3_LARGE = "text-embedding-3-large"
+    TEXT_EMBEDDING3_SMALL = "text-embedding-3-small"
+    GPT4_O = "gpt-4o"
+    GPT4_O_MINI = "gpt-4o-mini"
+    GPT41 = "gpt-4.1"
+    GPT41_MINI = "gpt-4.1-mini"
+    GPT41_NANO = "gpt-4.1-nano"
+    GPT5 = "gpt-5"
+    GPT5_MINI = "gpt-5-mini"
+    GPT5_NANO = "gpt-5-nano"
+    GPT51 = "gpt-5.1"
+    GPT52 = "gpt-5.2"
+    GPT54 = "gpt-5.4"
+    GPT5_4_MINI = "gpt-5.4-mini"
+    GPT5_4_NANO = "gpt-5.4-nano"
+    GPT55 = "gpt-5.5"
+    GPT56_SOL = "gpt-5.6-sol"
+    GPT56_TERRA = "gpt-5.6-terra"
+    GPT56_LUNA = "gpt-5.6-luna"
+    GPT6_ASTRA = "gpt-6-astra"
+    GPT6_SOL = "gpt-6-sol"
+    GPT6_LUNA = "gpt-6-luna"
+    GPT61_SOL = "gpt-6.1-sol"
+    GPT_5_MINI = GPT5_MINI
+    GPT_5_NANO = GPT5_NANO
+    GPT_5_4_MINI = GPT5_4_MINI
+    GPT_5_4_NANO = GPT5_4_NANO
+
+
+# pylint: enable=enum-must-be-uppercase
+
+
 def Collection(typ: Any) -> str:
     """Helper function to create a collection type string.
 
@@ -314,7 +367,7 @@ def SimpleField(
     filterable: bool = False,
     sortable: bool = False,
     facetable: bool = False,
-    **kw,  # pylint:disable=unused-argument
+    **kw,
 ) -> SearchField:
     """Configure a simple field for an Azure Search Index
 
@@ -365,6 +418,7 @@ def SimpleField(
     # If type is an enum, get its value; otherwise use it as-is
     field_type = type.value if isinstance(type, SearchFieldDataType) else type
     result: Dict[str, Any] = {
+        **kw,
         "name": name,
         "type": field_type,
         "key": key,
@@ -391,7 +445,7 @@ def SearchableField(
     search_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
     index_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
     synonym_map_names: Optional[List[str]] = None,
-    **kw,  # pylint:disable=unused-argument
+    **kw,
 ) -> SearchField:
     """Configure a searchable text field for an Azure Search Index
 
@@ -511,6 +565,7 @@ def SearchableField(
     """
     typ = Collection(SearchFieldDataType.STRING) if collection else SearchFieldDataType.STRING
     result: Dict[str, Any] = {
+        **kw,
         "name": name,
         "type": typ,
         "key": key,
@@ -536,7 +591,7 @@ def ComplexField(
     name: str,
     collection: bool = False,
     fields: Optional[List[SearchField]] = None,
-    **kw,  # pylint:disable=unused-argument
+    **kw,
 ) -> SearchField:
     """Configure a Complex or Complex collection field for an Azure Search Index
 
@@ -551,7 +606,7 @@ def ComplexField(
     :rtype:  SearchField
     """
     typ = Collection(SearchFieldDataType.COMPLEX) if collection else SearchFieldDataType.COMPLEX
-    result: Dict[str, Any] = {"name": name, "type": typ, "fields": fields}
+    result: Dict[str, Any] = {**kw, "name": name, "type": typ, "fields": fields}
     return SearchField(**result)
 
 
@@ -563,6 +618,7 @@ __all__: list[str] = [
     "RandomScoringFunction",
     "TagScoringFunction",
     "KnowledgeBase",
+    "AzureOpenAIModelName",
     "SearchField",
     "SearchFieldDataType",
     "SearchIndexerDataSourceConnection",

@@ -8,6 +8,7 @@ namespace azure.search.documents
         V2025_09_01 = "2025-09-01"
         V2026_04_01 = "2026-04-01"
         V2026_08_01_PREVIEW = "2026-08-01-preview"
+        V2026_10_01 = "2026-10-01"
         V2026_11_01_PREVIEW = "2026-11-01-preview"
 
 
@@ -155,7 +156,7 @@ namespace azure.search.documents
         @distributed_trace
         def index_documents(
                 self, 
-                batch: IndexDocumentsBatch, 
+                batch: Union[IndexDocumentsBatch, IndexDocumentsBatch, Mapping[str, Any]], 
                 **kwargs: Any
             ) -> List[IndexingResult]: ...
 
@@ -214,7 +215,7 @@ namespace azure.search.documents
                 speller: Optional[Union[str, QuerySpellerType]] = ..., 
                 top: Optional[int] = ..., 
                 vector_filter_mode: Optional[Union[str, VectorFilterMode]] = ..., 
-                vector_queries: Optional[List[VectorQuery]] = ..., 
+                vector_queries: Optional[Sequence[Union[VectorQuery, VectorQuery]]] = ..., 
                 **kwargs: Any
             ) -> SearchItemPaged[Dict]: ...
 
@@ -295,7 +296,7 @@ namespace azure.search.documents
         @distributed_trace
         def index_documents(
                 self, 
-                batch: IndexDocumentsBatch, 
+                batch: Union[IndexDocumentsBatch, IndexDocumentsBatch, Mapping[str, Any]], 
                 **kwargs
             ) -> List[IndexingResult]: ...
 
@@ -462,7 +463,7 @@ namespace azure.search.documents.aio
         @distributed_trace_async
         async def index_documents(
                 self, 
-                batch: IndexDocumentsBatch, 
+                batch: Union[IndexDocumentsBatch, IndexDocumentsBatch, Mapping[str, Any]], 
                 **kwargs: Any
             ) -> List[IndexingResult]: ...
 
@@ -521,7 +522,7 @@ namespace azure.search.documents.aio
                 speller: Optional[Union[str, QuerySpellerType]] = ..., 
                 top: Optional[int] = ..., 
                 vector_filter_mode: Optional[Union[str, VectorFilterMode]] = ..., 
-                vector_queries: Optional[List[VectorQuery]] = ..., 
+                vector_queries: Optional[Sequence[Union[VectorQuery, VectorQuery]]] = ..., 
                 **kwargs: Any
             ) -> AsyncSearchItemPaged[Dict]: ...
 
@@ -602,7 +603,7 @@ namespace azure.search.documents.aio
         @distributed_trace_async
         async def index_documents(
                 self, 
-                batch: IndexDocumentsBatch, 
+                batch: Union[IndexDocumentsBatch, IndexDocumentsBatch, Mapping[str, Any]], 
                 **kwargs
             ) -> List[IndexingResult]: ...
 
@@ -646,7 +647,7 @@ namespace azure.search.documents.indexes
         def analyze_text(
                 self, 
                 index_name: str, 
-                analyze_request: AnalyzeTextOptions, 
+                analyze_request: Union[AnalyzeTextOptions, AnalyzeTextOptions, IO[bytes]], 
                 **kwargs: Any
             ) -> AnalyzeResult: ...
 
@@ -797,7 +798,7 @@ namespace azure.search.documents.indexes
         @distributed_trace
         def create_or_update_alias(
                 self, 
-                alias: Union[SearchAlias, JSON], 
+                alias: Union[SearchAlias, SearchAlias, JSON], 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
                 **kwargs: Any
@@ -806,7 +807,7 @@ namespace azure.search.documents.indexes
         @distributed_trace
         def create_or_update_index(
                 self, 
-                index: Union[SearchIndex, JSON], 
+                index: Union[SearchIndex, SearchIndex, JSON], 
                 allow_index_downtime: Optional[bool] = None, 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
@@ -816,7 +817,7 @@ namespace azure.search.documents.indexes
         @distributed_trace
         def create_or_update_knowledge_base(
                 self, 
-                knowledge_base: Union[KnowledgeBase, JSON], 
+                knowledge_base: Union[KnowledgeBase, KnowledgeBase, JSON], 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
                 **kwargs: Any
@@ -825,7 +826,7 @@ namespace azure.search.documents.indexes
         @distributed_trace
         def create_or_update_knowledge_source(
                 self, 
-                knowledge_source: Union[KnowledgeSource, JSON], 
+                knowledge_source: Union[KnowledgeSource, KnowledgeSource, JSON], 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
                 **kwargs: Any
@@ -834,7 +835,7 @@ namespace azure.search.documents.indexes
         @distributed_trace
         def create_or_update_synonym_map(
                 self, 
-                synonym_map: Union[SynonymMap, JSON], 
+                synonym_map: Union[SynonymMap, SynonymMap, JSON], 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
                 **kwargs: Any
@@ -1221,7 +1222,7 @@ namespace azure.search.documents.indexes
         @distributed_trace
         def create_or_update_data_source_connection(
                 self, 
-                data_source_connection: Union[SearchIndexerDataSourceConnection, JSON], 
+                data_source_connection: Union[SearchIndexerDataSourceConnection, SearchIndexerDataSourceConnection, JSON], 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
                 skip_indexer_reset_requirement_for_cache: Optional[bool] = ..., 
@@ -1231,7 +1232,7 @@ namespace azure.search.documents.indexes
         @distributed_trace
         def create_or_update_indexer(
                 self, 
-                indexer: Union[SearchIndexer, JSON], 
+                indexer: Union[SearchIndexer, SearchIndexer, JSON], 
                 *, 
                 disable_cache_reprocessing_change_detection: Optional[bool] = ..., 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
@@ -1242,7 +1243,7 @@ namespace azure.search.documents.indexes
         @distributed_trace
         def create_or_update_skillset(
                 self, 
-                skillset: Union[SearchIndexerSkillset, JSON], 
+                skillset: Union[SearchIndexerSkillset, SearchIndexerSkillset, JSON], 
                 *, 
                 disable_cache_reprocessing_change_detection: Optional[bool] = ..., 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
@@ -1439,7 +1440,7 @@ namespace azure.search.documents.indexes
         def resync(
                 self, 
                 name: str, 
-                indexer_resync: Union[IndexerResyncBody, JSON, IO[bytes]], 
+                indexer_resync: Union[IndexerResyncBody, IndexerResyncBody, JSON, IO[bytes]], 
                 **kwargs: Any
             ) -> None: ...
 
@@ -1477,7 +1478,7 @@ namespace azure.search.documents.indexes.aio
         async def analyze_text(
                 self, 
                 index_name: str, 
-                analyze_request: AnalyzeTextOptions, 
+                analyze_request: Union[AnalyzeTextOptions, AnalyzeTextOptions, IO[bytes]], 
                 **kwargs: Any
             ) -> AnalyzeResult: ...
 
@@ -1628,7 +1629,7 @@ namespace azure.search.documents.indexes.aio
         @distributed_trace_async
         async def create_or_update_alias(
                 self, 
-                alias: Union[SearchAlias, JSON], 
+                alias: Union[SearchAlias, SearchAlias, JSON], 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
                 **kwargs: Any
@@ -1637,7 +1638,7 @@ namespace azure.search.documents.indexes.aio
         @distributed_trace_async
         async def create_or_update_index(
                 self, 
-                index: Union[SearchIndex, JSON], 
+                index: Union[SearchIndex, SearchIndex, JSON], 
                 allow_index_downtime: Optional[bool] = None, 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
@@ -1647,7 +1648,7 @@ namespace azure.search.documents.indexes.aio
         @distributed_trace_async
         async def create_or_update_knowledge_base(
                 self, 
-                knowledge_base: Union[KnowledgeBase, JSON], 
+                knowledge_base: Union[KnowledgeBase, KnowledgeBase, JSON], 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
                 **kwargs: Any
@@ -1656,7 +1657,7 @@ namespace azure.search.documents.indexes.aio
         @distributed_trace_async
         async def create_or_update_knowledge_source(
                 self, 
-                knowledge_source: Union[KnowledgeSource, JSON], 
+                knowledge_source: Union[KnowledgeSource, KnowledgeSource, JSON], 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
                 **kwargs: Any
@@ -1665,7 +1666,7 @@ namespace azure.search.documents.indexes.aio
         @distributed_trace_async
         async def create_or_update_synonym_map(
                 self, 
-                synonym_map: Union[SynonymMap, JSON], 
+                synonym_map: Union[SynonymMap, SynonymMap, JSON], 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
                 **kwargs: Any
@@ -2052,7 +2053,7 @@ namespace azure.search.documents.indexes.aio
         @distributed_trace_async
         async def create_or_update_data_source_connection(
                 self, 
-                data_source_connection: Union[SearchIndexerDataSourceConnection, JSON], 
+                data_source_connection: Union[SearchIndexerDataSourceConnection, SearchIndexerDataSourceConnection, JSON], 
                 *, 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
                 skip_indexer_reset_requirement_for_cache: Optional[bool] = ..., 
@@ -2062,7 +2063,7 @@ namespace azure.search.documents.indexes.aio
         @distributed_trace_async
         async def create_or_update_indexer(
                 self, 
-                indexer: Union[SearchIndexer, JSON], 
+                indexer: Union[SearchIndexer, SearchIndexer, JSON], 
                 *, 
                 disable_cache_reprocessing_change_detection: Optional[bool] = ..., 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
@@ -2073,7 +2074,7 @@ namespace azure.search.documents.indexes.aio
         @distributed_trace_async
         async def create_or_update_skillset(
                 self, 
-                skillset: Union[SearchIndexerSkillset, JSON], 
+                skillset: Union[SearchIndexerSkillset, SearchIndexerSkillset, JSON], 
                 *, 
                 disable_cache_reprocessing_change_detection: Optional[bool] = ..., 
                 match_condition: MatchConditions = MatchConditions.Unconditionally, 
@@ -2270,7 +2271,7 @@ namespace azure.search.documents.indexes.aio
         async def resync(
                 self, 
                 name: str, 
-                indexer_resync: Union[IndexerResyncBody, JSON, IO[bytes]], 
+                indexer_resync: Union[IndexerResyncBody, IndexerResyncBody, JSON, IO[bytes]], 
                 **kwargs: Any
             ) -> None: ...
 
@@ -2680,6 +2681,10 @@ namespace azure.search.documents.indexes.models
         GPT6_ASTRA = "gpt-6-astra"
         GPT6_LUNA = "gpt-6-luna"
         GPT6_SOL = "gpt-6-sol"
+        GPT_5_4_MINI = "gpt-5.4-mini"
+        GPT_5_4_NANO = "gpt-5.4-nano"
+        GPT_5_MINI = "gpt-5-mini"
+        GPT_5_NANO = "gpt-5-nano"
         TEXT_EMBEDDING3_LARGE = "text-embedding-3-large"
         TEXT_EMBEDDING3_SMALL = "text-embedding-3-small"
         TEXT_EMBEDDING_ADA002 = "text-embedding-ada-002"
@@ -7052,14 +7057,15 @@ namespace azure.search.documents.indexes.models
         def __init__(
                 self, 
                 *, 
-                container: SearchIndexerDataContainer, 
-                credentials: DataSourceCredentials, 
-                data_change_detection_policy: Optional[DataChangeDetectionPolicy] = ..., 
-                data_deletion_detection_policy: Optional[DataDeletionDetectionPolicy] = ..., 
+                container: Union[SearchIndexerDataContainer, SearchIndexerDataContainer], 
+                credentials: Union[DataSourceCredentials, DataSourceCredentials], 
+                data_change_detection_policy: Optional[Union[DataChangeDetectionPolicy, DataChangeDetectionPolicy]] = ..., 
+                data_deletion_detection_policy: Optional[Union[DataDeletionDetectionPolicy, DataDeletionDetectionPolicy]] = ..., 
                 description: Optional[str] = ..., 
                 e_tag: Optional[str] = ..., 
-                encryption_key: Optional[SearchResourceEncryptionKey] = ..., 
-                identity: Optional[SearchIndexerDataIdentity] = ..., 
+                encryption_key: Optional[Union[SearchResourceEncryptionKey, SearchResourceEncryptionKey]] = ..., 
+                identity: Optional[Union[SearchIndexerDataIdentity, SearchIndexerDataIdentity]] = ..., 
+                indexer_permission_options: Optional[List[Union[str, IndexerPermissionOption]]] = ..., 
                 name: str, 
                 type: Union[str, SearchIndexerDataSourceType]
             ) -> None: ...
@@ -7069,13 +7075,14 @@ namespace azure.search.documents.indexes.models
                 self, 
                 *, 
                 connection_string: str, 
-                container: SearchIndexerDataContainer, 
-                data_change_detection_policy: Optional[DataChangeDetectionPolicy] = ..., 
-                data_deletion_detection_policy: Optional[DataDeletionDetectionPolicy] = ..., 
+                container: Union[SearchIndexerDataContainer, SearchIndexerDataContainer], 
+                data_change_detection_policy: Optional[Union[DataChangeDetectionPolicy, DataChangeDetectionPolicy]] = ..., 
+                data_deletion_detection_policy: Optional[Union[DataDeletionDetectionPolicy, DataDeletionDetectionPolicy]] = ..., 
                 description: Optional[str] = ..., 
                 e_tag: Optional[str] = ..., 
-                encryption_key: Optional[SearchResourceEncryptionKey] = ..., 
-                identity: Optional[SearchIndexerDataIdentity] = ..., 
+                encryption_key: Optional[Union[SearchResourceEncryptionKey, SearchResourceEncryptionKey]] = ..., 
+                identity: Optional[Union[SearchIndexerDataIdentity, SearchIndexerDataIdentity]] = ..., 
+                indexer_permission_options: Optional[List[Union[str, IndexerPermissionOption]]] = ..., 
                 name: str, 
                 type: Union[str, SearchIndexerDataSourceType]
             ) -> None: ...
@@ -7431,8 +7438,10 @@ namespace azure.search.documents.indexes.models
         def __init__(
                 self, 
                 *, 
-                access_credentials: Optional[AzureActiveDirectoryApplicationCredentials] = ..., 
-                identity: Optional[SearchIndexerDataIdentity] = ..., 
+                access_credentials: Optional[Union[AzureActiveDirectoryApplicationCredentials, AzureActiveDirectoryApplicationCredentials]] = ..., 
+                application_id: Optional[str] = ..., 
+                application_secret: Optional[str] = ..., 
+                identity: Optional[Union[SearchIndexerDataIdentity, SearchIndexerDataIdentity]] = ..., 
                 is_service_level_key: Optional[bool] = ..., 
                 key_name: Optional[str] = ..., 
                 key_version: Optional[str] = ..., 
@@ -10056,6 +10065,13 @@ namespace azure.search.documents.indexes.types
         kind: Literal[KnowledgeBaseModelKind.MICROSOFT_RETRIEVER1]
 
 
+    class azure.search.documents.indexes.types.KnowledgeBaseModel(TypedDict, total=False):
+        key "azureOpenAIParameters": Required[AzureOpenAIVectorizerParameters]
+        key "kind": Required[Literal[KnowledgeBaseModelKind.AZURE_OPEN_AI]]
+        azureOpenAIParameters: AzureOpenAIVectorizerParameters
+        kind: Literal[KnowledgeBaseModelKind.AZURE_OPEN_AI]
+
+
     class azure.search.documents.indexes.types.KnowledgeBaseModelKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AZURE_OPEN_AI = "azureOpenAI"
         MICROSOFT_RETRIEVER1 = "microsoftRetriever1"
@@ -11697,16 +11713,38 @@ namespace azure.search.documents.knowledgebases
                 **kwargs: Any
             ) -> KnowledgeBaseRetrievalResponse: ...
 
-        @distributed_trace
+        @overload
         def retrieve_stream(
                 self, 
-                retrieval_request: Union[KnowledgeBaseRetrievalRequest, dict[str, Any], IO[bytes]], 
+                retrieval_request: KnowledgeBaseRetrievalRequest, 
                 *, 
                 content_type: str = "application/json", 
                 query_source_authorization: Optional[str] = ..., 
                 query_work_iq_source_authorization: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> KnowledgeBaseRetrievalStream: ...
+            ) -> Stream[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent]]: ...
+
+        @overload
+        def retrieve_stream(
+                self, 
+                retrieval_request: KnowledgeBaseRetrievalRequest, 
+                *, 
+                content_type: str = "application/json", 
+                query_source_authorization: Optional[str] = ..., 
+                query_work_iq_source_authorization: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> Stream[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent]]: ...
+
+        @overload
+        def retrieve_stream(
+                self, 
+                retrieval_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                query_source_authorization: Optional[str] = ..., 
+                query_work_iq_source_authorization: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> Stream[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent]]: ...
 
         def send_request(
                 self, 
@@ -11803,16 +11841,38 @@ namespace azure.search.documents.knowledgebases.aio
                 **kwargs: Any
             ) -> KnowledgeBaseRetrievalResponse: ...
 
-        @distributed_trace_async
+        @overload
         async def retrieve_stream(
                 self, 
-                retrieval_request: Union[KnowledgeBaseRetrievalRequest, dict[str, Any], IO[bytes]], 
+                retrieval_request: KnowledgeBaseRetrievalRequest, 
                 *, 
                 content_type: str = "application/json", 
                 query_source_authorization: Optional[str] = ..., 
                 query_work_iq_source_authorization: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> AsyncKnowledgeBaseRetrievalStream: ...
+            ) -> AsyncStream[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent]]: ...
+
+        @overload
+        async def retrieve_stream(
+                self, 
+                retrieval_request: KnowledgeBaseRetrievalRequest, 
+                *, 
+                content_type: str = "application/json", 
+                query_source_authorization: Optional[str] = ..., 
+                query_work_iq_source_authorization: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncStream[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent]]: ...
+
+        @overload
+        async def retrieve_stream(
+                self, 
+                retrieval_request: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                query_source_authorization: Optional[str] = ..., 
+                query_work_iq_source_authorization: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncStream[Union[KnowledgeBaseRetrievalStartedEvent, KnowledgeBaseActivityStartedEvent, KnowledgeBaseActivityRecord, KnowledgeBaseAnswerCompletedEvent, list[KnowledgeBaseReference], KnowledgeBaseStreamErrorEvent, KnowledgeBaseResponseCompletedEvent]]: ...
 
         def send_request(
                 self, 

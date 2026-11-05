@@ -7801,9 +7801,7 @@ ScoringFunction = Union[
     TagScoringFunction,
 ]
 VectorSearchAlgorithmConfiguration = Union[ExhaustiveKnnAlgorithmConfiguration, HnswAlgorithmConfiguration]
-KnowledgeBaseModel = Union[
-    KnowledgeBaseAzureOpenAIModel, KnowledgeBaseMicrosoftRetriever1Model, KnowledgeBaseOpenAICompatibleModel
-]
+KnowledgeBaseModel = Union[KnowledgeBaseAzureOpenAIModel]
 McpServerAuthentication = Union[McpServerFoundryConnectionAuthentication, McpServerStoredHeadersAuthentication]
 McpServerOutputParsing = Union[
     McpServerAutoOutputParsing, McpServerJsonOutputParsing, McpServerNoneOutputParsing, McpServerSplitOutputParsing

@@ -23,6 +23,12 @@ AUDIENCE = "https://search.azure.com/"
 class _AsyncResponse:
     def __init__(self):
         self.closed = False
+        self.status_code = 200
+        self.headers = {"Content-Type": "text/event-stream"}
+        self.raw_stream = None
+
+    def iter_bytes(self):
+        return self.raw_stream
 
     async def close(self):
         self.closed = True
@@ -166,74 +172,79 @@ class TestKnowledgeBaseRetrievalStreamAsync:
         assert response.closed
         assert raw_stream.closed
 
-    async def test_client_wraps_generated_stream_and_composes_cls(self):
+    @pytest.mark.parametrize("terminal", ["response.completed", "error"])
+    @pytest.mark.parametrize("use_cls", [False, True])
+    async def test_retrieve_stream_yields_ga_payloads_and_preserves_november_options(self, terminal, use_cls):
         require_capability(
             "azure.search.documents.knowledgebases.aio.KnowledgeBaseRetrievalClient.retrieve_stream",
-            "AsyncKnowledgeBaseRetrievalStream",
         )
-        from azure.search.documents.knowledgebases.aio import (
-            AsyncKnowledgeBaseRetrievalStream,
-            KnowledgeBaseRetrievalClient,
+        from azure.search.documents.knowledgebases.aio import KnowledgeBaseRetrievalClient
+        from azure.search.documents._utils.streaming_base import AsyncStream
+        from azure.search.documents.knowledgebases.models import (
+            KnowledgeBaseActivityStartedEvent,
+            KnowledgeBaseAnswerCompletedEvent,
+            KnowledgeBaseResponseCompletedEvent,
+            KnowledgeBaseRetrievalRequest,
+            KnowledgeBaseRetrievalStartedEvent,
+            KnowledgeBaseSearchIndexActivityRecord,
+            KnowledgeBaseSearchIndexReference,
+            KnowledgeBaseStreamErrorEvent,
         )
-        from azure.search.documents.knowledgebases.models import KnowledgeBaseRetrievalRequest
 
         response = _AsyncResponse()
-        raw_stream = _AsyncRawStream([_frame("response.completed", {"statusCode": 200, "response": {}})])
-        pipeline_response = SimpleNamespace(http_response=response)
-        generated_kwargs = {}
-
-        async def generated_retrieve_stream(_self, _request, **kwargs):
-            generated_kwargs.update(kwargs)
-            return kwargs["cls"](pipeline_response, raw_stream, {"content-type": "text/event-stream"})
-
-        client = KnowledgeBaseRetrievalClient(
-            ENDPOINT, AzureKeyCredential(KEY), knowledge_base_name=KNOWLEDGE_BASE_NAME
+        terminal_payload = (
+            {"statusCode": 200, "response": {}}
+            if terminal == "response.completed"
+            else {"error": {"code": "Failed", "message": "retrieval failed"}}
         )
-        with mock.patch(
-            "azure.search.documents.knowledgebases.aio._patch._KnowledgeBaseRetrievalClient.retrieve_stream",
-            new=generated_retrieve_stream,
-        ):
-            stream = await client.retrieve_stream(
-                KnowledgeBaseRetrievalRequest(),
-                query_source_authorization="query-token",
-                query_work_iq_source_authorization="work-iq-token",
-            )
-        assert isinstance(stream, AsyncKnowledgeBaseRetrievalStream)
-        assert generated_kwargs["query_source_authorization"] == "query-token"
-        assert generated_kwargs["query_work_iq_source_authorization"] == "work-iq-token"
-        await stream.close()
-
+        response.raw_stream = _AsyncRawStream(
+            [
+                _frame("retrieval.started", {"requestId": "request-id", "knowledgeBaseName": KNOWLEDGE_BASE_NAME}),
+                _frame("activity.started", {"id": 1, "type": "searchIndex"}),
+                _frame("activity.completed", {"id": 1, "type": "searchIndex"}),
+                _frame("answer.completed", {"messageIndex": 0, "message": {"role": "assistant", "content": []}}),
+                _frame("references.completed", [{"type": "searchIndex", "id": "doc-1", "activitySource": 1}]),
+                _frame(terminal, terminal_payload),
+                _frame("must.not.be.consumed", {}),
+            ]
+        )
+        pipeline_response = SimpleNamespace(http_response=response)
         observed = {}
 
         def custom_cls(received_pipeline_response, typed_stream, headers):
             observed.update(pipeline_response=received_pipeline_response, stream=typed_stream, headers=headers)
-            return "custom-result"
+            return typed_stream
 
-        response = _AsyncResponse()
-        raw_stream = _AsyncRawStream([])
-        pipeline_response = SimpleNamespace(http_response=response)
-        with mock.patch(
-            "azure.search.documents.knowledgebases.aio._patch._KnowledgeBaseRetrievalClient.retrieve_stream",
-            new=generated_retrieve_stream,
-        ):
-            result = await client.retrieve_stream(KnowledgeBaseRetrievalRequest(), cls=custom_cls)
-        assert result == "custom-result"
-        assert isinstance(observed["stream"], AsyncKnowledgeBaseRetrievalStream)
-        await observed["stream"].close()
-
-        response = _AsyncResponse()
-        raw_stream = _AsyncRawStream([])
-        pipeline_response = SimpleNamespace(http_response=response)
-
-        def raising_cls(_pipeline_response, _typed_stream, _headers):
-            raise RuntimeError("custom callback failed")
-
-        with mock.patch(
-            "azure.search.documents.knowledgebases.aio._patch._KnowledgeBaseRetrievalClient.retrieve_stream",
-            new=generated_retrieve_stream,
-        ):
-            with pytest.raises(RuntimeError, match="custom callback failed"):
-                await client.retrieve_stream(KnowledgeBaseRetrievalRequest(), cls=raising_cls)
+        async with KnowledgeBaseRetrievalClient(
+            ENDPOINT, AzureKeyCredential(KEY), knowledge_base_name=KNOWLEDGE_BASE_NAME
+        ) as client:
+            with mock.patch.object(
+                client._client._pipeline, "run", new_callable=mock.AsyncMock, return_value=pipeline_response
+            ) as run:
+                options = {"cls": custom_cls} if use_cls else {}
+                stream = await client.retrieve_stream(
+                    KnowledgeBaseRetrievalRequest(),
+                    query_source_authorization="query-token",
+                    query_work_iq_source_authorization="work-iq-token",
+                    **options,
+                )
+                async with stream:
+                    assert isinstance(stream, AsyncStream)
+                    events = [event async for event in stream]
+        if use_cls:
+            assert observed["pipeline_response"] is pipeline_response
+            assert observed["stream"] is stream
+        assert isinstance(events[0], KnowledgeBaseRetrievalStartedEvent)
+        assert isinstance(events[1], KnowledgeBaseActivityStartedEvent)
+        assert isinstance(events[2], KnowledgeBaseSearchIndexActivityRecord)
+        assert isinstance(events[3], KnowledgeBaseAnswerCompletedEvent)
+        assert isinstance(events[4][0], KnowledgeBaseSearchIndexReference)
+        expected_terminal = (
+            KnowledgeBaseResponseCompletedEvent if terminal == "response.completed" else KnowledgeBaseStreamErrorEvent
+        )
+        assert isinstance(events[5], expected_terminal)
+        assert len(events) == 6
+        request = run.call_args.args[0]
+        assert request.headers["x-ms-query-source-authorization"] == "query-token"
+        assert request.headers["x-ms-query-work-iq-source-authorization"] == "work-iq-token"
         assert response.closed
-        assert raw_stream.closed
-        await client.close()

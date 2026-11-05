@@ -8,12 +8,17 @@ from __future__ import annotations
 
 from devtools_testutils import AzureRecordedTestCase
 
+from _capabilities import require_capability
 from _search_helpers import (
     HOTEL_SUGGESTER_NAME,
     LARGE_HOTEL_DOCUMENT_COUNT,
     SEARCH_SELECT_FIELDS,
 )
-from _search_helpers_async import hotel_index, live_test
+from _search_helpers_async import (
+    hotel_index,
+    live_test,
+    make_index_client,
+)
 
 
 async def _collect(async_iterable):
@@ -30,6 +35,55 @@ def _assert_budget_results(results):
 
 
 class TestSearchClientSearchAsync(AzureRecordedTestCase):
+    @live_test()
+    async def test_search_more_like_this_excludes_seed_document(self, endpoint):
+        require_capability("azure.search.documents.aio.SearchClient.search.more_like_this")
+        index_name = self.get_resource_name("index-search-more-like-this")
+
+        async with hotel_index(self, endpoint, index_name) as (search_client, documents):
+            results = await _collect(await search_client.search(more_like_this="8", select=["HotelId"], top=3))
+
+            assert results
+            result_ids = {result["HotelId"] for result in results}
+            assert "8" not in result_ids
+            assert result_ids <= {document["HotelId"] for document in documents}
+
+    @live_test()
+    async def test_search_random_scoring_preserves_seeded_order(self, endpoint):
+        require_capability(
+            "azure.search.documents.indexes.models.RandomScoringFunction",
+            "azure.search.documents.indexes.models.RandomScoringParameters",
+        )
+        from azure.search.documents.indexes.models import RandomScoringFunction, RandomScoringParameters, ScoringProfile
+
+        index_name = self.get_resource_name("index-search-random-scoring")
+        async with hotel_index(self, endpoint, index_name) as (search_client, documents):
+            async with make_index_client(endpoint) as index_client:
+                index = await index_client.get_index(index_name)
+                index.scoring_profiles = [
+                    ScoringProfile(
+                        name="random-hotels",
+                        functions=[RandomScoringFunction(parameters=RandomScoringParameters(seed_parameter="seed"))],
+                    )
+                ]
+                await index_client.create_or_update_index(index)
+
+            options = {
+                "search_text": "*",
+                "scoring_profile": "random-hotels",
+                "scoring_parameters": ["seed-42"],
+                "select": ["HotelId"],
+                "top": len(documents),
+            }
+            first = await _collect(await search_client.search(**options))
+            second = await _collect(await search_client.search(**options))
+
+            assert len(first) == len(documents)
+            assert {result["HotelId"] for result in first} == {document["HotelId"] for document in documents}
+            assert [(result["HotelId"], result["@search.score"]) for result in first] == [
+                (result["HotelId"], result["@search.score"]) for result in second
+            ]
+
     @live_test()
     async def test_search_returns_documents_matching_search_text(self, endpoint):
         index_name = self.get_resource_name("index-search-text")

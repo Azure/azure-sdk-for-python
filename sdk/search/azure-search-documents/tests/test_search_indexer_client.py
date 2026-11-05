@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from unittest import mock
 
+import pytest
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
 
@@ -33,6 +34,19 @@ KEY = "fake-api-key"
 
 def _client() -> SearchIndexerClient:
     return SearchIndexerClient(ENDPOINT, AzureKeyCredential(KEY))
+
+
+class TestSearchIndexerClientDelete:
+    @pytest.mark.parametrize("resource", ["data_source_connection", "indexer", "skillset"])
+    def test_delete_resource_by_name_preserves_condition_and_etag(self, resource):
+        with _client() as client:
+            with mock.patch.object(client, "_delete_" + resource) as operation:
+                getattr(client, "delete_" + resource)(
+                    "owned-resource", match_condition=MatchConditions.IfPresent, etag='"etag"'
+                )
+        operation.assert_called_once_with(
+            name="owned-resource", match_condition=MatchConditions.IfPresent, etag='"etag"'
+        )
 
 
 class TestSearchIndexerCreateOrUpdateDataSourceConnection:
