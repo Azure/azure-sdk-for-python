@@ -228,85 +228,69 @@ and SDP offer/answer exchange (`rtc.call.sdp.create` and `rtc.call.sdp.created`)
 
 Start with the [text conversation sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_realtime_text_conversation.py)
 or [microphone sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_realtime_audio_conversation_async.py).
+The [async interruption sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_realtime_interruption_async.py)
+cancels a spoken response and confirms truncation over the WebSocket.
+It requires no audio devices: because it plays no audio, it reports zero heard milliseconds.
+A real player must report its actual playback position.
+The separate [sync REST example](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_read_generated_audio.py)
+reads an existing generated-audio artifact and optionally saves it to a new output file.
+It requires the stored item ID from REST and a deployment that persists unheard audio.
 
 ### Voice Agent GPT Live (preview)
 
-GPT Live uses a separate client and agent definition; it does not change Realtime behavior.
-The synchronous and asynchronous clients use the same access paths:
+Use `.beta.voice_agents.live` for GPT Live sessions and `.beta.voice_agents.live_conversations`
+for their stored conversations. Realtime uses separate clients and agent definitions.
 
-| | Realtime | GPT Live |
-|---|---|---|
-| Agent definition | `VoiceAgentDefinition` | `VoiceAgentLiveDefinition` |
-| WebSocket client | `.beta.voice_agents.realtime` | `.beta.voice_agents.live` |
-| Stored conversations | `.beta.voice_agents.conversations` | `.beta.voice_agents.live_conversations` |
+**Get started**
 
-Install the WebSocket dependencies:
+1. Install the sample dependencies:
 
 ```powershell
 pip install "azure-ai-projects[voice]" azure-identity python-dotenv
 ```
 
-Set `FOUNDRY_PROJECT_ENDPOINT` and `FOUNDRY_VOICE_AGENT_MODEL` to your project endpoint and
-GPT Live **deployment name**, not a model catalog ID. Authenticate with `DefaultAzureCredential`.
-Use `allow_preview=True` when creating an agent through `project_client.agents`; the `.beta`
-client opts in automatically.
+2. Set `FOUNDRY_PROJECT_ENDPOINT` and `FOUNDRY_VOICE_AGENT_MODEL` in your environment or `.env`.
+   The model value must be your GPT Live **deployment name**, not a model catalog ID.
+3. Choose an example below and follow its `USAGE` instructions. Samples authenticate with
+   `DefaultAzureCredential` and opt in to preview features.
 
-Choose a sample:
+**Choose an example**
 
-| Task | Sample |
-|---|---|
-| Open, update, and close a session | [Connection](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_connection.py) |
-| Send one or more text messages | [Text conversation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_text_conversation.py) |
-| Handle a function call and return its result | [Function tool](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_function_tool.py) |
-| Send a WAV file or use a microphone and speakers | [Audio conversation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_audio_conversation_async.py) |
-| Read a stored conversation and download its audio | [Conversation REST](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_read_conversation.py) |
+| Task | Example | Additional settings |
+|---|---|---|
+| Open, update, and close a session | [Connection](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_connection.py) | None |
+| Send text messages | [Async text](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_text_conversation_async.py) | `FOUNDRY_MODEL_NAME` for the Responses backend |
+| Run a local function tool | [Async function tool](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_function_tool_async.py) | `FOUNDRY_MODEL_NAME` for the Responses backend |
+| Ask a same-project prompt agent a spoken question | [Async managed agent](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_managed_agent_async.py) | `FOUNDRY_MODEL_NAME` and `FOUNDRY_VOICE_AUDIO_INPUT_PATH` |
+| Send a WAV file or use a microphone | [Async audio](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_audio_conversation_async.py) | `FOUNDRY_VOICE_AUDIO_INPUT_PATH` for WAV input |
+| Read a stored conversation and download audio | [Sync REST readback](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_read_conversation.py) | Optional existing conversation and agent IDs |
 
-Run samples without command-line arguments; edit the settings in each file as needed:
+**Inputs and cleanup**
 
-- **Text and tools:** also set `FOUNDRY_MODEL_NAME` to a Responses model deployment available
-  to your Live resource. This model handles delegated requests. Set `TEXT_PROMPTS` in the text
-  sample to a list of messages for a multi-turn conversation. Printed backend text does not
-  mean the voice agent has finished speaking.
-- **Audio:** by default, set `FOUNDRY_VOICE_AUDIO_INPUT_PATH` to a PCM16, mono, 24-kHz WAV file.
-  For microphone mode, install `pyaudio` and set `USE_MICROPHONE = True` instead. Use headphones
-  and press Ctrl-C to stop. Async lets the sample send and receive audio at the same time.
-  The WAV mode ends after three seconds without active reply audio or transcript updates;
-  long pauses can cut a reply short, and silence alone is not a successful reply.
-- **Stored conversations:** omit `FOUNDRY_VOICE_CONVERSATION_ID` to create a short greeting
-  conversation and delete it afterward. No microphone, input WAV, or Responses model is needed.
-  To read an existing conversation, set its ID and `FOUNDRY_VOICE_AGENT_NAME`; no Live model or
-  WebSocket is then needed. Use `session.started.conversation_id`, not `session.id`, from a
-  completed session with `store=True`. The existing agent and conversation are never changed.
+- WAV input must be **PCM16, mono, 24 kHz**. The managed-agent example accepts up to 30 seconds
+  and creates both agents in the same project. For microphone mode in the audio example,
+  install `pyaudio` and set `USE_MICROPHONE = True`.
+- For multiple text turns, set `TEXT_PROMPTS` in the text example. The examples delete only
+  resources they create; existing agents and conversations are never changed by REST readback.
+- To read an existing stored conversation, set `FOUNDRY_VOICE_AGENT_NAME` and
+  `FOUNDRY_VOICE_CONVERSATION_ID`. Use the ID from `session.started.conversation_id`, not
+  `session.id`, after a session with `store=True`. Without an ID, the REST example creates
+  and cleans up its own greeting conversation.
+- Audio is not saved by default. `SAVE_AUDIO = True` saves replies in the audio example;
+  REST downloads use a unique temporary folder. These files contain conversation content;
+  remove them when finished. Customer-storage (BYOS) audio requires your own storage credentials.
 
-GPT Live samples delete only the service resources they create. Streaming samples use `store=False`;
-set `SAVE_AUDIO = True` in the audio sample to save reply audio locally. Saved replies and REST
-downloads contain conversation content, not telemetry. They remain in a unique user-temporary
-folder whose path is printed; remove the folder when finished. Bring-your-own-storage (BYOS)
-recordings need your own storage credentials and are not downloaded by the REST sample.
+**Session notes**
 
-**Session basics:** open `.live.connect(...)` in a context manager and wait for `session.started`.
-Foundry starts the session; do not send `session.start`. Use `session.input_audio` for audio,
-`session.instructions` for guidance, `session.thinking` for unspoken context, and
-`session.commentary` for spoken commentary. The `response` methods require Responses delegation.
-To end a session, send `session.close`, wait for `session.closed`, and leave the context.
-Live has no `response.cancel`; cancel local receive tasks when needed.
-
-Create persisted Live definitions with `model_type=VoiceModelType.SELF_DEPLOYED` and
-`VoiceAgentLiveClientDelegation` or `VoiceAgentLiveResponsesDelegation`. Session updates use
-the native `LiveSessionUpdateParams` models to change backend settings or transcript triggers,
-not the persisted Foundry delegation target, frontend model, or audio format.
-For client-delegation updates, use `LiveSessionUpdateParamsDelegationLiveClientDelegationParam`;
-for Responses updates, use `LiveResponsesDelegationUpdateParam`.
-Both protocols send structured inputs as JSON in the `structured_inputs` query parameter.
-The Live client's `agent_version` option uses the `agent_version_override` query parameter.
-
-Session events use `VoiceAgentLiveSessionResource`; delegation events use `VoiceAgentLiveDelegationItem`.
-For Foundry-managed sessions, these report the target agent and resolved version, not the task text.
-Foundry handles delegations with `target="foundry_managed_agent"`.
-
-**Known REST limitation:** the pager advances using `last_id` without checking `has_more`.
-This does not affect WebSocket sessions. Unsupported Live REST routes return HTTP 404;
-the SDK does not fall back to the Realtime conversation API.
+- Wait for `session.started` before sending commands. Foundry starts the session automatically.
+  To finish, send `session.close` and wait for `session.closed`; Live has no `response.cancel`.
+- Keep input audio paced while waiting for context updates. The connection example sends
+  silent frames for this purpose; it needs no microphone.
+- Responses commands require a Responses backend. Foundry handles managed-agent delegation;
+  the client must not answer those requests itself. Session updates cannot change the saved
+  delegation target, frontend model, or audio format.
+- Printed backend text is not proof that speech finished. Audio examples wait for three
+  quiet seconds, so a long pause can end capture early. Unsupported REST routes return HTTP 404.
 
 ## Client-side tracing
 

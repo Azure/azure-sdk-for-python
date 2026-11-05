@@ -105,6 +105,8 @@ def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, prompt
                 print("Timed out waiting for the agent's reply.")
                 conn.response.cancel()
                 return
+            if isinstance(event, dict) and event.get("type") in ("response.output_text.done", "response.text.done"):
+                event = RealtimeServerEventResponseTextDone(event)
             if isinstance(event, RealtimeServerEventResponseFunctionCallArgumentsDone):
                 # The service forwards the call to us; execute it locally now, but defer sending
                 # the result until this response's own response.done arrives.

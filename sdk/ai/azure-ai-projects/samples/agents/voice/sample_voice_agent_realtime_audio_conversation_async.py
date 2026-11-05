@@ -53,6 +53,7 @@ from azure.ai.projects.models import (
     RealtimeServerEventResponseAudioTranscriptDone,
     RealtimeServerEventResponseCreated,
     RealtimeServerEventResponseDone,
+    RealtimeServerEventResponseTextDone,
     RealtimeServerEventSessionCreated,
     RealtimeServerEventError,
     VoiceAgentAudioConfig,
@@ -341,6 +342,15 @@ async def _run_audio_conversation(client: AIProjectClient, agent_name: str) -> O
 
         try:
             async for event in conn:
+                # The public models use GA response.output_* names; legacy aliases remain raw mappings.
+                if isinstance(event, dict):
+                    event_type = event.get("type")
+                    if event_type in ("response.output_audio.delta", "response.audio.delta"):
+                        event = RealtimeServerEventResponseAudioDelta(event)
+                    elif event_type in ("response.output_audio_transcript.done", "response.audio_transcript.done"):
+                        event = RealtimeServerEventResponseAudioTranscriptDone(event)
+                    elif event_type in ("response.output_text.done", "response.text.done"):
+                        event = RealtimeServerEventResponseTextDone(event)
                 if isinstance(event, RealtimeServerEventSessionCreated):
                     # The persisted conversation id (only present when conversation
                     # persistence is enabled) is set here, not on response.done.
@@ -369,6 +379,8 @@ async def _run_audio_conversation(client: AIProjectClient, agent_name: str) -> O
                     ap.queue_audio(event.delta)
                 elif isinstance(event, RealtimeServerEventResponseAudioTranscriptDone):
                     _safe_print(f"Agent: {event.transcript}")
+                elif isinstance(event, RealtimeServerEventResponseTextDone):
+                    _safe_print(f"Agent: {event.text}")
                 elif isinstance(event, RealtimeServerEventResponseDone):
                     response_active = False
         except (KeyboardInterrupt, asyncio.CancelledError):

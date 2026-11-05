@@ -7,7 +7,8 @@
 DESCRIPTION:
     Create a temporary GPT Live agent, open a session, update its settings,
     add instructions, and close it. The sample deletes the agent version it
-    creates. No user input or audio devices are needed.
+    creates. No user input or audio devices are needed. Silent audio frames
+    advance the Live timeline while it acknowledges the appended instructions.
 
 USAGE:
     python sample_voice_agent_live_connection.py
@@ -29,7 +30,13 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient, models
 
-from live_sample_utils import audio_settings, close_session, sample_agent_name, wait_for_event
+from live_sample_utils import (
+    audio_settings,
+    close_session,
+    sample_agent_name,
+    wait_for_event,
+    wait_for_event_with_audio_clock,
+)
 
 
 def main() -> None:
@@ -70,7 +77,7 @@ def main() -> None:
                     connection.session.instructions.append(
                         content="Keep responses brief. Do not invent external facts.", delegation_id=None
                     )
-                    wait_for_event(connection, "session.instructions.appended")
+                    wait_for_event_with_audio_clock(connection, "session.instructions.appended")
                     print("Confirmed session.updated and session.instructions.appended.")
                 finally:
                     # session.close is a command; leaving the context closes the transport.

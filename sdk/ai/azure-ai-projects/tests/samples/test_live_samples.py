@@ -193,7 +193,92 @@ def test_connection_waits_for_start_and_confirms_graceful_close(monkeypatch, sam
     connection.session.instructions.append.assert_called_once_with(
         content="Keep responses brief. Do not invent external facts.", delegation_id=None
     )
+    connection.session.input_audio.append.assert_called_once_with(audio=bytes(2400))
     assert "Live session started: session-test" in capsys.readouterr().out
+
+
+def test_context_ack_wait_sends_paced_silence_despite_receive_timeouts(monkeypatch, sample_environment):
+    helper = sample_environment.helper
+    clock = SimpleNamespace(now=0.0)
+    monkeypatch.setattr(helper, "time", SimpleNamespace(monotonic=lambda: clock.now))
+    connection = sample_environment.connection
+    sent = []
+    connection.session.input_audio.append.side_effect = lambda *, audio: sent.append((clock.now, audio))
+    calls = []
+
+    def receive(*, timeout):
+        calls.append(timeout)
+        clock.now += timeout
+        if len(calls) == 1:
+            raise TimeoutError
+        if len(calls) == 2:
+            return {"type": "future.event"}
+        return {"type": "session.instructions.appended"}
+
+    connection.recv.side_effect = receive
+    event = helper.wait_for_event_with_audio_clock(connection, "session.instructions.appended")
+
+    assert event["type"] == "session.instructions.appended"
+    assert [when for when, _ in sent] == pytest.approx([0.0, 0.05, 0.1])
+    assert all(audio == bytes(2400) for _, audio in sent)
+    assert calls == pytest.approx([0.05, 0.05, 0.05])
+
+
+def test_context_ack_wait_does_not_send_audio_for_every_fast_server_event(monkeypatch, sample_environment):
+    helper = sample_environment.helper
+    monkeypatch.setattr(helper, "time", SimpleNamespace(monotonic=lambda: 0.0))
+    connection = sample_environment.connection
+    connection.recv.side_effect = [
+        {"type": "future.event"},
+        {"type": "session.usage.updated"},
+        {"type": "session.instructions.appended"},
+    ]
+
+    helper.wait_for_event_with_audio_clock(connection, "session.instructions.appended")
+
+    connection.session.input_audio.append.assert_called_once_with(audio=bytes(2400))
+
+
+def test_context_ack_wait_keeps_one_overall_deadline(monkeypatch, sample_environment):
+    helper = sample_environment.helper
+    clock = SimpleNamespace(now=0.0)
+    monkeypatch.setattr(helper, "time", SimpleNamespace(monotonic=lambda: clock.now))
+    connection = sample_environment.connection
+
+    def receive(*, timeout):
+        clock.now += timeout
+        raise TimeoutError
+
+    connection.recv.side_effect = receive
+    with pytest.raises(TimeoutError, match="session.instructions.appended"):
+        helper.wait_for_event_with_audio_clock(connection, "session.instructions.appended", timeout=0.1)
+
+    assert connection.session.input_audio.append.call_count == 2
+    assert connection.recv.call_count == 2
+
+
+def test_context_ack_wait_surfaces_audio_send_failure(sample_environment):
+    connection = sample_environment.connection
+    connection.session.input_audio.append.side_effect = ConnectionError("clock send failed")
+
+    with pytest.raises(ConnectionError, match="clock send failed"):
+        sample_environment.helper.wait_for_event_with_audio_clock(connection, "session.instructions.appended")
+    connection.recv.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "event,message",
+    [
+        ({"type": "error", "error": {"code": "invalid_command", "message": "rejected"}}, "invalid_command"),
+        ({"type": "session.closed", "reason": "server_failure"}, "closed before"),
+    ],
+)
+def test_context_ack_wait_does_not_hide_service_errors(sample_environment, event, message):
+    connection = sample_environment.connection
+    connection.recv.return_value = event
+
+    with pytest.raises(RuntimeError, match=message):
+        sample_environment.helper.wait_for_event_with_audio_clock(connection, "session.instructions.appended")
 
 
 def test_text_uses_responses_delegation_and_granular_text(monkeypatch, sample_environment, capsys):

@@ -136,6 +136,31 @@ def wait_for_event(
         check_session_open(event)
 
 
+def wait_for_event_with_audio_clock(
+    connection: BetaLiveConnection, event_type: str, timeout: float = RESPONSE_TIMEOUT
+) -> LiveServerEvent:
+    """Keep the Live timeline advancing while waiting for a context acknowledgement."""
+    deadline = time.monotonic() + timeout
+    next_frame = time.monotonic()
+    silence = bytes(2400)  # 50 ms of PCM16, mono, 24 kHz audio.
+    while True:
+        remaining_time(deadline, event_type)
+        if time.monotonic() >= next_frame:
+            connection.session.input_audio.append(audio=silence)
+            next_frame = time.monotonic() + 0.05
+        receive_timeout = min(remaining_time(deadline, event_type), next_frame - time.monotonic())
+        if receive_timeout <= 0:
+            continue
+        try:
+            event = connection.recv(timeout=receive_timeout)
+        except TimeoutError:
+            continue
+        check_event(event)
+        if event.get("type") == event_type:
+            return event
+        check_session_open(event)
+
+
 async def wait_for_event_async(
     connection: AsyncBetaLiveConnection, event_type: str, timeout: float = RESPONSE_TIMEOUT
 ) -> LiveServerEvent:
