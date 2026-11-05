@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import ast
 import jsondiff
 import re
 from enum import Enum
@@ -32,6 +33,7 @@ class BreakingChangeType(str, Enum):
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
     REMOVED_OR_RENAMED_OPERATION_GROUP = "RemovedOrRenamedOperationGroup"
     REQUIRED_PROPERTY = "RequiredProperty"
+    CHANGED_PROPERTY_TYPE = "ChangedPropertyType"
 
 
 class BreakingChangesTracker:
@@ -92,6 +94,8 @@ class BreakingChangesTracker:
     REMOVED_OR_RENAMED_OPERATION_GROUP_MSG = \
         "Deleted or renamed client operation group `{}.{}`"
     REQUIRED_PROPERTY_MSG = "`{}.{}` is now required."
+    CHANGED_PROPERTY_TYPE_MSG = \
+        "Model `{}` changed type of property `{}` from `{}` to `{}`"
 
     def __init__(self, stable: Dict, current: Dict, package_name: str, **kwargs: Any) -> None:
         self.stable = stable
@@ -262,6 +266,7 @@ class BreakingChangesTracker:
                 continue  # class was deleted, abort other checks
             self.check_class_instance_attribute_removed_or_renamed(class_components)
             self.check_property_required(class_components)
+            self.check_property_type_changed(class_components)
 
             for method_name, method_components in class_components.get("methods", {}).items():
                 self._function_name = method_name
@@ -683,8 +688,8 @@ class BreakingChangesTracker:
             return any(member.strip() == "None" for member in annotation.split("|"))
 
         stable_properties = self.stable[self._module_name]["class_nodes"][self._class_name].get("properties", {})
-        current_properties = components.get("properties", {})
-        for key in current_properties:
+        current_properties = self.current[self._module_name]["class_nodes"][self._class_name].get("properties", {})
+        for key in components.get("properties", {}):
             if isinstance(key, jsondiff.Symbol) or key not in stable_properties or key not in current_properties:
                 continue
             stable_type = _get_property_type(stable_properties[key])
@@ -698,6 +703,75 @@ class BreakingChangesTracker:
                     key,
                 )
                 self.breaking_changes.append(bc)
+
+    def check_property_type_changed(self, components: Dict) -> None:
+        def _get_property_type(value: Any) -> Any:
+            return value.get("attr_type") if isinstance(value, dict) else value
+
+        def _normalize_property_type(annotation: str) -> frozenset:
+            def _members(node: ast.AST) -> frozenset:
+                if isinstance(node, ast.Constant) and isinstance(node.value, str):
+                    return _normalize_property_type(node.value)
+                if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+                    return _members(node.left) | _members(node.right)
+                if isinstance(node, ast.Subscript):
+                    name = ast.unparse(node.value).removeprefix("typing.")
+                    if name == "Optional":
+                        return _members(node.slice) | frozenset({"None"})
+                    if name == "Union":
+                        items = node.slice.elts if isinstance(node.slice, ast.Tuple) else [node.slice]
+                        return frozenset().union(*(_members(item) for item in items))
+                    name = {
+                        "List": "list",
+                        "Dict": "dict",
+                        "Tuple": "tuple",
+                        "Set": "set",
+                        "FrozenSet": "frozenset",
+                        "Type": "type",
+                    }.get(name, name)
+                    items = node.slice.elts if isinstance(node.slice, ast.Tuple) else [node.slice]
+                    return frozenset({(name, tuple(_members(item) for item in items))})
+                return frozenset({ast.unparse(node).removeprefix("typing.")})
+
+            try:
+                node = ast.parse(annotation, mode="eval").body
+            except SyntaxError:
+                return frozenset({annotation})
+            return _members(node)
+
+        stable_class = self.stable[self._module_name]["class_nodes"][self._class_name]
+        if (
+            stable_class.get("type") == "Enum"
+            or self.is_client(self._module_name, self._class_name)
+            or self.is_operation_group(self._module_name, self._class_name)
+        ):
+            return
+
+        stable_properties = stable_class.get("properties", {})
+        current_properties = self.current[self._module_name]["class_nodes"][self._class_name].get("properties", {})
+        for key in components.get("properties", {}):
+            if isinstance(key, jsondiff.Symbol) or key not in stable_properties or key not in current_properties:
+                continue
+            stable_type = _get_property_type(stable_properties[key])
+            current_type = _get_property_type(current_properties[key])
+            if not isinstance(stable_type, str) or not isinstance(current_type, str) or stable_type == current_type:
+                continue
+            if stable_type in {"Optional", "Union", key} or current_type in {"Optional", "Union", key}:
+                continue
+
+            stable_members = _normalize_property_type(stable_type)
+            current_members = _normalize_property_type(current_type)
+            if stable_members == current_members:
+                continue
+            if "None" in stable_members and stable_members - {"None"} == current_members:
+                continue
+
+            bc = (
+                self.CHANGED_PROPERTY_TYPE_MSG,
+                BreakingChangeType.CHANGED_PROPERTY_TYPE,
+                self._module_name, self._class_name, key, stable_type, current_type,
+            )
+            self.breaking_changes.append(bc)
 
     def check_class_removed_or_renamed(self, class_components: Dict) -> Union[bool, None]:
         if isinstance(self._class_name, jsondiff.Symbol):
