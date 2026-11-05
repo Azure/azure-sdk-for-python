@@ -54,6 +54,33 @@ module functions './function-app.bicep' = {
   }
 }
 
+module search './ai-search.bicep' = {
+  name: 'ai-search'
+  params: {
+    location: location
+    accountName: standard.outputs.accountName
+    projectName: standard.outputs.projectName
+    storageAccountName: standard.outputs.storageAccountName
+    searchServiceName: standard.outputs.searchServiceName
+    sharedSearchIdentityResourceId: sharedSearchIdentityResourceId
+    ownerToken: ownerToken
+  }
+  // Foundry rejects concurrent model deployment operations on the same account.
+  dependsOn: [
+    samples
+  ]
+}
+
+module browser './browser-automation.bicep' = {
+  name: 'browser-automation'
+  params: {
+    location: location
+    accountName: standard.outputs.accountName
+    projectName: standard.outputs.projectName
+    workspaceName: 'pw-${uniqueString(resourceGroup().id, ownerToken)}'
+  }
+}
+
 // Public, non-secret contract consumed by every SDK language. Keep explicit keys
 // so offline planning can discover supported bindings without Azure or a compiler.
 // Add new modules above and expose their test inputs here; no PowerShell edits.
@@ -67,4 +94,14 @@ output environment object = {
   STORAGE_INPUT_QUEUE_NAME: functions.outputs.environment.STORAGE_INPUT_QUEUE_NAME
   STORAGE_OUTPUT_QUEUE_NAME: functions.outputs.environment.STORAGE_OUTPUT_QUEUE_NAME
   STORAGE_QUEUE_SERVICE_ENDPOINT: functions.outputs.environment.STORAGE_QUEUE_SERVICE_ENDPOINT
+  AZURE_AI_SEARCH_ENDPOINT: search.outputs.environment.AZURE_AI_SEARCH_ENDPOINT
+  AI_SEARCH_PROJECT_CONNECTION_ID: search.outputs.environment.AI_SEARCH_PROJECT_CONNECTION_ID
+  AI_SEARCH_INDEX_NAME: search.outputs.environment.AI_SEARCH_INDEX_NAME
+  AZURE_AI_EMBED_DEPLOYMENT_NAME: search.outputs.environment.AZURE_AI_EMBED_DEPLOYMENT_NAME
+  AZURE_AI_EMBED_DIMENSIONS: search.outputs.environment.AZURE_AI_EMBED_DIMENSIONS
+  AZURE_BLOB_CONTAINER_NAME: search.outputs.environment.AZURE_BLOB_CONTAINER_NAME
+  AI_SEARCH_USER_INPUT: search.outputs.environment.AI_SEARCH_USER_INPUT
+  BROWSER_AUTOMATION_PROJECT_CONNECTION_ID: browser.outputs.environment.BROWSER_AUTOMATION_PROJECT_CONNECTION_ID
+  BROWSER_AUTOMATION_PROJECT_CONNECTION_NAME: browser.outputs.environment.BROWSER_AUTOMATION_PROJECT_CONNECTION_NAME
+  PLAYWRIGHT_SERVICE_RESOURCE_ID: browser.outputs.environment.PLAYWRIGHT_SERVICE_RESOURCE_ID
 }
