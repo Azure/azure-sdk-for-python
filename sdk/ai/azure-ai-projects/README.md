@@ -261,15 +261,17 @@ pip install "azure-ai-projects[voice]" azure-identity python-dotenv
 | Open, update, and close a session | [Async connection](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_connection_async.py) | None |
 | Send text messages | [Async text](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_text_conversation_async.py) | `FOUNDRY_MODEL_NAME` for the Responses backend |
 | Run a local function tool | [Async function tool](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_function_tool_async.py) | `FOUNDRY_MODEL_NAME` for the Responses backend |
-| Ask a same-project prompt agent a spoken question | [Async managed agent](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_managed_agent_async.py) | `FOUNDRY_MODEL_NAME` and `FOUNDRY_VOICE_AUDIO_INPUT_PATH` |
-| Send a WAV file or use a microphone | [Async audio](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_audio_conversation_async.py) | `FOUNDRY_VOICE_AUDIO_INPUT_PATH` for WAV input |
+| Ask a same-project prompt agent a spoken question | [Async managed agent](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_managed_agent_async.py) | `FOUNDRY_MODEL_NAME` for the prompt agent |
+| Send a WAV file or use a microphone | [Async audio](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_audio_conversation_async.py) | None; a spoken question is included |
 | Read a stored conversation and download audio | [Sync REST readback](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_read_conversation.py) | Optional existing conversation and agent IDs |
 
 **Inputs and cleanup**
 
-- WAV input must be **PCM16, mono, 24 kHz**. The managed-agent example accepts up to 30 seconds
-  and creates both agents in the same project. For microphone mode in the audio example,
-  install `pyaudio` and set `USE_MICROPHONE = True`.
+- Audio examples use the included `audio/question.wav`; no input-path setting or audio device
+  is needed. It asks, "What is two plus two? Please ask the backend agent to answer my question."
+  To use your own **PCM16, mono, 24-kHz WAV**, set `FOUNDRY_VOICE_AUDIO_INPUT_PATH`.
+  The managed-agent example accepts up to 30 seconds and creates both agents in the same project.
+  For microphone mode, install `pyaudio` and set `USE_MICROPHONE = True`.
 - For multiple text turns, set `TEXT_PROMPTS` in the text example. The examples delete only
   resources they create; existing agents and conversations are never changed by REST readback.
 - To read an existing stored conversation, set `FOUNDRY_VOICE_AGENT_NAME` and

@@ -26,6 +26,12 @@ RESPONSE_TIMEOUT = 60.0
 CLOSE_TIMEOUT = 10.0
 
 
+def input_audio_path() -> Path:
+    """Use the bundled spoken question unless a different WAV is supplied."""
+    default = Path(__file__).parent / "audio" / "question.wav"
+    return Path(os.environ.get("FOUNDRY_VOICE_AUDIO_INPUT_PATH") or default)
+
+
 def sample_agent_name(scenario: str) -> str:
     """Choose a unique agent name so cleanup affects only this run."""
     prefix = os.environ.get("FOUNDRY_VOICE_AGENT_NAME") or f"sample-live-{scenario}"

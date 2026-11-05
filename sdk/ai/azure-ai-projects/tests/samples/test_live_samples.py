@@ -170,6 +170,27 @@ async def test_failed_agent_creation_does_not_delete_an_existing_version(monkeyp
     sample_environment.async_client.beta.voice_agents.live.connect.assert_not_called()
 
 
+def test_default_audio_is_usable_from_any_working_directory(monkeypatch, sample_environment, tmp_path):
+    helper = sample_environment.helper
+    monkeypatch.delenv("FOUNDRY_VOICE_AUDIO_INPUT_PATH", raising=False)
+    monkeypatch.chdir(tmp_path)
+
+    path = helper.input_audio_path()
+    with wave.open(str(path), "rb") as recording:
+        assert recording.getnchannels() == 1
+        assert recording.getsampwidth() == 2
+        assert recording.getframerate() == 24000
+        assert 0 < recording.getnframes() <= 24000 * 30
+        pcm = recording.readframes(recording.getnframes())
+    assert any(
+        abs(int.from_bytes(pcm[index : index + 2], "little", signed=True)) > 256 for index in range(0, len(pcm), 2)
+    )
+
+    override = tmp_path / "my-question.wav"
+    monkeypatch.setenv("FOUNDRY_VOICE_AUDIO_INPUT_PATH", str(override))
+    assert helper.input_audio_path() == override
+
+
 @pytest.mark.asyncio
 async def test_connection_waits_for_start_and_confirms_graceful_close(monkeypatch, sample_environment, capsys):
     sample = _load_module(monkeypatch, "sample_voice_agent_live_connection_async.py")

@@ -5,24 +5,18 @@
 
 """
 DESCRIPTION:
-    Send a WAV recording to GPT Live, or talk through a microphone and hear
-    replies through your speakers. Async lets audio send and receive together.
-    Both modes use PCM16 little-endian, mono, 24-kHz audio.
-
-    The sample prints transcripts and audio byte counts, then deletes its
-    temporary agent version. Microphone mode also reports dropped capture
-    frames if sending cannot keep up. Device and playback errors are raised.
+    Send the bundled spoken question to GPT Live and print the reply transcript
+    and audio size. The sample deletes its temporary agent version afterward.
 
 USAGE:
     python sample_voice_agent_live_audio_conversation_async.py
 
     Settings in this file:
-    - USE_MICROPHONE = False (default): send a WAV file; no audio devices needed.
+    - USE_MICROPHONE = False (default): send audio/question.wav; no devices needed.
     - USE_MICROPHONE = True: use a microphone and speakers. Use headphones
       to avoid feedback; press Ctrl-C to stop.
-    - SAVE_AUDIO = True: save reply audio in a unique user-temporary folder.
-      The path is printed. Remove the folder when finished; it contains
-      conversation content, not telemetry. Saving is off by default.
+    - SAVE_AUDIO = True: save reply audio in a printed temporary folder.
+      These files contain conversation content; remove them when finished.
 
     pip install "azure-ai-projects[voice]" azure-identity python-dotenv
     pip install pyaudio  # Only required for microphone mode.
@@ -30,17 +24,12 @@ USAGE:
     Environment variables:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
     2) FOUNDRY_VOICE_AGENT_MODEL (required) - Your GPT Live deployment name.
-    3) FOUNDRY_VOICE_AUDIO_INPUT_PATH (required for WAV mode only) - Path to an
-       actual spoken-audio WAV file: uncompressed PCM16, mono, 24000 Hz.
+    3) FOUNDRY_VOICE_AUDIO_INPUT_PATH (optional) - Override audio/question.wav
+       with your own uncompressed PCM16, mono, 24-kHz WAV.
     4) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for the temporary agent name.
 
-    Uses DefaultAzureCredential; conversation persistence is disabled.
-    Choose a short spoken recording. WAV mode sends raw audio in 50-ms chunks
-    and adds one second of silence. It finishes after three seconds without
-    active reply audio or transcript updates because Live has no speech-finished
-    event. Long pauses can cut a reply short; silence alone is not a reply.
-    Low-level PCM (peak <= 256) does not extend the wait, but is still counted
-    and saved when requested. Live handles turn-taking without response.cancel.
+    Uses DefaultAzureCredential. Capture ends after three quiet seconds;
+    a long pause can cut off a reply. Audio is not saved by default.
 """
 
 from __future__ import annotations
@@ -68,6 +57,7 @@ from live_sample_utils import (
     check_event,
     check_session_open,
     close_session_async,
+    input_audio_path,
     remaining_time,
     safe_print,
     sample_agent_name,
@@ -444,7 +434,7 @@ async def main() -> None:
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     model = os.environ["FOUNDRY_VOICE_AGENT_MODEL"]
     backend = _microphone_backend() if USE_MICROPHONE else None
-    input_path = None if USE_MICROPHONE else Path(os.environ["FOUNDRY_VOICE_AUDIO_INPUT_PATH"])
+    input_path = None if USE_MICROPHONE else input_audio_path()
     output_path: Optional[Path] = None
     agent_name = sample_agent_name("audio")
 

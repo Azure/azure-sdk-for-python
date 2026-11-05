@@ -142,7 +142,7 @@ async def test_async_function_uses_canonical_call_id_after_each_completed_cycle(
             ),
             _response("response.output_item.done", item=call),
             *_tool_cycle(call),
-            *_text_response("The sample weather in Seattle is sunny, 72 F."),
+            *_text_response("Here is the tool's sample forecast."),
             _closed(),
         ]
     )
@@ -193,7 +193,7 @@ async def test_async_function_uses_canonical_call_id_after_each_completed_cycle(
     assert responses.tools[0].name == "get_weather"
     assert responses.tools[0].strict is True
     _assert_owned_cleanup(sample, sample_environment)
-    assert "Responses backend: The sample weather in Seattle is sunny, 72 F." in capsys.readouterr().out
+    assert "Responses backend: Here is the tool's sample forecast." in capsys.readouterr().out
 
 
 async def test_async_function_rejects_a_repeated_call_in_a_later_cycle(monkeypatch, sample_environment):

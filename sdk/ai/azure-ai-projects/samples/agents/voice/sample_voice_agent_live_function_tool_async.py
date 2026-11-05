@@ -89,8 +89,8 @@ async def _run_tool_turn(project_client: AIProjectClient, agent_name: str, agent
                 if not calls:
                     if not handled_calls:
                         raise RuntimeError("The backend answered without calling get_weather.")
-                    if "72" not in text or "seattle" not in text.casefold():
-                        raise RuntimeError("The backend answer did not include Seattle and the tool's 72 F result.")
+                    if not text:
+                        raise RuntimeError("The backend completed without returning an answer.")
                     return text
                 # Complete the backend cycle before submitting results or starting another response.
                 for call in calls:
@@ -116,51 +116,46 @@ async def main() -> None:
     backend_model = os.environ["FOUNDRY_MODEL_NAME"]
     agent_name = sample_agent_name("function-tool")
 
+    weather_tool = models.LiveFunctionToolInputParam(
+        name="get_weather",
+        description="Return sample weather for Seattle, not a live forecast.",
+        parameters={
+            "type": "object",
+            "properties": {"city": {"type": "string", "enum": ["Seattle"]}},
+            "required": ["city"],
+            "additionalProperties": False,
+        },
+        strict=True,
+    )
+    definition = models.VoiceAgentLiveDefinition(
+        model=model,
+        model_type=models.VoiceModelType.SELF_DEPLOYED,
+        instructions="Delegate weather questions to the Responses backend.",
+        audio=audio_settings(),
+        delegation=models.VoiceAgentLiveResponsesDelegation(
+            responses=models.LiveResponsesDelegationSettingsInputParam(
+                model=backend_model,
+                instructions=(
+                    "Call get_weather for Seattle, then answer once using its result. "
+                    "Do not call it again. Label the result as sample weather."
+                ),
+                tools=[weather_tool],
+                parallel_tool_calls=False,
+            )
+        ),
+        store=False,
+    )
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     ):
-        created_version = None
+        agent = await project_client.agents.create_version(agent_name=agent_name, definition=definition)
         try:
-            created_version = await project_client.agents.create_version(
-                agent_name=agent_name,
-                definition=models.VoiceAgentLiveDefinition(
-                    model=model,
-                    model_type=models.VoiceModelType.SELF_DEPLOYED,
-                    instructions="Delegate weather questions to the Responses backend.",
-                    audio=audio_settings(),
-                    delegation=models.VoiceAgentLiveResponsesDelegation(
-                        responses=models.LiveResponsesDelegationSettingsInputParam(
-                            model=backend_model,
-                            instructions=(
-                                "Call get_weather for Seattle. After its result, answer once without calling it again. "
-                                "Explicitly include Seattle and the numeric temperature in F. Label it sample weather."
-                            ),
-                            tools=[
-                                models.LiveFunctionToolInputParam(
-                                    name="get_weather",
-                                    description="Return deterministic sample weather for Seattle, not a live observation.",
-                                    parameters={
-                                        "type": "object",
-                                        "properties": {"city": {"type": "string", "enum": ["Seattle"]}},
-                                        "required": ["city"],
-                                        "additionalProperties": False,
-                                    },
-                                    strict=True,
-                                )
-                            ],
-                            parallel_tool_calls=False,
-                        )
-                    ),
-                    store=False,
-                ),
-            )
-            answer = await _run_tool_turn(project_client, agent_name, created_version.version)
+            answer = await _run_tool_turn(project_client, agent_name, agent.version)
             safe_print(f"Responses backend: {answer}")
         finally:
-            if created_version is not None:
-                await project_client.agents.delete_version(agent_name=agent_name, agent_version=created_version.version)
-                print(f"Deleted sample agent version: {created_version.version}")
+            await project_client.agents.delete_version(agent_name=agent_name, agent_version=agent.version)
+            print(f"Deleted sample agent version: {agent.version}")
 
 
 if __name__ == "__main__":

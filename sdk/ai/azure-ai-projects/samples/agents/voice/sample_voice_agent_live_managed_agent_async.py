@@ -6,7 +6,7 @@
 """
 DESCRIPTION:
     Ask a same-project prompt agent a spoken question through GPT Live.
-    Send a WAV file, print the reply transcript and audio size, and delete
+    Send the bundled spoken question, print the reply transcript and audio size, and delete
     both temporary agent versions. No microphone or speakers are needed.
 
 USAGE:
@@ -18,8 +18,8 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT (required) - The Foundry project endpoint.
     2) FOUNDRY_VOICE_AGENT_MODEL (required) - An existing GPT Live deployment.
     3) FOUNDRY_MODEL_NAME (required) - A prompt-agent deployment in the same project.
-    4) FOUNDRY_VOICE_AUDIO_INPUT_PATH (required) - Spoken-question WAV:
-       uncompressed PCM16, mono, 24 kHz, at most 30 seconds.
+    4) FOUNDRY_VOICE_AUDIO_INPUT_PATH (optional) - Override audio/question.wav
+       with your own PCM16, mono, 24-kHz WAV of at most 30 seconds.
     5) FOUNDRY_VOICE_AGENT_NAME (optional) - Prefix for unique owned names.
 
     Uses DefaultAzureCredential. Foundry runs the backend; the client only
@@ -32,14 +32,13 @@ from __future__ import annotations
 import asyncio
 from contextlib import AsyncExitStack
 import os
-from pathlib import Path
 
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects import models
 
-from live_sample_utils import close_session_async, sample_agent_name, wait_for_event_async
+from live_sample_utils import close_session_async, input_audio_path, sample_agent_name, wait_for_event_async
 from managed_agent_sample_utils import (
     PROMPT_INSTRUCTIONS,
     check_managed_session,
@@ -55,7 +54,7 @@ async def main() -> None:
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     model = os.environ["FOUNDRY_VOICE_AGENT_MODEL"]
     backend_model = os.environ["FOUNDRY_MODEL_NAME"]
-    pcm = read_input_audio(Path(os.environ["FOUNDRY_VOICE_AUDIO_INPUT_PATH"]))
+    pcm = read_input_audio(input_audio_path())
     backend_name = sample_agent_name("managed-backend")
     voice_name = sample_agent_name("managed-frontend")
 

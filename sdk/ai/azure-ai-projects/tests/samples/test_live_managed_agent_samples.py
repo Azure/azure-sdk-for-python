@@ -197,11 +197,12 @@ def managed_sample(monkeypatch):
         events=deque([_started(), *_success_events()]),
         sent=[],
         received_during_input=[],
+        input_path="offline-managed-input.wav",
     )
     real_wave_open = wave.open
 
     def open_input(path, mode):
-        assert path == "offline-managed-input.wav" and mode == "rb"
+        assert path == environment.input_path and mode == "rb"
         return real_wave_open(io.BytesIO(environment.wav), mode)
 
     monkeypatch.setattr(helper, "wave", SimpleNamespace(open=open_input, Error=wave.Error))
@@ -351,6 +352,17 @@ async def test_managed_samples_run_pinned_same_project_audio_workflow(managed_sa
     assert "Output transcript: Seattle has frequent rain." in text
     assert f"Received {len(_OUTPUT_PCM)} PCM16 bytes" in text
     assert "not a playback-complete event" in text
+
+
+@pytest.mark.asyncio
+async def test_managed_sample_uses_bundled_audio_without_an_input_path_setting(managed_sample, monkeypatch):
+    monkeypatch.delenv("FOUNDRY_VOICE_AUDIO_INPUT_PATH", raising=False)
+    managed_sample.input_path = str(_SAMPLES / "audio" / "question.wav")
+
+    await _run(managed_sample)
+
+    assert managed_sample.sent
+    _assert_deleted(managed_sample, [(_VOICE, "11"), (_BACKEND, "7")])
 
 
 @pytest.mark.asyncio
