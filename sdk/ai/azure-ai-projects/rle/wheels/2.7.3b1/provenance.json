@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "package": "azure-ai-projects",
+  "version": "2.7.3b1",
+  "channel": "rle",
+  "preview": true,
+  "filename": "azure_ai_projects-2.7.3b1-py3-none-any.whl",
+  "size_bytes": 600811,
+  "sha256": "a3823cc9e9e9386746523137db58a6ff00833f41aa60cec281bee374085a66d8",
+  "source_repository": "sujit-kamireddy/azure-sdk-for-python",
+  "source_commit": "4f82d3c33e5e55614aeb167bce2ff1980ceba64e",
+  "source_version": "2.7.0b7.dev20261104+queuedv3.3",
+  "source_date_epoch": 1793860832,
+  "build_helper": "sdk/ai/azure-ai-projects/scripts/rle/release.py:build_wheel",
+  "registry_helper": "sdk/ai/azure-ai-projects/scripts/rle/release.py:prepare_release",
+  "staged_override": {
+    "path": "azure/ai/projects/_version.py",
+    "from": "2.7.0b7.dev20261104+queuedv3.3",
+    "to": "2.7.3b1"
+  },
+  "validation": {
+    "installed_wheel_offline_rollout_tests": 226,
+    "wheel_metadata_and_record_integrity": "pass",
+    "python_modules_match_merged_source_except_version": 62,
+    "independent_rebuild_same_sha256": true,
+    "cloud_or_model_execution": false
+  }
+}
