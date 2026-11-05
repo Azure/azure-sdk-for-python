@@ -1,5 +1,5 @@
-apiHash: 2d3eff34b8c671aa17fa75a173100827a86da72f8c4389693ba47a1654909259
+apiHash: c5a8071e043e4e68b1891d13c1ccf29af15c88bf399d2e79c3140ef5287c1986
 packageRelativePath: sdk/ml/azure-ai-ml
-packageVersion: 1.34.1
+packageVersion: 1.36.0
 parserVersion: 0.3.31
 pythonVersion: 3.12.15
