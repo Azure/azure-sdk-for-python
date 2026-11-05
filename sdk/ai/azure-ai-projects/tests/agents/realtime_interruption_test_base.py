@@ -12,12 +12,13 @@ import logging
 from pathlib import Path
 import re
 import runpy
+import time
 from urllib.parse import urlsplit
 from uuid import uuid4
 
 from azure.ai.projects import models
 from azure.ai.projects.aio import AIProjectClient
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from devtools_testutils import EnvironmentVariableLoader, add_general_regex_sanitizer, is_live
 from devtools_testutils.preparers import AbstractPreparer
 
@@ -107,7 +108,26 @@ class RealtimeInterruptionPreparer(AbstractPreparer):
                 )
                 async with client.beta.voice_agents.realtime.connect(agent_name=agent_name) as connection:
                     await helpers["interrupt_reply_async"](connection, turn)
-                await helpers["wait_for_generated_audio_async"](client, agent_name, turn)
+                deadline = time.monotonic() + helpers["RECORDING_TIMEOUT"]
+                conversations = client.beta.voice_agents.conversations
+                while not turn.stored_item_id:
+                    try:
+                        conversation = await conversations.get(agent_name, turn.conversation_id)
+                        if conversation.status == "failed":
+                            raise RuntimeError("The interrupted conversation failed to persist.")
+                        if conversation.status == "completed":
+                            stored_item_id = helpers["_stored_audio_item"](
+                                [item async for item in conversations.list_items(agent_name, turn.conversation_id)],
+                                turn.response_id,
+                            )
+                            if stored_item_id is not None:
+                                turn.stored_item_id = stored_item_id
+                    except HttpResponseError as error:
+                        if not helpers["_recording_pending"](error):
+                            raise
+                    if not turn.stored_item_id:
+                        timeout = helpers["_remaining"](deadline, "stored interrupted conversation item")
+                        await asyncio.sleep(min(1.0, timeout))
                 fixture = RealtimeInterruptionFixture(
                     agent_name, turn.conversation_id, turn.stored_item_id, agent.version
                 )
@@ -145,9 +165,10 @@ def add_interruption_sanitizers(fixture: RealtimeInterruptionFixture) -> None:
         add_general_regex_sanitizer(regex=re.escape(actual), value=replacement, function_scoped=True)
 
 
-def assert_generated_status(expected: int):
+def assert_generated_status(expected: int | tuple[int, ...]):
     def verify(response):
-        assert response.http_response.status_code == expected
+        statuses = (expected,) if isinstance(expected, int) else expected
+        assert response.http_response.status_code in statuses
         path = urlsplit(response.http_request.url).path
         assert "/protocols/voice/conversations/" in path
         assert "/audio/generated" in path

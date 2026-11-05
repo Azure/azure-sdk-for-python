@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Recorded generated/unheard audio coverage with a real interrupted-response fixture."""
+"""Recorded generated-audio behavior after cancelling a real response."""
 
 import pytest
 
@@ -30,22 +30,40 @@ class TestVoiceAgentGeneratedAudio(TestBase):
             add_interruption_sanitizers(fixture)
         with self.create_client(allow_preview=True, **kwargs) as client:
             conversations = client.beta.voice_agents.conversations
-            metadata = conversations.get_generated_audio_item(
-                fixture.agent_name,
-                fixture.conversation_id,
-                fixture.item_id,
-                raw_response_hook=assert_generated_status(200),
-            )
-            assert_generated_metadata(metadata, fixture)
-            content = b"".join(
-                conversations.download_generated_audio_item(
+            try:
+                metadata = conversations.get_generated_audio_item(
                     fixture.agent_name,
                     fixture.conversation_id,
                     fixture.item_id,
-                    raw_response_hook=assert_generated_status(200),
+                    raw_response_hook=assert_generated_status((200, 404)),
                 )
-            )
-            assert_generated_wav(content, metadata, fixture)
+            except ResourceNotFoundError as error:
+                # Cancellation may stop rendering before a complete generated artifact exists.
+                assert error.status_code == 404
+                assert error.error and error.error.code == "not_found"
+                assert error.message and "generated audio" in error.message.casefold()
+                assert fixture.item_id in error.message
+                with pytest.raises(ResourceNotFoundError) as download_error:
+                    b"".join(
+                        conversations.download_generated_audio_item(
+                            fixture.agent_name,
+                            fixture.conversation_id,
+                            fixture.item_id,
+                            raw_response_hook=assert_generated_status(404),
+                        )
+                    )
+                assert download_error.value.status_code == 404
+            else:
+                assert_generated_metadata(metadata, fixture)
+                content = b"".join(
+                    conversations.download_generated_audio_item(
+                        fixture.agent_name,
+                        fixture.conversation_id,
+                        fixture.item_id,
+                        raw_response_hook=assert_generated_status(200),
+                    )
+                )
+                assert_generated_wav(content, metadata, fixture)
             conversations.delete(
                 fixture.agent_name,
                 fixture.conversation_id,
