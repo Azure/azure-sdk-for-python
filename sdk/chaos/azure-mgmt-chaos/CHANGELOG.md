@@ -18,13 +18,8 @@
   - Client `ChaosManagementClient` added operation group `workspace_discoveries`
   - Client `ChaosManagementClient` added operation group `workspace_evaluations`
   - Client `ChaosManagementClient` added operation group `workspaces`
-  - Model `Capability` added property `properties`
-  - Model `CapabilityType` added property `properties`
-  - Model `Experiment` added property `properties`
-  - Model `ExperimentExecution` added property `properties`
   - Model `ExperimentExecutionDetailsProperties` added property `provisioning_state`
   - Enum `ProvisioningState` added member `RUNNING`
-  - Model `TargetType` added property `properties`
   - Added model `Action`
   - Added model `ActionDependency`
   - Added enum `ActionDependencyType`
@@ -35,8 +30,6 @@
   - Added model `ActionProperties`
   - Added model `ActionSupportedTargetType`
   - Added model `ActionVersion`
-  - Added model `CapabilityProperties`
-  - Added model `CapabilityTypeProperties`
   - Added model `Connection`
   - Added enum `ConnectionKind`
   - Added model `ConnectionProperties`
@@ -45,8 +38,6 @@
   - Added model `DiscoveredResource`
   - Added model `DiscoveredResourceProperties`
   - Added model `EntraIdentity`
-  - Added model `ExperimentExecutionProperties`
-  - Added model `ExperimentProperties`
   - Added model `ExternalResource`
   - Added enum `FailureBehavior`
   - Added model `FixResourcePermissionsRequest`
@@ -95,7 +86,6 @@
   - Added model `ScenarioTemplateVersion`
   - Added model `ScenarioTemplateVersionProperties`
   - Added enum `ScenarioValidationState`
-  - Added model `TargetTypeProperties`
   - Added model `TemplateEvaluationResultItem`
   - Added model `Validation`
   - Added model `ValidationProperties`
@@ -144,47 +134,23 @@
 
 ### Breaking Changes
 
-  - Model `Capability` deleted or renamed its instance variable `description`
-  - Model `Capability` deleted or renamed its instance variable `parameters_schema`
-  - Model `Capability` deleted or renamed its instance variable `publisher`
-  - Model `Capability` deleted or renamed its instance variable `target_type`
-  - Model `Capability` deleted or renamed its instance variable `urn`
-  - Model `CapabilityType` deleted or renamed its instance variable `azure_rbac_actions`
-  - Model `CapabilityType` deleted or renamed its instance variable `azure_rbac_data_actions`
-  - Model `CapabilityType` deleted or renamed its instance variable `description`
-  - Model `CapabilityType` deleted or renamed its instance variable `display_name`
-  - Model `CapabilityType` deleted or renamed its instance variable `kind`
-  - Model `CapabilityType` deleted or renamed its instance variable `parameters_schema`
-  - Model `CapabilityType` deleted or renamed its instance variable `publisher`
-  - Model `CapabilityType` deleted or renamed its instance variable `required_azure_role_definition_ids`
-  - Model `CapabilityType` deleted or renamed its instance variable `runtime_properties`
-  - Model `CapabilityType` deleted or renamed its instance variable `target_type`
-  - Model `CapabilityType` deleted or renamed its instance variable `urn`
-  - Model `Experiment` deleted or renamed its instance variable `provisioning_state`
-  - Model `Experiment` deleted or renamed its instance variable `selectors`
-  - Model `Experiment` deleted or renamed its instance variable `steps`
-  - Model `ExperimentExecution` deleted or renamed its instance variable `started_at`
-  - Model `ExperimentExecution` deleted or renamed its instance variable `status`
-  - Model `ExperimentExecution` deleted or renamed its instance variable `stopped_at`
-  - Model `TargetType` deleted or renamed its instance variable `description`
-  - Model `TargetType` deleted or renamed its instance variable `display_name`
-  - Model `TargetType` deleted or renamed its instance variable `properties_schema`
-  - Model `TargetType` deleted or renamed its instance variable `resource_types`
-  - Deleted or renamed model `CapabilityListResult`
-  - Deleted or renamed model `CapabilityTypeListResult`
-  - Deleted or renamed model `ExperimentExecutionListResult`
-  - Deleted or renamed model `ExperimentListResult`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `TargetListResult`
-  - Deleted or renamed model `TargetTypeListResult`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `Capability` moved instance variable `description`, `parameters_schema`, `publisher`, `target_type` and `urn` under property `properties` whose type is `CapabilityProperties`
+  - Model `CapabilityType` moved instance variable `azure_rbac_actions`, `azure_rbac_data_actions`, `description`, `display_name`, `kind`, `parameters_schema`, `publisher`, `required_azure_role_definition_ids`, `runtime_properties`, `target_type` and `urn` under property `properties` whose type is `CapabilityTypeProperties`
+  - Model `Experiment` moved instance variable `provisioning_state`, `selectors` and `steps` under property `properties` whose type is `ExperimentProperties`
+  - Model `ExperimentExecution` moved instance variable `started_at`, `status` and `stopped_at` under property `properties` whose type is `ExperimentExecutionProperties`
+  - Model `TargetType` moved instance variable `description`, `display_name`, `properties_schema` and `resource_types` under property `properties` whose type is `TargetTypeProperties`
   - Method `CapabilitiesOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
   - Method `CapabilityTypesOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
-  - Method `ExperimentsOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
-  - Method `ExperimentsOperations.list` changed its parameter `running` from `positional_or_keyword` to `keyword_only`
-  - Method `ExperimentsOperations.list_all` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
-  - Method `ExperimentsOperations.list_all` changed its parameter `running` from `positional_or_keyword` to `keyword_only`
+  - Method `ExperimentsOperations.list` changed its parameter `continuation_token_parameter`/`running` from `positional_or_keyword` to `keyword_only`
+  - Method `ExperimentsOperations.list_all` changed its parameter `continuation_token_parameter`/`running` from `positional_or_keyword` to `keyword_only`
   - Method `TargetTypesOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
   - Method `TargetsOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `CapabilityListResult`/`CapabilityTypeListResult`/`ExperimentExecutionListResult`/`ExperimentListResult`/`OperationListResult`/`TargetListResult`/`TargetTypeListResult` which actually were not used by SDK users
 
 ## 3.0.0b2 (2026-07-28)
 
