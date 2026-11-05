@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-07-01-preview/FirewallRulesDelete.json
+# x-ms-original-file: 2026-10-01/FirewallRulesDelete.json
 if __name__ == "__main__":
     main()

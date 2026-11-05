@@ -11,6 +11,7 @@ import mimetypes
 mimetypes.add_type("text/csv", ".csv")
 mimetypes.add_type("text/markdown", ".md")
 
+import json
 import os
 import re
 import sys
@@ -30,7 +31,22 @@ from agent_insights.sanitizers import add_agent_insights_sanitizers
 from test_base import servicePreparer
 
 _SERVICE_PREPARER_DEFAULTS = servicePreparer.keywords or {}
+
+
+def _get_ci_environment_options():
+    names = json.loads(os.environ.get("AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES", "[]"))
+    if not isinstance(names, list) or any(
+        not isinstance(name, str)
+        or not re.fullmatch(r"[A-Z][A-Z0-9_]*", name)
+        or {"PAT", "SECRET", "KEY", "TOKEN", "PASSWORD", "CREDENTIAL", "CREDENTIALS"} & set(name.split("_"))
+        for name in names
+    ):
+        raise ValueError("CI environment option names must be a list of non-secret uppercase bindings.")
+    return {name.lower(): name for name in names}
+
+
 _CLI_ENV_OPTIONS = {
+    **_get_ci_environment_options(),
     **{option_name: option_name.upper() for option_name in _SERVICE_PREPARER_DEFAULTS},
     "azure_test_run_live": "AZURE_TEST_RUN_LIVE",
     "azure_skip_live_recording": "AZURE_SKIP_LIVE_RECORDING",
@@ -68,6 +84,8 @@ def pytest_configure(config):
 
     for option_name, environment_variable in _CLI_ENV_OPTIONS.items():
         value = config.getoption(option_name)
+        if value is None and environment_variable == "LLM_VALIDATION_PROJECT_ENDPOINT":
+            value = os.environ.get(environment_variable)
         if value is None:
             value = _SERVICE_PREPARER_DEFAULTS.get(option_name)
         if value is not None:
