@@ -1,5 +1,5 @@
-apiHash: d343481d81dc4c0dcea8876f87cd6c8ee4d8fa48b1080149e308f4c3e1e588f6
+apiHash: f8e2517080091017f3ecd5696509ad0cd24a1bf26a701ecab992eff1ef344514
 packageRelativePath: sdk/template/azure-template
-packageVersion: 1.0.0
+packageVersion: 1.1.0
 parserVersion: 0.3.31
 pythonVersion: 3.12.15
