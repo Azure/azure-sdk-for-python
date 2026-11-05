@@ -32,7 +32,7 @@ async def test_iter_raw_on_iterable(client):
 
 
 @pytest.mark.asyncio
-async def test_iter_with_error(client):
+async def test_iter_with_error(client, monkeypatch):
     request = HttpRequest("GET", "/errors/403")
 
     async with client.send_request(request, stream=True) as response:
@@ -50,11 +50,17 @@ async def test_iter_with_error(client):
 
     assert response.is_closed
 
-    request = HttpRequest("GET", "http://doesNotExist")
-    with pytest.raises(ServiceRequestError):
-        async with await client.send_request(request, stream=True):
-            raise ValueError("Should error before entering")
-    assert response.is_closed
+    error = ServiceRequestError("Connection failed")
+
+    async def fail_send(*args, **kwargs):
+        raise error
+
+    # A proxy may return an HTTP response instead of failing to resolve an invalid hostname.
+    monkeypatch.setattr(client._client._pipeline._transport, "send", fail_send)
+    with pytest.raises(ServiceRequestError) as exc_info:
+        async with await client.send_request(request, stream=True, retry_total=0):
+            pytest.fail("The response context must not be entered after a connection error")
+    assert exc_info.value is error
 
 
 @pytest.mark.asyncio

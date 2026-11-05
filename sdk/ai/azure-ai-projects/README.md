@@ -226,8 +226,8 @@ Use `transport`, not `extra_query`, to select a transport. `VoiceAgentTransport.
 WebRTC signaling over the WebSocket, but your app must handle the peer connection, audio/video,
 and SDP offer/answer exchange (`rtc.call.sdp.create` and `rtc.call.sdp.created`).
 
-Start with the [text conversation sample](samples/agents/voice/sample_voice_agent_realtime_text_conversation.py)
-or [microphone sample](samples/agents/voice/sample_voice_agent_realtime_audio_conversation_async.py).
+Start with the [text conversation sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_realtime_text_conversation.py)
+or [microphone sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_realtime_audio_conversation_async.py).
 
 ### Voice Agent GPT Live (preview)
 
@@ -255,11 +255,11 @@ Choose a sample:
 
 | Task | Sample |
 |---|---|
-| Open, update, and close a session | [Connection](samples/agents/voice/sample_voice_agent_live_connection.py) |
-| Send one or more text messages | [Text conversation](samples/agents/voice/sample_voice_agent_live_text_conversation.py) |
-| Handle a function call and return its result | [Function tool](samples/agents/voice/sample_voice_agent_live_function_tool.py) |
-| Send a WAV file or use a microphone and speakers | [Audio conversation](samples/agents/voice/sample_voice_agent_live_audio_conversation_async.py) |
-| Read a stored conversation and download its audio | [Conversation REST](samples/agents/voice/sample_voice_agent_live_read_conversation.py) |
+| Open, update, and close a session | [Connection](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_connection.py) |
+| Send one or more text messages | [Text conversation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_text_conversation.py) |
+| Handle a function call and return its result | [Function tool](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_function_tool.py) |
+| Send a WAV file or use a microphone and speakers | [Audio conversation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_audio_conversation_async.py) |
+| Read a stored conversation and download its audio | [Conversation REST](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/agents/voice/sample_voice_agent_live_read_conversation.py) |
 
 Run samples without command-line arguments; edit the settings in each file as needed:
 
