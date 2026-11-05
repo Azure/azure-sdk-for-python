@@ -75,11 +75,17 @@ from ._helpers._response_parse import process_backend_response
 from ._query_advisor import get_query_advice_info
 from .partition_key import _build_partition_key_from_properties
 
-# List/query database and container pages only forward the internal keywords
-# listed here. Other keywords make the input ineligible for the Rust path.
-_MASTER_FEED_ALLOWED_INTERNAL_KWARGS = frozenset({
-    Constants.OperationStartTime,
-})
+# Telemetry keywords are consumed by the Python page recorder, not the driver.
+# Other unrecognized keywords make metadata feeds ineligible for the Rust path.
+_MASTER_FEED_ALLOWED_INTERNAL_KWARGS = frozenset(
+    {
+        Constants.OperationStartTime,
+        "logger",
+        "logging_enable",
+        "tracing_options",
+        "tracing_attributes",
+    }
+)
 _DATABASE_FEED_ALLOWED_INTERNAL_KWARGS = _MASTER_FEED_ALLOWED_INTERNAL_KWARGS | {
     Constants.Kwargs.TIMEOUT,
 }

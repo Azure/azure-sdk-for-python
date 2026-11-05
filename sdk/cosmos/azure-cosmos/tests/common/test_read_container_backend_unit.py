@@ -117,7 +117,7 @@ def test_legacy_read_copies_preserve_original_methods_rust(surface, source_file,
     whether a copy still reflects its original.
     """
     tests = Path(__file__).resolve().parents[1]
-    copied_text = (tests / "read_container" / surface / "legacy" / "test_crud_container.py").read_text("utf-8")
+    copied_text = (tests / "read_container" / surface / "test_crud_container.py").read_text("utf-8")
     source_text = (tests / source_file).read_text("utf-8")
 
     def methods(text):

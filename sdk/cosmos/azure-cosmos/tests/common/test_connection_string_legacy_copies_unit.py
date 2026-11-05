@@ -39,7 +39,7 @@ def _method(cls, name):
 @pytest.mark.parametrize("surface,original_file,class_name,method_name", CASES)
 def test_factory_copy_replaces_only_approved_original_rust(surface, original_file, class_name, method_name):
     original = _classes(ROOT / "tests" / original_file)
-    copied_path = ROOT / "tests" / "from_connection_string" / surface / "legacy" / "test_from_connection_string.py"
+    copied_path = ROOT / "tests" / "from_connection_string" / surface / "test_from_connection_string.py"
     copied = _classes(copied_path)
     assert all(node.name != method_name for node in original[class_name].body if isinstance(
         node, (ast.FunctionDef, ast.AsyncFunctionDef)
@@ -99,7 +99,7 @@ def test_exactly_five_factory_sources_are_retired_rust():
     }
     assert len(RETIRED_CONNECTION_STRING_SOURCES) == len(set(RETIRED_CONNECTION_STRING_SOURCES.values())) == 5
     retained = []
-    for path in (ROOT / "tests" / "from_connection_string").glob("*/legacy/test_*.py"):
+    for path in (ROOT / "tests" / "from_connection_string").glob("*/test_*.py"):
         retained.extend(enforcer._iter_test_functions(ast.parse(path.read_text(encoding="utf-8"))))
     assert len(retained) == 5
 
@@ -111,7 +111,8 @@ def test_exactly_five_factory_sources_are_retired_rust():
     "test_every_source_reference_resolves_rust",
     "test_every_legacy_file_pins_rust_backend_rust",
     "test_no_unstructured_skips_rust",
-    "test_every_legacy_test_is_selected_by_emulator_marker_rust",
+    "test_every_copy_keeps_original_lane_markers_rust",
+    "test_every_legacy_test_collects_without_conftest_rust",
 ])
 def test_retained_factory_copies_pass_migration_enforcement_rust(monkeypatch, check_name):
     monkeypatch.setattr(enforcer, "_TESTS_DIR", ROOT / "tests" / "from_connection_string")

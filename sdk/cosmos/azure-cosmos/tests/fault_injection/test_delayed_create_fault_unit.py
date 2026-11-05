@@ -9,7 +9,7 @@ from azure.cosmos import exceptions
 from azure.cosmos._backend.client_config import _prepare_fault_injection_rules
 from azure.cosmos.aio._backend import binding_adapter as async_binding
 from fault_injection._delayed_create import assert_control, assert_failure, assert_route, create_rule
-from fault_injection import conftest as fixtures
+from config import fault_resources as fixtures
 
 
 @pytest.mark.parametrize("inject", [True, False])
@@ -127,11 +127,13 @@ def fake_setup(monkeypatch):
     client = MagicMock()
     client.__enter__.return_value = client
     client.get_database_client.return_value.read.side_effect = exceptions.CosmosResourceNotFoundError(404)
-    monkeypatch.setattr(fixtures, "CosmosClient", Mock(return_value=client))
+    monkeypatch.setattr(fixtures.clients, "create_fault_setup_client", Mock(return_value=client))
     monkeypatch.setenv("ACCOUNT_HOST", "https://fault.example")
     monkeypatch.setenv("ACCOUNT_KEY", "fake-key")
-    monkeypatch.setattr(fixtures, "create_owned_database", Mock(return_value=Mock()))
-    monkeypatch.setattr(fixtures, "create_owned_container", Mock(return_value=Mock()))
+    monkeypatch.setattr(fixtures.resources, "create_owned_database", Mock(return_value=Mock()))
+    monkeypatch.setattr(fixtures.resources, "create_owned_container", Mock(return_value=Mock()))
+    monkeypatch.setattr(fixtures.resources, "CONTROL_PLANE_MAX_ATTEMPTS", 2)
+    monkeypatch.setattr(fixtures.resources.time, "sleep", Mock())
     request = SimpleNamespace(node=SimpleNamespace(nodeid="controlled-case"))
     return client, fixtures.owned_target.__wrapped__(request)
 
@@ -148,7 +150,7 @@ def test_fixture_cleans_owned_database_after_assertion_failure_rust(fake_setup):
 
 def test_fixture_does_not_delete_resource_when_create_conflicts_rust(fake_setup):
     client, fixture = fake_setup
-    fixtures.create_owned_database.side_effect = exceptions.CosmosResourceExistsError(409)
+    fixtures.resources.create_owned_database.side_effect = exceptions.CosmosResourceExistsError(409)
     with pytest.raises(exceptions.CosmosResourceExistsError):
         next(fixture)
     client.delete_database.assert_not_called()
@@ -167,9 +169,18 @@ def test_fixture_surfaces_cleanup_failure_rust(fake_setup):
 
 def test_fixture_cleans_ambiguous_setup_failure_rust(fake_setup):
     client, fixture = fake_setup
-    fixtures.create_owned_database.side_effect = RuntimeError("setup failed")
+    fixtures.resources.create_owned_database.side_effect = RuntimeError("setup failed")
     client.delete_database.side_effect = exceptions.CosmosResourceNotFoundError(404)
     with pytest.raises(RuntimeError, match="setup failed"):
         next(fixture)
     client.delete_database.assert_called_once()
     assert client.get_database_client.return_value.read.call_count == 2
+
+
+def test_fixture_does_not_hide_unexpected_disappearance_of_owned_database_rust(fake_setup):
+    client, fixture = fake_setup
+    next(fixture)
+    client.delete_database.side_effect = exceptions.CosmosResourceNotFoundError(404)
+    with pytest.raises(exceptions.CosmosResourceNotFoundError):
+        fixture.close()
+    client.__exit__.assert_called_once()

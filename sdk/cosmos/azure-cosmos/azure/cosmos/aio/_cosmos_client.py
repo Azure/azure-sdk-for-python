@@ -35,7 +35,7 @@ This module is Python wrapper code, not the binding or the Rust driver.
 
 import logging
 from .._backend.capabilities import reject_removed_options, reject_rust_arguments, prepare_operation_kwargs
-from copy import copy
+from copy import copy, deepcopy
 from typing import Any, Optional, Union, Mapping, Callable, overload, Literal
 
 from azure.core.async_paging import AsyncItemPaged
@@ -66,6 +66,7 @@ from .._connection_policy import (
 from .._connection_string import parse_connection_string
 from .._cosmos_responses import CosmosDict
 from .._telemetry import trace_operation_async
+from .._diagnostic_logging import DiagnosticLogging
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ._backend.cosmos_backend import AsyncCosmosBackend
 from .._helpers._item_context import ItemClientContext, ItemClientDefaults
@@ -221,14 +222,43 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword list[str] excluded_locations: The excluded locations to be skipped from preferred locations. The locations
         in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
         If all preferred locations were excluded, primary/hub location will be used.
-    :keyword bool enable_diagnostics_logging: Enable the CosmosHttpLogging policy.
-        Must be used along with a logger to work.
-    :keyword ~logging.Logger logger: Logger to be used for collecting request diagnostics. Can be passed in at client
-        level (to log all requests) or at a single request level. Requests will be logged at INFO level.
-    :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending 
+    :keyword bool enable_diagnostics_logging: Log available Rust response diagnostic
+        summaries at INFO. This does not log every HTTP exchange. On the legacy
+        comparison backend, enables the CosmosHttpLogging policy.
+    :keyword ~logging.Logger logger: Python logger for diagnostics, overridable per
+        operation. Rust defaults to ``azure.cosmos.diagnostics``; the customer app
+        configures handlers and levels. Supplying a logger alone does not enable
+        Rust summary logging.
+    :keyword bool logging_enable: Log available Rust response diagnostic summaries
+        at DEBUG, overridable per operation. If diagnostics logging is also enabled,
+        emit one INFO record instead. Legacy retains detailed HTTP logging;
+        Rust does not reconstruct original HTTP headers or bodies.
+    :keyword dict[str, Any] tracing_attributes: Default attributes for Rust
+        request-attempt spans, like legacy request-policy defaults. Per-operation
+        ``tracing_attributes`` replaces these defaults and also labels the operation
+        span; ``tracing_options["attributes"]`` takes precedence on matching keys.
+        This does not enable tracing.
+    :keyword callable network_span_namer: Legacy request-span naming callback.
+        Rust-backed APIs reject this keyword, including ``None``, because they
+        cannot supply the actual HTTP request to the callback. Omit it to use
+        the existing ``cosmosdb.request`` attempt-span name.
+    :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending
         response payloads for write operations on items by default unless specified differently per operation.
     :keyword int throughput_bucket: The desired throughput bucket for the client.
-    :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
+    :keyword str user_agent_suffix: Application label appended to the SDK's User-Agent.
+        Rust supports up to 25 ASCII letters, digits, or ``-``, ``_``, ``.``, ``~``.
+        Empty or ``None`` adds no label; invalid Rust suffixes raise ``ValueError``
+        when the driver is prepared for use.
+    :keyword str user_agent: Legacy User-Agent prefix; retains the SDK identification.
+        The Rust driver does not support this setting. Explicit use, including
+        empty strings and ``None``, raises ``TypeError`` on Rust-backed clients.
+    :keyword bool user_agent_overwrite: Legacy control for replacing an existing
+        User-Agent header with the configured header, not for removing SDK identification.
+        The Rust driver does not support this setting. Explicit use, including
+        ``False`` and ``None``, raises ``TypeError`` on Rust-backed clients.
+    :keyword bool user_agent_use_env: Legacy control for appending ``AZURE_HTTP_USER_AGENT``.
+        The Rust driver does not support this setting or append that environment label.
+        Explicit use, including ``False`` and ``None``, raises ``TypeError`` on Rust-backed clients.
     :keyword Union[bool, dict[str, Any]] availability_strategy:
         Enables an availability strategy by using cross-region request hedging.
         Can be True (use default values: threshold_ms=500),
@@ -317,19 +347,27 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         self._adapter: AsyncCosmosBackend = chosen
         self._item_context: ItemClientContext[AsyncCosmosBackend] = ItemClientContext(
-            chosen, ItemClientDefaults(
+            chosen,
+            ItemClientDefaults(
                 operation_timeout_seconds=kwargs.get("timeout") if chosen.name != "core-python" else None,
                 priority=kwargs.get("priority"),
                 throughput_bucket=kwargs.get("throughput_bucket"),
                 hedging_threshold_ms=(
-                    _resolve_hedging(availability_strategy)
-                    if chosen.name != "core-python" else None
+                    _resolve_hedging(availability_strategy) if chosen.name != "core-python" else None
                 ),
                 no_response_on_write=bool(kwargs.get("no_response_on_write", False)),
                 enable_compact_utf8_item_writes=_validate_enable_compact_utf8_item_writes(
                     kwargs.get("enable_compact_utf8_item_writes", False)
                 ),
-            )
+            ),
+            diagnostic_logging=DiagnosticLogging(
+                logger=kwargs.get("logger"),
+                enable_diagnostics_logging=kwargs.get("enable_diagnostics_logging", False),
+                logging_enable=kwargs.get("logging_enable", False),
+            ),
+            tracing_attributes=(
+                deepcopy(dict(kwargs.get("tracing_attributes", {}))) if chosen.name != "core-python" else {}
+            ),
         )
         logging.getLogger(__name__).debug(
             "Cosmos client constructed with default backend=%s",
@@ -530,7 +568,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self,
         id: str,
         *,
-        offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
+        offer_throughput: Optional[Union[int, "ThroughputProperties"]] = None,
         initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
@@ -694,7 +732,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self,
         id: str,
         *,
-        offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
+        offer_throughput: Optional[Union[int, "ThroughputProperties"]] = None,
         initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,

@@ -3,14 +3,64 @@
 """Protect unchanged replacement assertions and distinct sync/aio collection."""
 
 import ast
+import importlib.util
 import os
 from pathlib import Path
 import subprocess
 import sys
+from tempfile import TemporaryDirectory
+
+import pytest
 
 
 ROOT = Path(__file__).resolve().parents[2]
 FAMILY = ROOT / "tests" / "replace_container"
+
+
+@pytest.mark.parametrize("operation", ["read_item", "session_token", "replace_container"])
+def test_local_baseline_keeps_surface_paths_distinct_rust(monkeypatch, tmp_path, operation):
+    scripts = ROOT / "scripts" / "v5"
+    monkeypatch.syspath_prepend(str(scripts))
+    spec = importlib.util.spec_from_file_location(
+        f"layout_{operation}_runner", scripts / f"run_{operation}_parity.py"
+    )
+    runner = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(runner)
+    monkeypatch.chdir(ROOT)
+    monkeypatch.setattr(sys, "path", list(sys.path))
+    monkeypatch.setattr(sys, "argv", ["runner", "--backend", "core-python"])
+    monkeypatch.setenv("ACCOUNT_HOST", "https://localhost:8081/")
+    monkeypatch.setenv("ACCOUNT_KEY", "unused-offline-test")
+    monkeypatch.setenv("COSMOS_BACKEND", "core-python")
+    monkeypatch.setenv("COSMOS_PARITY_CAPTURE_OP", operation)
+    monkeypatch.setattr(
+        runner, "TemporaryDirectory", lambda **kwargs: TemporaryDirectory(dir=tmp_path)
+    )
+
+    def inspect_baselines(options):
+        paths = [Path(option) for option in options if option.endswith(".py")]
+        assert len(paths) == len(set(paths))
+        assert {path.parent.name for path in paths} == {"sync", "aio"}
+        family = "get_latest_session_token" if operation == "session_token" else operation
+        for path in paths:
+            original = ROOT / "tests" / family / path.parent.name / path.name
+            expected = ast.parse(original.read_text(encoding="utf-8"))
+            actual = ast.parse(path.read_text(encoding="utf-8"))
+            for node in ast.walk(expected):
+                if isinstance(node, ast.keyword) and node.arg == "_backend":
+                    if isinstance(node.value, ast.Constant) and node.value.value == "rust":
+                        node.value.value = "core-python"
+            for tree in (expected, actual):
+                if ast.get_docstring(tree) is not None:
+                    tree.body = tree.body[1:]
+            assert ast.dump(actual) == ast.dump(expected)
+        return 0
+
+    monkeypatch.setattr(runner.pytest, "main", inspect_baselines)
+    if operation == "read_item":
+        assert runner.run_copied_suite("core-python", []) == 0
+    else:
+        assert runner.main() == 0
 
 
 def _methods(path):
@@ -47,8 +97,10 @@ def test_replacement_methods_match_originals_rust():
     silently disappearing is a failure rather than a smaller, still-passing run.
     """
     count = 0
-    for path in sorted(FAMILY.glob("*/legacy/test_*.py")):
-        suffix = "_async" if path.parent.parent.name == "aio" else ""
+    for path in sorted(FAMILY.glob("*/test_*.py")):
+        if "# Source:" not in path.read_text(encoding="utf-8"):
+            continue
+        suffix = "_async" if path.parent.name == "aio" else ""
         original = _methods(ROOT / "tests" / f"{path.stem}{suffix}.py")
         for key, method in _methods(path).items():
             source_key = (key[0], key[1].removesuffix("_rust"))
@@ -71,7 +123,10 @@ def test_replacement_collection_keeps_both_surfaces_rust():
     off, so collection reflects the files themselves rather than whatever the
     current session happens to be set up for.
     """
-    files = sorted(FAMILY.glob("*/legacy/test_*.py"))
+    files = sorted(
+        path for path in FAMILY.glob("*/test_*.py")
+        if "# Source:" in path.read_text(encoding="utf-8")
+    )
     expected = {
         f"{path.relative_to(ROOT).as_posix()}::{cls}::{method}"
         for path in files for cls, method in _methods(path)

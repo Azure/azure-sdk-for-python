@@ -380,7 +380,9 @@ def test_missing_id_raises_typed_not_found_rust(container_for):
     cmp.print_report()
     assert not cmp.core_python.succeeded, "core-python must raise on missing id"
     assert not cmp.rust.succeeded, "rust must raise on missing id"
-    cmp.assert_functional_exception_parity()
+    # Message text is not part of the contract: legacy and Rust word errors
+    # differently. Type, status code and sub-status must still match.
+    cmp.assert_functional_exception_parity(compare_message=False)
 
 
 def test_stale_etag_if_not_modified_raises_412_rust(container_for):
@@ -441,7 +443,9 @@ def test_stale_etag_if_not_modified_raises_412_rust(container_for):
             type(cmp.rust.raised).__name__,
         )
     )
-    cmp.assert_functional_exception_parity()
+    # Message text is not part of the contract: legacy and Rust word errors
+    # differently. Type, status code and sub-status must still match.
+    cmp.assert_functional_exception_parity(compare_message=False)
 
 
 # ---------------------------------------------------------------------------

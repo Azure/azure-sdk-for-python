@@ -179,7 +179,7 @@ def test_copied_batch_assertions_match_originals_rust(surface, filename):
     root = Path(__file__).resolve().parents[1]
     original = ast.parse((root / filename).read_text(encoding="utf-8"))
     copied = ast.parse(
-        (root / "execute_item_batch" / surface / "legacy" / filename).read_text(encoding="utf-8")
+        (root / "execute_item_batch" / surface / filename).read_text(encoding="utf-8")
     )
 
     def methods(tree):

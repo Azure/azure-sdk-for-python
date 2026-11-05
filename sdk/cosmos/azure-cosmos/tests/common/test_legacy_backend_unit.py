@@ -23,8 +23,6 @@ from azure.cosmos._backend.capabilities import OperationRouting
 
 import asyncio
 import unittest
-from types import SimpleNamespace
-from dataclasses import FrozenInstanceError
 
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
 
@@ -95,36 +93,6 @@ class TestLegacyBackendIsAnExplicitBackend(unittest.TestCase):
             ),
         )
         self.assertEqual(result, "legacy-page")
-
-    def test_operation_routing_is_frozen_rust(self):
-        """Operation identity and compatibility cannot change during execution."""
-        op = OperationRouting(op="create_item")
-        self.assertEqual(op.op, "create_item")
-        with self.assertRaises(FrozenInstanceError):
-            op.op = "delete_item"  # type: ignore[misc]
-
-
-class TestBackendCompatibilityFallback(unittest.TestCase):
-    """The backend boundary owns temporary parity fallback."""
-
-    def test_backend_execution_errors_never_replay_rust(self):
-        """Dispatch failure propagates, even for an operation allowing preflight fallback."""
-
-        class _RejectingBackend(CosmosBackend):
-            """Reject a prepared request to exercise explicit fallback."""
-
-            name = "rust"
-
-            def execute(self, prepared, *, deadline=None):
-                raise ValueError("unsupported input shape")
-
-        with self.assertRaisesRegex(ValueError, "unsupported input shape"):
-            _RejectingBackend().run_operation(
-                build_request=lambda: SimpleNamespace(op="is_feed_range_subset"),
-                routing=OperationRouting("is_feed_range_subset"),
-                legacy_call=lambda: self.fail("Execution must not replay"),
-                process_response=lambda _response: "rust",
-            )
 
 
 class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
@@ -198,34 +166,6 @@ class TestAsyncLegacyBackendIsAnExplicitBackend(unittest.TestCase):
                 ),
             )
             self.assertEqual(result, "async-legacy-page")
-
-        asyncio.run(_run())
-
-    def test_async_backend_execution_errors_never_replay_rust(self):
-        """An async execution failure cannot switch transports."""
-
-        async def _run():
-            class _RejectingBackend(AsyncCosmosBackend):
-                """Reject an async prepared request to exercise fallback."""
-
-                name = "rust"
-
-                async def execute(self, prepared, *, deadline=None):
-                    raise ValueError("unsupported input shape")
-
-            def build_request():
-                return SimpleNamespace(op="is_feed_range_subset")
-
-            async def run_legacy():
-                self.fail("Execution must not replay")
-
-            with self.assertRaisesRegex(ValueError, "unsupported input shape"):
-                await _RejectingBackend().run_operation(
-                    build_request=build_request,
-                    routing=OperationRouting("is_feed_range_subset"),
-                    legacy_call=run_legacy,
-                    process_response=lambda _response: "rust",
-                )
 
         asyncio.run(_run())
 

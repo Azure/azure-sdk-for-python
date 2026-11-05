@@ -362,7 +362,9 @@ async def test_missing_id_raises_typed_not_found_rust(container_for):
     assert not cmp.rust.succeeded, "rust must raise on missing id"
     assert getattr(cmp.core_python.raised, "status_code", None) == 404
     assert getattr(cmp.rust.raised, "status_code", None) == 404
-    cmp.assert_functional_exception_parity()
+    # Message text is not part of the contract: legacy and Rust word errors
+    # differently. Type, status code and sub-status must still match.
+    cmp.assert_functional_exception_parity(compare_message=False)
 
 
 @pytest.mark.asyncio
@@ -416,7 +418,9 @@ async def test_stale_etag_if_not_modified_raises_412_rust(container_for):
         "exception={!r}".format(
             getattr(cmp.rust.raised, "status_code", None),
             type(cmp.rust.raised).__name__))
-    cmp.assert_functional_exception_parity()
+    # Message text is not part of the contract: legacy and Rust word errors
+    # differently. Type, status code and sub-status must still match.
+    cmp.assert_functional_exception_parity(compare_message=False)
 
 
 @pytest.mark.asyncio

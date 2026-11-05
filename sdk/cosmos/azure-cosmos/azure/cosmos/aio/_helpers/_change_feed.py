@@ -36,14 +36,12 @@ from ..._telemetry import trace_operation_async
     name_of_span="ContainerProxy.query_items_change_feed.fetch",
 )
 async def _fetch_rust_page(
-    config: ChangeFeedConfig, state: ChangeFeedPageState, deadline: Optional[float]
+    config: ChangeFeedConfig, state: ChangeFeedPageState, deadline: Optional[float], **_tracing_kwargs: Any
 ) -> Optional[tuple[Optional[str], list[dict[str, Any]]]]:
     """Drain one authorized fetch before completing its public page."""
 
     async def fetch_one() -> list[dict[str, Any]]:
-        pages = config.backend.execute_pages(
-            state.prepared_page(deadline), deadline=deadline
-        )
+        pages = config.backend.execute_pages(state.prepared_page(deadline), deadline=deadline)
         try:
             page = await pages.__anext__()
         except StopAsyncIteration as error:
@@ -65,11 +63,7 @@ class AsyncChangeFeedPageIterator(AsyncPageIterator):
         headers: CaseInsensitiveDict,
         continuation_token: Optional[str] = None,
     ) -> None:
-        token = (
-            continuation_token
-            if continuation_token is not None
-            else config.options.get("continuation")
-        )
+        token = continuation_token if continuation_token is not None else config.options.get("continuation")
         self.state = ChangeFeedPageState(config, headers, token)
         super().__init__(self._fetch, self._unpack, continuation_token=token)
 
@@ -77,9 +71,7 @@ class AsyncChangeFeedPageIterator(AsyncPageIterator):
         # Pass through the continuation token and rows for the page iterator.
         return value
 
-    async def _fetch(
-        self, _token: Optional[str]
-    ) -> tuple[Optional[str], list[dict[str, Any]]]:
+    async def _fetch(self, _token: Optional[str]) -> tuple[Optional[str], list[dict[str, Any]]]:
         """Await a poll and then complete its result using the shared state.
 
         A poll starting at a particular time can require another fetch before
@@ -90,31 +82,23 @@ class AsyncChangeFeedPageIterator(AsyncPageIterator):
         if state.done:
             raise StopAsyncIteration
         if state.failed:
-            raise RuntimeError(
-                "change-feed pager failed; resume a new pager from the last delivered bookmark."
-            )
+            raise RuntimeError("change-feed pager failed; resume a new pager from the last delivered bookmark.")
         if not state.lock.acquire(blocking=False):
-            raise RuntimeError(
-                "Concurrent use of a change-feed pager is not supported."
-            )
+            raise RuntimeError("Concurrent use of a change-feed pager is not supported.")
         try:
             config, deadline = state.config, state.config.deadline()
             state.begin()
             if config.rust:
                 while True:
-                    result = await _fetch_rust_page(config, state, deadline)
+                    result = await _fetch_rust_page(config, state, deadline, **config.recording_options.kwargs)
                     if result is not None:
                         return result
 
             async def fetch_page() -> list[dict[str, Any]]:
-                state.legacy_options.update(
-                    legacy_deadline_options(config.options, deadline)
-                )
+                state.legacy_options.update(legacy_deadline_options(config.options, deadline))
                 state.legacy_options.pop("continuation", None)
                 if state.fetcher is None:
-                    properties = await config.proxy._get_properties_with_options(
-                        state.legacy_options
-                    )
+                    properties = await config.proxy._get_properties_with_options(state.legacy_options)
                     remaining_timeout(deadline)
                     change_state = state.legacy_state(properties)
                     state.legacy_options["changeFeedState"] = change_state
@@ -133,9 +117,7 @@ class AsyncChangeFeedPageIterator(AsyncPageIterator):
                             **config.kwargs
                         )
                         if state.responses == before:
-                            raise RuntimeError(
-                                "Legacy change-feed response headers were not captured."
-                            )
+                            raise RuntimeError("Legacy change-feed response headers were not captured.")
                         return rows, dict(state.captured)
 
                     factory = (

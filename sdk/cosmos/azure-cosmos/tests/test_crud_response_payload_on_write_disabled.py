@@ -1482,19 +1482,10 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.assertTrue(True)
 
     def test_get_resource_with_dictionary_and_object(self):
+        # Database checks retired to the matching tests/get_database_client/sync file.
+        # Retire this mixed method only after its container and item checks also
+        # have Rust copies and parity with no_response_on_write=True preserved.
         created_db = self.databaseForTest
-
-        # read database with id
-        read_db = self.client.get_database_client(created_db.id)
-        self.assertEqual(read_db.id, created_db.id)
-
-        # read database with instance
-        read_db = self.client.get_database_client(created_db)
-        self.assertEqual(read_db.id, created_db.id)
-
-        # read database with properties
-        read_db = self.client.get_database_client(created_db.read())
-        self.assertEqual(read_db.id, created_db.id)
 
         created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 

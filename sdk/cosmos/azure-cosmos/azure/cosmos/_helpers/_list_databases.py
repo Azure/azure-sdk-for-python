@@ -6,6 +6,7 @@ Each page iterator keeps its own continuation token. On the Rust path it builds
 a prepared page request without a feed cursor, then parses a backend page.
 The customer app receives an ItemPaged pager, not the page iterator itself.
 """
+
 from __future__ import annotations
 
 import time
@@ -19,7 +20,11 @@ from azure.core.utils import CaseInsensitiveDict
 from .. import http_constants
 from .._backend.contracts import PreparedPageRequest
 from .._constants import _Constants, TimeoutScope
-from .._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options, remaining_timeout
+from .._operation_deadline import (
+    legacy_deadline_kwargs,
+    legacy_deadline_options,
+    remaining_timeout,
+)
 from .._query_rust_routing import (
     build_list_databases_prepared_page_request,
     build_query_databases_prepared_page_request,
@@ -27,9 +32,12 @@ from .._query_rust_routing import (
     can_use_rust_backend_for_query_databases_page,
 )
 from ._request_settings import (
-    build_customer_headers, compose_item_options, is_supported_operation_timeout, normalize_query_specification,
+    build_customer_headers,
+    compose_item_options,
+    is_supported_operation_timeout,
+    normalize_query_specification,
 )
-from ._metadata_feed import MetadataFeedPageIterator
+from ._metadata_feed import MetadataFeedPageIterator, RecordingOptions
 
 
 class ListDatabasesConfig:
@@ -68,7 +76,8 @@ class ListDatabasesConfig:
         initial = build_customer_headers(self.options.get("initialHeaders"))
         page_size_header = http_constants.HttpHeaders.PageSize
         raw_count = initial.get(
-            page_size_header, build_customer_headers(self.default_headers).get(page_size_header),
+            page_size_header,
+            build_customer_headers(self.default_headers).get(page_size_header),
         )
         # Raw option headers override initial headers; a typed count overrides both.
         for key in tuple(self.options):
@@ -80,10 +89,7 @@ class ListDatabasesConfig:
                 count = int(raw_count)
             except ValueError as error:
                 raise ValueError(f"{self.operation} x-ms-max-item-count must be an integer.") from error
-        if count is not None and (
-            type(count) is not int
-            or count == 0 or count < -1 or count >= 2**63
-        ):
+        if count is not None and (type(count) is not int or count == 0 or count < -1 or count >= 2**63):
             raise ValueError(f"{self.operation} max_item_count must be a positive i64 integer, -1, or None.")
         if count is not None:
             self.options["maxItemCount"] = count
@@ -91,6 +97,7 @@ class ListDatabasesConfig:
             initial.pop(page_size_header, None)
             self.options["initialHeaders"] = initial
         self.kwargs = kwargs
+        self.recording_options = RecordingOptions.snapshot(kwargs)
         self.telemetry_owner = client
         self.backend = client._adapter
         self.rust = self.backend.name != "core-python"
@@ -107,12 +114,21 @@ class ListDatabasesConfig:
         return "list_databases" if self.query_payload is None else "query_databases"
 
     def prepared(self, token: Optional[str], deadline: Optional[float]) -> PreparedPageRequest:
-        eligible = can_use_rust_backend_for_list_databases_page(
-            options=self.options, kwargs=self.kwargs, is_query_plan=False,
-            resource_type=http_constants.ResourceType.Database,
-        ) if self.query_payload is None else can_use_rust_backend_for_query_databases_page(
-            query_payload=self.query_payload, options=self.options, kwargs=self.kwargs,
-            is_query_plan=False, resource_type=http_constants.ResourceType.Database,
+        eligible = (
+            can_use_rust_backend_for_list_databases_page(
+                options=self.options,
+                kwargs=self.kwargs,
+                is_query_plan=False,
+                resource_type=http_constants.ResourceType.Database,
+            )
+            if self.query_payload is None
+            else can_use_rust_backend_for_query_databases_page(
+                query_payload=self.query_payload,
+                options=self.options,
+                kwargs=self.kwargs,
+                is_query_plan=False,
+                resource_type=http_constants.ResourceType.Database,
+            )
         )
         if not eligible:
             raise NotImplementedError(
@@ -126,14 +142,22 @@ class ListDatabasesConfig:
             options.pop("continuation", None)
         prepared = (
             build_list_databases_prepared_page_request(options=options, req_headers=self.default_headers)
-            if self.query_payload is None else build_query_databases_prepared_page_request(
-                query_payload=self.query_payload, options=options, req_headers=self.default_headers,
+            if self.query_payload is None
+            else build_query_databases_prepared_page_request(
+                query_payload=self.query_payload,
+                options=options,
+                req_headers=self.default_headers,
             )
         )
-        return replace(prepared, settings=replace(prepared.settings, timeout_seconds=remaining_timeout(deadline)))
+        return replace(
+            prepared,
+            settings=replace(prepared.settings, timeout_seconds=remaining_timeout(deadline)),
+        )
 
     def legacy_page(
-        self, token: Optional[str], deadline: Optional[float],
+        self,
+        token: Optional[str],
+        deadline: Optional[float],
         response_headers: Optional[CaseInsensitiveDict] = None,
     ) -> Any:
         if self.connection is None:
@@ -142,8 +166,13 @@ class ListDatabasesConfig:
         options["continuation"] = token
         # The legacy path retries the request, never the customer app's success hook.
         return self.connection._CosmosClientConnection__QueryFeed(
-            "/dbs", http_constants.ResourceType.Database, "",
-            lambda body: body["Databases"], lambda _, body: body, self.query_payload, options,
+            "/dbs",
+            http_constants.ResourceType.Database,
+            "",
+            lambda body: body["Databases"],
+            lambda _, body: body,
+            self.query_payload,
+            options,
             _read_all_backend=self.backend,
             response_headers=response_headers,
             **legacy_deadline_kwargs(self.kwargs, deadline),
@@ -157,14 +186,19 @@ class QueryDatabasesConfig(ListDatabasesConfig):
     )
 
     def __init__(
-        self, client: Any, query: Any, parameters: Any, kwargs: dict[str, Any],
+        self,
+        client: Any,
+        query: Any,
+        parameters: Any,
+        kwargs: dict[str, Any],
     ) -> None:
         if query is not None:
             text, values = normalize_query_specification(query, parameters, operation=self.operation)
             self.query_payload = {"query": text, "parameters": list(values)}
         modes = client.client_connection._QueryCompatibilityMode
         self.query_mode_supported = client.client_connection._query_compatibility_mode in (
-            modes.Default, modes.Query,
+            modes.Default,
+            modes.Query,
         )
         super().__init__(client, kwargs)
 
@@ -175,10 +209,14 @@ class QueryDatabasesConfig(ListDatabasesConfig):
 
 
 def list_databases(client: Any, kwargs: dict[str, Any]) -> ItemPaged[dict[str, Any]]:
-    return ItemPaged(ListDatabasesConfig(client, kwargs), page_iterator_class=MetadataFeedPageIterator)
+    return ItemPaged(
+        ListDatabasesConfig(client, kwargs),
+        page_iterator_class=MetadataFeedPageIterator,
+    )
 
 
 def query_databases(client: Any, query: Any, parameters: Any, kwargs: dict[str, Any]) -> ItemPaged[Any]:
     return ItemPaged(
-        QueryDatabasesConfig(client, query, parameters, kwargs), page_iterator_class=MetadataFeedPageIterator,
+        QueryDatabasesConfig(client, query, parameters, kwargs),
+        page_iterator_class=MetadataFeedPageIterator,
     )

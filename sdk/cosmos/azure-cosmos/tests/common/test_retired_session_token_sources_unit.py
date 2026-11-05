@@ -153,7 +153,8 @@ def test_token_retirement_does_not_hide_unknown_or_broken_sources_rust(monkeypat
     "test_every_source_reference_resolves_rust",
     "test_every_legacy_file_pins_rust_backend_rust",
     "test_no_unstructured_skips_rust",
-    "test_every_legacy_test_is_selected_by_emulator_marker_rust",
+    "test_every_copy_keeps_original_lane_markers_rust",
+    "test_every_legacy_test_collects_without_conftest_rust",
 ])
 def test_retained_token_copies_pass_migration_enforcement_rust(monkeypatch, check_name):
     monkeypatch.setattr(enforcer, "_TESTS_DIR", TOKEN_TESTS)

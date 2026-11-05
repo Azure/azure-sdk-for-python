@@ -135,7 +135,7 @@ def test_copied_setup_registers_cleanup_before_creation_rust(monkeypatch, asynch
     monkeypatch.setenv("ACCOUNT_HOST", "https://unused.invalid")
     monkeypatch.setenv("ACCOUNT_KEY", "unused")
     filename = family + ("_async" if asynchronous and family == "test_auto_scale" else "") + ".py"
-    module = load(Path(__file__).parent / ("aio" if asynchronous else "sync") / "legacy" / filename)
+    module = load(Path(__file__).parent / ("aio" if asynchronous else "sync") / filename)
     cls, = [
         value for value in vars(module).values()
         if isinstance(value, type) and issubclass(value, unittest.TestCase)

@@ -16,13 +16,15 @@ pytest.importorskip("opentelemetry.sdk.trace")
 # pylint: disable=wrong-import-position
 from opentelemetry import trace
 from opentelemetry.sdk.trace.sampling import ALWAYS_OFF
-from common.test_rust_telemetry_unit import (  # pylint: disable=unused-import
+from telemetry.test_rust_telemetry_unit import (  # pylint: disable=unused-import
     DriverTransportError,
     attempt_spans,
     contribution_response,
     recording_setup,
 )
-from read_all_items.test_read_all_items_contract_unit import feed  # pylint: disable=unused-import
+from read_all_items.test_read_all_items_contract_unit import (
+    feed,
+)  # pylint: disable=unused-import
 from azure.core.exceptions import ServiceResponseError
 from azure.core.settings import settings
 from azure.cosmos import _telemetry as telemetry
@@ -62,6 +64,7 @@ def read_all_setup(recording, feed, monkeypatch):  # pylint: disable=unused-argu
     def finish(handle, prepared, cursor, include_attempts, timeout_seconds):
         _, payload = contribution_response(5, time.time_ns())
         payload["complete"] = not cursor.can_retry_setup
+        payload["incomplete_reasons"] = [] if payload["complete"] else ["feed_preparation_diagnostics_unavailable"]
         if h.error:
             if include_attempts:
                 h.error._cosmos_attempt_payload = payload
@@ -93,6 +96,27 @@ def read_all_setup(recording, feed, monkeypatch):  # pylint: disable=unused-argu
 
 def fetch_spans(recording):
     return [s for s in recording.exporter.get_finished_spans() if s.name == "ContainerProxy.read_all_items.fetch"]
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+def test_page_tracing_settings_are_snapshotted_until_consumption(reading, recording, enabled):
+    h, f = reading, reading.feed
+    settings.tracing_enabled = not enabled
+    attributes = {"bank.component": "orders"}
+    options = {"enabled": enabled, "attributes": {"bank.page": "first"}}
+    pager = f.proxy.read_all_items(tracing_attributes=attributes, tracing_options=options)
+    assert not h.calls and not fetch_spans(recording) and not attempt_spans(recording)
+    recording.exporter.clear()
+    attributes["bank.component"] = "mutated"
+    options["enabled"] = not enabled
+    options["attributes"]["bank.page"] = "mutated"
+    assert f.next_page(pager.by_page()) == [{"id": "a", "nested": [1]}]
+    assert len(h.calls) == 1 and h.calls[0][2] is enabled
+    spans = recording.exporter.get_finished_spans()
+    assert len(spans) == (3 if enabled else 0)
+    for span in spans:
+        assert span.attributes["bank.component"] == "orders"
+        assert span.attributes["bank.page"] == "first"
 
 
 @pytest.mark.parametrize("mode", ["enabled", "disabled", "handler-only", "sampled-out", "no-handlers"])
@@ -128,7 +152,10 @@ def test_internal_fetch_owns_diagnostics_and_final_hook(
     assert not h.calls and not h.seen and not fetch_spans(recording)
     pages = iterable.by_page()
     parents = []
-    for expected, fetch_count in (([{"id": "a", "nested": [1]}], 1), ([{"id": "b"}], 2)):
+    for expected, fetch_count in (
+        ([{"id": "a", "nested": [1]}], 1),
+        ([{"id": "b"}], 2),
+    ):
         with trace.get_tracer("customer").start_as_current_span("consume") as consumer:
             assert f.next_page(pages) == expected
             parents.extend([consumer.get_span_context().span_id] * fetch_count)
@@ -158,7 +185,9 @@ def test_internal_fetch_owns_diagnostics_and_final_hook(
     assert len(spans) == (4 if mode in ("enabled", "no-handlers") else 0)
     if spans:
         assert [s.parent.span_id for s in spans] == parents
-        assert not any(key.startswith("cosmos.poc.") for key in spans[0].attributes)
+        assert "cosmos.poc.request_count" not in spans[0].attributes
+        assert "cosmos.poc.retained_request_count" not in spans[0].attributes
+        assert spans[0].attributes["cosmos.poc.diagnostics_complete"] is False
         assert all(s.attributes["cosmos.poc.request_count"] == 5 for s in spans[1:])
         assert all(s.status.status_code is trace.StatusCode.UNSET for s in spans)
         assert all(
@@ -206,7 +235,7 @@ def test_fetch_errors_preserve_customer_outcome(reading, recording, failure, tim
     elif failure == "transport":
         h.error, expected = DriverTransportError("failed"), ServiceResponseError
     elif failure == "timeout":
-        h.error, expected = TimeoutError("timed out"), CosmosClientTimeoutError if timeout else TimeoutError
+        h.error, expected = TimeoutError("timed out"), (CosmosClientTimeoutError if timeout else TimeoutError)
     elif failure == "parse":
         h.transform = lambda value: ((200, 0, {}, b"invalid-json", None), value[1])
         expected = json.JSONDecodeError
@@ -253,11 +282,22 @@ def test_diagnostics_failure_does_not_change_paging(reading, recording, monkeypa
     elif detail == "malformed":
         h.transform = lambda value: (value[0], {"schema_version": 99})
     elif detail == "partial":
-        h.transform = lambda value: (value[0], {**value[1], "complete": False})
+        h.transform = lambda value: (
+            value[0],
+            {
+                **value[1],
+                "complete": False,
+                "incomplete_reasons": ["feed_preparation_diagnostics_unavailable"],
+            },
+        )
     elif detail == "invalid-response":
         h.transform = lambda _: ("invalid",)
     else:
-        monkeypatch.setattr(telemetry, "emit_attempts", Mock(side_effect=RuntimeError("recording failed")))
+        monkeypatch.setattr(
+            telemetry,
+            "emit_attempts",
+            Mock(side_effect=RuntimeError("recording failed")),
+        )
         f.proxy._item_context = replace(
             f.proxy._item_context,
             telemetry_handlers=(
@@ -273,7 +313,8 @@ def test_diagnostics_failure_does_not_change_paging(reading, recording, monkeypa
         assert f.next_page(pages) == [{"id": "b"}]
     assert len(h.calls) == len(h.seen) == len(fetch_spans(recording)) == 1
     assert h.seen[0].outcome == ("error" if detail == "invalid-response" else "success")
-    assert not any(key.startswith("cosmos.poc.") for key in fetch_spans(recording)[0].attributes)
+    assert "cosmos.poc.request_count" not in fetch_spans(recording)[0].attributes
+    assert "cosmos.poc.retained_request_count" not in fetch_spans(recording)[0].attributes
     assert len(attempt_spans(recording)) == (2 if detail == "partial" else 0)
 
 
@@ -370,10 +411,12 @@ def test_nested_hook_does_not_contribute_to_outer_fetch(reading, recording):
 
 
 @pytest.mark.parametrize("option", ["tracing_options", "tracing_attributes"])
-def test_unsupported_tracing_arguments_remain_unsupported(reading, recording, option):
-    with pytest.raises(NotImplementedError):
-        reading.feed.proxy.read_all_items(**{option: {}})
+def test_empty_tracing_arguments_preserve_default_recording(reading, recording, option):
+    pages = reading.feed.proxy.read_all_items(**{option: {}}).by_page()
     assert not reading.calls and not reading.seen and not fetch_spans(recording)
+    assert reading.feed.next_page(pages) == [{"id": "a", "nested": [1]}]
+    assert len(reading.calls) == len(reading.seen) == len(fetch_spans(recording)) == 1
+    assert reading.calls[0][2]
 
 
 @pytest.mark.parametrize("enabled", [False, True])

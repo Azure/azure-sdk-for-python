@@ -310,7 +310,12 @@ fn subset_response<'py>(
 ) -> PyResult<Bound<'py, PyTuple>> {
     let response = tuple_from_is_feed_range_subset_result(py, result);
     if include_attempts {
-        with_attempt_diagnostics(py, response, None, true)
+        with_attempt_diagnostics(
+            py,
+            response,
+            None,
+            super::response::AttemptCoverage::Complete,
+        )
     } else {
         response
     }

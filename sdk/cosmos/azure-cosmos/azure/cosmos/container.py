@@ -1436,20 +1436,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
-        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
-            the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
+        :keyword int retry_write: Per-call retry configuration is not supported on Rust-backed clients.
+            Non-None values, including zero, raise ``NotImplementedError``. Omit this option or pass ``None``;
+            the Rust driver controls automatic retries, so ``None`` does not disable retries.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Union[bool, dict[str, Any]] availability_strategy: Enables an availability strategy by using cross-region request hedging.
-            Can be True (use client config if present, otherwise use default values: threshold_ms=500),
-            False (disable hedging even if client has it enabled),
-            or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
-            If not provided, uses the client's configured strategy.
+        :keyword Union[bool, dict[str, Any]] availability_strategy: Write hedging is not supported on Rust-backed clients.
+            This option cannot enable it for ``create_item``.
         :keyword float timeout: One metadata-plus-write budget, finite and at least one second.
+        :raises NotImplementedError: A non-None ``retry_write`` was supplied on a Rust-backed client.
         :raises TypeError: A retired keyword, invalid body type, non-string ID, or non-callable response hook was supplied.
         :raises ValueError: The ID, JSON body, or timeout is invalid.
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: The ID already exists in the logical partition.

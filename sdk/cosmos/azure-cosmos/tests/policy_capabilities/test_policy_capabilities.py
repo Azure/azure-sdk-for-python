@@ -25,7 +25,7 @@ from azure.cosmos.aio._retry_utility_async import _ConnectionRetryPolicy
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from azure.cosmos.documents import ConnectionPolicy
 from common._parity_helpers import _binding_operation_count, _rust_fallback_count
-from test_config import MockHandler
+from common._test_helpers import MockHandler
 from test_cosmos_http_logging_policy import FilterStatusCode
 
 
@@ -223,6 +223,18 @@ def test_policy_capability_rust(backend, saved_order, asynchronous, capability, 
             finish(exporter, result, error)
 
     try:
+        if backend == "rust" and capability == "network_span_namer":
+            client_type = AsyncCosmosClient if asynchronous else CosmosClient
+            with pytest.raises(TypeError, match="network_span_namer is not supported by Rust-backed APIs"):
+                client_type(
+                    os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend=backend, **settings,
+                )
+            assert not events
+            print("\nPOLICY-CAPTURE " + json.dumps({
+                "capability": capability, "backend": backend, "surface": "aio" if asynchronous else "sync",
+                "outcome": "rejected_at_construction",
+            }))
+            return
         if backend == "rust" and capability == "connection_retry_policy" and not asynchronous:
             with pytest.raises(TypeError, match="connection_retry_policy is not supported by Rust-backed clients"):
                 CosmosClient(

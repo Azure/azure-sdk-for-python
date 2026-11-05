@@ -75,6 +75,19 @@ struct QueryRequest {
     feed_range: Option<(String, String)>,
     allow_cross_partition: bool,
     continuation_limit_kb: Option<i64>,
+    max_buffered_query_window: Option<u64>,
+}
+
+fn query_planning_error(error: CosmosError, maximum: Option<u64>) -> PyResult<CosmosError> {
+    if maximum.is_some()
+        && error.status() == status_codes::CLIENT_BUFFERED_QUERY_REQUIRES_FINITE_WINDOW
+    {
+        return Err(PyValueError::new_err(
+            "Executing a vector search query with more items than the max is not allowed. \
+             Please ensure you are using a limit smaller than the max, or change the max.",
+        ));
+    }
+    Ok(error)
 }
 
 fn feed_range_from_bounds(min: &str, max: &str) -> Result<FeedRange, CosmosError> {
@@ -386,13 +399,21 @@ async fn next_plan_page(
         }
         let service_continuation =
             matches!(request, FeedRequest::Query(_)) && operation.is_trivial();
+        let maximum = match &request {
+            FeedRequest::Query(query) => query.max_buffered_query_window,
+            _ => None,
+        };
+        let plan_options = match maximum {
+            Some(maximum) => plan_options.with_max_buffered_query_window(maximum),
+            None => plan_options,
+        };
         let token = continuation.map(ContinuationToken::from_string);
         let plan = match driver
             .plan_operation(operation, &options, token.as_ref(), &plan_options)
             .await
         {
             Ok(plan) => plan,
-            Err(error) => return Ok((Err(error), None, false)),
+            Err(error) => return Ok((Err(query_planning_error(error, maximum)?), None, false)),
         };
         Progress {
             plan,
@@ -503,6 +524,11 @@ fn feed_inputs(prepared: &Bound<'_, PyAny>, scope: BindingPartitionKey) -> PyRes
                 .getattr("query")?
                 .getattr("continuation_limit_kb")?
                 .extract()?,
+            max_buffered_query_window: prepared
+                .getattr("settings")?
+                .getattr("query")?
+                .getattr("max_buffered_query_window")?
+                .extract()?,
         }));
     }
     match op.as_str() {
@@ -544,7 +570,12 @@ fn finish_page<'py>(
         Ok(tuple)
     })();
     if include_attempts {
-        with_attempt_diagnostics(py, response, diagnostics, complete)
+        let coverage = if complete {
+            super::response::AttemptCoverage::Complete
+        } else {
+            super::response::AttemptCoverage::Incomplete("feed_preparation_diagnostics_unavailable")
+        };
+        with_attempt_diagnostics(py, response, diagnostics, coverage)
     } else {
         response
     }
@@ -833,7 +864,17 @@ mod tests {
                             .extract::<bool>()
                             .unwrap());
                     } else {
-                        assert!(payload.get_item("complete").is_err());
+                        assert!(payload
+                            .get_item("complete")
+                            .unwrap()
+                            .extract::<bool>()
+                            .unwrap());
+                        assert!(payload
+                            .get_item("incomplete_reasons")
+                            .unwrap()
+                            .extract::<Vec<String>>()
+                            .unwrap()
+                            .is_empty());
                     }
                     let headers = ordinary.get_item(2).unwrap();
                     assert_eq!(
@@ -1140,7 +1181,40 @@ mod tests {
             feed_range: None,
             allow_cross_partition: true,
             continuation_limit_kb: None,
+            max_buffered_query_window: None,
         })
+    }
+
+    #[test]
+    fn configured_buffer_guard_maps_only_its_typed_planning_error() {
+        pyo3::prepare_freethreaded_python();
+        for maximum in [None, Some(0), Some(1), Some(50_000)] {
+            for status in [
+                status_codes::CLIENT_BUFFERED_QUERY_REQUIRES_FINITE_WINDOW,
+                status_codes::CLIENT_BUFFERED_QUERY_CONTINUATION_UNSUPPORTED,
+            ] {
+                let error = CosmosError::builder()
+                    .with_status(status)
+                    .with_message("original driver message")
+                    .build();
+                let result = query_planning_error(error, maximum);
+                if maximum.is_some()
+                    && status == status_codes::CLIENT_BUFFERED_QUERY_REQUIRES_FINITE_WINDOW
+                {
+                    let error = result.unwrap_err();
+                    Python::with_gil(|py| {
+                        assert!(error.is_instance_of::<PyValueError>(py));
+                        assert_eq!(
+                            error.value_bound(py).getattr("args").unwrap().get_item(0).unwrap().extract::<String>().unwrap(),
+                            "Executing a vector search query with more items than the max is not allowed. \
+                             Please ensure you are using a limit smaller than the max, or change the max."
+                        );
+                    });
+                } else {
+                    assert_eq!(result.unwrap().status(), status);
+                }
+            }
+        }
     }
 
     #[test]
@@ -1161,6 +1235,11 @@ mod tests {
                 .unwrap();
             prepared.setattr("query_scope", &scope).unwrap();
             let settings = super::super::settings::test_settings(py);
+            settings
+                .getattr("query")
+                .unwrap()
+                .setattr("max_buffered_query_window", 1u64)
+                .unwrap();
             prepared.setattr("settings", settings).unwrap();
             scope.setattr("feed_range", ("00", "AA")).unwrap();
             scope.setattr("allow_cross_partition", false).unwrap();
@@ -1173,6 +1252,7 @@ mod tests {
             assert_eq!(query.feed_range, Some(("00".into(), "AA".into())));
             assert!(!query.allow_cross_partition);
             assert!(query.partition_key.is_none());
+            assert_eq!(query.max_buffered_query_window, Some(1));
 
             prepared.setattr("query_scope", py.None()).unwrap();
             let error = match feed_inputs(&prepared, BindingPartitionKey::CrossPartition) {
@@ -1389,6 +1469,7 @@ mod tests {
             feed_range: None,
             allow_cross_partition: true,
             continuation_limit_kb: Some(1),
+            max_buffered_query_window: None,
         });
         let mut options = modifiers();
         options.custom_headers.insert(
@@ -1441,6 +1522,7 @@ mod tests {
             feed_range: None,
             allow_cross_partition: false,
             continuation_limit_kb: None,
+            max_buffered_query_window: None,
         };
         let rows = query_drain(&driver, &FeedRequest::Query(request.clone()), None).await;
         assert_eq!(rows.len(), 1);
@@ -1539,6 +1621,7 @@ mod tests {
             feed_range: None,
             allow_cross_partition: true,
             continuation_limit_kb: None,
+            max_buffered_query_window: None,
         };
         let rows = query_drain(&driver, &FeedRequest::Query(request.clone()), None).await;
         assert_eq!(rows.len(), 9);

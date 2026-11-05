@@ -227,7 +227,11 @@ fn offer_read_tuple<'py>(
         py,
         tuple_from_offer_feed_result(py, result.into_result()),
         diagnostics,
-        complete,
+        if complete {
+            super::response::AttemptCoverage::Complete
+        } else {
+            super::response::AttemptCoverage::Incomplete("error_diagnostics_unavailable")
+        },
     )
 }
 

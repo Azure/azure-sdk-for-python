@@ -25,18 +25,21 @@ ROOT = Path(__file__).resolve().parents[2]
 def test_files(operation):
     """Include reads owned by neighboring operation families without copying them again."""
     family = f"{operation}_database_throughput"
-    files = sorted((ROOT / "tests" / family).glob("*/legacy/test_*.py"))
+    files = sorted(
+        path for path in (ROOT / "tests" / family).glob("*/test_*.py")
+        if "# Source:" in path.read_text(encoding="utf-8")
+    )
     if operation == "get":
         files.extend(
-            ROOT / "tests" / "replace_database_throughput" / surface / "legacy" / "test_auto_scale.py"
+            ROOT / "tests" / "replace_database_throughput" / surface / "test_auto_scale.py"
             for surface in ("sync", "aio")
         )
         files.append(
-            ROOT / "tests" / "get_container_throughput" / "sync" / "legacy" / "test_backwards_compatibility.py"
+            ROOT / "tests" / "get_container_throughput" / "sync" / "test_backwards_compatibility.py"
         )
     else:
         files.extend(
-            ROOT / "tests" / "get_database_throughput" / surface / "legacy" / filename
+            ROOT / "tests" / "get_database_throughput" / surface / filename
             for surface in ("sync", "aio")
             for filename in ("test_cosmos_responses.py", "test_crud_response_payload_on_write_disabled.py")
         )
@@ -113,7 +116,7 @@ def main():
     with TemporaryDirectory(prefix="database_throughput_corepy_", dir=artifacts) as temporary:
         baseline_files = []
         for path in files:
-            target = Path(temporary) / path.parent.parent.parent.name / path.parent.parent.name / path.name
+            target = Path(temporary) / path.parent.parent.name / path.parent.name / path.name
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(
                 _source_for_backend(path, "core-python"),

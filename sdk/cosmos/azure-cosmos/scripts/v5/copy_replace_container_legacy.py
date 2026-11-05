@@ -74,7 +74,7 @@ def generated_files():
                 copied[0] = copied[0].replace("def " + method.name + "(", "def " + method.name + "_rust(", 1)
                 copied.insert(1, f"        # Source: tests/{source_path.name}::{cls.name}.{method.name}")
                 chunks.append("\n".join(copied))
-            destination = ROOT / "tests" / "replace_container" / surface / "legacy" / f"test_{family}.py"
+            destination = ROOT / "tests" / "replace_container" / surface / f"test_{family}.py"
             yield destination, "\n\n".join(chunks) + "\n"
 
 

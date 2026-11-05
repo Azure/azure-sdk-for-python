@@ -108,8 +108,9 @@ def point_read(request, monkeypatch):
                 raise TimeoutError("native item budget exhausted during metadata")
         return timeout_seconds
 
-    def ensure_driver_handle():
+    def ensure_driver_handle(*, deadline=None):
         clock.now += context.init_delay
+        _operation_deadline.remaining_timeout(deadline)
         return "test-handle"
 
     def wrap(function):

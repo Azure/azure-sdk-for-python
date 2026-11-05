@@ -1,39 +1,46 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Sync ``test_container_patch_item_throughput_bucket`` on the core-python path.
+"""Sync ``test_container_patch_item_throughput_bucket`` on the ``_backend="rust"`` path.
 
-A deterministic copy of ``sync/legacy/test_headers.py`` (identical except
-that it doesn't pass the ``_backend`` argument). The partition-key value
-and id are fixed so the parity reporter can diff the patched item
-field by field against the Rust run; the original test uses a random pk
-each run, which would show up as a spurious mismatch.
+Copied from ``tests/test_headers.py``; the class and method names match the
+source (apart from the method's ``_rust`` suffix) so the parity reporter can pair the
+core-python and Rust runs. Builds its
+own database + container and reads ``ACCOUNT_HOST`` / ``ACCOUNT_KEY`` from the
+environment. The single patch call exercises all six operation kinds
+(add / remove / replace / set / incr / move) in one request.
 
-Run: ``pytest tests/patch_item/sync/test_headers.py -v -s``
+Run: ``pytest --noconftest tests/patch_item/sync/test_headers.py -v``
 """
+import importlib
 import os
 import unittest
 from unittest.mock import patch
 import uuid
 
+import pytest
+
 from azure.cosmos import CosmosClient, PartitionKey, http_constants
 
 
-HOST = os.environ["ACCOUNT_HOST"]
-KEY = os.environ["ACCOUNT_KEY"]
+HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
+KEY = os.environ.get(
+    "ACCOUNT_KEY",
+    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+)
 
 
-# Same value as the Rust copy, so the wire bytes match.
+# Same value as the source, so the wire bytes match core-python.
 request_throughput_bucket_number = 3
 
 
+@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAADLong
 class TestHeaders(unittest.TestCase):
-    """Verify sync patch request headers and the resulting item."""
 
     @classmethod
     def setUpClass(cls):
-        # No ``_backend`` -> the SDK default (core-python) path.
-        cls.client = CosmosClient(HOST, KEY)
-        cls._db_id = "corepy_pi_headers_" + uuid.uuid4().hex[:8]
+        cls.client = CosmosClient(HOST, KEY, _backend="rust")
+        cls._db_id = "legacy_pi_headers_" + uuid.uuid4().hex[:8]
         cls._container_id = "c_" + uuid.uuid4().hex[:8]
         cls.database = cls.client.create_database(cls._db_id)
         cls.container = cls.database.create_container(
@@ -49,13 +56,15 @@ class TestHeaders(unittest.TestCase):
             pass
 
     def test_container_patch_item_throughput_bucket_rust(self):
-        """patch_item forwards the ``throughput_bucket`` keyword as the
-        ``x-ms-cosmos-throughput-bucket`` header, and all six patch
-        operations apply to produce the expected item."""
-        # Fixed (pk, id) so the parity reporter can diff the patched item
-        # against the Rust run field by field; each run has its own fresh
-        # container, so there is no collision.
+        """Verify the operation prepares the requested throughput bucket."""
+        # Source: tests/test_headers.py::TestHeaders.test_container_patch_item_throughput_bucket
+        # NOTE: the partition-key value and item id are FIXED (not a random
+        # uuid like the source) so the parity reporter can diff the patched
+        # item field-by-field against the core-python column -- a random
+        # pk would show up as a spurious body divergence. Each column builds
+        # its own fresh container, so the fixed (pk, id) never collides.
         pkValue = "patch_item_pk"
+        # Create item to patch
         item = {
             "id": "patch_item",
             "pk": pkValue,
@@ -66,6 +75,7 @@ class TestHeaders(unittest.TestCase):
             "company": "Microsoft",
             "number": 3}
         self.container.create_item(item)
+        # Define and run patch operations
         operations = [
             {"op": "add", "path": "/color", "value": "yellow"},
             {"op": "remove", "path": "/prop"},
@@ -74,16 +84,16 @@ class TestHeaders(unittest.TestCase):
             {"op": "incr", "path": "/number", "value": 7},
             {"op": "move", "from": "/color", "path": "/favorite_color"}
         ]
-        transport = self.client.client_connection.pipeline_client._pipeline._transport
-        with patch.object(transport, "send", wraps=transport.send) as send:
+        binding = importlib.import_module(type(self.client._adapter).__module__)._rust_module
+        with patch.object(binding, "patch_item", wraps=binding.patch_item) as operation:
             self.container.patch_item(
                 item="patch_item",
                 partition_key=pkValue,
                 patch_operations=operations,
                 throughput_bucket=request_throughput_bucket_number)
-        self.assertTrue(send.called)
-        for call in send.call_args_list:
+        self.assertTrue(operation.called)
+        for call in operation.call_args_list:
             self.assertEqual(
-                call.args[0].headers[http_constants.HttpHeaders.ThroughputBucket],
+                call.args[1].headers[http_constants.HttpHeaders.ThroughputBucket],
                 str(request_throughput_bucket_number),
             )

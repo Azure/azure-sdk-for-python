@@ -13,11 +13,10 @@ from urllib.parse import urlsplit
 
 import pytest
 
-from azure.cosmos import CosmosClient, exceptions
-from _fault_injection_transport import FaultInjectionTransport
+from azure.cosmos import exceptions
+from config.fault_resources import load_account as load_account
 
 from fault_injection._delayed_create import emit
-from _client_transport import create_client_with_transport
 
 WRITE_REGION = "East US"
 READ_REGION = "West US"
@@ -54,24 +53,6 @@ def topology(account, write_endpoint, read_endpoint, target_guard):
     result.pop("thinClientReadableLocations", None)
     result.pop("thinClientWritableLocations", None)
     return result
-
-
-def load_account(endpoint, key):
-    accounts = []
-    transport = FaultInjectionTransport()
-
-    def capture(request, inner):
-        response = inner()
-        assert response.status_code == 200, "Account discovery failed"
-        accounts.append(json.loads(response.body()))
-        return response
-
-    transport.add_response_transformation(
-        FaultInjectionTransport.predicate_is_database_account_call, capture)
-    with create_client_with_transport(CosmosClient, endpoint, key, _backend="core-python", transport=transport, timeout=TIMEOUT):
-        pass
-    assert accounts, "No account discovery response was observed"
-    return accounts[-1]
 
 
 def rules(rule_id, container_id, account, inject=True):
@@ -135,7 +116,7 @@ def assert_guard(error, records, read_endpoint, hits, rule_id):
     assert all(record["sub_status"] == 3 for record in records)
 
 
-def capture_native(monkeypatch, records, asynchronous=False):
+def capture_native(monkeypatch, records, asynchronous=False, *, driver_handle):
     if asynchronous:
         from azure.cosmos.aio._backend import binding_adapter as module
     else:
@@ -152,6 +133,8 @@ def capture_native(monkeypatch, records, asynchronous=False):
             return function
 
         def capture(*args, **kwargs):
+            if args[0] is not driver_handle:
+                return function(*args, **kwargs)
             try:
                 response, payload = function(*args, **kwargs, include_fault_diagnostics=True)
             except module._DRIVER_TRANSPORT_ERROR as error:
@@ -163,6 +146,8 @@ def capture_native(monkeypatch, records, asynchronous=False):
             return response
 
         async def capture_async(*args, **kwargs):
+            if args[0] is not driver_handle:
+                return await function(*args, **kwargs)
             try:
                 response, payload = await function(*args, **kwargs, include_fault_diagnostics=True)
             except module._DRIVER_TRANSPORT_ERROR as error:
@@ -232,6 +217,11 @@ def isolate(request, target):
     print(result.stdout, end="")
     if result.stderr:
         print(result.stderr, end="", file=sys.stderr)
-    assert result.returncode == 0, f"Isolated F02 worker failed with exit {result.returncode}"
+    assert result.returncode == 0, (
+        f"Isolated F02 worker failed with exit {result.returncode}\n"
+        f"Test: {node}\n"
+        f"--- worker stdout ---\n{result.stdout}\n"
+        f"--- worker stderr ---\n{result.stderr}"
+    )
     emit("regional_worker", nodeid=node, exit_code=result.returncode)
     return True

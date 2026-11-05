@@ -6,12 +6,15 @@
 
 #### Features Added
 
+* Added opt-in Rust response-summary logging through `logger`, `enable_diagnostics_logging` (INFO), and `logging_enable` (DEBUG), without reconstructing legacy HTTP traffic logs.
 * Added `CosmosRuntime`, `ConnectionPoolOptions`, and the `CosmosClient(runtime=...)` option for explicitly initialized, shareable Rust runtimes alongside the default process singleton.
 * Added Rust-backed client-level `timeout` defaults with per-operation overrides, independently of runtime connection and HTTP-request timeouts.
 * Added simple-token combination to synchronous and asynchronous `ContainerProxy.get_latest_session_token()`, alongside existing vector-token support.
 
 #### Breaking Changes
 
+* Rust-backed constructors, connection-string factories, and per-operation inputs reject `user_agent`, `user_agent_overwrite`, and `user_agent_use_env` with `TypeError`, including empty strings, `False`, and `None`. The Rust driver supports only `user_agent_suffix` among these four controls and does not append `AZURE_HTTP_USER_AGENT`; legacy behavior is unchanged.
+* Rust-backed constructors, connection-string factories, and per-operation inputs reject `network_span_namer`, including `None`, with `TypeError` before database work. The current driver has no supported production request-observation interface for this callback; legacy support is unchanged.
 * Rust-backed sync/async clients and connection-string factories reject `connection_retry_policy`, including `None`, with `TypeError`; legacy behavior is retained pending the driver team's implementation decision.
 * Rust-backed sync/async clients and connection-string factories now reject `retry_connect` and `retry_read`, including `None` and zero, with `TypeError` pending retry-control parity review; legacy Python behavior is unchanged.
 * Rust-backed sync/async clients and connection-string factories reject `retry_fixed_interval`, including `None` and zero, and non-`None` grouped fixed retry intervals with `TypeError`; legacy Python behavior is unchanged.
@@ -33,6 +36,8 @@
 
 #### Bugs Fixed
 
+* Fixed Rust telemetry claiming complete totals when metadata diagnostics or owned binding work were unaccounted for. Preserved available point-operation metadata-error attempts and exposed explicit coverage reasons without warnings for expected partial diagnostics.
+* Preserved client request-span attribute defaults and per-call tracing attributes on Rust request-attempt spans. Item and metadata pagers now honor per-call tracing attributes and enablement at page consumption.
 * Restored synchronous and asynchronous Rust-backed `query_items()` service-token pass-through and positive `continuation_token_limit` support for complete partition keys, removing the migration-only Python token envelope.
 * Fixed synchronous and asynchronous database and container `get_throughput()` and `replace_throughput()` to share one overall timeout across uncached metadata, the complete offer query, any container-identity refresh and replacement, inherit the client timeout default, and await asynchronous cancellation cleanup.
 * Fixed database and container throughput replacements to retain autoscale fields and response headers, isolate callback and input data, and report missing offers with `CosmosResourceNotFoundError`. Both replacement steps now receive supported caller options.

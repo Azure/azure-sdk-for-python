@@ -13,7 +13,7 @@ import uuid
 import pytest
 
 from azure.cosmos import CosmosClient, exceptions
-from common._parity_helpers import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count, _rust_fallback_count
 from fault_injection._delayed_create import (
     OPERATION_TIMEOUT, assert_control, assert_failure, assert_route, create_rule, emit,
 )

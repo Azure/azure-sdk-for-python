@@ -19,6 +19,17 @@ from azure.cosmos._constants import _Constants
 from _client_transport import create_client_with_transport
 
 
+def test_unmodified_legacy_policy_retains_three_waits_as_characterization():
+    from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPolicy
+
+    policy = ResourceThrottleRetryPolicy(5, 0, 2.5)
+    error = exceptions.CosmosHttpResponseError(status_code=429)
+    # CosmosHttpResponseError normally receives headers from a response.
+    error.headers = {"x-ms-retry-after-ms": "1000"}
+    assert [policy.ShouldRetry(error) for _ in range(4)] == [True, True, True, False]
+    assert policy.cumulative_wait_time_in_milliseconds == 3000
+
+
 def setup_method_with_custom_transport(
         custom_transport,
         **kwargs):

@@ -25,6 +25,7 @@ from typing import TYPE_CHECKING, Any, Generic, Mapping, Optional, TypeVar
 from azure.core.utils import CaseInsensitiveDict
 
 from .._availability_strategy_config import CrossRegionHedgingStrategy
+from .._diagnostic_logging import DiagnosticLogging
 
 if TYPE_CHECKING:
     from .._backend.cosmos_backend import CosmosBackend
@@ -136,3 +137,5 @@ class ItemClientContext(Generic[_BackendT]):
     response_state: ClientLastResponseHeaders = field(default_factory=ClientLastResponseHeaders)
     # SDK-internal consumers share configuration, never per-operation mutable data.
     telemetry_handlers: tuple[CompletionHandler, ...] = ()
+    diagnostic_logging: DiagnosticLogging = field(default_factory=DiagnosticLogging)
+    tracing_attributes: Mapping[str, Any] = field(default_factory=dict)

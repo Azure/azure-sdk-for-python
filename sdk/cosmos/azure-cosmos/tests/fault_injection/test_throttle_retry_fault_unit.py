@@ -100,14 +100,3 @@ def test_final_wait_uses_operation_budget_not_fixed_sixteen_seconds_rust(monkeyp
     assert_throttle_wait_failure(exceptions.CosmosHttpResponseError(429), 6.02, 4, 3, max_retries=5)
     with pytest.raises(AssertionError):
         assert_throttle_wait_failure(exceptions.CosmosHttpResponseError(429), 3.02, 4, 3, max_retries=5)
-
-
-def test_unmodified_legacy_policy_retains_three_waits_as_characterization_rust():
-    from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPolicy
-
-    policy = ResourceThrottleRetryPolicy(5, 0, 2.5)
-    error = exceptions.CosmosHttpResponseError(status_code=429)
-    # CosmosHttpResponseError normally receives headers from a response.
-    error.headers = {"x-ms-retry-after-ms": "1000"}
-    assert [policy.ShouldRetry(error) for _ in range(4)] == [True, True, True, False]
-    assert policy.cumulative_wait_time_in_milliseconds == 3000

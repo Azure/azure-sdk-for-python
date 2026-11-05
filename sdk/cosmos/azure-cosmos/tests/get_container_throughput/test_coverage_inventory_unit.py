@@ -113,7 +113,7 @@ def test_explicit_none_original_calls_and_assertions_are_preserved_rust():
             node for node in original.body if isinstance(node, ast.ClassDef) and node.name == original_class
         )
         original_node = next(node for node in original_cls.body if getattr(node, "name", None) == original_method)
-        copied = ROOT / "tests" / "get_container_throughput" / surface / "legacy" / "test_none_options.py"
+        copied = ROOT / "tests" / "get_container_throughput" / surface / "test_none_options.py"
         tree = ast.parse(copied.read_text(encoding="utf-8"))
         assert calls(original_node) == calls(tree)
         assert len(calls(tree)) == 1

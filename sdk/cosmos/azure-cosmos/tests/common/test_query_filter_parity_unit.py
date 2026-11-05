@@ -15,7 +15,7 @@ import pytest
 
 
 ROOT = Path(__file__).resolve().parents[2]
-COPY = ROOT / "tests" / "query_items" / "sync" / "legacy" / "test_query.py"
+COPY = ROOT / "tests" / "query_items" / "sync" / "test_query.py"
 
 
 def _method_name(path, name):
@@ -74,7 +74,7 @@ def test_owned_item_runner_selects_original_or_copy_rust(monkeypatch, backend, o
     options = selections[0]
     folder = ROOT / "tests"
     if backend == "rust":
-        folder = folder / operation / "sync" / "legacy"
+        folder = folder / operation / "sync"
     suffix = "_rust" if backend == "rust" else ""
     assert str(folder / filename) + method + suffix in options
     if operation == "upsert_item":
@@ -129,7 +129,6 @@ def test_query_selector_rejects_other_operations_rust():
     ["--op", "query_items", "--query-test", "ordering"],
     ["--op", "query_items", "--query-test", "top"],
     ["--op", "query_items", "--query-test", "positional"],
-    ["--op", "query_items", "--query-test", "vector-ordering"],
 ])
 def test_async_selector_rejects_unsupported_selections_rust(options):
     runner = load_module("_async_query_selector_guard", ROOT / "scripts" / "v5" / "run_read_item_parity.py")
@@ -151,7 +150,7 @@ def test_async_query_helpers_preserve_original_body_rust(filename, source_class,
         return [ast.dump(node) for node in method.body]
 
     assert body(ROOT / "tests" / filename, source_class) == body(
-        ROOT / "tests" / "query_items" / "aio" / "legacy" / "test_query_async.py", copy_class
+        ROOT / "tests" / "query_items" / "aio" / "test_query_async.py", copy_class
     )
 
 
@@ -182,7 +181,7 @@ def test_advice_copy_retains_environment_skip_rust(surface, filename, class_name
                       and node.name == _method_name(path, method_name))
         return method.decorator_list
 
-    copied = decorators(ROOT / "tests" / "query_items" / surface / "legacy" / filename)
+    copied = decorators(ROOT / "tests" / "query_items" / surface / filename)
     assert len(copied) == 1
     assert ast.unparse(copied[0].func) == "pytest.mark.skip"
     copied_reason = next(keyword.value for keyword in copied[0].keywords if keyword.arg == "reason")
@@ -234,7 +233,7 @@ def test_deployed_udf_fixture_uses_core_setup_and_always_cleans_database_rust(mo
 def test_async_fixture_cleans_database_when_container_setup_fails_rust(monkeypatch):
     module = load_module(
         "_offset_async_copy_cleanup",
-        ROOT / "tests" / "query_items" / "aio" / "legacy" / "test_query_async.py",
+        ROOT / "tests" / "query_items" / "aio" / "test_query_async.py",
     )
     client = MagicMock()
     client.__aenter__ = AsyncMock(return_value=client)
@@ -276,8 +275,34 @@ def test_async_fixture_cleans_database_when_container_setup_fails_rust(monkeypat
     for surface, suffix, class_suffix in (("sync", "", ""), ("aio", "_async", "Async"))
     if surface == "sync" or selection not in ("parameters", "ordering", "positional")
 ] + [
+    ("vector-partition-hook", "sync", "test_query_vector_similarity.py", "TestVectorSimilarityQuery",
+     "test_vector_query_partitioned_response_hook"),
+    ("vector-partition-hook", "aio", "test_query_vector_similarity_async.py", "TestVectorSimilarityQueryAsync",
+     "test_vector_query_partitioned_response_hook_async"),
+    ("vector-cross-hook", "sync", "test_query_vector_similarity.py", "TestVectorSimilarityQuery",
+     "test_vector_query_cross_partition_response_hook"),
+    ("vector-cross-hook", "aio", "test_query_vector_similarity_async.py", "TestVectorSimilarityQueryAsync",
+     "test_vector_query_cross_partition_response_hook_async"),
+    ("vector-large-data", "sync", "test_query_vector_similarity.py", "TestVectorSimilarityQuery",
+     "test_vector_query_large_data"),
+    ("vector-large-data", "aio", "test_query_vector_similarity_async.py", "TestVectorSimilarityQueryAsync",
+     "test_vector_query_large_data_async"),
+    ("vector-buffer", "sync", "test_query_vector_similarity.py", "TestVectorSimilarityQuery",
+     "test_vector_search_environment_variables"),
+    ("vector-buffer", "aio", "test_query_vector_similarity_async.py", "TestVectorSimilarityQueryAsync",
+     "test_vector_search_environment_variables_async"),
+    ("vector-rejection", "sync", "test_query_vector_similarity.py", "TestVectorSimilarityQuery",
+     "test_wrong_vector_search_queries"),
+    ("vector-rejection", "aio", "test_query_vector_similarity_async.py", "TestVectorSimilarityQueryAsync",
+     "test_wrong_vector_search_queries_async"),
+    ("vector-pagination", "sync", "test_query_vector_similarity.py", "TestVectorSimilarityQuery",
+     "test_vector_query_pagination"),
+    ("vector-pagination", "aio", "test_query_vector_similarity_async.py", "TestVectorSimilarityQueryAsync",
+     "test_vector_query_pagination_async"),
     ("vector-ordering", "sync", "test_query_vector_similarity.py", "TestVectorSimilarityQuery",
      "test_ordering_distances"),
+    ("vector-ordering", "aio", "test_query_vector_similarity_async.py", "TestVectorSimilarityQueryAsync",
+     "test_ordering_distances_async"),
     ("partition-feed-range", "sync", "test_query_feed_range_discovery.py", "TestQueryFeedRange",
      "test_query_with_feed_range_for_partition_key"),
     ("partition-feed-range", "aio", "test_query_feed_range_discovery_async.py", "TestQueryFeedRangeAsync",
@@ -321,7 +346,7 @@ def test_adapted_runner_uses_same_copy_with_only_backend_changed_rust(
     runner = load_module("_top_owned_runner", ROOT / "scripts" / "v5" / "run_read_item_parity.py")
     factory = MagicMock()
     monkeypatch.setattr(runner, "CosmosClient", factory)
-    source = ROOT / "tests" / "query_items" / surface / "legacy" / filename
+    source = ROOT / "tests" / "query_items" / surface / filename
     selected_paths = []
 
     def run(options):
@@ -369,11 +394,16 @@ def test_top_copy_preserves_queries_and_public_assertions_rust(method_name):
         ]
 
     assert body(ROOT / "tests" / "test_orderby.py") == body(
-        ROOT / "tests" / "query_items" / "sync" / "legacy" / "test_orderby.py"
+        ROOT / "tests" / "query_items" / "sync" / "test_orderby.py"
     )
 
 
-@pytest.mark.parametrize("name", ["verify_ordering", "test_ordering_distances"])
+@pytest.mark.parametrize("name", [
+    "verify_ordering", "test_ordering_distances", "test_vector_query_pagination", "test_wrong_vector_search_queries",
+    "test_vector_search_environment_variables", "test_vector_query_large_data",
+    "test_vector_query_cross_partition_response_hook",
+    "test_vector_query_partitioned_response_hook",
+])
 def test_vector_ordering_preserves_original_body_rust(name):
     def body(path):
         tree = ast.parse(path.read_text(encoding="utf-8"))
@@ -386,7 +416,15 @@ def test_vector_ordering_preserves_original_body_rust(name):
 
 
 @pytest.mark.parametrize("failure_stage", [None, "container", "item"])
-def test_vector_ordering_fixture_preserves_profiles_and_cleans_up_rust(monkeypatch, failure_stage):
+@pytest.mark.parametrize("method_name,profile_count", [
+    ("test_ordering_distances_rust", 3),
+    ("test_vector_query_pagination_rust", 1),
+    ("test_vector_query_cross_partition_response_hook_rust", 1),
+    ("test_vector_query_partitioned_response_hook_rust", 1),
+])
+def test_vector_ordering_fixture_preserves_profiles_and_cleans_up_rust(
+    monkeypatch, failure_stage, method_name, profile_count,
+):
     monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
     monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
     module = load_module("_vector_ordering_copy", COPY.with_name("test_query_vector_similarity.py"))
@@ -400,24 +438,24 @@ def test_vector_ordering_fixture_preserves_profiles_and_cleans_up_rust(monkeypat
         create_container.side_effect = RuntimeError("container failed")
     elif failure_stage == "item":
         create_item.side_effect = RuntimeError("item failed")
-    case = module.TestVectorSimilarityQuery("test_ordering_distances_rust")
+    case = module.TestVectorSimilarityQuery(method_name)
     try:
         if failure_stage is None:
             case.setUp()
-            assert create_container.call_count == 3
-            assert create_item.call_count == 30
+            assert create_container.call_count == profile_count
+            assert create_item.call_count == 10 * profile_count
             for call, index_type, distance in zip(
                 create_container.call_args_list,
                 ("quantizedFlat", "flat", "diskANN"),
                 ("cosine", "euclidean", "dotproduct"),
             ):
-                assert call.kwargs["offer_throughput"] == module.test_config.TestConfig.THROUGHPUT_FOR_2_PARTITIONS
+                assert call.kwargs["offer_throughput"] == module.settings.TestSettings.THROUGHPUT_FOR_2_PARTITIONS
                 assert call.kwargs["indexing_policy"] == module.test_config.get_vector_indexing_policy(index_type)
                 assert call.kwargs["vector_embedding_policy"] == module.test_config.get_vector_embedding_policy(
                     distance, "float32", 128
                 )
             assert [call.args[0] for call in create_item.call_args_list] == (
-                module.vector_test_data.get_vector_items() * 3
+                module.vector_test_data.get_vector_items() * profile_count
             )
         else:
             with pytest.raises(RuntimeError, match=f"{failure_stage} failed"):
@@ -428,6 +466,527 @@ def test_vector_ordering_fixture_preserves_profiles_and_cleans_up_rust(monkeypat
     setup_client.delete_database.assert_called_once_with(case.database_id)
     setup_client.close.assert_called_once()
     query_client.close.assert_called_once()
+
+
+@pytest.mark.parametrize("surface,method_name,expected_rows,expected_hooks,scope", [
+    ("sync", "test_vector_query_cross_partition_response_hook_rust", 5, 2, {"enable_cross_partition_query": True}),
+    ("sync", "test_vector_query_partitioned_response_hook_rust", 4, 1, {"partition_key": "1"}),
+    ("aio", "test_vector_query_partitioned_response_hook_async_rust", 4, 1, {"partition_key": "1"}),
+    ("aio", "test_vector_query_cross_partition_response_hook_async_rust", 5, 2, {}),
+])
+@pytest.mark.parametrize("row_delta,hook_delta,query_error", [
+    (0, 0, False),
+    (0, -1, False),
+    (0, 1, False),
+    (-1, 0, False),
+    (1, 0, False),
+    (0, -1, True),
+])
+def test_vector_hook_copies_preserve_exact_assertions_and_cleanup_rust(
+    monkeypatch, surface, method_name, expected_rows, expected_hooks, scope, row_delta, hook_delta, query_error,
+):
+    monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
+    monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
+    suffix = "_async" if surface == "aio" else ""
+    path = ROOT / "tests" / "query_items" / surface / f"test_query_vector_similarity{suffix}.py"
+    module = load_module("_vector_hook_copy", path)
+    setup_client, query_client = MagicMock(), MagicMock()
+    if surface == "aio":
+        query_client.__aenter__ = AsyncMock(return_value=query_client)
+        query_client.close = AsyncMock()
+        monkeypatch.setattr(module, "CosmosSyncClient", MagicMock(return_value=setup_client))
+        monkeypatch.setattr(module, "CosmosClient", MagicMock(return_value=query_client))
+    else:
+        monkeypatch.setattr(module, "CosmosClient", MagicMock(side_effect=[setup_client, query_client]))
+    container = query_client.get_database_client.return_value.get_container_client.return_value
+
+    def query(**kwargs):
+        assert set(kwargs) == {"query", "response_hook"} | set(scope)
+        assert kwargs["query"].startswith(f"SELECT TOP {expected_rows} ")
+        for key, value in scope.items():
+            assert kwargs[key] == value
+            assert type(kwargs[key]) is type(value)
+        assert isinstance(kwargs["response_hook"], module.test_config.ResponseHookCaller)
+
+        def respond():
+            for _ in range(expected_hooks + hook_delta):
+                kwargs["response_hook"]({}, {})
+            if query_error:
+                raise RuntimeError("query failed")
+
+        if surface == "aio":
+            async def rows():
+                respond()
+                for _ in range(expected_rows + row_delta):
+                    yield None
+            return rows()
+        respond()
+        return [None] * (expected_rows + row_delta)
+
+    container.query_items.side_effect = query
+    class_name = "TestVectorSimilarityQueryAsync" if surface == "aio" else "TestVectorSimilarityQuery"
+    case = getattr(module, class_name)(method_name)
+    result = unittest.TestResult()
+    case.run(result)
+    assert len(result.errors) == int(query_error)
+    assert len(result.failures) == int(not query_error and (row_delta != 0 or hook_delta != 0))
+    if query_error:
+        assert "query failed" in result.errors[0][1]
+    container.query_items.assert_called_once()
+    setup_client.delete_database.assert_called_once_with(case.database_id)
+    setup_client.close.assert_called_once()
+    if surface == "aio":
+        query_client.close.assert_awaited_once()
+    else:
+        query_client.close.assert_called_once()
+
+
+@pytest.mark.parametrize("failure_stage", [None, "container", "query"])
+@pytest.mark.parametrize("method_name", [
+    "test_wrong_vector_search_queries_rust", "test_vector_search_environment_variables_rust",
+])
+def test_vector_rejection_fixture_preserves_empty_container_and_cleanup_rust(monkeypatch, failure_stage, method_name):
+    monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
+    monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
+    module = load_module("_vector_rejection_copy", COPY.with_name("test_query_vector_similarity.py"))
+    setup_client, query_client = MagicMock(), MagicMock()
+    factory = MagicMock(side_effect=[setup_client, query_client])
+    monkeypatch.setattr(module, "CosmosClient", factory)
+    database = setup_client.create_database.return_value
+    if failure_stage == "container":
+        database.create_container.side_effect = RuntimeError("container failed")
+
+    def exercise(case):
+        assert case.created_large_container is (
+            query_client.get_database_client.return_value.get_container_client.return_value
+        )
+        if failure_stage == "query":
+            raise RuntimeError("query failed")
+
+    monkeypatch.setattr(module.TestVectorSimilarityQuery, method_name, exercise)
+    case = module.TestVectorSimilarityQuery(method_name)
+    result = unittest.TestResult()
+    case.run(result)
+    assert not result.failures
+    assert len(result.errors) == (0 if failure_stage is None else 1)
+    if failure_stage is not None:
+        assert f"{failure_stage} failed" in result.errors[0][1]
+    database.create_container.assert_called_once()
+    options = database.create_container.call_args.kwargs
+    assert options["offer_throughput"] == module.settings.TestSettings.THROUGHPUT_FOR_2_PARTITIONS
+    assert options["partition_key"] == module.PartitionKey(path="/pk")
+    assert options["indexing_policy"] == module.test_config.get_vector_indexing_policy("quantizedFlat")
+    assert options["vector_embedding_policy"] == module.test_config.get_vector_embedding_policy(
+        "cosine", "float32", 2
+    )
+    database.create_container.return_value.create_item.assert_not_called()
+    assert [call.kwargs["_backend"] for call in factory.call_args_list] == ["core-python", "rust"]
+    setup_client.delete_database.assert_called_once_with(case.database_id)
+    setup_client.close.assert_called_once()
+    query_client.close.assert_called_once()
+
+
+@pytest.mark.parametrize("previous", [None, "17"])
+@pytest.mark.parametrize("failure_stage", [None, "first", "second"])
+@pytest.mark.parametrize("surface", ["sync", "aio"])
+def test_vector_buffer_copy_restores_environment_after_queries_rust(monkeypatch, previous, failure_stage, surface):
+    name = "AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"
+    monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
+    monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
+    if previous is None:
+        monkeypatch.delenv(name, raising=False)
+    else:
+        monkeypatch.setenv(name, previous)
+    suffix = "_async" if surface == "aio" else ""
+    path = ROOT / "tests" / "query_items" / surface / f"test_query_vector_similarity{suffix}.py"
+    module = load_module("_vector_buffer_copy", path)
+    setup_client, query_client = MagicMock(), MagicMock()
+    if surface == "aio":
+        query_client.__aenter__ = AsyncMock(return_value=query_client)
+        query_client.close = AsyncMock()
+        monkeypatch.setattr(module, "CosmosSyncClient", MagicMock(return_value=setup_client))
+        monkeypatch.setattr(module, "CosmosClient", MagicMock(return_value=query_client))
+    else:
+        monkeypatch.setattr(module, "CosmosClient", MagicMock(side_effect=[setup_client, query_client]))
+    container = query_client.get_database_client.return_value.get_container_client.return_value
+    observed = []
+
+    def query(**kwargs):
+        assert set(kwargs) == ({"query"} if surface == "aio" else {"query", "enable_cross_partition_query"})
+        if surface == "sync":
+            assert kwargs["enable_cross_partition_query"] is True
+        assert kwargs["query"].startswith("SELECT TOP 10 ")
+        observed.append(module.os.environ[name])
+        stage = "first" if len(observed) == 1 else "second"
+
+        def consume():
+            if stage == failure_stage:
+                raise RuntimeError(f"{stage} failed")
+            if stage == "first":
+                raise ValueError(
+                    "Executing a vector search query with more items than the max is not allowed. "
+                    "Please ensure you are using a limit smaller than the max, or change the max."
+                )
+            return []
+
+        if surface == "aio":
+            async def rows():
+                for item in consume():
+                    yield item
+            return rows()
+        return consume()
+
+    container.query_items.side_effect = query
+    class_name = "TestVectorSimilarityQueryAsync" if surface == "aio" else "TestVectorSimilarityQuery"
+    case = getattr(module, class_name)(f"test_vector_search_environment_variables{suffix}_rust")
+    result = unittest.TestResult()
+    case.run(result)
+    assert not result.failures
+    assert len(result.errors) == (0 if failure_stage is None else 1)
+    if failure_stage is not None:
+        assert f"{failure_stage} failed" in result.errors[0][1]
+    assert observed == (["1"] if failure_stage == "first" else ["1", "50000"])
+    assert module.os.environ.get(name) == previous
+    setup_client.delete_database.assert_called_once_with(case.database_id)
+    setup_client.close.assert_called_once()
+    if surface == "aio":
+        query_client.close.assert_awaited_once()
+    else:
+        query_client.close.assert_called_once()
+
+
+@pytest.mark.parametrize("failure_stage", [None, "container", "item", "query"])
+def test_vector_large_data_fixture_routes_only_queries_to_selected_backend_rust(monkeypatch, failure_stage):
+    monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
+    monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
+    name = "AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"
+    monkeypatch.delenv(name, raising=False)
+    module = load_module("_vector_large_data_copy", COPY.with_name("test_query_vector_similarity.py"))
+    setup_client, query_client = MagicMock(), MagicMock()
+    factory = MagicMock(side_effect=[setup_client, query_client])
+    monkeypatch.setattr(module, "CosmosClient", factory)
+    database = setup_client.create_database.return_value
+    seed_container = database.create_container.return_value
+    query_container = query_client.get_database_client.return_value.get_container_client.return_value
+    original_create_item = query_container.create_item
+    if failure_stage == "container":
+        database.create_container.side_effect = RuntimeError("container failed")
+    elif failure_stage == "item":
+        seed_container.create_item.side_effect = RuntimeError("item failed")
+    if failure_stage == "query":
+        query_container.query_items.side_effect = RuntimeError("query failed")
+    else:
+        query_container.query_items.side_effect = [
+            [None] * count for count in (1000, 1000, 750, 750, 500, 500)
+        ]
+
+    case = module.TestVectorSimilarityQuery("test_vector_query_large_data_rust")
+    result = unittest.TestResult()
+    case.run(result)
+    assert not result.failures
+    assert len(result.errors) == (0 if failure_stage is None else 1)
+    if failure_stage is not None:
+        assert f"{failure_stage} failed" in result.errors[0][1]
+    database.create_container.assert_called_once()
+    options = database.create_container.call_args.kwargs
+    assert options["offer_throughput"] == module.settings.TestSettings.THROUGHPUT_FOR_2_PARTITIONS
+    assert options["partition_key"] == module.PartitionKey(path="/pk")
+    assert options["indexing_policy"] == module.test_config.get_vector_indexing_policy("quantizedFlat")
+    assert options["vector_embedding_policy"] == module.test_config.get_vector_embedding_policy(
+        "cosine", "float32", 2
+    )
+    assert query_container.create_item is original_create_item
+    original_create_item.assert_not_called()
+    assert name not in module.os.environ
+    if failure_stage == "container":
+        seed_container.create_item.assert_not_called()
+    elif failure_stage == "item":
+        seed_container.create_item.assert_called_once()
+    else:
+        assert seed_container.create_item.call_count == 2000
+        embedding_value = 0.0001
+        for i, call in enumerate(seed_container.create_item.call_args_list):
+            assert call.args == (
+                {"id": str(i), "pk": i % 2, "embedding": [embedding_value, embedding_value]},
+            )
+            assert not call.kwargs
+            embedding_value += 0.0001
+    assert query_container.query_items.call_count == (
+        6 if failure_stage is None else 1 if failure_stage == "query" else 0
+    )
+    for call in query_container.query_items.call_args_list:
+        assert call.kwargs["enable_cross_partition_query"] is True
+        assert set(call.kwargs) == {"query", "enable_cross_partition_query"}
+    assert [call.kwargs["_backend"] for call in factory.call_args_list] == ["core-python", "rust"]
+    setup_client.delete_database.assert_called_once_with(case.database_id)
+    setup_client.close.assert_called_once()
+    query_client.close.assert_called_once()
+
+
+@pytest.mark.parametrize("failure_stage", [
+    None, "container", "enter", "seed-enter", "item", "query", "first-count", "last-count",
+])
+def test_async_vector_large_data_preserves_awaited_seeding_queries_and_cleanup_rust(monkeypatch, failure_stage):
+    monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
+    monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
+    name = "AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"
+    monkeypatch.delenv(name, raising=False)
+    path = ROOT / "tests" / "query_items" / "aio" / "test_query_vector_similarity_async.py"
+    module = load_module("_async_vector_large_data_copy", path)
+    setup_client, query_client, seed_client = MagicMock(), MagicMock(), MagicMock()
+    for client in (query_client, seed_client):
+        client.__aenter__ = AsyncMock(return_value=client)
+        client.close = AsyncMock()
+    setup_factory = MagicMock(return_value=setup_client)
+    query_factory = MagicMock(side_effect=[query_client, seed_client])
+    monkeypatch.setattr(module, "CosmosSyncClient", setup_factory)
+    monkeypatch.setattr(module, "CosmosClient", query_factory)
+    database = setup_client.create_database.return_value
+    query_container = query_client.get_database_client.return_value.get_container_client.return_value
+    seed_container = seed_client.get_database_client.return_value.get_container_client.return_value
+    query_container.create_item = AsyncMock()
+    seed_container.create_item = AsyncMock()
+    original_create_item = query_container.create_item
+    targets = {
+        "container": database.create_container,
+        "enter": query_client.__aenter__,
+        "seed-enter": seed_client.__aenter__,
+        "item": seed_container.create_item,
+        "query": query_container.query_items,
+    }
+    if failure_stage in targets:
+        targets[failure_stage].side_effect = RuntimeError(f"{failure_stage} failed")
+    else:
+        async def rows(count):
+            for _ in range(count):
+                yield None
+
+        counts = [1000, 1000, 750, 750, 500, 500]
+        if failure_stage == "first-count":
+            counts[0] -= 1
+        elif failure_stage == "last-count":
+            counts[-1] -= 1
+        query_container.query_items.side_effect = [rows(count) for count in counts]
+    case = module.TestVectorSimilarityQueryAsync("test_vector_query_large_data_async_rust")
+    result = unittest.TestResult()
+    case.run(result)
+    assert len(result.failures) == int(failure_stage in ("first-count", "last-count"))
+    assert len(result.errors) == int(failure_stage in targets)
+    if failure_stage in targets:
+        assert f"{failure_stage} failed" in result.errors[0][1]
+    database.create_container.assert_called_once()
+    options = database.create_container.call_args.kwargs
+    assert options["partition_key"] == module.PartitionKey(path="/pk")
+    assert options["offer_throughput"] == module.settings.TestSettings.THROUGHPUT_FOR_2_PARTITIONS
+    assert options["indexing_policy"] == module.test_config.get_vector_indexing_policy("quantizedFlat")
+    assert options["vector_embedding_policy"] == module.test_config.get_vector_embedding_policy(
+        "cosine", "float32", 2
+    )
+    database.create_container.return_value.create_item.assert_not_called()
+    assert query_container.create_item is original_create_item
+    original_create_item.assert_not_called()
+    expected_seeds = (
+        0 if failure_stage in ("container", "enter", "seed-enter") else 1 if failure_stage == "item" else 2000
+    )
+    assert seed_container.create_item.call_count == seed_container.create_item.await_count == expected_seeds
+    embedding_value = 0.0001
+    for i, call in enumerate(seed_container.create_item.await_args_list):
+        assert call.args == ({"id": str(i), "pk": i % 2, "embedding": [embedding_value, embedding_value]},)
+        assert not call.kwargs
+        embedding_value += 0.0001
+    assert query_container.query_items.call_count == (
+        6 if failure_stage in (None, "last-count") else 1 if failure_stage in ("query", "first-count") else 0
+    )
+    for call in query_container.query_items.call_args_list:
+        assert set(call.kwargs) == {"query"}
+    assert name not in module.os.environ
+    assert setup_factory.call_args.kwargs["_backend"] == "core-python"
+    expected_backends = (
+        [] if failure_stage == "container" else ["rust"] if failure_stage == "enter" else ["rust", "core-python"]
+    )
+    assert [call.kwargs["_backend"] for call in query_factory.call_args_list] == expected_backends
+    setup_client.delete_database.assert_called_once_with(case.database_id)
+    setup_client.close.assert_called_once()
+    assert query_client.close.await_count == int(failure_stage != "container")
+    assert seed_client.close.await_count == int(failure_stage not in ("container", "enter"))
+
+
+@pytest.mark.parametrize("method_name", [
+    "test_vector_query_pagination_async", "test_ordering_distances_async",
+    "test_vector_query_partitioned_response_hook_async",
+    "test_vector_query_cross_partition_response_hook_async",
+    "test_wrong_vector_search_queries_async",
+    "test_vector_search_environment_variables_async", "test_vector_query_large_data_async",
+])
+def test_async_vector_pagination_preserves_original_body_and_helper_rust(method_name):
+    original = ast.parse((ROOT / "tests" / "test_query_vector_similarity_async.py").read_text(encoding="utf-8"))
+    path = ROOT / "tests" / "query_items" / "aio" / "test_query_vector_similarity_async.py"
+    copied = ast.parse(path.read_text(encoding="utf-8"))
+
+    def body(tree, name):
+        method = next(node for node in ast.walk(tree)
+                      if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == name)
+        return ast.dump(method.args), [ast.dump(node) for node in method.body]
+
+    assert body(original, method_name) == body(
+        copied, method_name + "_rust"
+    )
+    helper_source = ast.parse(COPY.with_name("test_query_vector_similarity.py").read_text(encoding="utf-8"))
+    assert body(original, "verify_ordering") == body(helper_source, "verify_ordering")
+    assert any(isinstance(node, ast.ImportFrom)
+               and node.module == "query_items.sync.test_query_vector_similarity"
+               and any(alias.name == "verify_ordering" for alias in node.names)
+               for node in copied.body)
+
+
+@pytest.mark.parametrize("failure_stage", [None, "container", "item", "enter", "query"])
+@pytest.mark.parametrize("method_name,profile_count", [
+    ("test_vector_query_pagination_async_rust", 1),
+    ("test_ordering_distances_async_rust", 3),
+    ("test_vector_query_partitioned_response_hook_async_rust", 1),
+    ("test_vector_query_cross_partition_response_hook_async_rust", 1),
+    ("test_wrong_vector_search_queries_async_rust", 1),
+    ("test_vector_search_environment_variables_async_rust", 1),
+])
+def test_async_vector_pagination_fixture_preserves_setup_and_cleanup_rust(
+    monkeypatch, failure_stage, method_name, profile_count,
+):
+    monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
+    monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
+    path = ROOT / "tests" / "query_items" / "aio" / "test_query_vector_similarity_async.py"
+    module = load_module("_async_vector_pagination_copy", path)
+    empty_container = method_name in (
+        "test_wrong_vector_search_queries_async_rust", "test_vector_search_environment_variables_async_rust",
+    )
+    expected_failure = None if empty_container and failure_stage == "item" else failure_stage
+    setup_client, query_client = MagicMock(), MagicMock()
+    query_client.__aenter__ = AsyncMock(return_value=query_client)
+    query_client.close = AsyncMock()
+    setup_factory = MagicMock(return_value=setup_client)
+    query_factory = MagicMock(return_value=query_client)
+    monkeypatch.setattr(module, "CosmosSyncClient", setup_factory)
+    monkeypatch.setattr(module, "CosmosClient", query_factory)
+    database = setup_client.create_database.return_value
+    container = database.create_container.return_value
+    targets = {
+        "container": database.create_container,
+        "item": container.create_item,
+        "enter": query_client.__aenter__,
+    }
+    if failure_stage in targets:
+        targets[failure_stage].side_effect = RuntimeError(f"{failure_stage} failed")
+
+    async def exercise(case):
+        attribute = "created_large_container" if empty_container else "created_quantized_cosine_container"
+        assert getattr(case, attribute) is (
+            query_client.get_database_client.return_value.get_container_client.return_value
+        )
+        if failure_stage == "query":
+            raise RuntimeError("query failed")
+
+    monkeypatch.setattr(module.TestVectorSimilarityQueryAsync, method_name, exercise)
+    case = module.TestVectorSimilarityQueryAsync(method_name)
+    result = unittest.TestResult()
+    case.run(result)
+    assert not result.failures
+    assert len(result.errors) == (0 if expected_failure is None else 1)
+    if expected_failure is not None:
+        assert f"{expected_failure} failed" in result.errors[0][1]
+    assert setup_factory.call_args.kwargs["_backend"] == "core-python"
+    setup_client.delete_database.assert_called_once_with(case.database_id)
+    setup_client.close.assert_called_once()
+    if expected_failure not in ("container", "item"):
+        assert query_factory.call_args.kwargs["_backend"] == "rust"
+        query_client.close.assert_awaited_once()
+        assert database.create_container.call_count == profile_count
+        assert [call.args[0] for call in container.create_item.call_args_list] == (
+            [] if empty_container else module.vector_test_data.get_vector_items() * profile_count
+        )
+        assert query_client.get_database_client.return_value.get_container_client.call_count == (
+            0 if failure_stage == "enter" else profile_count
+        )
+    for call, index_type, distance in zip(
+        database.create_container.call_args_list,
+        ("quantizedFlat", "flat", "diskANN"),
+        ("cosine", "euclidean", "dotproduct"),
+    ):
+        options = call.kwargs
+        assert options["id"] == index_type
+        assert options["partition_key"] == module.PartitionKey(path="/pk")
+        assert options["offer_throughput"] == module.settings.TestSettings.THROUGHPUT_FOR_2_PARTITIONS
+        assert options["indexing_policy"] == module.test_config.get_vector_indexing_policy(index_type)
+        assert options["vector_embedding_policy"] == module.test_config.get_vector_embedding_policy(
+            distance, "float32", 2 if empty_container else 128
+        )
+
+
+@pytest.mark.parametrize("scenario", [
+    "expected", "alternate-sort-message", "first-success", "first-type", "first-message",
+    "second-success", "second-type", "second-status", "second-message",
+])
+def test_async_vector_rejection_preserves_error_contracts_and_cleanup_rust(monkeypatch, scenario):
+    monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
+    monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
+    path = ROOT / "tests" / "query_items" / "aio" / "test_query_vector_similarity_async.py"
+    module = load_module("_async_vector_rejection_copy", path)
+    setup_client, query_client = MagicMock(), MagicMock()
+    query_client.__aenter__ = AsyncMock(return_value=query_client)
+    query_client.close = AsyncMock()
+    monkeypatch.setattr(module, "CosmosSyncClient", MagicMock(return_value=setup_client))
+    monkeypatch.setattr(module, "CosmosClient", MagicMock(return_value=query_client))
+    container = query_client.get_database_client.return_value.get_container_client.return_value
+    missing_limit = (
+        "Executing a vector search query without TOP or LIMIT can consume many RUs very fast and"
+        " have long runtimes. Please ensure you are using one of the two filters with your"
+        " vector search query."
+    )
+    sort_message = (
+        "Specifying a sorting order (ASC or DESC) with VectorDistance function is not supported."
+        if scenario == "alternate-sort-message" else "One of the input values is invalid."
+    )
+    errors = [
+        ValueError(missing_limit),
+        module.exceptions.CosmosHttpResponseError(status_code=400, message=sort_message),
+    ]
+    if scenario.endswith("-success"):
+        errors[0 if scenario.startswith("first-") else 1] = None
+    elif scenario.endswith("-type"):
+        errors[0 if scenario.startswith("first-") else 1] = RuntimeError("unexpected error type")
+    elif scenario == "first-message":
+        errors[0] = ValueError("wrong validation message")
+    elif scenario == "second-status":
+        errors[1] = module.exceptions.CosmosHttpResponseError(status_code=500, message=sort_message)
+    elif scenario == "second-message":
+        errors[1] = module.exceptions.CosmosHttpResponseError(status_code=400, message="wrong service message")
+    queries = []
+
+    def query(**kwargs):
+        assert set(kwargs) == {"query"}
+        sql = kwargs["query"]
+        assert "SELECT c.text, VectorDistance(" in sql
+        assert "TOP " not in sql and "LIMIT " not in sql
+        assert sql.endswith(" ASC") == bool(queries)
+        error = errors[len(queries)]
+        queries.append(sql)
+
+        async def rows():
+            if error is not None:
+                raise error
+            yield None
+
+        return rows()
+
+    container.query_items.side_effect = query
+    case = module.TestVectorSimilarityQueryAsync("test_wrong_vector_search_queries_async_rust")
+    result = unittest.TestResult()
+    case.run(result)
+    assert len(result.failures) == int(scenario in ("first-message", "second-status", "second-message"))
+    assert len(result.errors) == int(scenario.endswith(("-success", "-type")))
+    assert len(queries) == (1 if scenario.startswith("first-") else 2)
+    setup_client.create_database.return_value.create_container.return_value.create_item.assert_not_called()
+    setup_client.delete_database.assert_called_once_with(case.database_id)
+    setup_client.close.assert_called_once()
+    query_client.close.assert_awaited_once()
 
 
 @pytest.mark.parametrize("filename,class_name,method_name,id_attribute", [
@@ -473,7 +1032,7 @@ def test_prefix_fixture_cleans_owned_database_on_failure_rust(monkeypatch, surfa
     monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
     module = load_module(
         f"_prefix_cleanup_{surface}",
-        ROOT / "tests" / "query_items" / surface / "legacy" / f"test_query_feed_range_multipartition{suffix}.py",
+        ROOT / "tests" / "query_items" / surface / f"test_query_feed_range_multipartition{suffix}.py",
     )
     client, database, container = MagicMock(), MagicMock(), MagicMock()
     if surface == "aio":
@@ -510,7 +1069,7 @@ def test_async_sum_fixture_cleans_database_when_container_setup_fails_rust(monke
     monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
     module = load_module(
         "_sum_async_copy_cleanup",
-        ROOT / "tests" / "query_items" / "aio" / "legacy" / "test_query_feed_range_async.py",
+        ROOT / "tests" / "query_items" / "aio" / "test_query_feed_range_async.py",
     )
     client = MagicMock()
     client.__aenter__ = AsyncMock(return_value=client)
@@ -534,7 +1093,7 @@ def test_async_sum_fixture_cleans_database_when_container_setup_fails_rust(monke
 @pytest.mark.parametrize("scope", ["all_partitions", "partition_key"])
 def test_feed_range_copies_preserve_original_bodies_helpers_and_profiles_rust(surface, suffix, scope):
     original = ast.parse((ROOT / "tests" / f"test_query_feed_range{suffix}.py").read_text(encoding="utf-8"))
-    path = ROOT / "tests" / "query_items" / surface / "legacy" / f"test_query_feed_range_discovery{suffix}.py"
+    path = ROOT / "tests" / "query_items" / surface / f"test_query_feed_range_discovery{suffix}.py"
     copied = ast.parse(path.read_text(encoding="utf-8"))
     method_name = f"test_query_with_feed_range_for_{scope}{suffix}"
 
@@ -553,8 +1112,8 @@ def test_feed_range_copies_preserve_original_bodies_helpers_and_profiles_rust(su
         assert ast.dump(function(original, name)) == ast.dump(function(copied, name))
 
     module = load_module(f"_ranges_profiles_{surface}", path)
-    config = ast.parse((ROOT / "tests" / "test_config.py").read_text(encoding="utf-8"))
-    config_class = next(node for node in config.body if isinstance(node, ast.ClassDef) and node.name == "TestConfig")
+    config = ast.parse((ROOT / "tests" / "config" / "settings.py").read_text(encoding="utf-8"))
+    config_class = next(node for node in config.body if isinstance(node, ast.ClassDef) and node.name == "TestSettings")
     values = {
         target.id: node.value for node in config_class.body if isinstance(node, ast.Assign)
         for target in node.targets if isinstance(target, ast.Name)
@@ -579,7 +1138,7 @@ def test_all_ranges_owned_fixture_cleans_up_and_surfaces_failures_rust(
 ):
     monkeypatch.setenv("ACCOUNT_HOST", "https://example.invalid")
     monkeypatch.setenv("ACCOUNT_KEY", "unit-test-key")
-    path = ROOT / "tests" / "query_items" / surface / "legacy" / f"test_query_feed_range_discovery{suffix}.py"
+    path = ROOT / "tests" / "query_items" / surface / f"test_query_feed_range_discovery{suffix}.py"
     module = load_module(f"_ranges_cleanup_{surface}", path)
     client, database, container = MagicMock(), MagicMock(), MagicMock()
     if surface == "aio":

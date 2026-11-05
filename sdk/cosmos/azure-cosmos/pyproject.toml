@@ -2,7 +2,7 @@
 # compile and where to put the result.
 [build-system]
 requires      = ["maturin==1.15.0"]
-build-backend = "azure_cosmos_build_backend"
+build-backend = "azure_cosmos_package_builder"
 backend-path = ["."]
 
 # _version.py is authoritative; repository release tools synchronize this copy.
@@ -97,13 +97,13 @@ module-name = "azure.cosmos._rust"
 # libpython at build time).
 features = ["pyo3/extension-module"]
 
-# The PEP 517 backend stages approved target-platform QueryPlanInterop files
+# The SDK package builder stages approved target-platform QueryPlanInterop files
 # here only while assembling a wheel. Source distributions never include them.
 include = [
     { path = "azure/cosmos/_rust.pyi", format = "wheel" },
     { path = "azure/cosmos/_rust.pyi", format = "sdist" },
     { path = "azure/cosmos/.libs/*", format = "wheel" },
-    { path = "azure_cosmos_build_backend.py", format = "sdist" },
+    { path = "azure_cosmos_package_builder.py", format = "sdist" },
     { path = "azure_cosmos_build_metadata.py", format = "sdist" },
     { path = "api.metadata.yml", format = "sdist" },
     { path = "CHANGELOG.md", format = "sdist" },

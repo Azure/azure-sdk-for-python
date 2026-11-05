@@ -108,6 +108,10 @@ def _reflective_settings_values(cls, kwargs):
             raise ValueError("timeout_seconds must be finite, positive and less than 2**64")
         if bucket is not None and not 0 <= bucket < 2**32:
             raise ValueError("throughput_bucket must be an unsigned 32-bit integer")
+    if cls is QuerySettings:
+        maximum = values["max_buffered_query_window"]
+        if maximum is not None and not 0 <= maximum < 2**64:
+            raise ValueError("max_buffered_query_window must be a nonnegative u64")
     return values
 
 

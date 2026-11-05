@@ -9,7 +9,7 @@ import uuid
 import pytest
 
 from azure.cosmos.aio import CosmosClient
-from common._parity_helpers import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count, _rust_fallback_count
 from fault_injection._async_cancellation import (
     CANCELLATION_ALLOWANCE, OPERATION_TIMEOUT, assert_cancelled, cancellation_rule,
     capture_read_lifecycle, wait_for_evidence,

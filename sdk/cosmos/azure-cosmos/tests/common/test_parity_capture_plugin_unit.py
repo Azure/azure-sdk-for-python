@@ -596,6 +596,49 @@ async def test_query_capture_distinguishes_local_drain_from_empty_response_rust(
     assert all(block["rust_operation_delta"] == 1 for block in emitted)
 
 
+@pytest.mark.asyncio
+async def test_query_capture_ignores_already_finished_real_pager_rust(monkeypatch, async_surface):
+    from azure.core.utils import CaseInsensitiveDict
+    from azure.cosmos._helpers._query_items import QueryPageIterator
+    from azure.cosmos.aio._helpers._query_items import AsyncQueryPageIterator
+
+    plugin = _load_plugin()
+    emitted = []
+    hook_calls = []
+    headers = {"x-ms-request-charge": "1"}
+    client = SimpleNamespace(client_connection=SimpleNamespace(
+        _backend=SimpleNamespace(name="rust"), last_response_headers=headers
+    ))
+    monkeypatch.setattr(plugin, "_rust_operation_count", lambda: 1)
+    monkeypatch.setattr(plugin, "_rust_fallback_count", lambda: 0)
+    config = SimpleNamespace(
+        operation="query_items", rust=True, options={}, response_state=None,
+        hook=lambda response_headers, body: hook_calls.append((response_headers, body)),
+    )
+    iterator_type = AsyncQueryPageIterator if async_surface else QueryPageIterator
+    pages = iterator_type(config, CaseInsensitiveDict())
+    rows = [{"id": str(i)} for i in range(4)]
+    pages.state.capture(headers, {"Documents": rows})
+    pages.state.more = False
+    assert pages.state.accept(rows, None) == rows
+    assert pages.state.done
+    assert pages.state.responses == 1
+    assert len(hook_calls) == 1
+
+    wrapper_type = plugin._CapturedAsyncPageIterator if async_surface else plugin._CapturedSyncPageIterator
+    wrapped = wrapper_type(pages, lambda *args: emitted.append(args), client)
+    for _ in range(2):
+        if async_surface:
+            with pytest.raises(StopAsyncIteration):
+                await wrapped.__anext__()
+        else:
+            with pytest.raises(StopIteration):
+                next(wrapped)
+    assert pages.state.responses == 1
+    assert len(hook_calls) == 1
+    assert emitted == []
+
+
 def test_query_capture_next_aliases_do_not_bypass_recording_rust(monkeypatch):
     plugin = _load_plugin()
     emitted = []

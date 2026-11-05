@@ -96,6 +96,14 @@ def inspect_spans(exporter, trace_id, mode, failure, payload):
     if mode == "enabled" and (failure == "connection" or payload is not None):
         if not isinstance(payload, dict) or payload["schema_version"] != 1 or payload["error"] is not None:
             raise AssertionError("Compiled exception must carry versioned diagnostics")
+        complete, reasons = payload.get("complete"), payload.get("incomplete_reasons")
+        if (
+            not isinstance(complete, bool)
+            or not isinstance(reasons, list)
+            or any(not isinstance(reason, str) or not reason for reason in reasons)
+            or complete == bool(reasons)
+        ):
+            raise AssertionError("Compiled diagnostics must declare consistent coverage")
         records = payload["attempts"]
         if not 0 < len(records) == payload["retained_request_count"] <= payload["request_count"]:
             raise AssertionError("Connection proof requires retained request diagnostics")
@@ -123,9 +131,19 @@ def inspect_spans(exporter, trace_id, mode, failure, payload):
         )
         if actual_fields != expected_fields:
             raise AssertionError("Attempt fields differ from the compiled binding diagnostics")
+        if operation.attributes.get("cosmos.poc.diagnostics_complete") is not complete:
+            raise AssertionError("Operation coverage differs from compiled diagnostics")
+        if not complete and operation.attributes.get("cosmos.poc.diagnostics_incomplete_reasons") != tuple(
+            sorted(set(reasons))
+        ):
+            raise AssertionError("Operation coverage reasons differ from compiled diagnostics")
         for name in ("request_count", "retained_request_count"):
-            if operation.attributes["cosmos.poc." + name] != payload[name]:
-                raise AssertionError("Operation count differs from compiled diagnostics")
+            attribute = "cosmos.poc." + name
+            if complete:
+                if operation.attributes.get(attribute) != payload[name]:
+                    raise AssertionError("Operation count differs from compiled diagnostics")
+            elif attribute in operation.attributes:
+                raise AssertionError("Partial diagnostics must not advertise operation totals")
     elif attempts or payload is not None:
         raise AssertionError("Disabled or interrupted calls must not invent attempt data")
     return [

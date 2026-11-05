@@ -23,26 +23,26 @@ PACKAGE = ROOT.parents[1]
 # and the explicit legacy-routing-cache gate. Do not regenerate these hashes
 # merely to make a weakened or missing assertion pass.
 METHOD_BODIES = {
-    "sync/legacy/test_session_token_helpers_owned.py": {
+    "sync/test_session_token_helpers_owned.py": {
         "test_get_session_token_update": "963c27bf13dfa1bf7f40fc7ac02b490c60ff6b9c49f685ad349ec62aabeb5f73",
         "test_many_session_tokens_update_same_range": "6f89f0f71c95b5e704b4d72c3eabbac5c4c160da4fd5209669a9d13470e170b2",
         "test_many_session_tokens_update": "d10b48f5ed8619092260b61abe6b49277ac5939da76a8a6f839b3f84e7b2b193",
         "test_simulated_splits_merges": "f8465ca99fa0ac65267839a29283542ce8dfdffa0d382de302d04a2adbd226f3",
         "test_invalid_feed_range": "db20272a219e78701cacf3b62cf178d619565bb8ceecc048a826002e96da99b7",
     },
-    "sync/legacy/test_latest_session_token.py": {
+    "sync/test_latest_session_token.py": {
         "test_latest_session_token_hpk": "2f935a84eac50b39bc95ae68f88f628567f1d95fa29f9c1d80e2f15e63de1519",
         "test_latest_session_token_logical_hpk": "66162d59cd92f847d3e7b0ba9c6d5ae0c40d7708eab08d9075f4166e7908aec3",
     },
-    "aio/legacy/test_latest_session_token_async.py": {
+    "aio/test_latest_session_token_async.py": {
         "test_latest_session_token_hpk": "5dc721307d493ac3f9352feb1957ab11c8beffba4b43d3dff0bf1750ef568720",
         "test_latest_session_token_logical_hpk": "ebf0804f3484d0f7e5b5ac05dcdfff80209dbb32e63e21937589871dbd1ecc8a",
     },
-    "sync/legacy/test_latest_session_token_real_split.py": {
+    "sync/test_latest_session_token_real_split.py": {
         "test_change_feed_session_token_and_read_items_after_split":
             "192adbbda150de45aacdb368987068a80baa1bf23afe8dd45a49fa7dae2a014d",
     },
-    "aio/legacy/test_latest_session_token_real_split_async.py": {
+    "aio/test_latest_session_token_real_split_async.py": {
         "test_change_feed_session_token_and_read_items_after_split_async":
             "12dab49471b7f4611f39707b2d261f01fa781de9d26376ab69fd11323a4bf5dd",
     },
@@ -62,13 +62,13 @@ def _body_hash(node):
 
 
 def test_retained_manifest_covers_every_copied_file_and_case_rust():
-    paths = {path.relative_to(ROOT).as_posix() for path in ROOT.glob("*/legacy/test_*.py")}
+    paths = {path.relative_to(ROOT).as_posix() for path in ROOT.glob("*/test_*.py")}
     assert paths == set(METHOD_BODIES)
     assert sum(len(methods) for methods in METHOD_BODIES.values()) == 11
     assert len(create_split_ranges()) == 13
     assert 11 - 1 + len(create_split_ranges()) == 23
     for surface in ("sync", "aio"):
-        assert (ROOT / surface / "legacy" / "__init__.py").is_file()
+        assert (ROOT / surface / "__init__.py").is_file()
 
 
 @pytest.mark.parametrize("name", METHOD_BODIES)

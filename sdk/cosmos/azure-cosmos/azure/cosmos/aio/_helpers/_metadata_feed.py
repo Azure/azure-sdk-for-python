@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """Await metadata pages while retaining each iterator's own bookmark."""
+
 from typing import Any, Awaitable, Callable, Optional
 
 from azure.core.async_paging import AsyncPageIterator
@@ -64,7 +65,8 @@ class AsyncMetadataFeedPageIterator(AsyncPageIterator):
                 rows = await state.config.legacy_page(state.token, deadline, headers)
                 return rows, headers
             pages = state.config.backend.execute_pages(
-                state.config.prepared(state.token, deadline), deadline=deadline,
+                state.config.prepared(state.token, deadline),
+                deadline=deadline,
             )
             try:
                 page = await pages.__anext__()
@@ -86,13 +88,8 @@ class AsyncMetadataFeedPageIterator(AsyncPageIterator):
                 operation_name=state.config.operation,
                 name_of_span=f"{state.config.owner_name}.{state.config.operation}.fetch",
             )(fetch_page)
-        tracing_kwargs = {
-            key: state.config.kwargs[key]
-            for key in ("tracing_options", "tracing_attributes")
-            if key in state.config.kwargs
-        }
         while True:
-            rows = await fetch_page(state.config.telemetry_owner, **tracing_kwargs)
+            rows = await fetch_page(state.config.telemetry_owner, **state.config.recording_options.kwargs)
             if rows:
                 return state.token, rows
             if state.done:

@@ -24,20 +24,20 @@ def test_files(operation):
     :returns: Original-derived test files.
     :rtype: list[pathlib.Path]
     """
-    files = sorted((ROOT / "tests" / "get_container_throughput").glob("*/legacy/test_*.py"))
+    files = sorted((ROOT / "tests" / "get_container_throughput").glob("*/test_*.py"))
     if operation == "replace":
         excluded = {
             "test_auto_scale.py", "test_auto_scale_async.py",
             "test_backwards_compatibility.py", "test_crud_subpartition.py", "test_none_options.py",
         }
         files = [path for path in files if path.name not in excluded]
-        files.extend(sorted((ROOT / "tests" / "replace_throughput").glob("*/legacy/test_*.py")))
+        files.extend(sorted((ROOT / "tests" / "replace_throughput").glob("*/test_*.py")))
     for surface in ("sync", "aio"):
-        files.append(ROOT / "tests" / "replace_database_throughput" / surface / "legacy" / "test_auto_scale.py")
-        files.append(ROOT / "tests" / "get_database_throughput" / surface / "legacy" / "test_cosmos_responses.py")
+        files.append(ROOT / "tests" / "replace_database_throughput" / surface / "test_auto_scale.py")
+        files.append(ROOT / "tests" / "get_database_throughput" / surface / "test_cosmos_responses.py")
         if operation == "get":
-            files.append(ROOT / "tests" / "read_container" / surface / "legacy" / "test_crud_container.py")
-    return files
+            files.append(ROOT / "tests" / "read_container" / surface / "test_crud_container.py")
+    return [path for path in files if "# Source:" in path.read_text(encoding="utf-8")]
 
 
 def test_targets(path, operation):
@@ -95,7 +95,7 @@ def main():
     with TemporaryDirectory(prefix="container_throughput_corepy_", dir=artifacts) as temporary:
         baseline_files = []
         for path in files:
-            target = Path(temporary) / path.parent.parent.parent.name / path.parent.parent.name / path.name
+            target = Path(temporary) / path.parent.parent.name / path.parent.name / path.name
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(_source_for_backend(path, "core-python"), encoding="utf-8")
             baseline_files.extend(test_targets(target, args.operation))

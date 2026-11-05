@@ -46,11 +46,40 @@ from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos._helpers import _read_all_items
+from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyValue
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
+
+
+@pytest.mark.parametrize("value,expected", [(None, None), ("1", 1), ("50000", 50000), ("0", 0)])
+def test_vector_buffer_allowance_is_snapshotted_per_query_not_page_size_rust(query, monkeypatch, value, expected):
+    if value is None:
+        monkeypatch.delenv(Constants.MAX_ITEM_BUFFER_VS_CONFIG, raising=False)
+    else:
+        monkeypatch.setenv(Constants.MAX_ITEM_BUFFER_VS_CONFIG, value)
+    pager = query.proxy.query_items("SELECT TOP 10 * FROM c", max_item_count=2)
+    monkeypatch.setenv(Constants.MAX_ITEM_BUFFER_VS_CONFIG, "17")
+    query.collect(pager)
+    assert query.calls
+    for prepared, _, _ in query.calls:
+        assert prepared.settings.query.max_buffered_query_window == expected
+        assert prepared.settings.query.max_item_count == 2
+        assert not any("buffer" in key.lower() for key in wire_headers(prepared))
+
+    query.calls.clear()
+    query.collect(query.proxy.query_items("SELECT TOP 10 * FROM c"))
+    assert all(prepared.settings.query.max_buffered_query_window == 17 for prepared, _, _ in query.calls)
+
+
+@pytest.mark.parametrize("value", ["", "abc", "1.5", "-1", str(2**64)])
+def test_invalid_vector_buffer_allowance_fails_without_binding_call_rust(query, monkeypatch, value):
+    monkeypatch.setenv(Constants.MAX_ITEM_BUFFER_VS_CONFIG, value)
+    with pytest.raises(ValueError):
+        query.proxy.query_items("SELECT TOP 10 * FROM c")
+    assert not query.calls
 
 
 @pytest.mark.parametrize("key,epk", [

@@ -66,7 +66,7 @@ from ..._operation_deadline import remaining_timeout, run_with_deadline
 from ...exceptions import CosmosClientTimeoutError
 
 from .cosmos_backend import AsyncCosmosBackend
-from ..._telemetry import get_operation
+from ..._telemetry import get_operation, log_response_diagnostics
 from ...runtime import CosmosRuntime
 
 if TYPE_CHECKING:
@@ -459,12 +459,16 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
                 contribution.error(exc)
             raise ServiceResponseError(message=str(exc)) from exc
         except _DRIVER_RESPONSE_ERROR as exc:
+            if contribution is not None:
+                contribution.error(exc)
             raise metadata_exception_from_binding(exc) from exc
         if result is None:
             raise BindingProtocolError(f"The binding returned no response for {prepared.op!r}")
         if contribution is not None:
             result = contribution.response(result)
-        return build_backend_response(*result)
+        response = build_backend_response(*result)
+        log_response_diagnostics(self, prepared.op, response)
+        return response
 
     async def get_container_metadata(
         self, container_link: str, *, deadline: Optional[float] = None
@@ -557,6 +561,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             if contribution is not None:
                 result = contribution.response(result)
             response = build_backend_response(*result)
+        log_response_diagnostics(self, prepared.op, response)
         yield build_backend_page(prepared, response)
 
     def validate_page_request(self, prepared: PreparedPageRequest) -> None:

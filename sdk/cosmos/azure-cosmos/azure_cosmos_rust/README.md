@@ -461,6 +461,26 @@ not proof of full legacy parity. See Bite 55 in
 `../docs/V5/testing/rust-telemetry.md` for the customer example, evidence
 and limitations.
 
+Bite 56 completes diagnostic handling for the existing public
+`ContainerProxy.execute_item_batch` span. Batch response interpretation
+and the hook remain inside that span; per-operation failures retain the
+existing public batch exception rather than being mistaken for success.
+The binding keeps metadata-resolution failures distinct from execution
+results and attaches available diagnostics without changing error mapping.
+Successful resolution omits diagnostics, so available batch detail is
+marked incomplete and does not produce complete operation totals.
+
+The release extension was rebuilt and installed locally. Focused batch
+checks passed 182 tests with six skipped; Rust wire checks passed 133 with
+one ignored. The broader shared telemetry suite still has 94 failing
+test cases, all reproduced with the pre-change adapter execution methods.
+
+The compiled before/after comparison is still blocked: after an approved
+emulator start, account initialization returned HTTP 500. The detailed
+guide records this open verification separately from the implemented
+diagnostic handling. The original compiled extension is retained with
+the Bite 56 baseline artifacts for the deferred comparison.
+
 Exports are registered in `src/lib.rs` (`#[pymodule] fn _rust(...)`).
 Current surface:
 

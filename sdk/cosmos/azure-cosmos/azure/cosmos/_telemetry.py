@@ -12,12 +12,14 @@ from _thread import LockType
 from collections.abc import Awaitable, Callable, Iterator, Mapping
 from contextlib import contextmanager
 from contextvars import ContextVar
+from copy import deepcopy
 from dataclasses import dataclass, field
 from functools import wraps
 import logging
 import sys
 from threading import Lock, get_ident
 from time import perf_counter_ns
+from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Literal, Optional, TypeVar
 
 from typing_extensions import ParamSpec
@@ -28,6 +30,8 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._backend.constants import is_rust_backend
 from ._backend.errors import BindingProtocolError
+from ._backend.contracts import BackendResponse
+from ._diagnostic_logging import DiagnosticLogging
 
 if TYPE_CHECKING:
     from opentelemetry.trace import Span, SpanContext
@@ -83,7 +87,8 @@ class _Attempt:
 class _Diagnostics:
     request_count: int
     attempts: tuple[_Attempt, ...]
-    complete: bool = True
+    complete: bool
+    incomplete_reasons: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -102,6 +107,71 @@ class CompletionHandler:
 
     record: Callable[[OperationCompletion], None]
     collect_attempts: bool = False
+    start: Optional[Callable[[], bool]] = None
+
+
+@dataclass(frozen=True)
+class RecordingOptions:
+    """Snapshot recording configuration, never execution context or logger objects."""
+
+    kwargs: Mapping[str, Any]
+
+    @classmethod
+    def snapshot(cls, kwargs: Mapping[str, Any]) -> RecordingOptions:
+        return cls(
+            MappingProxyType(
+                {
+                    key: (deepcopy(kwargs[key]) if key in ("tracing_options", "tracing_attributes") else kwargs[key])
+                    for key in (
+                        "tracing_options",
+                        "tracing_attributes",
+                        "logger",
+                        "logging_enable",
+                    )
+                    if key in kwargs
+                }
+            )
+        )
+
+    @classmethod
+    def take(cls, kwargs: dict[str, Any]) -> RecordingOptions:
+        snapshot = cls.snapshot(kwargs)
+        for key in snapshot.kwargs:
+            kwargs.pop(key)
+        return snapshot
+
+    def attributes(self, defaults: Mapping[str, Any]) -> Mapping[str, Any]:
+        selected = self.kwargs["tracing_attributes"] if "tracing_attributes" in self.kwargs else deepcopy(defaults)
+        return {
+            **selected,
+            **self.kwargs.get("tracing_options", {}).get("attributes", {}),
+        }
+
+
+@dataclass
+class _AttemptSpanRecorder:
+    """Provider-specific activation and emission; the collector only sees callbacks."""
+
+    caller: SpanContext
+    attributes: Mapping[str, Any]
+    parent: Optional[Span] = None
+
+    def start(self) -> bool:
+        try:
+            from opentelemetry import trace  # pylint: disable=import-outside-toplevel
+
+            parent = trace.get_current_span()
+            if parent.is_recording() and parent.get_span_context() != self.caller:
+                self.parent = parent
+                return True
+        except Exception:  # pylint: disable=broad-except
+            _report("Rust telemetry could not capture the operation span; attempt recording is skipped")
+        return False
+
+    def record(self, completion: OperationCompletion) -> None:
+        parent, self.parent = self.parent, None
+        if parent is not None:
+            emit_attempts(parent, completion.diagnostics, self.attributes)
 
 
 @dataclass
@@ -112,6 +182,7 @@ class _DiagnosticCollector:
     diagnostics: Optional[_Diagnostics] = None
     contributions: int = 0
     received: int = 0
+    incomplete_reasons: set[str] = field(default_factory=set)
     _lock: LockType = field(default_factory=Lock, repr=False)
 
     def __post_init__(self) -> None:
@@ -139,13 +210,26 @@ class _DiagnosticCollector:
         _report("Rust telemetry rejected a closed, excess, or unbounded additional contribution")
         return None
 
-    def accept(self, contribution: _Contribution, diagnostics: Optional[_Diagnostics]) -> None:
+    def mark_incomplete(self, reason: str) -> None:
+        with self._lock:
+            if not self.closed:
+                self.incomplete_reasons.add(reason)
+
+    def accept(
+        self,
+        contribution: _Contribution,
+        diagnostics: Optional[_Diagnostics],
+        *,
+        incomplete_reason: Optional[str] = None,
+    ) -> None:
         with self._lock:
             if self.closed or contribution.owner is not self or contribution.consumed:
                 rejected = True
             else:
                 rejected = False
                 contribution.consumed = True
+                if incomplete_reason is not None:
+                    self.incomplete_reasons.add(incomplete_reason)
                 if diagnostics is not None:
                     self.received += 1
                     previous = self.diagnostics
@@ -159,6 +243,12 @@ class _DiagnosticCollector:
                         (previous.request_count if previous else 0) + diagnostics.request_count,
                         attempts,
                         complete=diagnostics.complete and (previous is None or previous.complete),
+                        incomplete_reasons=tuple(
+                            sorted(
+                                set(diagnostics.incomplete_reasons)
+                                | (set(previous.incomplete_reasons) if previous else set())
+                            )
+                        ),
                     )
         if rejected:
             _report("Rust telemetry rejected a duplicate or late diagnostic contribution, or a different owner")
@@ -169,8 +259,15 @@ class _DiagnosticCollector:
                 return False, None
             self.closed = True
             diagnostics = self.diagnostics
-            if diagnostics is not None and self.received != self.contributions:
-                diagnostics = _Diagnostics(diagnostics.request_count, diagnostics.attempts, complete=False)
+            if self.received != self.contributions:
+                self.incomplete_reasons.add("missing_contribution")
+            if diagnostics is not None and self.incomplete_reasons:
+                diagnostics = _Diagnostics(
+                    diagnostics.request_count,
+                    diagnostics.attempts,
+                    complete=False,
+                    incomplete_reasons=tuple(sorted(set(diagnostics.incomplete_reasons) | self.incomplete_reasons)),
+                )
             self.diagnostics = None
             return True, diagnostics
 
@@ -179,12 +276,11 @@ class _DiagnosticCollector:
 class _Operation:  # pylint: disable=too-many-instance-attributes
     operation: str
     backend: object
-    caller: Optional[SpanContext]
     task: object
     thread: int
     binding_operation: _BindingOperation
-    parent: Optional[Span] = None
     handlers: tuple[CompletionHandler, ...] = ()
+    diagnostic_logging: DiagnosticLogging = field(default_factory=DiagnosticLogging)
     started_ns: int = field(default_factory=perf_counter_ns)
     collector: _DiagnosticCollector = field(default_factory=_DiagnosticCollector)
     delegated_tasks: set[object] = field(default_factory=set, repr=False)
@@ -212,6 +308,17 @@ class _Operation:  # pylint: disable=too-many-instance-attributes
         """
         return self.collector.reserve()
 
+    def start(self) -> None:
+        active = []
+        for handler in self.handlers:
+            try:
+                if handler.start is None or handler.start():
+                    active.append(handler)
+            except Exception:  # pylint: disable=broad-except
+                _report("Rust telemetry completion handler could not start; operation result is unchanged")
+        self.handlers = tuple(active)
+        self.started_ns = perf_counter_ns()
+
     def finish(self, outcome: _Outcome = "success") -> None:
         """Freeze completion once, before invoking independently isolated handlers.
 
@@ -223,15 +330,9 @@ class _Operation:  # pylint: disable=too-many-instance-attributes
         if not first_completion:
             return
         completion = OperationCompletion(self.operation, outcome, max(0, ended_ns - self.started_ns), diagnostics)
-        parent, handlers = self.parent, self.handlers
-        self.parent = None
+        handlers = self.handlers
         self.handlers = ()
         self.delegated_tasks.clear()
-        if parent is not None:
-            try:
-                emit_attempts(parent, diagnostics)
-            except Exception:  # pylint: disable=broad-except
-                _report("Rust telemetry could not emit attempt spans; operation result is unchanged")
         for handler in handlers:
             try:
                 handler.record(completion)
@@ -246,16 +347,31 @@ class _Contribution:
 
     def _complete(self, payload: object) -> None:
         diagnostics = None
+        incomplete_reason = None
         if payload is not None:
             try:
                 total, _, attempts = _decode_payload(payload)
-                complete = payload.get("complete", True) if isinstance(payload, dict) else True
-                if not isinstance(complete, bool):
+                complete = payload["complete"]
+                reasons = payload["incomplete_reasons"]
+                if (
+                    not isinstance(complete, bool)
+                    or not isinstance(reasons, list)
+                    or any(not isinstance(reason, str) or not reason for reason in reasons)
+                    or complete == bool(reasons)
+                ):
                     raise ValueError("Invalid diagnostic completeness")
-                diagnostics = _Diagnostics(total, tuple(attempts), complete=complete)
+                diagnostics = _Diagnostics(
+                    total,
+                    tuple(attempts),
+                    complete=complete,
+                    incomplete_reasons=tuple(sorted(set(reasons))),
+                )
             except Exception:  # pylint: disable=broad-except
+                incomplete_reason = "invalid_diagnostics"
                 _report("Rust telemetry rejected an invalid diagnostics payload; operation result is unchanged")
-        self.owner.accept(self, diagnostics)
+        else:
+            incomplete_reason = "diagnostics_unavailable"
+        self.owner.accept(self, diagnostics, incomplete_reason=incomplete_reason)
 
     def response(self, result: object) -> tuple[Any, ...]:
         """Keep normal response conversion separate from optional diagnostics.
@@ -362,7 +478,9 @@ def _current_task() -> object:
         return None
 
 
-def bind_operation_task(operation: Callable[[], Awaitable[_T]]) -> Callable[[], Awaitable[_T]]:
+def bind_operation_task(
+    operation: Callable[[], Awaitable[_T]],
+) -> Callable[[], Awaitable[_T]]:
     """Authorize one SDK-owned worker, captured before creating its task.
 
     Ordinary context inheritance does not authorize child tasks. Only this
@@ -402,36 +520,61 @@ def bind_operation_task(operation: Callable[[], Awaitable[_T]]) -> Callable[[], 
 
 
 def _new_operation(
-    owner: object, operation: str, kwargs: Mapping[str, Any], binding_operation: Optional[_BindingOperation] = None
+    owner: object,
+    operation: str,
+    kwargs: Mapping[str, Any],
+    binding_operation: Optional[_BindingOperation] = None,
 ) -> Optional[_Operation]:
     context = getattr(owner, "_item_context", None)
     handlers = getattr(context, "telemetry_handlers", ())
+    logging_defaults = getattr(context, "diagnostic_logging", None) or DiagnosticLogging()
+    diagnostic_logging = logging_defaults.for_operation(kwargs)
     options = kwargs.get("tracing_options", {})
     enabled = options.get("enabled") if isinstance(options, Mapping) else False
     tracing = enabled is not False and (enabled is not None or settings.tracing_enabled())
-    if not tracing and not handlers and not isinstance(binding_operation, (tuple, BindingAlternatives)):
+    if (
+        not tracing
+        and not handlers
+        and diagnostic_logging.level is None
+        and not isinstance(binding_operation, (tuple, BindingAlternatives))
+    ):
         return None
     backend = getattr(context, "adapter", None)
     if backend is None or not is_rust_backend(backend):
         return None
     binding_operation = operation if binding_operation is None else binding_operation
     state = None
-    if handlers or not tracing:
-        state = _Operation(operation, backend, None, _current_task(), get_ident(), binding_operation, handlers=handlers)
+    if handlers or diagnostic_logging.level is not None or not tracing:
+        state = _Operation(
+            operation,
+            backend,
+            _current_task(),
+            get_ident(),
+            binding_operation,
+            handlers=handlers,
+            diagnostic_logging=diagnostic_logging,
+        )
     if not tracing:
         # Azure Core retains validation of its own tracing options.
         return state
     try:
         from opentelemetry import trace  # pylint: disable=import-outside-toplevel
     except ImportError:
-        _report("OpenTelemetry is unavailable; Rust attempt recording is disabled", logging.DEBUG)
+        _report(
+            "OpenTelemetry is unavailable; Rust attempt recording is disabled",
+            logging.DEBUG,
+        )
         return state
     try:
-        caller = trace.get_current_span().get_span_context()
+        attributes = RecordingOptions.snapshot(kwargs).attributes(getattr(context, "tracing_attributes", {}))
+    except Exception:  # pylint: disable=broad-except
+        _report("Rust telemetry could not snapshot tracing attributes; attempt recording is skipped")
+        return state
+    try:
+        recorder = _AttemptSpanRecorder(trace.get_current_span().get_span_context(), attributes)
         if state is None:
-            state = _Operation(operation, backend, caller, _current_task(), get_ident(), binding_operation)
-        else:
-            state.caller = caller
+            state = _Operation(operation, backend, _current_task(), get_ident(), binding_operation)
+        state.handlers += (CompletionHandler(recorder.record, collect_attempts=True, start=recorder.start),)
         return state
     except Exception:  # pylint: disable=broad-except
         _report("Rust telemetry could not capture the caller span; attempt recording is skipped")
@@ -440,7 +583,10 @@ def _new_operation(
 
 @contextmanager
 def _operation_scope(
-    owner: object, operation: str, kwargs: Mapping[str, Any], binding_operation: Optional[_BindingOperation] = None
+    owner: object,
+    operation: str,
+    kwargs: Mapping[str, Any],
+    binding_operation: Optional[_BindingOperation] = None,
 ) -> Iterator[None]:
     # Even a disabled call masks inherited state from an outer SDK operation.
     token = _OPERATION.set(_new_operation(owner, operation, kwargs, binding_operation))
@@ -453,17 +599,8 @@ def _operation_scope(
 @contextmanager
 def _record_operation() -> Iterator[None]:
     operation = _OPERATION.get()
-    if operation is not None and operation.caller is not None:
-        try:
-            from opentelemetry import trace  # pylint: disable=import-outside-toplevel
-
-            parent = trace.get_current_span()
-            if parent.is_recording() and parent.get_span_context() != operation.caller:
-                operation.parent = parent
-        except Exception:  # pylint: disable=broad-except
-            _report("Rust telemetry could not capture the operation span; attempt recording is skipped")
     if operation is not None:
-        operation.started_ns = perf_counter_ns()
+        operation.start()
     outcome: _Outcome = "success"
     try:
         yield
@@ -601,24 +738,38 @@ def get_operation(backend: object, operation: str) -> Optional[_Operation]:
     if (
         state.backend is not backend
         or not state.owns_execution()
-        or (state.parent is None and not any(handler.collect_attempts for handler in state.handlers))
+        or not any(handler.collect_attempts for handler in state.handlers)
     ):
         return None
     expected = state.binding_operation
     if isinstance(expected, BindingAlternatives):
         index = state.collector.contributions
         selected = tuple(path for path in expected.paths if index < len(path) and path[index] == operation)
-        if not selected:
-            return None
-        state.binding_operation = selected[0] if len(selected) == 1 else BindingAlternatives(selected)
-        state.collector.contribution_limit = max(len(path) for path in selected)
+        matched = bool(selected)
+        if selected:
+            state.binding_operation = selected[0] if len(selected) == 1 else BindingAlternatives(selected)
+            state.collector.contribution_limit = max(len(path) for path in selected)
     elif isinstance(expected, tuple):
         index = state.collector.contributions
-        if index >= len(expected) or expected[index] != operation:
-            return None
-    elif expected != operation:
+        matched = index < len(expected) and expected[index] == operation
+    else:
+        matched = expected == operation
+    if not matched:
+        state.collector.mark_incomplete("unexpected_binding_operation")
+        _report("Rust telemetry encountered unexpected owned binding work; operation totals are unavailable")
         return None
     return state
+
+
+def log_response_diagnostics(backend: object, operation: str, response: BackendResponse) -> None:
+    """Log only a supplied summary belonging to the active native call or page."""
+    state = _OPERATION.get()
+    if state is None or state.closed or state.backend is not backend or not state.owns_execution():
+        return
+    try:
+        state.diagnostic_logging.record(operation, response)
+    except Exception:  # pylint: disable=broad-except
+        _report("Rust diagnostic logging failed; operation result is unchanged")
 
 
 def _integer(value: object) -> int:
@@ -651,13 +802,19 @@ def _decode_payload(payload: object) -> tuple[int, int, list[_Attempt]]:
     return total, retained, attempts
 
 
-def emit_attempts(parent: Span, payload: Optional[_Diagnostics]) -> None:
+def emit_attempts(
+    parent: Span,
+    payload: Optional[_Diagnostics],
+    attributes: Optional[Mapping[str, Any]] = None,
+) -> None:
     """Create sibling spans from the finalized, validated diagnostics.
 
     :param parent: Owned public operation span.
     :type parent: ~opentelemetry.trace.Span
     :param payload: Aggregated diagnostics, or None when unavailable.
     :type payload: _Diagnostics or None
+    :param attributes: Resolved customer attributes; recorded driver facts take precedence.
+    :type attributes: Mapping[str, Any] or None
     """
     if payload is None:
         _report("Rust telemetry has no request diagnostics for this result", logging.DEBUG)
@@ -669,8 +826,9 @@ def emit_attempts(parent: Span, payload: Optional[_Diagnostics]) -> None:
         if payload.complete:
             parent.set_attribute("cosmos.poc.request_count", payload.request_count)
             parent.set_attribute("cosmos.poc.retained_request_count", len(payload.attempts))
-        else:
-            _report("Rust telemetry has incomplete contributions; operation totals are unavailable")
+        parent.set_attribute("cosmos.poc.diagnostics_complete", payload.complete)
+        if not payload.complete:
+            parent.set_attribute("cosmos.poc.diagnostics_incomplete_reasons", payload.incomplete_reasons)
         tracer = trace.get_tracer("azure.cosmos.rust")
         parent_context = trace.set_span_in_context(parent)
         for attempt in payload.attempts:
@@ -683,6 +841,7 @@ def emit_attempts(parent: Span, payload: Optional[_Diagnostics]) -> None:
                 kind=trace.SpanKind.CLIENT,
                 start_time=attempt.start_ns,
                 attributes={
+                    **(attributes or {}),
                     "cosmos.poc.driver_status_code": attempt.driver_status_code,
                     "cosmos.poc.execution_context": attempt.execution_context,
                 },

@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-use pyo3::exceptions::{PyAttributeError, PyRuntimeError, PyRuntimeWarning, PyTimeoutError, PyValueError};
+use pyo3::exceptions::{
+    PyAttributeError, PyRuntimeError, PyRuntimeWarning, PyTimeoutError, PyValueError,
+};
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyDict, PyTuple};
 use serde::{Deserialize, Serialize};
@@ -14,7 +16,7 @@ use azure_data_cosmos_driver::{
 };
 
 use super::diagnostics::record_diagnostics;
-use super::errors::{_DriverTransportError, _UnsupportedQueryFeatureError};
+use super::errors::{_DriverResponseError, _DriverTransportError, _UnsupportedQueryFeatureError};
 use super::feed_range::{FeedRangeFromPartitionKeyError, FeedRangeFromPartitionKeyPayload};
 
 /// Opt-in fault-test envelope. Ordinary responses and telemetry are unchanged.
@@ -42,10 +44,15 @@ pub(super) fn tuple_from_result_with_fault_diagnostics<'py>(
         None => py.None(),
     };
     match tuple_from_result(py, response_result) {
-        Ok(response) => Ok(PyTuple::new_bound(py, [response.into_any().unbind(), payload])),
+        Ok(response) => Ok(PyTuple::new_bound(
+            py,
+            [response.into_any().unbind(), payload],
+        )),
         Err(error) => {
             if !payload.is_none(py) {
-                error.value_bound(py).setattr("_cosmos_fault_diagnostics", payload)?;
+                error
+                    .value_bound(py)
+                    .setattr("_cosmos_fault_diagnostics", payload)?;
             }
             Err(error)
         }
@@ -54,6 +61,12 @@ pub(super) fn tuple_from_result_with_fault_diagnostics<'py>(
 
 /// Opt-in POC envelope: (unchanged response tuple, attempt payload).
 /// A response-less driver exception carries the same payload privately.
+#[derive(Clone, Copy)]
+pub(super) enum AttemptCoverage {
+    Complete,
+    Incomplete(&'static str),
+}
+
 pub(super) fn tuple_from_result_with_attempts<'py>(
     py: Python<'py>,
     response_result: Result<CosmosResponse, CosmosError>,
@@ -66,7 +79,24 @@ pub(super) fn tuple_from_result_with_attempts<'py>(
         py,
         tuple_from_result(py, response_result),
         diagnostics,
-        true,
+        AttemptCoverage::Complete,
+    )
+}
+
+/// Resolving a container does not expose successful metadata diagnostics.
+pub(super) fn tuple_from_resolved_result_with_attempts<'py>(
+    py: Python<'py>,
+    result: Result<CosmosResponse, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let diagnostics = match &result {
+        Ok(response) => Some(response.diagnostics()),
+        Err(error) => error.diagnostics(),
+    };
+    with_attempt_diagnostics(
+        py,
+        tuple_from_result(py, result),
+        diagnostics,
+        AttemptCoverage::Incomplete("metadata_diagnostics_unavailable"),
     )
 }
 
@@ -75,37 +105,64 @@ pub(super) fn with_attempt_diagnostics<'py>(
     py: Python<'py>,
     response: PyResult<Bound<'py, PyTuple>>,
     diagnostics: Option<Arc<DiagnosticsContext>>,
-    complete: bool,
+    coverage: AttemptCoverage,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let payload = match diagnostics {
+    match response {
+        Ok(response) => Ok(PyTuple::new_bound(
+            py,
+            [
+                response.into_any().unbind(),
+                covered_attempt_payload(py, diagnostics, coverage),
+            ],
+        )),
+        Err(error) => Err(with_error_attempt_diagnostics(
+            py,
+            error,
+            diagnostics,
+            coverage,
+        )),
+    }
+}
+
+fn covered_attempt_payload(
+    py: Python<'_>,
+    diagnostics: Option<Arc<DiagnosticsContext>>,
+    coverage: AttemptCoverage,
+) -> PyObject {
+    match diagnostics {
         Some(diagnostics) => {
             let payload =
                 super::diagnostics::attempt_payload(py, &diagnostics).and_then(|payload| {
-                    if !complete {
-                        payload.set_item("complete", false)?;
-                    }
+                    let reasons = match coverage {
+                        AttemptCoverage::Complete => Vec::new(),
+                        AttemptCoverage::Incomplete(reason) => vec![reason],
+                    };
+                    payload.set_item("complete", reasons.is_empty())?;
+                    payload.set_item("incomplete_reasons", reasons)?;
                     Ok(payload)
                 });
             attempt_payload_or_error(py, payload)
         }
         None => py.None(),
-    };
-    match response {
-        Ok(response) => Ok(PyTuple::new_bound(
-            py,
-            [response.into_any().unbind(), payload],
-        )),
-        Err(error) => {
-            if (error.is_instance_of::<_DriverTransportError>(py)
-                || error.is_instance_of::<PyTimeoutError>(py)
-                || error.is_instance_of::<_UnsupportedQueryFeatureError>(py))
-                && !payload.is_none(py)
-            {
-                attach_attempt_payload(py, &error, payload);
-            }
-            Err(error)
-        }
     }
+}
+
+pub(super) fn with_error_attempt_diagnostics(
+    py: Python<'_>,
+    error: PyErr,
+    diagnostics: Option<Arc<DiagnosticsContext>>,
+    coverage: AttemptCoverage,
+) -> PyErr {
+    let payload = covered_attempt_payload(py, diagnostics, coverage);
+    if (error.is_instance_of::<_DriverTransportError>(py)
+        || error.is_instance_of::<_DriverResponseError>(py)
+        || error.is_instance_of::<PyTimeoutError>(py)
+        || error.is_instance_of::<_UnsupportedQueryFeatureError>(py))
+        && !payload.is_none(py)
+    {
+        attach_attempt_payload(py, &error, payload);
+    }
+    error
 }
 
 fn attach_attempt_payload(py: Python<'_>, error: &PyErr, payload: PyObject) {
@@ -257,7 +314,7 @@ pub(super) fn tuple_from_database_feed_result_with_attempts<'py>(
         py,
         tuple_from_database_feed_result(py, response_result),
         diagnostics,
-        true,
+        AttemptCoverage::Complete,
     )
 }
 
@@ -291,7 +348,7 @@ pub(super) fn tuple_from_query_databases_result_with_attempts<'py>(
         py,
         tuple_from_query_databases_result(py, response_result),
         diagnostics,
-        true,
+        AttemptCoverage::Complete,
     )
 }
 
@@ -323,7 +380,7 @@ pub(super) fn tuple_from_container_feed_result_with_attempts<'py>(
         py,
         tuple_from_container_feed_result(py, response_result),
         diagnostics,
-        true,
+        AttemptCoverage::Complete,
     )
 }
 
@@ -363,7 +420,7 @@ pub(super) fn tuple_from_query_containers_result_with_attempts<'py>(
         py,
         tuple_from_query_containers_result(py, response_result),
         diagnostics,
-        true,
+        AttemptCoverage::Complete,
     )
 }
 
@@ -466,7 +523,7 @@ pub(super) fn tuple_from_partition_key_ranges_result_with_attempts<'py>(
         py,
         tuple_from_partition_key_ranges_result(py, result),
         diagnostics,
-        false,
+        AttemptCoverage::Incomplete("metadata_diagnostics_unavailable"),
     )
 }
 
@@ -482,7 +539,7 @@ pub(super) fn tuple_from_feed_range_from_partition_key_result_with_attempts<'py>
         py,
         tuple_from_feed_range_from_partition_key_result(py, result),
         diagnostics,
-        false,
+        AttemptCoverage::Incomplete("metadata_diagnostics_unavailable"),
     )
 }
 
@@ -697,12 +754,14 @@ fn backend_response_tuple_from_offer_feed_success<'py>(
     for response in responses.into_iter().chain(std::iter::once(last)) {
         diagnostics = record_diagnostics(response.diagnostics());
         let bytes = named_feed_response_body_to_vec(response.into_body(), b"Offers")?;
-        let page: OfferFeedBody = serde_json::from_slice(&bytes)
-            .map_err(|error| PyValueError::new_err(format!("Invalid get_throughput page: {error}")))?;
+        let page: OfferFeedBody = serde_json::from_slice(&bytes).map_err(|error| {
+            PyValueError::new_err(format!("Invalid get_throughput page: {error}"))
+        })?;
         body.offers.extend(page.offers);
     }
-    let bytes = serde_json::to_vec(&body)
-        .map_err(|error| PyValueError::new_err(format!("Invalid get_throughput result: {error}")))?;
+    let bytes = serde_json::to_vec(&body).map_err(|error| {
+        PyValueError::new_err(format!("Invalid get_throughput result: {error}"))
+    })?;
     backend_response_tuple(
         py,
         status_code,
@@ -999,8 +1058,8 @@ mod tests {
         partition_key_range::PartitionKeyRange, CosmosResponse, CosmosResponseHeaders,
         EffectivePartitionKey, ResponseBody,
     };
-    use pyo3::prelude::*;
     use pyo3::exceptions::PyTimeoutError;
+    use pyo3::prelude::*;
     use pyo3::types::PyDict;
 
     use super::super::diagnostics::{BINDING_ATTEMPT_COUNT, BINDING_RETRY_COUNT};
@@ -1088,7 +1147,13 @@ mod tests {
             let (status, sub_status) = super::status_code_and_sub_status(response.status());
             let diagnostics = super::record_diagnostics(response.diagnostics());
             let headers = response.headers().to_raw_headers();
-            (status, sub_status, diagnostics, headers, response.into_body())
+            (
+                status,
+                sub_status,
+                diagnostics,
+                headers,
+                response.into_body(),
+            )
         });
         let python_headers = PyDict::new_bound(py);
         for (name, value) in headers.iter() {
@@ -1096,10 +1161,20 @@ mod tests {
         }
         match body {
             ResponseBody::Bytes(bytes) => super::backend_response_tuple(
-                py, status, sub_status, python_headers, bytes.as_ref(), Some(&diagnostics),
+                py,
+                status,
+                sub_status,
+                python_headers,
+                bytes.as_ref(),
+                Some(&diagnostics),
             ),
             ResponseBody::NoPayload => super::backend_response_tuple(
-                py, status, sub_status, python_headers, b"", Some(&diagnostics),
+                py,
+                status,
+                sub_status,
+                python_headers,
+                b"",
+                Some(&diagnostics),
             ),
             ResponseBody::Items(items) => Err(pyo3::exceptions::PyRuntimeError::new_err(format!(
                 "unexpected feed response body for point operation: got {} item(s)",
@@ -1119,8 +1194,10 @@ mod tests {
             let proposed = tuple_with_rust_preparation_released(py, read.clone()).unwrap();
             assert!(current.eq(&proposed).unwrap());
             // Other native tests can update the process-wide counter concurrently.
-            assert!(BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed)
-                >= before + 2 * read.diagnostics().request_count() as u64);
+            assert!(
+                BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed)
+                    >= before + 2 * read.diagnostics().request_count() as u64
+            );
         });
     }
 
@@ -1151,7 +1228,11 @@ mod tests {
             }
             let diag = read.diagnostics();
             for sample in 0..samples {
-                for released in if sample % 2 == 0 { [false, true] } else { [true, false] } {
+                for released in if sample % 2 == 0 {
+                    [false, true]
+                } else {
+                    [true, false]
+                } {
                     let start = Instant::now();
                     for _ in 0..iterations {
                         let response = black_box(read.clone());
@@ -1159,11 +1240,16 @@ mod tests {
                             tuple_with_rust_preparation_released(py, response)
                         } else {
                             super::backend_response_tuple_from_success(py, response)
-                        }.unwrap();
+                        }
+                        .unwrap();
                         drop(black_box(tuple));
                     }
                     let ns = start.elapsed().as_nanos() as f64 / iterations as f64;
-                    if released { released_ns.push(ns); } else { current_ns.push(ns); }
+                    if released {
+                        released_ns.push(ns);
+                    } else {
+                        current_ns.push(ns);
+                    }
                 }
                 let start = Instant::now();
                 for _ in 0..iterations {
@@ -1172,7 +1258,9 @@ mod tests {
                 formatting_ns.push(start.elapsed().as_nanos() as f64 / iterations as f64);
                 let start = Instant::now();
                 for _ in 0..iterations {
-                    drop(black_box(super::record_diagnostics(black_box(diag.clone()))));
+                    drop(black_box(super::record_diagnostics(black_box(
+                        diag.clone(),
+                    ))));
                 }
                 diagnostics_ns.push(start.elapsed().as_nanos() as f64 / iterations as f64);
                 let start = Instant::now();
@@ -1181,20 +1269,112 @@ mod tests {
                 }
                 headers_ns.push(start.elapsed().as_nanos() as f64 / iterations as f64);
             }
-            println!("RESPONSE_PREPARATION_BENCHMARK={}", serde_json::json!({
-                "scope": "Local no-network release benchmark; completed in-memory-driver read response; no GIL contender",
-                "iterations_per_sample": iterations, "samples": samples,
-                "body_bytes": match read.body() { ResponseBody::Bytes(b) => b.len(), _ => 0 },
-                "header_count": read.headers().to_raw_headers().iter().count(),
-                "request_count": diag.request_count(),
-                "response_tuple_parity": true,
-                "current_conversion_ns": current_ns,
-                "released_preparation_conversion_ns": released_ns,
-                "diag_to_string_ns": formatting_ns,
-                "record_diagnostics_ns": diagnostics_ns,
-                "rust_raw_headers_ns": headers_ns
-            }));
+            println!(
+                "RESPONSE_PREPARATION_BENCHMARK={}",
+                serde_json::json!({
+                    "scope": "Local no-network release benchmark; completed in-memory-driver read response; no GIL contender",
+                    "iterations_per_sample": iterations, "samples": samples,
+                    "body_bytes": match read.body() { ResponseBody::Bytes(b) => b.len(), _ => 0 },
+                    "header_count": read.headers().to_raw_headers().iter().count(),
+                    "request_count": diag.request_count(),
+                    "response_tuple_parity": true,
+                    "current_conversion_ns": current_ns,
+                    "released_preparation_conversion_ns": released_ns,
+                    "diag_to_string_ns": formatting_ns,
+                    "record_diagnostics_ns": diagnostics_ns,
+                    "rust_raw_headers_ns": headers_ns
+                })
+            );
         });
+    }
+
+    #[tokio::test]
+    async fn resolved_operation_coverage_preserves_available_results_without_claiming_metadata() {
+        pyo3::prepare_freethreaded_python();
+        let (success, read, conflict) = create_read_and_conflict().await;
+        for result in [Ok(success), Ok(read), Err(conflict)] {
+            Python::with_gil(|py| {
+                let ordinary = tuple_from_result(py, result.clone()).unwrap();
+                let envelope = super::tuple_from_resolved_result_with_attempts(py, result).unwrap();
+                assert!(envelope.get_item(0).unwrap().eq(ordinary).unwrap());
+                let payload = envelope.get_item(1).unwrap();
+                assert!(!payload
+                    .get_item("complete")
+                    .unwrap()
+                    .extract::<bool>()
+                    .unwrap());
+                assert_eq!(
+                    payload
+                        .get_item("incomplete_reasons")
+                        .unwrap()
+                        .extract::<Vec<String>>()
+                        .unwrap(),
+                    vec!["metadata_diagnostics_unavailable"],
+                );
+                assert!(
+                    payload
+                        .get_item("request_count")
+                        .unwrap()
+                        .extract::<usize>()
+                        .unwrap()
+                        > 0
+                );
+            });
+        }
+    }
+
+    #[tokio::test]
+    async fn metadata_error_attachment_preserves_service_transport_and_timeout_errors() {
+        use azure_core::http::StatusCode;
+        pyo3::prepare_freethreaded_python();
+        let (success, _, conflict) = create_read_and_conflict().await;
+        let diagnostics = success.diagnostics();
+        let timeout = CosmosStatus::new(StatusCode::RequestTimeout)
+            .with_sub_status(status_codes::substatus::CLIENT_OPERATION_TIMEOUT.value());
+        let transport = CosmosError::builder()
+            .with_status(CosmosStatus::new(StatusCode::ServiceUnavailable))
+            .with_message("metadata transport failure")
+            .with_diagnostics(diagnostics.clone())
+            .build();
+        let timeout = CosmosError::builder()
+            .with_status(timeout)
+            .with_diagnostics(diagnostics)
+            .build();
+        for error in [conflict, transport, timeout] {
+            Python::with_gil(|py| {
+                let ordinary = super::super::container_metadata::metadata_error(py, error.clone());
+                let recorded =
+                    super::super::container_metadata::metadata_error_with_attempts(py, error);
+                assert!(recorded.get_type_bound(py).is(&ordinary.get_type_bound(py)));
+                assert!(recorded
+                    .value_bound(py)
+                    .getattr("args")
+                    .unwrap()
+                    .eq(ordinary.value_bound(py).getattr("args").unwrap())
+                    .unwrap());
+                assert!(!ordinary
+                    .value_bound(py)
+                    .hasattr("_cosmos_attempt_payload")
+                    .unwrap());
+                let payload = recorded
+                    .value_bound(py)
+                    .getattr("_cosmos_attempt_payload")
+                    .unwrap();
+                assert!(!payload
+                    .get_item("complete")
+                    .unwrap()
+                    .extract::<bool>()
+                    .unwrap());
+                assert!(
+                    payload
+                        .get_item("request_count")
+                        .unwrap()
+                        .extract::<usize>()
+                        .unwrap()
+                        > 0
+                );
+            });
+        }
     }
 
     #[tokio::test]
@@ -2068,7 +2248,10 @@ def record_unraisable(args):
                             tuple_from_result(py, Err(error))
                         }
                         .unwrap_err();
-                        assert_eq!(error.is_instance_of::<PyTimeoutError>(py), status == timeout);
+                        assert_eq!(
+                            error.is_instance_of::<PyTimeoutError>(py),
+                            status == timeout
+                        );
                         assert_eq!(
                             error.is_instance_of::<_DriverTransportError>(py),
                             status != timeout
@@ -2093,9 +2276,15 @@ def record_unraisable(args):
                 .with_response(conflict.response().unwrap().clone())
                 .build();
             let expected = tuple_from_result(py, Err(conflict.clone())).unwrap();
-            assert!(tuple_from_result(py, Err(attached.clone())).unwrap().eq(expected).unwrap());
+            assert!(tuple_from_result(py, Err(attached.clone()))
+                .unwrap()
+                .eq(expected)
+                .unwrap());
             let expected_feed = tuple_from_feed_result(py, Err(conflict)).unwrap();
-            assert!(tuple_from_feed_result(py, Err(attached)).unwrap().eq(expected_feed).unwrap());
+            assert!(tuple_from_feed_result(py, Err(attached))
+                .unwrap()
+                .eq(expected_feed)
+                .unwrap());
 
             let error = CosmosError::builder()
                 .with_status(timeout)
@@ -2104,7 +2293,8 @@ def record_unraisable(args):
             let before = BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed);
             let ordinary = tuple_from_result(py, Err(error.clone())).unwrap_err();
             let traced = tuple_from_result_with_attempts(py, Err(error.clone())).unwrap_err();
-            let fault = super::tuple_from_result_with_fault_diagnostics(py, Err(error.clone())).unwrap_err();
+            let fault = super::tuple_from_result_with_fault_diagnostics(py, Err(error.clone()))
+                .unwrap_err();
             let feed = tuple_from_feed_result(py, Err(error)).unwrap_err();
             assert!(feed.is_instance_of::<PyTimeoutError>(py));
             assert_eq!(feed.to_string(), ordinary.to_string());
@@ -2116,12 +2306,18 @@ def record_unraisable(args):
                 assert_eq!(observed.to_string(), ordinary.to_string());
                 let payload = observed.value_bound(py).getattr(attribute).unwrap();
                 assert_eq!(
-                    payload.get_item("request_count").unwrap().extract::<usize>().unwrap(),
+                    payload
+                        .get_item("request_count")
+                        .unwrap()
+                        .extract::<usize>()
+                        .unwrap(),
                     diagnostics.request_count()
                 );
             }
-            assert!(BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed)
-                >= before + 4 * diagnostics.request_count() as u64);
+            assert!(
+                BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed)
+                    >= before + 4 * diagnostics.request_count() as u64
+            );
         });
     }
 

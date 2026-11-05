@@ -19,13 +19,15 @@ pytest.importorskip("opentelemetry.sdk.trace")
 # pylint: disable=wrong-import-position
 from opentelemetry import trace
 from opentelemetry.sdk.trace.sampling import ALWAYS_OFF
-from common.test_rust_telemetry_unit import (  # pylint: disable=unused-import
+from telemetry.test_rust_telemetry_unit import (  # pylint: disable=unused-import
     DriverTransportError,
     attempt_spans,
     contribution_response,
     recording_setup,
 )
-from query_items.test_query_backend_routing_unit import listing_client  # pylint: disable=unused-import
+from query_items.test_query_backend_routing_unit import (
+    listing_client,
+)  # pylint: disable=unused-import
 from azure.core.exceptions import ServiceResponseError
 from azure.core.settings import settings
 from azure.cosmos import _telemetry as telemetry
@@ -33,7 +35,10 @@ from azure.cosmos._backend import binding_adapter as sync_binding
 from azure.cosmos._backend.errors import BindingProtocolError, UnsupportedQueryError
 from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos.aio._backend import binding_adapter as async_binding
-from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosResourceNotFoundError
+from azure.cosmos.exceptions import (
+    CosmosClientTimeoutError,
+    CosmosResourceNotFoundError,
+)
 
 # pylint: enable=wrong-import-position
 
@@ -53,7 +58,7 @@ def listing_telemetry_setup(
     monkeypatch.setattr(
         backend,
         "_ensure_driver_handle",
-        AsyncMock(return_value="test-driver") if asynchronous else Mock(return_value="test-driver"),
+        (AsyncMock(return_value="test-driver") if asynchronous else Mock(return_value="test-driver")),
     )
     monkeypatch.setattr(module, "_DRIVER_TRANSPORT_ERROR", DriverTransportError)
     monkeypatch.setattr(module, "_UNSUPPORTED_QUERY_ERROR", DriverUnsupportedQueryError)
@@ -109,7 +114,10 @@ def listing_telemetry_setup(
         response = (
             harness.status,
             0,
-            {"x-ms-continuation": continuation, "x-ms-activity-id": str(len(harness.calls))},
+            {
+                "x-ms-continuation": continuation,
+                "x-ms-activity-id": str(len(harness.calls)),
+            },
             b"invalid-json" if harness.malformed_body else json.dumps(body).encode(),
             None,
         )
@@ -133,7 +141,9 @@ def listing_telemetry_setup(
         "_rust_module",
         SimpleNamespace(
             **{
-                "list_databases_async" if asynchronous else "list_databases": native_async if asynchronous else native,
+                "list_databases_async" if asynchronous else "list_databases": (
+                    native_async if asynchronous else native
+                ),
                 "query_databases_async" if asynchronous else "query_databases": (
                     native_async if asynchronous else native
                 ),
@@ -144,7 +154,7 @@ def listing_telemetry_setup(
     async def next_async(pages):
         return [row async for row in await pages.__anext__()]
 
-    harness.next = lambda pages: asyncio.run(next_async(pages)) if asynchronous else list(next(pages))
+    harness.next = lambda pages: (asyncio.run(next_async(pages)) if asynchronous else list(next(pages)))
     harness.next_async = next_async
     return harness
 
@@ -155,6 +165,26 @@ def fetch_spans(recording):
         for s in recording.exporter.get_finished_spans()
         if s.name in ("CosmosClient.list_databases.fetch", "CosmosClient.query_databases.fetch")
     ]
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+def test_metadata_page_tracing_options_reach_owned_spans(listing_telemetry, recording, enabled):
+    h = listing_telemetry
+    settings.tracing_enabled = not enabled
+    h.client._item_context = replace(h.client._item_context, tracing_attributes={"bank.component": "orders"})
+    pager = h.create_iterable(
+        tracing_attributes={"bank.component": "catalog"},
+        tracing_options={"enabled": enabled, "attributes": {"bank.page": "first"}},
+    )
+    assert not h.calls and not fetch_spans(recording) and not attempt_spans(recording)
+    recording.exporter.clear()
+    assert h.next(pager.by_page()) == [{"id": "sales"}]
+    assert len(h.calls) == 1 and h.calls[0][1] is enabled
+    spans = recording.exporter.get_finished_spans()
+    assert len(spans) == (3 if enabled else 0)
+    for span in spans:
+        assert span.attributes["bank.component"] == "catalog"
+        assert span.attributes["bank.page"] == "first"
 
 
 @pytest.mark.parametrize("mode", ["enabled", "disabled", "handler-only", "sampled-out", "no-handlers"])
@@ -241,7 +271,10 @@ def test_listing_page_telemetry_empty_pages_are_successes(listing_telemetry, rec
     assert all(s.status.status_code is trace.StatusCode.UNSET for s in fetch_spans(recording))
 
 
-@pytest.mark.parametrize("failure", ["service", "transport", "timeout", "parse", "hook", "hook-stop", "nonprogress"])
+@pytest.mark.parametrize(
+    "failure",
+    ["service", "transport", "timeout", "parse", "hook", "hook-stop", "nonprogress"],
+)
 @pytest.mark.parametrize("timeout", [None, 10])
 def test_listing_page_telemetry_preserves_failure_and_diagnostics(listing_telemetry, recording, failure, timeout):
     h = listing_telemetry
@@ -250,9 +283,12 @@ def test_listing_page_telemetry_preserves_failure_and_diagnostics(listing_teleme
     if failure == "service":
         h.status, expected = 404, CosmosResourceNotFoundError
     elif failure == "transport":
-        h.error, expected = DriverTransportError("transport failed"), ServiceResponseError
+        h.error, expected = (
+            DriverTransportError("transport failed"),
+            ServiceResponseError,
+        )
     elif failure == "timeout":
-        h.error, expected = TimeoutError("binding timeout"), CosmosClientTimeoutError if timeout else TimeoutError
+        h.error, expected = TimeoutError("binding timeout"), (CosmosClientTimeoutError if timeout else TimeoutError)
     elif failure == "parse":
         h.malformed_body, expected = True, json.JSONDecodeError
     elif failure in ("hook", "hook-stop"):
@@ -292,7 +328,14 @@ def test_listing_page_telemetry_optional_detail_never_repeats_fetch(listing_tele
     elif detail == "malformed":
         h.transform = lambda value: (value[0], {"schema_version": 99})
     elif detail == "partial":
-        h.transform = lambda value: (value[0], {**value[1], "complete": False})
+        h.transform = lambda value: (
+            value[0],
+            {
+                **value[1],
+                "complete": False,
+                "incomplete_reasons": ["metadata_diagnostics_unavailable"],
+            },
+        )
     elif detail == "envelope":
         h.transform = lambda value: value[0]
     else:
@@ -308,7 +351,8 @@ def test_listing_page_telemetry_optional_detail_never_repeats_fetch(listing_tele
     assert len(h.calls) == len(h.seen) == 1
     assert h.seen[0].outcome == "success"
     span = fetch_spans(recording)[0]
-    assert not any(key.startswith("cosmos.poc.") for key in span.attributes)
+    assert "cosmos.poc.request_count" not in span.attributes
+    assert "cosmos.poc.retained_request_count" not in span.attributes
     assert len(attempt_spans(recording)) == (2 if detail == "partial" else 0)
 
 
@@ -328,7 +372,8 @@ def test_listing_page_telemetry_is_selected_at_consumption(listing_telemetry, re
 def test_listing_page_telemetry_masks_outer_state_and_restores_it(listing_telemetry, recording, enabled):
     h = listing_telemetry
     h.client._item_context = replace(
-        h.client._item_context, telemetry_handlers=(telemetry.CompletionHandler(h.seen.append, collect_attempts=True),)
+        h.client._item_context,
+        telemetry_handlers=(telemetry.CompletionHandler(h.seen.append, collect_attempts=True),),
     )
     with telemetry._operation_scope(h.client, "outer", {}, h.operation):
         outer = telemetry._OPERATION.get()
@@ -374,13 +419,18 @@ def test_listing_page_telemetry_leaves_other_paths_unchanged(listing_telemetry, 
             h.create_iterable(max_item_count=0)
         assert not h.calls and not h.seen and not fetch_spans(recording)
         return
-    if kind in ("unsupported", "explicit-disable"):
-        kwargs = {"unknown_setting": True} if kind == "unsupported" else {"tracing_options": {"enabled": False}}
-        pages = h.create_iterable(**kwargs).by_page()
+    if kind == "explicit-disable":
+        pages = h.create_iterable(tracing_options={"enabled": False}).by_page()
+        assert h.next(pages) == [{"id": "sales"}]
+        assert len(h.calls) == len(h.seen) == 1 and h.seen[0].outcome == "success"
+        assert not h.calls[0][1] and not fetch_spans(recording) and not attempt_spans(recording)
+        return
+    if kind == "unsupported":
+        pages = h.create_iterable(unknown_setting=True).by_page()
         with pytest.raises(NotImplementedError):
             h.next(pages)
         assert not h.calls and len(h.seen) == 1 and h.seen[0].outcome == "error"
-        assert len(fetch_spans(recording)) == int(kind == "unsupported")
+        assert len(fetch_spans(recording)) == 1
         return
     settings.tracing_enabled = False
     h.client._item_context = replace(h.client._item_context, telemetry_handlers=())

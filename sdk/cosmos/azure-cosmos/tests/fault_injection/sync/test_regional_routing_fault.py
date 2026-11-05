@@ -13,7 +13,7 @@ import pytest
 
 from azure.core.exceptions import ServiceResponseError
 from azure.cosmos import CosmosClient, exceptions
-from common._parity_helpers import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count, _rust_fallback_count
 from fault_injection._delayed_create import assert_route, emit
 from fault_injection._regional_routing import (
     READ_REGION, WRITE_REGION, READ_SECONDS, REGIONAL_ROUTING_CASES, TIMEOUT, assert_destination, assert_fields,
@@ -37,12 +37,12 @@ def test_swr_mrr_succeeds_rust(request, regional_target, monkeypatch, case):
     item_id = uuid.uuid4().hex
     item = {"id": item_id, "pk": item_id, "name": "sample document", "key": "value"}
     records = []
-    capture_native(monkeypatch, records)
     with CosmosClient(
         write_endpoint, key, _backend="rust", consistency_level="Session",
         preferred_locations=[READ_REGION, WRITE_REGION], timeout=TIMEOUT,
         _fault_injection_rules=rules(rule_id, observer.id, account, case != "guard-disabled"),
     ) as client:
+        capture_native(monkeypatch, records, driver_handle=client._adapter._ensure_driver_handle())
         container = client.get_database_client(database_id).get_container_client(observer.id)
         wait_topology(client, rule_id, case != "routing")
         assert client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0

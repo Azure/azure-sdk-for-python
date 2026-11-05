@@ -56,7 +56,8 @@ import uuid
 import pytest
 
 
-from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos import CosmosClient, PartitionKey, exceptions
+from azure.cosmos.aio._backend import binding_adapter as _rust_backend_module
 from common._parity_helpers import BackendComparison, run_on_both_backends_async, skip_unless_emulator, skip_unless_rust_binding
 
 pytestmark = [skip_unless_emulator(), skip_unless_rust_binding()]
@@ -187,11 +188,35 @@ async def test_async_indexing_directive_rust(container_for):
 
 
 @pytest.mark.asyncio
-async def test_async_session_token_rust(container_for):
-    """Baseline call plus ``session_token`` -- forwarded as a request header."""
+async def test_async_session_token_rust(container_for, monkeypatch):
+    """Pass a service-issued token to fresh async clients for the same container and partition."""
+    seed_body = {"id": uuid.uuid4().hex, "pk": "a"}
+    seed = container_for.create_item(body=seed_body)
+    assert seed["id"] == seed_body["id"] and seed["pk"] == "a"
+    token = seed.get_response_headers()["x-ms-session-token"]
+    assert token, "Seed create must return a service-issued token"
+
+    select = _rust_backend_module._binding_function_for_op
+    native_create = select("create_item")
+    native_ids = []
+
+    async def capture(handle, prepared, **kwargs):
+        assert prepared.settings.session_token == token, "Rust must receive the unchanged token"
+        native_ids.append(prepared.item_id)
+        return await native_create(handle, prepared, **kwargs)
+
+    monkeypatch.setattr(
+        _rust_backend_module, "_binding_function_for_op",
+        lambda operation: capture if operation == "create_item" else select(operation),
+    )
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    cmp = await _run_create(container_for, body, summary="baseline + session_token",
-                            session_token="0:1#42")
+    cmp = await _run_create(container_for, body, summary="service-issued session_token on fresh clients",
+                            session_token=token)
+    # Legacy may omit write tokens; successful parity alone does not prove forwarding.
+    for outcome in (cmp.core_python, cmp.rust):
+        assert outcome.raised is None, outcome
+        assert outcome.return_value["pk"] == "a", outcome
+    assert native_ids == [cmp.rust.return_value["id"]], "Expected one real native create"
     cmp.assert_functional_parity()
 
 
@@ -259,9 +284,14 @@ async def test_async_no_response_rust(container_for):
     cmp.assert_functional_parity()
 
 
+@pytest.mark.skip(reason=(
+    "Accepted design exclusion: docs/V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-13. "
+    "Rust owns automatic write retries and rejects non-None per-call retry_write; "
+    "retain this legacy parity test for reference."
+))
 @pytest.mark.asyncio
 async def test_async_retry_write_rust(container_for):
-    """``retry_write=1`` -- opts a non-idempotent write into retries."""
+    """Retained legacy ``retry_write=1`` parity case; excluded by pushback 13."""
     body = {"id": uuid.uuid4().hex, "pk": "a"}
     cmp = await _run_create(container_for, body, summary="baseline + retry_write",
                             retry_write=1)
@@ -368,29 +398,29 @@ async def test_async_response_hook_fires_once_rust(container_for):
 
 @pytest.mark.asyncio
 async def test_async_duplicate_id_raises_typed_exception_rust(container_for):
-    """inserting the same id twice raises ``CosmosResourceExistsError``.
+    """Each backend creates its own item, then gets a plain 409 on duplication.
 
-    Uses the functional exception assertion rather than the strict one: the
-    rust binding exposes a smaller response-header surface on errors, which is
-    a known and separately tracked gap, so demanding header-set equality here
-    would fail every run for a reason unrelated to the exception contract.
+    Compare the exception type and codes, not service text or header surfaces.
     """
-    fixed_id = uuid.uuid4().hex
+    created_ids = []
 
     async def _do(client):
+        fixed_id = uuid.uuid4().hex
         cont = client.get_database_client("parity_db").get_container_client(container_for.id)
-        await cont.create_item(body={"id": fixed_id, "pk": "a"})
+        created = await cont.create_item(body={"id": fixed_id, "pk": "a"})
+        assert created["id"] == fixed_id and created["pk"] == "a"
+        created_ids.append(fixed_id)
         return await cont.create_item(body={"id": fixed_id, "pk": "a"})
 
     cmp = await run_on_both_backends_async(
         _do,
-        description="async duplicate-id 409: insert id={!r} twice".format(fixed_id),
-        request_body={"id": fixed_id, "pk": "a", "_note": "sent twice"},
+        description="async duplicate-id 409: create a distinct item twice per backend",
     )
-    cmp.print_report()
-    assert not cmp.core_python.succeeded
-    assert not cmp.rust.succeeded
-    cmp.assert_functional_exception_parity()
+    assert len(set(created_ids)) == 2, "Each backend must first create its own distinct item successfully"
+    for outcome in (cmp.core_python, cmp.rust):
+        assert isinstance(outcome.raised, exceptions.CosmosResourceExistsError), outcome
+        assert outcome.raised.status_code == 409, outcome
+        assert outcome.raised.sub_status in (None, 0), outcome
 
 
 # ---------------------------------------------------------------------------

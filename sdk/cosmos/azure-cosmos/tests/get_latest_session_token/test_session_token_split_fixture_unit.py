@@ -21,7 +21,7 @@ def test_real_split_setup_rejects_missing_explicit_approval_before_clients_rust(
     else:
         monkeypatch.setenv(support.REAL_SPLIT_ENV, opt_in)
     name = "test_latest_session_token_real_split" + ("_async" if surface == "aio" else "")
-    module = importlib.import_module(f"get_latest_session_token.{surface}.legacy.{name}")
+    module = importlib.import_module(f"get_latest_session_token.{surface}.{name}")
     constructor = Mock(side_effect=AssertionError("Client must not be constructed without approval"))
     monkeypatch.setattr(module, "CosmosClient", constructor)
     cls = module.TestLatestSessionTokenRealSplitAsync if surface == "aio" else module.TestLatestSessionTokenRealSplit

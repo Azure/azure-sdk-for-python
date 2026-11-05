@@ -1,10 +1,11 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import sys
+
 import pytest
-import test_config
-from azure.cosmos import CosmosClient as CosmosSyncClient
-from azure.cosmos._backend.constants import BACKEND_NAME_CORE_PYTHON
+
+from config import clients, collection, resources
 
 # Register the in-repo parity-capture pytest plugin. The plugin
 # itself is dormant unless the env var COSMOS_PARITY_CAPTURE_OP is
@@ -15,6 +16,59 @@ pytest_plugins = ["common.parity_capture_plugin"]
 
 cosmos_sync_client = None
 _live_resources_initialized = False
+
+
+def pytest_addoption(parser):
+    parser.getgroup("cosmos").addoption(
+        "--include-legacy-tests",
+        action="store_true",
+        default=False,
+        help="Include preserved legacy tests and paired comparisons for local migration work.",
+    )
+
+
+def pytest_ignore_collect(collection_path, config):
+    if not config.option.include_legacy_tests and collection.exclude_module(collection_path):
+        return True
+    return None
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_pycollect_makemodule(module_path, parent):
+    # Explicit file/node arguments bypass pytest_ignore_collect.
+    if not parent.config.option.include_legacy_tests and collection.exclude_module(module_path):
+        raise pytest.UsageError(
+            f"{module_path.name} is excluded from normal runs. "
+            "Use --include-legacy-tests with a specific path for local migration work."
+        )
+    return None
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_pycollect_makeitem(collector, name, obj):
+    if collector.config.option.include_legacy_tests:
+        return None
+    if collection.exclude_test(collector.path, name):
+        return []
+    # Importing an original class for helpers must not collect its tests again.
+    source_module = sys.modules.get(getattr(obj, "__module__", None))
+    source_path = getattr(source_module, "__file__", None)
+    if source_path and collection.exclude_test(source_path, getattr(obj, "__name__", name)):
+        return []
+    return None
+
+
+def pytest_collection_modifyitems(config, items):
+    if config.option.include_legacy_tests:
+        return
+    excluded = [
+        item for item in items
+        if collection.exclude_parameters(item.path, getattr(getattr(item, "callspec", None), "params", {}))
+    ]
+    if excluded:
+        excluded_set = set(excluded)
+        items[:] = [item for item in items if item not in excluded_set]
+        config.hook.pytest_deselected(items=excluded)
 
 
 @pytest.fixture
@@ -62,22 +116,25 @@ def _get_setup_client():
     """
     global cosmos_sync_client  # pylint: disable=global-statement
     if cosmos_sync_client is None:
-        # Shared test-data setup must remain on core Python because it reads
-        # account metadata before Rust-specific tests choose their own backend.
-        cosmos_sync_client = CosmosSyncClient(
-            test_config.TestConfig.host,
-            test_config.TestConfig.masterKey,
-            _backend=BACKEND_NAME_CORE_PYTHON,
-        )
+        cosmos_sync_client = clients.create_setup_client()
     return cosmos_sync_client
 
 
-def pytest_configure(config):
-    """
-    Allows plugins and conftest files to perform initial configuration.
-    This hook is called for every plugin and initial conftest
-    file after command line options have been parsed.
-    """
+def _initialize_legacy_account_info(session):
+    """Keep the unsupported account lookup out of maintained Rust-only runs."""
+    if not getattr(session.config.option, "include_legacy_tests", False):
+        return
+    legacy = sys.modules.get("test_config")
+    if legacy is None:
+        return
+    for item in session.items:
+        module = getattr(item, "module", None)
+        if (
+            getattr(module, "test_config", None) is legacy
+            or getattr(module, "TestConfig", None) is legacy.TestConfig
+        ):
+            legacy.initialize_legacy_account_info()
+            return
 
 
 def pytest_collection_finish(session):
@@ -100,15 +157,15 @@ def pytest_collection_finish(session):
         return
 
     global _live_resources_initialized  # pylint: disable=global-statement
+    _initialize_legacy_account_info(session)
     client = _get_setup_client()
-    config = test_config.TestConfig
-    config.get_account_info(client)
-    config.create_database_if_not_exist(client)
-    config.create_single_partition_container_if_not_exist(client)
-    config.create_multi_partition_container_if_not_exist(client)
-    config.create_single_partition_prefix_pk_container_if_not_exist(client)
-    config.create_multi_partition_prefix_pk_container_if_not_exist(client)
+    resources.create_database_if_not_exist(client)
+    # Track ownership before container setup, so partial setup is also cleaned up.
     _live_resources_initialized = True
+    resources.create_single_partition_container_if_not_exist(client)
+    resources.create_multi_partition_container_if_not_exist(client)
+    resources.create_single_partition_prefix_pk_container_if_not_exist(client)
+    resources.create_multi_partition_prefix_pk_container_if_not_exist(client)
 
 
 def pytest_sessionfinish(session, exitstatus):
@@ -116,14 +173,25 @@ def pytest_sessionfinish(session, exitstatus):
     Called after whole test run finished, right before
     returning the exit status to the system.
     """
-    if _live_resources_initialized:
-        test_config.TestConfig.try_delete_database(cosmos_sync_client)
+    global _live_resources_initialized  # pylint: disable=global-statement
+    try:
+        if _live_resources_initialized:
+            resources.try_delete_database(cosmos_sync_client)
+    finally:
+        _live_resources_initialized = False
+        _close_setup_client()
+
+
+def _close_setup_client():
+    global cosmos_sync_client  # pylint: disable=global-statement
+    client, cosmos_sync_client = cosmos_sync_client, None
+    if client is not None:
+        client.close()
 
 
 def pytest_unconfigure(config):
-    """
-    called before test process is exited.
-    """
+    """Close a client even when pytest exits before session cleanup."""
+    _close_setup_client()
 
 
 
@@ -142,11 +210,6 @@ def _reset_shared_pk_range_cache():
     exercise the normal population behaviour.
     """
     yield
-    # Local import to avoid pulling these modules in at conftest collection
-    # time (some environments treat conftest import errors as fatal).
-    from azure.cosmos._routing import routing_map_provider as _sync_pmp
-    from azure.cosmos._routing.aio import routing_map_provider as _async_pmp
-
     # Clear the *contents* of each per-endpoint cache dict, not the registry
     # itself. Long-lived test fixtures (class-level CosmosClient) hold strong
     # references to the inner dicts via ``_collection_routing_map_by_item``;
@@ -154,7 +217,14 @@ def _reset_shared_pk_range_cache():
     # the same endpoint creates a brand-new inner dict and the dict-identity
     # invariant that test_shared_cache_integration relies on is broken.
     # Same reasoning for ``_shared_collection_locks``.
-    for pmp in (_sync_pmp, _async_pmp):
+    # Temporary compatibility: never import retired routing code just for cleanup.
+    for name in (
+        "azure.cosmos._routing.routing_map_provider",
+        "azure.cosmos._routing.aio.routing_map_provider",
+    ):
+        pmp = sys.modules.get(name)
+        if pmp is None:
+            continue
         with pmp._shared_cache_lock:  # pylint: disable=protected-access
             for cache in pmp._shared_routing_map_cache.values():  # pylint: disable=protected-access
                 cache.clear()

@@ -13,13 +13,13 @@ use azure_data_cosmos_driver::options::{
     AvailabilityStrategy, ContentResponseOnWrite, EndToEndOperationLatencyPolicy, HedgeThreshold,
     HedgingStrategy,
 };
+#[cfg(test)]
+use pyo3::types::PyDict;
 use pyo3::{
     exceptions::{PyTypeError, PyValueError},
     prelude::*,
     types::PyBool,
 };
-#[cfg(test)]
-use pyo3::types::PyDict;
 use std::{collections::HashMap, time::Duration};
 
 fn optional<'py, T: FromPyObject<'py>>(obj: &Bound<'py, PyAny>, name: &str) -> PyResult<Option<T>> {
@@ -69,9 +69,15 @@ impl WireValue for IndexingValue {
 // Boolean casing is a per-header Cosmos contract, not a universal HTTP rule.
 // A bool without an explicit encoding fails to compile (no WireValue impl).
 macro_rules! header_text {
-    ($value:expr, lowercase) => { $value.to_string() };
-    ($value:expr, pascal_case) => { (if $value { "True" } else { "False" }).to_owned() };
-    ($value:expr) => { $value.wire() };
+    ($value:expr, lowercase) => {
+        $value.to_string()
+    };
+    ($value:expr, pascal_case) => {
+        (if $value { "True" } else { "False" }).to_owned()
+    };
+    ($value:expr) => {
+        $value.wire()
+    };
 }
 
 macro_rules! header_group {
@@ -147,10 +153,11 @@ pub(crate) fn _request_settings_schema() -> HashMap<String, Vec<String>> {
     ]
     .into_iter()
     .map(|(name, fields)| {
-        (
-            name.to_owned(),
-            fields.iter().map(|s| (*s).to_owned()).collect(),
-        )
+        let mut fields: Vec<String> = fields.iter().map(|s| (*s).to_owned()).collect();
+        if name == "QuerySettings" {
+            fields.push("max_buffered_query_window".to_owned());
+        }
+        (name.to_owned(), fields)
     })
     .collect()
 }
@@ -352,24 +359,51 @@ mod tests {
                 "x-ms-documentdb-post-trigger-include",
             ] {
                 let request = prepared(py);
-                request.getattr("headers").unwrap().set_item(name, "validateOrder").unwrap();
-                assert!(extract_settings(&request).err().unwrap().is_instance_of::<PyTypeError>(py));
+                request
+                    .getattr("headers")
+                    .unwrap()
+                    .set_item(name, "validateOrder")
+                    .unwrap();
+                assert!(extract_settings(&request)
+                    .err()
+                    .unwrap()
+                    .is_instance_of::<PyTypeError>(py));
             }
             for field in ["pre_triggers", "post_triggers"] {
                 let request = prepared(py);
-                request.getattr("settings").unwrap().getattr("item").unwrap()
-                    .setattr(field, vec!["validateOrder"]).unwrap();
-                assert!(extract_settings(&request).err().unwrap().is_instance_of::<PyTypeError>(py));
+                request
+                    .getattr("settings")
+                    .unwrap()
+                    .getattr("item")
+                    .unwrap()
+                    .setattr(field, vec!["validateOrder"])
+                    .unwrap();
+                assert!(extract_settings(&request)
+                    .err()
+                    .unwrap()
+                    .is_instance_of::<PyTypeError>(py));
             }
             let request = prepared(py);
             let hedging = PyDict::new_bound(py);
             hedging.set_item("enabled", true).unwrap();
             hedging.set_item("threshold_ms", 100).unwrap();
             hedging.set_item("threshold_steps_ms", 50).unwrap();
-            let namespace = py.import_bound("types").unwrap().getattr("SimpleNamespace").unwrap()
-                .call((), Some(&hedging)).unwrap();
-            request.getattr("settings").unwrap().setattr("hedging", namespace).unwrap();
-            assert!(extract_settings(&request).err().unwrap().is_instance_of::<PyTypeError>(py));
+            let namespace = py
+                .import_bound("types")
+                .unwrap()
+                .getattr("SimpleNamespace")
+                .unwrap()
+                .call((), Some(&hedging))
+                .unwrap();
+            request
+                .getattr("settings")
+                .unwrap()
+                .setattr("hedging", namespace)
+                .unwrap();
+            assert!(extract_settings(&request)
+                .err()
+                .unwrap()
+                .is_instance_of::<PyTypeError>(py));
         });
     }
 
@@ -383,20 +417,44 @@ mod tests {
             headers.set_item("X-MS-SESSION-TOKEN", "raw").unwrap();
             headers.set_item("X-MS-ACTIVITY-ID", "activity").unwrap();
             headers.set_item("X-MS-MAX-ITEM-COUNT", "1").unwrap();
-            let readonly = py.import_bound("types").unwrap()
-                .getattr("MappingProxyType").unwrap().call1((&headers,)).unwrap();
+            let readonly = py
+                .import_bound("types")
+                .unwrap()
+                .getattr("MappingProxyType")
+                .unwrap()
+                .call1((&headers,))
+                .unwrap();
             request.setattr("headers", readonly).unwrap();
             let settings = request.getattr("settings").unwrap();
             settings.setattr("session_token", "typed").unwrap();
-            settings.getattr("query").unwrap().setattr("max_item_count", 2).unwrap();
+            settings.setattr("throughput_bucket", 3).unwrap();
+            settings
+                .getattr("query")
+                .unwrap()
+                .setattr("max_item_count", 2)
+                .unwrap();
             let result = extract_settings(&request).unwrap();
             assert_eq!(result.session_header.as_deref(), Some("typed"));
             assert_eq!(result.activity_header.as_deref(), Some("activity"));
-            assert_eq!(result.custom_headers[&HeaderName::from_static("x-custom")].as_str(), "True");
-            assert_eq!(result.custom_headers[&HeaderName::from_static("x-ms-max-item-count")].as_str(), "2");
-            assert_eq!(result.custom_headers.len(), 2);
+            assert_eq!(
+                result.custom_headers[&HeaderName::from_static("x-custom")].as_str(),
+                "True"
+            );
+            assert_eq!(
+                result.custom_headers[&HeaderName::from_static("x-ms-max-item-count")].as_str(),
+                "2"
+            );
+            assert_eq!(
+                result.custom_headers[&HeaderName::from_static("x-ms-cosmos-throughput-bucket")]
+                    .as_str(),
+                "3"
+            );
+            assert_eq!(result.custom_headers.len(), 3);
             headers.set_item("x-invalid", 3).unwrap();
-            assert!(extract_settings(&request).err().unwrap().is_instance_of::<PyTypeError>(py));
+            assert!(extract_settings(&request)
+                .err()
+                .unwrap()
+                .is_instance_of::<PyTypeError>(py));
         });
     }
 
@@ -406,24 +464,41 @@ mod tests {
         Python::with_gil(|py| {
             for value in [false, true] {
                 let request = prepared(py);
-                let query = request.getattr("settings").unwrap().getattr("query").unwrap();
+                let query = request
+                    .getattr("settings")
+                    .unwrap()
+                    .getattr("query")
+                    .unwrap();
                 query.setattr("is_query", value).unwrap();
                 query.setattr("enable_cross_partition", value).unwrap();
-                request.getattr("headers").unwrap().set_item("X-MS-DOCUMENTDB-ISQUERY", "caller").unwrap();
+                request
+                    .getattr("headers")
+                    .unwrap()
+                    .set_item("X-MS-DOCUMENTDB-ISQUERY", "caller")
+                    .unwrap();
                 let result = extract_settings(&request).unwrap();
                 assert_eq!(
-                    result.custom_headers[&HeaderName::from_static("x-ms-documentdb-isquery")].as_str(),
+                    result.custom_headers[&HeaderName::from_static("x-ms-documentdb-isquery")]
+                        .as_str(),
                     if value { "true" } else { "false" }
                 );
                 assert_eq!(
-                    result.custom_headers[&HeaderName::from_static("x-ms-documentdb-query-enablecrosspartition")].as_str(),
+                    result.custom_headers
+                        [&HeaderName::from_static("x-ms-documentdb-query-enablecrosspartition")]
+                        .as_str(),
                     if value { "True" } else { "False" }
                 );
                 assert_eq!(result.custom_headers.len(), 2);
                 query.setattr("is_query", 1).unwrap();
-                assert!(extract_settings(&request).err().unwrap().is_instance_of::<PyTypeError>(py));
+                assert!(extract_settings(&request)
+                    .err()
+                    .unwrap()
+                    .is_instance_of::<PyTypeError>(py));
             }
-            assert!(extract_settings(&prepared(py)).unwrap().custom_headers.is_empty());
+            assert!(extract_settings(&prepared(py))
+                .unwrap()
+                .custom_headers
+                .is_empty());
         });
     }
 
@@ -488,9 +563,11 @@ mod tests {
                 result.content_response_on_write,
                 ContentResponseOnWrite::Disabled
             );
-            assert!(!result.custom_headers.contains_key(
-                &HeaderName::from_static("x-ms-documentdb-pre-trigger-include")
-            ));
+            assert!(
+                !result.custom_headers.contains_key(&HeaderName::from_static(
+                    "x-ms-documentdb-pre-trigger-include"
+                ))
+            );
             assert_eq!(
                 result.custom_headers[&HeaderName::from_static("x-ms-max-item-count")].as_str(),
                 "7"

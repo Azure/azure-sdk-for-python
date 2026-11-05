@@ -28,7 +28,7 @@ from ..._telemetry import trace_operation_async
     name_of_span="ContainerProxy.query_items.fetch",
 )
 async def _fetch_rust_page(
-    config: QueryConfig, state: QueryPageState, deadline: Optional[float]
+    config: QueryConfig, state: QueryPageState, deadline: Optional[float], **_tracing_kwargs: Any
 ) -> Optional[list[Any]]:
     """Record one internal fetch and finish its authorized work before acceptance."""
     previous = state.token
@@ -59,11 +59,7 @@ class AsyncQueryPageIterator(AsyncIterator[AsyncIterator[Any]]):
         headers: CaseInsensitiveDict,
         continuation_token: Optional[str] = None,
     ) -> None:
-        token = (
-            continuation_token
-            if continuation_token is not None
-            else config.options.get("continuation")
-        )
+        token = continuation_token if continuation_token is not None else config.options.get("continuation")
         self.state = QueryPageState(config, headers, token)
 
     @property
@@ -75,9 +71,7 @@ class AsyncQueryPageIterator(AsyncIterator[AsyncIterator[Any]]):
         still continue using the feed cursor.
         """
         if not self.state.resumable:
-            raise NotImplementedError(
-                "The driver cannot bookmark this query shape; continue using this iterator."
-            )
+            raise NotImplementedError("The driver cannot bookmark this query shape; continue using this iterator.")
         return self.state.last_delivered_continuation_token
 
     async def __anext__(self) -> Any:
@@ -97,7 +91,7 @@ class AsyncQueryPageIterator(AsyncIterator[AsyncIterator[Any]]):
             state.begin()
 
             while True:
-                rows = await _fetch_rust_page(state.config, state, deadline)
+                rows = await _fetch_rust_page(state.config, state, deadline, **state.config.recording_options.kwargs)
                 if rows is not None:
                     break
         except BaseException as error:

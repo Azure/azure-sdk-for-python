@@ -15,7 +15,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 
 ROOT = Path(__file__).resolve().parents[2]
 ORIGINAL = ROOT / "tests" / "test_none_options.py"
-COPY = ROOT / "tests" / "delete_item" / "sync" / "legacy" / "test_none_options.py"
+COPY = ROOT / "tests" / "delete_item" / "sync" / "test_none_options.py"
 
 
 def test_delete_method_preserves_original_assertions_rust():

@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def _load(surface, filename):
-    path = Path(__file__).parent / surface / "legacy" / filename
+    path = Path(__file__).parent / surface / filename
     spec = importlib.util.spec_from_file_location("owned_replacement_" + surface + path.stem, path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

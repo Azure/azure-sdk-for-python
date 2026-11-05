@@ -6,7 +6,6 @@
   - [`CosmosClient(...)` - Creating a Cosmos client](#cosmosclient-construction)
   - [`CosmosClient.from_connection_string` - Connection-string client creation](#cosmosclientfrom_connection_string)
   - [`CosmosClient.get_database_client` - Getting a database client from properties](#cosmosclientget_database_client)
-  - [`CosmosClient.close` - Releasing client-owned resources](#cosmosclientclose)
 - [Account and database operations](#account-and-database-operations)
   - [`CosmosClient.create_database` - Creating a database](#cosmosclientcreate_database)
   - [`CosmosClient.create_database_if_not_exists` - Creating a database if it does not exist](#cosmosclientcreate_database_if_not_exists)
@@ -170,7 +169,7 @@ The legacy Python backend retains the fixed-delay setting and its existing
 behavior. Rust still supports `retry_throttle_total` and
 `throttle_retry_wait_threshold_seconds`; neither is a fixed-delay replacement.
 This closes only the fixed-delay requirement in the
-[CosmosClient walkthrough](V5/api-review/RUST_PARITY_PUSHBACKS.md#client-bite-7),
+CosmosClient walkthrough,
 not its hedged-read execution controls.
 
 **Connection/read retry counts are rejected on Rust pending review.** Alpha
@@ -191,15 +190,34 @@ Omitting the keywords leaves the driver's retry behavior unchanged; it does
 not disable retries. Legacy Python continues to honor these settings.
 This is an interim safeguard, not a permanent compatibility exclusion:
 The connection/read requirements in
-[Gap 33](V5/api-review/RUST_PARITY_PUSHBACKS.md#client-bite-8) remain open
+Gap 33 remain open
 until driver support or an explicit exclusion is agreed.
-It does not change the treatment of retry-delay settings or customer-supplied
-retry policies, which remain separate review topics.
+It does not change retry-delay settings. Customer-supplied retry code has
+the separate guard described below.
 
-The [nine-bite constructor walkthrough](V5/api-review/RUST_PARITY_PUSHBACKS.md#gap-33)
+**Custom retry-policy keyword is guarded on Rust only.** Alpha Bank supplies
+`connection_retry_policy=bank_policy` because it needs its Python code to
+handle the order request. Rust does not execute that policy, so the
+sync/async constructors and connection-string factories now reject the
+keyword with `TypeError`, including `None`, before building the legacy
+connection policy, backend or connection. This applies to Rust selection
+through an argument or environment. Omit the keyword to use the driver's
+existing behavior, not an equivalent execution of the customer's code.
+
+The synchronous legacy route remains usable with its existing deprecation
+warning. **Retain legacy support until the driver team confirms the feature
+will not be implemented**, then handle retirement as a separate change.
+No such confirmation or legacy retirement is recorded here. The async
+`connection_policy.ConnectionRetryConfiguration` route is unchanged and
+remains a separate unresolved input. The problem is silently ignored policy
+code, not a Rust order read falling back to legacy execution.
+
+The ten-bite constructor walkthrough
 introduces these settings from Alpha Bank's customer need, including the
 per-call versus shared execution limits, retry counts, waiting thresholds,
-and the delay settings shared by connection and response-read retries.
+the delay settings shared by connection and response-read retries, and
+customer-supplied retry code. Former Gap 27 is merged into its
+Bite 10.
 
 **Resource-token authentication is omitted.** The Rust driver supports account
 keys and Entra, not Cosmos resource tokens. Both backends reject resource-token
@@ -245,6 +263,17 @@ can still group supported settings. Preferred and excluded regions remain
 supported, but are not replacements for the excluded switches. The retained
 `core-python` comparison backend continues to honor them; its code is not
 retired by this decision.
+
+<a id="first-use-initialization-deadlines"></a>
+
+**First-use initialization deadlines:** Synchronous operations wait for
+shared background driver acquisition within their own remaining timeout.
+For example, a first read with `timeout=1` can stop waiting while a second read
+with `timeout=5` continues waiting for the same acquisition. The expired read
+is not dispatched when the handle later arrives. Callers still waiting receive
+the same result or failure; after failure, a later call can retry acquisition.
+This bounds the customer's acquisition wait, not the lifetime of a synchronous
+credential callback or native setup.
 
 <a id="1---connection-string-client-creation"></a>
 <a id="connection-string-client-creation"></a>
@@ -350,58 +379,70 @@ def from_connection_string(
 
 **Why the customer calls this API**
 
-The customer has selected `sales` from a database listing and wants a
-`DatabaseProxy`, the Python object used to access that database's containers.
-For example, the customer can pass the listed properties containing
-`{"id": "sales"}` and then obtain a client for `orders`.
+The customer wants to work with an existing database:
 
-This API constructs a local object. It does not create `sales` or contact
-the service backend to verify that the database exists.
+```python
+database = client.get_database_client("sales")
+properties = database.read()
+```
+
+`get_database_client` returns a database client. It does not create `sales`
+or contact the service backend. The later `read()` makes the request.
+The customer can also supply database properties, such as `{"id": "sales"}`,
+or an existing database client of the matching sync/async type.
 
 **Why this needs a public decision**
 
-Properties can be supplied as a **mapping**, an object supporting lookup
-by key, such as a dictionary. A read-only mapping supports that same lookup
-without allowing its entries to be changed. Both forms should work here.
-The review also needs one rule for the ID's Python type: if the supplied
-mapping contains `{"id": 123}`, should `database.id` be the number `123`
-or the string `"123"`? Sync and async callers should get the same answer.
+Legacy sync and async clients handle the same properties differently:
+
+```python
+database = client.get_database_client({"id": 123})
+```
+
+| Client | Legacy `database.id` | Proposed `database.id` |
+|---|---|---|
+| Sync | `123` (integer) | `"123"` (string) |
+| Async | `"123"` (string) | `"123"` (string) |
+
+Making the results consistent changes observable behavior for synchronous
+customers. Code that expects an integer may need to change, which is why
+this belongs in API review.
+
+The public type information also differs: the legacy sync signature describes
+dictionary-like inputs, including read-only dictionaries, while the async
+signature describes only ordinary dictionaries. Both should describe the
+same accepted inputs.
 
 **Current decision; approval is not recorded**
 
-Both methods look up the mapping's `id` and convert it to a string.
-Their annotations describe that input as `Mapping[str, Any]`.
-They still accept a plain database-name string or
-an existing proxy of the matching sync/async type. This is Python SDK input
-and result-type alignment, not a missing Rust-driver capability.
+Convert the `id` supplied through database properties to a string on both
+clients. This brings synchronous behavior into line with the existing
+asynchronous behavior. Both signatures describe dictionary-like inputs using
+`Mapping[str, Any]`.
+
+These changes are implemented in the current branch, but public API approval
+is not recorded. They affect the Python wrapper; no Rust-driver operation is
+needed.
 
 ```python
-from types import MappingProxyType
-
-properties = MappingProxyType({"id": "sales", "_rid": "unused-here"})
-database = client.get_database_client(properties)
-assert database.id == "sales"
-
-numeric_name = client.get_database_client({"id": 123})
-assert numeric_name.id == "123"
+database = client.get_database_client({"id": 123})
+assert database.id == "123"  # The same result on sync and async clients.
 ```
 
-Only the supplied ID is reused. The method creates a fresh proxy attached to
-the calling client; it does not adopt another proxy's connection or cache the
-mapping's other properties. It sends no request and does not verify existence,
-permissions, or the name. A missing `id` still raises `KeyError`.
-
-Passing a proxy from another client also supplies only its ID.
-The newly returned object belongs to the client on which this method was
-called, not to the other client's account or connection.
+Only the supplied ID is used; other properties are ignored. A missing `id`
+still raises `KeyError`. Each call returns a new database client using the
+calling client's account and settings, even when the input is a database
+client from another account.
 
 **What customer code must change**
 
-String-ID callers keep their existing behavior. Code that relies on an integer
-`database.id` must compare with `"123"` rather than `123`, use string dictionary
-keys where appropriate, and account for string output when serializing that
-attribute. The address represented by this example is still `dbs/123`; the
-change concerns the Python value's type, not selecting another database.
+Synchronous customer code that relies on an integer `database.id` from
+properties must compare with `"123"` rather than `123`, use string dictionary
+keys where appropriate, and expect a string when serializing that attribute.
+This changes the Python value's type, not which database is selected.
+
+Customers passing `"sales"` or `{"id": "sales"}` are unaffected. Asynchronous
+customers already receive a string for the properties input.
 
 **Current signature on both client classes**
 
@@ -413,43 +454,9 @@ def get_database_client(
     ...
 ```
 
-<a id="cosmosclientclose"></a>
-
-### `CosmosClient.close`
-
-**Current contract; no public API change is needed.**
-
-Alpha Bank has finished using `alpha-bank-db` / `alpha-bank-container`.
-`client.close()` releases the synchronous client's local resources;
-`await client.close()` does so for the asynchronous client. Both return
-`None` on normal completion, accept no request options, and use the same
-cleanup path as leaving their corresponding context manager.
-
-Finish operations before closing. Close does not delete service data, drain
-in-flight work, or close the application's credential. Repeated calls do not
-release another client's driver acquisition. A client or runtime still owned
-elsewhere remains usable; close is not process-wide runtime shutdown.
-
-<a id="first-use-initialization-deadlines"></a>
-
-**First-use initialization and close:** Synchronous operations now wait for
-shared background driver acquisition within their own remaining timeout.
-For example, a first read with `timeout=1` can stop waiting while a second read
-with `timeout=5` continues waiting for the same acquisition. The expired read
-is not dispatched when the handle later arrives. Callers still waiting receive
-the same result or failure; after failure, a later call can retry acquisition.
-
-Close does not wait for that worker to finish. If the client remains open, the
-worker retains a late handle for later calls; if close wins, the worker releases
-it instead. The worker retains its original credential and runtime inputs even
-if close clears the adapter's fields. This bounds the customer's acquisition
-wait, not the lifetime of a synchronous credential callback or native setup.
-
-Cancelling an async caller's wait does not cancel backend cleanup that has
-already started. A later close waits for that same completion, and the
-client's Python routing-cache share is released in `finally`. This does not
-make every cleanup step cancellation-proof. Backend cleanup failures are
-logged; Python HTTP cleanup errors can still propagate.
+`DatabaseProxy` is the SDK's type name for a database client; each signature
+uses its matching sync or async type. On the async client, call this method
+without `await`; await subsequent service operations such as `database.read()`.
 
 ## Account and database operations
 
@@ -2397,214 +2404,234 @@ This is a release-scope decision, not a request for new Rust driver support.
 
 **Why the customer calls this API**
 
-The customer has accepted a new order and needs to store it in `orders`.
-This API sends the order's JSON document to the service backend for creation.
-It is not a request to replace an existing order with the same ID and
-partition key.
-
-The customer normally supplies an ID such as `"order-42"`, or explicitly asks
-the SDK to generate one. For a container partitioned by `/id`, that generated
-value also determines the partition key. The review must ensure both values
-agree, without changing the customer's input dictionary, before the write
-is sent.
-
-**Bounded lost-response verification:** On October 18, 2026 (UTC), the selected
-isolated SDK snapshot cut a real create response after 20,000 forwarded bytes.
-Sync and async recorded transport-generated `503/20003`, then duplicate
-`409/0`, and raised `CosmosResourceExistsError`. Independent and subsequent
-same-client reads returned the complete stored order. This demonstrates
-an ambiguous create outcome, not matched legacy fault parity or validation
-of concurrent SDK changes. The local testing guide records the exact setup
-and retained evidence; broader retry and live-account requirements remain.
-
-The test-harness review follow-up
-repeated this outcome after fixing observation and process-cleanup races.
-It strengthens the local evidence without changing the API decision.
-
-**Why the Python contract changes:** Sync accepted optional positional arguments while async
-required keywords. Query metrics and conditional options were inconsistently
-warned about, validated, or forwarded. Automatic IDs could be generated after
-partition-key extraction, producing an inconsistent request for `/id` partition
-keys, and the Rust path could modify the caller's body. Response hooks could
-modify SDK-owned data, and metadata lookup could escape the create timeout.
-
-**Proposed contract, implemented for review:** Require all arguments except `body` by keyword.
-Reject `populate_query_metrics`, `etag`, and `match_condition` whenever supplied,
-including `None` or `False`. Copy and validate the body before metadata lookup:
-require a mapping, apply the shared resource-ID rules, and reject non-JSON
-values and non-finite numbers. Without automatic generation, an ID must be a
-non-empty string. Automatic generation remains opt-in and replaces a missing
-or false-valued ID on the copy before partition-key extraction. The partition
-key and serialized body use the same nested snapshot.
-
-**Response contract:** Return a `CosmosDict`; with `no_response=True`, it is
-empty but retains response headers. Per-call `no_response=False` overrides a
-client default that suppresses write bodies. Invoke success hooks once with
-independent headers and a deep-copied `CosmosDict`, including an empty body for
-suppressed responses. Reject a non-callable hook before metadata lookup or
-writing, rather than saving the order and only then reporting a callback
-error. Honor false-valued callable objects. Hook exceptions
-propagate outside retries and do not replay the write. A service 409 remains
-`CosmosResourceExistsError`.
-
-**Timeout and encoding:** A supported explicit `timeout` is one budget for
-metadata and create, including metadata-cache lock waits. Remaining durations
-below one second are not rounded up. The
-[first-use acquisition wait](#first-use-initialization-deadlines) uses that same
-budget without forcibly stopping the shared worker. The client's
-`enable_compact_utf8_item_writes` option is honored by Rust-backed create,
-upsert, replace, and patch serialization; its default remains `False`, and
-metadata/query encoding is unchanged.
-
-**Shared request settings:** The customer may keep a reusable option mapping:
+The customer has accepted a new order and needs to save it in the existing
+`sales/orders` container, partitioned by `/customerId`:
 
 ```python
-settings = {"timeout": 2, "responsePayloadOnWriteDisabled": True}
 created = orders.create_item(
-    {"id": "order-42", "customerId": "customer-17"},
-    feed_options=settings,
-    no_response=False,
+    {"id": "order-42", "customerId": "customer-17", "total": 125.50}
 )
 ```
 
-For this `/customerId` container, the call uses a two-second budget but
-requests the returned order body. The mapping is not changed. A supplied
-`request_options` takes precedence over `feed_options`, even when empty or
-`None`; explicit `timeout=None` clears a nested timeout. Both clients now
-preserve this selection instead of accidentally hiding `feed_options` behind
-an empty mapping. This correction and early hook validation are Python wrapper
-fixes, not missing Rust driver capabilities.
+The call creates one item rather than replacing an existing item with the
+same ID and partition-key value. A duplicate raises `CosmosResourceExistsError`.
 
-**Customer migration:** Remove trigger options; pass indexing directives by keyword;
-remove retired metrics and condition arguments. Supply a valid ID or opt into
-generation and obtain the generated ID from the returned item, not by expecting
-the input dictionary to change. If the generated ID is needed, request a
-response body rather than combining automatic generation with `no_response=True`.
-Do not rely on hook edits to modify returned data or SDK state.
+**Why these API changes need review**
 
-**Illustration - generate the ID before choosing the partition:**
+Synchronous callers could pass optional arguments positionally, while
+asynchronous callers had to name them. The proposed contract aligns both
+clients and changes input-error handling, callback behavior, operation timeout
+scope, option-map ownership, and custom-header handling.
+
+**Proposed API changes; approval is not recorded**
+
+The following changes are implemented for review; approval is not recorded.
+Existing behavior and fixes that only restore legacy compatibility are not
+presented as new contract decisions. Ordinary usage is covered in
+migration status.
+
+<a id="create-item-keyword-options"></a>
+
+**1. Require keyword arguments for all options**
+
+**Why:** A customer switching from synchronous to asynchronous calls should
+not also have to change how options are supplied. In `create_item(order, 1)`,
+the meaning of `1` is hidden; `create_item(order, indexing_directive=1)`
+makes the intended option explicit and works with the same argument rules on
+both clients. V5 adopts the keyword-only rule rather than introducing optional
+positional arguments on the asynchronous client.
+
+**V5 contract:** Only `body` may be positional. Name every option, for example
+`indexing_directive=1`; optional positional arguments are not supported.
+
+<a id="create-item-inapplicable-options"></a>
+
+**2. Reject `populate_query_metrics`, `etag`, and `match_condition` on create**
+
+**Why these arguments do not apply:**
+
+- `populate_query_metrics` requests statistics about executing a query.
+  `create_item` submits a new item to store; it does not execute a query, so
+  there are no query-execution statistics to return. The write's request
+  charge is separate and remains available through supported response headers.
+- `etag` supplies an item's version marker, and `match_condition` specifies
+  how to compare that marker. For example, a conditional replacement can mean
+  "replace order-42 only if it still has the version I read." A create does
+  not replace or update an existing version: it inserts a new item. If
+  `order-42` already exists for `customer-17`, create fails with
+  `CosmosResourceExistsError` regardless of that existing item's version.
+  No version condition is needed to prevent overwriting it.
+
+Rejecting these arguments makes that boundary explicit instead of suggesting
+that create performs a query or offers conditional-update behavior.
+
+**V5 contract:** Remove `populate_query_metrics`, `etag`, and `match_condition`.
+Supplying any of them raises `TypeError`, including `None` or `False`.
+
+**3. Reject invalid item bodies and IDs before service requests**
+
+**Why:** Customers should receive a clear input error without unnecessary
+service requests. Legacy already rejected invalid ID characters, truthy
+non-string IDs such as `42`, and values such as a Python set that could not
+be serialized as JSON. Those restrictions are not new V5 contract changes.
+The decisions below concern stricter input checks and when errors are reported.
+
+| Input | Previous behavior | V5 contract |
+|---|---|---|
+| A body that is not a mapping | No explicit mapping check at entry; later processing could fail | Raise an explicit `TypeError` before service requests. |
+| Missing or empty `id`, with automatic generation disabled | Could proceed without local rejection of the missing or empty ID | Raise a local `ValueError`. Supply a non-empty string ID or enable automatic generation. |
+| `NaN` or infinity in the body | Serialized into the outgoing body; this does not establish that the service accepted or stored it | Raise a local `ValueError`. Supply a finite JSON number. |
+| A non-JSON value such as a Python set | Already raised `TypeError` during serialization, after required metadata lookup | Still raise `TypeError`, but before metadata requests. Use a JSON-compatible value, such as a list, instead. |
+
+**Changes to customer error handling:** Earlier rejection and explicit
+exception types are observable changes even when the input was already
+invalid. For example, a customer handling a service error for a missing ID
+may now need to handle a local `ValueError`. Review these changes to input
+acceptance and error handling, not a claim that validation is entirely new.
+The SDK does not silently convert unsupported values or claim that all such
+inputs previously created usable items.
+
+<a id="create-item-callback-snapshots"></a>
+
+**4. Give `response_hook` separate copies of headers and item data**
+
+**Why:** A callback is customer code invoked with response information.
+For example, a logging callback might remove `customerId` from its copy of
+an order before logging it. That must not remove `customerId` from the item
+returned to the application. The same protection applies if the callback
+changes a nested property such as `shipping.address` or edits a header.
+Legacy passed response headers and the decoded body directly to the callback
+before constructing the returned item. Callback edits could therefore affect
+what the application received. Customers who relied on those edits must
+transform the returned result explicitly instead.
+
+**V5 contract:** A callback receives independent copies of headers and the
+result, including nested item properties. Editing those copies does not
+change the returned item or SDK state.
+
+The callback's result argument is now a `CosmosDict`, a dictionary with access
+to response headers, instead of the legacy decoded dictionary or `None`.
+With a suppressed response body, the legacy hook received `None`; V5 supplies
+an empty `CosmosDict`. A callback using `if result is None` to detect suppression
+must account for this change. This concerns the callback argument, not the
+method's returned value: the method already returned an empty `CosmosDict`
+with headers for a suppressed response.
+
+<a id="create-item-callback-validation"></a>
+
+**5. Require `response_hook` to be callable or `None`**
+
+**Why:** Passing `response_hook="log_order"` supplies text, not a function
+the SDK can call. Discovering that mistake only after saving `order-42`
+would make the customer see an error even though the write succeeded,
+potentially encouraging an unnecessary retry. V5 rejects that configuration
+before the write.
+
+A valid function can still fail while running, for example if its logging
+destination is unavailable. Input validation cannot prevent that later failure;
+the callback error must reach the customer without causing another create.
+
+**V5 contract:** `response_hook` must be `None` or callable; other values are
+rejected before sending requests. Legacy skipped false-valued hooks and
+could discover a truthy non-callable hook only after the write. V5 invokes
+every supplied callable even if it evaluates to false in a Boolean check,
+and rejects non-callable values such as `False` rather than silently skipping
+them. Use `None` to disable the hook.
+
+Success-only invocation and propagating callback exceptions without retrying
+the write already existed; they are not additional V5 changes.
+
+<a id="create-item-operation-timeout"></a>
+
+**6. Include container lookup in the create timeout**
+
+**Why:** Before creating an item, the SDK may need to fetch the container's
+properties, including its partition-key definition, to determine the item's
+partition key. Cached information can avoid that request. The customer expects
+`timeout=2` to include this lookup, not to start a fresh two-second allowance
+when the write begins.
+
+Legacy already supported timeouts, but did not consistently enforce one
+budget across the container lookup and the write. This changes the timeout's
+scope; it does not introduce timeout support.
+
+**V5 contract:** A supported `timeout` covers the required container lookup and
+the write together. If the lookup uses 1.5 seconds of a two-second budget,
+about 0.5 seconds remains for creating the item, not another two seconds.
+These timings illustrate the budget, not measured performance.
+
+<a id="create-item-option-mappings"></a>
+
+**7. Do not modify the customer's reusable request options**
+
+**Why:** A customer may reuse the same options dictionary across creates:
 
 ```python
-# Assume this container's partition key is /id.
-body = {"description": "new order"}
-created = container.create_item(body, enable_automatic_id_generation=True)
-generated_id = created["id"]
-assert "id" not in body  # The SDK modifies its own copy, not this dictionary.
+settings = {"timeout": 2}
+orders.create_item(order, request_options=settings, timeout=5)
 ```
 
-If the generated ID is `"generated-123"` (an illustrative value), both the
-stored body's ID and the extracted partition-key value must be
-`"generated-123"`. Generating it after partition-key extraction could send
-inconsistent values. Without generation enabled, provide a non-empty string
-ID. A non-JSON value such as a Python `set`, or a number such as `float("nan")`,
-fails validation before metadata lookup.
+Legacy could overwrite `settings["timeout"]` with `5` and insert SDK
+bookkeeping, such as the operation's start time and the container's internal
+resource ID, into that same customer-supplied dictionary. The dictionary
+therefore no longer contained just the settings the customer supplied, and
+reusing it could unintentionally change later calls.
 
-```python
-result = container.create_item(
-    {"id": "order-43", "tenant": "tenant-a"}, no_response=True
-)
-assert not result
-headers = result.get_response_headers()  # Empty body does not mean no headers.
-```
+V5 uses five seconds for this call but leaves `settings` as `{"timeout": 2}`.
+SDK bookkeeping stays separate from the customer's reusable configuration.
 
-This second example assumes a `/tenant` container. The service backend still
-receives the full order; only its returned body is suppressed. The available
-headers can still supply the request charge and activity ID.
+**V5 contract:** Neither `request_options` nor `feed_options` is modified.
+Code that inspected SDK-added entries in those mappings must stop relying
+on that side effect. Explicit `None` is also accepted as an empty option
+selection rather than failing when the SDK tries to update it.
 
-**Remaining compatibility requirements**
+The precedence of `request_options` over `feed_options`, selection of an empty
+mapping, and an explicit `timeout=None` overriding a nested timeout already
+existed. They are preserved behavior, not new decisions.
 
-Behavior during partition splits and under different account configurations
-remains an open compatibility question.
+<a id="create-item-custom-headers"></a>
 
-| Customer need | Difference and required decision or work |
+**8. Reject SDK-controlled header overrides**
+
+**Why:** Not all headers are application-specific information.
+`Accept` describes the response format the caller can handle,
+`Cache-Control` expresses caching directives, `User-Agent` identifies the
+calling software, and `x-ms-version` selects the service API version.
+Overriding these through an arbitrary header mapping can request behavior
+different from the SDK's supported contract.
+
+V5 keeps these settings under SDK control while still allowing ordinary
+application headers. This is a restriction on particular overrides, not a
+removal of `initial_headers` or all header customization.
+
+**V5 contract:** `initial_headers` rejects overrides of `Accept`,
+`Cache-Control`, `User-Agent`, and `x-ms-version`.
+Remove those overrides; ordinary custom headers remain supported.
+
+**Other V5 changes that affect `create_item`**
+
+| Feature or option | V5 support |
 |---|---|
-| Continue writing to an older container created without a partition key | Excluded from the Rust-backed release. The driver team has no current implementation plans; reconsideration depends on customer need. Existing data is not migrated by changing SDKs; customers need an explicit compatibility plan. |
-| Decide whether to retry after the result of a create is uncertain | Legacy exposes a write-retry opt-in for these failures. The driver can retry creates without the equivalent per-write control, while the Rust item path rejects non-`None` `retry_write`, including zero. The driver must provide the control or the changed retry contract needs approval. |
-| Keep writing after a container is recreated under the same name | With `/customerId` cached, recreate the container with `/region` and submit `{"id":"order-42","region":"West US"}` without `customerId`. Legacy recovery re-extracts this undefined key; the Rust driver refreshes metadata but retains the old key. The request can fail with HTTP 400 rather than recover using the new key. Recovery after container recreation remains an open compatibility requirement. |
-| Bound connection setup or response waiting for this create | Connection and complete HTTP-attempt limits belong to `CosmosRuntime`; supported `timeout` bounds the overall operation. Legacy per-call transport overrides and read-inactivity timers are excluded by design, not pending driver support. |
-| Start another eligible regional write while the first remains slow | Legacy can hedge writes with write-retry opt-in and suitable writable regions. The Rust driver does not hedge document creates. Accepting `availability_strategy` in Python does not preserve that behavior; driver support or an approved availability change is needed. |
-| Read all service response headers | The driver retains selected fields, not the original complete map. Neither `get_response_headers()` nor a copied success-hook argument can recover a discarded header, including when the response body is suppressed. |
-| Inspect or modify the raw outgoing request | The Rust path rejects the raw request callback. The driver needs a supported interception capability before our binding can restore it. Static custom headers and parsed success hooks are not equivalents. |
+| Pre- and post-triggers | Not supported. Trigger arguments are rejected. |
+| `raw_request_hook` and `raw_response_hook` | Not supported. Supplying either raises `TypeError`, including explicit `None`. `response_hook` remains supported. |
+| Per-call `retry_write` | The Rust driver controls automatic retries. Per-call retry configuration is not supported; non-`None` `retry_write` values, including zero, are rejected. |
+| Write hedging | Not supported. `availability_strategy` cannot enable an additional regional write while the first is still pending. |
+| Per-call connection and response-inactivity timeouts | Not supported. Use runtime settings for connection and complete HTTP-attempt limits, and `timeout` for the overall operation. These are not response-inactivity timers. |
+| Older partitionless/system-key containers | Not supported. |
+| Complete original service response headers | V5 exposes selected response headers, not every header returned by the service. |
 
-**Illustration - a failed return does not prove the order was not saved**
+A failed or timed-out create does not prove the order was not saved. If the
+service backend saves `order-42` but its response is lost, a repeated create
+can report a duplicate. That duplicate alone does not establish that the saved
+order matches this call's intended contents. The customer app must check the
+existing order before deciding how to recover; timeout or cancellation does
+not undo an accepted write.
 
-```text
-Service backend saves order-42.
-Its success response is lost.
-A repeated create uses the same ID and partition key.
-The service backend returns 409 because that item now exists.
-```
+**Method signature for sync and async clients**
 
-The customer sees `CosmosResourceExistsError`, even though the earlier attempt
-may have saved the order. This does not mean there are two orders with the same ID
-and partition key. Nor does any 409 prove that the existing order contains
-this call's intended data. Timeout or async cancellation also cannot undo a
-write already accepted by the service backend.
-
-**Preliminary requests have their own consequences**
-
-Before sending the order, the Rust driver defaults to obtaining the physical
-partition map: the range information used to route requests within `orders`.
-If it cannot obtain a usable map, create can fail before sending the order.
-The original metadata error can be replaced by a generic topology-resolution
-failure, losing the distinction between permission and temporary service
-failures. The driver must preserve the cause and the binding must return it
-to Python. The binding now explicitly selects lazy loading, so container
-resolution does not take that eager path. Loading is deferred until an
-operation needs the map; its cost and possible failure do not disappear.
-This binding-wide policy preserves the previous resolution behavior and is
-not a new per-call option. The eager error-loss gap remains in the driver.
-
-The binding forwards create's exclusions and remaining timeout to container
-resolution, but not the item's session token, triggers, custom headers,
-response suppression or per-call availability strategy. In particular,
-`availability_strategy=False` on the create is not a promise to disable
-separately governed metadata hedging.
-
-**Other differences must not be misclassified**
-
-For create, legacy accepted `initial_headers` but did not forward that mapping
-to the outgoing request. Rust forwards ordinary custom headers and rejects
-overrides of `Accept`, `Cache-Control`, `User-Agent` and `x-ms-version`.
-The rejection can break an existing call, but it does not remove a working
-legacy create-header override.
-
-Customers may need to preserve imported text in an order's `note`.
-An **unpaired surrogate** is one half of a Unicode surrogate pair without its
-matching half. Legacy Python can serialize it as a JSON escape:
-
-```json
-{"id":"order-44","customerId":"customer-17","note":"\ud800"}
-```
-
-The binding previously rejected this unrelated `note` while extracting
-`customerId`. That binding defect is fixed: it validates the complete JSON
-syntax, decodes only the values needed for the partition key and item ID,
-and passes the original body bytes to the Rust driver.
-
-```text
-Partition-key value -> "customer-17"
-Outgoing note       -> "\ud800", unchanged rather than replaced
-```
-
-The correction applies to synchronous and asynchronous create, upsert and
-replacement. It does not accept malformed JSON or make an unpaired surrogate
-representable in the actual item ID or selected partition-key string.
-That narrower string restriction remains a compatibility boundary to resolve,
-not approval to rewrite customer data. Live comparison with legacy is still
-needed to establish service acceptance and returned content for the unrelated
-escaped value. The fixed unrelated-field defect needs no breaking-change
-approval.
-
-`raw_response_hook` is removed from both backends; supplying it raises
-`TypeError`, including when its value is `None`. It formerly received a raw pipeline
-response object, rather than the parsed headers/body given to `response_hook`.
-No equivalent raw hook is planned in Rust. Use supported results, response
-headers, OpenTelemetry, and diagnostic strings for information, subject to
-their documented coverage. The shared raw-hook decision below preserves
-the ordinary `response_hook` contract.
-
-**New contract (async-client signature):**
+The asynchronous signature is shown below. The synchronous method has the same
+parameters and return type, uses `def` rather than `async def`, and is called
+without `await`.
 
 ```python
 async def create_item(
@@ -2626,13 +2653,15 @@ async def create_item(
     ...
 ```
 
-**Review disposition:** Creation remains partially migrated. The shared driver
-integration is complete; the compatibility requirements above and service-level checks
-for account-dependent session behavior, uncertain write outcomes,
-recreation and metadata failures remain open. This entry is self-contained
-for board review; it does not record approval of the proposed changes or
-removal of unsupported behavior beyond the explicitly excluded features.
-Trigger invocation is excluded rather than waiting on a service-parity check.
+**Remaining migration gaps and verification**
+
+This entry requests review of the public contract; it does not record approval
+or declare migration complete. Remaining behavior after container recreation,
+response retry metadata, and item ID/text compatibility is tracked in
+migration status.
+Executed comparisons and pending service scenarios belong in
+live verification,
+not in the contract decision.
 
 <a id="16---reading-an-item"></a>
 <a id="containerproxyread_item"></a>
@@ -2641,283 +2670,100 @@ Trigger invocation is excluded rather than waiting on a service-parity check.
 
 **Why the customer calls this API**
 
-The customer wants to display `order-42` and already knows its ID and partition
-key value, `"tenant-a"`. This API reads that specific item without asking the
-customer to write a query. The ID and partition key together identify the
-order. The examples use `container` for an `orders` container partitioned by
-`/tenant`.
-
-If the customer already has a copy, it can also ask for the body only when
-the order has changed since its saved ETag, the service backend's version
-marker. The review must distinguish that unchanged response from an ordinary
-order body and keep the read's callback and timeout behavior consistent.
-
-**Why the Python contract changes:** Sync accepted positional query metrics and post-trigger
-arguments while async required optional arguments by keyword. Inapplicable
-metrics were warned about or consumed inconsistently. Hook arguments could
-refer to the same dictionaries as the returned item and saved response
-headers, allowing the callback to change them. Looking up container properties
-could also run outside the customer's requested read timeout budget.
-
-**Proposed contract, implemented for review:** Keep only `item` and `partition_key` positional.
-Reject `populate_query_metrics` by presence, including `None` and `False`, on
-both clients. Validate conditions before metadata lookup,
-copy caller options, and consume unused ETags only after preserving wildcard
-conditions. Give the success hook independent headers and a deep-copied
-`CosmosDict`, including an empty `CosmosDict` for 304. Invoke false-valued
-callable objects normally; propagate callback errors without replaying the read.
-
-**Corrections that preserve customer intent**
-
-These are Python wrapper/binding fixes, not requests to remove a driver
-capability:
-
-| Problem | Corrected behavior |
-|---|---|
-| `feed_options` could be hidden behind an empty `request_options` mapping. | Use `feed_options` when `request_options` is absent. A supplied `request_options`, including `{}` or `None`, still wins. Recognized explicit options override nested settings; the required partition-key argument wins over a nested key. |
-| An invalid response hook failed only after the read. | Reject non-callable hooks before metadata or item execution. `response_hook=False` raises `TypeError`; omit the hook or pass `None` instead. |
-| A per-read consistency setting could be overwritten by the driver's client setting. | Typed read-strategy selection fixes precedence and cached-session-token selection for that strategy, but does not establish parity for all five ordinary consistency levels. The semantic correction remains open; see below. |
-| Per-read `availability_strategy=True` replaced the client's configured hedge threshold with the default. | Preserve the client's first threshold, as legacy does. A client configured for 20 ms keeps 20 ms, not 500 ms. With no configured client strategy, `True` uses 500 ms; `False` disables the item strategy and an explicit dictionary supplies its own threshold. |
-
-For example, with a client configured for Session consistency:
+The customer wants to display `order-42` from the existing `sales/orders`
+container, partitioned by `/customerId`, and knows its partition-key value:
 
 ```python
-order = container.read_item(
-    "order-42", partition_key="tenant-a",
-    request_options={"consistencyLevel": "Eventual"},
-)
+order = orders.read_item("order-42", partition_key="customer-17")
 ```
 
-The binding selects the Eventual read strategy for this read without changing
-the client or preliminary metadata settings. Omitting a per-read override
-preserves the client's choice. That precedence correction is implemented;
-preserving all five ordinary Cosmos consistency levels is not established.
+The ID and partition key identify one item; no query is required. Customers
+with a cached copy can also request it conditionally using its saved ETag.
 
-**Open consistency gap:** Both clients translate ConsistentPrefix to the
-Eventual strategy and BoundedStaleness to LatestCommitted. These strategies
-override ordinary consistency rather than represent those levels directly.
-The earlier parity claim is withdrawn. LatestCommitted behaves like the
-account default on Strong or Bounded Staleness accounts, so this is not proof
-that an existing account bound is removed. On weaker accounts it requests a
-region-local quorum read, not a cross-region staleness bound.
+**Why these API changes need review**
 
-Simply retaining `x-ms-consistency-level` and selecting the Default strategy
-does not fix the pinned driver: Gateway V2 encoding and automatic session-token
-selection still resolve from account settings. The driver needs a supported
-ordinary-level path, and the binding must use it without substituting
-strategies. Writes remain account-governed. No runtime fix is included in this
-review.
+The proposed contract aligns optional-argument rules across synchronous and
+asynchronous clients, removes query-metrics input from a non-query operation,
+and applies the callback, timeout, option-map, and custom-header changes
+introduced for `create_item`.
 
-**Conditional results:** `IfModified` uses If-None-Match; an unchanged item
-returns an empty `CosmosDict` on 304. If-Match on item GET is service-enforced,
-not a client-side version comparison: preserve 200 if that is what the service
-returns, and preserve a real service 412 as `CosmosAccessConditionFailedError`.
-Do not promise that stale If-Match on GET always fails with 412.
+**Proposed API changes; approval is not recorded**
 
-**Customer migration:** Pass conditions by keyword and remove retired query
-metrics and trigger arguments. Trigger inputs are rejected on the Rust-backed
-path; they are not silently omitted. Do not rely on modifying hook arguments to
-change returned items or SDK state. Hook bodies are always `CosmosDict` objects
-on success, including the empty 304 result.
+The following changes are implemented for review; approval is not recorded.
+Shared explanations are linked rather than repeated. Existing behavior and
+fixes that restore it are not additional contract decisions.
 
-**Timeout scope:** An explicit supported per-call `timeout` covers metadata and
-the point read together, including the legacy metadata-cache lock. Initial
-durations must be finite non-boolean numbers of at least one second and less
-than `2**64` seconds; the platform timer can further constrain extreme values.
-A remaining sub-second budget is honored rather than restarted or rounded up.
-Expiry raises `CosmosClientTimeoutError`.
+**1. Require keyword arguments for all options**
 
-**Illustration - an unchanged item is not an ordinary item body:**
+**Why:** Apply the same [calling-convention rationale](#create-item-keyword-options)
+as `create_item`. Legacy synchronous reads accepted positional query-metrics
+and post-trigger arguments; asynchronous reads already required named options.
 
-```python
-from azure.core import MatchConditions
+**V5 contract:** Only `item` and `partition_key` may be positional. Name every
+supported option; removal of metrics and trigger inputs is covered below.
 
-item = container.read_item(
-    "order-42",
-    partition_key="tenant-a",
-    etag=previously_read_etag,
-    match_condition=MatchConditions.IfModified,
-)
-```
+**2. Reject `populate_query_metrics`; keep ETag conditions for reads**
 
-If the service reports HTTP 304 ("not modified"), `item` is an empty
-`CosmosDict`, still able to expose headers. Do not immediately assume
-`item["id"]` exists; keep the customer's cached order instead.
+**Why:** A point read retrieves an item by its identity rather than executing
+a query. The [query-metrics rationale](#create-item-inapplicable-options)
+therefore applies here too. Unlike create, a read can use the customer's saved
+version to avoid returning an unchanged item, so ETag conditions remain useful.
 
-With `timeout=5`, spending 2 seconds obtaining container metadata leaves
-approximately 3 for the item read, not a fresh 5. Waiting for the legacy
-metadata-cache lock consumes time too. `timeout=None` inherits the client
-default and overrides a nested timeout; separate transport settings still
-apply. The [acquisition wait](#first-use-initialization-deadlines) is bounded;
-Python parsing and synchronous callback code are not forcibly interrupted at
-every instruction. The async client requests
-cancellation of pending binding work, but cannot guarantee immediate
-cancellation of work already received by the service backend.
+**V5 contract:** Supplying `populate_query_metrics` raises `TypeError`,
+including `None` or `False`, on both clients. Remove the argument rather than
+setting it to false. `etag` and `match_condition` remain supported; their
+appearance as named parameters is not a newly introduced conditional-read
+capability.
 
-**Verified response-stall behavior**
+**3. Apply the same callback, timeout, request-option, and header rules as `create_item`**
 
-On October 17, 2026, sync and async Rust-backed reads with `timeout=3`
-raised `CosmosClientTimeoutError` after approximately 3.016 seconds when
-Toxiproxy stopped downstream traffic from the installed emulator. The test
-identified the existing connection used by a successful warm read and
-observed returning traffic on that connection within 4-6 milliseconds,
-before later reconnects. After fault removal, a new read succeeded using
-the same client, without legacy fallback.
+The linked `create_item` decisions explain the business reasons. This table
+states their effect on a read without repeating those explanations.
 
-This verifies the overall read budget and recovery for the isolated driver
-`84e2bb66c9911fa730dc9756c8fc3f9612456344` snapshot. It does not establish
-legacy-versus-Rust parity under the same network fault, per-call transport
-timeout support, or response-inactivity timeout behavior. The worktree's
-async binding adapter changed concurrently and is outside this evidence.
-The API's partial migration status and unrelated requirements remain unchanged.
-
-**Verified single-reset recovery**
-
-A separate October 17, 2026 test on the same isolated snapshot reset the
-established read connection, then removed the fault before replacement traffic
-proceeded. Both sync and async interrupted calls returned the order within
-their original three-second budget, with exactly two recorded attempts:
-transport-generated `503/20003`, then successful `200/0`. This establishes
-recovery within that read, not merely success on a later call. Subsequent
-reads using the same client also passed.
-
-This does not guarantee recovery from persistent resets, change retry
-eligibility for writes, or close the remaining migration requirements.
-
-**Verified controlled response delay**
-
-On October 17, 2026, the same isolated snapshot returned the expected order
-with 500 milliseconds of added downstream latency in about 0.508 seconds
-for sync and 0.509 seconds for async. With five seconds of added delay,
-both reads raised `CosmosClientTimeoutError` near their original three-second
-budget. No-fault controls and subsequent same-client reads passed.
-
-The measured delay distinguishes the wait after returning traffic on the warmed connection from
-setup time and emulator processing. Fault removal runs after the measured
-read and has a separate management timeout; it does not extend the customer's
-budget. This remains local, Rust-only snapshot evidence, not verification of
-concurrent SDK changes, matched legacy parity, bandwidth limits, or response
-inactivity. The API's partial migration status is unchanged.
-
-**Verified deadline despite response progress**
-
-The bandwidth run completed on October 18, 2026 (UTC) using the same isolated
-snapshot. With a 64,000-byte receipt and a 64,000-byte/second downstream limit,
-sync and async reads returned the complete order in about 1.041 and 1.033
-seconds. At 16,000 bytes/second, they raised `CosmosClientTimeoutError` in
-3.017 and 3.016 seconds despite repeated forwarding towards the SDK.
-
-The run recorded 30 encrypted forwarding events on each warmed read connection before
-timeout, partial transferred bytes, and successful subsequent reads using
-the same clients. This supports the overall operation budget under the
-tested conditions, not a response-inactivity or streaming contract. It
-does not validate concurrent SDK changes, establish matched legacy fault
-parity, or close remaining migration requirements.
-
-**Verified recovery after a response cutoff**
-
-On October 18, 2026 (UTC), the same isolated snapshot recovered a read after
-exactly 20,000 encrypted response bytes were forwarded and the established
-connection closed. Controlled fault removal allowed the retry to proceed.
-The original sync and async calls returned the complete order and receipt
-in 0.092 and 0.115 seconds, with exactly two data-plane attempts:
-transport-generated `503/20003`, then `200/0`.
-
-The run recorded the byte count, end-of-stream, replacement ordering, controls, and
-subsequent same-client success. It does not expose the underlying body-read
-error or establish a particular HTTP/JSON parsing stage. This is bounded,
-local, Rust-only evidence, not validation of concurrent SDK changes or
-matched legacy parity; partial migration status remains unchanged.
-
-**Verified failure while the response cutoff remains active**
-
-On October 18, 2026 (UTC), the same isolated snapshot raised
-`ServiceResponseError` in 0.271 seconds for sync and 0.188 seconds for async.
-Each call retained eight transport-generated `503/20003` attempts. Separately,
-the SDK-facing observer recorded 20,000 bytes and end-of-stream on the
-warmed connection and seven replacements. Replacement forwarding was not
-gated, and the fault remained configured until after the call ended.
-
-The persistent-cutoff record
-records controls, subsequent same-client success, and cleanup. This proves
-bounded terminal transport failure, not expiration of the three-second
-deadline or a public eight-attempt retry guarantee. Local, snapshot-only,
-and no-matched-legacy-parity limits remain; migration status is unchanged.
-
-**Execution and preliminary requests**
-
-The synchronous read starts during the call; the asynchronous read starts when
-its coroutine runs. There is no iterator or continuation token. The binding
-resolves the container through the Rust driver before constructing the item
-GET. Cached metadata can avoid a lookup; retries and eligible regional attempts
-can add requests. The Python wrapper does not replay a failed Rust read
-through legacy Python.
-
-Starting another regional attempt before an earlier one finishes is called
-hedging. It can shorten a slow read but can also consume additional service
-work.
-
-Read behavior during partition splits remains an open compatibility question.
-
-The physical partition map is the range information used for routing.
-Although the driver defaults to loading it during container resolution, the
-binding explicitly selects lazy loading: obtain it when an operation needs it.
-This preserves the previous resolution behavior but can defer loading cost
-to the first operation needing the map. The driver's eager-path error-loss
-requirement below is not a path selected by this binding.
-
-The binding forwards the read's exclusions and remaining timeout to container
-resolution, not its item conditions, session token, custom headers, cache-age
-limit, triggers or per-call availability strategy. A per-read
-`availability_strategy=False` is not a whole-call guarantee against separately
-governed metadata hedging.
-
-**Remaining compatibility requirements**
-
-| Customer need | Difference and required work or decision |
+| Rule explained under `create_item` | Effect on `read_item` |
 |---|---|
-| Read an order in an older partitionless/system-key container | Excluded from the Rust-backed release. The driver team has no current implementation plans; reconsideration depends on customer need. Null and undefined keys are not substitutes for the legacy empty-key representation. See the shared older-container decision below. |
-| Limit connection setup or response inactivity for this read | Configure connection and complete HTTP-attempt limits on `CosmosRuntime`; supported `timeout` bounds the overall operation. Legacy per-call transport overrides and read-inactivity timers are excluded by design, not pending driver support. |
-| Try additional regions while earlier read attempts remain slow | The release supports threshold-only hedging with one alternate. Explicit `threshold_steps_ms` is rejected rather than discarded; progressive third/later hedges are intentionally excluded. |
-| Obtain every original service response header | A generic success-response header map is excluded by design. The wrapper preserves the available modeled fields; copying hook arguments cannot restore an omitted original header. This is not an outstanding request to preserve every success header. |
-| Inspect throttle retry counts and accumulated waiting | The driver contract and binding mapping need clarification. These SDK-added values are not original service headers. |
-| Inspect or modify the raw outgoing request | `raw_request_hook` is removed from both backends and raises `TypeError`. Use supported options/static headers for configuration and supported tracing/diagnostics for information. Arbitrary prepared-request mutation is not preserved. |
-| Inspect the raw pipeline response object | `raw_response_hook` is removed from both backends and raises `TypeError`. Use supported results, headers, tracing, and diagnostics. These do not reproduce the pipeline response object. |
-| Distinguish a permission failure from a temporary failure during physical-map loading | Eager container resolution can discard the underlying metadata error and return a generic topology-resolution failure. A generic error does not tell the customer whether to repair permissions or retry a temporary failure. Preserving that distinction remains required. |
+| [Give `response_hook` separate copies of headers and item data](#create-item-callback-snapshots) | Hook edits no longer affect the returned item or SDK response state. The body argument changes from the decoded dictionary to an independent `CosmosDict`, including copies of nested properties. Transform the returned item explicitly instead of editing the callback's copy. |
+| [Require `response_hook` to be callable or `None`](#create-item-callback-validation) | Reject non-callables before requests; invoke every supplied callable, including false-valued callable objects. Use `None`, not `False`, to disable the hook. Success-only invocation and propagation of callback failures without replaying the read are preserved, not new decisions. |
+| [Include container lookup in the operation timeout](#create-item-operation-timeout) | A supported `timeout` covers required metadata lookup and the item read together, rather than allowing setup outside that budget. Expiry raises `CosmosClientTimeoutError`. Duration limits and separate transport scopes follow the timeout decision. |
+| [Do not modify the customer's reusable request options](#create-item-option-mappings) | Do not modify `request_options` or `feed_options`; accept explicit `None` as an empty option selection. Option precedence and the required partition-key argument overriding a nested key already existed and are not new changes. |
+| [Reject SDK-controlled header overrides](#create-item-custom-headers) | `initial_headers` rejects overrides of `Accept`, `Cache-Control`, `User-Agent`, and `x-ms-version`. Remove those overrides; ordinary custom headers remain supported. |
 
-For the hedging example, assume four eligible regions and unfinished earlier
-attempts. Legacy can start attempts at 0, 20, 30 and 40 milliseconds with an
-initial 20-ms threshold and a 10-ms step. Rust does not start a third attempt
-merely because the first two remain slow. These are illustrative timings,
-not a latency guarantee. Extra attempts can consume service work.
+**For HTTP 304, the hook receives an empty `CosmosDict` instead of `None`**
 
-**Accepted input is not proof of working legacy behavior**
+When a conditional read receives HTTP 304 ("not modified"), legacy already
+returned an empty `CosmosDict` with response headers. That method result is
+preserved. The change is the hook's body argument: legacy passed `None` for
+the empty response; V5 passes an empty `CosmosDict`. A hook checking
+`result is None` must be updated. The customer should continue using its cached
+item rather than expecting item properties in the empty result.
 
-The retained legacy item-read path accepted `initial_headers` but did not
-forward that mapping. Rust forwards ordinary custom headers and rejects
-overrides of `Accept`, `Cache-Control`, `User-Agent` and `x-ms-version`.
-That rejection can break an existing call, but does not remove a working
-legacy item-read override.
+Existing condition validation and wildcard conditions are not new decisions.
+Conditions remain service-enforced: a stale If-Match on a read does not
+guarantee HTTP 412. A real service 412 remains
+`CosmosAccessConditionFailedError`.
 
-A positive `max_integrated_cache_staleness_in_ms` is forwarded as a cache-age
-header for an appropriately configured dedicated gateway. Zero currently
-emits no header on these paths; it is not a cache-bypass request. Real cache
-freshness and the interaction with conditional reads remain service-level
-verification requirements. Forwarding priority and throughput-bucket headers
-likewise does not establish their service effects. Trigger options and trigger
-header overrides are excluded, not forwarded.
+**Other V5 changes that affect `read_item`**
 
-**Keep read requirements separate from create requirements**
+The shared exclusions described under `create_item` also apply to reads:
+raw request hooks,
+raw response hooks,
+per-call transport controls,
+older partitionless containers,
+and the complete original success-header map.
+Their rationale and migration implications are not repeated here.
 
-Reads legitimately use session tokens and retry without a write-retry opt-in.
-They already receive the customer's partition key, so they do not need to
-extract it from a write body after container recreation. The driver supports
-eligible name-based recreation recovery; resource-ID addresses and explicit
-tokens restrict retargeting. Do not classify every recreation as unsupported.
-The point-read capability is in the Rust driver itself, not only the separate
-higher-level Rust client.
+Two call-specific consequences need separate attention:
 
-**New contract (async-client signature):**
+| Customer expectation | V5 behavior and what the customer must account for |
+|---|---|
+| Supply trigger options with a read | Trigger inputs and trigger-header overrides are rejected, not silently ignored. Remove them; accepting such an argument in legacy does not establish that the service executed a trigger on a read. See the trigger decision. |
+| Start further regional reads while earlier attempts remain slow | Read hedging supports one alternate, not progressively adding third and later attempts. `threshold_steps_ms` is rejected. Customers relying on progressive hedging must reassess their latency strategy; ordinary retries do not provide the same scheduling promise. See the read-hedging decision. |
+
+**Method signature for sync and async clients**
+
+The asynchronous signature is shown below. The synchronous method has the same
+parameters and return type, uses `def` rather than `async def`, and is called
+without `await`.
 
 ```python
 async def read_item(
@@ -2939,11 +2785,19 @@ async def read_item(
     ...
 ```
 
-**Review disposition:** Reading an item remains partially migrated. The
-Python/binding corrections do not close the driver requirements or approve
-removal of unsupported behavior. The shared driver integration is complete; live checks
-for resource addressing, caching, regional behavior and metadata failures
-remain pending. This is a draft for board review, not recorded approval.
+**Remaining migration gaps and verification**
+
+This entry requests review of public contract changes; it does not record
+approval or declare migration complete. Preserving ordinary consistency
+levels remains an open compatibility requirement,
+not an approved substitution of weaker read semantics. Missing throttle-retry
+totals remain tracked in gap 29.
+
+Customer usage and migration status belong in
+migration status.
+Executed comparisons, network-fault evidence, and pending service scenarios
+belong in live verification,
+not in the contract decision.
 
 <a id="18---reading-known-items"></a>
 <a id="containerproxyread_items"></a>
@@ -3653,8 +3507,8 @@ close the separately documented Rust driver gaps.
 #### What remains to prove
 
 The original nine synchronous and nine asynchronous functional test bodies
-are copied under `tests/execute_item_batch/sync/legacy` and
-`tests/execute_item_batch/aio/legacy`. Only setup, resource cleanup, backend
+are copied under `tests/execute_item_batch/sync` and
+`tests/execute_item_batch/aio`. Only setup, resource cleanup, backend
 selection, and the `_rust` method-name suffix change. An offline comparison
 checks that the copied test bodies still match the originals.
 
@@ -4460,3 +4314,104 @@ Strict header allowlists may need to allow this optional entry. Treat its value
 as human-readable text, not a stable format to parse. It may be absent when no
 request or diagnostics exist, and it does not recover missing original service
 headers such as `date`.
+
+### Rust logging can deliver that summary automatically
+
+Alpha Bank need not read and log the diagnostics header after every call.
+With `CosmosClient(..., logger=orders_logger, enable_diagnostics_logging=True)`,
+the Python wrapper logs each available native response summary at INFO,
+including summaries accompanying error responses, before response parsing and
+any success hook. The record's `diagnostics` field contains the same text
+exposed in `x-ms-cosmos-sdk-diagnostics`; `status_code`, `sub_status_code`, and
+`operation_type` describe that binding result, not the eventual public-call
+outcome. Here operation names are Python names such as `read_item`.
+
+Alternatively, `logging_enable=True` emits the same summary at DEBUG.
+Per-operation `logger` and `logging_enable` override their client defaults.
+If both switches are enabled, one INFO record is emitted, not two copies.
+The diagnostics switch is a client setting; a per-operation
+`logging_enable=False` disables DEBUG logging, not separately enabled INFO logging.
+Supplying only `logger` enables neither switch. Without a supplied logger, the
+destination logger is `azure.cosmos.diagnostics`. The customer app still
+configures its handlers, levels, and filters; the SDK installs no console handler.
+
+This is an accepted narrower Rust behavior, not legacy HTTP-log parity.
+It does not forward arbitrary Rust `tracing` events, include request/response
+bodies, reconstruct original headers, or emit one record per network attempt.
+A page fetch can produce a summary when consumed; creating a pager does not.
+No returned summary means no summary record, including response-less failures
+or cancellation before a result is returned. Logging-handler failures are
+reported without changing the database result.
+
+The first-principles sequence and concrete setup are in
+the telemetry walkthrough.
+
+### Rust request-attempt spans retain customer tracing attributes
+
+Constructor `tracing_attributes` supplies request-span defaults, preserving the
+legacy request-policy scope rather than adding defaults to the public operation
+span. Per-call `tracing_attributes` replaces that dictionary; an empty dictionary
+clears it. `tracing_options["attributes"]` is then merged with matching keys taking
+precedence. Per-call fields keep their existing Azure Core operation-span behavior
+and now also reach the wrapper-created Rust request-attempt spans.
+
+The wrapper snapshots the selected fields before execution. They are Python
+telemetry configuration, not outgoing Cosmos headers or shared driver settings.
+Recorded driver status and execution context take precedence over same-named
+customer fields on attempt spans.
+
+Item and metadata pagers accept per-call tracing attributes and
+`tracing_options["enabled"]` for their consumed fetches. Item pager options are
+snapshotted at construction. Existing per-call tracing enablement is unchanged;
+adding attributes alone does not enable tracing or override sampling.
+
+The legacy `network_span_namer` callback remains unsupported on Rust. Constructors,
+connection-string factories, and per-operation inputs now reject this keyword with
+`TypeError` before database work, including `None` and disabled tracing. Recognized
+nested request/feed options are checked. Omission retains the existing
+`cosmosdb.request` attempt-span name; legacy naming support is unchanged.
+
+The callback receives the actual Python HTTP request on the legacy path.
+Driver pin `84e2bb66c9911fa730dc9756c8fc3f9612456344` exposes diagnostic
+facts, including a routing endpoint, but not the actual request method, complete
+URL, and headers through those records. Its raw `HttpRequest` belongs to the
+internal transport; custom transport replacement is explicitly test-only.
+The remaining driver requirement is a supported production request-observation
+interface at a defined phase, followed by faithful binding/wrapper integration.
+The wrapper does not invent an HTTP request, use test-only hooks, or treat the
+new guard as closing that requirement.
+
+See the tracing-setting example.
+The request-naming bite
+provides the concrete input/output example and pinned-source evidence.
+
+### Rust diagnostic coverage is explicit
+
+Attempt envelopes now require `complete` and `incomplete_reasons`. An absent or
+contradictory declaration is rejected as invalid optional diagnostics, without
+changing the database result. Complete coverage is distinct from retaining every
+individual request record.
+
+Point operations and container delete/replace no longer advertise final-execution
+diagnostics as complete coverage of preceding container resolution. They retain
+available execution records with `metadata_diagnostics_unavailable`. Point
+metadata failures preserve available attempt diagnostics before Python exception
+conversion. Successful metadata resolution still exposes no diagnostic records
+through that driver interface; a warm client is not proof of zero lookup work.
+
+Unexpected same-owner binding calls invalidate totals rather than disappearing
+from accounting. The collector retains single-use contributions, bounded
+collection, task/thread ownership, and hook-inclusive immutable completion.
+Tracing emission is a separate callback consumer. Valid partial coverage is
+reported through diagnostic state, not a warning; malformed payloads, unexpected
+owned work, and recording failures remain observable.
+
+For validated payloads, operation spans expose `cosmos.poc.diagnostics_complete`
+and, when partial, `cosmos.poc.diagnostics_incomplete_reasons`. Partial counts
+are not published as operation totals. Missing diagnostics remain unavailable,
+not zero.
+
+Sync/async methods and deferred pagers use the shared recording-options snapshot.
+It copies tracing configuration, retains logger identity, and never captures a
+pager's creation-time parent span. These wrapper/binding fixes do not implement
+the separate request-dependent naming capability.

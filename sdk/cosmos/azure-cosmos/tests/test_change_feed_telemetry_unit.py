@@ -17,13 +17,16 @@ pytest.importorskip("opentelemetry.sdk.trace")
 # pylint: disable=wrong-import-position
 from opentelemetry import trace
 from opentelemetry.sdk.trace.sampling import ALWAYS_OFF
-from common.test_rust_telemetry_unit import (  # pylint: disable=unused-import
+from telemetry.test_rust_telemetry_unit import (  # pylint: disable=unused-import
     DriverTransportError,
     attempt_spans,
     contribution_response,
     recording_setup,
 )
-from test_change_feed_contract_unit import base_feed, feed  # pylint: disable=unused-import
+from test_change_feed_contract_unit import (
+    base_feed,
+    feed,
+)  # pylint: disable=unused-import
 from azure.core.exceptions import ServiceResponseError
 from azure.core.settings import settings
 from azure.cosmos import _telemetry as telemetry
@@ -62,6 +65,7 @@ def polling_setup(recording, feed, monkeypatch):  # pylint: disable=unused-argum
     def finish(handle, prepared, cursor, include_attempts, timeout_seconds):
         _, payload = contribution_response(5, time.time_ns())
         payload["complete"] = False
+        payload["incomplete_reasons"] = ["feed_preparation_diagnostics_unavailable"]
         if h.error:
             if include_attempts:
                 h.error._cosmos_attempt_payload = payload
@@ -95,7 +99,31 @@ def fetch_spans(recording):
     ]
 
 
-@pytest.mark.parametrize("recording_mode", ["enabled", "disabled", "handler-only", "sampled-out", "no-handlers"])
+@pytest.mark.parametrize("enabled", [False, True])
+def test_page_tracing_settings_are_snapshotted_until_consumption(polling, recording, enabled):
+    h, f = polling, polling.feed
+    settings.tracing_enabled = not enabled
+    attributes = {"bank.component": "orders"}
+    options = {"enabled": enabled, "attributes": {"bank.page": "first"}}
+    pager = f.proxy.query_items_change_feed(tracing_attributes=attributes, tracing_options=options)
+    assert not h.calls and not fetch_spans(recording) and not attempt_spans(recording)
+    recording.exporter.clear()
+    attributes["bank.component"] = "mutated"
+    options["enabled"] = not enabled
+    options["attributes"]["bank.page"] = "mutated"
+    assert f.next_page(pager.by_page()) == [{"id": "a", "nested": [1]}]
+    assert len(h.calls) == 1 and h.calls[0][2] is enabled
+    spans = recording.exporter.get_finished_spans()
+    assert len(spans) == (3 if enabled else 0)
+    for span in spans:
+        assert span.attributes["bank.component"] == "orders"
+        assert span.attributes["bank.page"] == "first"
+
+
+@pytest.mark.parametrize(
+    "recording_mode",
+    ["enabled", "disabled", "handler-only", "sampled-out", "no-handlers"],
+)
 @pytest.mark.parametrize("mode", ["LatestVersion", "AllVersionsAndDeletes"])
 @pytest.mark.parametrize("timeout", [None, 10])
 def test_caught_up_poll_and_resume_keep_per_fetch_ownership(
@@ -160,7 +188,9 @@ def test_caught_up_poll_and_resume_keep_per_fetch_ownership(
     if spans:
         assert [s.parent.span_id for s in spans] == parents
         assert all(s.status.status_code is trace.StatusCode.UNSET for s in spans)
-        assert not any(k.startswith("cosmos.poc.") for s in spans for k in s.attributes)
+        assert all("cosmos.poc.request_count" not in s.attributes for s in spans)
+        assert all("cosmos.poc.retained_request_count" not in s.attributes for s in spans)
+        assert all(s.attributes["cosmos.poc.diagnostics_complete"] is False for s in spans)
         assert [sum(a.parent.span_id == s.context.span_id for a in attempt_spans(recording)) for s in spans] == [
             2,
             2,
@@ -187,7 +217,9 @@ def test_time_start_shares_deadline_and_only_final_fetch_owns_hook(polling, reco
 
     monkeypatch.setattr(f.backend, "execute_pages", execute_pages)
     pages = f.proxy.query_items_change_feed(
-        start_time=datetime(2025, 1, 1, tzinfo=timezone.utc), timeout=10, response_hook=hook
+        start_time=datetime(2025, 1, 1, tzinfo=timezone.utc),
+        timeout=10,
+        response_hook=hook,
     ).by_page()
     assert f.next_page(pages) == [{"id": "b"}]
     assert len(h.calls) == len(h.seen) == len(fetch_spans(recording)) == 2
@@ -209,7 +241,7 @@ def test_failed_poll_preserves_last_delivered_checkpoint(polling, recording, fai
     elif failure == "transport":
         h.error, expected = DriverTransportError("failed"), ServiceResponseError
     elif failure == "timeout":
-        h.error, expected = TimeoutError("timed out"), CosmosClientTimeoutError if timeout else TimeoutError
+        h.error, expected = TimeoutError("timed out"), (CosmosClientTimeoutError if timeout else TimeoutError)
     elif failure == "parse":
         h.transform = lambda value: ((200, 0, {}, b"invalid-json", None), value[1])
         expected = json.JSONDecodeError
@@ -242,7 +274,11 @@ def test_diagnostic_failure_does_not_change_poll_result(polling, recording, monk
     elif detail == "invalid-response":
         h.transform = lambda _: ("invalid",)
     else:
-        monkeypatch.setattr(telemetry, "emit_attempts", Mock(side_effect=RuntimeError("reporting failed")))
+        monkeypatch.setattr(
+            telemetry,
+            "emit_attempts",
+            Mock(side_effect=RuntimeError("reporting failed")),
+        )
         f.proxy._item_context = replace(
             f.proxy._item_context,
             telemetry_handlers=(
@@ -258,7 +294,8 @@ def test_diagnostic_failure_does_not_change_poll_result(polling, recording, monk
         assert f.next_page(pages) == [{"id": "a", "nested": [1]}]
     assert len(h.calls) == len(h.seen) == len(fetch_spans(recording)) == 1
     assert h.seen[0].outcome == ("error" if detail == "invalid-response" else "success")
-    assert not any(k.startswith("cosmos.poc.") for k in fetch_spans(recording)[0].attributes)
+    assert "cosmos.poc.request_count" not in fetch_spans(recording)[0].attributes
+    assert "cosmos.poc.retained_request_count" not in fetch_spans(recording)[0].attributes
 
 
 def test_setup_retry_keeps_cursor_and_separate_completions(polling, recording):
@@ -278,7 +315,11 @@ def test_setup_retry_keeps_cursor_and_separate_completions(polling, recording):
 
 def test_delete_record_keeps_all_versions_shape(polling, recording):
     h, f = polling, polling.feed
-    record = {"current": {}, "previous": {"id": "a"}, "metadata": {"operationType": "delete"}}
+    record = {
+        "current": {},
+        "previous": {"id": "a"},
+        "metadata": {"operationType": "delete"},
+    }
     f.pages[0] = ([record], "c1.a")
     rows = f.next_page(f.proxy.query_items_change_feed(mode="AllVersionsAndDeletes").by_page())
     assert rows == [record]

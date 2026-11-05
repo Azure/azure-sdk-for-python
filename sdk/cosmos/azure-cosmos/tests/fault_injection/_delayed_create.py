@@ -1,10 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """Shared assertions for the copied delayed-create scenario and its control."""
-import json
 import math
 
 from azure.cosmos.exceptions import CosmosHttpResponseError
+from config.diagnostics import emit as emit
 
 DELAY_MS = 10000
 OPERATION_TIMEOUT = 90
@@ -39,7 +39,3 @@ def assert_control(returned, stored, item, hits):
 def assert_route(before, after, backend):
     assert after[0] - before[0] == (1 if backend == "rust" else 0), "Wrong binding operation count"
     assert after[1] == before[1], "The Rust operation fell back to Python"
-
-
-def emit(kind, **fields):
-    print("FAULT_EVIDENCE " + json.dumps({"kind": kind, **fields}, sort_keys=True), flush=True)

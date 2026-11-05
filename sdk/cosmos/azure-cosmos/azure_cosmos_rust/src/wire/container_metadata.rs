@@ -59,6 +59,16 @@ pub(super) fn metadata_error(py: Python<'_>, error: CosmosError) -> PyErr {
     }
 }
 
+pub(super) fn metadata_error_with_attempts(py: Python<'_>, error: CosmosError) -> PyErr {
+    let diagnostics = error.diagnostics();
+    super::response::with_error_attempt_diagnostics(
+        py,
+        metadata_error(py, error),
+        diagnostics,
+        super::response::AttemptCoverage::Incomplete("metadata_diagnostics_unavailable"),
+    )
+}
+
 /// Resolve a container and return its resource id and partition key definition.
 pub(crate) fn get_container_metadata<'py>(
     py: Python<'py>,

@@ -1034,6 +1034,7 @@ class _CapturedPageIterator:
             _rust_fallback_count(),
             _snapshot_headers_identity(self._client),
             continuation,
+            getattr(getattr(self._pages, "state", None), "done", False) is True,
         )
 
     def _record(self, before, rows, error=None, exhausted=False):
@@ -1042,6 +1043,9 @@ class _CapturedPageIterator:
         )
         fresh_headers = _snapshot_headers_identity(self._client) != before[2]
         if exhausted and not evidence["rust_fallback_delta"]:
+            # An already-finished pager retains response totals from its last fetch.
+            if before[4] and evidence["rust_operation_delta"] == 0 and not fresh_headers:
+                return
             # A retained query can enter the binding just to drain its local
             # cursor. Its page state counts responses, unlike the entry counter.
             responses = getattr(getattr(self._pages, "state", None), "responses", None)

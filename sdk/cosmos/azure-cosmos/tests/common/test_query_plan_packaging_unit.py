@@ -34,9 +34,9 @@ from zipfile import ZipFile
 
 import pytest
 
-# The build backend lives in the checkout, not in the installed SDK wheel.
-_BACKEND_PATH = Path(__file__).resolve().parents[2] / "azure_cosmos_build_backend.py"
-_BACKEND_SPEC = importlib.util.spec_from_file_location("azure_cosmos_build_backend", _BACKEND_PATH)
+# The SDK package builder lives in the checkout, not in the installed SDK wheel.
+_BACKEND_PATH = Path(__file__).resolve().parents[2] / "azure_cosmos_package_builder.py"
+_BACKEND_SPEC = importlib.util.spec_from_file_location("azure_cosmos_package_builder", _BACKEND_PATH)
 if _BACKEND_SPEC is None or _BACKEND_SPEC.loader is None:
     raise ImportError(f"Cannot load build backend from {_BACKEND_PATH}")
 build_backend = importlib.util.module_from_spec(_BACKEND_SPEC)
@@ -70,7 +70,7 @@ from pathlib import Path
 from setuptools.errors import SetupError
 
 original_path = list(sys.path)
-assert "azure_cosmos_build_backend" not in sys.modules
+assert "azure_cosmos_package_builder" not in sys.modules
 assert "azure_cosmos_build_metadata" not in sys.modules
 for argument in sys.argv[1:]:
     test_path = Path(argument)
@@ -82,7 +82,7 @@ for argument in sys.argv[1:]:
     ).resolve()
     backend = namespace["build_backend"]
     assert Path(backend.__file__).resolve() == (
-        test_path.parents[2] / "azure_cosmos_build_backend.py"
+        test_path.parents[2] / "azure_cosmos_package_builder.py"
     ).resolve()
     assert callable(backend.validate_version_metadata)
 """,

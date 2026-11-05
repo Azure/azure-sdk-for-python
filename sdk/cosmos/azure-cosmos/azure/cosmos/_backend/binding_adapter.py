@@ -35,7 +35,7 @@ from typing import TYPE_CHECKING, Any, Iterator, Optional
 from azure.core.exceptions import ServiceResponseError
 from .._operation_deadline import remaining_timeout
 from ..exceptions import CosmosClientTimeoutError
-from .._telemetry import get_operation
+from .._telemetry import get_operation, log_response_diagnostics
 from ..runtime import CosmosRuntime
 
 from .cosmos_backend import CosmosBackend
@@ -370,12 +370,16 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
                 contribution.error(exc)
             raise ServiceResponseError(message=str(exc)) from exc
         except _DRIVER_RESPONSE_ERROR as exc:
+            if contribution is not None:
+                contribution.error(exc)
             raise metadata_exception_from_binding(exc) from exc
         if raw_response is None:
             raise BindingProtocolError(f"The binding returned no response for {prepared.op!r}")
         if contribution is not None:
             raw_response = contribution.response(raw_response)
-        return build_backend_response(*raw_response)
+        response = build_backend_response(*raw_response)
+        log_response_diagnostics(self, prepared.op, response)
+        return response
 
     def _debug_fault_injection_rule_hit_count(self, rule_id: str) -> int:
         """Return how many Rust request attempts applied the named test rule."""
@@ -495,6 +499,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             if contribution is not None:
                 result = contribution.response(result)
             response = build_backend_response(*result)
+        log_response_diagnostics(self, prepared.op, response)
         yield build_backend_page(prepared, response)
 
     def validate_page_request(self, prepared: PreparedPageRequest) -> None:

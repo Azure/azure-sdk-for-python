@@ -256,7 +256,7 @@ class ReporterParserTests(unittest.TestCase):
                         original_method = "test_read" + async_suffix + parameter
                         copied_method = "test_read" + async_suffix + "_rust" + parameter
                         original = f"tests/test_item{async_suffix}.py::TestItem::{original_method}"
-                        copied = f"tests/read_item/{surface}/legacy/test_item.py::TestItem::{copied_method}"
+                        copied = f"tests/read_item/{surface}/test_item.py::TestItem::{copied_method}"
                         core_text = original + " PASSED\n" + _make_block(
                             token="11111111", nodeid=original, surface=surface,
                         )
@@ -284,7 +284,7 @@ class ReporterParserTests(unittest.TestCase):
         for path in ("tests/test_item.py", "tests/workloads/test_item.py"):
             self.assertEqual(normalize(path, "test_read_rust[param_rust]"), "test_read_rust[param_rust]")
         for path in (
-            r"tests\read_item\sync\legacy\test_item.py",
+            r"tests\read_item\sync\test_item.py",
             "docs/V5/_parity_runs/temporary/test_item.py",
         ):
             self.assertEqual(normalize(path, "test_read_rust[param_rust]"), "test_read[param_rust]")
@@ -801,7 +801,7 @@ def test_v4_replacement_report_accepts_isolated_baseline_and_long_summary_rust(t
     paths = []
     for backend in ("core-python", "rust"):
         prefix = ("docs/V5/_parity_runs/replace_container_corepy_fixture/sync"
-                  if backend == "core-python" else "tests/replace_container/sync/legacy")
+                  if backend == "core-python" else "tests/replace_container/sync")
         nodeid = f"{prefix}/test_copy.py::TestX::test_y"
         path = tmp_path / f"{backend}.txt"
         path.write_text(

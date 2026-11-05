@@ -58,14 +58,32 @@ def _factory_for(cred):
 
 def test_create_item_parity_with_token_credential_rust(container_for):
     """create_item must match across backends when authed by a token credential."""
-    body = {"id": uuid.uuid4().hex, "pk": "a", "n": 1}
-    cmp = run_on_both_backends(
-        lambda c: c.get_database_client("parity_db")
-                   .get_container_client(container_for.id).create_item(body=dict(body)),
-        client_factory=_factory_for(make_sync_token_credential()),
-        description="[AAD] create_item via sync token credential",
-        request_body=body,
-    )
+    body = {"pk": "a", "n": 1}
+    created_ids = []
+
+    def create(client):
+        item = dict(body, id=uuid.uuid4().hex)
+        container = client.get_database_client("parity_db").get_container_client(container_for.id)
+        created = container.create_item(body=item)
+        assert all(created[key] == value for key, value in item.items())
+        created_ids.append(created["id"])
+        return created
+
+    credential = make_sync_token_credential()
+    try:
+        cmp = run_on_both_backends(
+            create,
+            client_factory=_factory_for(credential),
+            description="[AAD] create_item via sync token credential",
+            request_body=body,
+        )
+    finally:
+        close = getattr(credential, "close", None)
+        if close is not None:
+            close()
+    for outcome in (cmp.core_python, cmp.rust):
+        assert outcome.raised is None, outcome
+    assert len(set(created_ids)) == 2, "Both backends must create distinct items successfully"
     cmp.print_report()
     cmp.assert_functional_parity()
 
@@ -99,5 +117,4 @@ def test_engine_multiplied_for_distinct_credential_objects_rust():
     h2 = BindingAdapter(endpoint=os.environ["ACCOUNT_HOST"],
                      token_credential=make_sync_token_credential())._ensure_driver_handle()
     assert h1 != h2, "distinct credential objects must build distinct engine handles"
-
 

@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Structural gate for the legacy-folder parity copies.
+"""Structural gate for migrated Rust copies of the original tests.
 
-The legacy-folder parity workflow copies each in-scope v4 test into a
-``tests/<op>/<surface>/legacy/`` folder and changes exactly one thing:
-the copy constructs its client with ``_backend="rust"``. The Rust column
+The migration workflow copies each in-scope v4 test into a
+``tests/<op>/<surface>/`` folder, retaining a ``# Source:`` reference and
+selecting ``_backend="rust"``. The Rust column
 of every parity audit comes from running those copies. Two ways that can
 rot silently:
 
@@ -21,18 +21,20 @@ These checks parse the copies and their cited sources, then perform an
 isolated collection-only run. They do not execute service tests or fixtures.
 They check six invariants:
 
-1. Every ``legacy/`` folder is an importable package (has ``__init__.py``).
+1. Every migrated surface folder is an importable package (has ``__init__.py``).
 2. Every ``test_*`` method carries a ``# Source:`` comment naming the
    original it was copied from.
 3. Every ``# Source:`` reference resolves to its original or an explicitly
    approved retained replacement, unless marked ``(new)`` for a test with
    no v4 ancestor.
-4. Every legacy test file pins the Rust backend with the literal
+4. Every migrated test file pins the Rust backend with the literal
    ``_backend="rust"``.
-5. No test in a legacy folder is skipped without a structured reason, so
+5. No migrated test is skipped without a structured reason, so
    every skip names a category a reviewer can act on.
-6. Every copied test is selected by ``-m cosmosEmulator`` without relying on
-   shared conftest hooks to add the marker.
+6. Every copied test keeps the original's ``cosmos*`` lane markers (module,
+   class and method combined), so it runs in the same pipeline lanes. A
+   live-only or multi-region original is not made emulator-only by copying.
+   Every copy must also collect without shared conftest hooks.
 
 The collection check runs pytest in a subprocess without shared conftest files.
 """
@@ -56,7 +58,7 @@ _PKG_ROOT = _TESTS_DIR.parent
 #: The backend pin, in both quote styles a copy might use.
 _PIN_LITERALS = ('_backend="rust"', "_backend='rust'")
 
-#: A test in a legacy folder may only be skipped if its reason string
+#: A migrated test may only be skipped if its reason string
 #: starts with one of these category tags, so every skip says which kind
 #: of gap parked it. Extend this list when a new category is needed.
 _STRUCTURED_SKIP_TAGS = (
@@ -72,17 +74,18 @@ _STRUCTURED_SKIP_TAGS = (
 _SKIP_NAMES = frozenset({"skip", "skipif", "skipIf", "skipUnless"})
 
 
-def _legacy_dirs():
-    """Every directory named ``legacy`` anywhere under ``tests/``."""
-    return sorted(p for p in _TESTS_DIR.rglob("legacy") if p.is_dir())
-
-
 def _legacy_test_files():
-    """Every ``test_*.py`` file inside a legacy folder."""
-    files = []
-    for directory in _legacy_dirs():
-        files.extend(sorted(directory.glob("test_*.py")))
-    return files
+    """Find source-linked copies without including neighboring parity/unit tests."""
+    return sorted(
+        path for path in _TESTS_DIR.rglob("test_*.py")
+        if path.parent.name in ("sync", "aio")
+        and any(line.lstrip().startswith("# Source:") for line in path.read_text(encoding="utf-8").splitlines())
+    )
+
+
+def _legacy_dirs():
+    """Surface packages containing migrated tests."""
+    return sorted({path.parent for path in _legacy_test_files()})
 
 
 def _rel(path):
@@ -157,6 +160,40 @@ def _skip_reason(dec):
     return True, None
 
 
+def _lane_markers_from(decorators):
+    """``cosmos*`` names from ``@pytest.mark.<name>`` expressions."""
+    names = set()
+    for dec in decorators:
+        target = dec.func if isinstance(dec, ast.Call) else dec
+        if (isinstance(target, ast.Attribute) and target.attr.startswith("cosmos")
+                and isinstance(target.value, ast.Attribute) and target.value.attr == "mark"):
+            names.add(target.attr)
+    return names
+
+
+def _effective_lane_markers(tree, class_name, method_name):
+    """Lane markers that apply to one test (module ``pytestmark`` + class + method).
+
+    Returns None when the test is not defined in ``tree``.
+    """
+    markers = set()
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and any(
+                isinstance(t, ast.Name) and t.id == "pytestmark" for t in node.targets):
+            value = node.value
+            markers |= _lane_markers_from(value.elts if isinstance(value, (ast.List, ast.Tuple)) else [value])
+    scopes = [(None, tree.body)]
+    if class_name is not None:
+        scopes = [(n, n.body) for n in tree.body if isinstance(n, ast.ClassDef) and n.name == class_name]
+    for cls, body in scopes:
+        for func in body:
+            if isinstance(func, (ast.FunctionDef, ast.AsyncFunctionDef)) and func.name == method_name:
+                if cls is not None:
+                    markers |= _lane_markers_from(cls.decorator_list)
+                return markers | _lane_markers_from(func.decorator_list)
+    return None
+
+
 def _class_method_exists(src_tree, class_name, method_name):
     """True if ``class_name.method_name`` (or a module function when
     ``class_name`` is None) is defined in the parsed source tree."""
@@ -178,20 +215,21 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
     """Check the copies' source structure and marker-based collection."""
 
     def test_legacy_folders_discovered_rust(self):
-        """Sanity: the walk finds legacy folders, so the checks below
+        """Sanity: the walk finds migrated copies, so the checks below
         can't pass vacuously on a misconfigured path."""
         dirs = _legacy_dirs()
         self.assertTrue(
             dirs,
-            "No tests/<op>/<surface>/legacy/ folders found under {}.".format(_rel(_TESTS_DIR)),
+            "No source-linked tests/<op>/<surface>/ copies found under {}.".format(_rel(_TESTS_DIR)),
         )
 
     def test_every_legacy_folder_is_a_package_rust(self):
-        """Invariant 1: each legacy/ folder has __init__.py."""
-        missing = [_rel(d) for d in _legacy_dirs() if not (d / "__init__.py").is_file()]
+        """Invariant 1: each surface and operation has __init__.py."""
+        packages = {package for surface in _legacy_dirs() for package in (surface, surface.parent)}
+        missing = sorted(_rel(d) for d in packages if not (d / "__init__.py").is_file())
         self.assertEqual(
             missing, [],
-            "legacy/ folders missing __init__.py:\n  - " + "\n  - ".join(missing),
+            "Migrated-test packages missing __init__.py:\n  - " + "\n  - ".join(missing),
         )
 
     def test_every_test_method_has_a_source_comment_rust(self):
@@ -206,7 +244,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
                     violations.append(_label(path, class_name, func.name))
         self.assertEqual(
             violations, [],
-            "test methods in legacy/ without a `# Source:` comment:\n  - "
+            "migrated test methods without a `# Source:` comment:\n  - "
             + "\n  - ".join(violations),
         )
 
@@ -241,7 +279,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
                     violations.append("{} -> {} not found in {}".format(where, qualified, path_part))
         self.assertEqual(
             violations, [],
-            "legacy/ tests whose `# Source:` lineage no longer resolves:\n  - "
+            "migrated tests whose `# Source:` lineage no longer resolves:\n  - "
             + "\n  - ".join(violations),
         )
 
@@ -254,7 +292,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
                 violations.append(_rel(path))
         self.assertEqual(
             violations, [],
-            'legacy/ files missing the literal _backend="rust" pin (without it '
+            'migrated files missing the literal _backend="rust" pin (without it '
             "the rust column silently runs core-python):\n  - " + "\n  - ".join(violations),
         )
 
@@ -283,12 +321,45 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
                         violations.append("{}::{} -> skip reason not structured: {!r}".format(_rel(path), label, reason))
         self.assertEqual(
             violations, [],
-            "legacy/ skips whose reason does not start with a structured tag "
+            "migrated-test skips whose reason does not start with a structured tag "
             "({}):\n  - ".format(", ".join(_STRUCTURED_SKIP_TAGS)) + "\n  - ".join(violations),
         )
 
-    def test_every_legacy_test_is_selected_by_emulator_marker_rust(self):
-        """Marker-filtered collection must retain every copied parameter case."""
+    def test_every_copy_keeps_original_lane_markers_rust(self):
+        """Invariant 6: each copy keeps its original's ``cosmos*`` lane markers."""
+        violations = []
+        src_cache = {}
+        for path in _legacy_test_files():
+            text = path.read_text(encoding="utf-8")
+            lines = text.splitlines()
+            tree = ast.parse(text, filename=str(path))
+            for class_name, func in _iter_test_functions(tree):
+                ref = _source_ref(func, lines)
+                if ref is None or ref.startswith("(new)") or "::" not in ref:
+                    continue
+                path_part, qualified = RETIRED_TEST_SOURCES.get(ref, ref).split("::", 1)
+                src_path = _PKG_ROOT / path_part
+                if not src_path.is_file():
+                    continue  # reported by invariant 3
+                src_class, src_method = qualified.rsplit(".", 1) if "." in qualified else (None, qualified)
+                if src_path not in src_cache:
+                    src_cache[src_path] = ast.parse(src_path.read_text(encoding="utf-8"), filename=str(src_path))
+                original = _effective_lane_markers(src_cache[src_path], src_class, src_method)
+                if original is None:
+                    continue  # reported by invariant 3
+                copy = _effective_lane_markers(tree, class_name, func.name)
+                if copy != original:
+                    violations.append("{} -> missing {}, extra {} (source {})".format(
+                        _label(path, class_name, func.name),
+                        sorted(original - copy), sorted(copy - original), ref))
+        self.assertEqual(
+            violations, [],
+            "migrated tests whose cosmos* lane markers differ from the original:\n  - "
+            + "\n  - ".join(violations),
+        )
+
+    def test_every_legacy_test_collects_without_conftest_rust(self):
+        """Every copied test definition collects without shared conftest hooks."""
         files = _legacy_test_files()
         expected = set()
         for path in files:
@@ -301,7 +372,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
         self.assertTrue(expected, "No legacy-copy test definitions found.")
 
         env = dict(os.environ)
-        env["PYTHONPATH"] = str(_TESTS_DIR) + os.pathsep + env.get("PYTHONPATH", "")
+        env["PYTHONPATH"] = str(_PKG_ROOT / "tests") + os.pathsep + env.get("PYTHONPATH", "")
         env.pop("COSMOS_PARITY_CAPTURE_OP", None)
         env.pop("PYTEST_ADDOPTS", None)
 
@@ -321,10 +392,6 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
         self.assertSetEqual(
             {nodeid.split("[", 1)[0] for nodeid in unfiltered}, expected,
             "Unfiltered collection must include all legacy-copy test definitions.",
-        )
-        self.assertSetEqual(
-            collect(["-m", "cosmosEmulator"]), unfiltered,
-            "Marker-filtered collection must retain every test, including parameter cases.",
         )
 
 

@@ -38,7 +38,7 @@ def main():
         "-p", "no:cacheprovider", "-v", "-s", "--disable-warnings", "--tb=short",
     ]
     files = [
-        ROOT / "tests" / "get_latest_session_token" / surface / "legacy" / name
+        ROOT / "tests" / "get_latest_session_token" / surface / name
         for surface, name in (
             ("sync", "test_session_token_helpers_owned.py"),
             ("sync", "test_latest_session_token.py"),
@@ -54,7 +54,7 @@ def main():
     with TemporaryDirectory(prefix="token_corepy_", dir=artifacts) as temporary:
         baseline_files = []
         for path in files:
-            target = Path(temporary) / path.parent.parent.name / path.name
+            target = Path(temporary) / path.parent.name / path.name
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(_source_for_backend(path, "core-python"), encoding="utf-8")
             baseline_files.append(str(target))

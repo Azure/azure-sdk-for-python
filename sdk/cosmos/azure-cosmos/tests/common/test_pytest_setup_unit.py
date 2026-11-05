@@ -85,10 +85,10 @@ def test_nonexecuting_runs_do_not_create_live_resources_rust(setup_module_under_
 
 @pytest.mark.parametrize("session", [_session(), _session(failures=1, continue_on_errors=True)])
 def test_live_run_still_creates_shared_resources_rust(setup_module_under_test, monkeypatch, session):
-    """A run that needs resources gets all six, in order, from one client.
+    """A run that needs resources provisions them in order with one Rust client.
 
-    The order matters: the account is asked about itself first, then the database is made,
-    then the containers that live inside it. Every call has to use the same client, since
+    The order matters: the database is made before its containers.
+    Every call has to use the same client, since
     a second one would mean a second connection to the same account.
 
     The second case is the exception to the rule above. A run that hit collection errors
@@ -98,10 +98,9 @@ def test_live_run_still_creates_shared_resources_rust(setup_module_under_test, m
     client = object()
     config = Mock()
     monkeypatch.setattr(setup_module_under_test, "_get_setup_client", lambda: client)
-    monkeypatch.setattr(setup_module_under_test.test_config, "TestConfig", config)
+    monkeypatch.setattr(setup_module_under_test, "resources", config)
     setup_module_under_test.pytest_collection_finish(session)
     assert [call[0] for call in config.method_calls] == [
-        "get_account_info",
         "create_database_if_not_exist",
         "create_single_partition_container_if_not_exist",
         "create_multi_partition_container_if_not_exist",

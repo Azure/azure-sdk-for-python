@@ -25,9 +25,25 @@ two test cases per surface, with three key-scoped queries in each case.
 --query-test ordering selects partition-scoped ORDER BY/paging.
 --query-test positional selects the synchronous seven-positional-argument
 query, preserving the original scope, page-size and ordered-ID assertions.
---query-test vector-ordering selects the synchronous original 90-query
-distance-ordering test. Core Python provisions three owned 12,000 RU/s
+--query-test vector-ordering selects the original 90-query test on either surface.
+Core Python provisions three owned 12,000 RU/s
 vector containers; only the query client changes backend.
+--query-test vector-pagination selects the original TOP 8/page-size 3
+test on either surface, with one owned 12,000 RU/s quantized-flat container.
+Core Python provisions and seeds it; only the query client changes backend.
+--query-test vector-rejection selects the original invalid-query test on either
+surface, with one empty two-dimensional 12,000 RU/s quantized-flat container.
+Core Python provisions it; only the query client changes backend.
+--query-test vector-buffer selects the original environment-variable test on either
+surface on the same empty container, restoring the previous setting after the test.
+--query-test vector-large-data selects the original six-query test on either surface:
+TOP/OFFSET LIMIT/DISTINCT. Its original body seeds 2000 items through
+Core Python; queries alone use the selected backend. No buffer override is added.
+--query-test vector-cross-hook selects the original TOP 5 cross-partition
+response-hook test on either surface, including its exact two-callback assertion.
+Core Python provisions and seeds one 12,000 RU/s quantized-flat/cosine container.
+--query-test vector-partition-hook selects the original TOP 4 test on either
+surface, using that same fixture, partition_key="1" and exactly one callback.
 --query-test offset selects seven OFFSET LIMIT queries; --surface aio selects
 the async counterpart (sync is default).
 --query-test distinct selects four DISTINCT queries on either surface.
@@ -80,6 +96,12 @@ QUERY_METHODS = {
     "parameters": "::TestQuery::test_query_items_with_parameters_none",
     "positional": "::TestQuery::test_query_positional_args",
     "vector-ordering": "::TestVectorSimilarityQuery::test_ordering_distances",
+    "vector-pagination": "::TestVectorSimilarityQuery::test_vector_query_pagination",
+    "vector-rejection": "::TestVectorSimilarityQuery::test_wrong_vector_search_queries",
+    "vector-buffer": "::TestVectorSimilarityQuery::test_vector_search_environment_variables",
+    "vector-large-data": "::TestVectorSimilarityQuery::test_vector_query_large_data",
+    "vector-cross-hook": "::TestVectorSimilarityQuery::test_vector_query_cross_partition_response_hook",
+    "vector-partition-hook": "::TestVectorSimilarityQuery::test_vector_query_partitioned_response_hook",
     "ordering": "::TestQuery::test_query_pagination_with_max_item_count",
     "top": "::TestCrossPartitionTopOrderBy::test_orderby_top_query",
     "offset": "::TestQuery::test_offset_limit",
@@ -99,6 +121,13 @@ QUERY_METHODS = {
 }
 
 ASYNC_QUERY_METHODS = {
+    "vector-ordering": "::TestVectorSimilarityQueryAsync::test_ordering_distances_async",
+    "vector-pagination": "::TestVectorSimilarityQueryAsync::test_vector_query_pagination_async",
+    "vector-partition-hook": "::TestVectorSimilarityQueryAsync::test_vector_query_partitioned_response_hook_async",
+    "vector-cross-hook": "::TestVectorSimilarityQueryAsync::test_vector_query_cross_partition_response_hook_async",
+    "vector-rejection": "::TestVectorSimilarityQueryAsync::test_wrong_vector_search_queries_async",
+    "vector-buffer": "::TestVectorSimilarityQueryAsync::test_vector_search_environment_variables_async",
+    "vector-large-data": "::TestVectorSimilarityQueryAsync::test_vector_query_large_data_async",
     "feed-ranges": "::TestQueryFeedRangeAsync::test_query_with_feed_range_for_all_partitions_async",
     "partition-feed-range": "::TestQueryFeedRangeAsync::test_query_with_feed_range_for_partition_key_async",
     "none-options": "::TestNoneOptionsAsync::test_container_query_items_none_options_partition_async",
@@ -135,7 +164,7 @@ def run_copied_suite(backend, options):
     from run_database_throughput_parity import _source_for_backend
 
     files = [
-        ROOT / "tests" / "read_item" / surface / "legacy" / name
+        ROOT / "tests" / "read_item" / surface / name
         for surface, names in (
             ("sync", ("test_none_options.py", "test_headers.py", "test_crud.py")),
             ("aio", ("test_none_options.py", "test_headers.py", "test_crud_async.py")),
@@ -151,7 +180,7 @@ def run_copied_suite(backend, options):
     with TemporaryDirectory(prefix="read_item_corepy_", dir=artifacts) as temporary:
         baseline_files = []
         for path in files:
-            target = Path(temporary) / path.parent.parent.name / path.name
+            target = Path(temporary) / path.parent.name / path.name
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(_source_for_backend(path, "core-python"), encoding="utf-8")
             baseline_files.append(str(target))
@@ -174,7 +203,9 @@ def main(argv=None):
         parser.error(
             "--surface aio requires --op query_items --query-test none-options, offset, distinct, count, "
             "metrics, index-metrics, advice, continuation, cross-continuation, token-limit, "
-            "prefix-continuation, feed-ranges, partition-feed-range, sum, avg, max, or min"
+            "prefix-continuation, feed-ranges, partition-feed-range, vector-ordering, vector-pagination, "
+            "vector-partition-hook, vector-cross-hook, vector-rejection, vector-buffer, vector-large-data, "
+            "sum, avg, max, or min"
         )
     for name in ("ACCOUNT_HOST", "ACCOUNT_KEY"):
         if not os.environ.get(name):
@@ -190,11 +221,14 @@ def main(argv=None):
     source_file = "test_query.py" if args.op == "query_items" else "test_none_options.py"
     if args.query_test == "top":
         source_file = "test_orderby.py"
-    if args.query_test == "vector-ordering":
-        source_file = "test_query_vector_similarity.py"
     if args.surface == "aio":
         source_file = "test_query_async.py"
         method = ASYNC_QUERY_METHODS[args.query_test]
+    if args.query_test in (
+        "vector-ordering", "vector-pagination", "vector-rejection", "vector-buffer", "vector-large-data",
+        "vector-cross-hook", "vector-partition-hook",
+    ):
+        source_file = "test_query_vector_similarity_async.py" if args.surface == "aio" else "test_query_vector_similarity.py"
     if args.query_test == "none-options":
         source_file = "test_none_options_async.py" if args.surface == "aio" else "test_none_options.py"
     if args.query_test in ("sum", "avg", "min"):
@@ -219,13 +253,13 @@ def main(argv=None):
     if args.suite == "copied":
         return run_copied_suite(args.backend, options)
     if args.backend == "rust":
-        folder = ROOT / "tests" / args.op / args.surface / "legacy"
+        folder = ROOT / "tests" / args.op / args.surface
         return pytest.main(options + [str(folder / filename) + node + "_rust" for filename, node in selections])
 
     if args.op == "query_items":
         from run_database_throughput_parity import _source_for_backend
 
-        source = ROOT / "tests" / "query_items" / args.surface / "legacy" / source_file
+        source = ROOT / "tests" / "query_items" / args.surface / source_file
         artifacts = ROOT / "docs" / "V5" / "_parity_runs"
         artifacts.mkdir(parents=True, exist_ok=True)
         with TemporaryDirectory(prefix=f"query_{args.query_test}_corepy_", dir=artifacts) as temporary:

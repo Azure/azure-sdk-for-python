@@ -391,6 +391,7 @@ def test_legacy_custom_retry_policy_is_preserved_rust(
     assert prepared.ConnectionRetryConfiguration is custom_policy
 
 
+@pytest.mark.parametrize("client_module", [async_client], ids=["async"])
 def test_rust_grouped_retry_policy_is_not_retired_by_keyword_guard_rust(construct_client):
     policy = ConnectionPolicy()
     custom_policy = MagicMock()

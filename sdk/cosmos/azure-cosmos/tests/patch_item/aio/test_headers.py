@@ -1,43 +1,48 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 """Async ``test_container_patch_item_throughput_bucket_async`` on the
-**core-python** path (the parity reporter's core-python column).
+``_backend="rust"`` path.
 
-Deterministic twin of ``aio/legacy/test_headers.py`` -- identical except
-the absent ``_backend`` argument (so this runs the SDK default
-core-python path) -- with a fixed partition-key value and id so the
-parity reporter's body diff against the Rust column is meaningful. See
-the sync sibling ``tests/patch_item/sync/test_headers.py`` for the full
-rationale (the main-tree async original uses a random per-run pk).
+Copied from ``tests/test_headers_async.py``; the class and method names
+match the source (apart from the method's ``_rust`` suffix) so the parity reporter can
+pair the core-python and
+Rust runs. The file name drops the ``_async`` suffix so it pairs with
+the sync copy. Builds its own database + container and reads
+``ACCOUNT_HOST`` / ``ACCOUNT_KEY`` from the environment.
 
-Run (core-python column):
-``pytest tests/patch_item/aio/test_headers.py -v -s``
+Run: ``pytest --noconftest tests/patch_item/aio/test_headers.py -v``
 """
+import importlib
 import os
 import unittest
 from unittest.mock import patch
 import uuid
 
+import pytest
+
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos import PartitionKey, http_constants
 
 
-HOST = os.environ["ACCOUNT_HOST"]
-KEY = os.environ["ACCOUNT_KEY"]
+HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
+KEY = os.environ.get(
+    "ACCOUNT_KEY",
+    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+)
 
 
-# Same value as the Rust copy, so the wire bytes match.
+# Same value as the source, so the wire bytes match core-python.
 request_throughput_bucket_number = 3
 
 
+@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAADLong
 class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
-    """Verify async patch request headers and the resulting item."""
 
     async def asyncSetUp(self):
-        # No ``_backend`` -> the SDK default (core-python) path.
-        self.client = CosmosClient(HOST, KEY)
+        self.client = CosmosClient(HOST, KEY, _backend="rust")
         await self.client.__aenter__()
-        self._db_id = "corepy_pi_headers_" + uuid.uuid4().hex[:8]
+        self._db_id = "legacy_pi_headers_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
         self.database = await self.client.create_database(self._db_id)
         self.container = await self.database.create_container(
@@ -53,8 +58,15 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
         await self.client.close()
 
     async def test_container_patch_item_throughput_bucket_async_rust(self):
-        """Verify the async patch_item forwards the throughput_bucket kwarg as the x-ms-cosmos-throughput-bucket header and that all six patch operations produce the expected item."""
+        """Verify the operation prepares the requested throughput bucket."""
+        # Source: tests/test_headers_async.py::TestHeadersAsync.test_container_patch_item_throughput_bucket_async
+        # NOTE: the partition-key value and item id are FIXED (not a random
+        # uuid like the source) so the parity reporter can diff the patched
+        # item field-by-field against the core-python column -- a random
+        # pk would show up as a spurious body divergence. Each column builds
+        # its own fresh container, so the fixed (pk, id) never collides.
         pkValue = "patch_item_pk"
+        # Create item to patch
         item = {
             "id": "patch_item",
             "pk": pkValue,
@@ -65,6 +77,7 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             "company": "Microsoft",
             "number": 3}
         await self.container.create_item(item)
+        # Define and run patch operations
         operations = [
             {"op": "add", "path": "/color", "value": "yellow"},
             {"op": "remove", "path": "/prop"},
@@ -73,17 +86,16 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             {"op": "incr", "path": "/number", "value": 7},
             {"op": "move", "from": "/color", "path": "/favorite_color"}
         ]
-        transport = self.client.client_connection.pipeline_client._pipeline._transport
-        with patch.object(transport, "send", wraps=transport.send) as send:
+        binding = importlib.import_module(type(self.client._adapter).__module__)._rust_module
+        with patch.object(binding, "patch_item_async", wraps=binding.patch_item_async) as operation:
             await self.container.patch_item(
                 item="patch_item",
                 partition_key=pkValue,
                 patch_operations=operations,
                 throughput_bucket=request_throughput_bucket_number)
-        self.assertTrue(send.called)
-        for call in send.call_args_list:
+        self.assertTrue(operation.called)
+        for call in operation.call_args_list:
             self.assertEqual(
-                call.args[0].headers[http_constants.HttpHeaders.ThroughputBucket],
+                call.args[1].headers[http_constants.HttpHeaders.ThroughputBucket],
                 str(request_throughput_bucket_number),
             )
-

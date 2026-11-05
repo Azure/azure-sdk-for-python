@@ -19,13 +19,16 @@ pytest.importorskip("opentelemetry.sdk.trace")
 # pylint: disable=wrong-import-position
 from opentelemetry import trace
 from opentelemetry.sdk.trace.sampling import ALWAYS_OFF
-from common.test_rust_telemetry_unit import (  # pylint: disable=unused-import
+from telemetry.test_rust_telemetry_unit import (  # pylint: disable=unused-import
     DriverTransportError,
     attempt_spans,
     contribution_response,
     recording_setup,
 )
-from common.test_container_backend_unit import _new_sync_connection, _new_async_connection
+from common.test_container_backend_unit import (
+    _new_sync_connection,
+    _new_async_connection,
+)
 from common.test_list_databases_telemetry_unit import DriverUnsupportedQueryError
 from azure.core.exceptions import ServiceResponseError
 from azure.core.settings import settings
@@ -36,7 +39,10 @@ from azure.cosmos._helpers._item_context import ItemClientContext
 from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.aio._database import DatabaseProxy as AsyncDatabaseProxy
 from azure.cosmos.aio._backend import binding_adapter as async_binding
-from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosResourceNotFoundError
+from azure.cosmos.exceptions import (
+    CosmosClientTimeoutError,
+    CosmosResourceNotFoundError,
+)
 
 # pylint: enable=wrong-import-position
 
@@ -44,6 +50,26 @@ from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosResourceNotF
 @pytest.fixture(name="container_operation", params=["list_containers", "query_containers"])
 def container_operation_setup(request):
     return request.param
+
+
+@pytest.mark.parametrize("enabled", [False, True])
+def test_metadata_page_tracing_options_reach_owned_spans(listing, recording, enabled):
+    h = listing
+    settings.tracing_enabled = not enabled
+    h.database._item_context = replace(h.database._item_context, tracing_attributes={"bank.component": "orders"})
+    pager = h.create_iterable(
+        tracing_attributes={"bank.component": "catalog"},
+        tracing_options={"enabled": enabled, "attributes": {"bank.page": "first"}},
+    )
+    assert not h.calls and not fetch_spans(recording) and not attempt_spans(recording)
+    recording.exporter.clear()
+    assert h.next(pager.by_page()) == [{"id": "orders"}]
+    assert len(h.calls) == 1 and h.calls[0][1] is enabled
+    spans = recording.exporter.get_finished_spans()
+    assert len(spans) == (3 if enabled else 0)
+    for span in spans:
+        assert span.attributes["bank.component"] == "catalog"
+        assert span.attributes["bank.page"] == "first"
 
 
 @pytest.fixture(name="listing", params=["sync", "async"])
@@ -61,7 +87,7 @@ def container_listing_setup(request, recording, monkeypatch, container_operation
     monkeypatch.setattr(
         backend,
         "_ensure_driver_handle",
-        AsyncMock(return_value="driver") if asynchronous else Mock(return_value="driver"),
+        (AsyncMock(return_value="driver") if asynchronous else Mock(return_value="driver")),
     )
     monkeypatch.setattr(module, "_DRIVER_TRANSPORT_ERROR", DriverTransportError)
     monkeypatch.setattr(module, "_UNSUPPORTED_QUERY_ERROR", DriverUnsupportedQueryError)
@@ -117,7 +143,13 @@ def container_listing_setup(request, recording, monkeypatch, container_operation
         body = {"DocumentCollections": rows} if h.status == 200 else {"message": "missing"}
         result = h.transform(
             (
-                (h.status, 0, headers, b"invalid-json" if h.malformed else json.dumps(body).encode(), None),
+                (
+                    h.status,
+                    0,
+                    headers,
+                    b"invalid-json" if h.malformed else json.dumps(body).encode(),
+                    None,
+                ),
                 payload,
             )
         )
@@ -153,7 +185,7 @@ def container_listing_setup(request, recording, monkeypatch, container_operation
     async def next_async(pages):
         return [row async for row in await pages.__anext__()]
 
-    h.next = lambda pages: asyncio.run(next_async(pages)) if asynchronous else list(next(pages))
+    h.next = lambda pages: (asyncio.run(next_async(pages)) if asynchronous else list(next(pages)))
     h.next_async = next_async
     return h
 
@@ -162,7 +194,11 @@ def fetch_spans(recording):
     return [
         s
         for s in recording.exporter.get_finished_spans()
-        if s.name in ("DatabaseProxy.list_containers.fetch", "DatabaseProxy.query_containers.fetch")
+        if s.name
+        in (
+            "DatabaseProxy.list_containers.fetch",
+            "DatabaseProxy.query_containers.fetch",
+        )
     ]
 
 
@@ -272,7 +308,7 @@ def test_container_listing_telemetry_preserves_errors(listing, recording, failur
     elif failure == "transport":
         h.error, expected = DriverTransportError("failed"), ServiceResponseError
     elif failure == "timeout":
-        h.error, expected = TimeoutError("timed out"), CosmosClientTimeoutError if timeout else TimeoutError
+        h.error, expected = TimeoutError("timed out"), (CosmosClientTimeoutError if timeout else TimeoutError)
     elif failure == "parse":
         h.malformed, expected = True, json.JSONDecodeError
     else:
@@ -300,11 +336,22 @@ def test_container_listing_telemetry_diagnostics_fail_independently(listing, rec
     elif detail == "malformed":
         h.transform = lambda value: (value[0], {"schema_version": 99})
     elif detail == "partial":
-        h.transform = lambda value: (value[0], {**value[1], "complete": False})
+        h.transform = lambda value: (
+            value[0],
+            {
+                **value[1],
+                "complete": False,
+                "incomplete_reasons": ["metadata_diagnostics_unavailable"],
+            },
+        )
     elif detail == "invalid-response":
         h.transform = lambda _: ("invalid",)
     else:
-        monkeypatch.setattr(telemetry, "emit_attempts", Mock(side_effect=RuntimeError("recording failed")))
+        monkeypatch.setattr(
+            telemetry,
+            "emit_attempts",
+            Mock(side_effect=RuntimeError("recording failed")),
+        )
         h.database._item_context = replace(
             h.database._item_context,
             telemetry_handlers=(
@@ -320,7 +367,8 @@ def test_container_listing_telemetry_diagnostics_fail_independently(listing, rec
         assert h.next(pages) == [{"id": "orders"}]
     assert len(h.calls) == len(h.seen) == len(fetch_spans(recording)) == 1
     assert h.seen[0].outcome == ("error" if detail == "invalid-response" else "success")
-    assert not any(k.startswith("cosmos.poc.") for k in fetch_spans(recording)[0].attributes)
+    assert "cosmos.poc.request_count" not in fetch_spans(recording)[0].attributes
+    assert "cosmos.poc.retained_request_count" not in fetch_spans(recording)[0].attributes
     assert len(attempt_spans(recording)) == (2 if detail == "partial" else 0)
 
 
@@ -345,12 +393,15 @@ def test_container_listing_telemetry_partial_consumption_and_current_settings(li
 @pytest.mark.parametrize("case", ["unsupported", "disabled-option", "no-import"])
 def test_container_listing_telemetry_keeps_other_paths(listing, recording, monkeypatch, case):
     h = listing
-    if case in ("unsupported", "disabled-option"):
-        kwargs = {"unknown_setting": True} if case == "unsupported" else {"tracing_options": {"enabled": False}}
+    if case == "disabled-option":
+        assert h.next(h.create_iterable(tracing_options={"enabled": False}).by_page()) == [{"id": "orders"}]
+        assert len(h.calls) == len(h.seen) == 1 and h.seen[0].outcome == "success"
+        assert not h.calls[0][1] and not fetch_spans(recording) and not attempt_spans(recording)
+    elif case == "unsupported":
         with pytest.raises(NotImplementedError):
-            h.next(h.create_iterable(**kwargs).by_page())
+            h.next(h.create_iterable(unknown_setting=True).by_page())
         assert not h.calls and h.seen[0].outcome == "error"
-        assert len(fetch_spans(recording)) == int(case == "unsupported")
+        assert len(fetch_spans(recording)) == 1
     else:
         settings.tracing_enabled = False
         h.database._item_context = replace(h.database._item_context, telemetry_handlers=())
@@ -517,7 +568,10 @@ def test_container_query_and_listing_telemetry_remain_independent(listing, recor
     for pages in (queried, listed, queried, listed):
         h.next(pages)
     assert all(call[0].op == "list_containers" for call in h.calls)
-    assert [completion.operation for completion in h.seen] == ["query_containers", "list_containers"] * 2
+    assert [completion.operation for completion in h.seen] == [
+        "query_containers",
+        "list_containers",
+    ] * 2
     assert [span.name for span in fetch_spans(recording)] == [
         "DatabaseProxy.query_containers.fetch",
         "DatabaseProxy.list_containers.fetch",

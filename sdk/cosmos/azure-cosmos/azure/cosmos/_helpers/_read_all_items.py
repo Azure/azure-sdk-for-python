@@ -37,7 +37,7 @@ from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict, CosmosItemPaged
 from ..exceptions import CosmosClientTimeoutError
 from .._operation_deadline import legacy_deadline_options, remaining_timeout
-from .._telemetry import trace_operation
+from .._telemetry import RecordingOptions, trace_operation
 from ._read_items import ResponseHeaderAccumulator
 from ._response_parse import process_backend_response
 from .._query_rust_routing import page_to_backend_response
@@ -48,13 +48,9 @@ def validate_read_all_continuation_token(token: Optional[str], rust: bool) -> No
     if token is None:
         return
     if not isinstance(token, str) or not token:
-        raise ValueError(
-            "read_all_items continuation must be a nonempty string or None."
-        )
+        raise ValueError("read_all_items continuation must be a nonempty string or None.")
     if token.startswith("c1.") != rust:
-        raise ValueError(
-            "read_all_items continuation belongs to an incompatible backend."
-        )
+        raise ValueError("read_all_items continuation belongs to an incompatible backend.")
 
 
 if TYPE_CHECKING:
@@ -64,44 +60,27 @@ if TYPE_CHECKING:
 class ReadAllConfig:
     """Snapshot request options and retain the selected Python backend."""
 
-    def __init__(
-        self, proxy: Any, kwargs: dict[str, Any], *, operation: str = "read_all_items"
-    ) -> None:
+    def __init__(self, proxy: Any, kwargs: dict[str, Any], *, operation: str = "read_all_items") -> None:
         self.operation = operation
         if operation != "query_items" and "populate_query_metrics" in kwargs:
             raise TypeError(f"{operation}() does not accept 'populate_query_metrics'.")
         self.hook = kwargs.pop("response_hook", None)
         if self.hook is not None and not callable(self.hook):
             raise TypeError(f"{operation} response_hook must be callable or None.")
-        kwargs["request_options"] = deepcopy(
-            kwargs.get("request_options", kwargs.pop("feed_options", {})) or {}
-        )
+        kwargs["request_options"] = deepcopy(kwargs.get("request_options", kwargs.pop("feed_options", {})) or {})
         self.options = deepcopy(compose_options_from_kwargs(kwargs))
         for key in ("timeout",):
             if key in kwargs:
                 self.options[key] = kwargs.pop(key)
         self.timeout = self.options.get("timeout")
         if not is_supported_operation_timeout(self.timeout):
-            raise ValueError(
-                f"{operation} timeout must be None or finite seconds >= 1 and < 2**64."
-            )
+            raise ValueError(f"{operation} timeout must be None or finite seconds >= 1 and < 2**64.")
         count = self.options.get("maxItemCount")
-        if count is not None and (
-            isinstance(count, bool)
-            or not isinstance(count, int)
-            or count == 0
-            or count < -1
-        ):
-            raise ValueError(
-                f"{operation} max_item_count must be a positive integer, -1, or None."
-            )
+        if count is not None and (isinstance(count, bool) or not isinstance(count, int) or count == 0 or count < -1):
+            raise ValueError(f"{operation} max_item_count must be a positive integer, -1, or None.")
         cache = self.options.get("maxIntegratedCacheStaleness")
-        if cache is not None and (
-            isinstance(cache, bool) or not isinstance(cache, int) or cache < 0
-        ):
-            raise ValueError(
-                f"{operation} cache staleness must be a nonnegative integer or None."
-            )
+        if cache is not None and (isinstance(cache, bool) or not isinstance(cache, int) or cache < 0):
+            raise ValueError(f"{operation} cache staleness must be a nonnegative integer or None.")
         if operation != "query_items" and "populateQueryMetrics" in self.options:
             raise TypeError(f"{operation}() does not accept query metrics.")
         self.proxy = proxy
@@ -109,10 +88,9 @@ class ReadAllConfig:
         context = proxy._item_context
         self._item_context = context
         self.response_state = context.response_state if context is not None else None
-        self.backend = (
-            context.adapter if context is not None else self.connection._backend
-        )
+        self.backend = context.adapter if context is not None else self.connection._backend
         self.rust = self.backend.name != "core-python"
+        self.recording_options = RecordingOptions.take(kwargs) if self.rust else RecordingOptions.snapshot({})
         if self.rust:
             allowed = {
                 "maxItemCount",
@@ -128,8 +106,12 @@ class ReadAllConfig:
             }
             if operation == "query_items":
                 allowed |= {
-                    "populateQueryMetrics", "populateIndexMetrics", "populateQueryAdvice",
-                    "enableScanInQuery", "availabilityStrategy", "correlatedActivityId",
+                    "populateQueryMetrics",
+                    "populateIndexMetrics",
+                    "populateQueryAdvice",
+                    "enableScanInQuery",
+                    "availabilityStrategy",
+                    "correlatedActivityId",
                     "responseContinuationTokenLimitInKb",
                 }
             initial = self.options.get("initialHeaders")
@@ -145,11 +127,7 @@ class ReadAllConfig:
                 "x-ms-documentdb-isquery",
                 "x-ms-cosmos-is-query-plan-request",
             }
-            if (
-                kwargs
-                or set(self.options) - allowed
-                or any(name.lower() in reserved for name in (initial or {}))
-            ):
+            if kwargs or set(self.options) - allowed or any(name.lower() in reserved for name in (initial or {})):
                 raise NotImplementedError(
                     f"{operation} cannot honor these options on Rust; no legacy fallback will be used."
                 )
@@ -163,7 +141,10 @@ class ReadAllConfig:
         return None if self.timeout is None else time.monotonic() + self.timeout
 
     def prepared(
-        self, token: Optional[str], cursor: Optional[_ItemFeedCursor], deadline: Optional[float]
+        self,
+        token: Optional[str],
+        cursor: Optional[_ItemFeedCursor],
+        deadline: Optional[float],
     ) -> PreparedPageRequest:
         """Build a prepared page request, keeping its feed cursor separate from body bytes.
 
@@ -197,9 +178,7 @@ class ReadAllConfig:
 class ReadAllPageState:
     """Keep one page iterator's progress and per-fetch response information."""
 
-    def __init__(
-        self, config: ReadAllConfig, headers: CaseInsensitiveDict, token: Optional[str]
-    ) -> None:
+    def __init__(self, config: ReadAllConfig, headers: CaseInsensitiveDict, token: Optional[str]) -> None:
         if config.operation == "read_all_items":
             validate_read_all_continuation_token(token, config.rust)
         self.config = config
@@ -248,9 +227,7 @@ class ReadAllPageState:
 
     def capture(self, headers: Any, body: Any) -> None:
         self.responses += 1
-        self.has_charge = (
-            self.has_charge or "x-ms-request-charge" in CaseInsensitiveDict(headers)
-        )
+        self.has_charge = self.has_charge or "x-ms-request-charge" in CaseInsensitiveDict(headers)
         self.accumulated(headers, None)
         self.captured.clear()
         self.captured.update(headers)
@@ -260,18 +237,10 @@ class ReadAllPageState:
     def parse(self, page: BackendPage) -> list[dict[str, Any]]:
         result = process_backend_response(
             page_to_backend_response(page),
-            response_state=(
-                self.config.response_state
-                if page.headers or page.continuation is not None
-                else None
-            ),
+            response_state=(self.config.response_state if page.headers or page.continuation is not None else None),
         )
-        if not isinstance(result, dict) or not isinstance(
-            result.get("Documents"), list
-        ):
-            raise ValueError(
-                f"{self.config.operation} received an invalid Documents response envelope."
-            )
+        if not isinstance(result, dict) or not isinstance(result.get("Documents"), list):
+            raise ValueError(f"{self.config.operation} received an invalid Documents response envelope.")
         rows = result["Documents"]
         if self.config.operation != "query_items" and any(not isinstance(row, dict) for row in rows):
             raise ValueError("read_all_items received a non-object document.")
@@ -292,9 +261,7 @@ class ReadAllPageState:
     ) -> tuple[Optional[str], list[dict[str, Any]]]:
         remaining_timeout(deadline)
         hook = self.config.hook
-        headers = CaseInsensitiveDict(
-            self.accumulated.headers if self.responses else self.headers
-        )
+        headers = CaseInsensitiveDict(self.accumulated.headers if self.responses else self.headers)
         if self.responses and not self.has_charge:
             headers.pop("x-ms-request-charge", None)
         if self.token is None:
@@ -333,7 +300,10 @@ class ReadAllPageState:
     name_of_span="ContainerProxy.read_all_items.fetch",
 )
 def _fetch_rust_page(
-    config: ReadAllConfig, state: ReadAllPageState, deadline: Optional[float]
+    config: ReadAllConfig,
+    state: ReadAllPageState,
+    deadline: Optional[float],
+    **_tracing_kwargs: Any,
 ) -> Optional[tuple[Optional[str], list[dict[str, Any]]]]:
     """Record one internal fetch; finish the public page only when it is ready."""
     previous = state.token
@@ -364,11 +334,7 @@ class ReadAllPageIterator(PageIterator):
         headers: CaseInsensitiveDict,
         continuation_token: Optional[str] = None,
     ) -> None:
-        token = (
-            continuation_token
-            if continuation_token is not None
-            else config.options.get("continuation")
-        )
+        token = continuation_token if continuation_token is not None else config.options.get("continuation")
         self.state = ReadAllPageState(config, headers, token)
         super().__init__(self._fetch, self._unpack, continuation_token=token)
 
@@ -379,38 +345,28 @@ class ReadAllPageIterator(PageIterator):
         # what can actually arrive. The value is passed straight through.
         return value
 
-    def _fetch(
-        self, _token: Optional[str]
-    ) -> tuple[Optional[str], list[dict[str, Any]]]:
+    def _fetch(self, _token: Optional[str]) -> tuple[Optional[str], list[dict[str, Any]]]:
         state = self.state
         if state.done:
             raise StopIteration
         if state.failed:
-            raise RuntimeError(
-                "read_all_items pager failed; resume a new pager from the last delivered bookmark."
-            )
+            raise RuntimeError("read_all_items pager failed; resume a new pager from the last delivered bookmark.")
         if not state.lock.acquire(blocking=False):
-            raise RuntimeError(
-                "Concurrent use of a read_all_items pager is not supported."
-            )
+            raise RuntimeError("Concurrent use of a read_all_items pager is not supported.")
         try:
             config = state.config
             deadline = config.deadline()
             state.begin()
             if config.rust:
                 while True:
-                    result = _fetch_rust_page(config, state, deadline)
+                    result = _fetch_rust_page(config, state, deadline, **config.recording_options.kwargs)
                     if result is not None:
                         break
                 rows = result[1]
             else:
-                state.legacy_options.update(
-                    legacy_deadline_options(config.options, deadline)
-                )
+                state.legacy_options.update(legacy_deadline_options(config.options, deadline))
                 if state.legacy_pages is None:
-                    properties = config.proxy._get_properties_with_options(
-                        state.legacy_options
-                    )
+                    properties = config.proxy._get_properties_with_options(state.legacy_options)
                     state.legacy_options[Constants.ContainerRID] = properties["_rid"]
                     remaining_timeout(deadline)
                     state.legacy_options["_read_all_response_headers"] = state.captured

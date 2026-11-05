@@ -41,7 +41,7 @@ def test_copied_dictionary_read_statements_match_original_rust(surface, filename
         )
         return function.body[start:]
 
-    copied = statements(ROOT / "tests" / "read_item" / surface / "legacy" / filename, method + "_rust")
+    copied = statements(ROOT / "tests" / "read_item" / surface / filename, method + "_rust")
     original = statements(ROOT / "tests" / filename, method)[:len(copied)]
     assert [ast.dump(node) for node in copied] == [ast.dump(node) for node in original]
 
@@ -75,7 +75,7 @@ def test_runner_imports_checkout_in_fresh_process_rust():
 def test_rust_fixture_cleanup_rust(monkeypatch, failure, operation):
     module = _load(
         "owned_" + operation + "_fixture",
-        ROOT / "tests" / operation / "sync" / "legacy" / "test_none_options.py",
+        ROOT / "tests" / operation / "sync" / "test_none_options.py",
     )
     events = []
     client = MagicMock()
@@ -163,7 +163,7 @@ def test_original_fixture_closes_acquired_clients_rust(monkeypatch, data_client_
 ])
 @pytest.mark.parametrize("failure", [None, "database", "container", "delete"])
 def test_async_read_fixture_cleanup_rust(monkeypatch, filename, classname, method, failure):
-    module = _load("async_owned_read_fixture", ROOT / "tests" / "read_item" / "aio" / "legacy" / filename)
+    module = _load("async_owned_read_fixture", ROOT / "tests" / "read_item" / "aio" / filename)
     events = []
     client, database, container = MagicMock(), MagicMock(), MagicMock()
     client.__aenter__ = AsyncMock(return_value=client)
@@ -283,12 +283,12 @@ def test_runner_selects_rust_copy_rust(monkeypatch, operation):
     selected = operation or "read_item"
     options = execute.call_args.args[0]
     expected_nodes = [(
-        str(ROOT / "tests" / selected / "sync" / "legacy" / "test_none_options.py")
+        str(ROOT / "tests" / selected / "sync" / "test_none_options.py")
         + "::TestNoneOptions::" + OPERATION_METHODS[selected] + "_rust"
     )]
     if selected == "upsert_item":
         expected_nodes.append(
-            str(ROOT / "tests" / selected / "sync" / "legacy" / "test_crud.py")
+            str(ROOT / "tests" / selected / "sync" / "test_crud.py")
             + "::TestCRUDOperations::test_document_upsert_rust"
         )
     assert options[-len(expected_nodes):] == expected_nodes

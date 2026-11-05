@@ -18,9 +18,7 @@ use pyo3::types::PyTuple;
 use azure_data_cosmos_driver::{
     driver::CosmosDriver,
     error::{status_codes::substatus, CosmosError, CosmosStatus},
-    models::{
-        ActivityId, CosmosOperation, CosmosResponse, DatabaseReference, SessionToken,
-    },
+    models::{ActivityId, CosmosOperation, CosmosResponse, DatabaseReference, SessionToken},
     options::{ContentResponseOnWrite, OperationOptions},
 };
 
@@ -30,7 +28,7 @@ use super::request::{build_operation_options, RequestHeadersAndOptions};
 use super::response::{
     tuple_from_container_feed_result, tuple_from_container_feed_result_with_attempts,
     tuple_from_query_containers_result, tuple_from_query_containers_result_with_attempts,
-    tuple_from_result, tuple_from_result_with_attempts,
+    tuple_from_resolved_result_with_attempts, tuple_from_result, tuple_from_result_with_attempts,
 };
 
 /// Create a container and convert the response for synchronous Python code.
@@ -189,7 +187,7 @@ pub(crate) fn run_delete_container_operation<'py>(
         operation_name,
         move |driver| run_delete_container_future(driver, modifiers, database_id, container_id),
         if include_attempts {
-            tuple_from_result_with_attempts
+            tuple_from_resolved_result_with_attempts
         } else {
             tuple_from_result
         },
@@ -212,7 +210,7 @@ pub(crate) fn run_delete_container_operation_async<'py>(
         operation_name,
         move |driver| run_delete_container_future(driver, modifiers, database_id, container_id),
         if include_attempts {
-            tuple_from_result_with_attempts
+            tuple_from_resolved_result_with_attempts
         } else {
             tuple_from_result
         },
@@ -238,7 +236,7 @@ pub(crate) fn run_replace_container_operation<'py>(
             run_replace_container_future(driver, modifiers, database_id, container_id, body_bytes)
         },
         if include_attempts {
-            tuple_from_result_with_attempts
+            tuple_from_resolved_result_with_attempts
         } else {
             tuple_from_result
         },
@@ -264,7 +262,7 @@ pub(crate) fn run_replace_container_operation_async<'py>(
             run_replace_container_future(driver, modifiers, database_id, container_id, body_bytes)
         },
         if include_attempts {
-            tuple_from_result_with_attempts
+            tuple_from_resolved_result_with_attempts
         } else {
             tuple_from_result
         },
@@ -581,7 +579,9 @@ mod tests {
             session_header: None,
             content_response_on_write: ContentResponseOnWrite::Enabled,
             excluded_regions_value: None,
-            driver_timeout_policy: Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(2))),
+            driver_timeout_policy: Some(EndToEndOperationLatencyPolicy::new(Duration::from_secs(
+                2,
+            ))),
             operation_timeout: None,
             availability_strategy: None,
             read_consistency_strategy: None,

@@ -88,6 +88,7 @@ class QuerySettings(_ValidatedSettings):
     supported_features: Optional[str] = None
     version: Optional[str] = None
     continuation_limit_kb: Optional[int] = None
+    max_buffered_query_window: Optional[int] = None
 
     def __post_init__(self) -> None:
         self._check_type("max_item_count", self.max_item_count, int)
@@ -102,6 +103,9 @@ class QuerySettings(_ValidatedSettings):
         self._check_type("supported_features", self.supported_features, str)
         self._check_type("version", self.version, str)
         self._check_type("continuation_limit_kb", self.continuation_limit_kb, int)
+        self._check_type("max_buffered_query_window", self.max_buffered_query_window, int)
+        if self.max_buffered_query_window is not None and not 0 <= self.max_buffered_query_window < 2**64:
+            raise ValueError("max_buffered_query_window must be a nonnegative u64")
 
 
 @dataclass(frozen=True)

@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import replace
+import os
 from typing import TYPE_CHECKING, Any, Iterator, Optional
 from uuid import uuid4
 
@@ -27,6 +28,7 @@ from .._backend._immutable import freeze_json
 from .._backend.operations import OP_QUERY_ITEMS
 from .._backend.partition_key_input import BindingPartitionKey
 from .._cosmos_responses import CosmosItemPaged
+from .._constants import _Constants as Constants
 from .._query_advisor import get_query_advice_info
 from .._telemetry import trace_operation
 from ._partition_key import query_partition_key_components
@@ -45,9 +47,7 @@ _QUERY_OPTIONS = {
 
 def uses_rust(proxy: Any) -> bool:
     context = proxy._item_context
-    backend = (
-        context.adapter if context is not None else proxy.client_connection._backend
-    )
+    backend = context.adapter if context is not None else proxy.client_connection._backend
     return backend.name != "core-python"
 
 
@@ -60,9 +60,7 @@ def reject_rust_continuation_token(kwargs: dict[str, Any]) -> None:
 
 
 def validate_query_continuation(token: Optional[str]) -> None:
-    if token is not None and (
-        not isinstance(token, str) or token.startswith(("q1.", "cf1."))
-    ):
+    if token is not None and (not isinstance(token, str) or token.startswith(("q1.", "cf1."))):
         raise ValueError("query_items requires a service or driver query continuation token.")
 
 
@@ -75,19 +73,15 @@ class QueryConfig(ReadAllConfig):
 
     def __init__(self, proxy: Any, kwargs: dict[str, Any]) -> None:
         self.query, self.parameters = normalize_query_specification(
-            kwargs.pop("query", None), kwargs.pop("parameters", None), operation="query_items",
+            kwargs.pop("query", None),
+            kwargs.pop("parameters", None),
+            operation="query_items",
         )
-        options = deepcopy(
-            kwargs.pop("request_options", kwargs.pop("feed_options", {})) or {}
-        )
+        options = deepcopy(kwargs.pop("request_options", kwargs.pop("feed_options", {})) or {})
         for public, internal in _QUERY_OPTIONS.items():
             if public in kwargs:
                 options[internal] = kwargs.pop(public)
-            if (
-                internal in options
-                and options[internal] is not None
-                and not isinstance(options[internal], bool)
-            ):
+            if internal in options and options[internal] is not None and not isinstance(options[internal], bool):
                 raise TypeError(f"{public} must be a bool or None.")
         key = kwargs.pop("partition_key", options.pop("partitionKey", None))
         feed = kwargs.pop("feed_range", None)
@@ -97,9 +91,7 @@ class QueryConfig(ReadAllConfig):
         if key is not None:
             components = partition_key_components(key)
             if len(components) > 3:
-                raise ValueError(
-                    "Query partition keys support at most three components."
-                )
+                raise ValueError("Query partition keys support at most three components.")
             partition = query_partition_key_components(components)
         interval = None
         if feed is not None:
@@ -111,9 +103,7 @@ class QueryConfig(ReadAllConfig):
                 or interval.get("isMinInclusive", True) is not True
                 or interval.get("isMaxInclusive", False) is not False
             ):
-                raise ValueError(
-                    "feed_range requires a nonempty min-inclusive, max-exclusive Range."
-                )
+                raise ValueError("feed_range requires a nonempty min-inclusive, max-exclusive Range.")
             interval = [interval["min"], interval["max"]]
         cross = kwargs.pop(
             "enable_cross_partition_query",
@@ -132,20 +122,14 @@ class QueryConfig(ReadAllConfig):
         )
         if limit is not None:
             if isinstance(limit, bool) or not isinstance(limit, int) or limit < 0:
-                raise ValueError(
-                    "continuation_token_limit must be a nonnegative integer."
-                )
+                raise ValueError("continuation_token_limit must be a nonnegative integer.")
             if limit:
                 options["responseContinuationTokenLimitInKb"] = limit
-        scope = kwargs.pop(
-            "full_text_score_scope", options.pop("fullTextScoreScope", None)
-        )
+        scope = kwargs.pop("full_text_score_scope", options.pop("fullTextScoreScope", None))
         if scope is not None:
             if scope not in ("Local", "Global"):
                 raise ValueError("full_text_score_scope must be Local or Global.")
-            raise NotImplementedError(
-                "Full-text statistics scope requires driver hybrid processing; no fallback."
-            )
+            raise NotImplementedError("Full-text statistics scope requires driver hybrid processing; no fallback.")
         options["correlatedActivityId"] = str(uuid4())
         kwargs["request_options"] = options
         super().__init__(proxy, kwargs, operation=OP_QUERY_ITEMS)
@@ -157,9 +141,7 @@ class QueryConfig(ReadAllConfig):
                 threshold = self.backend._client_config.hedging_threshold_ms
                 if threshold is not None:
                     strategy = {"threshold_ms": threshold}
-            self.options["availabilityStrategy"] = _validate_request_hedging_strategy(
-                strategy
-            )
+            self.options["availabilityStrategy"] = _validate_request_hedging_strategy(strategy)
         initial = self.options.get("initialHeaders") or {}
         if any(
             name.lower()
@@ -173,27 +155,40 @@ class QueryConfig(ReadAllConfig):
             }
             for name in initial
         ):
-            raise NotImplementedError(
-                "Query scope, paging and planning headers cannot be overridden; no fallback."
-            )
+            raise NotImplementedError("Query scope, paging and planning headers cannot be overridden; no fallback.")
         payload: dict[str, Any] = {"query": self.query}
         if self.parameters:
             payload["parameters"] = list(self.parameters)
         self.query_body = serialize_body_to_bytes(payload, allow_nan=False)
         self.parameters = freeze_json(self.parameters)
         validate_query_continuation(self.options.get("continuation"))
+        maximum = os.environ.get(Constants.MAX_ITEM_BUFFER_VS_CONFIG)
+        self.max_buffered_query_window = int(maximum) if maximum is not None else None
+        if self.max_buffered_query_window is not None and not 0 <= self.max_buffered_query_window < 2**64:
+            raise ValueError(f"{Constants.MAX_ITEM_BUFFER_VS_CONFIG} must be a nonnegative u64")
 
     def prepared(
-        self, token: Optional[str], cursor: Optional[_ItemFeedCursor], deadline: Optional[float]
+        self,
+        token: Optional[str],
+        cursor: Optional[_ItemFeedCursor],
+        deadline: Optional[float],
     ) -> PreparedPageRequest:
+        prepared = super().prepared(token, cursor, deadline)
         return replace(
-            super().prepared(token, cursor, deadline),
+            prepared,
             op=OP_QUERY_ITEMS,
             query=self.query,
             parameters=self.parameters,
             query_body=self.query_body,
             query_scope=self.scope,
             partition_key=self.partition_key,
+            settings=replace(
+                prepared.settings,
+                query=replace(
+                    prepared.settings.query,
+                    max_buffered_query_window=self.max_buffered_query_window,
+                ),
+            ),
         )
 
 
@@ -207,9 +202,7 @@ class QueryPageState(ReadAllPageState):
 
     config: QueryConfig
 
-    def __init__(
-        self, config: QueryConfig, headers: CaseInsensitiveDict, token: Optional[str]
-    ) -> None:
+    def __init__(self, config: QueryConfig, headers: CaseInsensitiveDict, token: Optional[str]) -> None:
         validate_query_continuation(token)
         super().__init__(config, headers, token)
         self.more = True
@@ -259,9 +252,7 @@ class QueryPageState(ReadAllPageState):
 
     def check(self) -> None:
         if self.failed:
-            raise RuntimeError(
-                "Query pager failed; create a new pager from the last delivered bookmark."
-            )
+            raise RuntimeError("Query pager failed; create a new pager from the last delivered bookmark.")
         if not self.lock.acquire(blocking=False):
             raise RuntimeError("Concurrent use of a query pager is not supported.")
 
@@ -269,9 +260,7 @@ class QueryPageState(ReadAllPageState):
         if rows or not self.more:
             return True
         if self.resumable and previous == self.token:
-            raise RuntimeError(
-                "Query returned an empty page without continuation progress."
-            )
+            raise RuntimeError("Query returned an empty page without continuation progress.")
         return False
 
 
@@ -280,7 +269,12 @@ class QueryPageState(ReadAllPageState):
     operation_name="query_items",
     name_of_span="ContainerProxy.query_items.fetch",
 )
-def _fetch_rust_page(config: QueryConfig, state: QueryPageState, deadline: Optional[float]) -> Optional[list[Any]]:
+def _fetch_rust_page(
+    config: QueryConfig,
+    state: QueryPageState,
+    deadline: Optional[float],
+    **_tracing_kwargs: Any,
+) -> Optional[list[Any]]:
     """Record one internal fetch, accepting the public page only when ready."""
     previous = state.token
     pages = config.backend.execute_pages(
@@ -306,19 +300,13 @@ class QueryPageIterator(Iterator[Iterator[Any]]):
         headers: CaseInsensitiveDict,
         continuation_token: Optional[str] = None,
     ) -> None:
-        token = (
-            continuation_token
-            if continuation_token is not None
-            else config.options.get("continuation")
-        )
+        token = continuation_token if continuation_token is not None else config.options.get("continuation")
         self.state = QueryPageState(config, headers, token)
 
     @property
     def continuation_token(self) -> Optional[str]:
         if not self.state.resumable:
-            raise NotImplementedError(
-                "The driver cannot bookmark this query shape; continue using this iterator."
-            )
+            raise NotImplementedError("The driver cannot bookmark this query shape; continue using this iterator.")
         return self.state.last_delivered_continuation_token
 
     def __next__(self) -> Any:
@@ -330,7 +318,12 @@ class QueryPageIterator(Iterator[Iterator[Any]]):
             deadline = state.config.deadline()
             state.begin()
             while True:
-                rows = _fetch_rust_page(state.config, state, deadline)
+                rows = _fetch_rust_page(
+                    state.config,
+                    state,
+                    deadline,
+                    **state.config.recording_options.kwargs,
+                )
                 if rows is not None:
                     break
         except BaseException as error:
@@ -348,6 +341,4 @@ class QueryPageIterator(Iterator[Iterator[Any]]):
 def query_items(proxy: Any, kwargs: dict[str, Any]) -> CosmosItemPaged:
     config = QueryConfig(proxy, kwargs)
     headers = CaseInsensitiveDict()
-    return CosmosItemPaged(
-        config, headers, page_iterator_class=QueryPageIterator, response_headers=headers
-    )
+    return CosmosItemPaged(config, headers, page_iterator_class=QueryPageIterator, response_headers=headers)

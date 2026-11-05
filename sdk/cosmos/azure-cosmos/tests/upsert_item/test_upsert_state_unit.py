@@ -16,7 +16,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
 ROOT = Path(__file__).resolve().parents[2]
-COPY = ROOT / "tests" / "upsert_item" / "sync" / "legacy" / "test_crud.py"
+COPY = ROOT / "tests" / "upsert_item" / "sync" / "test_crud.py"
 
 
 def test_upsert_copy_preserves_complete_original_method_rust():

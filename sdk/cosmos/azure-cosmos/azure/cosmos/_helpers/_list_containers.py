@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """Prepare container metadata pages without a legacy query execution context."""
+
 from __future__ import annotations
 
 import time
@@ -14,7 +15,11 @@ from azure.core.utils import CaseInsensitiveDict
 from .. import _base, http_constants
 from .._backend.contracts import PreparedPageRequest
 from .._constants import _Constants, TimeoutScope
-from .._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options, remaining_timeout
+from .._operation_deadline import (
+    legacy_deadline_kwargs,
+    legacy_deadline_options,
+    remaining_timeout,
+)
 from .._query_rust_routing import (
     build_list_containers_prepared_page_request,
     build_query_containers_prepared_page_request,
@@ -22,7 +27,7 @@ from .._query_rust_routing import (
     can_use_rust_backend_for_query_containers_page,
 )
 from ._item_arguments import get_selected_backend
-from ._metadata_feed import MetadataFeedPageIterator
+from ._metadata_feed import MetadataFeedPageIterator, RecordingOptions
 from ._request_settings import compose_item_options, is_supported_operation_timeout
 
 
@@ -38,6 +43,7 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
         kwargs.pop("timeout", None)
         self.options.pop(_Constants.OperationStartTime, None)
         self.kwargs = kwargs
+        self.recording_options = RecordingOptions.snapshot(kwargs)
         self.timeout = self.options.get("timeout")
         self.telemetry_owner = proxy
         connection = proxy.client_connection
@@ -72,19 +78,29 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
                 "the request will not be sent through legacy Python."
             )
         started = (
-            self.started if self.options.get(_Constants.TimeoutScope) == TimeoutScope.OPERATION
-            else time.monotonic()
+            self.started if self.options.get(_Constants.TimeoutScope) == TimeoutScope.OPERATION else time.monotonic()
         )
         return started + self.timeout
 
     def prepared(self, token: Optional[str], deadline: Optional[float]) -> PreparedPageRequest:
         query = self.query_payload
-        eligible = can_use_rust_backend_for_list_containers_page(
-            path=self.path, options=self.options, kwargs=self.kwargs,
-            is_query_plan=False, resource_type=http_constants.ResourceType.Collection,
-        ) if query is None else can_use_rust_backend_for_query_containers_page(
-            path=self.path, query_payload=query, options=self.options, kwargs=self.kwargs,
-            is_query_plan=False, resource_type=http_constants.ResourceType.Collection,
+        eligible = (
+            can_use_rust_backend_for_list_containers_page(
+                path=self.path,
+                options=self.options,
+                kwargs=self.kwargs,
+                is_query_plan=False,
+                resource_type=http_constants.ResourceType.Collection,
+            )
+            if query is None
+            else can_use_rust_backend_for_query_containers_page(
+                path=self.path,
+                query_payload=query,
+                options=self.options,
+                kwargs=self.kwargs,
+                is_query_plan=False,
+                resource_type=http_constants.ResourceType.Collection,
+            )
         )
         if not eligible:
             raise NotImplementedError(
@@ -95,15 +111,27 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
         options["continuation"] = token
         prepared = (
             build_list_containers_prepared_page_request(
-                path=self.path, options=options, req_headers=self.default_headers,
-            ) if query is None else build_query_containers_prepared_page_request(
-                path=self.path, query_payload=query, options=options, req_headers=self.default_headers,
+                path=self.path,
+                options=options,
+                req_headers=self.default_headers,
+            )
+            if query is None
+            else build_query_containers_prepared_page_request(
+                path=self.path,
+                query_payload=query,
+                options=options,
+                req_headers=self.default_headers,
             )
         )
-        return replace(prepared, settings=replace(prepared.settings, timeout_seconds=remaining_timeout(deadline)))
+        return replace(
+            prepared,
+            settings=replace(prepared.settings, timeout_seconds=remaining_timeout(deadline)),
+        )
 
     def legacy_page(
-        self, token: Optional[str], deadline: Optional[float],
+        self,
+        token: Optional[str],
+        deadline: Optional[float],
         response_headers: Optional[CaseInsensitiveDict] = None,
     ) -> Any:
         if self.connection is None:
@@ -111,9 +139,15 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
         options = legacy_deadline_options(self.options, deadline)
         options["continuation"] = token
         return self.connection._CosmosClientConnection__QueryFeed(  # pylint: disable=protected-access
-            self.path, http_constants.ResourceType.Collection, self.resource_id,
-            lambda body: body[self.response_key], lambda _, body: body, self.query_payload, options,
-            _read_all_backend=self.backend, response_headers=response_headers,
+            self.path,
+            http_constants.ResourceType.Collection,
+            self.resource_id,
+            lambda body: body[self.response_key],
+            lambda _, body: body,
+            self.query_payload,
+            options,
+            _read_all_backend=self.backend,
+            response_headers=response_headers,
             **legacy_deadline_kwargs(self.kwargs, deadline),
         )
 

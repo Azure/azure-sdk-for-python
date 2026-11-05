@@ -37,7 +37,7 @@ PACKAGE_ROOT = Path(__file__).resolve().parents[2]
 with pytest.MonkeyPatch.context() as _build_imports:
     # Build helpers belong to the checkout, not to the installed SDK wheel.
     _build_imports.syspath_prepend(str(PACKAGE_ROOT))
-    import azure_cosmos_build_backend as build_backend
+    import azure_cosmos_package_builder as build_backend
     import azure_cosmos_build_metadata as build_metadata
 
 
@@ -181,7 +181,8 @@ def test_prototype_wheel_targets_rust():
     assert wheels["linux"]["manylinux-x86_64-image"] == "manylinux_2_28"
     assert wheels["linux"]["manylinux-aarch64-image"] == "manylinux_2_28"
     assert config["build-system"]["requires"] == ["maturin==1.15.0"]
-    assert config["build-system"]["build-backend"] == "azure_cosmos_build_backend"
+    assert config["build-system"]["build-backend"] == build_backend.__name__ == "azure_cosmos_package_builder"
+    assert config["build-system"]["backend-path"] == ["."]
     assert config["tool"]["maturin"]["locked"] is True
     assert config["tool"]["maturin"]["module-name"] == "azure.cosmos._rust"
 
@@ -261,7 +262,7 @@ def test_source_archive_declares_its_build_bootstrap_inputs_rust():
         if entry["format"] == "sdist"
     }
     assert {
-        "azure_cosmos_build_backend.py",
+        "azure_cosmos_package_builder.py",
         "azure_cosmos_build_metadata.py",
         "api.metadata.yml",
         "CHANGELOG.md",

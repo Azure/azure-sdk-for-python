@@ -31,7 +31,7 @@ from ..._operation_deadline import (
     name_of_span="ContainerProxy.read_all_items.fetch",
 )
 async def _fetch_rust_page(
-    config: ReadAllConfig, state: ReadAllPageState, deadline: Optional[float]
+    config: ReadAllConfig, state: ReadAllPageState, deadline: Optional[float], **_tracing_kwargs: Any
 ) -> Optional[tuple[Optional[str], list[dict[str, Any]]]]:
     """Record one internal fetch, draining deadline work before completion."""
     previous = state.token
@@ -66,11 +66,7 @@ class AsyncReadAllPageIterator(AsyncPageIterator):
         headers: CaseInsensitiveDict,
         continuation_token: Optional[str] = None,
     ) -> None:
-        token = (
-            continuation_token
-            if continuation_token is not None
-            else config.options.get("continuation")
-        )
+        token = continuation_token if continuation_token is not None else config.options.get("continuation")
         self.state = ReadAllPageState(config, headers, token)
         super().__init__(self._fetch, self._unpack, continuation_token=token)
 
@@ -78,9 +74,7 @@ class AsyncReadAllPageIterator(AsyncPageIterator):
         # Pass through the rows and continuation token; None marks the end.
         return value
 
-    async def _fetch(
-        self, _token: Optional[str]
-    ) -> tuple[Optional[str], list[dict[str, Any]]]:
+    async def _fetch(self, _token: Optional[str]) -> tuple[Optional[str], list[dict[str, Any]]]:
         """Fetch rows under one deadline, including any empty pages skipped.
 
         state.begin() may create a feed cursor but does not acquire a driver
@@ -91,13 +85,9 @@ class AsyncReadAllPageIterator(AsyncPageIterator):
         if state.done:
             raise StopAsyncIteration
         if state.failed:
-            raise RuntimeError(
-                "read_all_items pager failed; resume a new pager from the last delivered bookmark."
-            )
+            raise RuntimeError("read_all_items pager failed; resume a new pager from the last delivered bookmark.")
         if not state.lock.acquire(blocking=False):
-            raise RuntimeError(
-                "Concurrent use of a read_all_items pager is not supported."
-            )
+            raise RuntimeError("Concurrent use of a read_all_items pager is not supported.")
         try:
             config = state.config
             deadline = config.deadline()
@@ -105,7 +95,7 @@ class AsyncReadAllPageIterator(AsyncPageIterator):
 
             if config.rust:
                 while True:
-                    result = await _fetch_rust_page(config, state, deadline)
+                    result = await _fetch_rust_page(config, state, deadline, **config.recording_options.kwargs)
                     if result is not None:
                         break
                 rows = result[1]
@@ -116,9 +106,7 @@ class AsyncReadAllPageIterator(AsyncPageIterator):
             async def fetch() -> list[dict[str, Any]]:
                 state.legacy_options.update(legacy_deadline_options(config.options, deadline))
                 if state.legacy_pages is None:
-                    await config.proxy._get_properties_with_options(
-                        state.legacy_options
-                    )
+                    await config.proxy._get_properties_with_options(state.legacy_options)
                     remaining_timeout(deadline)
                     state.legacy_options["_read_all_response_headers"] = state.captured
                     items = config.connection.ReadItems(

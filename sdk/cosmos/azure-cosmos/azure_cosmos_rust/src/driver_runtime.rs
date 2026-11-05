@@ -20,6 +20,10 @@ use crate::runtime::{get_config_opt, runtime_context};
 static DEFAULT_RUNTIME: OnceCell<RuntimeHandle> = OnceCell::const_new();
 static NEXT_RUNTIME_ID: AtomicU64 = AtomicU64::new(1);
 
+#[cfg(test)]
+static FAIL_NEXT_RUNTIME_BUILD: std::sync::atomic::AtomicBool =
+    std::sync::atomic::AtomicBool::new(false);
+
 #[pyclass(name = "_CosmosRuntime", module = "azure.cosmos._rust", frozen)]
 #[derive(Clone)]
 pub(crate) struct RuntimeHandle {
@@ -93,6 +97,13 @@ fn connection_options(options: Option<&Bound<'_, PyAny>>) -> PyResult<Connection
 }
 
 async fn build(options: ConnectionPoolOptions) -> PyResult<RuntimeHandle> {
+    #[cfg(test)]
+    if FAIL_NEXT_RUNTIME_BUILD.swap(false, Ordering::SeqCst) {
+        return Err(pyo3::exceptions::PyRuntimeError::new_err(
+            "injected runtime build failure",
+        ));
+    }
+
     let driver_runtime = CosmosDriverRuntime::builder()
         .with_connection_pool(options)
         .build()
@@ -146,6 +157,44 @@ mod tests {
     use super::*;
 
     #[test]
+    fn runtime_preserves_all_explicit_connection_options() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let module = PyModule::from_code_bound(
+                py,
+                "from types import SimpleNamespace\n\
+                 options = SimpleNamespace(connection_timeout=2, \
+                 data_http_request_timeout=8, metadata_http_request_timeout=20)",
+                "runtime_options.py",
+                "runtime_options",
+            )
+            .unwrap();
+            let options = module.getattr("options").unwrap();
+            for (idle_seconds, max_idle, proxy_allowed) in [(600, 17, false), (900, 23, true)] {
+                options
+                    .setattr("idle_connection_timeout", idle_seconds)
+                    .unwrap();
+                options
+                    .setattr("max_idle_connections_per_endpoint", max_idle)
+                    .unwrap();
+                options.setattr("proxy_allowed", proxy_allowed).unwrap();
+
+                let runtime = create_runtime(py, Some(&options)).unwrap();
+                let pool = runtime.driver_runtime.connection_pool();
+                assert_eq!(pool.max_connect_timeout(), Duration::from_secs(2));
+                assert_eq!(pool.max_dataplane_request_timeout(), Duration::from_secs(8));
+                assert_eq!(pool.max_metadata_request_timeout(), Duration::from_secs(20));
+                assert_eq!(
+                    pool.idle_connection_timeout(),
+                    Some(Duration::from_secs(idle_seconds))
+                );
+                assert_eq!(pool.max_idle_connections_per_endpoint(), max_idle);
+                assert_eq!(pool.proxy_allowed(), proxy_allowed);
+            }
+        });
+    }
+
+    #[test]
     fn default_is_shared_but_explicit_runtimes_are_distinct() {
         runtime_context().tokio_rt.block_on(async {
             let (first, second) = tokio::join!(default_runtime(), default_runtime());
@@ -159,17 +208,61 @@ mod tests {
         });
     }
 
-    #[tokio::test]
-    async fn failed_initialization_does_not_poison_a_singleton() {
-        let cell: OnceCell<RuntimeHandle> = OnceCell::const_new();
-        let failed = cell
-            .get_or_try_init(|| async { Err::<RuntimeHandle, _>("initialization failed") })
-            .await;
-        assert!(failed.is_err());
-        assert!(cell.get().is_none());
-        assert!(cell
-            .get_or_try_init(|| build(connection_options(None).unwrap()))
-            .await
-            .is_ok());
+    #[test]
+    fn failed_default_initialization_can_retry() {
+        const CHILD_ENV: &str = "AZURE_COSMOS_RUNTIME_RETRY_TEST_CHILD";
+        if std::env::var_os(CHILD_ENV).is_none() {
+            // Isolate the real singleton and failure injection from other runtime tests.
+            let output = std::process::Command::new(std::env::current_exe().unwrap())
+                .args([
+                    "--exact",
+                    "driver_runtime::tests::failed_default_initialization_can_retry",
+                    "--nocapture",
+                    "--test-threads=1",
+                ])
+                .env(CHILD_ENV, "1")
+                .output()
+                .expect("start isolated runtime initialization test");
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            assert!(
+                output.status.success() && stdout.contains("1 passed"),
+                "isolated runtime initialization test failed:\n{stdout}\n{}",
+                String::from_utf8_lossy(&output.stderr),
+            );
+            return;
+        }
+
+        pyo3::prepare_freethreaded_python();
+        runtime_context().tokio_rt.block_on(async {
+            assert!(default_configuration().is_none());
+            FAIL_NEXT_RUNTIME_BUILD.store(true, Ordering::SeqCst);
+            let error = default_runtime()
+                .await
+                .err()
+                .expect("runtime build failure must reach the caller");
+            Python::with_gil(|py| {
+                assert!(error.is_instance_of::<pyo3::exceptions::PyRuntimeError>(py));
+                assert_eq!(
+                    error.value_bound(py).to_string(),
+                    "injected runtime build failure"
+                );
+            });
+            assert!(default_configuration().is_none());
+
+            let recovered = default_runtime().await.unwrap();
+            assert_eq!(default_configuration(), Some(recovered.timeouts()));
+
+            FAIL_NEXT_RUNTIME_BUILD.store(true, Ordering::SeqCst);
+            let reused = default_runtime().await.unwrap();
+            assert_eq!(recovered.id, reused.id);
+            assert!(Arc::ptr_eq(
+                &recovered.driver_runtime,
+                &reused.driver_runtime
+            ));
+            assert!(
+                FAIL_NEXT_RUNTIME_BUILD.swap(false, Ordering::SeqCst),
+                "cached runtime must not invoke the builder again"
+            );
+        });
     }
 }

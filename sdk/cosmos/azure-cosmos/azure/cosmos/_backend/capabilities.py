@@ -84,7 +84,18 @@ def reject_rust_arguments(
     ):
         if not isinstance(options, Mapping):
             continue
+        if "network_span_namer" in options:
+            raise TypeError(
+                "network_span_namer is not supported by Rust-backed APIs; omit this keyword. "
+                "The current Rust integration cannot supply the actual HTTP request to this callback."
+            )
         for name, value in options.items():
+            if name in ("user_agent", "user_agent_overwrite", "user_agent_use_env"):
+                raise TypeError(
+                    f"{name} is not supported by Rust-backed APIs because the Rust driver "
+                    "does not support this setting. Omit this keyword; use user_agent_suffix "
+                    "to add an application label."
+                )
             if name in (
                 "pre_trigger_include", "post_trigger_include", "preTriggerInclude", "postTriggerInclude",
                 "threshold_steps_ms",

@@ -50,17 +50,24 @@ def test_connection_options_constructor_preserves_keyword_only_fields_rust():
             setattr(options, name, None)
 
 
-@pytest.mark.parametrize("field,value", [
-    ("connection_timeout", True), ("connection_timeout", "2"),
-    ("connection_timeout", float("nan")), ("connection_timeout", 0.09),
-    ("connection_timeout", 7), ("data_http_request_timeout", float("inf")),
-    ("data_http_request_timeout", 0), ("metadata_http_request_timeout", 66),
-    ("idle_connection_timeout", 60), ("max_idle_connections_per_endpoint", 9),
-    ("max_idle_connections_per_endpoint", True), ("proxy_allowed", 1),
-    ("connection_timeout", 10**1000), ("data_http_request_timeout", 2**64),
+@pytest.mark.parametrize("field,value,expected_error", [
+    ("connection_timeout", True, TypeError),
+    ("connection_timeout", "2", TypeError),
+    ("connection_timeout", float("nan"), ValueError),
+    ("connection_timeout", 0.09, ValueError),
+    ("connection_timeout", 7, ValueError),
+    ("data_http_request_timeout", float("inf"), ValueError),
+    ("data_http_request_timeout", 0, ValueError),
+    ("metadata_http_request_timeout", 66, ValueError),
+    ("idle_connection_timeout", 60, ValueError),
+    ("max_idle_connections_per_endpoint", 9, ValueError),
+    ("max_idle_connections_per_endpoint", True, TypeError),
+    ("proxy_allowed", 1, TypeError),
+    ("connection_timeout", 10**1000, ValueError),
+    ("data_http_request_timeout", 2**64, ValueError),
 ])
-def test_connection_options_validate_before_runtime_creation_rust(field, value):
-    with pytest.raises((TypeError, ValueError)):
+def test_connection_options_validate_before_runtime_creation_rust(field, value, expected_error):
+    with pytest.raises(expected_error, match=field):
         ConnectionPoolOptions(**{field: value})
 
 
@@ -123,15 +130,56 @@ def test_async_creation_returns_initialized_shareable_runtime_rust():
         close(client)
 
 
-@pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
-@pytest.mark.parametrize("setting", [
-    {"connection_timeout": 2}, {"request_timeout": 2000}, 
-    {"proxy_allowed": False},
-    {"data_http_request_timeout": 6}, {"metadata_http_request_timeout": 20},
+@pytest.fixture(scope="module")
+def runtime_for_rejection():
+    return CosmosRuntime.create(connection_pool=ConnectionPoolOptions(
+        connection_timeout=2,
+        data_http_request_timeout=6,
+        metadata_http_request_timeout=20,
+        idle_connection_timeout=300,
+        max_idle_connections_per_endpoint=10,
+        proxy_allowed=False,
+    ))
+
+
+@pytest.mark.parametrize("client_type,factory_path", [
+    (CosmosClient, "azure.cosmos.cosmos_client.make_backend"),
+    (AsyncCosmosClient, "azure.cosmos.aio._cosmos_client.make_async_backend"),
 ])
-def test_legacy_client_network_overrides_are_rejected_rust(client_type, setting):
-    with pytest.raises(TypeError, match="runtime|Runtime"):
-        client_type("https://runtime.invalid", "key", _backend="rust", **setting)
+@pytest.mark.parametrize("from_connection_string", [False, True])
+@pytest.mark.parametrize("include_runtime", [False, True])
+@pytest.mark.parametrize("setting,value", [
+    (setting, value)
+    for setting, values in (
+        ("connection_timeout", (2, None, 0)),
+        ("request_timeout", (2000, None, 0)),
+        ("data_http_request_timeout", (6, None, 0)),
+        ("metadata_http_request_timeout", (20, None, 0)),
+        ("idle_connection_timeout", (300, None, 0)),
+        ("max_idle_connections_per_endpoint", (10, None, 0)),
+        ("proxy_allowed", (True, False, None)),
+    )
+    for value in values
+])
+def test_legacy_client_network_overrides_are_rejected_rust(
+    client_type, factory_path, from_connection_string, include_runtime,
+    setting, value, runtime_for_rejection, monkeypatch,
+):
+    factory = MagicMock(side_effect=AssertionError("adapter creation must not start"))
+    monkeypatch.setattr(factory_path, factory)
+    kwargs = {"_backend": "rust", setting: value}
+    if include_runtime:
+        kwargs["runtime"] = runtime_for_rejection
+    with pytest.raises(TypeError, match=setting) as caught:
+        if from_connection_string:
+            client_type.from_connection_string(
+                "AccountEndpoint=https://runtime.invalid;AccountKey=ZmFrZQ==;", **kwargs
+            )
+        else:
+            client_type("https://runtime.invalid", "ZmFrZQ==", **kwargs)
+    assert "ConnectionPoolOptions" in str(caught.value)
+    assert "runtime=" in str(caught.value)
+    factory.assert_not_called()
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])
@@ -144,18 +192,6 @@ def test_legacy_connection_alias_explains_conversion_to_runtime_seconds_rust(cli
     assert "seconds" in message
     assert "CosmosRuntime.create()/create_async()" in message
     assert "runtime=" in message
-
-
-@pytest.mark.parametrize("client_type,factory_path", [
-    (CosmosClient, "azure.cosmos.cosmos_client.make_backend"),
-    (AsyncCosmosClient, "azure.cosmos.aio._cosmos_client.make_async_backend"),
-])
-def test_client_connection_setting_is_rejected_before_adapter_creation_rust(client_type, factory_path, monkeypatch):
-    factory = MagicMock(side_effect=AssertionError("adapter creation must not start"))
-    monkeypatch.setattr(factory_path, factory)
-    with pytest.raises(TypeError, match="Configure connection_timeout through ConnectionPoolOptions"):
-        client_type("https://runtime.invalid", "key", _backend="rust", connection_timeout=5)
-    factory.assert_not_called()
 
 
 @pytest.mark.parametrize("client_type", [CosmosClient, AsyncCosmosClient])

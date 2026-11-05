@@ -3,16 +3,59 @@
 """Offline guards for F02; these do not establish regional execution."""
 import copy
 import json
+from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 
 from azure.core.exceptions import ServiceResponseError
 from azure.cosmos import exceptions
 from azure.cosmos._backend.client_config import _prepare_fault_injection_rules
+from fault_injection import _regional_routing
 from fault_injection._regional_routing import (
     REGIONAL_ROUTING_CASES, assert_destination, assert_fields, assert_guard,
     emulator_endpoints, native_records, rules, topology,
 )
+
+
+@pytest.mark.parametrize("exit_code", [1, 2])
+def test_worker_failure_preserves_child_output_in_assertion_rust(monkeypatch, exit_code):
+    node_name = "test_swr_mrr_succeeds_rust[guard-rust]"
+    request = SimpleNamespace(
+        config=SimpleNamespace(getoption=lambda option: False),
+        node=SimpleNamespace(path=Path(__file__).resolve(), name=node_name),
+    )
+    run = Mock(return_value=SimpleNamespace(
+        returncode=exit_code,
+        stdout="FAILED: child operation assertion",
+        stderr="Traceback: child setup exception",
+    ))
+    monkeypatch.setattr(_regional_routing.subprocess, "run", run)
+    with pytest.raises(AssertionError) as failure:
+        _regional_routing.isolate(request, ("fault_create_test", SimpleNamespace(id="orders_test")))
+    message = str(failure.value)
+    assert f"Isolated F02 worker failed with exit {exit_code}" in message
+    assert node_name in message
+    assert "--- worker stdout ---\nFAILED: child operation assertion" in message
+    assert "--- worker stderr ---\nTraceback: child setup exception" in message
+    run.assert_called_once()
+
+
+def test_worker_success_and_child_branch_remain_unchanged_rust(monkeypatch):
+    run = Mock(return_value=SimpleNamespace(returncode=0, stdout="", stderr=""))
+    monkeypatch.setattr(_regional_routing.subprocess, "run", run)
+    request = SimpleNamespace(
+        config=SimpleNamespace(getoption=lambda option: False),
+        node=SimpleNamespace(path=Path(__file__).resolve(), name="test_worker"),
+    )
+    target = ("fault_create_test", SimpleNamespace(id="orders_test"))
+    assert _regional_routing.isolate(request, target) is True
+    run.assert_called_once()
+    run.reset_mock()
+    request.config.getoption = lambda option: True
+    assert _regional_routing.isolate(request, target) is False
+    run.assert_not_called()
 
 
 def test_regional_cases_only_select_enabled_rust_scenarios_rust():
@@ -104,6 +147,61 @@ def payload():
             "requests": [{"pipeline": "data_plane", "endpoint": "https://localhost:8081/",
                           "status": 403, "sub_status": 3,
                           "evaluations": [{"rule_id": "guard", "applied": True}]}]}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("asynchronous", [False, True])
+@pytest.mark.parametrize("operation", ["create_item", "read_item"])
+@pytest.mark.parametrize("fails", [False, True])
+async def test_attempt_capture_excludes_independent_rust_verification_rust(
+    monkeypatch, asynchronous, operation, fails,
+):
+    if asynchronous:
+        from azure.cosmos.aio._backend import binding_adapter as module
+    else:
+        from azure.cosmos._backend import binding_adapter as module
+
+    class TransportError(Exception):
+        pass
+
+    error = TransportError("controlled transport failure")
+    error._cosmos_fault_diagnostics = payload()
+    measured_handle, verification_handle = object(), object()
+    response = object()
+
+    def execute(handle, request, **kwargs):
+        if fails:
+            raise error
+        return (response, payload()) if kwargs.get("include_fault_diagnostics") else response
+
+    binding = (AsyncMock if asynchronous else Mock)(side_effect=execute)
+    monkeypatch.setattr(module, "_binding_function_for_op", Mock(return_value=binding))
+    monkeypatch.setattr(module, "_DRIVER_TRANSPORT_ERROR", TransportError)
+    records = []
+    _regional_routing.capture_native(
+        monkeypatch, records, asynchronous, driver_handle=measured_handle,
+    )
+    selected = module._binding_function_for_op(operation)
+
+    async def call(handle):
+        if asynchronous:
+            return await selected(handle, "request")
+        return selected(handle, "request")
+
+    for handle in (verification_handle, measured_handle):
+        if fails:
+            with pytest.raises(TransportError) as caught:
+                await call(handle)
+            assert caught.value is error
+        else:
+            assert await call(handle) is response
+        if handle is verification_handle:
+            assert records == []
+            assert binding.call_args.kwargs == {}
+        else:
+            assert records == payload()["requests"]
+            assert binding.call_args.kwargs == {"include_fault_diagnostics": True}
+    assert module._binding_function_for_op("patch_item") is binding
 
 
 @pytest.mark.parametrize("change", [

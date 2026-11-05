@@ -7,6 +7,7 @@ from __future__ import annotations
 import argparse
 import ast
 import importlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -18,6 +19,29 @@ from tempfile import TemporaryDirectory
 import pytest
 
 PACKAGE = Path(__file__).resolve().parents[1]
+TOXIPROXY_CASE_COUNTS = {
+    "test_toxiproxy_route.py": 32,
+    "test_toxiproxy_write.py": 8,
+    "test_toxiproxy_reset_socket.py": 6,
+}
+TELEMETRY_MODULES = (
+    "telemetry/test_rust_telemetry_unit.py",
+    "telemetry/test_tracing_settings_unit.py",
+    "telemetry/test_rust_azure_export_unit.py",
+    "telemetry/test_rust_failure_proof_unit.py",
+    "common/test_list_databases_telemetry_unit.py",
+    "common/test_list_containers_telemetry_unit.py",
+    "execute_item_batch/test_batch_telemetry_unit.py",
+    "read_all_items/test_read_all_items_telemetry_unit.py",
+    "query_items/test_query_items_telemetry_unit.py",
+    "test_change_feed_telemetry_unit.py",
+)
+_COLLECTION_SPEC = importlib.util.spec_from_file_location(
+    "_cosmos_test_collection",
+    PACKAGE / "tests" / "config" / "collection.py",
+)
+test_collection = importlib.util.module_from_spec(_COLLECTION_SPEC)
+_COLLECTION_SPEC.loader.exec_module(test_collection)
 
 # Parameter cross-products deliberately contain cases that do not apply to one
 # surface/backend. These exact existing reasons are not environment exemptions.
@@ -30,7 +54,11 @@ OFFLINE_SKIPS = {
         "Legacy transport timeout checks are bypassed by the fake HTTP response",
     },
     "common/test_list_databases_telemetry_unit.py": {"Sync thread handoff", "Async cancellation"},
-    "common/test_list_containers_telemetry_unit.py": {"Sync thread handoff", "Async cancellation"},
+    "common/test_list_containers_telemetry_unit.py": {
+        "Sync thread handoff",
+        "Async cancellation",
+        "Synchronous nested listing in a synchronous hook",
+    },
     "common/test_query_containers_backend_unit.py": {
         "Rust-specific option rejection",
         "Rust-specific binding failures",
@@ -45,7 +73,7 @@ OFFLINE_SKIPS = {
         "Rust response mapping",
         "Rust binding failures",
     },
-    "common/test_rust_telemetry_unit.py": {
+    "telemetry/test_rust_telemetry_unit.py": {
         "Synchronous cross-thread consumption",
         "Async cancellation",
         "Async interruption",
@@ -53,6 +81,22 @@ OFFLINE_SKIPS = {
         "Replacement boundary",
         "Replacement inputs",
         "Async task cancellation",
+    },
+    "execute_item_batch/test_batch_telemetry_unit.py": {
+        "Synchronous nested batch inside a synchronous hook",
+        "Async cancellation",
+    },
+    "read_all_items/test_read_all_items_telemetry_unit.py": {
+        "Synchronous nested fetch in a synchronous hook",
+        "Async cancellation",
+    },
+    "query_items/test_query_items_telemetry_unit.py": {
+        "Synchronous nested query inside a synchronous hook",
+        "Async cancellation",
+    },
+    "test_change_feed_telemetry_unit.py": {
+        "Synchronous nested poll inside a synchronous hook",
+        "Async cancellation",
     },
     "read_item/test_read_item_contract_unit.py": {"Legacy validates the address in its transport preparation."},
     "read_all_items/test_read_all_items_contract_unit.py": {"async cancellation"},
@@ -62,25 +106,47 @@ OFFLINE_SKIPS = {
 
 
 def discover_tests(root: Path, suite: str) -> list[Path]:
-    """Include new matching modules automatically, including unmarked parity tests.
+    """Include maintained matching modules, excluding local-only originals and comparisons.
 
     :param root: Package source directory.
     :type root: pathlib.Path
-    :param suite: Offline or service-parity selection.
+    :param suite: Offline, telemetry, Toxiproxy, or service selection (CLI name parity).
     :type suite: str
     :return: Required test module paths.
     :rtype: list[pathlib.Path]
     """
     tests = root / "tests"
-    if suite == "offline":
-        files = sorted(tests.rglob("test_*_unit.py"))
+    if suite == "toxiproxy":
+        files = [tests / "toxiproxy" / name for name in TOXIPROXY_CASE_COUNTS]
+        for path in files:
+            if not path.is_file():
+                raise RuntimeError(f"Required Toxiproxy module is missing: {path}")
+    elif suite == "telemetry":
+        files = [tests / name for name in TELEMETRY_MODULES]
+        for path in files:
+            if not path.is_file():
+                raise RuntimeError(f"Required telemetry module is missing: {path}")
+        files = sorted(set(files) | set((tests / "telemetry").rglob("test_*_unit.py")))
+    elif suite == "offline":
+        files = sorted(
+            path for path in tests.rglob("test_*_unit.py") if not test_collection.exclude_module(path, tests_root=tests)
+        )
     else:
         files = sorted(
             path
             for path in tests.rglob("test_*.py")
             if not path.name.endswith("_unit.py")
+            and not test_collection.exclude_module(path, tests_root=tests)
             and path.relative_to(tests).parts[0] not in ("auth", "common")
-            and ("parity" in path.stem or "legacy" in path.relative_to(tests).parts)
+            and (
+                "parity" in path.stem
+                or (
+                    path.parent.name in ("sync", "aio")
+                    and any(
+                        line.lstrip().startswith("# Source:") for line in path.read_text(encoding="utf-8").splitlines()
+                    )
+                )
+            )
         )
         for surface in ("sync", "aio"):
             if not any(surface in path.relative_to(tests).parts for path in files):
@@ -102,11 +168,13 @@ def declared_tests(path: Path) -> set[str]:
     names = set()
     for node in tree.body:
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("test_"):
-            names.add(node.name)
+            if not test_collection.exclude_test(path, node.name):
+                names.add(node.name)
         elif isinstance(node, ast.ClassDef) and node.name.startswith("Test"):
             for method in node.body:
                 if isinstance(method, (ast.FunctionDef, ast.AsyncFunctionDef)) and method.name.startswith("test_"):
-                    names.add(f"{node.name}::{method.name}")
+                    if not test_collection.exclude_test(path, method.name):
+                        names.add(f"{node.name}::{method.name}")
     return names
 
 
@@ -121,7 +189,15 @@ class RequiredCoverage:
     :type expected_skips: dict[pathlib.Path, set[str]] or None
     """
 
-    def __init__(self, files: list[Path], results: Path, expected_skips: dict[Path, set[str]] | None = None):
+    def __init__(
+        self,
+        files: list[Path],
+        results: Path,
+        expected_skips: dict[Path, set[str]] | None = None,
+        *,
+        required_case_counts: dict[Path, int] | None = None,
+        allow_declared_skips: bool = True,
+    ):
         self.expected = {path.resolve(): declared_tests(path) for path in files}
         self.results = results
         self.selected: set[str] = set()
@@ -131,9 +207,20 @@ class RequiredCoverage:
         self.passed: set[str] = set()
         self.skipped: set[str] = set()
         self.errors: list[str] = []
+        self.required_case_counts = {path.resolve(): count for path, count in (required_case_counts or {}).items()}
+        self.allow_declared_skips = allow_declared_skips
 
     def pytest_deselected(self, items):
-        self.errors.append(f"{len(items)} required tests were deselected.")
+        unexpected = [
+            item
+            for item in items
+            if not test_collection.exclude_parameters(
+                item.path,
+                getattr(getattr(item, "callspec", None), "params", {}),
+            )
+        ]
+        if unexpected:
+            self.errors.append(f"{len(unexpected)} required tests were deselected.")
 
     @pytest.hookimpl(tryfirst=True)
     def pytest_collection_finish(self, session):
@@ -149,9 +236,11 @@ class RequiredCoverage:
             self.selected.add(item.nodeid)
             # Existing unconditional skips document intentionally unsupported contracts.
             # Environment-dependent skipif/importorskip never qualifies.
-            reasons = {
-                mark.kwargs["reason"] for mark in item.iter_markers("skip") if mark.kwargs.get("reason")
-            } | self.expected_skips.get(path, set())
+            reasons = (
+                {mark.kwargs["reason"] for mark in item.iter_markers("skip") if mark.kwargs.get("reason")}
+                if self.allow_declared_skips
+                else set()
+            ) | self.expected_skips.get(path, set())
             if reasons:
                 self.allowed_skips[item.nodeid] = reasons
         for path, names in self.expected.items():
@@ -161,6 +250,10 @@ class RequiredCoverage:
                 self.errors.append(f"Missing tests in {path}: {sorted(names - observed[path])}")
         if not self.selected:
             self.errors.append("No required tests collected.")
+        for path, count in self.required_case_counts.items():
+            observed_count = len(self.file_ids.get(path, set()))
+            if observed_count != count:
+                self.errors.append(f"Expected {count} cases in {path}, collected {observed_count}.")
         if self.errors:
             raise pytest.UsageError("\n".join(self.errors))
 
@@ -234,12 +327,44 @@ def run_native(results: Path) -> int:
     return 0
 
 
+def run_toxiproxy_worker(results, native):
+    """Own the whole network-test process tree, including timed-out proxy servers."""
+    from toxiproxy._process_tree import run_owned_worker
+    from toxiproxy._toxiproxy_config import digest
+
+    state = {}
+    results.mkdir(parents=True, exist_ok=True)
+    record = {
+        "native_extension": str(native.__file__),
+        "native_sha256": digest(Path(native.__file__)),
+        "driver_commit": native.__rust_driver_commit__,
+    }
+    try:
+        with (results / "live.txt").open("w", encoding="utf-8") as log:
+            status = run_owned_worker(
+                [sys.executable, "-I", str(Path(__file__).resolve()), *sys.argv[1:], "--toxiproxy-worker"],
+                cwd=PACKAGE,
+                env=os.environ.copy(),
+                log=log,
+                state=state,
+            )
+        record["exit_code"] = status
+        print((results / "live.txt").read_text(encoding="utf-8"))
+        return status
+    except subprocess.TimeoutExpired:
+        record["outer_timeout"] = True
+        raise
+    finally:
+        (results / "run.json").write_text(json.dumps({**record, **state}, indent=2), encoding="utf-8")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("suite", choices=("offline", "parity", "native"))
+    parser.add_argument("suite", choices=("offline", "parity", "native", "toxiproxy", "telemetry"))
     parser.add_argument("--results", type=Path, required=True)
     parser.add_argument("--collect-only", action="store_true")
     parser.add_argument("--require-installed-wheel", action="store_true")
+    parser.add_argument("--toxiproxy-worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     results = args.results.resolve()
     if args.suite == "native":
@@ -251,19 +376,37 @@ def main() -> int:
     if args.require_installed_wheel and Path(native.__file__).resolve().is_relative_to(PACKAGE):
         raise RuntimeError("CI must load the installed wheel, not a checkout extension.")
     print(f"Native extension: {native.__file__}")
-    if args.suite == "offline":
+    if args.suite in ("offline", "telemetry"):
         importlib.import_module("opentelemetry.sdk.trace")
         importlib.import_module("azure.core.tracing.ext.opentelemetry_span")
+    if args.suite == "telemetry":
+        importlib.import_module("azure.monitor.opentelemetry.exporter")
     for variable in ("PYTEST_ADDOPTS", "COSMOS_PARITY_CAPTURE_BACKEND_LABEL"):
         if os.environ.get(variable):
             raise RuntimeError(f"Unset {variable}; required coverage cannot accept selection/label overrides.")
-    if args.suite == "parity":
+    if args.toxiproxy_worker:
+        if args.suite != "toxiproxy" or sys.stdin.buffer.read(1) != b"1":
+            raise RuntimeError("Runner did not establish Toxiproxy process-tree ownership.")
+    if args.suite in ("parity", "toxiproxy"):
         if os.environ.get("COSMOS_BACKEND") != "rust":
             raise RuntimeError("The service lane requires COSMOS_BACKEND=rust.")
         if not os.environ.get("ACCOUNT_HOST") or not os.environ.get("ACCOUNT_KEY"):
             raise RuntimeError("The service lane requires emulator endpoint and key.")
     files = discover_tests(PACKAGE, args.suite)
     sys.path[:0] = [str(PACKAGE), str(PACKAGE / "tests")]
+    if args.suite == "toxiproxy":
+        from toxiproxy._toxiproxy_config import DRIVER_COMMIT, validate_endpoint, verify_server
+
+        if sys.platform != "win32":
+            raise RuntimeError("The required Toxiproxy lane uses the Windows emulator.")
+        validate_endpoint(os.environ["ACCOUNT_HOST"])
+        verify_server(os.environ.get("TOXIPROXY_SERVER", ""))
+        if native.__rust_driver_commit__ != DRIVER_COMMIT:
+            raise RuntimeError("Toxiproxy requires the pinned Rust driver build.")
+        if not args.toxiproxy_worker:
+            if args.collect_only:
+                parser.error("required Toxiproxy coverage requires execution")
+            return run_toxiproxy_worker(results, native)
     os.chdir(PACKAGE)
     options = [
         *map(str, files),
@@ -280,15 +423,43 @@ def main() -> int:
     ]
     if args.collect_only:
         options.append("--collect-only")
+    if args.suite == "toxiproxy":
+        options.extend(
+            [
+                "--confcutdir=" + str(PACKAGE / "tests" / "toxiproxy"),
+                "-o",
+                "junit_logging=all",
+                "-o",
+                "junit_log_passing_tests=true",
+            ]
+        )
     expected_skips = (
         {(PACKAGE / "tests" / name).resolve(): reasons for name, reasons in OFFLINE_SKIPS.items()}
-        if args.suite == "offline"
+        if args.suite in ("offline", "telemetry")
         else {}
     )
     results.mkdir(parents=True, exist_ok=True)
     with TemporaryDirectory(prefix="pytest-", dir=results) as temporary:
         options.append(f"--basetemp={temporary}")
-        return int(pytest.main(options, plugins=[RequiredCoverage(files, results, expected_skips)]))
+        counts = (
+            {PACKAGE / "tests" / "toxiproxy" / name: count for name, count in TOXIPROXY_CASE_COUNTS.items()}
+            if args.suite == "toxiproxy"
+            else {}
+        )
+        return int(
+            pytest.main(
+                options,
+                plugins=[
+                    RequiredCoverage(
+                        files,
+                        results,
+                        expected_skips,
+                        required_case_counts=counts,
+                        allow_declared_skips=args.suite not in ("toxiproxy", "telemetry"),
+                    )
+                ],
+            )
+        )
 
 
 if __name__ == "__main__":

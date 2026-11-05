@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """Page database and container metadata without sharing enumeration state."""
+
 from __future__ import annotations
 
 import threading
@@ -13,7 +14,7 @@ from .._backend.contracts import BackendPage, PreparedPageRequest
 from .._backend.errors import BindingProtocolError
 from .._operation_deadline import remaining_timeout
 from .._query_rust_routing import page_to_backend_response
-from .._telemetry import trace_operation
+from .._telemetry import RecordingOptions, trace_operation
 from ._response_parse import process_backend_response
 
 
@@ -25,6 +26,7 @@ class MetadataFeedConfig(Protocol):
     owner_name: str
     options: dict[str, Any]
     kwargs: dict[str, Any]
+    recording_options: RecordingOptions
     hook: Optional[Callable[..., Any]]
     backend: Any
     response_state: Any
@@ -42,7 +44,9 @@ class MetadataFeedConfig(Protocol):
     def prepared(self, token: Optional[str], deadline: Optional[float]) -> PreparedPageRequest: ...
 
     def legacy_page(
-        self, token: Optional[str], deadline: Optional[float],
+        self,
+        token: Optional[str],
+        deadline: Optional[float],
         response_headers: Optional[CaseInsensitiveDict] = None,
     ) -> Any: ...
 
@@ -57,7 +61,8 @@ class MetadataFeedPageState:
 
     def parse(self, page: BackendPage) -> tuple[list[Any], CaseInsensitiveDict]:
         result = process_backend_response(
-            page_to_backend_response(page), response_state=self.config.response_state,
+            page_to_backend_response(page),
+            response_state=self.config.response_state,
         )
         rows = result.get(self.config.response_key)
         if not isinstance(rows, list) or (
@@ -69,7 +74,9 @@ class MetadataFeedPageState:
         return rows, CaseInsensitiveDict(result.get_response_headers())
 
     def accept(
-        self, response: tuple[list[Any], Any], deadline: Optional[float],
+        self,
+        response: tuple[list[Any], Any],
+        deadline: Optional[float],
     ) -> list[Any]:
         rows, headers = response
         remaining_timeout(deadline)
@@ -126,7 +133,8 @@ class MetadataFeedPageIterator(PageIterator):
             remaining_timeout(deadline)
             if state.config.rust:
                 pages = state.config.backend.execute_pages(
-                    state.config.prepared(state.token, deadline), deadline=deadline,
+                    state.config.prepared(state.token, deadline),
+                    deadline=deadline,
                 )
                 try:
                     page = next(pages)
@@ -145,13 +153,8 @@ class MetadataFeedPageIterator(PageIterator):
                 operation_name=state.config.operation,
                 name_of_span=f"{state.config.owner_name}.{state.config.operation}.fetch",
             )(fetch)
-        tracing_kwargs = {
-            key: state.config.kwargs[key]
-            for key in ("tracing_options", "tracing_attributes")
-            if key in state.config.kwargs
-        }
         while True:
-            rows = fetch(state.config.telemetry_owner, **tracing_kwargs)
+            rows = fetch(state.config.telemetry_owner, **state.config.recording_options.kwargs)
             if rows:
                 return state.token, rows
             if state.done:

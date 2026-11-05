@@ -22,14 +22,15 @@ use azure_data_cosmos_driver::{
     },
 };
 
-use super::container_metadata::metadata_error;
+use super::container_metadata::{metadata_error, metadata_error_with_attempts};
 use super::deadline::with_operation_timeout;
 use super::driver_runner::{
     run_prepared_driver_operation_async, run_prepared_driver_operation_sync,
 };
 use super::request::{build_operation_options, parse_container_link, RequestHeadersAndOptions};
 use super::response::{
-    tuple_from_result, tuple_from_result_with_attempts, tuple_from_result_with_fault_diagnostics,
+    tuple_from_resolved_result_with_attempts, tuple_from_result,
+    tuple_from_result_with_fault_diagnostics,
 };
 
 /// Preserve whether the prepared target names an item or supplies its resource address.
@@ -96,7 +97,9 @@ pub(crate) fn execute_item_operation_sync<'py>(
     build_op: impl FnOnce(ItemReference, Vec<u8>) -> CosmosOperation + Send,
 ) -> PyResult<Bound<'py, PyTuple>> {
     if include_attempts && include_fault_diagnostics {
-        return Err(PyValueError::new_err("Select either attempt telemetry or fault diagnostics"));
+        return Err(PyValueError::new_err(
+            "Select either attempt telemetry or fault diagnostics",
+        ));
     }
     run_prepared_driver_operation_sync(
         py,
@@ -116,6 +119,7 @@ pub(crate) fn execute_item_operation_sync<'py>(
                     body_bytes,
                     modifiers,
                     honor_content_response,
+                    include_attempts,
                     build_op,
                 ),
             );
@@ -124,7 +128,7 @@ pub(crate) fn execute_item_operation_sync<'py>(
         if include_fault_diagnostics {
             |py, result| tuple_from_result_with_fault_diagnostics(py, result?)
         } else if include_attempts {
-            |py, result| tuple_from_result_with_attempts(py, result?)
+            |py, result| tuple_from_resolved_result_with_attempts(py, result?)
         } else {
             |py, result| tuple_from_result(py, result?)
         },
@@ -155,7 +159,9 @@ pub(crate) fn execute_item_operation_async<'py>(
     build_op: impl FnOnce(ItemReference, Vec<u8>) -> CosmosOperation + Send + 'static,
 ) -> PyResult<Bound<'py, PyAny>> {
     if include_attempts && include_fault_diagnostics {
-        return Err(PyValueError::new_err("Select either attempt telemetry or fault diagnostics"));
+        return Err(PyValueError::new_err(
+            "Select either attempt telemetry or fault diagnostics",
+        ));
     }
     run_prepared_driver_operation_async(
         py,
@@ -175,6 +181,7 @@ pub(crate) fn execute_item_operation_async<'py>(
                     body_bytes,
                     modifiers,
                     honor_content_response,
+                    include_attempts,
                     build_op,
                 ),
             );
@@ -184,7 +191,7 @@ pub(crate) fn execute_item_operation_async<'py>(
         if include_fault_diagnostics {
             |py, result| tuple_from_result_with_fault_diagnostics(py, result?)
         } else if include_attempts {
-            |py, result| tuple_from_result_with_attempts(py, result?)
+            |py, result| tuple_from_resolved_result_with_attempts(py, result?)
         } else {
             |py, result| tuple_from_result(py, result?)
         },
@@ -205,6 +212,7 @@ fn execute_item_on_driver(
     body_bytes: Vec<u8>,
     modifiers: RequestHeadersAndOptions,
     honor_content_response: bool,
+    include_attempts: bool,
     build_op: impl FnOnce(ItemReference, Vec<u8>) -> CosmosOperation + Send,
 ) -> impl std::future::Future<Output = PyResult<Result<CosmosResponse, CosmosError>>> + Send {
     let deadline = modifiers
@@ -243,7 +251,15 @@ fn execute_item_on_driver(
                     .await
             }
         }
-        .map_err(|error| Python::with_gil(|py| metadata_error(py, error)))?;
+        .map_err(|error| {
+            Python::with_gil(|py| {
+                if include_attempts {
+                    metadata_error_with_attempts(py, error)
+                } else {
+                    metadata_error(py, error)
+                }
+            })
+        })?;
         if let ItemTarget::SelfLink {
             database,
             by_rid: true,
@@ -322,7 +338,9 @@ mod tests {
             ConsistencyLevel, ContainerConfig, InMemoryEmulatorHttpClient, RequestObserver,
             VirtualAccountConfig, VirtualRegion, WriteMode,
         },
-        models::{AccountReference, FeedRange, PartitionKeyDefinition, PartitionKeyVersion, ResponseBody},
+        models::{
+            AccountReference, FeedRange, PartitionKeyDefinition, PartitionKeyVersion, ResponseBody,
+        },
         options::{
             BinaryEncodingOptions, ContentResponseOnWrite, DriverOptions, OperationOptionsBuilder,
             Region,
@@ -460,6 +478,7 @@ mod tests {
             br#"{"id":"order-42","region":"West US"}"#.to_vec(),
             modifiers(),
             true,
+            false,
             |item, body| CosmosOperation::create_item(item).with_body(body),
         )
         .await
@@ -489,6 +508,7 @@ mod tests {
             br#"{"id":"order-42","region":"West US"}"#.to_vec(),
             modifiers(),
             true,
+            false,
             |item, body| CosmosOperation::create_item(item).with_body(body),
         )
         .await
@@ -507,6 +527,7 @@ mod tests {
             "order-42".into(),
             Vec::new(),
             modifiers(),
+            false,
             false,
             |item, _| CosmosOperation::read_item(item),
         )
@@ -572,11 +593,14 @@ mod tests {
             let runtime = emulator.runtime_builder().build().await.unwrap();
             let driver = runtime
                 .create_driver(
-                    DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
-                        .with_partition_failover_options(
-                            crate::runtime::partition_failover_options().unwrap(),
-                        )
-                        .build(),
+                    DriverOptions::builder(AccountReference::with_account_key(
+                        url,
+                        "ZW11bGF0b3Ita2V5",
+                    ))
+                    .with_partition_failover_options(
+                        crate::runtime::partition_failover_options().unwrap(),
+                    )
+                    .build(),
                 )
                 .await
                 .unwrap();
@@ -604,6 +628,7 @@ mod tests {
                     .unwrap(),
                     options,
                     true,
+                    false,
                     |item, body| CosmosOperation::create_item(item).with_body(body),
                 )
                 .await
@@ -628,6 +653,7 @@ mod tests {
                 "first".into(),
                 Vec::new(),
                 modifiers(),
+                false,
                 false,
                 |item, _| CosmosOperation::read_item(item),
             )
@@ -712,6 +738,7 @@ mod tests {
                 body,
                 modifiers(),
                 true,
+                false,
                 |item, body| {
                     let range = FeedRange::for_partition(item.partition_key().clone(), &definition);
                     assert_eq!(range.min_inclusive().to_hex(), expected);
@@ -730,6 +757,7 @@ mod tests {
                 id.into(),
                 Vec::new(),
                 modifiers(),
+                false,
                 false,
                 |item, _| CosmosOperation::read_item(item),
             )
@@ -750,6 +778,156 @@ mod tests {
     struct CreateRequests {
         metadata_reads: Mutex<usize>,
         writes: Mutex<Vec<Option<String>>>,
+        container_rids: Mutex<Vec<String>>,
+    }
+
+    #[tokio::test]
+    async fn create_legacy_quoted_paths_preserve_partition_key_headers() {
+        #[derive(Debug, Default)]
+        struct Keys(Mutex<Vec<String>>);
+        impl RequestObserver for Keys {
+            fn on_request(&self, request: &Request) {
+                if request.method() == Method::Post
+                    && request
+                        .url()
+                        .path()
+                        .trim_end_matches('/')
+                        .ends_with("/docs")
+                {
+                    self.0.lock().unwrap().push(
+                        request
+                            .headers()
+                            .get_optional_str(&HeaderName::from_static(
+                                "x-ms-documentdb-partitionkey",
+                            ))
+                            .expect("Create must send its extracted key")
+                            .to_owned(),
+                    );
+                }
+            }
+        }
+        pyo3::prepare_freethreaded_python();
+        let cases: Vec<serde_json::Value> = serde_json::from_str(include_str!(
+            "../../../tests/create_item/legacy_partition_key_cases.json"
+        ))
+        .unwrap();
+        for case in cases {
+            for suppressed in [false, true] {
+                let url = Url::parse("https://quoted-keys.emulator.local").unwrap();
+                let observed = Arc::new(Keys::default());
+                let emulator = Arc::new(
+                    InMemoryEmulatorHttpClient::new(
+                        VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())])
+                            .unwrap(),
+                    )
+                    .with_request_observer(observed.clone()),
+                );
+                emulator.store().create_database("db");
+                emulator.store().create_container(
+                    "db",
+                    "orders",
+                    serde_json::from_value::<PartitionKeyDefinition>(case["definition"].clone())
+                        .unwrap(),
+                );
+                let runtime = emulator.runtime_builder().build().await.unwrap();
+                let driver = runtime
+                    .create_driver(
+                        DriverOptions::builder(AccountReference::with_account_key(
+                            url,
+                            "ZW11bGF0b3Ita2V5",
+                        ))
+                        .build(),
+                    )
+                    .await
+                    .unwrap();
+                let mut options = modifiers();
+                options.content_response_on_write = if suppressed {
+                    ContentResponseOnWrite::Disabled
+                } else {
+                    ContentResponseOnWrite::Enabled
+                };
+                let response = execute_item_on_driver(
+                    driver,
+                    "db".into(),
+                    "orders".into(),
+                    None,
+                    case["body"]["id"].as_str().unwrap().into(),
+                    serde_json::to_vec(&case["body"]).unwrap(),
+                    options,
+                    true,
+                    false,
+                    |item, body| CosmosOperation::create_item(item).with_body(body),
+                )
+                .await
+                .unwrap();
+                assert_eq!(
+                    *observed.0.lock().unwrap(),
+                    vec![case["header"].as_str().unwrap()],
+                    "case {}, suppressed={suppressed}",
+                    case["name"]
+                );
+                // The in-memory emulator rejects object leaves and scalar
+                // intermediates instead of treating them as undefined. Public
+                // service tests require success; this test still pins their [{}].
+                if matches!(
+                    case["name"].as_str().unwrap(),
+                    "hash-object-leaf" | "hash-missing-descendant"
+                ) {
+                    assert_eq!(u16::from(response.unwrap_err().status().status_code()), 400);
+                } else {
+                    assert_eq!(u16::from(response.unwrap().status().status_code()), 201);
+                }
+            }
+        }
+    }
+
+    #[tokio::test]
+    async fn create_compact_utf8_preserves_body_bytes_and_escaped_key_rust() {
+        #[derive(Debug, Default)]
+        struct Writes(Mutex<Vec<(Vec<u8>, String)>>);
+        impl RequestObserver for Writes {
+            fn on_request(&self, request: &Request) {
+                if request.method() == Method::Post && request.url().path().ends_with("/docs") {
+                    self.0.lock().unwrap().push((
+                        azure_core::Bytes::from(request.body()).to_vec(),
+                        request.headers().get_optional_str(&HeaderName::from_static(
+                            "x-ms-documentdb-partitionkey",
+                        )).unwrap().to_owned(),
+                    ));
+                }
+            }
+        }
+        pyo3::prepare_freethreaded_python();
+        let url = Url::parse("https://compact-body.emulator.local").unwrap();
+        let observed = Arc::new(Writes::default());
+        let emulator = Arc::new(
+            InMemoryEmulatorHttpClient::new(
+                VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap(),
+            ).with_request_observer(observed.clone()),
+        );
+        emulator.store().create_database("db");
+        emulator.store().create_container("db", "orders", PartitionKeyDefinition::from("/pk"));
+        let runtime = emulator.runtime_builder().build().await.unwrap();
+        let driver = runtime.create_driver(
+            DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
+                .build(),
+        ).await.unwrap();
+        for (id, body) in [
+            ("compact", r#"{"id":"compact","pk":"日本","content":"create café 日本 🎉"}"#.as_bytes()),
+            ("escaped", br#"{"id":"escaped","pk":"\u65e5\u672c","content":"create caf\u00e9 \u65e5\u672c \ud83c\udf89"}"#.as_slice()),
+        ] {
+            let response = execute_item_on_driver(
+                driver.clone(), "db".into(), "orders".into(), None, id.into(), body.to_vec(),
+                modifiers(), true, false,
+                |item, body| CosmosOperation::create_item(item).with_body(body),
+            ).await.unwrap().unwrap();
+            assert_eq!(u16::from(response.status().status_code()), 201);
+            assert_eq!(
+                observed.0.lock().unwrap().pop().unwrap(),
+                (body.to_vec(), "[\"\\u65e5\\u672c\"]".to_owned()),
+            );
+            assert!(observed.0.lock().unwrap().is_empty());
+        }
     }
 
     #[derive(Debug, Default)]
@@ -820,6 +998,7 @@ mod tests {
             body.to_vec(),
             settings,
             true,
+            false,
             |item, body| CosmosOperation::patch_item(item).with_body(body),
         )
         .await
@@ -860,14 +1039,17 @@ mod tests {
         let observed = Arc::new(SurrogateBodyRequests::default());
         let emulator = Arc::new(
             InMemoryEmulatorHttpClient::new(
-                VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap(),
+                VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())])
+                    .unwrap(),
             )
             .with_request_observer(observed.clone()),
         );
         emulator.store().create_database("db");
-        emulator
-            .store()
-            .create_container("db", "orders", PartitionKeyDefinition::from("/customerId"));
+        emulator.store().create_container(
+            "db",
+            "orders",
+            PartitionKeyDefinition::from("/customerId"),
+        );
         let runtime = emulator.runtime_builder().build().await.unwrap();
         let driver = runtime
             .create_driver(
@@ -895,6 +1077,7 @@ mod tests {
                 body.to_vec(),
                 modifiers(),
                 true,
+                false,
                 |item, body| build(item).with_body(body),
             )
             .await
@@ -913,9 +1096,7 @@ mod tests {
                     .headers()
                     .get_optional_str(&HeaderName::from_static(name))
             };
-            if request.method() == Method::Get
-                && request.url().path() == "/dbs/db/colls/orders"
-            {
+            if request.method() == Method::Get && request.url().path() == "/dbs/db/colls/orders" {
                 *self.metadata_reads.lock().unwrap() += 1;
                 assert!(header("x-ms-test-create").is_none());
                 assert!(header("x-ms-cosmos-priority-level").is_none());
@@ -924,11 +1105,21 @@ mod tests {
             if request.method() == Method::Post
                 && request.url().path().trim_end_matches('/') == "/dbs/db/colls/orders/docs"
             {
-                assert_eq!(header("x-ms-documentdb-partitionkey"), Some("[\"customer-17\"]"));
+                assert_eq!(
+                    header("x-ms-documentdb-partitionkey"),
+                    Some("[\"customer-17\"]")
+                );
                 assert_eq!(header("x-ms-test-create"), Some("orders"));
                 assert_eq!(header("x-ms-cosmos-priority-level"), Some("High"));
-                assert!(header("x-ms-cosmos-intended-collection-rid").is_some());
-                self.writes.lock().unwrap().push(header("prefer").map(str::to_owned));
+                self.container_rids.lock().unwrap().push(
+                    header("x-ms-cosmos-intended-collection-rid")
+                        .expect("Create must use the resolved container identity")
+                        .to_owned(),
+                );
+                self.writes
+                    .lock()
+                    .unwrap()
+                    .push(header("prefer").map(str::to_owned));
             }
         }
     }
@@ -979,10 +1170,9 @@ mod tests {
                     HeaderValue::from_static(value),
                 );
             }
-            let body = serde_json::to_vec(
-                &serde_json::json!({"id": id, "customerId": "customer-17"}),
-            )
-            .unwrap();
+            let body =
+                serde_json::to_vec(&serde_json::json!({"id": id, "customerId": "customer-17"}))
+                    .unwrap();
             let result = execute_item_on_driver(
                 driver.clone(),
                 "db".into(),
@@ -992,6 +1182,7 @@ mod tests {
                 body,
                 options,
                 true,
+                false,
                 |item, body| CosmosOperation::create_item(item).with_body(body),
             )
             .await
@@ -1019,15 +1210,21 @@ mod tests {
                 }
             }
             Python::with_gil(|py| {
-                let envelope = tuple_from_result_with_attempts(py, result).unwrap();
+                let envelope = tuple_from_resolved_result_with_attempts(py, result).unwrap();
                 let response = envelope.get_item(0).unwrap();
                 let response = response.downcast::<PyTuple>().unwrap();
-                assert_eq!(response.get_item(0).unwrap().extract::<u16>().unwrap(), expected_status);
+                assert_eq!(
+                    response.get_item(0).unwrap().extract::<u16>().unwrap(),
+                    expected_status
+                );
                 let attempts = envelope.get_item(1).unwrap().get_item("attempts").unwrap();
                 assert!(attempts.len().unwrap() > 0);
                 let last = attempts.get_item(attempts.len().unwrap() - 1).unwrap();
                 assert_eq!(
-                    last.get_item("driver_status_code").unwrap().extract::<u16>().unwrap(),
+                    last.get_item("driver_status_code")
+                        .unwrap()
+                        .extract::<u16>()
+                        .unwrap(),
                     expected_status
                 );
                 let body = response.get_item(3).unwrap().extract::<Vec<u8>>().unwrap();
@@ -1048,6 +1245,549 @@ mod tests {
             *observed.writes.lock().unwrap(),
             vec![None, Some("return=minimal".into()), None],
         );
+        let container = driver
+            .resolve_container("db", "orders", Default::default())
+            .await
+            .unwrap();
+        assert_eq!(
+            *observed.container_rids.lock().unwrap(),
+            vec![container.rid().to_string(); 3],
+        );
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn create_metadata_and_write_share_native_deadline_rust() {
+        use azure_data_cosmos_driver::fault_injection::{
+            FaultInjectionConditionBuilder, FaultInjectionResultBuilder,
+            FaultInjectionRuleBuilder, FaultOperationType,
+        };
+        use std::time::Duration;
+
+        pyo3::prepare_freethreaded_python();
+        for (metadata_ms, write_ms, succeeds, expected_write_hits) in [
+            (750, 125, true, 1),
+            (1250, 0, false, 0),
+            (750, 500, false, 1),
+        ] {
+            let url = Url::parse("https://create-deadline.emulator.local").unwrap();
+            let emulator = Arc::new(InMemoryEmulatorHttpClient::new(
+                VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())])
+                    .unwrap(),
+            ));
+            emulator.store().create_database("db");
+            emulator.store().create_container(
+                "db", "orders", PartitionKeyDefinition::from("/pk"),
+            );
+            let rule = |name, operation, milliseconds| {
+                Arc::new(
+                    FaultInjectionRuleBuilder::new(
+                        name,
+                        FaultInjectionResultBuilder::new()
+                            .with_delay(Duration::from_millis(milliseconds))
+                            .with_probability(1.0)
+                            .build(),
+                    )
+                    .with_condition(
+                        FaultInjectionConditionBuilder::new()
+                            .with_operation_type(operation)
+                            .build(),
+                    )
+                    .build(),
+                )
+            };
+            let metadata = rule("metadata-delay", FaultOperationType::MetadataReadContainer, metadata_ms);
+            let write = rule("create-delay", FaultOperationType::CreateItem, write_ms);
+            let runtime = emulator
+                .runtime_builder_with_fault_rules(vec![metadata.clone(), write.clone()])
+                .build()
+                .await
+                .unwrap();
+            let driver = runtime
+                .create_driver(
+                    DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
+                        .build(),
+                )
+                .await
+                .unwrap();
+            let budget = Duration::from_secs(1);
+            let mut options = modifiers();
+            options.operation_timeout = Some(budget);
+            let started = tokio::time::Instant::now();
+            let outcome = with_operation_timeout(
+                Some(budget),
+                execute_item_on_driver(
+                    driver, "db".into(), "orders".into(), None, "order".into(),
+                    br#"{"id":"order","pk":"A"}"#.to_vec(), options, true, false,
+                    |item, body| CosmosOperation::create_item(item).with_body(body),
+                ),
+            )
+            .await;
+            if succeeds {
+                assert_eq!(
+                    u16::from(outcome.unwrap().unwrap().unwrap().status().status_code()),
+                    201,
+                );
+                assert!(started.elapsed() < budget);
+            } else {
+                let error = outcome.unwrap_err();
+                Python::with_gil(|py| assert!(error.is_instance_of::<PyTimeoutError>(py)));
+                assert!(started.elapsed() <= budget + Duration::from_millis(1));
+            }
+            assert_eq!(metadata.hit_count(), 1);
+            assert_eq!(write.hit_count(), expected_write_hits);
+        }
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn create_lost_response_and_post_commit_deadline_preserve_item_rust() {
+        use azure_data_cosmos_driver::fault_injection::{
+            FaultInjectionConditionBuilder, FaultInjectionErrorType, FaultInjectionResultBuilder,
+            FaultInjectionRuleBuilder, FaultOperationType,
+        };
+        use std::time::Duration;
+
+        #[derive(Debug, Default)]
+        struct WriteCount(Mutex<usize>);
+        impl RequestObserver for WriteCount {
+            fn on_request(&self, request: &Request) {
+                if request.method() == Method::Post && request.url().path().ends_with("/docs") {
+                    *self.0.lock().unwrap() += 1;
+                }
+            }
+        }
+
+        pyo3::prepare_freethreaded_python();
+        for (error_type, delay_ms, committed, expires, cancels) in [
+            (
+                FaultInjectionErrorType::ResponseTimeout,
+                0,
+                false,
+                false,
+                false,
+            ),
+            (
+                FaultInjectionErrorType::ResponseTimeoutAfterService,
+                0,
+                true,
+                false,
+                false,
+            ),
+            (
+                FaultInjectionErrorType::ResponseTimeoutAfterService,
+                2000,
+                true,
+                true,
+                false,
+            ),
+            (
+                FaultInjectionErrorType::ResponseTimeout,
+                2000,
+                false,
+                false,
+                true,
+            ),
+            (
+                FaultInjectionErrorType::ResponseTimeoutAfterService,
+                2000,
+                true,
+                false,
+                true,
+            ),
+        ] {
+            for suppressed in [false, true] {
+                let url = Url::parse("https://lost-create-response.emulator.local").unwrap();
+                let observed = Arc::new(WriteCount::default());
+                let emulator = Arc::new(
+                    InMemoryEmulatorHttpClient::new(
+                        VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())])
+                            .unwrap(),
+                    )
+                    .with_request_observer(observed.clone()),
+                );
+                emulator.store().create_database("db");
+                emulator.store().create_container(
+                    "db",
+                    "orders",
+                    PartitionKeyDefinition::from("/pk"),
+                );
+                let fault = Arc::new(
+                    FaultInjectionRuleBuilder::new(
+                        "lost-create-response",
+                        FaultInjectionResultBuilder::new()
+                            .with_error(error_type)
+                            .with_delay(Duration::from_millis(delay_ms))
+                            .with_probability(1.0)
+                            .build(),
+                    )
+                    .with_condition(
+                        FaultInjectionConditionBuilder::new()
+                            .with_operation_type(FaultOperationType::CreateItem)
+                            .build(),
+                    )
+                    .build(),
+                );
+                let runtime = emulator
+                    .runtime_builder_with_fault_rules(vec![fault.clone()])
+                    .build()
+                    .await
+                    .unwrap();
+                let driver = runtime
+                    .create_driver(
+                        DriverOptions::builder(AccountReference::with_account_key(
+                            url,
+                            "ZW11bGF0b3Ita2V5",
+                        ))
+                        .build(),
+                    )
+                    .await
+                    .unwrap();
+                let mut options = modifiers();
+                options.content_response_on_write = if suppressed {
+                    ContentResponseOnWrite::Disabled
+                } else {
+                    ContentResponseOnWrite::Enabled
+                };
+                let operation = execute_item_on_driver(
+                    driver.clone(),
+                    "db".into(),
+                    "orders".into(),
+                    None,
+                    "order".into(),
+                    br#"{"id":"order","pk":"A","value":"original"}"#.to_vec(),
+                    options,
+                    true,
+                    false,
+                    |item, body| CosmosOperation::create_item(item).with_body(body),
+                );
+                if cancels {
+                    let mut pending = Box::pin(operation);
+                    let applied = async {
+                        while fault.hit_count() == 0 {
+                            tokio::time::sleep(Duration::from_millis(1)).await;
+                        }
+                    };
+                    tokio::select! {
+                        _ = &mut pending => panic!("Create completed before cancellation"),
+                        hit = tokio::time::timeout(Duration::from_secs(1), applied) => {
+                            hit.expect("Create never reached the intended cancellation point");
+                        }
+                    }
+                    drop(pending);
+                } else {
+                    let outcome =
+                        with_operation_timeout(Some(Duration::from_secs(1)), operation).await;
+                    if expires {
+                        let error = outcome.unwrap_err();
+                        Python::with_gil(|py| assert!(error.is_instance_of::<PyTimeoutError>(py)));
+                    } else {
+                        let error = outcome.unwrap().unwrap().unwrap_err();
+                        assert_eq!(
+                            u16::from(error.status().status_code()),
+                            if committed { 409 } else { 503 }
+                        );
+                    }
+                }
+                let hits = fault.hit_count();
+                assert!(hits > 0);
+                let writes = *observed.0.lock().unwrap();
+                if committed {
+                    assert_eq!(hits, 1, "Only the successful service response is discarded");
+                    assert!(writes > 0);
+                } else {
+                    assert_eq!(writes, 0, "Synthetic faults must not reach storage");
+                }
+                let read = execute_item_on_driver(
+                    driver.clone(),
+                    "db".into(),
+                    "orders".into(),
+                    Some(PartitionKey::from("A")),
+                    "order".into(),
+                    Vec::new(),
+                    modifiers(),
+                    false,
+                    false,
+                    |item, _| CosmosOperation::read_item(item),
+                )
+                .await
+                .unwrap();
+                if committed {
+                    let response = read.unwrap();
+                    let ResponseBody::Bytes(body) = response.body() else {
+                        panic!("Expected persisted item");
+                    };
+                    assert_eq!(
+                        serde_json::from_slice::<serde_json::Value>(body).unwrap()["value"],
+                        "original"
+                    );
+                } else {
+                    assert_eq!(u16::from(read.unwrap_err().status().status_code()), 404);
+                }
+                fault.disable();
+                let repeated = execute_item_on_driver(
+                    driver.clone(),
+                    "db".into(),
+                    "orders".into(),
+                    None,
+                    "order".into(),
+                    br#"{"id":"order","pk":"A","value":"replacement"}"#.to_vec(),
+                    modifiers(),
+                    true,
+                    false,
+                    |item, body| CosmosOperation::create_item(item).with_body(body),
+                )
+                .await
+                .unwrap();
+                if committed {
+                    assert_eq!(u16::from(repeated.unwrap_err().status().status_code()), 409);
+                } else {
+                    assert_eq!(u16::from(repeated.unwrap().status().status_code()), 201);
+                }
+                tokio::time::advance(Duration::from_secs(3)).await;
+                let response = execute_item_on_driver(
+                    driver,
+                    "db".into(),
+                    "orders".into(),
+                    Some(PartitionKey::from("A")),
+                    "order".into(),
+                    Vec::new(),
+                    modifiers(),
+                    false,
+                    false,
+                    |item, _| CosmosOperation::read_item(item),
+                )
+                .await
+                .unwrap()
+                .unwrap();
+                let ResponseBody::Bytes(body) = response.body() else {
+                    panic!("Expected persisted item after duplicate control");
+                };
+                assert_eq!(
+                    serde_json::from_slice::<serde_json::Value>(body).unwrap()["value"],
+                    if committed { "original" } else { "replacement" },
+                );
+                assert_eq!(fault.hit_count(), hits);
+                assert_eq!(*observed.0.lock().unwrap(), writes + 1);
+            }
+        }
+    }
+
+    #[tokio::test]
+    #[ignore = "Requires ACCOUNT_HOST/ACCOUNT_KEY and uniquely owned COSMOS_CREATE_FAULT_DATABASE/CONTAINER"]
+    async fn create_live_lost_response_and_deadline_preserve_item_rust() {
+        use azure_data_cosmos_driver::{
+            driver::CosmosDriverRuntime,
+            fault_injection::{
+                FaultInjectionConditionBuilder, FaultInjectionErrorType,
+                FaultInjectionResultBuilder, FaultInjectionRuleBuilder, FaultOperationType,
+            },
+        };
+        use std::time::Duration;
+
+        pyo3::prepare_freethreaded_python();
+        let endpoint =
+            Url::parse(&std::env::var("ACCOUNT_HOST").expect("ACCOUNT_HOST required")).unwrap();
+        let key = std::env::var("ACCOUNT_KEY").expect("ACCOUNT_KEY required");
+        let database =
+            std::env::var("COSMOS_CREATE_FAULT_DATABASE").expect("Owned database required");
+        let container =
+            std::env::var("COSMOS_CREATE_FAULT_CONTAINER").expect("Owned container required");
+        assert!(
+            database.starts_with("create_lost_"),
+            "Refuse non-test database"
+        );
+        assert!(
+            container.starts_with("orders_"),
+            "Refuse non-test container"
+        );
+        let runtime = CosmosDriverRuntime::builder().build().await.unwrap();
+        for (expires, cancels) in [(false, false), (true, false), (false, true)] {
+            for suppressed in [false, true] {
+                let id = format!("lost-{expires}-{cancels}-{suppressed}");
+                let fault = Arc::new(
+                    FaultInjectionRuleBuilder::new(
+                        id.clone(),
+                        FaultInjectionResultBuilder::new()
+                            .with_error(FaultInjectionErrorType::ResponseTimeoutAfterService)
+                            .with_delay(Duration::from_millis(if expires || cancels {
+                                30000
+                            } else {
+                                0
+                            }))
+                            .with_probability(1.0)
+                            .build(),
+                    )
+                    .with_condition(
+                        FaultInjectionConditionBuilder::new()
+                            .with_operation_type(FaultOperationType::CreateItem)
+                            .with_container_id(container.clone())
+                            .build(),
+                    )
+                    .build(),
+                );
+                let driver = runtime
+                    .create_driver(
+                        DriverOptions::builder(AccountReference::with_account_key(
+                            endpoint.clone(),
+                            key.clone(),
+                        ))
+                        .with_fault_injection_rules(vec![fault.clone()])
+                        .unwrap()
+                        .build(),
+                    )
+                    .await
+                    .unwrap();
+                driver
+                    .resolve_container(&database, &container, Default::default())
+                    .await
+                    .unwrap();
+                let body = serde_json::to_vec(&serde_json::json!({
+                    "id": id, "pk": "live", "value": "original",
+                }))
+                .unwrap();
+                let mut options = modifiers();
+                options.content_response_on_write = if suppressed {
+                    ContentResponseOnWrite::Disabled
+                } else {
+                    ContentResponseOnWrite::Enabled
+                };
+                let operation = execute_item_on_driver(
+                    driver.clone(),
+                    database.clone(),
+                    container.clone(),
+                    None,
+                    id.clone().into(),
+                    body.clone(),
+                    options,
+                    true,
+                    false,
+                    |item, body| CosmosOperation::create_item(item).with_body(body),
+                );
+                if cancels {
+                    let mut pending = Box::pin(operation);
+                    let committed = async {
+                        // A fault hit can still be a provisional reservation.
+                        // Observe storage before cancelling the pending write.
+                        loop {
+                            let read = execute_item_on_driver(
+                                driver.clone(),
+                                database.clone(),
+                                container.clone(),
+                                Some(PartitionKey::from("live")),
+                                id.clone().into(),
+                                Vec::new(),
+                                modifiers(),
+                                false,
+                                false,
+                                |item, _| CosmosOperation::read_item(item),
+                            )
+                            .await
+                            .unwrap();
+                            match read {
+                                Ok(response) => {
+                                    let ResponseBody::Bytes(stored) = response.body() else {
+                                        panic!("Expected committed document before cancellation");
+                                    };
+                                    let stored: serde_json::Value =
+                                        serde_json::from_slice(stored).unwrap();
+                                    assert_eq!(stored["id"], id);
+                                    assert_eq!(stored["value"], "original");
+                                    break;
+                                }
+                                Err(error) => {
+                                    assert_eq!(u16::from(error.status().status_code()), 404);
+                                    tokio::time::sleep(Duration::from_millis(50)).await;
+                                }
+                            }
+                        }
+                    };
+                    tokio::select! {
+                        _ = &mut pending => panic!("Create completed before post-commit cancellation"),
+                        hit = tokio::time::timeout(Duration::from_secs(20), committed) => {
+                            hit.expect("Service never committed the cancellation target");
+                        }
+                    }
+                    drop(pending);
+                } else {
+                    let outcome = with_operation_timeout(
+                        Some(Duration::from_secs(if expires { 15 } else { 20 })),
+                        operation,
+                    )
+                    .await;
+                    if expires {
+                        let error = outcome.unwrap_err();
+                        Python::with_gil(|py| assert!(error.is_instance_of::<PyTimeoutError>(py)));
+                    } else {
+                        assert_eq!(
+                            u16::from(
+                                outcome
+                                    .unwrap()
+                                    .unwrap()
+                                    .unwrap_err()
+                                    .status()
+                                    .status_code()
+                            ),
+                            409,
+                            "Automatic retry must observe the committed duplicate",
+                        );
+                    }
+                }
+                let hits = fault.hit_count();
+                if cancels {
+                    assert!(
+                        hits <= 1,
+                        "Cancellation must not manufacture repeated service faults"
+                    );
+                } else {
+                    assert_eq!(
+                        hits, 1,
+                        "The service response must have succeeded before being discarded: {id}"
+                    );
+                }
+                fault.disable();
+                let repeated = execute_item_on_driver(
+                    driver.clone(),
+                    database.clone(),
+                    container.clone(),
+                    None,
+                    id.clone().into(),
+                    body,
+                    modifiers(),
+                    true,
+                    false,
+                    |item, body| CosmosOperation::create_item(item).with_body(body),
+                )
+                .await
+                .unwrap()
+                .unwrap_err();
+                assert_eq!(u16::from(repeated.status().status_code()), 409);
+                let response = execute_item_on_driver(
+                    driver,
+                    database.clone(),
+                    container.clone(),
+                    Some(PartitionKey::from("live")),
+                    id.clone().into(),
+                    Vec::new(),
+                    modifiers(),
+                    false,
+                    false,
+                    |item, _| CosmosOperation::read_item(item),
+                )
+                .await
+                .unwrap()
+                .unwrap();
+                let ResponseBody::Bytes(stored) = response.body() else {
+                    panic!("Expected independently read service document");
+                };
+                let stored: serde_json::Value = serde_json::from_slice(stored).unwrap();
+                assert_eq!(stored["id"], id);
+                assert_eq!(stored["pk"], "live");
+                assert_eq!(stored["value"], "original");
+                assert_eq!(fault.hit_count(), hits);
+                println!(
+                    "Verified committed create: timeout={expires}, cancellation={cancels}, suppressed={suppressed}"
+                );
+            }
+        }
     }
 
     #[test]
@@ -1089,7 +1829,10 @@ mod tests {
                     .get_optional_str(&HeaderName::from_static(name))
             };
             if request.url().path().contains("/docs/") {
-                assert_eq!(header("x-ms-documentdb-partitionkey"), Some("[\"customer-17\"]"));
+                assert_eq!(
+                    header("x-ms-documentdb-partitionkey"),
+                    Some("[\"customer-17\"]")
+                );
                 assert_eq!(header("x-ms-dedicatedgateway-max-age"), Some("500"));
                 assert_eq!(header("x-ms-test-read"), Some("orders"));
                 if request.url().path().starts_with("/dbs/db/colls/orders/") {
@@ -1144,9 +1887,11 @@ mod tests {
             .with_request_observer(observed.clone()),
         );
         emulator.store().create_database("db");
-        emulator
-            .store()
-            .create_container("db", "orders", PartitionKeyDefinition::from("/customerId"));
+        emulator.store().create_container(
+            "db",
+            "orders",
+            PartitionKeyDefinition::from("/customerId"),
+        );
         let runtime = emulator.runtime_builder().build().await.unwrap();
         let driver = runtime
             .create_driver(
@@ -1174,6 +1919,7 @@ mod tests {
             br#"{"id":"order-42","customerId":"customer-17"}"#.to_vec(),
             modifiers(),
             true,
+            false,
             |item, body| CosmosOperation::create_item(item).with_body(body),
         )
         .await
@@ -1212,6 +1958,7 @@ mod tests {
                 "order-42".into(),
                 Vec::new(),
                 settings,
+                false,
                 false,
                 |item, _| CosmosOperation::read_item(item),
             )
@@ -1313,6 +2060,7 @@ mod tests {
                 br#"{"id":"order-42","customerId":"customer-17"}"#.to_vec(),
                 write_settings,
                 true,
+                false,
                 |item, body| CosmosOperation::create_item(item).with_body(body),
             )
             .await
@@ -1330,6 +2078,7 @@ mod tests {
                     "order-42".into(),
                     Vec::new(),
                     settings,
+                    false,
                     false,
                     |item, _| CosmosOperation::read_item(item),
                 )
@@ -1389,6 +2138,7 @@ mod tests {
             br#"{"id":"order-42","customerId":"customer-17"}"#.to_vec(),
             modifiers(),
             true,
+            false,
             |item, body| CosmosOperation::create_item(item).with_body(body),
         )
         .await
@@ -1403,7 +2153,11 @@ mod tests {
 
         for (target, condition, expected_status) in [
             (ItemTarget::Name("order-42".into()), None, Some(200)),
-            (ItemTarget::Name("order-42".into()), Some(etag.clone()), Some(304)),
+            (
+                ItemTarget::Name("order-42".into()),
+                Some(etag.clone()),
+                Some(304),
+            ),
             (ItemTarget::Name("missing".into()), None, Some(404)),
             (ItemTarget::from_self_link(self_link).unwrap(), None, None),
         ] {
@@ -1432,6 +2186,7 @@ mod tests {
                 Vec::new(),
                 options,
                 false,
+                false,
                 |item, _| CosmosOperation::read_item(item),
             )
             .await
@@ -1454,7 +2209,14 @@ mod tests {
                                 serde_json::from_slice::<serde_json::Value>(&body).unwrap()["id"],
                                 "order-42",
                             );
-                            assert_eq!(headers.get_item("etag").unwrap().extract::<String>().unwrap(), etag);
+                            assert_eq!(
+                                headers
+                                    .get_item("etag")
+                                    .unwrap()
+                                    .extract::<String>()
+                                    .unwrap(),
+                                etag
+                            );
                         }
                         304 => assert!(body.is_empty()),
                         404 => assert!(!body.is_empty()),
@@ -1501,9 +2263,12 @@ mod tests {
         let runtime = emulator.runtime_builder().build().await.unwrap();
         let driver = runtime
             .create_driver(
-                DriverOptions::builder(AccountReference::with_account_key(east, "ZW11bGF0b3Ita2V5"))
-                    .with_preferred_regions(vec![Region::WEST_US, Region::EAST_US])
-                    .build(),
+                DriverOptions::builder(AccountReference::with_account_key(
+                    east,
+                    "ZW11bGF0b3Ita2V5",
+                ))
+                .with_preferred_regions(vec![Region::WEST_US, Region::EAST_US])
+                .build(),
             )
             .await
             .unwrap();
@@ -1525,6 +2290,7 @@ mod tests {
                 br#"{"id":"missing","pk":"A"}"#.to_vec(),
                 options,
                 true,
+                false,
                 |item, body| CosmosOperation::replace_item(item).with_body(body),
             )
             .await
@@ -1545,6 +2311,146 @@ mod tests {
                 ),
             ],
         );
+    }
+
+    #[tokio::test]
+    async fn create_exclusion_matrix_observes_metadata_and_write_routes() {
+        #[derive(Debug, Default)]
+        struct Routes {
+            metadata: Mutex<Vec<String>>,
+            creates: Mutex<Vec<String>>,
+        }
+        impl RequestObserver for Routes {
+            fn on_request(&self, request: &Request) {
+                let path = request.url().path().trim_end_matches('/');
+                let destination = request.url().host_str().unwrap().to_owned();
+                if request.method() == Method::Get && path == "/dbs/db/colls/orders" {
+                    self.metadata.lock().unwrap().push(destination);
+                } else if request.method() == Method::Post && path.ends_with("/docs") {
+                    self.creates.lock().unwrap().push(destination);
+                }
+            }
+        }
+
+        pyo3::prepare_freethreaded_python();
+        let w = Region::WEST_US;
+        let r = Region::EAST_US;
+        let third = Region::EAST_US_2;
+        // Client exclusions, request override, metadata host, multi-write host.
+        // None inherits the client's list; Some([]) explicitly clears it.
+        let cases = [
+            (vec![], None, "westus", "westus"),
+            (vec![w.clone()], None, "eastus", "eastus"),
+            (vec![w.clone(), r.clone()], None, "westus", "westus"),
+            (vec![third.clone()], None, "westus", "westus"),
+            (vec![], Some(vec![w.clone()]), "eastus", "eastus"),
+            (vec![w.clone()], Some(vec![w.clone()]), "eastus", "eastus"),
+            (
+                vec![w.clone(), r.clone()],
+                Some(vec![w.clone()]),
+                "eastus",
+                "eastus",
+            ),
+            (
+                vec![w.clone()],
+                Some(vec![w.clone(), r.clone()]),
+                "westus",
+                "westus",
+            ),
+            (
+                vec![w.clone(), r.clone()],
+                Some(vec![w.clone(), r.clone()]),
+                "westus",
+                "westus",
+            ),
+            (vec![w.clone()], Some(vec![r.clone()]), "westus", "westus"),
+            (
+                vec![w.clone(), r.clone()],
+                Some(vec![third]),
+                "westus",
+                "westus",
+            ),
+            (vec![w.clone(), r.clone()], Some(vec![]), "westus", "westus"),
+        ];
+        for write_mode in [WriteMode::Single, WriteMode::Multi] {
+            for (index, (client, request, metadata, multi_write)) in cases.iter().enumerate() {
+                let west = Url::parse("https://westus.emulator.local").unwrap();
+                let observed = Arc::new(Routes::default());
+                let emulator = Arc::new(
+                    InMemoryEmulatorHttpClient::new(
+                        VirtualAccountConfig::new(vec![
+                            VirtualRegion::new("West US", west.clone()),
+                            VirtualRegion::new(
+                                "East US",
+                                Url::parse("https://eastus.emulator.local").unwrap(),
+                            ),
+                        ])
+                        .unwrap()
+                        .with_write_mode(write_mode),
+                    )
+                    .with_request_observer(observed.clone()),
+                );
+                emulator.store().create_database("db");
+                emulator.store().create_container(
+                    "db",
+                    "orders",
+                    PartitionKeyDefinition::from("/pk"),
+                );
+                let runtime = emulator.runtime_builder().build().await.unwrap();
+                let driver = runtime
+                    .create_driver(
+                        DriverOptions::builder(AccountReference::with_account_key(
+                            west,
+                            "ZW11bGF0b3Ita2V5",
+                        ))
+                        .with_preferred_regions(vec![w.clone(), r.clone()])
+                        .build(),
+                    )
+                    .await
+                    .unwrap();
+                let mut options = modifiers();
+                // Python merges client defaults before sending the prepared request.
+                options.excluded_regions_value =
+                    Some(request.as_ref().unwrap_or(client).iter().cloned().collect());
+                let response = execute_item_on_driver(
+                    driver,
+                    "db".into(),
+                    "orders".into(),
+                    None,
+                    "order".into(),
+                    br#"{"id":"order","pk":"A"}"#.to_vec(),
+                    options,
+                    true,
+                    false,
+                    |item, body| CosmosOperation::create_item(item).with_body(body),
+                )
+                .await
+                .unwrap()
+                .unwrap();
+                assert_eq!(u16::from(response.status().status_code()), 201);
+                let expected_write = if matches!(write_mode, WriteMode::Single) {
+                    "westus"
+                } else {
+                    multi_write
+                };
+                for (stage, actual, expected) in [
+                    ("metadata", &observed.metadata, *metadata),
+                    ("create", &observed.creates, expected_write),
+                ] {
+                    let actual = actual.lock().unwrap();
+                    assert!(
+                        !actual.is_empty(),
+                        "case {index}, {write_mode:?}: no {stage} evidence"
+                    );
+                    assert!(
+                        actual
+                            .iter()
+                            .all(|host| host == &format!("{expected}.emulator.local")),
+                        "case {index}, {write_mode:?}, {stage}: {actual:?}"
+                    );
+                }
+            }
+        }
     }
 
     #[tokio::test]
@@ -1605,6 +2511,7 @@ mod tests {
                 body.to_vec(),
                 modifiers(),
                 true,
+                false,
                 |item, body| build(item).with_body(body),
             )
             .await
@@ -1621,6 +2528,7 @@ mod tests {
             br#"{"operations":[{"op":"incr","path":"/n","value":1}]}"#.to_vec(),
             modifiers(),
             true,
+            false,
             |item, body| CosmosOperation::patch_item(item).with_body(body),
         )
         .await
@@ -1634,6 +2542,7 @@ mod tests {
             "item".into(),
             Vec::new(),
             modifiers(),
+            false,
             false,
             |item, _| CosmosOperation::read_item(item),
         )
@@ -1664,6 +2573,7 @@ mod tests {
             br#"{"id":"item","pk":"A","n":2}"#.to_vec(),
             guarded,
             true,
+            false,
             |item, body| CosmosOperation::replace_item(item).with_body(body),
         )
         .await
@@ -1687,6 +2597,7 @@ mod tests {
             br#"{"id":"item","pk":"A","n":3}"#.to_vec(),
             stale,
             true,
+            false,
             |item, body| CosmosOperation::replace_item(item).with_body(body),
         )
         .await
@@ -1705,6 +2616,7 @@ mod tests {
             br#"{"id":"other","pk":"A"}"#.to_vec(),
             modifiers(),
             true,
+            false,
             |item, body| {
                 assert_eq!(item.partition_key(), &PartitionKey::from("B"));
                 CosmosOperation::create_item(item).with_body(body)
@@ -1727,6 +2639,7 @@ mod tests {
             br#"{"id":"expired","pk":"A"}"#.to_vec(),
             timed,
             true,
+            false,
             |_, _| panic!("Expired preparation must not construct an item"),
         );
         tokio::time::sleep(std::time::Duration::from_millis(5)).await;
@@ -1742,6 +2655,7 @@ mod tests {
             Vec::new(),
             modifiers(),
             false,
+            false,
             |item, _| CosmosOperation::delete_item(item),
         )
         .await
@@ -1755,6 +2669,7 @@ mod tests {
             "item".into(),
             Vec::new(),
             modifiers(),
+            false,
             false,
             |item, _| CosmosOperation::read_item(item),
         )
@@ -1771,6 +2686,7 @@ mod tests {
             br#"{"id":"item","pk":"A","n":7}"#.to_vec(),
             modifiers(),
             true,
+            false,
             |item, body| CosmosOperation::create_item(item).with_body(body),
         )
         .await
@@ -1786,6 +2702,7 @@ mod tests {
             br#"{"id":"item","pk":"A","n":8}"#.to_vec(),
             modifiers(),
             true,
+            false,
             |item, body| CosmosOperation::replace_item(item).with_body(body),
         )
         .await
@@ -1806,6 +2723,7 @@ mod tests {
             Vec::new(),
             modifiers(),
             false,
+            false,
             |item, _| CosmosOperation::read_item(item),
         )
         .await
@@ -1819,30 +2737,53 @@ mod tests {
             7
         );
 
-        let missing_container = execute_item_on_driver(
-            driver,
-            "db".into(),
-            "missing".into(),
-            None,
-            "item".into(),
-            br#"{"id":"item","pk":"A"}"#.to_vec(),
-            modifiers(),
-            true,
-            |_, _| panic!("Metadata failure must not construct or execute an item"),
-        )
-        .await
-        .unwrap_err();
-        Python::with_gil(|py| {
-            assert!(
-                missing_container.is_instance_of::<super::super::errors::_DriverResponseError>(py)
-            );
-            let response = missing_container
-                .value_bound(py)
-                .getattr("args")
-                .unwrap()
-                .get_item(0)
-                .unwrap();
-            assert_eq!(response.get_item(0).unwrap().extract::<u16>().unwrap(), 404);
-        });
+        for include_attempts in [false, true] {
+            let missing_container = execute_item_on_driver(
+                driver.clone(),
+                "db".into(),
+                "missing".into(),
+                None,
+                "item".into(),
+                br#"{"id":"item","pk":"A"}"#.to_vec(),
+                modifiers(),
+                true,
+                include_attempts,
+                |_, _| panic!("Metadata failure must not construct or execute an item"),
+            )
+            .await
+            .unwrap_err();
+            Python::with_gil(|py| {
+                assert!(missing_container
+                    .is_instance_of::<super::super::errors::_DriverResponseError>(py));
+                let response = missing_container
+                    .value_bound(py)
+                    .getattr("args")
+                    .unwrap()
+                    .get_item(0)
+                    .unwrap();
+                assert_eq!(response.get_item(0).unwrap().extract::<u16>().unwrap(), 404);
+                let error = missing_container.value_bound(py);
+                assert_eq!(
+                    error.hasattr("_cosmos_attempt_payload").unwrap(),
+                    include_attempts
+                );
+                if include_attempts {
+                    let payload = error.getattr("_cosmos_attempt_payload").unwrap();
+                    assert!(!payload
+                        .get_item("complete")
+                        .unwrap()
+                        .extract::<bool>()
+                        .unwrap());
+                    assert!(
+                        payload
+                            .get_item("request_count")
+                            .unwrap()
+                            .extract::<usize>()
+                            .unwrap()
+                            > 0
+                    );
+                }
+            });
+        }
     }
 }

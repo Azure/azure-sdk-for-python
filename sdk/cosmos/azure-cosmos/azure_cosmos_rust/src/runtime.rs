@@ -547,10 +547,6 @@ pub(crate) fn acquire_driver_handle(
             }
         };
 
-        // Combine the account address, credential, and applicable client settings
-        // into the options used to create a CosmosDriver. Preferred regions are
-        // one example of those settings; connection settings are applied separately
-        // to CosmosDriverRuntime.
         let driver_options = {
             let mut builder = DriverOptions::builder(account)
                 .with_operation_options(operation_options)

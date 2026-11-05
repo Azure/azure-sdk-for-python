@@ -25,9 +25,29 @@ pr:
     - sdk/core/
 
 extends:
-  template: /eng/pipelines/templates/stages/cosmos-sdk-client.yml
+  # Keep Cosmos-specific hooks SDK-owned; reuse the existing Central archetype.
+  template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: cosmos
+    TestMarkArgument: cosmosEmulator
+    BeforeTestSteps:
+    - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+      parameters:
+        StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Session'
+    AfterTestSteps:
+    - template: /sdk/cosmos/templates/telemetry-tests.yml
+    - template: /sdk/cosmos/templates/toxiproxy-tests.yml
+    MatrixConfigs:
+    - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+      - Name: Python_cosmos_emulator
+        Path: sdk/cosmos/cosmos-emulator-public-matrix.json
+        Selection: all
+        GenerateVMJobs: true
+    - ${{ else }}:
+      - Name: Python_cosmos_emulator
+        Path: sdk/cosmos/cosmos-emulator-internal-matrix.json
+        Selection: all
+        GenerateVMJobs: true
     InstallMsRustToolchain: true
     MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/cosmos/azure-cosmos
     MsRustToolchainFeed: https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json

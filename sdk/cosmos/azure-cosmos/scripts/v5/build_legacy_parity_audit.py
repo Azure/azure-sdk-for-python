@@ -4,7 +4,7 @@
 """Legacy-folder parity reporter.
 
 Reads two ``pytest -v`` transcripts -- one from the originals
-(core-python column) and one from the ``tests/<op>/<surface>/legacy/``
+(core-python column) and one from the ``tests/<op>/<surface>/``
 copies (rust column) -- pairs them by ``(surface, class name, method
 name)``, and emits the per-operation parity audit markdown.
 The migration-suite ``_rust`` suffix is ignored when pairing copied methods
@@ -23,7 +23,7 @@ The reporter does **no test execution** -- it only diffs the two
 transcripts. The pairing model:
 
 * The rust column comes from a separate pytest invocation against the
-  ``legacy/`` folders, whose test classes hard-code ``_backend="rust"``
+  operation/surface folders, whose migrated test classes hard-code ``_backend="rust"``
   in ``setUp``.
 * The core-python column comes from a separate pytest invocation
   against the originals, which never pass ``_backend`` and therefore
@@ -77,7 +77,7 @@ def _load_parity_helpers():
 # -----------------------------------------------------------------------------
 
 # Matches lines like:
-#   tests/read_item/sync/legacy/test_headers.py::TestHeaders::test_xxx PASSED [ 20%]
+#   tests/read_item/sync/test_headers.py::TestHeaders::test_xxx PASSED [ 20%]
 #   tests/test_headers_async.py::TestHeadersAsync::test_xxx PASSED [ 80%]
 #   tests/test_xxx.py::Cls::method FAILED
 #   tests/test_xxx.py::Cls::method SKIPPED (reason)
@@ -138,7 +138,7 @@ def _surface_of(path: str, method_name: str) -> str:
 
     Rules in order:
       1. If the path contains ``/aio/`` or ``\\aio\\``, it is aio (the
-         legacy copies live under ``tests/<op>/aio/legacy/``).
+         legacy copies live under ``tests/<op>/aio/``).
       2. Otherwise, if the basename ends with ``_async.py`` (the
          original-source naming convention for async tests), it is aio.
       3. Otherwise, if the method name ends with ``_async``, it is aio
@@ -162,7 +162,7 @@ def _file_key_of(path: str) -> str:
 
     The legacy aio copies intentionally drop the ``_async`` suffix from
     their file names (source ``test_x_async.py`` -> legacy
-    ``tests/<op>/aio/legacy/test_x.py``). We normalize both shapes to
+    ``tests/<op>/aio/test_x.py``). We normalize both shapes to
     the same key (``test_x``) so pairing remains stable while still
     disambiguating rows that share class+method names across different
     files.
@@ -906,7 +906,7 @@ def _description_for(
     """Resolve the Description-column text for one scoreboard row.
 
     Preference order:
-      1. ``test_doc`` recorded on the rust block (the legacy/ copy
+      1. ``test_doc`` recorded on the rust block (the migrated copy
          is the file we own, so its docstring is the canonical
          per-test description).
       2. ``test_doc`` recorded on the core-python block (the
@@ -1001,7 +1001,7 @@ def emit_markdown(
     pairs = sorted(pairs, key=_row_sort_key)
 
     lines: List[str] = []
-    lines.append(f"# Parity audit — `{op}` (legacy-folder workflow)")
+    lines.append(f"# Parity audit — `{op}` (migrated-test workflow)")
     lines.append("")
     lines.append(
         f"_Generated {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} by "
@@ -1531,7 +1531,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         help=(
             "Optional path to a markdown fragment describing which "
             "candidate tests were considered and which were excluded "
-            "from this operation's legacy folder, with the per-test "
+            "from this operation's migrated tests, with the per-test "
             "rationale. Injected verbatim as a 'Scope decisions' "
             "section after the scoreboard."
         ),

@@ -3,7 +3,7 @@
 ## Table of contents
 
 1. [Start with the complete build-to-install flow](#1-start-with-the-complete-build-to-install-flow)
-2. [Where the Python and Rust code lives](#2-where-the-python-and-rust-code-lives)
+2. [Which parts become the installed SDK](#2-which-parts-become-the-installed-sdk)
 3. [Which work belongs to the SDK team and which belongs to Central](#3-which-work-belongs-to-the-sdk-team-and-which-belongs-to-central)
 4. [Why both setup.py and pyproject.toml exist](#4-why-both-setuppy-and-pyprojecttoml-exist)
 5. [Files that control the Rust build](#5-files-that-control-the-rust-build)
@@ -14,18 +14,18 @@
 10. [Why one release needs several wheels](#10-why-one-release-needs-several-wheels)
 11. [How QueryPlanInterop reaches the wheel and the running SDK](#11-how-queryplaninterop-reaches-the-wheel-and-the-running-sdk)
 12. [How the pipeline builds and releases the complete wheel set](#12-how-the-pipeline-builds-and-releases-the-complete-wheel-set)
-13. [What Contoso Bank installs](#13-what-contoso-bank-installs)
+13. [What Alpha Bank installs](#13-what-alpha-bank-installs)
 14. [What changes if we also publish a source distribution](#14-what-changes-if-we-also-publish-a-source-distribution)
 15. [What still needs to be decided or proved before release](#15-what-still-needs-to-be-decided-or-proved-before-release)
 
 ## 1. Start with the complete build-to-install flow
 
-The SDK team and the customer have different jobs. We will use Contoso Bank
+The SDK team and the customer have different jobs. We will use Alpha Bank
 as the customer throughout this guide. Its **customer app** is the bank's
 application code; the **SDK** is the complete Azure Cosmos DB package that
 application installs and uses.
 
-**The SDK team prepares and tests the package. Contoso Bank installs that
+**The SDK team prepares and tests the package. Alpha Bank installs that
 package and uses it in its customer app.** We want the normal customer
 installation to remain straightforward even though the SDK now contains Rust.
 
@@ -35,13 +35,12 @@ groups several files into one file for storage or delivery.
 
 The team then installs that wheel into a test **Python environment**: the
 Python interpreter and the packages available to it. If the required checks
-and approvals pass, the release
-process **publishes** the wheel, making it available through a package service.
+and approvals pass, the release process **publishes** the wheel, making it
+available from a package service for customers to download.
 
-Contoso Bank can then use **pip**, Python's installation tool, to select and
+Alpha Bank can then use **pip**, Python's installation tool, to select and
 install the package. Pip normally obtains public packages from **PyPI**, the
 Python Package Index, unless another source is configured.
-
 
 ### What changes when we add Rust?
 
@@ -65,7 +64,7 @@ SDK team maintains Python and Rust source
     -> repeat for the required operating systems and processors
     -> complete release checks and publish the approved files
 
-Contoso Bank
+Alpha Bank
     -> installs a compatible wheel
     -> runs its application using the installed SDK
 ```
@@ -76,22 +75,31 @@ The processor labels x64 and ARM64 identify different machine-code families.
 One compiled file cannot serve both simply because the Python source is the
 same.
 
+## 2. Which parts become the installed SDK
 
-
-## 2. Where the Python and Rust code lives
-
-Before asking how to compile the SDK, we need to identify what we are compiling.
-A **binding** is code that makes one language's functionality callable from
-another language. Here, the binding connects Python to Rust.
-
-The Rust-backed path has three source components:
+Before building the wheel, the SDK team needs to identify which parts it must
+include. Follow a customer call that creates an order:
 
 ```text
 customer app
-    -> Python wrapper prepares the operation
-    -> Python/Rust binding calls the Rust driver
+    -> Python wrapper checks the supplied order and prepares the operation
+    -> Python/Rust binding converts those inputs and calls the Rust driver
     -> Rust driver sends requests to the service backend
+    -> binding and wrapper return the result or raise a Python exception
 ```
+
+A **binding** makes code written in one language callable from another.
+Here, it lets the Python wrapper call the Rust driver.
+
+| Component | Owner | What the wheel includes |
+|---|---|---|
+| Python wrapper | Cosmos SDK team | Python files that accept customer arguments and return Python results or exceptions |
+| Python/Rust binding | Cosmos SDK team | Compiled code that converts inputs, calls the driver, and converts its results |
+| Rust driver | Rust driver team | Driver code compiled together with the binding into the Python extension |
+
+The **service backend** is the remote Cosmos DB service. It is not included
+in the wheel. The customer app is also separate: it imports and calls the SDK
+after installation.
 
 A **Rust crate** is a Rust project containing source and build information.
 **Cargo** is Rust's build tool; it understands those projects and builds them.
@@ -99,156 +107,64 @@ A **dependency** is another library our code needs. The Rust driver is a
 dependency of our binding, even though its source lives in a different
 repository.
 
-| Component | Where its source is maintained | Its job |
-|---|---|---|
-| Python wrapper | Python repository: `sdk\cosmos\azure-cosmos\azure\cosmos` | Our Python code: accepts customer arguments, prepares calls, and returns Python results or exceptions |
-| Python/Rust binding, `azure_cosmos_rust` | Python repository: `sdk\cosmos\azure-cosmos\azure_cosmos_rust` | Our compiled extension: converts Python inputs into Rust driver calls and converts their results back |
-| Rust driver, `azure_data_cosmos_driver` | Rust repository: `sdk\cosmos\azure_data_cosmos_driver` | A separately owned dependency: manages connections, routes requests, and applies its retry rules |
-
-The **service backend** is the remote Cosmos DB service, not another component
-inside the Python package.
-The SDK's **public API** is the set of classes, methods, and options exposed
-to the customer app.
-In code explanations, use the layer names above so ownership stays clear.
-For example, `_backend\binding_adapter.py` and its `BindingAdapter` class are Python
-wrapper code; the compiled Python/Rust binding is exposed as `azure.cosmos._rust`.
-
-The release will use the Rust driver for operations. Private switches that
-still select the legacy Python implementation in this checkout are migration
-test controls to remove before release, not customer options.
-
-The **package source directory** in this guide means:
+For the commands later in this guide, the **package source directory** means
+the directory containing the package's `pyproject.toml`:
 
 ```text
 azure-sdk-for-python\sdk\cosmos\azure-cosmos
 ```
 
-The build also needs **package metadata**: information describing the package,
-such as its name, version, and dependencies, rather than the implementation
-of its operations.
-
-Inside the package source directory, the important layout is:
-
-```text
-azure\cosmos\                    Python wrapper files
-azure_cosmos_rust\
-    Cargo.toml                  binding configuration
-    src\                        binding Rust source
-    build.rs                    checks performed during the Rust build
-    query_plan_binary.rs        supporting compiled-file checks
-Cargo.toml                      shared Rust configuration
-Cargo.lock                      selected Rust dependency versions
-rust-toolchain.toml             selected Rust build tools
-pyproject.toml                  Python package and build settings
-setup.py                        metadata compatibility for repository tools
-azure_cosmos_build_backend.py    SDK-specific packaging helper
-scripts\                        build-tool setup scripts
-```
-
-We will explain the configuration files individually rather than treating
-this list as instructions to memorize.
-
 ### How the build obtains the Rust driver
 
-The driver stays in the Rust repository. It is not copied into the Python
-repository as another maintained source directory.
+The SDK team does not maintain a second copy of the driver in the Python
+repository. The prototype tells Cargo to fetch a specific **Git revision**,
+which identifies a particular saved state of the driver's source.
+Selecting that revision is called **pinning** the dependency.
 
-The current configuration tells Cargo to fetch a specific Git revision of the
-driver. A **Git revision** identifies a particular source snapshot. The
-package-level `Cargo.toml` selects the revision, and `Cargo.lock` records the
-resolved dependency.
-
-**Checkout reviewed on October 22, 2026:** the driver is `1.1.0-beta.1`, a
-preview rather than a stable release, at revision
-`84e2bb66c9911fa730dc9756c8fc3f9612456344`. Both the driver and its
-`azure_data_cosmos_macros` dependency resolve to this revision.
-
-The revision selection is often called a **pin**: builds request that
-specific source snapshot. Updating a neighboring Rust checkout alone does
-not update the Python extension:
-the SDK team must change the pin, update the lockfile, rebuild the binding,
-and install the resulting extension before Python can use the new code.
+Cargo downloads the selected source and compiles it with the binding. Editing
+a neighboring Rust checkout does not change the extension already installed
+in Python. To use a different driver revision, the SDK team must change the
+dependency selection, rebuild, and install the new extension. Section 5
+explains how the build records that selection.
 
 For the final release, our plan calls for an approved driver version published
 on **crates.io**, the public registry from which Cargo downloads Rust source
 packages. A stable SDK release must use an approved stable driver, not a
 preview dependency.
 
-Cargo downloads driver source and compiles it with the binding. A customer
-installing our wheel does not separately install a Rust driver package.
+A customer installing our wheel does not separately install a Rust driver
+package. Next, we need to distinguish who prepares that wheel from who runs
+the shared build and release process.
 
 ## 3. Which work belongs to the SDK team and which belongs to Central
 
-**A pipeline** is an automated sequence of work, such as building and testing
-a package. The SDK owns the Cosmos entry file, `sdk\cosmos\ci.yml`, but that
-file delegates most work to Central's shared pipeline files.
+The **Cosmos SDK team** maintains the Python wrapper, binding, package settings,
+and tests. **Central** is the shared engineering team that maintains build and
+release tools used by multiple SDK packages.
 
-The **continuous integration**, or **CI**, pipeline checks code changes by
-building and testing them. Azure DevOps is the service that schedules and
-runs this pipeline.
+For example, the SDK team can request a Windows ARM64 wheel. Central must
+provide a machine that can build it and an environment that can run its tests.
+Declaring the target does not create those environments.
 
-Before looking at ownership, distinguish its three levels:
-
-| Level | What it groups | Example |
+| Work | SDK team | Central team |
 |---|---|---|
-| **Stage** | A broad part of a pipeline run | Build the packages and run required checks |
-| **Job** | A unit of work assigned to a build environment | Build the Windows wheels |
-| **Step** | One operation inside a job | Install build tools, then run the package-build command |
+| Package contents | Specify the Python files, extension, data, and dependencies | Run the shared tools that build and collect the package |
+| Platform coverage | Request the supported wheel targets and supply tests | Provide build machines and execute the required tests |
+| Version changes | Approve the package version and identify every copy that must agree | Make shared version commands update those copies together |
+| Publication | Identify the approved files and release requirements | Apply signing and publication rules through shared release tools |
 
-Steps in a job run in order. Jobs can run in parallel when their declared
-dependencies allow it and suitable build capacity is available. A job that
-tests a wheel must wait for the job producing that wheel.
+A **pipeline** is an automated sequence of work, such as building a package
+and testing it. Some requested shared behavior is still
+[pending with Central](#central-changes-still-required). An SDK setting is a
+request for that behavior, not proof that the shared tools implement it.
 
-The `.yml` files use **YAML**, a text format for structured settings.
-A **shared template** is a reusable file of pipeline instructions. The Cosmos
-entry file selects shared templates and supplies their inputs, rather than
-maintaining a separate copy of every job and step.
-
-### The SDK-owned files
-
-The following paths are relative to the package source directory:
-
-| File or area | What the SDK team controls there |
-|---|---|
-| `azure\cosmos`, `azure_cosmos_rust\src` | Python and binding implementation |
-| `setup.py`, `MANIFEST.in` | Metadata compatibility and legacy source-file rules; the Rust-backed build uses Maturin, introduced in section 4 |
-| `pyproject.toml` | Package information, selected build tools, and requested platform builds |
-| Both `Cargo.toml` files and `Cargo.lock` | Rust dependencies and the selections used by builds |
-| `rust-toolchain.toml`, `scripts\*.sh` | Selected Rust tools and the prototype's setup scripts |
-| `azure_cosmos_build_backend.py` | SDK-specific preparation around the wheel build |
-| `azure_cosmos_build_metadata.py` | Version checks shared by the Rust-backed and setuptools build routes |
-| `azure_cosmos_rust\build.rs`, `query_plan_binary.rs` | Checks on supplied compiled libraries |
-| `tests` | Packaging checks and tests of installed SDK behavior |
-
-
-### The Central-owned files
-
-Central maintains the shared files under `eng\pipelines\templates` and the
-build tools under `eng\tools\azure-sdk-tools`. Shared engineering also maintains
-`eng\common` and the shared Sphinx configuration under `doc\sphinx`.
-
-For example, the SDK can declare:
-
-> "We need a Windows ARM64 wheel."
-
-Central must arrange the environment that can build it and the environment
-that can execute its required tests. A setting in a package file does not
-create either environment.
-
-
-Ownership also does not override source-branch selection. A run using a
-particular branch uses that branch's same-repository SDK files and shared
-templates. Required Central-owned changes must therefore be available in the
-source used by the run, not merely present in someone else's branch.
-
-**Integration status after the October 22, 2026 rollback:** this branch keeps
-the SDK-owned implementation and configuration, but its additional changes
-under `eng` and `doc\sphinx` have been removed for Central to implement.
-Existing shared Rust build support remains. The
-[pending Central work](#central-changes-still-required) must not be mistaken
-for functionality enabled by an SDK setting alone.
+We will return to the full pipeline after following one local build. First,
+we need to understand how the package tells its build tools what to do.
 
 ## 4. Why both setup.py and pyproject.toml exist
+
+The build needs more than code. It also needs **package metadata**: the package
+name, version, Python requirements, and dependencies that pip will read.
 
 **Both files existed before the Rust integration, but they had different jobs.
 With Rust, we are expanding what `pyproject.toml` controls, not introducing it
@@ -268,7 +184,7 @@ a wheel supplies installation-ready files; a **source distribution**, or
 Section 14 covers the extra requirements for building from Rust-backed source.
 
 The legacy Cosmos build used **setuptools**, an open-source Python packaging
-tool. Setuptools is not Cosmos-specific, and it is still maintained. "Legacy"
+tool. Setuptools is not Cosmos-specific. "Legacy"
 here describes our existing Cosmos packaging process, not the tool itself.
 
 Our `setup.py` supplied instructions to setuptools, such as:
@@ -287,7 +203,7 @@ Build command
 ```
 
 `setup.py` is Python code used during packaging. It is not code that
-Contoso Bank calls when its customer app uses the installed SDK.
+Alpha Bank calls when its customer app uses the installed SDK.
 
 ### Before Rust: pyproject.toml held other tool settings
 
@@ -295,30 +211,9 @@ The pre-Rust `pyproject.toml` was **already used**, but it did not direct the
 Cosmos package build. TOML is the format used to write these settings; it is
 not a tool that runs the build.
 
-The file contained settings such as:
-
-```toml
-[tool.azure-sdk-build]
-mypy = true
-pyright = false
-pylint = true
-
-[tool.azure-sdk-conda]
-in_bundle = false
-```
-
-The first section selected which repository code checks were enabled.
-`mypy` and `pyright` check whether values are used consistently with their
-declared **types**, the kinds of values the code expects. `pylint` checks code
-for likely mistakes and rule violations.
-These tools inspect code; they do not compile Rust or assemble a wheel.
-
-The second section was for **Conda**, a separate package and environment
-manager. This setting concerns the Conda distribution process, not how we
-compile Rust or build a wheel for pip.
-
-That file did not yet contain `[project]` package information or
-`[build-system]` build instructions.
+It selected repository checks, such as checks for likely Python mistakes,
+and held settings for other packaging tools. Those settings did not tell
+setuptools which files to put in the Cosmos wheel.
 
 So the responsibilities were:
 
@@ -343,8 +238,9 @@ packages containing Rust code. Maturin invokes Cargo and packages the compiled
 extension together with the Python files.
 
 A **build backend** is the component a Python build tool calls to create the
-package. Our backend is an SDK-owned helper that prepares the inputs and
-calls Maturin. Its exact configuration is explained below.
+package. We call ours the **SDK package builder**:
+`azure_cosmos_package_builder.py`. It prepares the inputs and calls Maturin.
+Its exact configuration is explained below.
 
 Our `pyproject.toml` retains the existing repository settings and adds these
 responsibilities:
@@ -354,7 +250,6 @@ responsibilities:
 | `[project]` | "The customer-facing package is `azure-cosmos`. Here are its version, Python requirements, and dependencies." |
 | `[build-system]` | "Call this component to carry out the package build." |
 | `[tool.maturin]` | "Here is the Rust binding to compile, the Python source to include, and the extension's Python import name." |
-| `[tool.cibuildwheel]` | "Here are the platform wheel builds that our automated build process should coordinate." |
 
 The Python package information matters because the internal Rust binding has
 its own name and version. Customers are installing `azure-cosmos`, not a
@@ -362,25 +257,18 @@ separately named Rust package.
 
 ### How package metadata and the running SDK keep the same version
 
-Suppose Contoso Bank installs the approved v5 wheel. Here, **v5** means major
-version 5, the first number in the release version. This is the intended
-upgrade that can change previously supported behavior.
+Suppose pip reports that Alpha Bank installed version `5.0.0`, but the SDK
+reports `4.17.2` when the app asks for its version. The developer cannot tell
+which release is running. These numbers illustrate a mismatch; they are not
+approved release versions.
 
-The version recorded in the wheel must agree with the version reported by the
-installed SDK. Otherwise the installer can report one release while the
-customer app is running code labelled as another.
-
-The current source still declares `4.17.2`. That is development metadata, not
-the release identity for this breaking upgrade. The
-[v5 release requirement](#treat-the-rust-backed-release-as-a-v5-upgrade)
-must be satisfied before publication.
-
-**`azure\cosmos\_version.py` is the version authority.** The other release
+The wheel and installed SDK must report the same version.
+**`_version.py` is the version authority.** The other release
 files carry copies or descriptions of that version:
 
 | File | What its version means |
 |---|---|
-| `azure\cosmos\_version.py` | The Python SDK version, currently `4.17.2` |
+| `_version.py` | The Python SDK version |
 | `pyproject.toml`, `[project].version` | The package version Maturin puts in distribution metadata |
 | `api.metadata.yml`, `packageVersion` | The package version associated with the API metadata |
 | The first release heading in `CHANGELOG.md` | The release described by the newest notes |
@@ -399,7 +287,7 @@ The SDK records that it needs synchronized version updates:
 synchronize-version-metadata = true
 ```
 
-**Pending Central work:** the restored shared versioning tools do not
+**Pending Central work:** the shared versioning tools do not
 implement this setting. Setting it to `true` does not currently make a
 version command update all four files.
 
@@ -409,12 +297,12 @@ changelog heading. The stability **classifier**, a metadata label identifying
 a stable or beta release, must also agree in `setup.py` and `pyproject.toml`.
 
 After that support is integrated, the intended workflow is to approve the
-exact v5 version and release date, then run the following command from the
+exact release version and release date, then run the following command from the
 package directory. Replace the placeholders with the approved values, using
 `YYYY-MM-DD` for the date:
 
 ```powershell
-sdk_update_version --package-path . --version "<approved-v5-version>" --release-date "<approved-release-date>"
+sdk_update_version --package-path . --version "<approved-version>" --release-date "<approved-release-date>"
 ```
 
 This is the intended synchronized-update workflow, not a claim that the
@@ -433,8 +321,8 @@ the files. Complete the version update before starting builds.
 
 ### What happens if someone changes only one file?
 
-Before calling Maturin, our build backend checks all four versions. The
-setuptools route performs the same check before calling `setup()`. A mismatch
+Before calling Maturin, our SDK package builder checks all four versions. The
+setuptools metadata commands perform the same check. A mismatch
 stops the build with the disagreeing filenames and versions; it does not
 silently select one copy or repair the checkout during packaging.
 
@@ -445,38 +333,29 @@ can perform the same check. Packaging tests verify that a mismatch is rejected
 before either builder is called.
 
 
-### What the SDK-owned build helper does
+<a id="what-the-sdk-owned-build-helper-does"></a>
+
+### What the SDK package builder does
 
 Our `[build-system]` section selects:
 
 ```toml
-build-backend = "azure_cosmos_build_backend"
+build-backend = "azure_cosmos_package_builder"
 ```
 
-This selects our SDK-owned Python file as the build backend:
+`build-backend` is the standard Python packaging key; its value names our
+Python module without the `.py` extension. This selects the SDK package
+builder rather than calling Maturin directly.
+The package builder checks the version information and, when supplied, temporarily
+places additional compiled libraries among the files Maturin will package.
+Section 11 follows the separate query-planning library that needs this step.
 
-```text
-azure_cosmos_build_backend.py
-```
-
-The setting means:
-
-> "When asked to build this package, call our helper file. That helper will
-> perform our package-specific preparation and then ask Maturin to build
-> the wheel."
-
-The helper exists because we have an additional preparation step for
-**QueryPlanInterop**, a separate compiled library that can create database
-query plans: instructions for coordinating a query, not the query's returned
-data. Its detailed purpose and delivery are covered in
-[section 11](#11-how-queryplaninterop-reaches-the-wheel-and-the-running-sdk).
-
-For a wheel build, the helper's added work is:
+For a wheel build, the package builder's added work is:
 
 ```text
 Check that the SDK version and release metadata agree
 
-If matching QueryPlanInterop files were supplied:
+If matching additional compiled libraries were supplied:
     temporarily copy them into the Python package directory
 
 Call Maturin to build the wheel
@@ -485,47 +364,18 @@ Remove the temporary copies from the source checkout
 ```
 
 The completed wheel retains the packaged files. The cleanup affects the
-temporary source-checkout copies.
+temporary source-checkout copies. This temporary copying before packaging is
+called **staging**.
 
-**The helper does not replace Maturin or compile Rust itself.** If no
-QueryPlanInterop files are supplied, the current helper skips that preparation
+**The package builder does not replace Maturin or compile Rust itself.** If no
+additional compiled libraries are supplied, it skips that preparation
 and still calls Maturin.
 
-### What cibuildwheel does
-
-**`cibuildwheel` is an open-source tool that coordinates building and testing
-Python wheels across different platform and Python environments.** It is not
-a Cosmos script or an Azure DevOps service.
-
-It addresses a different problem from Maturin:
-
-> "We can build one Rust-backed wheel. How do we repeat the appropriate build
-> for all our configured platforms?"
-
-For example:
-
-```toml
-[tool.cibuildwheel.windows]
-archs = ["AMD64", "ARM64"]
-```
-
-This tells `cibuildwheel` to target Windows x64 and Windows ARM64.
-
-`[tool.cibuildwheel]` is simply the section containing its settings. The section
-does not run anything by itself. Central arranges the build jobs and invokes
-the tool in suitable environments.
-
-The new responsibilities fit together as follows:
+For one wheel, the tools now have distinct jobs:
 
 ```text
-Azure DevOps pipeline
-    -> supplies and starts the build jobs
-
-cibuildwheel
-    -> coordinates the configured wheel builds within those jobs
-
-SDK-owned build helper
-    -> prepares supplied QueryPlanInterop files for each wheel
+SDK package builder
+    -> checks version information and prepares supplied library files
 
 Maturin
     -> invokes Cargo and packages the Python files with the Rust extension
@@ -553,8 +403,8 @@ as the Rust extension.
 | `python setup.py --name` or `--version` | Returns package information. |
 | `python setup.py egg_info` or `dist_info` | Produces metadata for compatible tooling. |
 | `python setup.py bdist_wheel`, `sdist`, or other build/install commands | Fails before executing commands and directs the caller to the supported build path. |
-| `python -m build --wheel` or `--sdist` | Uses the configured backend, which delegates native packaging to Maturin. |
-| `python -m pip install -e .` | Uses the configured backend to install the checkout for development, explained in section 7. |
+| `python -m build --wheel` or `--sdist` | Uses the SDK package builder, which delegates native packaging to Maturin. |
+| `python -m pip install -e .` | Uses the SDK package builder to install the checkout for development, explained in section 7. |
 
 A mixed command such as `python setup.py egg_info bdist_wheel` also fails
 before either command runs. Keeping the metadata commands available does
@@ -598,22 +448,15 @@ There are two files named `Cargo.toml`, but they do not have the same job.
 
 ### The package-level Cargo.toml: shared settings
 
-The file at:
-
-```text
-sdk\cosmos\azure-cosmos\Cargo.toml
-```
-
-defines a **workspace**. In Cargo, a workspace is a collection of Rust projects
+The package-level file defines a **workspace**: a collection of Rust projects
 managed together, with shared settings and a shared lock file. It can contain
 just one project.
 
-Our workspace currently declares:
+The workspace's member selection is:
 
 ```toml
 [workspace]
 members = ["azure_cosmos_rust"]
-resolver = "2"
 ```
 
 The `members` line says:
@@ -623,11 +466,6 @@ The `members` line says:
 
 That project is our binding. The driver is an external dependency, not a
 second member of this Python repository's workspace.
-
-`resolver = "2"` selects Cargo's rules for combining dependencies and their
-optional capabilities. It is
-not a Rust compiler version. We do not need the detailed rules here to
-understand the file's purpose.
 
 The package-level file provides settings that the binding can reuse:
 
@@ -653,13 +491,7 @@ selection is recorded separately in `Cargo.lock`.
 
 ### The binding's Cargo.toml: what this Rust project needs
 
-The second file is:
-
-```text
-sdk\cosmos\azure-cosmos\azure_cosmos_rust\Cargo.toml
-```
-
-It describes the actual binding project: its name, the library it builds, and
+The file inside the binding directory describes its name, the library it builds, and
 the dependencies it uses. Cargo documentation calls a `Cargo.toml` file a
 **manifest**: the file describing a Rust project or workspace.
 
@@ -693,34 +525,10 @@ Binding's Cargo.toml
     -> reuses selected settings from the package-level file
 ```
 
-Normal and test-related driver dependencies use the same shared source.
-The normal dependency enables these driver features:
-
-```toml
-features = ["__internal_native_query_plan", "fault_injection", "unstable_patch"]
-```
-
-The first two enable native query-planning integration and **fault injection**,
-deliberately introducing failure conditions to test how the SDK responds.
-A **patch** changes selected fields of an item rather than replacing the
-whole item. `unstable_patch` enables patch-strategy configuration: the binding
-uses it to select service-side evaluation when a patch includes a condition.
-Core patch support remains available in the driver without that feature.
-
-**Unfinished test migration:** the current test dependency still enables
-`__internal_in_memory_emulator`, a Rust test substitute that keeps simulated
-service state in memory. The agreed direction is to replace those tests with
-Windows Cosmos DB Emulator coverage against a separately running local
-service, not retain this substitute. The feature
-must be removed after the dependent tests are migrated; its presence is not
-evidence that Windows-emulator coverage has run.
-
-The pinned driver declares `unstable_patch`, not `preview_patch`. The build
-configuration test checks the exact feature set, so a stale expected name
-rejects the configuration even when Cargo uses the intended feature.
-When changing the driver revision, check its declared features and keep the
-binding manifest and test expectation aligned; do not weaken the assertion
-to accept arbitrary feature names.
+Normal builds and tests must use the same selected driver source. When the
+SDK team updates it, they must also check that the new driver still provides
+every feature requested by the binding. A renamed or removed feature should
+fail configuration checks rather than be silently omitted.
 
 The binding and driver also exchange values defined by the `azure_core` Rust
 library. If the binding creates a value using one copy of that library but
@@ -734,7 +542,7 @@ use the same crate's types.
 Knowing that we allow Tokio `1.x` is not enough to identify which version a
 particular build should use. That is the job of `Cargo.lock`.
 
-In the checked-out files:
+For an illustrative selection:
 
 ```text
 Cargo.toml
@@ -744,8 +552,8 @@ Cargo.lock
     -> records Tokio 1.52.3
 ```
 
-The version shown is the checkout's selection, not a claim about the newest
-available release.
+The important difference is the allowed series, `1.x`, versus one exact
+selected version, `1.52.3`. A normal build reuses the selection.
 
 The lock also records dependencies needed by our dependencies. For example,
 the binding needs the driver, and the driver needs other libraries. Those
@@ -876,7 +684,7 @@ rust-version
     -> the minimum compiler compatibility we declare
 ```
 
-These are SDK build concerns. Contoso Bank does not need the tools when
+These are SDK build concerns. Alpha Bank does not need the tools when
 installing a compatible prebuilt wheel. Customer source installation, if
 supported, needs its own accessible toolchain path; it cannot assume access
 to our internal Microsoft toolchain.
@@ -945,9 +753,9 @@ compiled binding code + compiled driver code
     -> one Python extension
 ```
 
-We do not ask Contoso Bank to install a separate compiled driver alongside it.
-QueryPlanInterop is different: it remains a separate library and is covered
-later.
+We do not ask Alpha Bank to install a separate compiled driver alongside it.
+Additional libraries supplied to the packaging helper remain separate files;
+section 9 shows their place in the wheel.
 
 ### Maturin gives the result its place in the Python package
 
@@ -975,9 +783,9 @@ Read the settings in terms of the work Maturin needs to do:
 | `features` | "Enable PyO3's Python-extension build behavior." |
 | `locked` | "Do not silently change Rust dependency selections." |
 
-The final `_rust` part must match the Python module name declared in
-`azure_cosmos_rust\src\lib.rs`. Its `#[pymodule]` declaration is how the binding
-identifies the module to PyO3.
+The final `_rust` part must match the module name the compiled binding exposes.
+Otherwise, Python asks to load one module name while the extension provides
+another, and the import can fail.
 
 Maturin places the extension under the Python package using the appropriate
 filename:
@@ -1016,6 +824,148 @@ maturin develop --release
 This makes the SDK available in the developer's active Python environment.
 It is not the process for collecting release wheels.
 
+### Install the Microsoft Rust toolchain on a developer machine
+
+Before `maturin develop` can compile anything, the SDK developer's machine
+needs the Rust build tools that `rust-toolchain.toml` selects.
+[Section 5](#5-files-that-control-the-rust-build) explains that this file
+selects `ms-prod-1.97`, a Microsoft toolchain that only **msrustup** can
+install.
+
+Suppose the SDK developer already has public Rust installed through `rustup`.
+They run `cargo -V` in `sdk\cosmos\azure-cosmos`, and the command stops:
+
+```text
+error: custom toolchain 'ms-prod-1.97' specified in override file
+'...\sdk\cosmos\azure-cosmos\rust-toolchain.toml' is not installed
+```
+
+Public Rust is present, but the selected Microsoft toolchain is not.
+
+### Why the developer cannot use the pipeline's installer
+
+The pipeline installs the toolchain with an Azure DevOps step named
+`RustInstaller@1`, described in
+[section 12](#12-how-the-pipeline-builds-and-releases-the-complete-wheel-set).
+That step runs only inside a pipeline. A developer machine needs a different
+route, and the header of `scripts\install-msrustup.sh` names it:
+
+> "This script is expected to be copied into any build system that needs to
+> install the internal Rust toolchain, if that system cannot use an ADO
+> pipeline and the Rust installer pipeline task."
+
+**Installation therefore has two parts: the script downloads `msrustup`, then
+`msrustup` downloads the toolchain that `rust-toolchain.toml` selects.**
+
+### What the script needs
+
+Microsoft publishes `msrustup` and its toolchains in an internal **feed**: a
+private download location in Azure DevOps. The feed only answers requests
+that prove who is asking. That proof is an **access token**: a temporary
+credential issued after the developer signs in.
+
+A token also records which **tenant** issued it. A tenant is the
+organization directory that a sign-in belongs to. One person can have
+accounts in several tenants. **The feed accepts tokens from the Microsoft
+corporate tenant only.** A token from another tenant is still a valid token,
+but the feed refuses it with `403 Forbidden`.
+
+The script also needs a few command-line tools:
+
+| Tool | What the script uses it for |
+|---|---|
+| Git Bash | Runs the script, which is written for a Unix-style shell. |
+| `curl` | Downloads from the feed. Windows includes it. |
+| `unzip` | Extracts `msrustup` from the download. Git Bash includes it. |
+| `jq` | Reads the feed's reply to find the latest `msrustup` version. Install it separately, for example with `winget install --id jqlang.jq -e`. |
+
+**Use Git Bash, at `C:\Program Files\Git\bin\bash.exe`, not the `bash`
+command that Windows itself provides.** The Windows `bash` command starts a
+Linux environment. The script asks which operating system it is running on,
+so from that environment it would download the Linux `msrustup`, which
+cannot install a Windows toolchain. Git Bash reports Windows, so the script
+downloads the Windows `msrustup`.
+
+### Run the installation
+
+First, obtain a corporate-tenant token and place it where the script looks
+for it, the `MSRUSTUP_ACCESS_TOKEN` environment variable. With the Azure CLI,
+name the corporate tenant and the Azure DevOps service explicitly:
+
+```powershell
+$env:MSRUSTUP_ACCESS_TOKEN = az account get-access-token `
+    --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 `
+    --resource 499b84ac-1321-427f-aa17-267ca6975798 `
+    --query accessToken -o tsv
+```
+
+The `--tenant` value identifies the Microsoft corporate tenant. The
+`--resource` value identifies Azure DevOps, the service that hosts the feed.
+The script can also use `MSRUSTUP_PAT`, a personal access token created in
+Azure DevOps, or the `azureauth` sign-in tool if either is available instead.
+
+Then, from the same PowerShell window and the package directory, download
+`msrustup` and install the selected toolchain:
+
+```powershell
+$bootstrap = "$env:USERPROFILE\.msrustup\bootstrap"
+New-Item -ItemType Directory -Force $bootstrap | Out-Null
+Copy-Item scripts\install-msrustup.sh $bootstrap
+& "C:\Program Files\Git\bin\bash.exe" -lc `
+    'cd "$(cygpath "$USERPROFILE")/.msrustup/bootstrap" && sh ./install-msrustup.sh'
+& "$bootstrap\msrustup.exe" toolchain install
+```
+
+The first two commands create a working folder. The third copies the script
+into it. The fourth runs the script in Git Bash, which places `msrustup.exe`
+in that folder. The last command reads `rust-toolchain.toml` from the current
+directory and installs `ms-prod-1.97`.
+
+If the script reports that it requires `jq` immediately after `jq` was
+installed, Git Bash has not found the new program yet. Add the folder that
+contains `jq.exe` to the search path inside the Git Bash command.
+
+### What changes on the developer machine
+
+Windows finds a command such as `cargo` by checking the folders listed in
+the **`PATH`** setting, in order, and running the first match. Public Rust
+already placed its own `cargo` in `%USERPROFILE%\.cargo\bin`.
+
+`msrustup toolchain install` makes three changes:
+
+| Change | What it means for the developer |
+|---|---|
+| Installs `ms-prod-1.97` | The selected Microsoft toolchain is now on the machine. |
+| Places `%USERPROFILE%\.msrustup\multiplexers\bin` first in the user `PATH` | Typing `cargo` or `rustc` now runs `msrustup`'s copy. That copy reads `rust-toolchain.toml` and starts the selected toolchain. |
+| Adds a `global-credential-providers` line to `%USERPROFILE%\.cargo\config.toml` | When a Rust package source requires sign-in, Cargo can ask `msrustup` for the credential. |
+
+**The `PATH` change applies only to terminals opened afterward.** A terminal
+that was already open keeps its old `PATH`, so `cargo` still runs public
+Rust's copy there. `msrustup` warns about this by saying that `cargo` and
+`rustc` are "shadowed".
+
+Open a new terminal in the package directory and confirm which `cargo` runs:
+
+```powershell
+Get-Command cargo
+cargo -V
+```
+
+`Get-Command` should show `%USERPROFILE%\.msrustup\multiplexers\bin\cargo.exe`.
+`cargo -V` should show version `1.97.1` with an `-ms-` label, which marks a
+Microsoft build.
+
+### The first build after switching takes longer
+
+Compiled Rust output from the previous toolchain cannot be reused, so the
+first `maturin develop --release` recompiles the binding and every Rust
+dependency. On one Windows developer machine, that build took about
+12 minutes. Later builds recompile only what changed.
+
+To confirm which compiler produced a build, open `target\.rustc_info.json`.
+It records the `rustc` version that Cargo used, including the Microsoft
+build label.
+
 ### Prepare the environment before running the command
 
 A **Python virtual environment** gives the project its own Python package
@@ -1025,7 +975,8 @@ separate from unrelated projects.
 For the current configuration, the developer needs:
 
 - A suitable Python environment for the prototype's Python 3.10 minimum.
-- The selected Rust toolchain, with the required internal setup and access.
+- The selected Rust toolchain, installed as described in the previous
+  subsection.
 - The operating system's required compiler/linker tools.
 - Access to the selected driver and other Rust dependency sources.
 
@@ -1068,10 +1019,10 @@ libraries that are missing from the wheel.
 
 ### The custom wheel helper is not involved
 
-This command calls Maturin directly. It does not invoke
-`azure_cosmos_build_backend.py` to stage QueryPlanInterop files.
+This command calls Maturin directly. It does not run the SDK package builder's version
+checks or copy additional compiled libraries into the package.
 
-If a developer needs that particular query-planning library, the running SDK
+If a developer needs the separate query-planning library, the running SDK
 must be pointed at an appropriate external library directory, as described in
 [section 11](#11-how-queryplaninterop-reaches-the-wheel-and-the-running-sdk).
 Do not use the setting that selects files for a wheel as a substitute for
@@ -1091,12 +1042,11 @@ That requires testing the archive, not merely using the development checkout.
 ### The command that starts the build
 
 The **Python `build` package** is an open-source tool invoked as
-`python -m build`. It starts a package build by calling the backend selected
+`python -m build`. It starts a package build by calling the SDK package builder selected
 in `pyproject.toml`.
 
 This initiating role is called a **build frontend**. The frontend starts the
-work; the backend implements the package build. In our case, the backend is
-the SDK helper that delegates to Maturin.
+work; our SDK package builder prepares the inputs and delegates to Maturin.
 
 With the Rust and platform prerequisites from section 7 arranged, run from
 the package source directory:
@@ -1124,18 +1074,18 @@ declared here:
 ```toml
 [build-system]
 requires = ["maturin==1.15.0"]
-build-backend = "azure_cosmos_build_backend"
+build-backend = "azure_cosmos_package_builder"
 backend-path = ["."]
 ```
 
 | Setting | Meaning |
 |---|---|
 | `requires` | "Install this Python build dependency for the build." |
-| `build-backend` | "Call our SDK-owned helper." |
-| `backend-path` | "Find that helper in the package source directory." |
+| `build-backend` | "Call our SDK package builder." |
+| `backend-path` | "Find that module in the package source directory." |
 
 Keeping those build dependencies separate is called **build isolation**.
-The temporary environment creates the wheel; it is not Contoso Bank's
+The temporary environment creates the wheel; it is not Alpha Bank's
 application environment.
 
 ```text
@@ -1144,15 +1094,15 @@ Developer's environment
 
 Temporary build environment
     -> contains the declared Maturin version
-    -> runs the configured helper and packaging work
+    -> runs the SDK package builder and packaging work
 
 dist\
     -> receives the completed wheel
 ```
 
 Build isolation manages Python build dependencies. It is not a promise to
-install the complete Rust toolchain, operating-system build tools, or
-QueryPlanInterop. Arrange those inputs explicitly for this prototype.
+install the Rust toolchain, operating-system build tools, or additional
+compiled libraries. The developer must supply those before starting the build.
 
 If `--no-isolation` is used, the caller becomes responsible for installing
 and selecting the correct Python build tools too.
@@ -1165,25 +1115,25 @@ For a Windows x64 example:
 python -m build --wheel
     -> reads [build-system]
     -> prepares the Python build environment
-    -> calls azure_cosmos_build_backend.py
-    -> the helper stages QueryPlanInterop if supplied
+    -> calls the SDK package builder
+    -> the package builder checks versions and temporarily copies supplied libraries
     -> Maturin invokes Cargo for the Windows x64 extension
     -> Maturin packages the extension, Python files, and package information
     -> writes the Windows x64 wheel under dist\
 ```
 
-Calling `maturin build` directly bypasses our helper. Use the configured Python
+Calling `maturin build` directly bypasses our SDK package builder. Use the configured Python
 build path when checking the wheel workflow, including its version checks and
 optional staging. Direct `maturin develop` remains a local-development shortcut;
 it does not run these release-metadata checks.
 
-The helper also delegates source-archive, editable-build, and package-information
-requests to Maturin. Its extra QueryPlanInterop staging is specific to the
+The package builder also delegates source-archive, editable-build, and package-information
+requests to Maturin. Its extra library copying is specific to the
 wheel-building path.
 
 ### Inspect the archive, then install that exact file
 
-Before returning a built wheel, the backend checks the actual archive for
+Before returning a built wheel, the SDK package builder checks the actual archive for
 exactly one nonempty `_rust` extension under `azure/cosmos`, with a `.pyd` or
 `.so` suffix, and rejects an `any`-platform wheel. A wheel containing only
 the `_rust.pyi` interface description, called a **type stub**, fails
@@ -1246,9 +1196,13 @@ installed wheel.
 The wheel must carry the files the installed SDK needs, not just the compiled
 Rust result.
 
-A wheel is a ZIP archive. Here is the intended Windows layout. The `.libs`
-part is the planned QueryPlanInterop addition, not a claim that the current
-prototype already includes it:
+A wheel is a ZIP archive. The intended Windows layout below includes the
+Python wrapper, extension, and package information.
+
+It also shows a planned addition: **QueryPlanInterop**, a separate compiled
+library that creates a query plan, instructions the driver uses to request
+and combine query results. It is not yet supplied by the prototype wheel.
+Section 11 explains why it needs separate packaging and testing.
 
 ```text
 azure\
@@ -1304,7 +1258,7 @@ QueryPlanInterop is not folded into `_rust`. When included, it remains under
 ### The installer also needs information about the package
 
 The `.dist-info` directory carries the package metadata introduced in
-section 2. The installer reads it to understand the package it is installing.
+section 4. The installer reads it to understand the package it is installing.
 It also records file contents using **hashes**, values calculated from those
 contents so tooling can detect changes.
 
@@ -1330,7 +1284,7 @@ The next question is why we need several such archives for the same release.
 
 ## 10. Why one release needs several wheels
 
-Suppose Contoso Bank develops on Windows x64 but runs its customer app on
+Suppose Alpha Bank develops on Windows x64 but runs its customer app on
 Linux ARM64.
 
 The Python source may be the same, but the two environments cannot load the
@@ -1461,6 +1415,12 @@ implementation), or musllinux wheels (a different Linux runtime family).
 
 ### Where the target list is declared
 
+Building each target by hand would mean repeating the same preparation,
+build, installation, and test commands in several environments.
+**cibuildwheel** is an open-source tool that runs those wheel-building and
+testing workflows for the requested platforms and Python environments.
+It invokes the SDK package builder; it does not replace Maturin or Cargo.
+
 The relevant excerpt from `pyproject.toml` is:
 
 ```toml
@@ -1480,22 +1440,46 @@ manylinux-aarch64-image = "manylinux_2_28"
 archs = ["arm64"]
 ```
 
-This excerpt explains selection; it omits setup commands and environment
-settings from the complete file. Central must supply the environments that
-execute these builds and tests.
+For example, `archs = ["AMD64", "ARM64"]` requests both Windows processor
+targets. Writing that list does not start either build. Central must supply
+the build environments and invoke cibuildwheel there.
 
 Every separate library added to a wheel must match the same target. That
 requirement becomes important for QueryPlanInterop.
 
 ## 11. How QueryPlanInterop reaches the wheel and the running SDK
 
-Suppose Contoso Bank stores orders in a Cosmos DB **container**, the service
-resource holding those items. To handle data at scale, the service backend
-distributes it across **partitions**, portions of the container's data.
-A query may need results from several partitions rather than just one.
+Alpha Bank stores orders in a Cosmos DB **container** named `orders`.
+A container holds items, and the service backend distributes those items
+across **physical partitions**, service-managed portions of its data.
+Consider this illustrative set:
 
-Before requesting those results, the SDK needs a **query plan** describing
-which data ranges are relevant and how to process the combined results.
+| Physical partition | Order ID | Total |
+|---|---|---|
+| A | `order-17` | `125.50` |
+| B | `order-18` | `200.00` |
+| B | `order-19` | `70.00` |
+
+The customer app asks for orders over 100, sorted by total:
+
+```sql
+SELECT c.id, c.total FROM c WHERE c.total > 100 ORDER BY c.total
+```
+
+The expected result is `order-17`, then `order-18`. Reading only partition A
+would miss a matching order; combining unsorted replies could put them in the
+wrong order.
+
+A **query plan** tells the driver how to obtain and combine the results.
+For this example, the required work is:
+
+```text
+Request matching orders from both partitions, sorted by total
+    -> combine the replies while preserving that order
+    -> return order-17, then order-18
+```
+
+Those lines explain the work, not the literal format of a driver's plan.
 
 Creating that plan is different from executing the query and returning its
 results. The driver can obtain a plan from more than one place.
@@ -1580,27 +1564,26 @@ python -m build --wheel
 
 The path is an example, not a known download location.
 
-`azure_cosmos_build_backend.py` checks that the directory contains exactly one
+The SDK package builder checks that the directory contains exactly one
 primary library. It temporarily stages that library and the supplied native
 companions under `azure\cosmos\.libs`, lets Maturin package them, and cleans up
 its staged copies afterward.
 
 An invalid supplied directory or invalid primary-library set is an error.
-An absent source setting is different: the current backend skips staging and
+An absent source setting is different: the SDK package builder skips staging and
 can build a wheel without QueryPlanInterop.
 
 The current pipeline does not yet deliver these binaries or forward this
 source setting into Linux build containers. A **build container** is an
 isolated environment used to run build tools with its own filesystem view.
-It is unrelated to the Cosmos DB container holding Contoso Bank's orders.
+It is unrelated to the Cosmos DB container holding Alpha Bank's orders.
 The future setup must make both the files and the setting available inside it.
 A path visible only on the host machine is insufficient.
 
 ### Build time: reject the wrong processor's file
 
-Cargo runs `azure_cosmos_rust\build.rs` as part of building the binding.
-When staging is active, it uses `query_plan_binary.rs` to inspect the supplied
-compiled files.
+When library files have been staged, the binding's build checks inspect them
+before accepting them for the selected target.
 
 A compiled file has a **header**, a part of the file that identifies properties
 such as its format and processor. The checks compare those properties with
@@ -1615,7 +1598,7 @@ that the library can create a valid plan.
 
 ### Runtime: find the library beside the installed extension
 
-**Runtime** means when Contoso Bank's customer app is using the installed SDK,
+**Runtime** means when Alpha Bank's customer app is using the installed SDK,
 rather than when the SDK team is building it.
 
 The runtime setting is different:
@@ -1628,7 +1611,7 @@ It means:
 
 > "Look in this directory when the driver needs to load QueryPlanInterop."
 
-The Python helper in `azure\cosmos\_backend\_binding_adapter_shared.py` finds `.libs` beside
+The Python wrapper looks for `.libs` beside
 the imported `_rust` extension. If that directory exists, it supplies the path
 to the driver unless the caller already provided an explicit runtime setting.
 
@@ -1644,13 +1627,12 @@ Do not confuse the two variables:
 | `AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR` | Wheel build | Select files to package |
 | `AZURE_COSMOS_QUERYPLANINTEROP_DIR` | Running SDK | Select where to load the library |
 
-When the provider is used, the driver loads the library, finds the required
-functions, and submits query and partition-key information, including through
-`GetPartitionKeyRangesFromQuery4`. The returned JSON describes a plan.
-The SDK uses that plan to coordinate query requests and combine responses.
-The **partition replicas**, service-backend components holding copies of the
-partition data, execute the data operations. The QueryPlanInterop library
-does not read the database's items or return their query results.
+When this provider is used, the driver loads the library and supplies the query
+and the container's partition-key definition: the fields used to group related
+items for storage. The library returns a
+plan. The driver then sends the required data requests to the service backend
+and combines its replies. QueryPlanInterop creates the plan; it does not read
+`order-17` or `order-18` from the database.
 
 The driver does not download or compile QueryPlanInterop automatically.
 
@@ -1667,8 +1649,9 @@ The driver's diagnostic labels distinguish them:
 | `local_rust` | Pure-Rust planner |
 | `gateway` | Plan returned by the gateway |
 
-Installed-wheel tests need an observable signal for the actual provider,
-not merely an import check or a file-presence check. The label alone is not
+Installed-wheel tests must inspect the driver's reported planning result,
+not merely check that a library file exists or that the SDK imports. A label
+alone is not
 proof of success: `native_ffi` also appears in logs reporting an unavailable
 library or failed planning attempt. Check the message and outcome, such as
 `using native FFI query plan`, rather than treating a fallback message as
@@ -1699,46 +1682,114 @@ The local workflow answers:
 
 The pipeline must answer a larger question:
 
-> "Can we build the whole required set from the intended source, test it, and
+> "Can we build the whole required set from the intended source and
 > publish only the approved results?"
+
+This section covers build preparation, packaging, documentation generation,
+and release processing. Test coverage and execution belong in the
+[testing guide](V5/testing/v5-testing.md).
 
 ### The SDK entry point calls shared Central instructions
 
-The Cosmos entry file uses the shared templates introduced in section 3.
-It selects the common build instructions and passes the Cosmos-specific
-settings through them.
+**Azure DevOps** schedules and runs the automated pipeline. Its **continuous
+integration**, or **CI**, runs check proposed code changes by building and
+testing the package.
 
-The current chain is:
+The Cosmos configuration supplies package-specific settings to Central's
+**shared templates**, reusable pipeline instructions used by several SDKs.
+The configuration is written in **YAML**, a text format for structured settings.
+
+The pipeline groups work at three levels:
+
+| Level | Meaning | Example |
+|---|---|---|
+| Stage | A named group of jobs | Build the package files |
+| Job | Work assigned to one build environment | Build the Windows wheels |
+| Step | One operation in that job | Install the compiler, or run a wheel-build command |
+
+Steps in a job run in order. Independent jobs can run in parallel when build
+machines are available. A job that installs a wheel must wait for the job
+that produces it.
+
+### What Microsoft Rust installation means
+
+Before Maturin can ask Cargo to compile our Rust code, the build environment
+needs a **Rust toolchain**: Cargo, the `rustc` compiler, and Rust's standard
+library. Microsoft Rust installation means downloading and preparing the
+Microsoft-distributed toolchain selected for this SDK build. It does **not**
+install the Cosmos SDK into Alpha Bank's application, build a wheel, or
+publish anything.
+
+**msrustup** is Microsoft's toolchain manager: the program used to obtain
+and select these internal Rust build tools. It is different from the public
+`rustup` toolchain manager. Installing Maturin as a Python package does not
+install this Microsoft toolchain.
+
+### Who creates rust-toolchain.toml, and where is it used?
+
+`rust-toolchain.toml` is an **SDK-owned configuration file** in
+`sdk\cosmos\azure-cosmos`, alongside `pyproject.toml`. The SDK team creates
+and maintains it with the package source. It is not generated by the
+pipeline or by the tool installer.
+
+The file records our selected build tools:
+
+```toml
+[toolchain]
+channel = "ms-prod-1.97"
+profile = "minimal"
+```
+
+`channel` names the Microsoft toolchain to select. `profile = "minimal"`
+requests its basic compilation components, not a smaller wheel. The file
+contains settings; it does not contain the compiler or install it by itself.
+
+**The same file applies to local development and pipeline builds.**
+
+| Environment | How the file is used |
+|---|---|
+| Developer's machine | Rust build commands in this checkout use the selected toolchain. The developer must first install `msrustup` and the toolchain, with authorized access to its downloads, as described in [section 7](#7-building-for-local-development). |
+| Pipeline build machine | The installation step reads the file from the configured package directory and prepares that toolchain before the wheel build. |
+| Linux wheel-build container | The compiler must also be installed inside the container. Our `before-all` preparation in `pyproject.toml` obtains `msrustup` with `scripts\install-msrustup.sh`, then runs `msrustup toolchain install` from the mounted source directory. |
+| Alpha Bank installing a compatible wheel | No Rust compilation is needed, so the customer does not need these tools or this toolchain-selection file to install the wheel. |
+
+For example, a developer may already have public Rust installed and still
+receive "`ms-prod-1.97` is not installed." The missing prerequisite is the
+selected Microsoft toolchain, not the SDK source or a Cosmos API.
+
+### What the pipeline installer is
+
+Here, **installer** means the Azure DevOps step named `RustInstaller@1`.
+It installs the selected Microsoft Rust build tools into the build
+environment. It is not pip, the tool that installs Python packages.
+
+Central's shared
+`eng\pipelines\templates\steps\install-msrust-toolchain.yml` invokes that
+installation step. The template first checks that the package directory
+contains `rust-toolchain.toml` and that a download source was supplied.
+After installation, it configures Cargo's package source and authentication.
+It reads the SDK's selection; it does not create that selection file.
+
+### How the SDK requests that installation
+
+Follow a request for a Windows ARM64 wheel:
 
 ```text
-sdk\cosmos\ci.yml
-    -> eng\pipelines\templates\stages\cosmos-sdk-client.yml
-    -> eng\pipelines\templates\stages\archetype-sdk-client.yml
-    -> shared build jobs and conditional release processing
+SDK configuration requests the wheel and its Rust build tools
+    -> shared templates pass those settings to a Windows build job
+    -> the job installs the requested tools
+    -> cibuildwheel invokes the package build for the requested target
 ```
 
 **Having shared instructions for installing Rust is different from asking
 the Cosmos pipeline to use them.** The general template supports Microsoft
 Rust installation, but leaves it disabled unless a caller requests it.
 
-The SDK-owned `sdk\cosmos\ci.yml` must send that request through the
-Central-owned `cosmos-sdk-client.yml`. The Cosmos template must accept the
-inputs and forward them to `archetype-sdk-client.yml`; it does not need another
-implementation of the installer.
-
-**Checkout reviewed on October 22, 2026:** the SDK entry requests Rust
-installation, and `cosmos-sdk-client.yml` declares and forwards the installer
-inputs to `archetype-sdk-client.yml`. That existing toolchain support remains
-after the rollback.
-
-The test-job integration is different. The restored Cosmos template does not
-declare `RunRustTests`. Supplying that input caused Cosmos CI build 6990313
-to fail during YAML validation, before any jobs could run. The SDK entry now
-omits the unsupported input. **Do not restore it to enable the temporary
-parity framework.** The agreed direction is to run the retained original test
-coverage against the Rust-backed SDK through the normal pipeline, as explained
-below. Removing the input addresses that configuration failure; it does not
-prove that the retained tests execute successfully against Rust.
+The shared templates already support forwarding the Rust installation request.
+Every template between the SDK configuration and installer must accept and
+forward the required settings. An unsupported setting can fail configuration
+validation before any job starts; adding a new name to the SDK configuration
+does not add the corresponding shared behavior.
 
 These template inputs are named settings passed from one file to the next.
 A **feed** is a service from which tools download packages or other build
@@ -1746,7 +1797,7 @@ inputs. Here, one input tells the installer which feed supplies the compiler.
 
 | Input | What it tells the build |
 |---|---|
-| `InstallMsRustToolchain` | Enable Microsoft Rust installation |
+| `InstallMsRustToolchain` | Ask the shared build to run the Microsoft Rust installation steps |
 | `MsRustWorkingDirectory` | Find `rust-toolchain.toml` in this package directory and use its selected compiler version |
 | `MsRustToolchainFeed` | Download the toolchain from this package source, explained below |
 | `MsRustAdditionalTargets` | Also install support for compiling Windows ARM64 on the Windows x64 build machine |
@@ -1762,135 +1813,19 @@ verifiable publisher and integrity information to compiled files.
 The shared build also uses the flag to select extension builds.
 **It does not request Microsoft Rust installation.**
 
-### How matrix files describe the test environments
+### How shared tools select the Rust-backed build
 
-The test matrix introduced in section 10 needs a concrete representation.
-The SDK-owned `sdk\cosmos\cosmos-emulator-public-matrix.json` and
-`sdk\cosmos\cosmos-emulator-internal-matrix.json` describe combinations of
-build-machine settings, Python versions, emulator settings, and checks.
+The shared build reads the package information in `[project]` and recognizes
+the `[tool.cibuildwheel]` settings. That recognition matters: this package
+does not declare its extension through setuptools, so checking only the old
+setuptools extension setting would miss the Rust-backed build.
 
-The shared Cosmos template selects the public matrix for pull-request runs
-and the internal matrix for other runs. Its job-generation instructions
-turn the selected combinations into test jobs. For example, the public
-matrix has separate standard-test configurations for Python 3.10 and 3.13.
-Each needs its own execution result even if both install the same wheel.
+The shared build command invokes cibuildwheel, which runs the SDK package
+builder for each requested target. The same package builder, Maturin, and Cargo
+steps from the local wheel build still perform the work.
 
-A matrix file describes requested work; it does not run tests itself.
-Nor is the matrix the list of wheel targets: one wheel can serve several
-Python-version test configurations.
-
-### Test the Rust integration, not just the ability to compile it
-
-Contoso Bank needs the installed SDK to behave correctly when its customer app
-creates, reads, or updates an order. A successful wheel build establishes that
-the package could be assembled. It does not establish that those operations
-work. For example, an existing test creates an order, reads it back, and checks
-its contents. The migration must preserve that expected result while changing
-the SDK implementation that executes the request.
-
-**The intended pipeline retains the original test coverage and runs it against
-the Rust-backed SDK. It does not add a permanent legacy-versus-Rust comparison
-framework.**
-
-```text
-Before: retained test -> legacy Python SDK implementation -> service backend
-After:  retained test -> Rust-backed SDK implementation    -> service backend
-```
-
-During development, **parity comparisons** run the same operation through both
-implementations to investigate differences. They are temporary local sanity
-checks, not the intended pipeline test suite. The copied original tests have
-a different purpose: they become the maintained tests for the Rust-backed SDK.
-As that migration completes, the SDK team retires the superseded originals,
-the legacy Python implementation and infrastructure, and the temporary parity
-framework. Keeping both implementations and duplicate suites indefinitely is
-not the target.
-
-For emulator tests, the intended execution sequence is:
-
-```text
-Build the Rust-backed wheel
-    -> install that wheel in the test environment
-    -> start the Windows Cosmos DB Emulator
-    -> execute the retained tests against the Rust-backed SDK
-    -> publish the test results
-```
-
-The **Windows Cosmos DB Emulator** provides the local service used by the
-existing emulator tests. It is not the Rust in-memory test substitute
-identified as unfinished migration work in section 5. Tests that require a
-live account, several service regions, or a different authentication setup
-must retain their appropriate environments; emulator results do not replace
-that coverage.
-
-**pytest** is the tool that executes the Python tests. It first **collects**
-tests, finding the cases selected by the command, and then runs their checks.
-The existing emulator job selects the `cosmosEmulator` **marker**, a label on
-a test. The SDK team must preserve the labels and discovery rules needed to
-select the retained tests. Successful collection alone does not prove that
-their test bodies ran or that their SDK calls used Rust.
-
-The test code can come from the repository, but the SDK under test should come
-from the installed package. Otherwise, a test could load an older locally
-compiled extension from the source directory instead of the extension in the
-wheel Contoso Bank will receive. Checking that the intended package is loaded
-is useful independently of any temporary runner.
-
-**Remaining migration files are not a statement of the intended CI design.**
-`sdk\cosmos\templates\rust-tests.yml` and
-`sdk\cosmos\azure-cosmos\scripts\run_rust_ci.py` still describe the earlier
-additional-job approach. The script selects tests and invokes pytest with
-extra execution checks. Their presence does not require Central to integrate
-them, and this documentation change does not remove them or prevent existing
-marker-based discovery from selecting temporary comparison tests. Removing
-the temporary framework and completing test selection are SDK migration work
-still to be performed.
-
-| Owner | Responsibility |
-|---|---|
-| SDK team | Preserve the original assertions and test coverage, adapt setup and SDK calls to Rust, maintain selection in the existing jobs, and retire temporary comparisons and superseded legacy infrastructure |
-| Central team | Maintain shared package installation and test execution; fix specific shared limitations demonstrated by the normal pipeline, without changing other SDK callers unnecessarily |
-
-There is no standing request to add parity jobs or restore `RunRustTests`.
-First establish whether the existing pipeline can install the intended
-Rust-built package and execute the retained tests. If a shared step prevents
-that, identify the failing step and request that specific Central change.
-
-Completion requires execution results for the retained tests in their intended
-environments, evidence that their SDK calls use Rust, and investigation of
-missing or skipped cases. A successful build, a collected test list, or a
-passing run against the legacy implementation is not a substitute. Newly
-exposed failures must be investigated rather than excluded to make CI pass.
-
-### Which shared files do the work?
-
-These files implement the shared stages, jobs, and steps introduced in
-section 3. Paths are relative to the Python repository root:
-
-| Central-owned file | Its part of the process |
-|---|---|
-| `eng\pipelines\templates\stages\cosmos-sdk-client.yml` | Applies Cosmos-specific settings |
-| `eng\pipelines\templates\stages\archetype-sdk-client.yml` | Connects the shared stages and passes build settings onward |
-| `eng\pipelines\templates\jobs\ci.yml` | Defines platform build jobs and their limits |
-| `eng\pipelines\templates\steps\resolve-build-platforms.yml` | Resolves platform setup, including Windows Python locations |
-| `eng\pipelines\templates\steps\build-package-artifacts.yml` | Prepares tools and dependency access, then generates packages |
-| `eng\pipelines\templates\steps\install-msrust-toolchain.yml` | Installs the Microsoft Rust toolchain |
-| `eng\tools\azure-sdk-tools\ci_tools\parsing\parse_functions.py` | Reads package information and recognizes the `cibuildwheel` configuration |
-| `eng\tools\azure-sdk-tools\ci_tools\build.py` | Selects and invokes the package-build route |
-| `eng\tools\azure-sdk-tools\azpysdk\sphinx.py` | Prepares documentation sources and installs the package used to generate API documentation |
-
-The parser's `ParsedSetup` object is the shared code's representation of the
-package configuration. It selects the Python package information from a
-populated `[project]` section and recognizes `[tool.cibuildwheel]`.
-
-That extra recognition matters because a Maturin extension is not declared
-as a setuptools `ext_modules` extension. The shared build must not overlook
-the need for platform-wheel coordination just because that setuptools setting
-is absent.
-
-`sdk_build`, the shared build command, then invokes `cibuildwheel`.
-This does not replace the helper or Maturin; it arranges their repeated
-execution in the selected environments.
+After the wheels are built, the pipeline also needs to produce the API
+documentation that explains how to use the installed SDK.
 
 ### What Sphinx does and why the pipeline runs it
 
@@ -1910,7 +1845,7 @@ such as the README, into documentation pages that a developer can read in a
 web browser.
 
 These are customer-facing SDK API reference pages: the kind of documentation
-Contoso Bank's developers consult on Microsoft Learn to understand classes,
+Alpha Bank's developers consult on Microsoft Learn to understand classes,
 methods, parameters, and return values. They are different from this
 `build_and_release.md` guide, which explains how contributors build and release
 the SDK.
@@ -1934,21 +1869,6 @@ Generating these pages does not build the customer package or prove that
 requests succeed against the service backend. The wheel supplies the code
 that the customer app runs; the documentation explains how to use that code.
 
-The documentation and emulator-test jobs are separate branches of the shared
-pipeline. Both wait for the Linux, Windows, and macOS package builds, but the
-test-matrix generation does not depend on the documentation job:
-
-```text
-Linux, Windows, and macOS package builds
-    -> Build Docs
-    -> Generate test matrix -> emulator test jobs
-```
-
-A documentation failure therefore does not itself prevent the emulator tests
-from running, although it still makes the overall pipeline unsuccessful.
-A test-collection failure, such as two test files being imported under the
-same module name, must be diagnosed separately from a documentation failure.
-
 ### Why documentation generation installs the built wheel
 
 Because Sphinx imports the SDK, the documentation environment needs an
@@ -1963,14 +1883,13 @@ The documentation check therefore needs two different inputs:
 | Source distribution (`sdist`) | An archive supplying the README and source files used to prepare documentation pages |
 | Compatible wheel | The installed SDK, including its compiled extension, that Sphinx imports |
 
-**Pending Central work:** the restored shared check in
-`eng\tools\azure-sdk-tools\azpysdk\sphinx.py` still installs the sdist.
-That asks the build backend to create a new wheel. For our package it invokes
+**Pending Central work:** the shared documentation check still installs the sdist.
+That asks the SDK package builder to create a new wheel. For our package it invokes
 Maturin and Cargo, which require the selected Microsoft Rust toolchain.
 Installing Maturin alone does not supply that toolchain.
 
-Central needs to use the existing `ext_modules` or `cibuildwheel` package
-information to recognize compiled packages. For those packages, the check
+Central needs to recognize packages that declare compiled extensions or
+cibuildwheel builds. For those packages, the check
 must stage the sdist without installing it, then install a compatible built
 wheel. In CI, `PREBUILT_WHEEL_DIR` identifies the existing artifacts.
 A missing compatible wheel must fail the check, not silently trigger a new
@@ -2007,25 +1926,18 @@ records information about SDK operations. The SDK adds a **wrapper function**
 around a method so it can record that information while calling the original
 method.
 
-Sphinx 8.2 looks up the overload's type names using the wrapper's module
-rather than the module defining the original method.
-The wrapper's module does not contain the
-`ContainerProxy` and `PartitionKey` names imported by the original method's
-module. The resulting short-name references can match several documented
-classes. That is why the documentation check can fail even when the
-docstring already contains qualified names.
+The documentation check can look up an overload's type names where the
+tracing wrapper is defined, rather than where the original method is defined.
+Those locations do not necessarily make the same classes available.
+Consequently, a short name such as `ContainerProxy` can resolve to the wrong
+class or remain ambiguous, even when the docstring uses a qualified name.
 
 The correction belongs to the documentation tools, not the customer app.
-**Pending Central work:** the proposed `_autodoc.py` helper and its
-registration in `doc\sphinx\conf.py` have been removed from this branch.
-Central needs a correction that resolves overloaded signatures using the
+**Pending Central work:** resolve overloaded signatures using the
 original method's types, rather than the tracing wrapper's imports.
 
 The SDK must keep its tracing wrapper and runtime behavior, and documentation
-warnings must remain errors. Central's regression tests should generate
-pages containing competing class names and check that both overloads link
-to the intended class. Those tests must be tracked and included in a test
-run, not left under an ignored generated-documentation directory.
+warnings must remain errors.
 
 ### Why package inspection must handle several wheels
 
@@ -2034,8 +1946,8 @@ name such as `azure.cosmos`. It obtains that information by inspecting
 Python files inside a wheel.
 
 The pure-Python package supplied one wheel, but this release supplies several
-platform wheels. The current `eng\scripts\Save-Package-Namespaces-Property.ps1`
-can pass several matching files to a helper that accepts one archive path.
+platform wheels. The shared namespace-inspection step can pass several
+matching files to a helper that accepts one archive path.
 That causes the namespace step to fail before it records the package data.
 
 **Pending Central work:** select one wheel for the exact package version and
@@ -2068,10 +1980,6 @@ These are environment variables, not new commands to run. PyO3's
 `generate-import-lib` feature helps create the Python-linking files needed
 by this Windows build arrangement.
 
-Neither setup excuses missing tests. Producing an ARM64 file on x64 does not
-prove the ARM64 file executes correctly. Central must establish execution-test
-coverage for each supported target.
-
 Linux wheel builds run inside the prepared containers introduced in section
 11. The compiler setup, required credentials, and input files must be available
 where the build actually runs, not just on the host.
@@ -2100,30 +2008,22 @@ The Cargo feed does not select the compiler version. It also does not replace
 the driver Git revision configured in `Cargo.toml`; that driver source still
 requires access to its Git repository.
 
-### Can we reuse the test toolchain feed?
+### Choosing a toolchain feed
 
-The checked-out SDK entry selects this feed for prototype testing:
-
-```text
-https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json
-```
-
-The address ends in `nuget/v3/index.json` because the toolchain is distributed
-using **NuGet**, another package-distribution system. We are downloading
-build tools here, not changing how customers install the Python SDK.
+The prototype uses a test feed. A release needs an approved feed containing
+the selected toolchain and additional compilation targets.
 
 The shared installer requires the caller to supply the toolchain feed
 explicitly. The SDK entry chooses the address; Central's template receives
 and uses it.
 
-The SDK entry now supplies the following inputs alongside `ServiceDirectory`
-under `extends.parameters` in `sdk\cosmos\ci.yml`, retaining the existing
-`Artifacts` list:
+The required settings have this shape. Replace the placeholders with the
+package directory on the build machine and the chosen feed address:
 
 ```yaml
 InstallMsRustToolchain: true
-MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/cosmos/azure-cosmos
-MsRustToolchainFeed: https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json
+MsRustWorkingDirectory: <package-source-directory>
+MsRustToolchainFeed: <toolchain-feed-address>
 MsRustAdditionalTargets: aarch64-pc-windows-msvc
 ```
 
@@ -2143,26 +2043,19 @@ Authentication for internal feeds belongs in pipeline infrastructure.
 The feed address is configuration; access tokens are credentials and must not
 be committed into the SDK's package files.
 
-The next run must confirm that its identity can obtain `ms-prod-1.97` and the
-required targets from this feed. Feed contents and current build access have
-not been verified by this documentation update. Successful toolchain
+The pipeline must demonstrate that its identity can obtain the selected
+toolchain and required targets from the chosen feed. Knowing the address
+does not establish that the files are present or accessible. Successful toolchain
 installation also does not prove that Cargo dependency downloads will succeed;
 those use their own feed configuration and authentication.
 
 These are build-time downloads. A customer installing a compatible wheel does
 not need these internal feeds or Microsoft Rust tools.
 
-**Source:** `eng\pipelines\templates\stages\archetype-sdk-client.yml`,
-`eng\pipelines\templates\steps\build-package-artifacts.yml`,
-`eng\pipelines\templates\steps\install-msrust-toolchain.yml`, and the package's
-`rust-toolchain.toml`. The forwarding and feed selection described here were
-checked in `cosmos-sdk-client.yml` and `sdk\cosmos\ci.yml`; feed access and
-successful execution still need their own evidence.
-
 ### Build time limits are separate from feed access
 
-The Rust-enabled jobs currently allow 240 minutes for a whole job and
-210 minutes for the package-generation step inside it.
+For example, a job can allow 240 minutes overall while its package-generation
+step allows only 210 minutes.
 
 The two limits answer different questions:
 
@@ -2193,13 +2086,10 @@ Saving artifacts lets the team inspect what the automated build produced
 and pass those files to later jobs. It does not automatically make them
 customer-visible releases.
 
-The current package `test-command` checks that `CosmosClient` and `_rust`
-import and that `_rust.create_database` is present. It does not call that
-operation, validate the complete SDK, or demonstrate query planning.
-
-The source paths covered by `sdk\cosmos\ci.yml` include the Rust source and
-configuration. Branch conditions still matter: the presence of a matching
-file path does not mean every branch push automatically runs the pipeline.
+The pipeline's trigger rules must cover changes to the Rust source and build
+configuration. Those rules also select branches: changing a covered file
+does not mean every branch push starts a run. Required SDK and shared-tool
+changes must be available in the branch that the pipeline actually builds.
 
 ### The release route processes and publishes approved outputs
 
@@ -2217,24 +2107,25 @@ If signing changes files inside a wheel, the release process must:
 unpack the wheel
     -> sign the files required by the approved policy
     -> repack it with correct packaged-file records
-    -> install and test that final wheel
+    -> verify the final archive before publication
 ```
 
 Signing can change file contents, so the hashes and sizes recorded in the
 wheel's `RECORD` file must describe the signed files, not the earlier copies.
-Testing an earlier unsigned wheel does not prove the repacked wheel works.
 Signing infrastructure and credentials remain Central-owned.
 
-Only after the required outputs, final-wheel tests, and approvals are complete
+Only after the required outputs, release checks, and approvals are complete
 should publication proceed. These are requirements for the finished release
 route, not a claim that the prototype has completed them.
 
-## 13. What Contoso Bank installs
+<a id="13-what-customer-installs"></a>
+
+## 13. What Alpha Bank installs
 
 The purpose of all that SDK-team work is to avoid making every customer repeat
 the compilation process.
 
-For a published Rust-backed release, a Contoso Bank developer normally uses:
+For a published Rust-backed release, an Alpha Bank developer normally uses:
 
 ```powershell
 python -m pip install azure-cosmos
@@ -2255,7 +2146,7 @@ The match is against the Python environment running pip, not just the
 machine's physical processor. For example, 32-bit Python on a 64-bit Windows
 machine cannot use our `win_amd64` wheel.
 
-If Contoso Bank later deploys the customer app to supported Linux ARM64, that
+If Alpha Bank later deploys the customer app to supported Linux ARM64, that
 environment needs the Linux ARM64 wheel for the same SDK version.
 These are different files belonging to one release.
 
@@ -2269,7 +2160,7 @@ SDK team
     -> places it in the platform wheel
     -> publishes the approved wheel
 
-Contoso Bank
+Alpha Bank
     -> downloads and installs that wheel
     -> runs the installed SDK
 ```
@@ -2292,7 +2183,7 @@ The Rust-backed release policy requires wheels-only publication. Once that
 policy is enforced, if none of that version's wheels is compatible, the
 customer cannot install that version using our published packages.
 
-The SDK records this policy, but enforcement in the restored shared
+The SDK records this policy, but enforcement in the shared
 publishers is still pending with Central. The current publishing path must
 not be used for this Rust-backed release before that work is integrated.
 
@@ -2302,7 +2193,7 @@ The next section explains why we do not yet support it.
 
 ## 14. What changes if we also publish a source distribution
 
-If no compatible wheel is available, a source archive could let Contoso Bank
+If no compatible wheel is available, a source archive could let Alpha Bank
 build one on its own machine. That moves compilation from the SDK team to
 the customer. For this package, the sdist filename has the shape:
 
@@ -2313,7 +2204,7 @@ azure_cosmos-<version>.tar.gz
 Unlike a platform wheel, it does not provide the already-built Rust extension
 for the customer's machine.
 
-### Sdist tracking note: customer source installation
+### Why customer source installation is not supported yet
 
 **Current policy: publish prebuilt wheels only. Customer source installation
 remains unvalidated. Enforcement in the shared publishers is pending.**
@@ -2329,7 +2220,7 @@ pip downloads the source archive
     -> prepares a Python build environment
     -> installs the declared Python build dependencies
     -> calls our helper and Maturin
-    -> Cargo and rustc build the extension for Contoso Bank's machine
+    -> Cargo and rustc build the extension for Alpha Bank's machine
     -> a local wheel is created
     -> pip installs that wheel
 ```
@@ -2352,7 +2243,7 @@ multi-platform Azure SDK pipeline.**
 | Rust dependency sources | Must be accessible; the prototype's Git-pinned driver also requires access to its Git source |
 | QueryPlanInterop files | Needed if this source-build path promises that particular provider |
 | `cibuildwheel` | Not needed to build just the customer's local wheel |
-| Python `build` package | Not required merely to run `pip install`; pip can call the backend |
+| Python `build` package | Not required merely to run `pip install`; pip can call the SDK package builder |
 
 If build isolation is disabled, the caller must arrange the Python build
 dependencies as well. Installing Maturin is not the same as installing the
@@ -2385,14 +2276,13 @@ It must include all package-owned inputs required to start a clean build:
 
 | Input | Why it is needed |
 |---|---|
-| `azure\__init__.py`, `azure\cosmos\**` | Python package structure, implementation, typing files, and data |
-| `azure_cosmos_rust\Cargo.toml`, `src\**` | Binding configuration and Rust source |
-| `azure_cosmos_rust\build.rs`, `query_plan_binary.rs` | Build-time native-library checks |
-| Root `Cargo.toml`, `Cargo.lock` | Workspace and dependency selections |
-| `rust-toolchain.toml`, required `scripts\*.sh` | Selected toolchain and configured setup inputs |
-| `pyproject.toml`, `azure_cosmos_build_backend.py` | Package information and build entry point |
-| `azure_cosmos_build_metadata.py`, `api.metadata.yml`, `CHANGELOG.md` | Version-check helper and its additional inputs; `_version.py` is included with the Python source |
-| README, license, and other files referenced by packaging | Required package descriptions and supporting information |
+| Python package files | Wrapper implementation, import structure, typing information, and package data |
+| Binding source and build checks | Rust code to compile and checks for supplied native libraries |
+| Both `Cargo.toml` files and `Cargo.lock` | Workspace, binding configuration, and selected dependencies |
+| `rust-toolchain.toml` and required setup scripts | Toolchain selection and preparation commands |
+| `pyproject.toml` and `azure_cosmos_package_builder.py` | Package information and the SDK package builder that prepares inputs and calls Maturin |
+| Version-check code and its inputs | The check must find `_version.py`, project metadata, API metadata, and the changelog inside the archive |
+| README, license, and referenced supporting files | Package description and distribution information |
 
 The driver source need not be copied into the archive if Cargo can obtain the
 approved source through the declared dependency. No active dependency may
@@ -2404,30 +2294,28 @@ provider, define how the customer obtains matching files.
 
 ### Use and validate the actual source-archive creation path
 
-The configured custom backend delegates internal sdist creation to Maturin.
-`pyproject.toml` explicitly includes the backend, toolchain file, and setup
+The SDK package builder delegates internal sdist creation to Maturin.
+`pyproject.toml` explicitly includes `azure_cosmos_package_builder.py`, the toolchain file, and setup
 scripts in that archive.
 
-The shared `create_package` function in
-`eng\tools\azure-sdk-tools\ci_tools\build.py` can already request this archive
-when `enable_sdist` is true. **Generating an sdist as a build output does not
+The shared build can request this archive with `enable_sdist: true`.
+**Generating an sdist as a build output does not
 decide whether we publish it or promise customers that source installation
 works.**
 
 Internal documentation builds use the archive's README and source files, so
 we retain archive generation. Publication must be blocked separately.
 
-The `azure-cosmos` artifact in `sdk\cosmos\ci.yml` requests that separation
-with `skipPublishSdist: true`. **The restored publishing templates do not
+The SDK's package-output settings request that separation
+with `skipPublishSdist: true`. **The shared publishing templates do not
 read this setting.** They still select `.tar.gz` files for publication, so
 the SDK flag alone does not protect customers.
 
-Central must update `eng\pipelines\templates\stages\release-artifact.yml`
-to exclude source archives from PyPI staging and source uploads to other
+Central must update the release publishers to exclude source archives from
+PyPI staging and source uploads to other
 release and development feeds. It must also reject source archives already
-present in a wheels-only staging directory. The separate
-`eng\pipelines\templates\steps\publish-alpha-package.yml` must honor the same
-setting for daily alpha packages. Packages that do not opt in should retain
+present in a wheels-only staging directory. The daily alpha-package publisher
+must honor the same setting. Packages that do not opt in should retain
 their existing behavior.
 
 Do not publish this Rust-backed package through those paths until the
@@ -2482,20 +2370,19 @@ must be identified.
 ### Central changes still required
 
 The SDK owns the requested behavior and its package-side configuration.
-Central owns the shared code that must act on those requests. After the
-October 22, 2026 rollback, the following work is pending rather than part of
-this branch's shared implementation:
+Central owns the shared code that must act on those requests. These changes
+remain pending:
 
-| Work | Central-owned files | What must be delivered |
-|---|---|---|
-| Synchronized version updates | `eng\tools\azure-sdk-tools\ci_tools\versioning\*`, `packaging_tools\sdk_update_version.py` under the same tool directory | Honor the SDK setting, update all version copies and stability labels, and restore files if the update fails |
-| Documentation installation | `eng\tools\azure-sdk-tools\azpysdk\sphinx.py` | Keep sdist sources for page generation but install a compatible built wheel for compiled packages |
-| Overloaded method documentation | Shared configuration under `doc\sphinx` | Resolve types from the original method without changing SDK tracing or suppressing warnings |
-| Multi-wheel namespace inspection | `eng\scripts\Save-Package-Namespaces-Property.ps1` | Inspect one exact-version wheel instead of passing several files to a single-archive helper |
-| Wheels-only publication | `eng\pipelines\templates\stages\release-artifact.yml`, `eng\pipelines\templates\steps\publish-alpha-package.yml` | Honor `skipPublishSdist` across all publication routes while preserving other packages' behavior |
+| Work | What Central must deliver |
+|---|---|
+| Synchronized version updates | Honor the SDK setting, update every version copy and stability label, and restore files if the update fails |
+| Documentation installation | Keep sdist sources for page generation but install a compatible built wheel for compiled packages |
+| Overloaded method documentation | Resolve types from the original method without changing SDK tracing or suppressing warnings |
+| Multi-wheel namespace inspection | Inspect one exact-version wheel instead of passing several files to a single-archive helper |
+| Wheels-only publication | Honor `skipPublishSdist` across all publication routes while preserving other packages' behavior |
 
-Each change needs Central-owned, tracked regression coverage and integration
-into the source used by the pipeline. A saved patch or an SDK opt-in is not
+Each change needs regression tests and must be included in the source used
+by the pipeline. A saved patch or an SDK opt-in is not
 evidence that the shared implementation exists. Integrating the temporary
 parity jobs is not part of this Central work list. The SDK team must complete
 the retained-test migration through the normal pipeline and raise any specific
@@ -2504,7 +2391,7 @@ the source-archive restriction.
 
 ### Treat the Rust-backed release as a v5 upgrade
 
-Contoso Bank needs to distinguish an update that preserves the existing API from
+Alpha Bank needs to distinguish an update that preserves the existing API from
 an upgrade that intentionally removes supported behavior. **This Rust-backed
 release targets SDK major version 5, not another compatible 4.x release.**
 The exact v5 version, preview or stable status, and release date still require
@@ -2530,7 +2417,7 @@ Before publication, the Cosmos SDK team and release approver must establish:
 
 **These are release requirements, not an automated major-version gate.**
 The existing metadata check rejects disagreement between version files, but
-it would accept matching `4.17.2` values. Passing that check does not authorize
+it would accept matching 4.x versions. Passing that check does not authorize
 publishing this breaking release under a 4.x version.
 
 ### Keep the remaining decisions in one place
@@ -2545,7 +2432,7 @@ publishing this breaking release under a 4.x version.
 | Support policy | Approve Python versions, platform coverage, Linux baseline, and Windows/macOS minimums | Release approver, using SDK and Central evidence |
 | Multi-target builds | Build the intended source and inspect every required wheel; establish execution-test coverage including ARM64 | Central team and Cosmos SDK team |
 | QueryPlanInterop | Complete the [deferred library delivery and provider checks](#deferred-work-and-completion-criteria) | Producing team, Cosmos SDK team, and Central team |
-| Source installation | Keep sdists unpublished until [customer source installation](#sdist-tracking-note-customer-source-installation) is approved and validated | Release approver, Cosmos SDK team, and Central team |
+| Source installation | Keep sdists unpublished until [customer source installation](#why-customer-source-installation-is-not-supported-yet) is approved and validated | Release approver, Cosmos SDK team, and Central team |
 | Dependency maintenance | Confirm update automation covers both Cargo manifests and the lock | Repository maintainers and Cosmos SDK team |
 | Signing and publication | Apply approved signing, test final repacked wheels, and publish the complete set under one version | Central team and release approver |
 
@@ -2574,26 +2461,14 @@ build job, import, or query cannot stand in for the complete evidence.
 
 ### Configuration tests catch different mistakes from runtime tests
 
-The SDK has focused tests under:
+Configuration tests can reject a mismatched package version, a missing target,
+or a build route that omits the Rust extension before compilation starts.
+They can also check which library files the helper copies into the package.
 
-```text
-tests\common\test_build_configuration_unit.py
-tests\common\test_query_plan_packaging_unit.py
-```
-
-They check matters such as metadata agreement, target selection, driver-source
-consistency, source-archive inclusion settings, and QueryPlanInterop staging.
-
-Central's corresponding shared-tool tests include:
-
-```text
-eng\tools\azure-sdk-tools\tests\test_build_interactions.py
-eng\tools\azure-sdk-tools\tests\test_parse_functionality.py
-```
-
-Those checks help catch a misread package or an incorrect build route before
-expensive native builds start. They do not prove that a compiled extension
-works on Windows ARM64 or that an installed query-planning library executes.
+Those checks do not execute the resulting extension. A Windows ARM64 wheel
+still needs installation and operation tests in a compatible environment.
+A wheel promising QueryPlanInterop still needs a query test that demonstrates
+successful planning by that provider, not merely a library filename in the ZIP.
 
 The release needs both kinds of evidence: correct configuration and working
 final packages in the environments we promise to support.

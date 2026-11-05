@@ -1,0 +1,46 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+steps:
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      $results = '$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-toxiproxy'
+      New-Item -ItemType Directory -Force $results | Out-Null
+      Write-Host '##vso[task.setvariable variable=uploadLlmArtifacts]true'
+      $server = '$(Agent.TempDirectory)/cosmos-toxiproxy/toxiproxy-server.exe'
+      python -I sdk/cosmos/azure-cosmos/tests/toxiproxy/_toxiproxy_config.py --install $server
+      Push-Location sdk/cosmos/azure-cosmos
+      try {
+        python -m pip install -r dev_requirements.txt
+      } finally {
+        Pop-Location
+      }
+      $wheels = @(Get-ChildItem '$(Build.ArtifactStagingDirectory)' -Recurse -Filter 'azure_cosmos-*-win_amd64.whl')
+      if ($wheels.Count -ne 1) {
+        throw "Expected exactly one built Cosmos Windows x64 wheel; found $($wheels.Count)."
+      }
+      python -m pip install --no-deps --force-reinstall $wheels[0].FullName
+      $env:TOXIPROXY_SERVER = $server
+      python -I sdk/cosmos/azure-cosmos/scripts/run_rust_ci.py toxiproxy `
+        --require-installed-wheel --results $results
+      exit $LASTEXITCODE
+    displayName: Run all 46 Toxiproxy cases against the built Rust wheel
+    timeoutInMinutes: 20
+    # One Windows standard-matrix job, not every Python/dependency variation.
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['PythonVersion'], '3.13'), eq(variables['ChecksOverride'], 'whl,sdist'))
+    env:
+      COSMOS_BACKEND: rust
+      COSMOS_TEST_DATA_AUTH_MODE: key
+      ACCOUNT_HOST: https://localhost:8081/
+      # Public emulator credential; never use the live-account test configuration.
+      ACCOUNT_KEY: C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
+  - task: PublishTestResults@2
+    displayName: Publish required Toxiproxy results
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['PythonVersion'], '3.13'), eq(variables['ChecksOverride'], 'whl,sdist'))
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: $(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-toxiproxy/pytest.xml
+      testRunTitle: Cosmos Rust Toxiproxy
+      failTaskOnFailedTests: true
+      failTaskOnMissingResultsFile: true

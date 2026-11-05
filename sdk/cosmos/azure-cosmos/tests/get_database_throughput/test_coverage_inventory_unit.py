@@ -84,7 +84,7 @@ def test_original_database_contract_inventory_and_backend_pins_rust():
 
 def test_baseline_paths_keep_neighboring_families_distinct_rust():
     files = _runner().test_files("get")
-    targets = {(path.parent.parent.parent.name, path.parent.parent.name, path.name) for path in files}
+    targets = {(path.parent.parent.name, path.parent.name, path.name) for path in files}
     assert len(targets) == len(files)
 
 

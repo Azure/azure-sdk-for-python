@@ -179,7 +179,7 @@ def test_get_or_create_legacy_copies_preserve_preconditions_and_assertions_rust(
     suffix = "_async" if surface == "aio" else ""
     original = ast.parse((root / f"test_cosmos_responses{suffix}.py").read_text(encoding="utf-8"))
     copied = ast.parse(
-        (root / "create_database_if_not_exists" / surface / "legacy" / "test_cosmos_responses.py")
+        (root / "create_database_if_not_exists" / surface / "test_cosmos_responses.py")
         .read_text(encoding="utf-8")
     )
     for stem in ("test_create_database_if_not_exists_headers", "test_create_database_if_not_exists_headers_negative"):

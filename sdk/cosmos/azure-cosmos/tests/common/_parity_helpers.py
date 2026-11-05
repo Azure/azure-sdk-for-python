@@ -37,6 +37,7 @@ import pytest
 
 from azure.cosmos import CosmosClient
 from azure.cosmos.aio import CosmosClient as AioCosmosClient
+from config.diagnostics import _binding_operation_count, _rust_fallback_count
 
 
 # ---------------------------------------------------------------------------
@@ -158,13 +159,19 @@ class BackendComparison:
             "Exception parity diffs:\n  - " + "\n  - ".join(exception_diffs)
         )
 
-    def assert_functional_exception_parity(self):
-        """Check the normalized exception contract while ignoring header-diff categories."""
-        self._assert_exception_contract()
+    def assert_functional_exception_parity(self, compare_message: bool = True):
+        """Check the normalized exception contract while ignoring header-diff categories.
+
+        With ``compare_message=False`` only the exception type, status code and
+        sub-status must match; message text differences are still printed in the
+        report but do not fail the test.
+        """
+        self._assert_exception_contract(compare_message=compare_message)
         non_header_diffs = [
             diff
             for diff in diff_outcomes(self.core_python, self.rust)
             if not any(diff.startswith(prefix) for prefix in self._HEADER_DIFF_PREFIXES)
+            and (compare_message or not diff.startswith("exception.message"))
         ]
         if non_header_diffs:
             print(self.format_report())
@@ -175,7 +182,7 @@ class BackendComparison:
             )
         self.print_report()
 
-    def _assert_exception_contract(self):
+    def _assert_exception_contract(self, compare_message: bool = True):
         core_exc, rust_exc = self.core_python.raised, self.rust.raised
         if core_exc is None or rust_exc is None:
             print(self.format_report())
@@ -187,6 +194,8 @@ class BackendComparison:
             assert getattr(core_exc, attr, None) == getattr(rust_exc, attr, None), (
                 "exception.{} differs: core-python {!r} / rust {!r}".format(
                     attr, getattr(core_exc, attr, None), getattr(rust_exc, attr, None)))
+        if not compare_message:
+            return
         core_message = _normalize_exception_message(core_exc)
         rust_message = _normalize_exception_message(rust_exc)
         assert core_message == rust_message, (
@@ -769,24 +778,6 @@ def _assert_expected_backend(client: Any, expected: str) -> None:
                 expected, observed
             )
         )
-
-
-def _binding_operation_count() -> int:
-    """Read the process-wide counter at instrumented Rust binding entry points."""
-    try:
-        from azure.cosmos import _rust
-        counter = getattr(_rust, "_debug_operation_count", None)
-        if callable(counter):
-            return int(counter())
-    except (ImportError, TypeError, ValueError):
-        pass
-    raise AssertionError("Rust binding operation counter is unavailable")
-
-
-def _rust_fallback_count() -> int:
-    """Return the number of Rust calls that continued through Python."""
-    from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
-    return rust_compatibility_fallback_count()
 
 
 def run_target_operation(

@@ -262,11 +262,36 @@ def test_priority_high_rust(container_for):
 # ---------------------------------------------------------------------------
 
 # Binding routes the session token to the driver's typed setter.
-def test_session_token_rust(container_for):
-    """Baseline call plus ``session_token=<token>`` (Session-consistency header kwarg)."""
+def test_session_token_rust(container_for, monkeypatch):
+    """Pass a service-issued token to fresh clients for the same container and partition."""
+    seed_body = {"id": uuid.uuid4().hex, "pk": "a"}
+    seed = container_for.create_item(body=seed_body)
+    assert seed["id"] == seed_body["id"] and seed["pk"] == "a"
+    token = seed.get_response_headers()["x-ms-session-token"]
+    assert token, "Seed create must return a service-issued token"
+
+    select = _rust_backend_module._binding_function_for_op
+    native_create = select(OP_CREATE_ITEM)
+    native_ids = []
+
+    def capture(handle, prepared, **kwargs):
+        assert prepared.settings.session_token == token, "Rust must receive the unchanged token"
+        native_ids.append(prepared.item_id)
+        return native_create(handle, prepared, **kwargs)
+
+    monkeypatch.setattr(
+        _rust_backend_module, "_binding_function_for_op",
+        lambda operation: capture if operation == OP_CREATE_ITEM else select(operation),
+    )
     body = {"id": uuid.uuid4().hex, "pk": "a"}
-    _run(container_for, body, summary="baseline + session_token",
-         session_token="0:1#42").assert_functional_parity()
+    cmp = _run(container_for, body, summary="service-issued session_token on fresh clients",
+               session_token=token)
+    # Legacy may omit write tokens; successful parity alone does not prove forwarding.
+    for outcome in (cmp.core_python, cmp.rust):
+        assert outcome.raised is None, outcome
+        assert outcome.return_value["pk"] == "a", outcome
+    assert native_ids == [cmp.rust.return_value["id"]], "Expected one real native create"
+    cmp.assert_functional_parity()
 
 
 # Binding forwards the per-request header through the driver's custom-headers channel.
@@ -428,24 +453,29 @@ def test_response_hook_fires_once_rust(container_for):
 # ---------------------------------------------------------------------------
 
 def test_duplicate_id_raises_typed_exception_rust(container_for):
-    """Inserting the same id twice must raise ``CosmosResourceExistsError``
-    (HTTP 409, sub_status 0) on **both** backends."""
-    fixed_id = uuid.uuid4().hex
+    """Each backend creates its own item, then gets a plain 409 on duplication.
+
+    Compare the exception type and codes, not service text or header surfaces.
+    """
+    created_ids = []
 
     def _do(client):
+        fixed_id = uuid.uuid4().hex
         cont = client.get_database_client("parity_db").get_container_client(container_for.id)
-        cont.create_item(body={"id": fixed_id, "pk": "a"})
+        created = cont.create_item(body={"id": fixed_id, "pk": "a"})
+        assert created["id"] == fixed_id and created["pk"] == "a"
+        created_ids.append(fixed_id)
         return cont.create_item(body={"id": fixed_id, "pk": "a"})
 
     cmp = run_on_both_backends(
         _do,
-        description="duplicate-id 409: insert id={!r} twice".format(fixed_id),
-        request_body={"id": fixed_id, "pk": "a", "_note": "sent twice"},
+        description="duplicate-id 409: create a distinct item twice per backend",
     )
-    cmp.print_report()
-    assert not cmp.core_python.succeeded
-    assert not cmp.rust.succeeded
-    cmp.assert_parity()
+    assert len(set(created_ids)) == 2, "Each backend must first create its own distinct item successfully"
+    for outcome in (cmp.core_python, cmp.rust):
+        assert isinstance(outcome.raised, exceptions.CosmosResourceExistsError), outcome
+        assert outcome.raised.status_code == 409, outcome
+        assert outcome.raised.sub_status in (None, 0), outcome
 
 
 # ---------------------------------------------------------------------------

@@ -171,3 +171,21 @@ def test_container_recovery_verifies_requested_partition_definition_rust(mismatc
         with pytest.raises(AssertionError, match="Recovered container"):
             provisioning.create_owned_container(database, id="owned", partition_key=key)
     database.create_container.assert_called_once_with(id="owned", partition_key=key)
+
+
+@pytest.mark.parametrize("actual_ttl", [10, 20, None])
+def test_container_recovery_verifies_requested_ttl_rust(actual_ttl):
+    key = PartitionKey(path="/id")
+    container = SimpleNamespace(read=Mock(return_value={
+        "id": "owned", "partitionKey": dict(key), "defaultTtl": actual_ttl,
+    }))
+    database = SimpleNamespace(
+        create_container=Mock(side_effect=ServiceResponseError("reset")),
+        get_container_client=Mock(return_value=container),
+    )
+    if actual_ttl == 10:
+        assert provisioning.create_owned_container(database, id="owned", partition_key=key, default_ttl=10) is container
+    else:
+        with pytest.raises(AssertionError, match="different default TTL"):
+            provisioning.create_owned_container(database, id="owned", partition_key=key, default_ttl=10)
+    database.create_container.assert_called_once_with(id="owned", partition_key=key, default_ttl=10)

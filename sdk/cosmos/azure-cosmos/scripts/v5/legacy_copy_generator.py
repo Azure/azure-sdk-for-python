@@ -3,10 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Generate the legacy-folder parity copies from a compact per-file spec.
+"""Generate migrated Rust test copies from a compact per-file spec.
 
 The parity workflow copies each in-scope v4 test into a
-``tests/<op>/<surface>/legacy/`` folder, pins the client to ``_backend="rust"``,
+``tests/<op>/<surface>/`` folder, pins the client to ``_backend="rust"``,
 and adds a ``# Source:`` comment to every method;
 ``tests/common/test_legacy_migration_enforcer_unit.py`` (the enforcer) checks
 their shape. There are ~80 operations across a sync and an async surface, so
@@ -24,7 +24,7 @@ The existing hand-written folders vary in a few structural ways, captured as
 spec fields; the generator reproduces the cleanest example of each
 byte-for-byte (checked by ``tests/common/test_legacy_copy_generator_unit.py``):
 
-* ``surface`` -- ``"sync"`` (``unittest.TestCase``, ``setUp`` / ``tearDown``)
+* ``surface`` -- ``"sync"`` (``unittest.TestCase``, ``setUp`` with registered cleanup)
   or ``"aio"`` (``unittest.IsolatedAsyncioTestCase``, ``asyncSetUp`` /
   ``asyncTearDown``, ``async def`` tests).
 * ``fixture`` -- ``"instance"`` (``setUp``) or ``"class"`` (``setUpClass``).
@@ -32,6 +32,11 @@ byte-for-byte (checked by ``tests/common/test_legacy_copy_generator_unit.py``):
 * ``license_style`` -- ``"licensed"`` or ``"mit"`` (the two header styles).
 * ``module_code`` -- module-level helpers / constants (e.g. a response hook).
 * per-method ``decorators`` -- e.g. ``@pytest.mark.parametrize(...)``.
+
+Lane markers (``cosmosEmulator``, ``cosmosLong``, ``cosmosCircuitBreaker``...)
+are not hand-written: unless a spec sets ``class_markers``, they are read from
+each method's ``# Source:`` original so the copy runs in the same pipeline
+lanes. When the originals disagree, each method gets its own markers.
 
 Other variation (docstrings, ``db_id`` prefixes) is supplied by the spec.
 
@@ -51,9 +56,15 @@ copies)::
 from __future__ import annotations
 
 import argparse
+import ast
 import pathlib
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import List, Optional, Tuple
+
+
+# scripts/v5/<this file> -> parents[2] is the azure-cosmos package root that
+# ``# Source: tests/...`` paths are relative to.
+_PKG_ROOT = pathlib.Path(__file__).resolve().parents[2]
 
 
 # The emulator master key the legacy copies fall back to when ``ACCOUNT_KEY``
@@ -99,7 +110,7 @@ class LegacyMethod:
 
 @dataclass(frozen=True)
 class LegacyFileSpec:
-    """One generated ``legacy/`` test file for a single operation + surface."""
+    """One generated test file for a single operation and surface."""
 
     #: Operation family folder, e.g. ``"create_item"``.
     op: str
@@ -136,7 +147,13 @@ class LegacyFileSpec:
     module_code: str = ""
 
     #: Class-level pytest markers (without the ``@pytest.mark.`` prefix).
-    class_markers: Tuple[str, ...] = ("cosmosEmulator",)
+    #: ``None`` (the default) copies the ``cosmos*`` lane markers from each
+    #: method's ``# Source:`` original, so the copy runs in the same pipeline
+    #: lanes. Set it explicitly only for files whose methods are all ``(new)``.
+    class_markers: Optional[Tuple[str, ...]] = None
+
+    #: Keep key-owned resources separate from configured key/AAD data operations.
+    configured_data_auth: bool = False
 
     #: ``"instance"`` (``setUp``) or ``"class"`` (``setUpClass``). Ignored for
     #: the aio surface, which always uses an instance fixture.
@@ -174,8 +191,10 @@ def build_docstring(surface: str, method_name: str, source_file: str, out_path: 
         '``_backend="rust"`` path.\n'
         "\n"
         "Self-contained: builds its own database + container in ``setUp`` and\n"
-        "deletes them in ``tearDown``. The class name matches\n"
-        "``{src}``; copied method names add ``_rust``.\n"
+        "registers cleanup after acquisition, including on setup failure.\n"
+        "The class name and method name match the\n"
+        "source (apart from the method's ``_rust`` suffix) at ``{src}`` so\n"
+        "test IDs differ by path and method suffix.\n"
         "\n"
         "Run with::\n"
         "\n"
@@ -184,7 +203,7 @@ def build_docstring(surface: str, method_name: str, source_file: str, out_path: 
 
 
 def render_init_py() -> str:
-    """Return the canonical ``legacy/__init__.py`` contents."""
+    """Return the canonical package ``__init__.py`` contents."""
     return (
         "# Copyright (c) Microsoft Corporation. All rights reserved.\n"
         "# Licensed under the MIT License.\n"
@@ -222,8 +241,48 @@ def _class_base(surface: str) -> str:
 
 
 def _fixture_block(spec: LegacyFileSpec) -> List[str]:
-    """Render the setUp/tearDown block; the ``_backend="rust"`` pin is always included."""
+    """Render setup and cleanup; the ``_backend="rust"`` pin is always included."""
     db_id = '"' + spec.db_id_prefix + '_" + uuid.uuid4().hex[:8]'
+
+    if spec.configured_data_auth:
+        if spec.surface == "aio":
+            return [
+                "    async def asyncSetUp(self):",
+                '        self.key_client = CosmosClient(HOST, KEY, _backend="rust")',
+                "        self.addAsyncCleanup(self.key_client.close)",
+                "        await self.key_client.__aenter__()",
+                "        self._db_id = " + db_id,
+                '        self._container_id = "c_" + uuid.uuid4().hex[:8]',
+                "        key_database = await self.key_client.create_database(self._db_id)",
+                "        self.addAsyncCleanup(self.key_client.delete_database, self._db_id)",
+                "        await key_database.create_container(",
+                '            id=self._container_id, partition_key=PartitionKey(path="/pk"),',
+                "        )",
+                '        self.client = clients.create_data_client_async(_backend="rust")',
+                "        self.addAsyncCleanup(self.client.close)",
+                "        await self.client.__aenter__()",
+                "        self.database = self.client.get_database_client(self._db_id)",
+                "        self.container = self.database.get_container_client(self._container_id)",
+            ]
+        if spec.fixture != "class":
+            raise ValueError("Configured data authentication requires a sync class or async instance fixture")
+        return [
+            "    @classmethod",
+            "    def setUpClass(cls):",
+            '        cls.key_client = CosmosClient(HOST, KEY, _backend="rust")',
+            "        cls.addClassCleanup(cls.key_client.close)",
+            "        cls._db_id = " + db_id,
+            '        cls._container_id = "c_" + uuid.uuid4().hex[:8]',
+            "        key_database = cls.key_client.create_database(cls._db_id)",
+            "        cls.addClassCleanup(cls.key_client.delete_database, cls._db_id)",
+            "        key_database.create_container(",
+            '            id=cls._container_id, partition_key=PartitionKey(path="/pk"),',
+            "        )",
+            '        cls.client = clients.create_data_client(_backend="rust")',
+            "        cls.addClassCleanup(cls.client.close)",
+            "        cls.database = cls.client.get_database_client(cls._db_id)",
+            "        cls.container = cls.database.get_container_client(cls._container_id)",
+        ]
 
     if spec.surface == "aio":
         return [
@@ -270,27 +329,86 @@ def _fixture_block(spec: LegacyFileSpec) -> List[str]:
     return [
         "    def setUp(self) -> None:",
         '        self.client = CosmosClient(HOST, KEY, _backend="rust")',
-        "        self._db_id = " + db_id,
+        "        self.addCleanup(self.client.close)",
+        '        self._db_id = "' + spec.db_id_prefix + '_" + uuid.uuid4().hex',
         '        self._container_id = "c_" + uuid.uuid4().hex[:8]',
         "        self.database = self.client.create_database(self._db_id)",
+        "        self.addCleanup(self.client.delete_database, self._db_id)",
         "        self.container = self.database.create_container(",
         "            id=self._container_id,",
         '            partition_key=PartitionKey(path="/pk"),',
         "        )",
-        "",
-        "    def tearDown(self) -> None:",
-        "        try:",
-        "            self.client.delete_database(self._db_id)",
-        "        except Exception:  # pylint: disable=broad-except",
-        "            # Best-effort cleanup: the test has already produced its",
-        "            # verdict by the time tearDown runs, and a stuck account",
-        "            # state should not mask the test result.",
-        "            pass",
     ]
 
 
-def _method_block(spec: LegacyFileSpec, method: LegacyMethod) -> List[str]:
+def _lane_markers_in(decorators) -> List[str]:
+    """``cosmos*`` names from ``pytest.mark.<name>`` expressions, in order."""
+    names: List[str] = []
+    for dec in decorators:
+        target = dec.func if isinstance(dec, ast.Call) else dec
+        if (isinstance(target, ast.Attribute) and target.attr.startswith("cosmos")
+                and isinstance(target.value, ast.Attribute) and target.value.attr == "mark"
+                and target.attr not in names):
+            names.append(target.attr)
+    return names
+
+
+def source_lane_markers(source: str, source_root=None) -> Tuple[str, ...]:
+    """Return the ``cosmos*`` markers that apply to a ``# Source:`` original.
+
+    Combines module ``pytestmark``, class decorators and method decorators in
+    that order. Raises ``ValueError`` if the original can't be found, so a
+    copy never silently falls back to a lane its original doesn't run in.
+    """
+    root = pathlib.Path(source_root) if source_root is not None else _PKG_ROOT
+    path_part, _, qualified = source.partition("::")
+    class_name, _, method_name = qualified.rpartition(".")
+    path = root / path_part
+    if not path.is_file():
+        raise ValueError("cannot derive markers: source file not found for " + source)
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    markers: List[str] = []
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and any(
+                isinstance(t, ast.Name) and t.id == "pytestmark" for t in node.targets):
+            value = node.value
+            markers += _lane_markers_in(value.elts if isinstance(value, (ast.List, ast.Tuple)) else [value])
+    scopes = [(None, tree.body)]
+    if class_name:
+        scopes = [(n, n.body) for n in tree.body if isinstance(n, ast.ClassDef) and n.name == class_name]
+    for cls, body in scopes:
+        for func in body:
+            if isinstance(func, (ast.FunctionDef, ast.AsyncFunctionDef)) and func.name == method_name:
+                if cls is not None:
+                    markers += _lane_markers_in(cls.decorator_list)
+                markers += _lane_markers_in(func.decorator_list)
+                return tuple(dict.fromkeys(markers))
+    raise ValueError("cannot derive markers: {} not found in {}".format(qualified, path_part))
+
+
+def resolve_markers(spec: "LegacyFileSpec", source_root=None):
+    """Return ``(class_markers, {method_name: method_markers})`` for ``spec``.
+
+    Explicit ``spec.class_markers`` win. Otherwise markers come from the
+    originals: on the class when every copied method agrees, else per method.
+    """
+    if spec.class_markers is not None:
+        return tuple(spec.class_markers), {}
+    derived = {m.name: source_lane_markers(m.source, source_root)
+               for m in spec.methods if not m.source.startswith("(new)")}
+    if not derived:
+        raise ValueError(spec.filename + ": all methods are (new); set class_markers explicitly")
+    if any(m.source.startswith("(new)") for m in spec.methods) or len(
+            {frozenset(v) for v in derived.values()}) > 1:
+        return (), derived
+    return next(iter(derived.values())), {}
+
+
+def _method_block(spec: LegacyFileSpec, method: LegacyMethod,
+                  method_markers: Tuple[str, ...] = ()) -> List[str]:
     lines: List[str] = []
+    for marker in method_markers:
+        lines.append("    @pytest.mark." + marker)
     for decorator in method.decorators:
         lines.append("    " + decorator)
     def_keyword = "    async def " if spec.surface == "aio" else "    def "
@@ -304,8 +422,13 @@ def _method_block(spec: LegacyFileSpec, method: LegacyMethod) -> List[str]:
     return lines
 
 
-def render_legacy_file(spec: LegacyFileSpec) -> str:
-    """Render the full text of a ``legacy/`` test file from ``spec``."""
+def render_legacy_file(spec: LegacyFileSpec, source_root=None) -> str:
+    """Render the full text of a migrated test file from ``spec``.
+
+    ``source_root`` is where ``# Source: tests/...`` paths resolve when lane
+    markers are derived; it defaults to this package's root.
+    """
+    class_markers, method_markers = resolve_markers(spec, source_root)
     lines: List[str] = []
 
     # 1. License header.
@@ -336,18 +459,18 @@ def render_legacy_file(spec: LegacyFileSpec) -> str:
         lines.append("")
 
     # 6. Class header + markers.
-    for marker in spec.class_markers:
+    for marker in class_markers:
         lines.append("@pytest.mark." + marker)
     lines.append("class " + spec.class_name + "(" + _class_base(spec.surface) + "):")
     lines.append("")
 
-    # 7. setUp/tearDown, which builds the client with the ``_backend="rust"`` pin.
+    # 7. Setup and cleanup, with the ``_backend="rust"`` pin.
     lines.extend(_fixture_block(spec))
 
     # 8. The copied methods. Each gets its ``# Source:`` line.
     for method in spec.methods:
         lines.append("")
-        lines.extend(_method_block(spec, method))
+        lines.extend(_method_block(spec, method, method_markers.get(method.name, ())))
 
     return "\n".join(lines) + "\n"
 
@@ -357,8 +480,8 @@ def render_legacy_file(spec: LegacyFileSpec) -> str:
 # ---------------------------------------------------------------------------
 
 def legacy_dir_for(spec: LegacyFileSpec, tests_root) -> pathlib.Path:
-    """Return ``<tests_root>/<op>/<surface>/legacy`` for ``spec``."""
-    return pathlib.Path(tests_root) / spec.op / spec.surface / "legacy"
+    """Return the migrated test's operation/surface package."""
+    return pathlib.Path(tests_root) / spec.op / spec.surface
 
 
 def write_legacy_family(spec: LegacyFileSpec, tests_root) -> pathlib.Path:
@@ -366,7 +489,10 @@ def write_legacy_family(spec: LegacyFileSpec, tests_root) -> pathlib.Path:
     ``tests_root``. Returns the written test file path."""
     directory = legacy_dir_for(spec, tests_root)
     directory.mkdir(parents=True, exist_ok=True)
-    (directory / "__init__.py").write_text(render_init_py(), encoding="utf-8")
+    for package in (directory.parent, directory):
+        marker = package / "__init__.py"
+        if not marker.exists():
+            marker.write_text(render_init_py(), encoding="utf-8")
     out_path = directory / spec.filename
     out_path.write_text(render_legacy_file(spec), encoding="utf-8")
     return out_path
@@ -395,7 +521,7 @@ CREATE_ITEM_SYNC_NONE_OPTIONS = LegacyFileSpec(
         "sync",
         "test_container_create_item_none_options",
         "tests/test_none_options.py",
-        "tests/create_item/sync/legacy/test_none_options.py",
+        "tests/create_item/sync/test_none_options.py",
     ),
     methods=(
         LegacyMethod(
@@ -405,8 +531,6 @@ CREATE_ITEM_SYNC_NONE_OPTIONS = LegacyFileSpec(
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 1}
         created = self.container.create_item(
             item,
-            pre_trigger_include=None,
-            post_trigger_include=None,
             indexing_directive=None,
             enable_automatic_id_generation=False,
             session_token=None,
@@ -423,9 +547,8 @@ CREATE_ITEM_SYNC_NONE_OPTIONS = LegacyFileSpec(
 
 
 _HEADERS_MODULE_CODE_SYNC = """\
-# The throughput-bucket number the test asserts is set on the
-# outgoing request. Kept identical to the source constant so the wire
-# value is the same as what the legacy path sent.
+# Preserve the original value at the typed native boundary.
+# Wire-header conversion is checked by the binding settings tests.
 request_throughput_bucket_number = 3"""
 
 
@@ -434,11 +557,12 @@ CREATE_ITEM_SYNC_HEADERS = LegacyFileSpec(
     surface="sync",
     filename="test_headers.py",
     class_name="TestHeaders",
+    configured_data_auth=True,
     db_id_prefix="legacy_headers",
     license_style="mit",
     fixture="class",
-    cosmos_imports=("PartitionKey", "http_constants"),
-    extra_imports=("import importlib", "from unittest.mock import patch"),
+    cosmos_imports=("PartitionKey",),
+    extra_imports=("import importlib", "from unittest.mock import patch", "from config import clients"),
     module_code=_HEADERS_MODULE_CODE_SYNC,
     docstring="""\
 Sync ``test_container_create_item_throughput_bucket`` test against
@@ -448,13 +572,13 @@ The other methods in the source ``TestHeaders`` class cover correlated
 activity ids, dedicated-gateway max-age, query headers, etc.; they
 belong to their own operations' ``legacy/`` folders.
 
-Self-contained: builds its own database + container in ``setUpClass``
-and deletes them in ``tearDownClass``. The class name matches
+Self-contained: key-owned setup registers cleanup in ``setUpClass``;
+data operations follow the configured key/AAD lane. The class name matches
 ``tests/test_headers.py``; copied method names add ``_rust``.
 
 Run with::
 
-    pytest --noconftest tests/create_item/sync/legacy/test_headers.py -v""",
+    pytest --noconftest tests/create_item/sync/test_headers.py -v""",
     methods=(
         LegacyMethod(
             name="test_container_create_item_throughput_bucket",
@@ -462,24 +586,22 @@ Run with::
             body="""\
         binding = importlib.import_module(type(self.client._adapter).__module__)._rust_module
         with patch.object(binding, "create_item", wraps=binding.create_item) as operation:
-            self.container.create_item(
+            created = self.container.create_item(
                 body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
                 throughput_bucket=request_throughput_bucket_number)
-        self.assertTrue(operation.called)
-        for call in operation.call_args_list:
-            self.assertEqual(
-                call.args[1].headers[http_constants.HttpHeaders.ThroughputBucket],
-                str(request_throughput_bucket_number),
-            )""",
+        operation.assert_called_once()
+        prepared = operation.call_args.args[1]
+        self.assertEqual(prepared.settings.throughput_bucket, request_throughput_bucket_number)
+        self.assertEqual(prepared.op, "create_item")
+        self.assertEqual(created["id"], prepared.item_id)""",
         ),
     ),
 )
 
 
 _HEADERS_MODULE_CODE_AIO = """\
-# The throughput-bucket number the test asserts is set on the
-# outgoing request. Kept identical to the source constant so the wire
-# value is the same as what the legacy path sent.
+# Preserve the original value at the typed native boundary.
+# Wire-header conversion is checked by the binding settings tests.
 request_throughput_bucket_number = 3"""
 
 
@@ -488,10 +610,11 @@ CREATE_ITEM_AIO_HEADERS = LegacyFileSpec(
     surface="aio",
     filename="test_headers.py",
     class_name="TestHeadersAsync",
+    configured_data_auth=True,
     db_id_prefix="legacy_headers_async",
     license_style="mit",
-    cosmos_imports=("PartitionKey", "http_constants"),
-    extra_imports=("import importlib", "from unittest.mock import patch"),
+    cosmos_imports=("PartitionKey",),
+    extra_imports=("import importlib", "from unittest.mock import patch", "from config import clients"),
     module_code=_HEADERS_MODULE_CODE_AIO,
     docstring="""\
 Async ``test_container_create_item_throughput_bucket`` test against
@@ -500,13 +623,13 @@ the ``_backend="rust"`` path.
 The other methods in the source ``TestHeadersAsync`` class cover other
 operations; they belong to their own operations' ``legacy/`` folders.
 
-Self-contained: builds its own database + container in ``asyncSetUp``
-and deletes them in ``asyncTearDown``. The class name matches
+Self-contained: key-owned setup registers cleanup in ``asyncSetUp``;
+data operations follow the configured key/AAD lane. The class name matches
 ``tests/test_headers_async.py``; copied method names add ``_rust``.
 
 Run with::
 
-    pytest --noconftest tests/create_item/aio/legacy/test_headers.py -v""",
+    pytest --noconftest tests/create_item/aio/test_headers.py -v""",
     methods=(
         LegacyMethod(
             name="test_container_create_item_throughput_bucket_async",
@@ -514,15 +637,14 @@ Run with::
             body="""\
         binding = importlib.import_module(type(self.client._adapter).__module__)._rust_module
         with patch.object(binding, "create_item_async", wraps=binding.create_item_async) as operation:
-            await self.container.create_item(
+            created = await self.container.create_item(
                 body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
                 throughput_bucket=request_throughput_bucket_number)
-        self.assertTrue(operation.called)
-        for call in operation.call_args_list:
-            self.assertEqual(
-                call.args[1].headers[http_constants.HttpHeaders.ThroughputBucket],
-                str(request_throughput_bucket_number),
-            )""",
+        operation.assert_called_once()
+        prepared = operation.call_args.args[1]
+        self.assertEqual(prepared.settings.throughput_bucket, request_throughput_bucket_number)
+        self.assertEqual(prepared.op, "create_item")
+        self.assertEqual(created["id"], prepared.item_id)""",
         ),
     ),
 )
@@ -538,7 +660,7 @@ READ_ITEM_SYNC_NONE_OPTIONS = LegacyFileSpec(
         "sync",
         "test_container_read_item_none_options",
         "tests/test_none_options.py",
-        "tests/read_item/sync/legacy/test_none_options.py",
+        "tests/read_item/sync/test_none_options.py",
     ),
     methods=(
         LegacyMethod(
@@ -573,7 +695,7 @@ CREATE_ITEM_AIO_NONE_OPTIONS = LegacyFileSpec(
         "aio",
         "test_container_create_item_none_options_async",
         "tests/test_none_options_async.py",
-        "tests/create_item/aio/legacy/test_none_options.py",
+        "tests/create_item/aio/test_none_options.py",
     ),
     methods=(
         LegacyMethod(
@@ -584,8 +706,6 @@ CREATE_ITEM_AIO_NONE_OPTIONS = LegacyFileSpec(
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 1}
         created = await self.container.create_item(
             item,
-            pre_trigger_include=None,
-            post_trigger_include=None,
             indexing_directive=None,
             enable_automatic_id_generation=False,
             session_token=None,

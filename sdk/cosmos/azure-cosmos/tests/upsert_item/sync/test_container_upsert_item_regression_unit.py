@@ -32,8 +32,9 @@ file pins:
   the cache-refresh read, under the proxy's ``container_cache_lock``.
 
 All tests use a mocked ``client_connection`` plus a fake cache. No
-network, no emulator, runs in milliseconds. Sibling of
-``test_container_create_item_regression_unit.py``.
+network, no emulator, runs in milliseconds. The former create sibling has
+been replaced by Rust-adapter checks in ``test_create_item_rust_regression_unit.py``;
+this module still explicitly covers legacy upsert behavior.
 """
 import unittest
 from unittest.mock import MagicMock, patch

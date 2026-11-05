@@ -1,0 +1,135 @@
+[
+  {
+    "name": "hash-double-quoted",
+    "definition": {"paths": ["/\"level' 1*()\"/\"le/vel2\""], "kind": "Hash", "version": 2},
+    "body": {"id": "document1", "level' 1*()": {"le/vel2": "val1"}},
+    "key": "val1",
+    "header": "[\"val1\"]"
+  },
+  {
+    "name": "hash-single-quoted",
+    "definition": {"paths": ["/'level\" 1*()'/'le/vel2'"], "kind": "Hash", "version": 2},
+    "body": {"id": "document2", "level\" 1*()": {"le/vel2": "val2"}},
+    "key": "val2",
+    "header": "[\"val2\"]"
+  },
+  {
+    "name": "hierarchical-double-quoted",
+    "definition": {
+      "paths": ["/\"first level' 1*()\"/\"le/vel2\"", "/\"second level' 1*()\"/\"le/vel2\""],
+      "kind": "MultiHash",
+      "version": 2
+    },
+    "body": {
+      "id": "document1",
+      "first level' 1*()": {"le/vel2": "val1"},
+      "second level' 1*()": {"le/vel2": "val2"}
+    },
+    "key": ["val1", "val2"],
+    "header": "[\"val1\",\"val2\"]"
+  },
+  {
+    "name": "hierarchical-single-quoted",
+    "definition": {
+      "paths": ["/'first level\" 1*()'/'first le/vel2'", "/'second level\" 1*()'/'second le/vel2'"],
+      "kind": "MultiHash",
+      "version": 2
+    },
+    "body": {
+      "id": "document2",
+      "first level\" 1*()": {"first le/vel2": "val3"},
+      "second level\" 1*()": {"second le/vel2": "val4"}
+    },
+    "key": ["val3", "val4"],
+    "header": "[\"val3\",\"val4\"]"
+  },
+  {
+    "name": "hash-null",
+    "definition": {"paths": ["/pk"], "kind": "Hash", "version": 2},
+    "body": {"id": "document1", "pk": null, "spam": "eggs"},
+    "key": null,
+    "header": "[null]"
+  },
+  {
+    "name": "hash-missing",
+    "definition": {"paths": ["/pk"], "kind": "Hash", "version": 2},
+    "body": {"id": "document1", "spam": "eggs"},
+    "key": {},
+    "header": "[{}]"
+  },
+  {
+    "name": "hash-boolean",
+    "definition": {"paths": ["/pk"], "kind": "Hash", "version": 2},
+    "body": {"id": "document1", "pk": true, "spam": "eggs"},
+    "key": true,
+    "header": "[true]"
+  },
+  {
+    "name": "hash-string",
+    "definition": {"paths": ["/pk"], "kind": "Hash", "version": 2},
+    "body": {"id": "document1", "pk": "value", "spam": "eggs"},
+    "key": "value",
+    "header": "[\"value\"]"
+  },
+  {
+    "name": "hash-integer",
+    "definition": {"paths": ["/pk"], "kind": "Hash", "version": 2},
+    "body": {"id": "document1", "pk": 100, "spam": "eggs"},
+    "key": 100,
+    "header": "[100]"
+  },
+  {
+    "name": "hash-float",
+    "definition": {"paths": ["/pk"], "kind": "Hash", "version": 2},
+    "body": {"id": "document1", "pk": 10.5, "spam": "eggs"},
+    "key": 10.5,
+    "header": "[10.5]"
+  },
+  {
+    "name": "hash-nested",
+    "definition": {"paths": ["/address/state"], "kind": "Hash", "version": 2},
+    "body": {
+      "id": "document1",
+      "address": {"street": "1 Microsoft Way", "city": "Redmond", "state": "WA", "zip code": 98052}
+    },
+    "key": "WA",
+    "header": "[\"WA\"]"
+  },
+  {
+    "name": "hash-object-leaf",
+    "definition": {"paths": ["/address"], "kind": "Hash", "version": 2},
+    "body": {
+      "id": "document1",
+      "address": {"street": "1 Microsoft Way", "city": "Redmond", "state": "WA", "zip code": 98052}
+    },
+    "key": {},
+    "header": "[{}]"
+  },
+  {
+    "name": "hash-missing-descendant",
+    "definition": {"paths": ["/address/state/city"], "kind": "Hash", "version": 2},
+    "body": {
+      "id": "document1",
+      "address": {"street": "1 Microsoft Way", "city": "Redmond", "state": "WA", "zip code": 98052}
+    },
+    "key": {},
+    "header": "[{}]"
+  },
+  {
+    "name": "hierarchical-nested",
+    "definition": {"paths": ["/address/state", "/address/city"], "kind": "MultiHash", "version": 2},
+    "body": {
+      "id": "document1",
+      "address": {"street": "1 Microsoft Way", "city": "Redmond", "state": "WA", "zip code": 98052}
+    },
+    "key": ["WA", "Redmond"],
+    "header": "[\"WA\",\"Redmond\"]"
+  },
+  {
+    "name": "hierarchical-mixed-types",
+    "definition": {"paths": ["/city", "/zipcode"], "kind": "MultiHash", "version": 2},
+    "body": {"id": "doc4", "key": "value4", "city": null, "zipcode": 1000},
+    "key": [null, 1000],
+    "header": "[null,1000]"
+  }
+]

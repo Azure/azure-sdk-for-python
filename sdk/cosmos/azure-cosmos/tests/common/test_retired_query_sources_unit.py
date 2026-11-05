@@ -18,7 +18,7 @@ QUERY_TESTS = ROOT / "tests" / "query_items"
 
 def test_query_retirement_matches_all_33_retired_sources_rust():
     references = []
-    for path in QUERY_TESTS.glob("*/legacy/test_*.py"):
+    for path in QUERY_TESTS.glob("*/test_*.py"):
         text = path.read_text(encoding="utf-8")
         for _, method in enforcer._iter_test_functions(ast.parse(text)):
             reference = enforcer._source_ref(method, text.splitlines())
@@ -71,7 +71,7 @@ def test_only_original_method_is_removed_and_exact_copy_remains_rust(reference, 
 
 @pytest.mark.parametrize("surface,suffix", [("sync", ""), ("aio", "_async")])
 def test_retained_cross_partition_replay_does_not_add_enable_flag_rust(surface, suffix):
-    path = QUERY_TESTS / surface / "legacy" / f"test_query{suffix}.py"
+    path = QUERY_TESTS / surface / f"test_query{suffix}.py"
     method = next(
         node for node in ast.walk(ast.parse(path.read_text(encoding="utf-8")))
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))

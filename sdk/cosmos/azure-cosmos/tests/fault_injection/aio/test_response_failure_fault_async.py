@@ -11,7 +11,7 @@ import pytest
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.cosmos import _rust, exceptions
 from azure.cosmos.aio import CosmosClient
-from common._parity_helpers import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count, _rust_fallback_count
 from fault_injection._delayed_create import assert_control, assert_route, emit
 from fault_injection._response_failure import OPERATION_TIMEOUT, assert_response_failure, response_failure_rule
 

@@ -32,7 +32,10 @@ def main():
         "--noconftest", "--import-mode=importlib", "-p", "common.parity_capture_plugin",
         "-v", "-s", "--disable-warnings", "--tb=short",
     ]
-    files = sorted((ROOT / "tests" / "replace_container").glob("*/legacy/test_*.py"))
+    files = sorted(
+        path for path in (ROOT / "tests" / "replace_container").glob("*/test_*.py")
+        if "# Source:" in path.read_text(encoding="utf-8")
+    )
     if len(files) != 8:
         raise AssertionError(f"Expected eight reviewed legacy files, found {len(files)}")
     if args.backend == "rust":
@@ -45,7 +48,7 @@ def main():
             text = path.read_text(encoding="utf-8")
             if text.count('_backend="rust"') != 1:
                 raise AssertionError(f"Expected exactly one Rust client factory in {path}")
-            target = Path(temporary) / path.parent.parent.name / path.name
+            target = Path(temporary) / path.parent.name / path.name
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(text.replace('_backend="rust"', '_backend="core-python"'), encoding="utf-8")
             baseline_files.append(str(target))
