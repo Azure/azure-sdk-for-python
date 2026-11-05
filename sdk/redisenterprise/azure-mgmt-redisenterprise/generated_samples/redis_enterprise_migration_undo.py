@@ -15,7 +15,7 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
     pip install azure-identity
     pip install azure-mgmt-redisenterprise
 # USAGE
-    python redis_enterprise_access_policy_assignment_create_update_with_custom_access_string.py
+    python redis_enterprise_migration_undo.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,22 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.access_policy_assignment.begin_create_update(
+    client.migrations.begin_undo(
         resource_group_name="rg1",
         cluster_name="cache1",
-        database_name="default",
-        access_policy_assignment_name="defaultTestEntraApp1",
-        parameters={
-            "properties": {
-                "accessPolicyName": "default",
-                "accessString": "+@read ~cache:*",
-                "user": {"objectId": "6497c918-11ad-41e7-1b0f-7c518a87d0b0"},
-            }
-        },
     ).result()
-    print(response)
 
 
-# x-ms-original-file: 2026-06-01-preview/RedisEnterpriseAccessPolicyAssignmentCreateUpdateWithCustomAccessString.json
+# x-ms-original-file: 2026-09-01/RedisEnterpriseMigrationUndo.json
 if __name__ == "__main__":
     main()

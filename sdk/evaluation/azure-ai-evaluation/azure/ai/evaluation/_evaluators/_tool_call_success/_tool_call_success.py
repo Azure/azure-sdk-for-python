@@ -4,7 +4,8 @@
 import math
 import os
 import logging
-from typing import Dict, Union, List, Optional
+import reprlib
+from typing import Any, Dict, Union, List, Optional
 from typing_extensions import overload, override
 from azure.ai.evaluation._exceptions import (
     EvaluationException,
@@ -19,6 +20,14 @@ from azure.ai.evaluation._common.utils import _log_safe_summary, _stringify_tool
 from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
+
+_NO_TOOL_CALLS_MESSAGE = "No tool calls found in response."
+# Message content without tool activity. Any other content type may be a tool call or result.
+_TEXT_CONTENT_TYPES = frozenset({"text", "input_text", "output_text"})
+_CONVERSATION_ROLES = frozenset({"system", "developer", "user", "assistant"})
+_TOOL_CALL_KEYS = ("tool_calls", "function_call")
+_TOOL_TRACE_MARKERS = ("[TOOL_CALL]", "[TOOL_RESULT]")
+_APPROVAL_TYPES = frozenset({"mcp_approval_request", "mcp_approval_response"})
 
 
 @experimental
@@ -131,10 +140,18 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         Example with list of messages:
             evaluator = _ToolCallSuccessEvaluator(model_config)
-            response = [{'createdAt': 1700000070, 'run_id': '0', 'role': 'assistant',
-            'content': [{'type': 'text', 'text': '**Day 1:** Morning: Visit Louvre Museum (9 AM - 12 PM)...'}]}]
+            response = [
+                {'role': 'assistant', 'content': [{'type': 'tool_call', 'tool_call_id': 'call_1',
+                 'name': 'fetch_weather', 'arguments': {'location': 'Paris'}}]},
+                {'role': 'tool', 'tool_call_id': 'call_1',
+                 'content': [{'type': 'tool_result', 'tool_result': {'temperature': '20C'}}]},
+                {'role': 'assistant', 'content': [{'type': 'text', 'text': 'It is 20C in Paris.'}]}]
 
             result = evaluator(response=response, )
+
+        A list of messages that holds only text has no tool calls, so it is reported as not applicable without
+        calling the judge model. A tool_calls, function_call or tool_call_id field that is None or empty does not
+        count as a tool call.
 
         :keyword response: The response being evaluated, either a string or a list of messages (full agent
             response potentially including tool calls)
@@ -197,6 +214,9 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             )
 
         if isinstance(eval_input.get("response"), list):
+            # Decided before preprocessing, which drops whole messages that hold an MCP approval.
+            if _has_no_tool_calls(eval_input["response"]):
+                return self._return_not_applicable_result(_NO_TOOL_CALLS_MESSAGE, self._threshold)
             eval_input["response"] = _preprocess_messages(eval_input["response"])
             eval_input["tool_calls"] = _reformat_tool_calls_results(eval_input["response"], logger)
         # If response is a string, pass directly without reformatting
@@ -235,17 +255,25 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
 
         if isinstance(llm_output, dict):
+            properties = llm_output.get("properties")
+            llm_properties = properties if isinstance(properties, dict) else {}
+            reason = _top_level_or_nested(llm_output, llm_properties, "reason", "")
             # Handle skipped status from LLM
-            llm_status = llm_output.get("status", "completed")
+            llm_status = _top_level_or_nested(llm_output, llm_properties, "status", "completed")
             if llm_status == "skipped":
-                reason = llm_output.get("reason", "")
                 return self._return_not_applicable_result(reason, self._threshold)
 
-            llm_properties = llm_output.get("properties", {}) or {}
-
-            score = float(llm_output.get("score", 0))
+            raw_score = _top_level_or_nested(llm_output, llm_properties, "score")
+            score = _binary_score(raw_score)
+            if score is None:
+                raise EvaluationException(
+                    message=f"Invalid score value: {reprlib.repr(raw_score)}. Expected 0 or 1.",
+                    internal_message="Invalid score value.",
+                    blame=ErrorBlame.SYSTEM_ERROR,
+                    category=ErrorCategory.FAILED_EXECUTION,
+                    target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
+                )
             success_result = "pass" if score >= 1.0 else "fail"
-            reason = llm_output.get("reason", "")
             llm_properties.update(self._get_token_metadata(prompty_output_dict))
             return {
                 self._result_key: score,
@@ -263,6 +291,77 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.EVALUATE,
         )
+
+
+def _top_level_or_nested(output: Dict, nested: Dict, key: str, default: Any = None) -> Any:
+    """Return the judge output's value for ``key``, or the one nested in its properties when it has none."""
+    value = output.get(key)
+    return nested.get(key, default) if value is None else value
+
+
+def _binary_score(value: Any) -> Optional[float]:
+    """Return a judge's score as 1.0 or 0.0, or None when it is neither."""
+    try:
+        score = float(value)
+    except (TypeError, ValueError, OverflowError):
+        return None
+    if score == 1.0:
+        return 1.0
+    if score == 0.0:
+        return 0.0
+    return None
+
+
+def _holds_nothing(value: Any) -> bool:
+    """Return True for None and an empty string, list or dict."""
+    return value is None or (isinstance(value, (str, list, dict)) and not value)
+
+
+def _is_one_of(value: Any, names: frozenset) -> bool:
+    """Return True when the value is one of the names; any other value, including an unhashable one, is not."""
+    return isinstance(value, str) and value in names
+
+
+def _has_no_tool_calls(messages) -> bool:
+    """Return True only for a list of text messages and MCP approvals that holds no tool calls, results or traces.
+
+    A tool_calls, function_call or tool_call_id field that holds nothing, such as the None that OpenAI's model_dump()
+    writes, counts as absent. A list in any other format may hold tool activity this evaluator does not parse, so the
+    judge assesses it.
+    """
+    if not isinstance(messages, list) or not messages:
+        return False
+    for message in messages:
+        if not isinstance(message, dict) or not all(_holds_nothing(message.get(key)) for key in _TOOL_CALL_KEYS):
+            return False
+        content = message.get("content")
+        items = content
+        if isinstance(content, list):
+            items = [
+                item
+                for item in content
+                if not (isinstance(item, dict) and _is_one_of(item.get("type"), _APPROVAL_TYPES))
+            ]
+            if content and not items:
+                # Only MCP approval requests or responses, which are not tool calls; a response names its request
+                # in tool_call_id.
+                continue
+        if not _is_one_of(message.get("role"), _CONVERSATION_ROLES) or not _holds_nothing(message.get("tool_call_id")):
+            return False
+        if isinstance(content, str):
+            texts = [content]
+        elif isinstance(items, list) and all(
+            isinstance(item, dict) and _is_one_of(item.get("type"), _TEXT_CONTENT_TYPES) for item in items
+        ):
+            texts = [item.get("text") for item in items]
+        else:
+            return False
+        # Text can carry tool calls in this evaluator's own trace format.
+        if not all(
+            isinstance(text, str) and not any(marker in text for marker in _TOOL_TRACE_MARKERS) for text in texts
+        ):
+            return False
+    return True
 
 
 def _filter_to_used_tools(tool_definitions, msgs_list, logger=None):

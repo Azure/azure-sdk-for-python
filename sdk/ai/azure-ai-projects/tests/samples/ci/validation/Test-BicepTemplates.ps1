@@ -264,6 +264,123 @@ if (($functionNames -join ',') -cne ($expectedFunctionNames -join ',') -or
 }
 Write-Host 'Standalone Function App template compiled; reference defaults, shared identity, keyless settings, and non-secret outputs verified.'
 
+$searchTemplate = Invoke-BicepCompilation -Path (Join-Path $infra 'ai-search.bicep')
+$searchResources = @(Get-ArmResources -Template $searchTemplate)
+Assert-NoArmRoleAssignments -Resources $searchResources
+$expectedSearchTypes = @('Microsoft.Storage/storageAccounts/blobServices/containers',
+    'Microsoft.CognitiveServices/accounts/deployments', 'Microsoft.Resources/deploymentScripts')
+foreach ($type in $expectedSearchTypes) {
+    if (@($searchResources | Where-Object Type -ceq $type).Count -ne 1) {
+        throw "Search indexing must declare exactly one '$type' and reuse the Standard resources."
+    }
+}
+if ($searchResources.Count -ne $expectedSearchTypes.Count) {
+    throw 'Search indexing must not create additional accounts, Search services, identities or IAM grants.'
+}
+$searchScript = @($searchResources | Where-Object Type -ceq 'Microsoft.Resources/deploymentScripts')[0].Definition
+Assert-SharedIdentity -Resource $searchScript -ParameterName 'sharedSearchIdentityResourceId'
+if ($searchScript['properties']['cleanupPreference'] -cne 'Always' -or
+    $searchScript['properties']['timeout'] -cne 'PT30M' -or
+    @($searchScript['dependsOn']).Count -ne 2) {
+    throw 'Search data-plane deployment must wait for its container and model and clean up supporting resources.'
+}
+$embedding = @($searchResources | Where-Object Type -ceq 'Microsoft.CognitiveServices/accounts/deployments')[0].Definition
+if ($embedding['properties']['model']['name'] -cne 'text-embedding-3-small' -or
+    $embedding['properties']['model']['version'] -cne '1' -or
+    $embedding['sku']['name'] -cne 'GlobalStandard' -or $embedding['sku']['capacity'] -ne 10 -or
+    $searchTemplate['variables']['dimensions'] -ne 1536) {
+    throw 'Search index dimensions must match the pinned embedding model deployment.'
+}
+$service = @($standardResources | Where-Object Type -ceq 'Microsoft.Search/searchServices')[0].Definition
+if ($service['properties']['semanticSearch'] -cne 'free') {
+    throw 'The Search sample index requires the existing service semantic free tier.'
+}
+$scriptContent = [IO.File]::ReadAllText((Join-Path $infra 'search-indexing.py'))
+$loadedScripts = @($searchTemplate['variables'].GetEnumerator() |
+    Where-Object { $_.Value -is [string] -and $_.Value -ceq $scriptContent })
+if ($loadedScripts.Count -ne 1 -or
+    -not ([string] $searchScript['properties']['scriptContent']).Contains("variables('$($loadedScripts[0].Key)')") -or
+    $scriptContent -notmatch '2026-04-01' -or $scriptContent -notmatch 'wait_for_indexer' -or
+    $scriptContent -match '\baz\s+role\s+assignment|\blistKeys\b|\blistAdminKeys\b') {
+    throw 'Search data-plane execution must wait for indexers and use tokens rather than IAM writes or keys.'
+}
+$searchOutputNames = @($searchTemplate['outputs']['environment']['value'].Keys | Sort-Object)
+$expectedSearchNames = @('AZURE_AI_SEARCH_ENDPOINT', 'AI_SEARCH_PROJECT_CONNECTION_ID', 'AI_SEARCH_INDEX_NAME',
+    'AZURE_AI_EMBED_DEPLOYMENT_NAME', 'AZURE_AI_EMBED_DIMENSIONS', 'AZURE_BLOB_CONTAINER_NAME',
+    'AI_SEARCH_USER_INPUT' | Sort-Object)
+$searchPlanNames = @(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $infra 'ai-search.bicep') | Sort-Object)
+if (($searchOutputNames -join ',') -cne ($expectedSearchNames -join ',') -or
+    ($searchOutputNames -join ',') -cne ($searchPlanNames -join ',')) {
+    throw 'Search must expose only its discoverable, non-secret sample bindings.'
+}
+
+$identityInfra = Join-Path $PSScriptRoot '../../shared-identities/infra'
+$identityConfiguration = Get-Content -Raw -LiteralPath (Join-Path $identityInfra 'IdentityConfiguration.json') |
+    ConvertFrom-Json -AsHashtable
+$searchGrants = @($identityConfiguration['roleAssignments'] | Where-Object target -ceq 'search')
+$expectedRoles = @('7ca78c08-252a-4471-8644-bb5ff32d4ba0', '8ebe5a00-799e-43f5-93ac-243d3dce84a7',
+    'ba92f5b4-2d11-453d-a403-e96b0029c9fe', '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd' | Sort-Object)
+if ((@($searchGrants.roleDefinitionId | Sort-Object) -join ',') -cne ($expectedRoles -join ',')) {
+    throw 'Only the four approved Search indexing and outbound data-plane roles belong in bootstrap.'
+}
+$roleUpdate = Invoke-BicepCompilation -Path (Join-Path $identityInfra 'update-search-roles.bicep')
+$roleUpdateResources = @(Get-ArmResources -Template $roleUpdate)
+if ($roleUpdateResources.Count -ne 1 -or
+    $roleUpdateResources[0].Type -cne 'Microsoft.Authorization/roleAssignments' -or
+    $roleUpdateResources[0].Definition['copy']['count'] -cne "[length(variables('grants'))]") {
+    throw 'The administrator-only update must add exactly the four Search roles and create no identities.'
+}
+Write-Host 'Search module compiled; keyless execution, bootstrap roles, embedding dimensions and non-secret outputs verified.'
+
+$browserTemplate = Invoke-BicepCompilation -Path (Join-Path $infra 'browser-automation.bicep')
+$browserResources = @(Get-ArmResources -Template $browserTemplate)
+Assert-NoArmRoleAssignments -Resources $browserResources
+$workspaces = @($browserResources | Where-Object Type -ceq 'Microsoft.LoadTestService/playwrightWorkspaces')
+$browserConnections = @($browserResources | Where-Object Type -ceq 'Microsoft.CognitiveServices/accounts/projects/connections')
+if ($browserResources.Count -ne 2 -or $workspaces.Count -ne 1 -or $browserConnections.Count -ne 1) {
+    throw 'Browser automation must create only a native workspace and project connection, with no identities or scripts.'
+}
+$workspace = $workspaces[0].Definition
+if ($workspace['apiVersion'] -cne '2025-09-01' -or
+    $workspace['location'] -cne "[parameters('location')]" -or
+    $workspace['properties']['localAuth'] -cne 'Disabled' -or
+    $workspace['properties']['regionalAffinity'] -cne 'Enabled' -or
+    $browserTemplate['parameters']['workspaceName']['minLength'] -ne 3 -or
+    $browserTemplate['parameters']['workspaceName']['maxLength'] -ne 24) {
+    throw 'Browser workspace must use the admitted region, valid name bounds, regional affinity and no local authentication.'
+}
+$browserConnection = $browserConnections[0].Definition
+$browserProperties = $browserConnection['properties']
+$workspaceId = "[resourceId('Microsoft.LoadTestService/playwrightWorkspaces', parameters('workspaceName'))]"
+$expectedTarget = "[format('{0}/mcp', replace(reference($($workspaceId.Trim('[', ']')), '2025-09-01').dataplaneUri, '.api.playwright.microsoft.com', '.mcp.playwright.microsoft.com'))]"
+if ($browserConnection['apiVersion'] -cne '2025-04-01-preview' -or
+    $browserProperties['category'] -cne 'PlaywrightWorkspace' -or
+    $browserProperties['authType'] -cne 'ProjectManagedIdentity' -or
+    $browserProperties['audience'] -cne 'https://mcp.playwright.microsoft.com' -or
+    $browserProperties['isSharedToAll'] -ne $true -or
+    -not $browserProperties.Contains('credentials') -or $null -ne $browserProperties['credentials'] -or
+    $browserProperties['metadata']['resourceId'] -cne $workspaceId -or
+    $browserProperties['target'] -cne $expectedTarget -or
+    @($browserConnection['dependsOn']).Count -ne 1 -or
+    @($browserConnection['dependsOn'])[0] -cne $workspaceId) {
+    throw 'Browser connection must wait for its workspace, derive its MCP target and use only project managed-identity authentication.'
+}
+$browserOutputNames = @($browserTemplate['outputs']['environment']['value'].Keys | Sort-Object)
+$expectedBrowserNames = @('BROWSER_AUTOMATION_PROJECT_CONNECTION_ID',
+    'BROWSER_AUTOMATION_PROJECT_CONNECTION_NAME', 'PLAYWRIGHT_SERVICE_RESOURCE_ID' | Sort-Object)
+$browserPlanNames = @(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $infra 'browser-automation.bicep') | Sort-Object)
+if (($browserOutputNames -join ',') -cne ($expectedBrowserNames -join ',') -or
+    ($browserOutputNames -join ',') -cne ($browserPlanNames -join ',') -or
+    ($browserTemplate | ConvertTo-Json -Depth 100 -Compress) -match 'listKeys|listAccessTokens|apiKey|sessionId|liveView') {
+    throw 'Browser outputs must contain only discoverable ARM IDs and the connection name, never keys or session data.'
+}
+$browserGrants = @($identityConfiguration['roleAssignments'] |
+    Where-Object { $_.target -ceq 'project' -and $_.roleName -ceq 'Playwright Workspace Contributor' })
+if ($browserGrants.Count -ne 1 -or $browserGrants[0].roleDefinitionId -cne '78cf819f-0969-4ebe-8759-015c6efcd5bf') {
+    throw 'The existing project UAMI needs exactly one Playwright Workspace Contributor bootstrap grant.'
+}
+Write-Host 'Browser module compiled; native keyless workspace, project connection, bootstrap role and non-secret outputs verified.'
+
 # The root is the extensibility boundary: modules and bindings must stay in sync.
 $bundle = Invoke-BicepCompilation -Path (Join-Path $infra 'main.bicep')
 $bundleResources = @(Get-ArmResources -Template $bundle)
@@ -278,7 +395,32 @@ foreach ($resource in $bundleResources) {
         throw 'Resource bundle modules must be unconditional; test selection never chooses infrastructure.'
     }
 }
-Write-Host 'Complete resource bundle compiled; unconditional modules, environment contract and zero worker IAM verified.'
+$searchModules = @($bundleResources | Where-Object {
+    $_.Type -ieq 'Microsoft.Resources/deployments' -and $_.Definition['name'] -ceq 'ai-search'
+})
+if ($searchModules.Count -ne 1 -or
+    "[resourceId('Microsoft.Resources/deployments', 'sample-resources')]" -cnotin
+        @($searchModules[0].Definition['dependsOn'])) {
+    throw 'Search embedding deployment must wait for the chat-model module to avoid concurrent Foundry account operations.'
+}
+$browserModules = @($bundleResources | Where-Object {
+    $_.Type -ieq 'Microsoft.Resources/deployments' -and $_.Definition['name'] -ceq 'browser-automation'
+})
+if ($browserModules.Count -ne 1 -or
+    @($browserModules[0].Definition['dependsOn']).Count -ne 1 -or
+    @($browserModules[0].Definition['dependsOn'])[0] -cne
+        "[resourceId('Microsoft.Resources/deployments', 'standard-setup')]" -or
+    $browserModules[0].Definition['properties']['parameters']['workspaceName']['value'] -cne
+        "[format('pw-{0}', uniqueString(resourceGroup().id, parameters('ownerToken')))]") {
+    throw 'Browser provisioning must depend only on Standard setup and retain the full run-unique workspace-name hash.'
+}
+foreach ($name in $expectedBrowserNames) {
+    if ($name -cnotin $compiledNames -or
+        -not ([string] $bundle['outputs']['environment']['value'][$name]).Contains("'browser-automation'")) {
+        throw 'Every browser environment binding must be exposed by the root from the browser module.'
+    }
+}
+Write-Host 'Complete resource bundle compiled; serialized models, independent browser provisioning, unconditional modules, environment contract and zero worker IAM verified.'
 
 # Optional, separate provenance check. The parent downloader remains responsible
 # for fetching the original 14 pinned files; this checker never downloads or patches them.

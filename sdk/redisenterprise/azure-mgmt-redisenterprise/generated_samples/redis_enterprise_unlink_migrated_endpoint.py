@@ -15,7 +15,7 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
     pip install azure-identity
     pip install azure-mgmt-redisenterprise
 # USAGE
-    python redis_enterprise_migration_cancel.py
+    python redis_enterprise_unlink_migrated_endpoint.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.migrations.begin_cancel(
+    client.clusters.begin_unlink_migrated_endpoint(
         resource_group_name="rg1",
         cluster_name="cache1",
     ).result()
 
 
-# x-ms-original-file: 2026-06-01-preview/RedisEnterpriseMigrationCancel.json
+# x-ms-original-file: 2026-09-01/RedisEnterpriseUnlinkMigratedEndpoint.json
 if __name__ == "__main__":
     main()
