@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.networksecurity.aio import NetworkSecurityManagementClient
+from azure.mgmt.networksecurity.aio import NetworkSecurityMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,18 +15,18 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkSecurityManagementNeuroShieldFindingsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestNetworkSecurityMgmtNeuroShieldMitigationsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkSecurityManagementClient, is_async=True)
+        self.client = self.create_mgmt_client(NetworkSecurityMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_neuro_shield_findings_get(self, resource_group):
-        response = await self.client.neuro_shield_findings.get(
+    async def test_neuro_shield_mitigations_get(self, resource_group):
+        response = await self.client.neuro_shield_mitigations.get(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
-            finding_id="str",
+            mitigation_id="str",
         )
 
         # please add some check logic here by yourself
@@ -34,22 +34,11 @@ class TestNetworkSecurityManagementNeuroShieldFindingsOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_neuro_shield_findings_list(self, resource_group):
-        response = self.client.neuro_shield_findings.list(
+    async def test_neuro_shield_mitigations_list(self, resource_group):
+        response = self.client.neuro_shield_mitigations.list(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_neuro_shield_findings_list_by_neuro_shield(self, resource_group):
-        response = self.client.neuro_shield_findings.list_by_neuro_shield(
-            resource_group_name=resource_group.name,
-            neuro_shield_name="str",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -57,12 +46,23 @@ class TestNetworkSecurityManagementNeuroShieldFindingsOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_neuro_shield_findings_mitigate(self, resource_group):
-        response = await self.client.neuro_shield_findings.mitigate(
+    async def test_neuro_shield_mitigations_list_by_neuro_shield(self, resource_group):
+        response = self.client.neuro_shield_mitigations.list_by_neuro_shield(
+            resource_group_name=resource_group.name,
+            neuro_shield_name="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_neuro_shield_mitigations_execute(self, resource_group):
+        response = await self.client.neuro_shield_mitigations.execute(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
-            finding_id="str",
+            mitigation_id="str",
         )
 
         # please add some check logic here by yourself
@@ -70,12 +70,12 @@ class TestNetworkSecurityManagementNeuroShieldFindingsOperationsAsync(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_neuro_shield_findings_rollback(self, resource_group):
-        response = await self.client.neuro_shield_findings.rollback(
+    async def test_neuro_shield_mitigations_rollback(self, resource_group):
+        response = await self.client.neuro_shield_mitigations.rollback(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
-            finding_id="str",
+            mitigation_id="str",
         )
 
         # please add some check logic here by yourself

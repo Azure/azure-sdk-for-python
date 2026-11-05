@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.networksecurity import NetworkSecurityManagementClient
+from azure.mgmt.networksecurity import NetworkSecurityMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = NetworkSecurityManagementClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = NetworkSecurityMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.networksecurity import NetworkSecurityManagementClient
+from azure.mgmt.networksecurity import NetworkSecurityMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkSecurityManagementNeuroShieldProtectedResourcesOperations(AzureMgmtRecordedTestCase):
+class TestNetworkSecurityMgmtNeuroShieldsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkSecurityManagementClient)
+        self.client = self.create_mgmt_client(NetworkSecurityMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_neuro_shield_protected_resources_get(self, resource_group):
-        response = self.client.neuro_shield_protected_resources.get(
+    def test_neuro_shields_get(self, resource_group):
+        response = self.client.neuro_shields.get(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
-            protected_resource_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,28 +31,20 @@ class TestNetworkSecurityManagementNeuroShieldProtectedResourcesOperations(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_neuro_shield_protected_resources_begin_create_or_update(self, resource_group):
-        response = self.client.neuro_shield_protected_resources.begin_create_or_update(
+    def test_neuro_shields_create_or_update(self, resource_group):
+        response = self.client.neuro_shields.create_or_update(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
-            protected_resource_name="str",
             resource={
+                "location": "str",
                 "properties": {
-                    "targetResourceId": "str",
-                    "agentHealth": {"lastSeenTime": "2020-02-20 00:00:00"},
-                    "inventoryUploadRequest": {
-                        "expiresAt": "2020-02-20 00:00:00",
-                        "requestId": "str",
-                        "requestedAt": "2020-02-20 00:00:00",
-                    },
+                    "responseMode": "str",
+                    "description": "str",
                     "provisioningState": "str",
-                    "targetIdentity": {
-                        "type": "str",
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "userAssignedIdentities": {},
-                    },
+                    "resourceGuid": "str",
+                    "severityThreshold": "str",
                 },
+                "etag": "str",
                 "id": "str",
                 "name": "str",
                 "systemData": {
@@ -64,31 +55,45 @@ class TestNetworkSecurityManagementNeuroShieldProtectedResourcesOperations(Azure
                     "lastModifiedBy": "str",
                     "lastModifiedByType": "str",
                 },
+                "tags": {"str": "str"},
                 "type": "str",
             },
-        ).result()  # call '.result()' to poll until service return final result
+        )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_neuro_shield_protected_resources_begin_delete(self, resource_group):
-        response = self.client.neuro_shield_protected_resources.begin_delete(
+    def test_neuro_shields_update(self, resource_group):
+        response = self.client.neuro_shields.update(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
-            protected_resource_name="str",
-        ).result()  # call '.result()' to poll until service return final result
+            properties={
+                "properties": {"description": "str", "responseMode": "str", "severityThreshold": "str"},
+                "tags": {},
+            },
+        )
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_neuro_shield_protected_resources_list(self, resource_group):
-        response = self.client.neuro_shield_protected_resources.list(
+    def test_neuro_shields_delete(self, resource_group):
+        response = self.client.neuro_shields.delete(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_neuro_shields_list_by_resource_group(self, resource_group):
+        response = self.client.neuro_shields.list_by_resource_group(
+            resource_group_name=resource_group.name,
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -96,12 +101,8 @@ class TestNetworkSecurityManagementNeuroShieldProtectedResourcesOperations(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_neuro_shield_protected_resources_trigger_inventory_upload(self, resource_group):
-        response = self.client.neuro_shield_protected_resources.trigger_inventory_upload(
-            resource_group_name=resource_group.name,
-            neuro_shield_name="str",
-            protected_resource_name="str",
-        )
-
+    def test_neuro_shields_list_by_subscription(self, resource_group):
+        response = self.client.neuro_shields.list_by_subscription()
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

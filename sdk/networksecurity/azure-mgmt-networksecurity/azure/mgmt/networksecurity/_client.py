@@ -18,7 +18,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import NetworkSecurityManagementClientConfiguration
+from ._configuration import NetworkSecurityMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     NeuroShieldFindingsOperations,
@@ -40,8 +40,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class NetworkSecurityManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
-    """NetworkSecurityManagementClient.
+class NetworkSecurityMgmtClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
+    """NetworkSecurityMgmtClient.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.networksecurity.operations.Operations
@@ -95,7 +95,7 @@ class NetworkSecurityManagementClient:  # pylint: disable=too-many-instance-attr
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = NetworkSecurityManagementClientConfiguration(
+        self._config = NetworkSecurityMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

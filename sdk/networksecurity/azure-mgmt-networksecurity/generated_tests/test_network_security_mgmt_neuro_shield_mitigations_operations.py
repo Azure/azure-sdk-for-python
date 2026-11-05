@@ -6,23 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.networksecurity.aio import NetworkSecurityManagementClient
+from azure.mgmt.networksecurity import NetworkSecurityMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkSecurityManagementNeuroShieldMitigationsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestNetworkSecurityMgmtNeuroShieldMitigationsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkSecurityManagementClient, is_async=True)
+        self.client = self.create_mgmt_client(NetworkSecurityMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_neuro_shield_mitigations_get(self, resource_group):
-        response = await self.client.neuro_shield_mitigations.get(
+    @recorded_by_proxy
+    def test_neuro_shield_mitigations_get(self, resource_group):
+        response = self.client.neuro_shield_mitigations.get(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
@@ -33,32 +32,32 @@ class TestNetworkSecurityManagementNeuroShieldMitigationsOperationsAsync(AzureMg
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_neuro_shield_mitigations_list(self, resource_group):
+    @recorded_by_proxy
+    def test_neuro_shield_mitigations_list(self, resource_group):
         response = self.client.neuro_shield_mitigations.list(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_neuro_shield_mitigations_list_by_neuro_shield(self, resource_group):
+    @recorded_by_proxy
+    def test_neuro_shield_mitigations_list_by_neuro_shield(self, resource_group):
         response = self.client.neuro_shield_mitigations.list_by_neuro_shield(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_neuro_shield_mitigations_execute(self, resource_group):
-        response = await self.client.neuro_shield_mitigations.execute(
+    @recorded_by_proxy
+    def test_neuro_shield_mitigations_execute(self, resource_group):
+        response = self.client.neuro_shield_mitigations.execute(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
@@ -69,9 +68,9 @@ class TestNetworkSecurityManagementNeuroShieldMitigationsOperationsAsync(AzureMg
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_neuro_shield_mitigations_rollback(self, resource_group):
-        response = await self.client.neuro_shield_mitigations.rollback(
+    @recorded_by_proxy
+    def test_neuro_shield_mitigations_rollback(self, resource_group):
+        response = self.client.neuro_shield_mitigations.rollback(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",

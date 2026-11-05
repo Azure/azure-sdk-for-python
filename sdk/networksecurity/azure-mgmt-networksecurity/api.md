@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.networksecurity
 
-    class azure.mgmt.networksecurity.NetworkSecurityManagementClient: implements ContextManager 
+    class azure.mgmt.networksecurity.NetworkSecurityMgmtClient: implements ContextManager 
         neuro_shield_findings: NeuroShieldFindingsOperations
         neuro_shield_mitigations: NeuroShieldMitigationsOperations
         neuro_shield_operation_statuses: NeuroShieldOperationStatusesOperations
@@ -35,7 +35,7 @@ namespace azure.mgmt.networksecurity
 
 namespace azure.mgmt.networksecurity.aio
 
-    class azure.mgmt.networksecurity.aio.NetworkSecurityManagementClient: implements AsyncContextManager 
+    class azure.mgmt.networksecurity.aio.NetworkSecurityMgmtClient: implements AsyncContextManager 
         neuro_shield_findings: NeuroShieldFindingsOperations
         neuro_shield_mitigations: NeuroShieldMitigationsOperations
         neuro_shield_operation_statuses: NeuroShieldOperationStatusesOperations

@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.networksecurity import NetworkSecurityManagementClient
+from azure.mgmt.networksecurity.aio import NetworkSecurityMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkSecurityManagementNeuroShieldFindingsOperations(AzureMgmtRecordedTestCase):
+class TestNetworkSecurityMgmtNeuroShieldFindingsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkSecurityManagementClient)
+        self.client = self.create_mgmt_client(NetworkSecurityMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_neuro_shield_findings_get(self, resource_group):
-        response = self.client.neuro_shield_findings.get(
+    @recorded_by_proxy_async
+    async def test_neuro_shield_findings_get(self, resource_group):
+        response = await self.client.neuro_shield_findings.get(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
@@ -32,32 +33,32 @@ class TestNetworkSecurityManagementNeuroShieldFindingsOperations(AzureMgmtRecord
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_neuro_shield_findings_list(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_neuro_shield_findings_list(self, resource_group):
         response = self.client.neuro_shield_findings.list(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_neuro_shield_findings_list_by_neuro_shield(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_neuro_shield_findings_list_by_neuro_shield(self, resource_group):
         response = self.client.neuro_shield_findings.list_by_neuro_shield(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_neuro_shield_findings_mitigate(self, resource_group):
-        response = self.client.neuro_shield_findings.mitigate(
+    @recorded_by_proxy_async
+    async def test_neuro_shield_findings_mitigate(self, resource_group):
+        response = await self.client.neuro_shield_findings.mitigate(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
@@ -68,9 +69,9 @@ class TestNetworkSecurityManagementNeuroShieldFindingsOperations(AzureMgmtRecord
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_neuro_shield_findings_rollback(self, resource_group):
-        response = self.client.neuro_shield_findings.rollback(
+    @recorded_by_proxy_async
+    async def test_neuro_shield_findings_rollback(self, resource_group):
+        response = await self.client.neuro_shield_findings.rollback(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",

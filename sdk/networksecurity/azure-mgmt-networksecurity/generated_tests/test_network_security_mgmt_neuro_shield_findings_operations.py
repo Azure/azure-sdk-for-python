@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.networksecurity import NetworkSecurityManagementClient
+from azure.mgmt.networksecurity import NetworkSecurityMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,18 +14,18 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkSecurityManagementNeuroShieldMitigationsOperations(AzureMgmtRecordedTestCase):
+class TestNetworkSecurityMgmtNeuroShieldFindingsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkSecurityManagementClient)
+        self.client = self.create_mgmt_client(NetworkSecurityMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_neuro_shield_mitigations_get(self, resource_group):
-        response = self.client.neuro_shield_mitigations.get(
+    def test_neuro_shield_findings_get(self, resource_group):
+        response = self.client.neuro_shield_findings.get(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
-            mitigation_id="str",
+            finding_id="str",
         )
 
         # please add some check logic here by yourself
@@ -33,22 +33,11 @@ class TestNetworkSecurityManagementNeuroShieldMitigationsOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_neuro_shield_mitigations_list(self, resource_group):
-        response = self.client.neuro_shield_mitigations.list(
+    def test_neuro_shield_findings_list(self, resource_group):
+        response = self.client.neuro_shield_findings.list(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_neuro_shield_mitigations_list_by_neuro_shield(self, resource_group):
-        response = self.client.neuro_shield_mitigations.list_by_neuro_shield(
-            resource_group_name=resource_group.name,
-            neuro_shield_name="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -56,12 +45,23 @@ class TestNetworkSecurityManagementNeuroShieldMitigationsOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_neuro_shield_mitigations_execute(self, resource_group):
-        response = self.client.neuro_shield_mitigations.execute(
+    def test_neuro_shield_findings_list_by_neuro_shield(self, resource_group):
+        response = self.client.neuro_shield_findings.list_by_neuro_shield(
+            resource_group_name=resource_group.name,
+            neuro_shield_name="str",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_neuro_shield_findings_mitigate(self, resource_group):
+        response = self.client.neuro_shield_findings.mitigate(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
-            mitigation_id="str",
+            finding_id="str",
         )
 
         # please add some check logic here by yourself
@@ -69,12 +69,12 @@ class TestNetworkSecurityManagementNeuroShieldMitigationsOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_neuro_shield_mitigations_rollback(self, resource_group):
-        response = self.client.neuro_shield_mitigations.rollback(
+    def test_neuro_shield_findings_rollback(self, resource_group):
+        response = self.client.neuro_shield_findings.rollback(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
-            mitigation_id="str",
+            finding_id="str",
         )
 
         # please add some check logic here by yourself

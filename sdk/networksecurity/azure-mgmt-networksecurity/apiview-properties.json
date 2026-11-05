@@ -90,5 +90,5 @@
         "azure.mgmt.networksecurity.operations.NeuroShieldMitigationsOperations.rollback": "NeuroShield.Management.NeuroShieldMitigations.rollback",
         "azure.mgmt.networksecurity.aio.operations.NeuroShieldMitigationsOperations.rollback": "NeuroShield.Management.NeuroShieldMitigations.rollback"
     },
-    "CrossLanguageVersion": "d541334c010a"
+    "CrossLanguageVersion": "232689d20e12"
 }

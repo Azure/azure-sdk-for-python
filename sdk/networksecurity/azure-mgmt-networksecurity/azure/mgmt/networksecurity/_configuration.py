@@ -19,8 +19,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class NetworkSecurityManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long,docstring-keyword-should-match-keyword-only
-    """Configuration for NetworkSecurityManagementClient.
+class NetworkSecurityMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
+    """Configuration for NetworkSecurityMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

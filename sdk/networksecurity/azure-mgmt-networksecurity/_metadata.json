@@ -3,7 +3,7 @@
   "apiVersions": {
     "NeuroShield.Management": "2026-10-01-preview"
   },
-  "commit": "fefbf1d094c7ef31f0a38dd130cfec7c6986d087",
+  "commit": "4a95637ebaef8fec9fb256fedbafd1217bb30872",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/networksecurity/resource-manager/Microsoft.NetworkSecurity",
   "emitterVersion": "0.63.10",

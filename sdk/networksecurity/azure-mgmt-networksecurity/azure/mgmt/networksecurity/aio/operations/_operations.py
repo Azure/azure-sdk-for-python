@@ -64,7 +64,7 @@ from ...operations._operations import (
     build_neuro_shields_update_request,
     build_operations_list_request,
 )
-from .._configuration import NetworkSecurityManagementClientConfiguration
+from .._configuration import NetworkSecurityMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -77,16 +77,14 @@ class Operations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityManagementClient`'s
+        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkSecurityManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: NetworkSecurityMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -189,16 +187,14 @@ class NeuroShieldOperationStatusesOperations:  # pylint: disable=docstring-missi
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityManagementClient`'s
+        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityMgmtClient`'s
         :attr:`neuro_shield_operation_statuses` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkSecurityManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: NetworkSecurityMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -278,16 +274,14 @@ class NeuroShieldsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityManagementClient`'s
+        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityMgmtClient`'s
         :attr:`neuro_shields` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkSecurityManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: NetworkSecurityMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1084,16 +1078,14 @@ class NeuroShieldSummariesOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityManagementClient`'s
+        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityMgmtClient`'s
         :attr:`neuro_shield_summaries` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkSecurityManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: NetworkSecurityMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1284,16 +1276,14 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityManagementClient`'s
+        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityMgmtClient`'s
         :attr:`neuro_shield_protected_resources` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkSecurityManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: NetworkSecurityMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2045,16 +2035,14 @@ class NeuroShieldFindingsOperations:  # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityManagementClient`'s
+        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityMgmtClient`'s
         :attr:`neuro_shield_findings` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkSecurityManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: NetworkSecurityMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2565,16 +2553,14 @@ class NeuroShieldMitigationsOperations:  # pylint: disable=docstring-missing-par
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityManagementClient`'s
+        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityMgmtClient`'s
         :attr:`neuro_shield_mitigations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkSecurityManagementClientConfiguration = (
-            input_args.pop(0) if input_args else kwargs.pop("config")
-        )
+        self._config: NetworkSecurityMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

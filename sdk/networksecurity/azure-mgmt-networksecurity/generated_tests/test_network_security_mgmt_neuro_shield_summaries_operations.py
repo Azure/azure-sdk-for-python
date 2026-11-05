@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.networksecurity import NetworkSecurityManagementClient
+from azure.mgmt.networksecurity import NetworkSecurityMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,16 +14,27 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkSecurityManagementNeuroShieldOperationStatusesOperations(AzureMgmtRecordedTestCase):
+class TestNetworkSecurityMgmtNeuroShieldSummariesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkSecurityManagementClient)
+        self.client = self.create_mgmt_client(NetworkSecurityMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_neuro_shield_operation_statuses_get(self, resource_group):
-        response = self.client.neuro_shield_operation_statuses.get(
-            location="str",
-            operation_id="str",
+    def test_neuro_shield_summaries_list(self, resource_group):
+        response = self.client.neuro_shield_summaries.list(
+            resource_group_name=resource_group.name,
+            neuro_shield_name="str",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_neuro_shield_summaries_get(self, resource_group):
+        response = self.client.neuro_shield_summaries.get(
+            resource_group_name=resource_group.name,
+            neuro_shield_name="str",
         )
 
         # please add some check logic here by yourself

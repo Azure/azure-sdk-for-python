@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.networksecurity import NetworkSecurityManagementClient
+from azure.mgmt.networksecurity.aio import NetworkSecurityMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNetworkSecurityManagementNeuroShieldsOperations(AzureMgmtRecordedTestCase):
+class TestNetworkSecurityMgmtNeuroShieldsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(NetworkSecurityManagementClient)
+        self.client = self.create_mgmt_client(NetworkSecurityMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_neuro_shields_get(self, resource_group):
-        response = self.client.neuro_shields.get(
+    @recorded_by_proxy_async
+    async def test_neuro_shields_get(self, resource_group):
+        response = await self.client.neuro_shields.get(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
         )
@@ -30,9 +31,9 @@ class TestNetworkSecurityManagementNeuroShieldsOperations(AzureMgmtRecordedTestC
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_neuro_shields_create_or_update(self, resource_group):
-        response = self.client.neuro_shields.create_or_update(
+    @recorded_by_proxy_async
+    async def test_neuro_shields_create_or_update(self, resource_group):
+        response = await self.client.neuro_shields.create_or_update(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             resource={
@@ -64,9 +65,9 @@ class TestNetworkSecurityManagementNeuroShieldsOperations(AzureMgmtRecordedTestC
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_neuro_shields_update(self, resource_group):
-        response = self.client.neuro_shields.update(
+    @recorded_by_proxy_async
+    async def test_neuro_shields_update(self, resource_group):
+        response = await self.client.neuro_shields.update(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             properties={
@@ -79,9 +80,9 @@ class TestNetworkSecurityManagementNeuroShieldsOperations(AzureMgmtRecordedTestC
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_neuro_shields_delete(self, resource_group):
-        response = self.client.neuro_shields.delete(
+    @recorded_by_proxy_async
+    async def test_neuro_shields_delete(self, resource_group):
+        response = await self.client.neuro_shields.delete(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
         )
@@ -90,19 +91,19 @@ class TestNetworkSecurityManagementNeuroShieldsOperations(AzureMgmtRecordedTestC
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_neuro_shields_list_by_resource_group(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_neuro_shields_list_by_resource_group(self, resource_group):
         response = self.client.neuro_shields.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_neuro_shields_list_by_subscription(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_neuro_shields_list_by_subscription(self, resource_group):
         response = self.client.neuro_shields.list_by_subscription()
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
