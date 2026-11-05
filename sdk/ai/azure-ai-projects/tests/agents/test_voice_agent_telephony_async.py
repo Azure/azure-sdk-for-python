@@ -12,8 +12,7 @@ from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.ai.projects.models import (
     AgentVersionDetails,
-    PSTNTelephonyTransferDestination,
-    TelephonyBindingStatus,
+    PhoneNumber,
     TelephonyTransferTarget,
     TelephonyTransferTargets,
     UpdateTelephonyBindingRequest,
@@ -27,7 +26,7 @@ from azure.ai.projects.models import (
 class TestVoiceAgentTelephonyAsync(TestBase):
     """
     Recorded tests covering the voice-agent telephony REST API surface exposed through
-    `project_client.agents.*` (telephony bindings, calls, and transfer targets), and the
+    `project_client.beta.voice_agents.telephony.*` (bindings, calls, and transfer targets), and the
     top-level `project_client.beta.voice_agents.conversations.*` generated-audio reads.
 
     NOTE: All tests in this file are currently marked `skip`:
@@ -92,12 +91,12 @@ class TestVoiceAgentTelephonyAsync(TestBase):
         Action REST API Route                                                  Client Method
         ------+-------------------------------------------------------------+-----------------------------------------------
         POST   /agents/{agent_name}/versions                                  project_client.agents.create_version()
-        GET    /agents/{agent_name}/telephony_bindings                        project_client.beta.voice_agents.telephony.list_bindings()
-        GET    /agents/{agent_name}/telephony_transfer_targets                project_client.beta.voice_agents.telephony.get_transfer_targets()
-        PUT    /agents/{agent_name}/telephony_transfer_targets                project_client.beta.voice_agents.telephony.replace_transfer_targets()
-        GET    /agents/{agent_name}/telephony_bindings/{binding_id}           project_client.beta.voice_agents.telephony.get_binding()
-        PATCH  /agents/{agent_name}/telephony_bindings/{binding_id}           project_client.beta.voice_agents.telephony.update_binding()
-        DELETE /agents/{agent_name}/telephony_bindings/{binding_id}           project_client.beta.voice_agents.telephony.delete_binding()
+        GET    /agents/{agent_name}/telephony/bindings                        project_client.beta.voice_agents.telephony.list_bindings()
+        GET    /agents/{agent_name}/telephony/transfer_targets                project_client.beta.voice_agents.telephony.get_transfer_targets()
+        PUT    /agents/{agent_name}/telephony/transfer_targets                project_client.beta.voice_agents.telephony.replace_transfer_targets()
+        GET    /agents/{agent_name}/telephony/bindings/{binding_id}           project_client.beta.voice_agents.telephony.get_binding()
+        PATCH  /agents/{agent_name}/telephony/bindings/{binding_id}           project_client.beta.voice_agents.telephony.update_binding()
+        DELETE /agents/{agent_name}/telephony/bindings/{binding_id}           project_client.beta.voice_agents.telephony.delete_binding()
         DELETE /agents/{agent_name}                                          project_client.agents.delete()
         """
         print("\n")
@@ -134,7 +133,7 @@ class TestVoiceAgentTelephonyAsync(TestBase):
         new_target = TelephonyTransferTarget(
             name="sales_desk",
             description="Transfers to the sales desk for pricing questions.",
-            destination=PSTNTelephonyTransferDestination(value="+14255550123"),
+            destination=PhoneNumber(value="+14255550123"),
         )
         replaced_targets: TelephonyTransferTargets = (
             await project_client.beta.voice_agents.telephony.replace_transfer_targets(
@@ -146,7 +145,9 @@ class TestVoiceAgentTelephonyAsync(TestBase):
         )
         assert len(replaced_targets.transfer_targets) == 1
         assert replaced_targets.transfer_targets[0].name == "sales_desk"
-        assert replaced_targets.transfer_targets[0].destination.kind == "pstn"
+        assert isinstance(replaced_targets.transfer_targets[0].destination, PhoneNumber)
+        assert replaced_targets.transfer_targets[0].destination.type == "phone_number"
+        assert replaced_targets.transfer_targets[0].destination.value == "+14255550123"
 
         # Confirm the change persisted.
         confirmed_targets: TelephonyTransferTargets = (
@@ -176,7 +177,7 @@ class TestVoiceAgentTelephonyAsync(TestBase):
             await project_client.beta.voice_agents.telephony.update_binding(
                 agent_name=agent_name,
                 binding_id=fake_binding_id,
-                body=UpdateTelephonyBindingRequest(status=TelephonyBindingStatus.SUSPENDED),
+                body=UpdateTelephonyBindingRequest(label="Updated test binding"),
                 etag=None,
                 match_condition=MatchConditions.IfPresent,
             )
@@ -210,10 +211,10 @@ class TestVoiceAgentTelephonyAsync(TestBase):
         Action REST API Route                                                  Client Method
         ------+-------------------------------------------------------------+-----------------------------------------------
         POST   /agents/{agent_name}/versions                                  project_client.agents.create_version()
-        GET    /agents/{agent_name}/telephony_calls                           project_client.beta.voice_agents.telephony.list_calls()
-        GET    /agents/{agent_name}/telephony_calls/{call_id}                 project_client.beta.voice_agents.telephony.get_call()
-        POST   /agents/{agent_name}/telephony_calls/{call_id}:transfer        project_client.beta.voice_agents.telephony.transfer_call()
-        POST   /agents/{agent_name}/telephony_calls/{call_id}:end             project_client.beta.voice_agents.telephony.end_call()
+        GET    /agents/{agent_name}/telephony/calls                           project_client.beta.voice_agents.telephony.list_calls()
+        GET    /agents/{agent_name}/telephony/calls/{call_id}                 project_client.beta.voice_agents.telephony.get_call()
+        POST   /agents/{agent_name}/telephony/calls/{call_id}:transfer        project_client.beta.voice_agents.telephony.transfer_call()
+        POST   /agents/{agent_name}/telephony/calls/{call_id}:end             project_client.beta.voice_agents.telephony.end_call()
         DELETE /agents/{agent_name}                                          project_client.agents.delete()
         """
         print("\n")

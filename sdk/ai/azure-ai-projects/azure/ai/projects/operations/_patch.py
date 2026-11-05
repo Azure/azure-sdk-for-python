@@ -29,6 +29,8 @@ from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
+
+# Nested operation groups are re-exported here rather than in the generated package exports.
 from ._operations import (
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
@@ -38,6 +40,7 @@ from ._operations import (
     BetaSchedulesOperations,
     BetaSkillsOperations,
     BetaVoiceAgentsConversationsOperations,
+    BetaVoiceAgentsLiveConversationsOperations,
     BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
     BetaVoiceAgentsTelephonyOperations,
 )
@@ -133,6 +136,8 @@ class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
 
     conversations: BetaVoiceAgentsConversationsOperations
     """:class:`~azure.ai.projects.operations.BetaVoiceAgentsConversationsOperations` operations"""
+    live_conversations: BetaVoiceAgentsLiveConversationsOperations
+    """:class:`~azure.ai.projects.operations.BetaVoiceAgentsLiveConversationsOperations` operations"""
     telephony: BetaVoiceAgentsTelephonyOperations
     """:class:`~azure.ai.projects.operations.BetaVoiceAgentsTelephonyOperations` operations"""
     realtime: BetaRealtime
@@ -216,6 +221,7 @@ __all__: List[str] = [
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
     "BetaVoiceAgentsConversationsOperations",
+    "BetaVoiceAgentsLiveConversationsOperations",
     "BetaVoiceAgentsOperations",
     "BetaVoiceAgentsTelephonyOperations",
     "ClientEvent",
