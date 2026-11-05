@@ -554,8 +554,8 @@ def test_status_false_is_not_applicable(service, evaluator_type, key, rubric, in
         f"{key}_score": None,
         f"{key}_passed": None,
         f"{key}_result": "not_applicable",
-        f"{key}_reason": "Not applicable: Status completion probability 0.2000 is below 0.5000; evaluation skipped. "
-        "No model rationale is available.",
+        f"{key}_reason": "Not applicable: the judge model's applicability probability 0.2000 is below the 0.5000 "
+        "cutoff, so the evaluator was skipped. No model rationale is available.",
         f"{key}_status": "skipped",
         f"{key}_threshold": threshold,
         f"{key}_prompt_tokens": 40,
