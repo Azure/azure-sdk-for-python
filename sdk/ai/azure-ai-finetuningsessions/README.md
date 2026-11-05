@@ -164,6 +164,13 @@ remain `GlobalStandard`, `DatazoneStandard`, and `DeveloperTier`; future strings
 are passed through without client-side validation. Set the property explicitly
 to select a tier. If omitted, the SDK leaves selection to the service.
 
+When the service resolves a new session to the M365 worker pool, an omitted
+tier defaults to `DatazoneStandard`; other pools retain the `GlobalStandard`
+baseline. Explicit tier choices and existing Developer Tier metadata selection
+are preserved. The SDK does not infer a worker pool or inject a training tier,
+and existing sessions are not migrated. Datazone availability and admission
+checks remain server-side; there is no automatic fallback to a global tier.
+
 ### Attach an existing session (async)
 
 Call `await async_client.attach_session(session_id)` before using a session

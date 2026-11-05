@@ -17,6 +17,11 @@
 - Preserve the latest Loom polling, sampling-limit, heartbeat shutdown, and scalar/tensor serialization behavior. Protected training is not blindly resubmitted after ambiguous submission or completion failures.
 - Generate raw operations against canonical `/fine_tuning_sessions` routes while retaining existing Python token-native constructors and convenience compatibility hooks.
 
+### Other Changes
+
+- Clarify service-side training-tier selection: an omitted tier uses `DatazoneStandard` for the effective M365 worker pool and the `GlobalStandard` baseline for other pools. The SDK still sends no tier when omitted and preserves explicit choices.
+- Use absolute repository links in package generation documentation to satisfy Azure SDK link guidance.
+
 ## 1.0.0b1 (2026-09-24)
 
 ### Features Added

@@ -258,8 +258,11 @@ class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-
     :ivar ejectable: Opt the session into idle hibernation. Default False.
     :vartype ejectable: bool
     :ivar training_type: Training tier. Set this property explicitly to select the tier. If
-     omitted, tier selection is left to the service. Known values are: "GlobalStandard",
-     "DatazoneStandard", and "DeveloperTier".
+     omitted, tier selection is left to the service: sessions assigned to the M365 worker pool
+     default to DatazoneStandard; other pools retain the GlobalStandard baseline. Existing
+     DeveloperTier metadata selection and explicit tier choices are preserved. No client-side
+     default is applied. Known values are: "GlobalStandard", "DatazoneStandard", and
+     "DeveloperTier".
     :vartype training_type: str or ~azure.ai.finetuningsessions.models.TrainingType
     """
 
@@ -277,8 +280,10 @@ class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Training tier. Set this property explicitly to select the tier. If omitted, tier selection is
-     left to the service. Known values are: \"GlobalStandard\", \"DatazoneStandard\", and
-     \"DeveloperTier\"."""
+     left to the service: sessions assigned to the M365 worker pool default to DatazoneStandard;
+     other pools retain the GlobalStandard baseline. Existing DeveloperTier metadata selection and
+     explicit tier choices are preserved. No client-side default is applied. Known values are:
+     \"GlobalStandard\", \"DatazoneStandard\", and \"DeveloperTier\"."""
 
     @overload
     def __init__(

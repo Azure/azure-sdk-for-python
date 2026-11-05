@@ -15,10 +15,10 @@
   "typespec": {
     "repository": "Azure/azure-rest-api-specs",
     "directory": "specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-finetuningsessions",
-    "base_commit": "0a86307b307665b6a0b9b12ebc42248c2b262325",
-    "commit": "e4f4ef32fd1048584b106c0eeb07fd1e0a5286b5",
+    "base_commit": "e4f4ef32fd1048584b106c0eeb07fd1e0a5286b5",
+    "commit": "f1c718e39ecbbe53b4ff3841d082ca1b207941a1",
     "requires_uncommitted_working_tree": false,
-    "source_fingerprint_sha256": "c0782800eec5812718100bd37fa056fd8db1395d6d138932949154f5f52fd5ba",
+    "source_fingerprint_sha256": "c5dc20d1db76bd4b68f7c51d58dde676b5b9ab5e4c341e54b02a7d3796802bb5",
     "client_sha256": "a974c5c1b8bb6649f9baaeba925a24b9e3439c1e80c9c92dd2ded2e2bd286694",
     "models_path": "specification/ai-foundry/data-plane/Foundry/src/session-finetuning/models-custom-code.tsp",
     "models_sha256": "bee9a1c4f4b8d80315f98212e378c28aef552d28eee3d6ec2327f1b30a0cbec3",
@@ -41,11 +41,11 @@
   },
   "assembly": {
     "generated_inventory_entries": 21,
-    "generated_inventory_fingerprint_sha256": "80c78d2676731dbfd26b3645fc7c73654d3a9addd897bc3e4e1768bc4d4a0974",
+    "generated_inventory_fingerprint_sha256": "9fa0d11f93ad81df9cd2168d8acc4a41d3c36a92ddda9940d408566c5005014d",
     "runtime_files": 32,
     "runtime_python_modules": 31,
     "baseline_runtime_fingerprint_sha256": "7cccad8118a905db7b6f526e13ffc0b77bf9dbc501068e22122ee8fea66363e1",
-    "runtime_fingerprint_sha256": "b47607b352b72c8a17393d03b38445425ef53277d0188eeffd258fb975fa2dc3",
+    "runtime_fingerprint_sha256": "d5b800971c03f28ed1d1d4b9b4d18d8236dae3aa8b5209bddf014834ecb26524",
     "maintained_modules": [
       "_checkpoint_download.py",
       "_client_options.py",
@@ -139,7 +139,7 @@
     },
     "upstream_tests": 434,
     "upstream_test_files": 19,
-    "current_tests": 2528,
+    "current_tests": 2532,
     "current_test_files": 37,
     "paired_convenience_cases": 20,
     "requests_per_sdk": 134,
@@ -352,17 +352,51 @@
       "validated_runtime_wheel_sha256": "00c4e6a008a3766b94cdaa18c5e20c83eb877f4922dd92b3b183339fd32e72fd",
       "tooling_limitations": "MCP hit Windows cleanup failure and overwrote packaging metadata despite generate-packaging-files=false; original pyproject/MANIFEST restored exactly, strict isolated emission and clean artifact validation used.",
       "typespec_suppression_approval_required": true
+    },
+    "beta2_review_20261105": {
+      "loom_master": "a644d00f44c0153e58790830297dbd23e0f3c2f8",
+      "spec_commit": "f1c718e39ecbbe53b4ff3841d082ca1b207941a1",
+      "sdk_tree_changed_since_previous_review": false,
+      "service_commit": "e4430b46d0a2c3f3e6a0301aab8f35e5692b6de2",
+      "wire_contract_changed": false,
+      "runtime_behavior_ast_changed": false,
+      "training_tier_tests_python313": 46,
+      "training_tier_tests_python310": 46,
+      "relative_package_links_corrected": 4,
+      "package_link_guidance_passed": true,
+      "independent_emissions": 2,
+      "live_service_tested": false,
+      "remote_ci_green_verified": false,
+      "source_tests_passed": 2532,
+      "source_tests_skipped": 72,
+      "python_310_tests_passed": 2531,
+      "python_310_tests_skipped": 73,
+      "installed_wheel_tests_passed": 2531,
+      "installed_wheel_tests_skipped": 73,
+      "maintainer_tests_passed": 16,
+      "mirror_workflow_tests_passed": 39,
+      "spelling_files_checked": 5,
+      "spelling_issues": 0,
+      "api_markdown_sha256": "e2d9037bcd2c3ad58f659da787814eb88204da5eab7a8dc4b889fd8e17445507",
+      "wheel_sha256": "be555d9758ee5ddf7261cb367ebad6fd406e2a23bc042cbd1a830d8606f438df",
+      "wheel_runtime_files": 32,
+      "runtime_ast_unchanged": true,
+      "new_loom_sync_pr": 116946,
+      "validation_scope": "Runtime and installed wheel validated; final provenance/doc metadata recorded afterward. No live service/GPU run or package publication."
     }
   },
   "sync_reference": {
     "repository": "loom",
-    "commit": "d9f379e1b0f825dfa61a4da41998b03d2189ea8c",
+    "commit": "a644d00f44c0153e58790830297dbd23e0f3c2f8",
     "scope": "Selected beta-compatible SDK changes; preparation-only checkpoint behavior explicitly retained.",
     "included_sdk_commits": [
       "eca5b224d78f92041fbd86fae96d9cccd8b35f77"
     ],
     "excluded_sdk_commits": {
       "6bab44b521a85a38d76b0e7d365b56e41ba1a4d5": "User selected preparation-only; local checkpoint file delivery is excluded."
-    }
+    },
+    "previous_assessed_commit": "d9f379e1b0f825dfa61a4da41998b03d2189ea8c",
+    "sdk_tree_sha": "1d5628135bd86cf3daab651ac0d9d0a78c1b05af",
+    "new_sdk_runtime_changes": false
   }
 }
