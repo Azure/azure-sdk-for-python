@@ -257,6 +257,9 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         RunApiStubGen: false
+        InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
+        MsRustWorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+        MsRustToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
         SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
 
   - job: 'Analyze'
@@ -292,6 +295,12 @@ jobs:
 
     - template: /eng/pipelines/templates/steps/use-venv.yml
 
+    - ${{ if parameters.InstallMsRustToolchain }}:
+      - template: /eng/pipelines/templates/steps/install-msrust-toolchain.yml
+        parameters:
+          ToolchainFeed: ${{ parameters.MsRustToolchainFeed }}
+          WorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
+
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
       parameters:
         ContinueOnError: false
@@ -317,6 +326,12 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
         VerifyAutorest: ${{ parameters.VerifyAutorest }}
         GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
+        EnvVars:
+          ${{ if parameters.InstallMsRustToolchain }}:
+            MSRUSTUP_ACCESS_TOKEN: $(System.AccessToken)
+            MSRUSTUP_FEED_URL: $(MSRUSTUP_FEED_URL)
+            CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN)
+            CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER: $(CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_CREDENTIAL_PROVIDER)
 
   - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
     parameters:
