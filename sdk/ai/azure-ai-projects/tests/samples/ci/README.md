@@ -28,9 +28,9 @@ The target IDs must be available to **both** Plan and RunSamples. Save runtime v
 The YAML variable `azureServiceConnection` is configured as **azure-sdk-tests**, an authorized Azure Resource Manager connection. It is not a Run pipeline field. Changing the connection requires updating that configuration and authorizing the pipeline; a subscription/MI name does not select or grant access to a service connection. Prefer workload identity federation. Its service principal must already have:
 
 - Access to the explicit subscription and tenant; resource-group/deployment permissions, attachment of the existing UAMIs, and native Cosmos SQL role-assignment permissions. **Contributor** covers these management operations; workers do not need Azure IAM-administrator roles.
-- The preconfigured subscription-scoped **Foundry User** grant checked by admission. Workers only verify Azure IAM grants; they never create or repair them.
+- The preconfigured subscription-scoped **Foundry User** grant. Workers assume Azure IAM grants exist; they never check, create or repair them.
 - Access to the existing validation project and its **gpt-5.2** deployment, including the harness's file-upload and Code Interpreter operations. No validator resources or roles are provisioned by this pipeline.
-- Registered providers: `Microsoft.CognitiveServices`, `Microsoft.Storage`, `Microsoft.DocumentDB`, `Microsoft.Search`, and `Microsoft.ManagedIdentity`.
+- Registered providers: `Microsoft.CognitiveServices`, `Microsoft.Storage`, `Microsoft.DocumentDB`, `Microsoft.Search`, `Microsoft.ManagedIdentity`, `Microsoft.Web`, and `Microsoft.LoadTestService`.
 
 The scripts require **PowerShell 7.2+**. Azure subscription roles do not grant Azure DevOps pipeline-edit or service-connection authorization rights. Existing organization/service-connection approvals are not bypassed.
 
@@ -42,20 +42,42 @@ The run form asks for **`identityResourceGroup`**: the existing resource group t
 
 The identities are created by [Deploy-Identities.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/shared-identities/infra/Deploy-Identities.ps1), which names them `mi-azsdk-sample-{project,account,search,function}-{region}-{timestamp}`. The pipeline needs only the `-project-`, `-account-`, `-search-` and `-function-` name segments; any prefix or suffix is accepted.
 
-The subscription/tenant still come from saved variables, never an active-account default or search across subscriptions. Offline **Plan** publishes only the RG name with resolution `Pending`—it invents no identity IDs or region. Read-only admission lists the managed identities in that RG and requires exactly one whose name contains each `-{purpose}-` segment (unrelated identities in the group are ignored). It then requires the `purpose`, `sample-ci-owner`, `sample-ci-retention=permanent` and `sample-ci-identity` tags set by the deployment script, one owner and one region, and binds their actual resource IDs, region, owner and principal IDs. Duplicates, missing identities, unowned/mixed sets or incomplete metadata fail closed. It verifies preconfigured grants and capacity, then publishes **resolved-sample-plan** for the workers; workers never use unresolved plans. Each worker GET-rechecks identity metadata before writes and passes the four resolved resource IDs and the project principal ID to Bicep. No identity is created, replaced or granted roles by test jobs.
+The subscription/tenant still come from saved variables, never an active-account default or search across subscriptions. Offline **Plan** publishes only the RG name with resolution `Pending`—it invents no identity IDs or region. Read-only admission lists the managed identities in that RG and requires exactly one whose name contains each `-{purpose}-` segment (unrelated identities in the group are ignored). It then requires the `purpose`, `sample-ci-owner`, `sample-ci-retention=permanent` and `sample-ci-identity` tags set by the deployment script, one owner and one region, and binds their actual resource IDs, region, owner and principal IDs. Duplicates, missing identities, unowned/mixed sets or incomplete metadata fail closed. It verifies capacity, then publishes **resolved-sample-plan** for the workers; workers never use unresolved plans. Provider registrations and preconfigured grants are assumed to exist and are not checked. Each worker GET-rechecks identity metadata before writes and passes the four resolved resource IDs and the project principal ID to Bicep. No identity is created, replaced or granted roles by test jobs.
 
 ### Permanent identities and service grants
 
 [Deploy-Identities.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/shared-identities/infra/Deploy-Identities.ps1) is the single owner of the shared identities; an authorized administrator runs it, never a worker job. Without `-Apply` it only previews (`what-if`). With `-Apply` it prompts for a subscription and region (or takes `-SubscriptionId`/`-Location`) and, after confirmation, creates:
 
 - A permanent RG `rg-azsdk-identities-{region}-{MMddyy_HHmmss}` and four UAMIs `mi-azsdk-sample-{project,account,search,function}-{region}-{MMddyy_HHmmss}`, tagged `purpose=azsdk-sample-identities`, `sample-ci-retention=permanent`, a shared `sample-ci-owner` token and `sample-ci-identity={purpose}`. Pass the RG name to the pipeline's `identityResourceGroup`.
-- The six **subscription-scoped** roles in [IdentityConfiguration.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/shared-identities/infra/IdentityConfiguration.json) for the project UAMI: Foundry User, Storage Blob Data Contributor, Storage Blob Data Owner (conditioned), Cosmos DB Operator, Search Service Contributor and Search Index Data Contributor.
+- The eight **subscription-scoped** roles in [IdentityConfiguration.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/shared-identities/infra/IdentityConfiguration.json) for the project UAMI: Foundry User, Storage Blob Data Contributor, Storage Blob Data Owner (conditioned), Cosmos DB Operator, Search Service Contributor, Search Index Data Contributor, Storage Queue Data Contributor and Playwright Workspace Contributor.
+- Subscription-scoped **Storage Blob Data Owner** and **Storage Queue Data Contributor** for the Function UAMI.
+- Subscription-scoped **Search Service Contributor**, **Search Index Data Contributor**,
+  **Storage Blob Data Contributor**, and **Cognitive Services OpenAI User** for the Search
+  UAMI. The deployment script uses it to upload source documents and configure indexes;
+  Search uses that same identity to read blobs and generate embeddings.
 
-The script does **not** grant the pipeline service principal Foundry User; admission requires that subscription-scoped grant to exist already and fails otherwise. Every run creates a new RG and identity set; nothing is reused or deleted.
+The script does **not** grant the pipeline service principal Foundry User; that subscription-scoped grant must exist already and is not checked by admission. Every run creates a new RG and identity set; nothing is reused or deleted.
 
-**A newly created set does not automatically run this pipeline.** Pass its RG name as `identityResourceGroup` after reviewing the target, broad role scope and regional eligibility. The [metadata resolver](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/SampleCiHelpers.ps1) requires a single existing, owned and properly granted identity set in that RG and never adopts unowned identities. Do not infer workload compatibility from MI creation.
+**A newly created set does not automatically run this pipeline.** Pass its RG name as `identityResourceGroup` after reviewing the target, broad role scope and regional eligibility. The [metadata resolver](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/SampleCiHelpers.ps1) requires a single existing, owned identity set in that RG and never adopts unowned identities. Grants are assumed to be configured already. Do not infer workload compatibility from MI creation.
 
-The other three identities have **no grants** until a separately reviewed integration needs them. The deployment script creates no test workloads. The CI cleanup never deletes these identities or grants.
+The account identity has **no grants**. The identity bootstrap creates no test workloads.
+The CI cleanup never deletes these identities or grants. The new Search grants use the
+existing subscription-scoped bootstrap pattern because temporary worker resources do not
+exist yet; review that broad scope before approving them.
+
+For an **existing permanent identity set**, an administrator can preview
+[update-search-roles.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/shared-identities/infra/update-search-roles.bicep)
+without creating replacement identities:
+
+```powershell
+az deployment sub what-if --subscription '<subscription-id>' --location '<identity-region>' `
+    --template-file tests\samples\shared-identities\infra\update-search-roles.bicep `
+    --parameters identityResourceGroupName='<existing-identity-rg>' searchIdentityName='<existing-search-uami>'
+```
+
+Verify the exact existing Search identity name, owner and region first. After approval,
+use `az deployment sub create` with the same explicit arguments to apply the four grants.
+Do not run this administrator template from a worker or rely on workers to repair RBAC.
 
 **Scope warning:** the service grants reach matching existing and future resources throughout the subscription, not just temporary RGs. Shared identities reduce cross-run isolation. The approved Blob Owner condition restricts only blob tag read/write and filtering to container names ending `-azureml-agent`; it omits the original generated workspace-prefix restriction, and other Blob Owner permissions remain allowed. Do not silently broaden this pattern or use it without scope review.
 
@@ -87,14 +109,228 @@ To verify repeatability, wait for all queues to pass and finish verified cleanup
 | `test-id` | `*test_samples_async.py::*[sample_agent_mcp_with_project_connection_async]` |
 | `test-id` | `sample_agent_basic;sample_agent_mcp_with_project_connection` (OR) |
 
-`*` and `?` are wildcards; brackets in pytest IDs are literal. Matching is case-insensitive, slash-normalized and deduplicated. Semicolons/newlines separate OR patterns. Zero matches fail; selection never falls back to all tests. Harness exclusions remain excluded. A selected sample that needs an environment variable nothing supplies is rejected during planning, before any resource is created: it is logged as an error and skipped, the other samples still run, and the run fails at the end in `ReportRejectedSamples`. The supported names are the keys of the `environment` output in [infra/sample-resources.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/sample-resources.bicep) plus `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`, `AZURE_RESOURCE_GROUP` and the pipeline-supplied `LLM_VALIDATION_PROJECT_ENDPOINT`. To support a new variable, add it to that output (never a secret) and define its `--<name>` option in `conftest.py`. The plan saves the Bicep-derived names as `environmentBindings`, which `run_samples.py` enforces. A queue whose samples were all rejected gets no worker.
+`*` and `?` are wildcards; brackets in pytest IDs are literal. Matching is case-insensitive, slash-normalized and deduplicated. Semicolons/newlines separate OR patterns. Zero matches fail; selection never falls back to all tests. Harness exclusions remain excluded. A selected sample that needs an environment variable nothing supplies is rejected during planning, before any resource is created: it is logged as an error and skipped, the other samples still run, and the run fails at the end in `ReportRejectedSamples`. Supported sample inputs come from the root `environment` output in [infra/main.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/main.bicep), `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`, `AZURE_RESOURCE_GROUP`, and the pipeline-supplied `LLM_VALIDATION_PROJECT_ENDPOINT`. Every active queue's plan saves the complete provisioned input names as `environmentBindings`, which `run_samples.py` enforces. A queue whose samples were all rejected gets no worker.
+
+## Shared provisioning and language adapters
+
+The infrastructure entry points have no dependency on Python, pytest, sample paths, or
+sample queries. They can prepare the same environment for .NET, Java, JavaScript/TypeScript,
+Go, or Python tests. The Azure resources always deploy as one complete bundle.
+
+| Layer | Entry points |
+| --- | --- |
+| Shared offline planning | [New-ResourceDeploymentPlan.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/New-ResourceDeploymentPlan.ps1) |
+| Shared admission and deployment | [Invoke-ResourceProvisioning.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/Invoke-ResourceProvisioning.ps1), [SampleCiHelpers.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/SampleCiHelpers.ps1) |
+| Shared cleanup | [Remove-SampleResources.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/Remove-SampleResources.ps1) |
+| Python-only selection and admission adapter | [New-SampleDeploymentPlan.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/New-SampleDeploymentPlan.ps1), [Invoke-SampleProvisioning.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/Invoke-SampleProvisioning.ps1), [PythonSampleCiHelpers.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/PythonSampleCiHelpers.ps1) |
+| Python-only execution | [select_samples.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/select_samples.py), [run_samples.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/run_samples.py), [sample_ci_attachments.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/sample_ci_attachments.py) |
+
+### Adding resources without editing PowerShell
+
+1. Add a Bicep resource or module to [infra/main.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/main.bicep).
+   Declare module dependencies using Bicep inputs/outputs, not script-side deployment steps.
+   Do not add a sample-selection condition.
+2. Expose its non-secret test inputs as explicit uppercase keys in the root
+   `output environment object = { ... }` block. Offline planning discovers these keys
+   without an Azure login or Bicep compiler. Keep one key per line, using the existing
+   format; computed keys and an output built with `union(...)` are not supported.
+   The compiled-template check verifies that discovered keys match actual ARM outputs.
+3. If a new provider or extra subscription-scoped grant is required, have an
+   administrator register the provider or approve and configure the bootstrap grant.
+   Workers assume provider registrations and grants for the existing
+   project/account/search/function identities already exist; they never check or create them.
+   The existing baseline project grants and conditioned Blob Owner grant remain mandatory.
+4. Run the offline regression suites and Bicep checker below, then validate live.
+
+No PowerShell changes are needed for ordinary ARM resources and their environment
+outputs. The Python runner also registers new output names as pytest options automatically:
+it passes only the validated binding **names** through
+`AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES`; values still use the existing CLI options.
+There is no resource-specific option list or sanitized default for these bindings.
+Outside that runner, manual pytest invocations using extra environment CLI options must
+set the same metadata first, for example
+`$env:AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES = '["NEW_RESOURCE_ENDPOINT"]'`
+before passing `--new-resource-endpoint=...`. Only names belong in that JSON array,
+not values. Existing preparer-derived options, live/recording flags and playback
+defaults are unchanged; directly running a sample script still uses its usual environment.
+
+This is not a generic imperative-task framework. Code publication, data-plane initialization,
+specialized quota/readiness checks, new identity types, or secret delivery may still need
+reviewed scripts. The shared Function publisher is such an explicit post-deployment step;
+its Python handler is a test dependency, not a dependency on the Python SDK test harness.
+
+### Calling from another SDK language
+
+Distribute the shared scripts, the complete [infra](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra) directory, and
+[function_app](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/tests/samples/ci/function_app) and
+[search_documents](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/tests/samples/ci/search_documents)
+together at a pinned revision; keep their relative layout.
+The shared entry points require PowerShell 7.2+, Azure CLI with Bicep, and the existing
+authorized service-principal context. They do not authenticate on behalf of the caller.
+Function remote build uses the packaged handler requirements.
+
+For example, after setting `AZURE_SUBSCRIPTION_ID` and `AZURE_TENANT_ID`:
+
+```powershell
+# Offline: no manifest or Python package is required.
+.\New-ResourceDeploymentPlan.ps1 -OutputDirectory .\plans\q1 -QueueName q1 `
+    -IdentityResourceGroup '<existing-identity-rg>' -DefinitionId 8392 -BuildId 12345 -JobAttempt 1
+
+# Read-only admission; workers must use the resolved plan it writes.
+.\Invoke-ResourceProvisioning.ps1 -BatchPlanDirectory .\plans -ResolvedPlanDirectory .\resolved
+
+# Billable deployment; MCP_GITHUB_PAT must be supplied securely in this process's environment.
+.\Invoke-ResourceProvisioning.ps1 -PlanPath .\resolved\q1\deployment-plan.json `
+    -StatePath .\results\q1\deployment-state.json -QueueName q1 -ConfirmProvisioning
+```
+
+The schema-version-1 JSON plan contains numeric run identifiers, queue `q1` through `q4`,
+fresh ownership metadata, model configuration, identity resolution, and `environmentBindings`.
+The shared planner creates it; callers should not invent resource names or identity bindings.
+If running under Azure DevOps, use the actual definition/build/attempt IDs; runtime ownership
+checks reject identifiers from another run. Other CI systems must supply equivalent numeric IDs.
+
+After deployment, require state `status=Ready`, then load the state's `environment`
+object into the language-specific test process. All bindings are nonempty strings;
+only declared non-secret names are accepted. Supply any external validation configuration
+separately. Shared admission does not inspect language-specific test metadata; each adapter
+must validate its own test partition before calling admission.
+
+In the caller's `finally`/always-run cleanup step, invoke:
+
+```powershell
+.\Remove-SampleResources.ps1 -StatePath .\results\q1\deployment-state.json -QueueName q1 -ConfirmCleanup
+```
+
+A non-Python adapter and pipeline are not shipped here. The shared interface is prepared
+for reuse; cross-language test execution still needs its own adapter and live validation.
+
+## Browser automation integration
+
+[browser-automation.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/browser-automation.bicep)
+ports the restored `foundry-project-pool` workspace and connection provisioning scripts.
+Every active queue gets a fresh `Microsoft.LoadTestService/playwrightWorkspaces` resource
+using API `2025-09-01`, in the admitted identity region. The workspace name retains the
+full run hash, local authentication is disabled, and regional affinity is enabled.
+Workspace creation and the connection are native ARM resources; no deployment script,
+API key, browser installation or new pipeline secret is required.
+
+The project connection is named `browserAutomation`, has category `PlaywrightWorkspace`,
+uses `ProjectManagedIdentity` authentication and audience
+`https://mcp.playwright.microsoft.com`, and is shared within the project. Its MCP target is
+derived from the workspace's actual `dataplaneUri`, replacing the API hostname with the MCP
+hostname and appending `/mcp`, exactly as in the restored pool script. Browser provisioning
+depends only on Standard setup, not on model deployments or Search indexing.
+The connection shape also matches the
+[official Foundry sample](https://github.com/microsoft-foundry/foundry-samples/blob/main/samples/csharp/hosted-agents/agent-framework/browser-automation/infra-modules/playwright-connection.bicep).
+The `2025-04-01-preview` Bicep type enum omits `ProjectManagedIdentity`, so only that
+property's `BCP036` warning is suppressed; the compiled contract checker pins its value.
+
+Unlike the pool script's system-assigned project identity, this bundle uses its existing,
+bootstrap-owned **project UAMI**. The project identity must already have **Playwright
+Workspace Contributor** (`78cf819f-0969-4ebe-8759-015c6efcd5bf`). New identity sets receive
+that role from the bootstrap configuration. It is subscription-scoped, matching the
+existing bootstrap pattern for disposable RGs; review that broad scope before approval.
+Workers create neither identities nor IAM role assignments.
+
+An administrator must also register
+`Microsoft.LoadTestService` and verify workspace availability in the chosen region; workers
+never register providers or repair prerequisites. West US 3 is listed as supported by
+the provider, but registration and RBAC are independent of regional support.
+
+Root outputs expose `BROWSER_AUTOMATION_PROJECT_CONNECTION_ID`,
+`BROWSER_AUTOMATION_PROJECT_CONNECTION_NAME`, and `PLAYWRIGHT_SERVICE_RESOURCE_ID`.
+Existing offline planning and dynamic pytest options consume these names automatically;
+no resource-specific PowerShell plumbing, option mappings or sanitized defaults are added.
+The existing Browser Automation sample uses the provisioned connection. Browser sessions
+are created by the sample at runtime, not by Bicep; live-view URLs and session identifiers
+must be treated as sensitive. The queue's existing RG cleanup removes the workspace and
+connection, not the permanent shared identity or its role assignment.
+
+## AI Search integration
+
+[ai-search.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/ai-search.bicep)
+ports the Search content provisioning from `foundry-project-pool` into the unconditional
+resource bundle. It reuses the Standard setup's S1 Search service, storage account,
+AAD-authenticated project connection and pre-existing Search UAMI. Semantic search uses
+the free tier. It adds a private `documents` container and a `text-embedding-3-small`
+version `1` deployment with GlobalStandard capacity `10` and `1536` dimensions. The region must
+support that embedding deployment and have its own remaining model quota; the chat-model
+preflight does not check embedding quota. ARM validates this additional deployment.
+The Search module waits for the chat-model/MCP module before deploying its embedding
+model: concurrent model deployment operations on the same Foundry account are rejected
+with `RequestConflict`.
+
+Search indexes, data sources, skillsets and indexer execution are
+[data-plane APIs](https://learn.microsoft.com/azure/search/search-how-to-create-indexers),
+not native ARM resources. A Bicep-managed `Microsoft.Resources/deploymentScripts` resource
+runs the packaged, standard-library-only
+[search-indexing.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/search-indexing.py)
+under the shared Search UAMI. No new PowerShell publisher, SDK dependency, API key,
+storage key or IAM grant is required in workers.
+
+The script uploads the CI-local
+[search_documents/product_info.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/search_documents/product_info.md)
+in Markdown and plain-text formats, creates the chunk/vector/semantic index, a keyless blob data source, a split and
+embedding skillset, and separate Markdown and document indexers. Data sources, embedding
+skills and query-time vector generation explicitly select the Search UAMI for outbound authentication;
+[managed-identity connections](https://learn.microsoft.com/azure/search/search-how-to-managed-identities)
+use Search API `2026-04-01`.
+
+Indexer reset/run is explicit on each script execution, including retries. The script
+waits for fresh, successful executions with nonzero processed documents, rejects indexing
+errors and warnings, and verifies searchable content before deployment can finish.
+Authorization propagation, throttling and transient HTTP failures have bounded retries;
+missing grants or model/embedding failures still fail the deployment. The deployment script
+has a 30-minute timeout and always removes its supporting resources after execution.
+All indexing resources are created even when no selected sample uses Search.
+
+Root outputs provide `AI_SEARCH_PROJECT_CONNECTION_ID`, `AI_SEARCH_INDEX_NAME`,
+`AZURE_AI_SEARCH_ENDPOINT`, `AZURE_AI_EMBED_DEPLOYMENT_NAME`,
+`AZURE_AI_EMBED_DIMENSIONS`, `AZURE_BLOB_CONTAINER_NAME`, and `AI_SEARCH_USER_INPUT`.
+The last value supplies a question about the indexed sample product so the Search sample
+does not wait for interactive input. Output names are discovered by the existing planner
+and registered by the Python runner; no new option mapping or sanitized defaults are added.
+This product-content index is for sample execution, not the separate Agent Lightning
+question-answering service tests, which require their own document corpus.
+
+## Function App integration
+
+[infra/function-app.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/function-app.bicep) translates the Function App infrastructure from the `foundry-project-pool` provisioning script. The pipeline always deploys it and publishes [function_app](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/tests/samples/ci/function_app) for every active queue, even when no selected sample uses Function or queue bindings. There is no Function enable/disable parameter.
+
+The sample query selects tests, not infrastructure. Every active queue receives the same resource bundle, environment bindings and prerequisite grant checks. Planning still validates each selected sample's required environment-variable names and rejects unsupported samples; that validation never adds or removes resources.
+
+Provisioning values are internal inputs, not environment-variable configuration:
+
+| Input | Source |
+| --- | --- |
+| Account and project names | Standard module outputs wired directly to dependent modules by the root Bicep template. |
+| Agent name | Generated run plan. |
+| Model settings | Run plan and validated regional model catalog. |
+| `storageAccountName` | Standard setup's storage output. |
+| `sharedFunctionIdentityResourceId` | Function UAMI in the admitted shared identity set. |
+
+These values are passed directly to Bicep. [infra/sample-resources.bicepparam](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/sample-resources.bicepparam) supplies only the existing `MCP_GITHUB_PAT` secret to the secure Bicep parameter; no names, identity IDs, model settings, or Function toggle are read from environment variables there.
+
+The Function template creates a Linux **EP1** plan, a Python **3.11** Function App with Functions host **v4**, and the `weather-input-queue` and `weather-output-queue` queues. Host storage and the queue binding use the existing Function UAMI without storage keys or connection strings. Each run creates a fresh app and declares its complete settings directly; reading and merging that same appsettings resource during deployment would introduce an ARM circular dependency. Premium capacity is billable for every active queue, regardless of sample selection, and must be available in the selected region.
+
+Before any queue can provision resources, admission and worker preflight require preconfigured subscription-scoped Storage Blob Data Owner and Storage Queue Data Contributor grants for the Function identity, and Storage Queue Data Contributor for the project identity. Worker jobs never create these grants. The shared-identity bootstrap includes them for new sets; existing sets require a separately approved grant update.
+
+The pipeline publishes only the three handler package files and checks for `queue_trigger` indexing up to 30 times, ten seconds apart, before starting the sample. This allows for host startup after publication; missing indexing or an Azure query error still fails provisioning. The five non-secret Function outputs become sample inputs: `FUNCTION_APP_NAME`, `FUNCTION_APP_URL`, `STORAGE_INPUT_QUEUE_NAME`, `STORAGE_OUTPUT_QUEUE_NAME`, and `STORAGE_QUEUE_SERVICE_ENDPOINT`. These are sample environment variables, not provisioning configuration. No `FUNCTION_APP_KEY` is retrieved or output.
+
+The package's [pytest environment hook](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/conftest.py) registers these Function inputs
+from the runner's binding-name metadata, just like any other provisioned resource.
+Both hyphenated and underscored CLI spellings are accepted. No Function-specific option
+mapping or sanitized playback default is needed. Explicit CLI values are copied to the
+sample environment; an omitted value leaves the existing environment unchanged.
 
 ## Safety and results
 
 - **Explicit targets and identity:** task, plan and state subscription/tenant IDs must match the same authorized service-principal identity. No fallback to an active account, another tenant, or a developer's login.
-- **Live preflight:** check provider registration, Search S1 offerings/service quota, Cosmos subscription-region access, the pinned template's Storage SKU restrictions, model availability, and separate account/model quotas. Missing or invalid evidence fails closed. These checks do not reserve capacity or change region, SKU, registration or policy.
+- **Live preflight:** check Search S1 offerings/service quota, Cosmos subscription-region access, the pinned template's Storage SKU restrictions, model availability, and separate account/model quotas. Missing or invalid evidence fails closed. Provider registrations and IAM grants are assumed to exist; missing prerequisites surface as Azure deployment or runtime errors. These checks do not reserve capacity or change region, SKU, registration or policy.
 - **Reviewed local Bicep:** [infra/standard-shared-identities.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/standard-shared-identities.bicep) is a local UAMI composition based on the unchanged official reference pinned by [infra/standard-setup.lock.json](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/infra/standard-setup.lock.json), not an unchanged upstream deployment. The official 14 sources remain checksum-verified maintainer references; workers do not download them. State is saved before the first resource mutation.
-- **Fresh workloads only:** every queue creates a Foundry account/project, Storage, Cosmos DB, Search, three AAD connections, two capability hosts, a native Cosmos data grant, one model deployment and an MCP connection. Only the four selected UAMIs are reused. No worker Azure IAM assignments, Application Insights, Function App or ACR are created. `GlobalStandard` inference may run globally despite resource colocation.
+- **Run-unique names:** the local template retains the full 13-character `uniqueString` hash of the resource group ID and saved deployment timestamp for account, project, Storage, Cosmos DB and Search names. It does not truncate the hash to four characters, which caused global storage-name collisions. The hash stays stable within a plan and changes for each fresh run.
+- **Fresh workloads only:** every queue creates a Foundry account/project, Storage, Cosmos DB, Search, three AAD connections, two capability hosts, a native Cosmos data grant, chat and embedding model deployments, an MCP connection, an indexed document container, a keyless Playwright workspace and project connection, and its own Function App, hosting plan and queues with published handler code. Only the four selected UAMIs are reused. No worker Azure IAM assignments, Application Insights or ACR are created. `GlobalStandard` inference may run globally despite resource colocation.
 - **Secrets:** only provisioning receives the PAT, through an environment-backed Bicep `@secure()` parameter. The connection stores the full Bearer token; the sample receives only its connection ID. No job explicitly maps an ADO access token; the sample subprocess strips any inherited token and the PAT. The external validator endpoint is passed only through the preflight/test environment and excluded from plans, state, Bicep outputs and pytest arguments.
 - **Readiness:** bounded read-only retries precede sample execution. An already-started sample is never retried automatically.
 - **Logs:** results attach the shared executor's sanitized API/print log and print-only output log through native JUnit markers. Captured console/JUnit reports are redacted; raw sample prints/live logging cannot bypass capture. Only verified run-owned attachment paths are published. Validator input remains the original in-memory output. Logs can still contain test data; use suitable access and retention settings.
@@ -106,10 +342,10 @@ Provisioning can incur standing charges. Agent loss, hard termination or Azure e
 
 | Runtime file | Responsibility |
 | --- | --- |
-| [New-SampleDeploymentPlan.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/New-SampleDeploymentPlan.ps1) | Fresh queue-bound plan, explicit targets and required-input checks. |
-| [Invoke-SampleProvisioning.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/Invoke-SampleProvisioning.ps1) | Read-only batch admission, local Bicep deployment, state and inventory. |
+| [New-SampleDeploymentPlan.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/New-SampleDeploymentPlan.ps1) | Python compatibility checks and test metadata added to a shared infrastructure plan. |
+| [Invoke-SampleProvisioning.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/Invoke-SampleProvisioning.ps1) | Python partition validation and delegation to the shared provisioner; preserves existing pipeline calls. |
 | [Remove-SampleResources.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/Remove-SampleResources.ps1) | Exact queue/ownership-checked cleanup. |
-| [SampleCiHelpers.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/SampleCiHelpers.ps1) | Shared identity/grant, nonempty/disjoint selection, quota and error-handling guards. |
+| [SampleCiHelpers.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/SampleCiHelpers.ps1) | Language-neutral identity metadata, ownership, output, quota and error-handling guards. |
 | [select_samples.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/select_samples.py), [run_samples.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/run_samples.py) | Real sample collection/selection and live pytest invocation. |
 | [sample_ci_attachments.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/sample_ci_attachments.py) | Sanitized shared-log attachments and captured report publication. |
 
@@ -118,6 +354,6 @@ Provisioning can incur standing charges. Agent loss, hard termination or Azure e
 Retained Python unit tests live in this directory; mocked PowerShell tests and [the Bicep checker](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/validation/Test-BicepTemplates.ps1) live under [validation](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/tests/samples/ci/validation). No new PR pipeline is introduced here.
 
 - With dotenv/live execution disabled, run the Python tests using `--confcutdir=tests/samples/ci` to avoid parent service fixtures.
-- Run all PowerShell `*.Tests.ps1` files under validation using **Pester 4.10.1**. The suites isolate Azure calls and cover identity resource-group resolution, metadata checks and exact grants. On-demand pipeline agents do not need Pester.
-- The Bicep checker compiles the three worker templates and fictional sample parameters with an empty PAT. Its optional `StandardTemplatePath` input also verifies and compiles the 14 unchanged cached official sources. It rejects worker Azure IAM writes.
+- Run all PowerShell `*.Tests.ps1` files under validation using **Pester 4.10.1**. The suites isolate Azure calls and cover identity resource-group resolution and metadata checks. On-demand pipeline agents do not need Pester.
+- The Bicep checker compiles the root bundle, all workload modules, the resource-group template, the administrator-only Search role update, and the secret-only parameter file with an empty PAT. It checks unconditional modules, environment-contract parity, Function hosting defaults, identity-based settings, keyless Playwright configuration and non-secret outputs, and rejects Azure IAM writes in worker templates including nested deployments. Its optional `StandardTemplatePath` input also verifies and compiles the 14 unchanged cached official sources.
 - Use the repository Black configuration, PowerShell syntax checks and `git diff --check`. Real harness collection must use `PYTHON_DOTENV_DISABLED=true` and fictional target IDs and must not execute samples.
