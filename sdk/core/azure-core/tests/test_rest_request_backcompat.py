@@ -204,6 +204,21 @@ def test_request_text_body(old_request, new_request):
     assert new_request.headers["Content-Type"] == "text/plain"
 
 
+def test_request_non_ascii_text_body_content_length(old_request, new_request):
+    text = "héllo€"
+    old_request.set_text_body(text)
+    new_request.set_text_body(text)
+    content_request = RestHttpRequest("POST", "/", content=text)
+
+    assert (
+        old_request.headers["Content-Length"]
+        == new_request.headers["Content-Length"]
+        == content_request.headers["Content-Length"]
+        == str(len(text.encode("utf-8")))
+    )
+    assert old_request.data == new_request.content == content_request.content == text
+
+
 def test_request_text_body_and_content_kwarg(old_request):
     old_request.set_text_body("i am text")
     new_request = RestHttpRequest("GET", "/", content="i am text")
