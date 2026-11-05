@@ -29,6 +29,12 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 60
+  - name: BuildTimeoutInMinutes
+    type: number
+    default: 90
+  - name: SbomGenerationTimeoutInMinutes
+    type: number
+    default: 30
   - name: InjectedPackages
     type: string
     default: ''
@@ -76,11 +82,11 @@ parameters:
 
 jobs:
   - job: 'Build_Linux'
-    # Native multi-target builds need more time, especially ARM64 under Linux emulation.
-    ${{ if parameters.InstallMsRustToolchain }}:
+    # Native multi-target builds retain a minimum 240-minute budget.
+    ${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}:
       timeoutInMinutes: 240
     ${{ else }}:
-      timeoutInMinutes: 90
+      timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
 
     pool:
       name: $(LINUXPOOL)
@@ -102,6 +108,7 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: linux
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ExcludePaths: ${{parameters.ExcludePaths}}
         InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
@@ -110,10 +117,10 @@ jobs:
         MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_Windows'
-    ${{ if parameters.InstallMsRustToolchain }}:
+    ${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}:
       timeoutInMinutes: 240
     ${{ else }}:
-      timeoutInMinutes: 90
+      timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
 
     pool:
       name: $(WINDOWSPOOL)
@@ -128,6 +135,7 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: windows
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ExcludePaths: ${{parameters.ExcludePaths}}
         InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
@@ -136,10 +144,10 @@ jobs:
         MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_MacOS'
-    ${{ if parameters.InstallMsRustToolchain }}:
+    ${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}:
       timeoutInMinutes: 240
     ${{ else }}:
-      timeoutInMinutes: 90
+      timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
 
     pool:
       name: $(MACPOOL)
@@ -161,6 +169,7 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         ArtifactSuffix: mac
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ExcludePaths: ${{parameters.ExcludePaths}}
         InstallMsRustToolchain: ${{ parameters.InstallMsRustToolchain }}
@@ -175,7 +184,7 @@ jobs:
       - 'Build_Windows'
       - 'Build_MacOS'
 
-    timeoutInMinutes: 90
+    timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
 
     pool:
       name: $(LINUXPOOL)
@@ -205,6 +214,7 @@ jobs:
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         BuildDocs: false
         RunApiStubGen: true
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
 
@@ -215,7 +225,7 @@ jobs:
       - 'Build_Windows'
       - 'Build_MacOS'
 
-    timeoutInMinutes: 90
+    timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
 
     pool:
       name: $(LINUXPOOL)
@@ -247,6 +257,7 @@ jobs:
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
         RunApiStubGen: false
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
 
   - job: 'Analyze'
     condition: and(succeeded(), ne(variables['Skip.Analyze'], 'true'))
