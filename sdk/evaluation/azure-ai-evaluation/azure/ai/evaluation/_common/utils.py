@@ -183,6 +183,19 @@ def ensure_nltk_data_downloaded():
                 nltk.download(_id)
 
 
+def _nltk_tokenize_with(text: str, international: bool) -> List[str]:
+    if international:
+        # Use NISTTokenizer for international tokenization
+        from nltk.tokenize.nist import NISTTokenizer
+
+        tokens = NISTTokenizer().international_tokenize(text)
+    else:
+        # By default, use NLTK word tokenizer
+        tokens = nltk.word_tokenize(text)
+
+    return list(tokens)
+
+
 def nltk_tokenize(text: str) -> List[str]:
     """Tokenize the input text using the NLTK tokenizer.
 
@@ -193,16 +206,26 @@ def nltk_tokenize(text: str) -> List[str]:
     """
     ensure_nltk_data_downloaded()
 
-    if not text.isascii():
-        # Use NISTTokenizer for international tokenization
-        from nltk.tokenize.nist import NISTTokenizer
+    return _nltk_tokenize_with(text, international=not text.isascii())
 
-        tokens = NISTTokenizer().international_tokenize(text)
-    else:
-        # By default, use NLTK word tokenizer
-        tokens = nltk.word_tokenize(text)
 
-    return list(tokens)
+def nltk_tokenize_pair(reference: str, hypothesis: str) -> Tuple[List[str], List[str]]:
+    """Tokenize a reference text and a hypothesis text with the same NLTK tokenizer.
+
+    The international tokenizer is used for both texts when either of them contains a non-ASCII
+    character, so that the words they share are split into the same tokens.
+
+    :param reference: The reference text, such as the ground truth
+    :type reference: str
+    :param hypothesis: The hypothesis text, such as the response
+    :type hypothesis: str
+    :return: The reference tokens and the hypothesis tokens
+    :rtype: tuple[list[str], list[str]]
+    """
+    ensure_nltk_data_downloaded()
+
+    international = not (reference.isascii() and hypothesis.isascii())
+    return _nltk_tokenize_with(reference, international), _nltk_tokenize_with(hypothesis, international)
 
 
 def _is_aoi_model_config(val: object) -> TypeGuard[AzureOpenAIModelConfiguration]:

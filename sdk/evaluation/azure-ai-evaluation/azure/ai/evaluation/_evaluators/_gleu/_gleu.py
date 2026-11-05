@@ -5,7 +5,7 @@ from typing import Dict
 from nltk.translate.gleu_score import sentence_gleu
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._common.utils import nltk_tokenize
+from azure.ai.evaluation._common.utils import nltk_tokenize_pair
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
@@ -75,8 +75,7 @@ class GleuScoreEvaluator(EvaluatorBase):
         """
         ground_truth = eval_input["ground_truth"]
         response = eval_input["response"]
-        reference_tokens = nltk_tokenize(ground_truth)
-        hypothesis_tokens = nltk_tokenize(response)
+        reference_tokens, hypothesis_tokens = nltk_tokenize_pair(ground_truth, response)
 
         score = sentence_gleu([reference_tokens], hypothesis_tokens)
         binary_result = False
