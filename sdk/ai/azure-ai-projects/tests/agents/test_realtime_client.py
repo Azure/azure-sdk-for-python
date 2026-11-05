@@ -337,6 +337,28 @@ class TestRealtimeConnectionRecv:
         assert isinstance(event, event_model)
         assert event.as_dict() == payload
 
+    @pytest.mark.parametrize(
+        "event_type,fields",
+        [
+            ("input_collection.status", {"channel": "dtmf", "status": "completed", "value": "0012"}),
+            ("response.system_tool_arguments.delta", {"delta": '{"secret":'}),
+            ("response.system_tool_arguments.done", {"name": "collect_dtmf", "arguments": '{"secret":false}'}),
+        ],
+    )
+    def test_recv_dispatches_system_tool_events(self, request, event_type, fields):
+        payload = {"type": event_type, "event_id": "event-test", "call_id": "call-test", **fields}
+        if event_type.startswith("response."):
+            payload.update(response_id="response-test", item_id="item-test", output_index=0)
+        transport = MagicMock()
+        transport.recv.return_value = json.dumps(payload)
+        with patch("websockets.sync.client.connect", return_value=transport):
+            manager = _make_manager()
+            connection = manager.enter()
+            request.addfinalizer(manager.__exit__)
+            event = connection.recv()
+        assert isinstance(event, models.RealtimeServerEvent.__mapping__[event_type])
+        assert event.as_dict() == payload
+
     def test_recv_dispatches_known_event_type(self, request):
         fake_connection = MagicMock()
         with patch("websockets.sync.client.connect", return_value=fake_connection):

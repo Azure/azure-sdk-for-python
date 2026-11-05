@@ -271,6 +271,35 @@ class TestAsyncRealtimeConnectionRecv:
         assert isinstance(event, models.RealtimeServerEvent.__mapping__[event_type])
         assert event.as_dict() == payload
 
+    @pytest.mark.parametrize(
+        "event_type,fields",
+        [
+            ("input_collection.status", {"channel": "dtmf", "status": "completed", "value": "0012"}),
+            ("response.system_tool_arguments.delta", {"delta": '{"secret":'}),
+            ("response.system_tool_arguments.done", {"name": "collect_dtmf", "arguments": '{"secret":false}'}),
+        ],
+    )
+    async def test_recv_dispatches_system_tool_events(self, event_type, fields):
+        import aiohttp
+
+        from azure.ai.projects import models
+
+        payload = {"type": event_type, "event_id": "event-test", "call_id": "call-test", **fields}
+        if event_type.startswith("response."):
+            payload.update(response_id="response-test", item_id="item-test", output_index=0)
+        transport = _make_fake_ws()
+        transport.receive = AsyncMock(return_value=_make_fake_msg(aiohttp.WSMsgType.TEXT, json.dumps(payload)))
+        patcher, _ = _patch_client_session(transport)
+        with patcher:
+            manager = _make_manager()
+            connection = await manager.enter()
+            try:
+                event = await connection.recv()
+            finally:
+                await manager.__aexit__()
+        assert isinstance(event, models.RealtimeServerEvent.__mapping__[event_type])
+        assert event.as_dict() == payload
+
     async def test_recv_dispatches_known_event_type(self):
         import aiohttp
 

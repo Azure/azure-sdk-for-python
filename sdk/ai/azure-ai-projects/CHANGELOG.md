@@ -5,7 +5,7 @@
 ### Features Added
 
 * Added preview GPT Live clients at `beta.voice_agents.live` for text and audio streaming, typed events, session controls, and Responses function-tool results. Both synchronous and asynchronous clients are available.
-* Added typed Realtime handoff events to the synchronous and asynchronous WebSocket clients.
+* Added typed Realtime handoff, system-tool argument, and input-collection events to the synchronous and asynchronous WebSocket clients.
 
 ### Sample updates
 
