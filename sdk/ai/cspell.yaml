@@ -24,6 +24,7 @@ words:
   - azureopenai
   - balapvbyostoragecanary
   - BLPHARMA
+  - brise
   - capsys
   - cegr
   - closefd
@@ -58,9 +59,11 @@ words:
   - getconnectionwithcredentials
   - GLEU
   - GRNWAVE
+  - harema
   - Hola
   - HORIZCHEM
   - inpainting
+  - juni
   - ldel
   - levelno
   - libasound
@@ -79,6 +82,9 @@ words:
   - mros
   - NBFCS
   - nify
+  - nira
+  - noeul
+  - nuri
   - OCEACARGO
   - okwargs
   - openai
@@ -103,6 +109,7 @@ words:
   - runid
   - runsvdir
   - sess
+  - shida
   - simpleqna
   - skoid
   - STLAUTO
@@ -116,6 +123,10 @@ words:
   - ubinary
   - Udbk
   - ulaw
+  - UNMUTE
+  - unmute
+  - unmuted
+  - UNMUTED
   - unsanitized
   - UPIA
   - vcpu
