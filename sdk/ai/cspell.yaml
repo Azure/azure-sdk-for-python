@@ -24,6 +24,7 @@ words:
   - azureopenai
   - balapvbyostoragecanary
   - BLPHARMA
+  - brise
   - capsys
   - cegr
   - closefd
@@ -45,6 +46,7 @@ words:
   - Fdeployments
   - FineTuning
   - fmatter
+  - flitz
   - Fproviders
   - Fresource
   - fspath
@@ -58,9 +60,11 @@ words:
   - getconnectionwithcredentials
   - GLEU
   - GRNWAVE
+  - harema
   - Hola
   - HORIZCHEM
   - inpainting
+  - juni
   - ldel
   - levelno
   - libasound
@@ -79,6 +83,9 @@ words:
   - mros
   - NBFCS
   - nify
+  - nira
+  - noeul
+  - nuri
   - OCEACARGO
   - okwargs
   - openai
@@ -103,6 +110,7 @@ words:
   - runid
   - runsvdir
   - sess
+  - shida
   - simpleqna
   - skoid
   - STLAUTO
@@ -116,6 +124,8 @@ words:
   - ubinary
   - Udbk
   - ulaw
+  - unmute
+  - unmuted
   - unsanitized
   - UPIA
   - vcpu
