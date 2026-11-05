@@ -196,6 +196,19 @@ class ComputeConfigurationOptions(object):
         )
         # [END vm_compute]
 
+        # [START fabricspark_compute]
+        from azure.ai.ml.entities import FabricSparkCompute
+
+        fabric_spark_compute = FabricSparkCompute(
+            name="my-fabric-spark-compute",
+            fabric_workspace_id="<fabric-workspace-id>",
+            lakehouse_id="<lakehouse-id>",
+            environment_id="<published-fabric-environment-id>",
+            pool_id="<custom-spark-pool-id>",
+        )
+        attached_compute = ml_client.compute.begin_attach(fabric_spark_compute)
+        # [END fabricspark_compute]
+
         # [START network_settings]
         from azure.ai.ml.entities import (
             AmlCompute,
