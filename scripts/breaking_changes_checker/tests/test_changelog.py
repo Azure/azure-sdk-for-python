@@ -1201,8 +1201,55 @@ def test_added_update_method_for_operation_group():
 
     assert len(bc.features_added) == 1
     msg, _, *args = bc.features_added[0]
-    assert msg == ChangelogTracker.ADDED_CLASS_METHOD_MSG
+    assert msg == ChangelogTracker.ADDED_OPERATION_GROUP_METHOD_MSG
     assert args == ["azure.mgmt.contoso.operations", "ContosoOperations", "update"]
+
+def test_added_keyword_only_param_to_operation_group_method():
+    stable = {
+        "azure.mgmt.contoso.operations": {
+            "class_nodes": {
+                "ContosoOperations": {
+                    "type": None,
+                    "methods": {
+                        "list": {
+                            "parameters": {
+                                "self": {"default": None, "param_type": "positional_or_keyword"},
+                            },
+                            "is_async": False,
+                        }
+                    },
+                    "properties": {},
+                }
+            }
+        }
+    }
+    current = {
+        "azure.mgmt.contoso.operations": {
+            "class_nodes": {
+                "ContosoOperations": {
+                    "type": None,
+                    "methods": {
+                        "list": {
+                            "parameters": {
+                                "self": {"default": None, "param_type": "positional_or_keyword"},
+                                "extra": {"default": None, "param_type": "keyword_only"},
+                            },
+                            "is_async": False,
+                        }
+                    },
+                    "properties": {},
+                }
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-mgmt-contoso")
+    bc.run_checks()
+    bc.report_changes()
+
+    assert len(bc.features_added) == 1
+    msg, _, *args = bc.features_added[0]
+    assert msg == ChangelogTracker.ADDED_OPERATION_GROUP_METHOD_PARAMETER_MSG
+    assert args == ["azure.mgmt.contoso.operations", "ContosoOperations", "extra", "list"]
 
 @pytest.mark.parametrize(
     "stable_property,current_property,expected_breaking_changes",
