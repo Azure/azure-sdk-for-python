@@ -159,7 +159,7 @@ async def wait_for_event_with_audio_clock_async(
             continue
         try:
             event = await asyncio.wait_for(connection.recv(), timeout=receive_timeout)
-        except TimeoutError:
+        except (asyncio.TimeoutError, TimeoutError):
             continue
         check_event(event)
         if event.get("type") == event_type:
