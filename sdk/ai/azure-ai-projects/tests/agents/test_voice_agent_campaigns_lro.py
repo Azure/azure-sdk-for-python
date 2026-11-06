@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cspell:ignore Acancel
 """Deterministic sync/async tests for campaign LRO completion and resumption."""
 
 import asyncio
