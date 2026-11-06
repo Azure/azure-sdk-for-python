@@ -79,7 +79,6 @@ from ..._operations._operations import (
     build_batch_list_node_files_request,
     build_batch_list_nodes_request,
     build_batch_list_pool_node_counts_request,
-    build_batch_list_pool_usage_metrics_request,
     build_batch_list_pools_request,
     build_batch_list_subtasks_request,
     build_batch_list_supported_images_request,
@@ -122,7 +121,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def list_applications(
         self,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         **kwargs: Any
@@ -137,7 +136,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -191,7 +190,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -238,7 +240,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         application_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.BatchApplication:
@@ -254,7 +256,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -326,150 +328,12 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def list_pool_usage_metrics(
-        self,
-        *,
-        service_timeout: Optional[int] = None,
-        ocp_date: Optional[datetime.datetime] = None,
-        max_results: Optional[int] = None,
-        start_time: Optional[datetime.datetime] = None,
-        end_time: Optional[datetime.datetime] = None,
-        filter: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.BatchPoolUsageMetrics"]:
-        """Lists the usage metrics, aggregated by Pool across individual time intervals, for the specified
-        Account.
-
-        If you do not specify a $filter clause including a poolId, the response includes all Pools that
-        existed in the Account in the time range of the returned aggregation intervals. If you do not
-        specify a $filter clause including a startTime or endTime these filters default to the start
-        and end times of the last aggregation interval currently available; that is, only the last
-        aggregation interval is returned.
-
-        :keyword service_timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype service_timeout: int
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: ~datetime.datetime
-        :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype max_results: int
-        :keyword start_time: The earliest time from which to include metrics. This must be at least two
-         and
-         a half hours before the current time. If not specified this defaults to the
-         start time of the last aggregation interval currently available. Default value is None.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: The latest time from which to include metrics. This must be at least two
-         hours
-         before the current time. If not specified this defaults to the end time of the
-         last aggregation interval currently available. Default value is None.
-        :paramtype end_time: ~datetime.datetime
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics
-         <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics>`_.
-         Default value is None.
-        :paramtype filter: str
-        :return: An iterator like instance of BatchPoolUsageMetrics
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchPoolUsageMetrics]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[list[_models.BatchPoolUsageMetrics]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_batch_list_pool_usage_metrics_request(
-                    service_timeout=service_timeout,
-                    ocp_date=ocp_date,
-                    max_results=max_results,
-                    start_time=start_time,
-                    end_time=end_time,
-                    filter=filter,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.BatchPoolUsageMetrics],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("odata.nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.BatchError,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
     @distributed_trace_async
     async def create_pool(
         self,
         pool: _models.BatchPoolCreateOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -483,7 +347,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -553,7 +417,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def list_pools(
         self,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
@@ -568,7 +432,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -634,7 +498,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -681,7 +548,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -707,7 +574,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -794,7 +661,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -809,7 +676,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -900,7 +767,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -917,7 +784,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1026,7 +893,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         pool: _models.BatchPoolUpdateOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1047,7 +914,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1144,7 +1011,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -1157,7 +1024,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1223,7 +1090,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         enable_auto_scale_options: _models.BatchPoolEnableAutoScaleOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1246,7 +1113,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1344,7 +1211,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         evaluate_auto_scale_options: _models.BatchPoolEvaluateAutoScaleOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.AutoScaleRun:
@@ -1363,7 +1230,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1449,7 +1316,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         resize_options: _models.BatchPoolResizeOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1473,7 +1340,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1570,7 +1437,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1592,7 +1459,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1683,7 +1550,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         pool: _models.BatchPoolReplaceOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -1700,7 +1567,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1773,7 +1640,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         remove_options: _models.BatchNodeRemoveOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1794,7 +1661,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1890,7 +1757,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def list_supported_images(
         self,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
@@ -1903,7 +1770,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -1963,7 +1830,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2009,7 +1879,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def list_pool_node_counts(
         self,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
@@ -2021,7 +1891,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -2081,7 +1951,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2128,7 +2001,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -2152,7 +2025,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -2243,7 +2116,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -2262,7 +2135,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -2371,7 +2244,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         job: _models.BatchJobUpdateOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -2392,7 +2265,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -2490,7 +2363,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         job: _models.BatchJob,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -2511,7 +2384,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -2609,7 +2482,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         disable_options: _models.BatchJobDisableOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -2634,7 +2507,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -2731,7 +2604,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -2752,7 +2625,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -2841,9 +2714,9 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def _terminate_job_internal(
         self,
         job_id: str,
-        options: Optional[_models._models.BatchJobTerminateOptions] = None,
+        options: Optional[_models.BatchJobTerminateOptions] = None,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -2863,11 +2736,11 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param job_id: The ID of the Job to terminate. Required.
         :type job_id: str
         :param options: The options to use for terminating the Job. Default value is None.
-        :type options: ~azure.batch.models._models.BatchJobTerminateOptions
+        :type options: ~azure.batch.models.BatchJobTerminateOptions
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -2972,7 +2845,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job: _models.BatchJobCreateOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -2991,7 +2864,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -3061,7 +2934,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def list_jobs(
         self,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
@@ -3076,7 +2949,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -3142,7 +3015,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3189,7 +3065,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
@@ -3207,7 +3083,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -3274,7 +3150,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3321,7 +3200,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
@@ -3342,7 +3221,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -3407,7 +3286,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3454,7 +3336,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.BatchTaskCountsResult:
@@ -3470,7 +3352,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -3547,7 +3429,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -3564,7 +3446,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -3655,7 +3537,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -3677,7 +3559,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -3768,7 +3650,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -3785,7 +3667,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -3894,7 +3776,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_schedule_id: str,
         job_schedule: _models.BatchJobScheduleUpdateOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -3916,7 +3798,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4014,7 +3896,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_schedule_id: str,
         job_schedule: _models.BatchJobSchedule,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -4036,7 +3918,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4133,7 +4015,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -4150,7 +4032,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4240,7 +4122,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -4257,7 +4139,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4347,7 +4229,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -4365,7 +4247,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4460,7 +4342,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_schedule: _models.BatchJobScheduleCreateOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -4473,7 +4355,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4543,7 +4425,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def list_job_schedules(
         self,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
@@ -4558,7 +4440,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4624,7 +4506,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4672,7 +4557,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task: _models.BatchTaskCreateOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -4689,7 +4574,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4761,7 +4646,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         job_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
@@ -4779,7 +4664,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -4846,7 +4731,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4894,7 +4782,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task_collection: _models.BatchTaskGroup,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.BatchCreateTaskCollectionResult:
@@ -4920,7 +4808,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -5006,7 +4894,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -5028,7 +4916,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -5117,7 +5005,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -5139,7 +5027,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -5251,7 +5139,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         task_id: str,
         task: _models.BatchTask,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -5270,7 +5158,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -5369,7 +5257,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         select: Optional[list[str]] = None,
         **kwargs: Any
@@ -5385,7 +5273,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -5440,7 +5328,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5488,7 +5379,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -5509,7 +5400,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -5601,7 +5492,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -5625,7 +5516,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -5718,7 +5609,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         task_id: str,
         file_path: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
@@ -5736,7 +5627,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -5809,7 +5700,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         task_id: str,
         file_path: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -5827,7 +5718,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -5930,7 +5821,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         task_id: str,
         file_path: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -5947,7 +5838,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6034,7 +5925,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         job_id: str,
         task_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
@@ -6052,7 +5943,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6119,7 +6010,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6168,7 +6062,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         user: _models.BatchNodeUserCreateOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -6189,7 +6083,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6264,7 +6158,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         user_name: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -6285,7 +6179,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6352,7 +6246,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         user_name: str,
         update_options: _models.BatchNodeUserReplaceOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -6374,7 +6268,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6449,7 +6343,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         node_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         select: Optional[list[str]] = None,
         **kwargs: Any
@@ -6465,7 +6359,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6546,9 +6440,9 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models._models.BatchNodeRebootOptions] = None,
+        options: Optional[_models.BatchNodeRebootOptions] = None,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -6561,11 +6455,11 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for rebooting the Compute Node. Default value is None.
-        :type options: ~azure.batch.models._models.BatchNodeRebootOptions
+        :type options: ~azure.batch.models.BatchNodeRebootOptions
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6643,7 +6537,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         node_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -6658,7 +6552,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6724,9 +6618,9 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models._models.BatchNodeReimageOptions] = None,
+        options: Optional[_models.BatchNodeReimageOptions] = None,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -6741,11 +6635,11 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for reimaging the Compute Node. Default value is None.
-        :type options: ~azure.batch.models._models.BatchNodeReimageOptions
+        :type options: ~azure.batch.models.BatchNodeReimageOptions
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6822,9 +6716,9 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models._models.BatchNodeDeallocateOptions] = None,
+        options: Optional[_models.BatchNodeDeallocateOptions] = None,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -6837,11 +6731,11 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for deallocating the Compute Node. Default value is None.
-        :type options: ~azure.batch.models._models.BatchNodeDeallocateOptions
+        :type options: ~azure.batch.models.BatchNodeDeallocateOptions
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -6920,7 +6814,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         options: Optional[_models.BatchNodeDisableSchedulingOptions] = None,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -6940,7 +6834,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7018,7 +6912,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         node_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -7035,7 +6929,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7102,7 +6996,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         node_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.BatchNodeRemoteLoginSettings:
@@ -7121,7 +7015,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7202,7 +7096,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         upload_options: _models.UploadBatchServiceLogsOptions,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.UploadBatchServiceLogsResult:
@@ -7223,7 +7117,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7309,7 +7203,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
@@ -7325,7 +7219,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7389,7 +7283,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7438,7 +7335,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         extension_name: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         select: Optional[list[str]] = None,
         **kwargs: Any
@@ -7457,7 +7354,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7540,7 +7437,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         node_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         select: Optional[list[str]] = None,
@@ -7557,7 +7454,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7616,7 +7513,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7665,7 +7565,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         file_path: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         recursive: Optional[bool] = None,
         **kwargs: Any
@@ -7683,7 +7583,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7756,7 +7656,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         file_path: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -7774,7 +7674,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7877,7 +7777,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         node_id: str,
         file_path: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -7894,7 +7794,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -7981,7 +7881,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         node_id: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[datetime.timedelta] = None,
         ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
@@ -7999,7 +7899,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
-        :paramtype service_timeout: int
+        :paramtype service_timeout: ~datetime.timedelta
         :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
@@ -8064,7 +7964,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
