@@ -43,26 +43,27 @@ class SavePackageApiHashTests(unittest.TestCase):
         ):
             save_package_api_hash.main()
 
-    def test_missing_tokens_default_missing_or_blank_hashes(self):
-        for properties in ({}, {"ApiHash": None}, {"ApiHash": ""}, {"ApiHash": "   "}):
-            with self.subTest(properties=properties):
-                path = self.write_package_info(**properties)
-                with patch.object(save_package_api_hash.subprocess, "run") as export:
-                    self.run_main()
-                export.assert_not_called()
-                self.assertEqual(
-                    json.loads(path.read_text(encoding="utf-8")),
-                    {"Name": "azure-mgmt-test", "Version": "1.0.0", "SdkType": "mgmt", "ApiHash": "dummy"},
-                )
+    def test_missing_tokens_leave_package_info_unchanged(self):
+        for name, sdk_type in (("azure-mgmt-test", "mgmt"), ("azure-test", "client")):
+            for properties in ({}, {"ApiHash": None}, {"ApiHash": ""}, {"ApiHash": "   "}):
+                with self.subTest(name=name, properties=properties):
+                    path = self.write_package_info(name, SdkType=sdk_type, **properties)
+                    original = path.read_bytes()
+                    with patch.object(save_package_api_hash.subprocess, "run") as export:
+                        self.run_main()
+                    export.assert_not_called()
+                    self.assertEqual(path.read_bytes(), original)
 
     def test_missing_tokens_preserve_existing_hash(self):
         path = self.write_package_info(ApiHash="existing-hash")
+        original = path.read_bytes()
         self.run_main()
-        self.assertEqual(json.loads(path.read_text(encoding="utf-8"))["ApiHash"], "existing-hash")
+        self.assertEqual(json.loads(path.read_text(encoding="utf-8-sig"))["ApiHash"], "existing-hash")
+        self.assertEqual(path.read_bytes(), original)
 
-    def test_generated_hash_and_dummy_in_same_run(self):
+    def test_generated_hash_and_missing_tokens_in_same_run(self):
         management_path = self.write_package_info()
-        generated_path = self.write_package_info("azure-test", ApiHash="dummy")
+        generated_path = self.write_package_info("azure-test", ApiHash="existing-hash")
         package_dir = self.artifact_dir / "azure-test"
         package_dir.mkdir()
         token_file = package_dir / "azure-test_python.json"
@@ -86,7 +87,7 @@ class SavePackageApiHashTests(unittest.TestCase):
         metadata = yaml.safe_load((package_dir / "api.metadata.yml").read_text(encoding="utf-8"))
         self.assertEqual(json.loads(generated_path.read_text(encoding="utf-8"))["ApiHash"], metadata["apiHash"])
         self.assertEqual(len(metadata["apiHash"]), 64)
-        self.assertEqual(json.loads(management_path.read_text(encoding="utf-8"))["ApiHash"], "dummy")
+        self.assertNotIn("ApiHash", json.loads(management_path.read_text(encoding="utf-8-sig")))
 
     def test_invalid_generated_metadata_still_fails(self):
         path = self.write_package_info()
@@ -99,7 +100,7 @@ class SavePackageApiHashTests(unittest.TestCase):
                     save_package_api_hash.update_package_info(metadata_path, path)
                 self.assertEqual(path.read_bytes(), original)
 
-    def test_export_failure_is_not_replaced_with_dummy(self):
+    def test_export_failure_is_propagated(self):
         path = self.write_package_info("azure-test")
         package_dir = self.artifact_dir / "azure-test"
         package_dir.mkdir()
