@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-06-01-preview",
+  "apiVersions": {
+    "Microsoft.Migrate": "2026-06-01-preview"
+  },
+  "commit": "f872f172e5ba8603e89de31604c61fbaab81ad61",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/migrate/resource-manager/Microsoft.Migrate/Waves",
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
+}
