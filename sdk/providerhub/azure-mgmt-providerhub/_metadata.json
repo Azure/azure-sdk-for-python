@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2025-10-01",
+  "apiVersion": "2026-10-01",
   "apiVersions": {
-    "Microsoft.ProviderHub": "2025-10-01"
+    "Microsoft.ProviderHub": "2026-10-01"
   },
-  "commit": "1c12250bfef95ae48005ba6ea9299cf29c1f5b3d",
+  "commit": "f4d3ffca09f884850694ecfbfe0b775a391a2936",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "typespec_src": "specification/providerhub/ProviderHub.Management",
-  "emitterVersion": "0.63.5",
-  "httpClientPythonVersion": "^0.36.0"
+  "typespec_src": "specification/providerhub/resource-manager/Microsoft.ProviderHub/ProviderHub",
+  "emitterVersion": "0.63.10",
+  "httpClientPythonVersion": "0.39.0"
 }

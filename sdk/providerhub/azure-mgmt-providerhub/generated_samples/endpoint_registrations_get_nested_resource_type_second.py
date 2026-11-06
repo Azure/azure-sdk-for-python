@@ -15,7 +15,7 @@ from azure.mgmt.providerhub import ProviderHubMgmtClient
     pip install azure-identity
     pip install azure-mgmt-providerhub
 # USAGE
-    python new_region_frontload_release_stop.py
+    python endpoint_registrations_get_nested_resource_type_second.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,16 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.new_region_frontload_release.stop(
+    response = client.endpoint_registrations.get_nested_resource_type_second(
         provider_namespace="Microsoft.Contoso",
-        release_name="2020week10",
+        resource_type="employees",
+        nested_resource_type_first="profiles",
+        nested_resource_type_second="preferences",
+        endpoint_name="primary",
     )
+    print(response)
 
 
-# x-ms-original-file: 2025-10-01/NewRegionFrontloadRelease_Stop.json
+# x-ms-original-file: 2026-10-01/EndpointRegistrations_GetNestedResourceTypeSecond.json
 if __name__ == "__main__":
     main()

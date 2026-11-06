@@ -34,7 +34,12 @@ class TestProviderHubMgmtAsync(AzureMgmtRecordedTestCase):
     async def test_checkin_manifest(self, resource_group):
         response = await self.client.checkin_manifest(
             provider_namespace="str",
-            checkin_manifest_params={"baselineArmManifestLocation": "str", "environment": "str"},
+            checkin_manifest_params={
+                "baselineArmManifestLocation": "str",
+                "environment": "str",
+                "checkinComment": "str",
+                "swaggerUri": "str",
+            },
         )
 
         # please add some check logic here by yourself
