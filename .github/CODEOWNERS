@@ -263,10 +263,10 @@
 /sdk/eventgrid/    @shankarsama @Nishanth-MS
 
 # PRLabel: %Event Hubs
-/sdk/eventhub/    @axisc @hmlam @j7nw4r @meetamitbhatia @SwayGom @sagar0207 @sjkwak
+/sdk/eventhub/    @axisc @hmlam @j7nw4r @ayush1252 @meetamitbhatia @SwayGom @sagar0207 @sjkwak
 
 # ServiceLabel: %Event Hubs
-# ServiceOwners: @axisc @hmlam @j7nw4r @meetamitbhatia @SwayGom @sagar0207 @sjkwak
+# ServiceOwners: @axisc @hmlam @j7nw4r @ayush1252 @meetamitbhatia @SwayGom @sagar0207 @sjkwak
 
 # PRLabel: %Graph
 /sdk/graphrbac/    @xirzec
@@ -862,7 +862,7 @@
 /sdk/**/ci.yml                                                       @JennyPng @l0lawrence @msyyc @xirzec @danieljurek @Azure/azure-arm-sdk-reviewers
 
 # Add Johnathan Walker as code owner for Event Hubs SDK
-/sdk/eventhub/azure-eventhub/* @j7nw4r @meetamitbhatia @SwayGom @sagar0207
+/sdk/eventhub/azure-eventhub/* @j7nw4r @ayush1252 @meetamitbhatia @SwayGom @sagar0207
 
 # Service Bus SDK team code owners
 /sdk/servicebus/azure-servicebus/* @j7nw4r @meetamitbhatia @SwayGom @sagar0207 @pranz1996 @EldertGrootenboer
