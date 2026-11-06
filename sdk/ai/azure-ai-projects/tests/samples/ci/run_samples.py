@@ -177,10 +177,12 @@ def main() -> int:
         AZURE_SKIP_LIVE_RECORDING="true",
         AZURE_TEST_USE_CLI_AUTH="true",
         AZURE_TOKEN_CREDENTIALS="AzureCliCredential",
+        AZURE_AI_PROJECTS_TEST_ENVIRONMENT_NAMES=json.dumps(sorted(allowed_environment_names(state["plan"]))),
         PYTEST_ADDOPTS="",
         PYTHONIOENCODING="utf-8",
     )
     environment.pop("MCP_GITHUB_PAT", None)
+    environment.pop("PROJ_CONN_OPEN_API_KEY", None)
     environment.pop("SYSTEM_ACCESSTOKEN", None)
     environment["PYTHONPATH"] = os.pathsep.join(
         (str(arguments.package_root), str(Path(__file__).resolve().parent), environment.get("PYTHONPATH", ""))

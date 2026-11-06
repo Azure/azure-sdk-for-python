@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
+from azure.mgmt.networksecurity import NetworkSecurityMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-redisenterprise
+    pip install azure-mgmt-networksecurity
 # USAGE
-    python redis_enterprise_migration_cancel.py
+    python neuro_shield_mitigations_list_by_neuro_shield.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,17 +25,19 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
 
 
 def main():
-    client = RedisEnterpriseManagementClient(
+    client = NetworkSecurityMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.migrations.begin_cancel(
-        resource_group_name="rg1",
-        cluster_name="cache1",
-    ).result()
+    response = client.neuro_shield_mitigations.list_by_neuro_shield(
+        resource_group_name="myResourceGroup",
+        neuro_shield_name="myNeuroShield",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-06-01-preview/RedisEnterpriseMigrationCancel.json
+# x-ms-original-file: 2026-10-01-preview/NeuroShieldMitigations_ListByNeuroShield.json
 if __name__ == "__main__":
     main()

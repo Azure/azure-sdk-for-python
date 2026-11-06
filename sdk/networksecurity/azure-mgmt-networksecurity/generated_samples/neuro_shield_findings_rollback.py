@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
+from azure.mgmt.networksecurity import NetworkSecurityMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-redisenterprise
+    pip install azure-mgmt-networksecurity
 # USAGE
-    python redis_enterprise_access_policy_assignment_get_with_failed_provisioning_state.py
+    python neuro_shield_findings_rollback.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,20 +25,20 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
 
 
 def main():
-    client = RedisEnterpriseManagementClient(
+    client = NetworkSecurityMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.access_policy_assignment.get(
-        resource_group_name="rg1",
-        cluster_name="cache1",
-        database_name="default",
-        access_policy_assignment_name="accessPolicyAssignmentName1",
+    response = client.neuro_shield_findings.rollback(
+        resource_group_name="myResourceGroup",
+        neuro_shield_name="myNeuroShield",
+        protected_resource_name="vm-01",
+        finding_id="CVE-2026-12345-vm-01",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-06-01-preview/RedisEnterpriseAccessPolicyAssignmentGetWithFailedProvisioningState.json
+# x-ms-original-file: 2026-10-01-preview/NeuroShieldFindings_Rollback.json
 if __name__ == "__main__":
     main()

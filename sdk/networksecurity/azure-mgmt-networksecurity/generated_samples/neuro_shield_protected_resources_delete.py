@@ -8,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
+from azure.mgmt.networksecurity import NetworkSecurityMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-redisenterprise
+    pip install azure-mgmt-networksecurity
 # USAGE
-    python redis_enterprise_access_policy_assignment_create_update_with_custom_access_string.py
+    python neuro_shield_protected_resources_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -25,27 +25,18 @@ from azure.mgmt.redisenterprise import RedisEnterpriseManagementClient
 
 
 def main():
-    client = RedisEnterpriseManagementClient(
+    client = NetworkSecurityMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.access_policy_assignment.begin_create_update(
-        resource_group_name="rg1",
-        cluster_name="cache1",
-        database_name="default",
-        access_policy_assignment_name="defaultTestEntraApp1",
-        parameters={
-            "properties": {
-                "accessPolicyName": "default",
-                "accessString": "+@read ~cache:*",
-                "user": {"objectId": "6497c918-11ad-41e7-1b0f-7c518a87d0b0"},
-            }
-        },
+    client.neuro_shield_protected_resources.begin_delete(
+        resource_group_name="myResourceGroup",
+        neuro_shield_name="myNeuroShield",
+        protected_resource_name="vm-01",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: 2026-06-01-preview/RedisEnterpriseAccessPolicyAssignmentCreateUpdateWithCustomAccessString.json
+# x-ms-original-file: 2026-10-01-preview/NeuroShieldProtectedResources_Delete.json
 if __name__ == "__main__":
     main()

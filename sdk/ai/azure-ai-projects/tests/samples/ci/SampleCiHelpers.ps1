@@ -62,27 +62,6 @@ function Get-SampleStandardTemplate {
     return (Join-Path $OutputDirectory 'main.bicep')
 }
 
-function Read-SampleManifest {
-    param([Parameter(Mandatory)] [string] $Path, [Parameter(Mandatory)] [string] $PackageRoot)
-
-    $manifest = Get-Content -LiteralPath $Path -Raw | ConvertFrom-Json -AsHashtable
-    if ($manifest['schemaVersion'] -ne 1 -or @($manifest['tests']).Count -eq 0) {
-        throw 'The sample manifest is empty or has an unsupported schema.'
-    }
-    foreach ($test in $manifest.tests) {
-        if ($test['node_id'] -notmatch '^tests/samples/test_samples(?:_async)?\.py::TestSamples(?:Async)?::\w+\[[^\r\n]+\]$') {
-            throw 'Manifest contains a node outside the sync/async sample test harness.'
-        }
-        $samplePath = [IO.Path]::GetFullPath((Join-Path $PackageRoot $test.sample_path))
-        $sampleRoot = [IO.Path]::GetFullPath((Join-Path $PackageRoot 'samples')) + [IO.Path]::DirectorySeparatorChar
-        if (-not $samplePath.StartsWith($sampleRoot, [StringComparison]::OrdinalIgnoreCase) -or
-            -not (Test-Path -LiteralPath $samplePath -PathType Leaf)) {
-            throw 'Manifest sample path must identify an existing file under samples/.'
-        }
-    }
-    return $manifest
-}
-
 function Get-SampleBicepEnvironmentNames {
     param([Parameter(Mandatory)] [string] $BicepPath)
 
@@ -95,6 +74,30 @@ function Get-SampleBicepEnvironmentNames {
     }
     if ($names.Count -eq 0) { throw "Cannot read the 'environment' output names from '$BicepPath'." }
     return $names
+}
+
+function Get-SampleEnvironmentNames {
+    $names = @(@(Get-SampleBicepEnvironmentNames -BicepPath (Join-Path $PSScriptRoot 'infra/main.bicep')) +
+        @('AZURE_SUBSCRIPTION_ID', 'AZURE_TENANT_ID', 'AZURE_RESOURCE_GROUP') | Sort-Object -Unique)
+    if (@($names | Where-Object { $_ -match '(^|_)(PAT|SECRET|KEY|TOKEN|PASSWORD|CREDENTIALS?)(_|$)' }).Count -gt 0) {
+        throw 'Infrastructure environment outputs must not contain secret-looking bindings.'
+    }
+    return $names
+}
+
+function Assert-SampleEnvironment {
+    param([Parameter(Mandatory)] [System.Collections.IDictionary] $Environment,
+        [Parameter(Mandatory)] [string[]] $Names)
+
+    $unexpected = @($Environment.Keys | Where-Object { $_ -cnotin $Names })
+    $missing = @($Names | Where-Object {
+        -not $Environment.Contains($_) -or $Environment[$_] -isnot [string] -or [string]::IsNullOrWhiteSpace($Environment[$_])
+    })
+    if ($unexpected.Count -gt 0 -or $missing.Count -gt 0 -or
+        @($Names | Where-Object { $_ -cnotmatch '^[A-Z][A-Z0-9_]*$' -or
+            $_ -match '(^|_)(PAT|SECRET|KEY|TOKEN|PASSWORD|CREDENTIALS?)(_|$)' }).Count -gt 0) {
+        throw 'Deployment outputs must match the declared non-secret environment bindings; values were suppressed.'
+    }
 }
 
 function Get-SampleSubscriptionId {
@@ -327,32 +330,6 @@ function Resolve-SampleIdentitySelection {
     return $resolved
 }
 
-function Get-SampleBlobOwnerCondition {
-    # One-time, explicitly approved shared-subscription variant of the pinned workspace condition.
-    return "((!(ActionMatches{'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/read'})  AND  !(ActionMatches{'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/filter/action'}) AND  !(ActionMatches{'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/tags/write'}) ) OR (@Resource[Microsoft.Storage/storageAccounts/blobServices/containers:name] StringLikeIgnoreCase '*-azureml-agent'))"
-}
-
-function Get-SampleProjectRoleIds {
-    return @('53ca6127-db72-4b80-b1b0-d745d6d5456d', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe',
-        'b7e6dc6d-f1e8-4753-8033-0f276bb0955b', '230815da-be43-4aae-9cb4-875f7bd000aa',
-        '7ca78c08-252a-4471-8644-bb5ff32d4ba0', '8ebe5a00-799e-43f5-93ac-243d3dce84a7')
-}
-
-function Get-SampleSubscriptionAssignments {
-    param([Parameter(Mandatory)] [string] $SubscriptionId)
-
-    $uri = 'https://management.azure.com/subscriptions/' + (Get-SampleSubscriptionId -SubscriptionId $SubscriptionId) +
-        '/providers/Microsoft.Authorization/roleAssignments?api-version=2022-04-01'
-    $assignments = @()
-    do {
-        if ($uri -notmatch '^https://management\.azure\.com/') { throw 'Unexpected authorization metadata host.' }
-        $page = Invoke-SampleAzure -Arguments @('rest', '--method', 'get', '--subscription', $SubscriptionId, '--url', $uri) -Sensitive
-        $assignments += @($page['value'])
-        $uri = [string] $page['nextLink']
-    } while ($uri)
-    return $assignments
-}
-
 function Get-SampleSharedIdentities {
     param([Parameter(Mandatory)] [hashtable] $Plan)
 
@@ -390,29 +367,50 @@ function Get-SampleSharedIdentities {
     return $identities
 }
 
-function Assert-SampleSharedIdentityGrants {
-    param([Parameter(Mandatory)] [hashtable] $Plan, [Parameter(Mandatory)] [hashtable] $Identities,
-        [Parameter(Mandatory)] [string] $RunnerPrincipalId)
+function Publish-SampleFunctionApp {
+    param([Parameter(Mandatory)] [hashtable] $Plan,
+        [Parameter(Mandatory)] [ValidatePattern('^[a-zA-Z0-9][a-zA-Z0-9-]{0,58}[a-zA-Z0-9]$')] [string] $FunctionAppName,
+        [string] $SourceDirectory = (Join-Path $PSScriptRoot 'function_app'))
 
-    $scope = '/subscriptions/' + $Plan.subscriptionId
-    $assignments = @(Get-SampleSubscriptionAssignments -SubscriptionId $Plan.subscriptionId)
-    foreach ($role in @(Get-SampleProjectRoleIds)) {
-        $matching = @($assignments | Where-Object {
-            $_['properties']['principalId'] -ieq $Identities.project.principalId -and
-            $_['properties']['scope'] -ieq $scope -and $_['properties']['roleDefinitionId'] -ieq "$scope/providers/Microsoft.Authorization/roleDefinitions/$role"
-        })
-        $condition = if ($role -eq 'b7e6dc6d-f1e8-4753-8033-0f276bb0955b') { Get-SampleBlobOwnerCondition } else { '' }
-        if ($matching.Count -ne 1 -or [string] $matching[0]['properties']['condition'] -cne $condition -or
-            ($condition -and $matching[0]['properties']['conditionVersion'] -cne '2.0')) {
-            throw 'The approved shared project-identity service grants are missing or differ; no resources were changed.'
+    Assert-SampleRunPlan -Plan $Plan
+    $files = @('function_app.py', 'host.json', 'requirements.txt')
+    foreach ($file in $files) {
+        if (-not (Test-Path -LiteralPath (Join-Path $SourceDirectory $file) -PathType Leaf)) {
+            throw "Missing Function App source file '$file'; no code was published."
         }
     }
-    $callerAccess = @($assignments | Where-Object {
-        $_['properties']['principalId'] -ieq $RunnerPrincipalId -and $_['properties']['scope'] -ieq $scope -and
-        $_['properties']['roleDefinitionId'] -ieq "$scope/providers/Microsoft.Authorization/roleDefinitions/53ca6127-db72-4b80-b1b0-d745d6d5456d" -and
-        -not $_['properties']['condition']
-    })
-    if ($callerAccess.Count -ne 1) { throw 'Preconfigure the pipeline Foundry User grant; workers never create Azure IAM assignments.' }
+    $zipPath = Join-Path ([IO.Path]::GetTempPath()) ('sample-function-' + [guid]::NewGuid().ToString('N') + '.zip')
+    try {
+        $archive = [IO.Compression.ZipFile]::Open($zipPath, [IO.Compression.ZipArchiveMode]::Create)
+        try {
+            foreach ($file in $files) {
+                $entry = $archive.CreateEntry($file)
+                $entry.LastWriteTime = [DateTimeOffset]::new(2000, 1, 1, 0, 0, 0, [TimeSpan]::Zero)
+                $entryStream = $entry.Open()
+                try {
+                    $sourceStream = [IO.File]::OpenRead((Join-Path $SourceDirectory $file))
+                    try { $sourceStream.CopyTo($entryStream) } finally { $sourceStream.Dispose() }
+                } finally { $entryStream.Dispose() }
+            }
+        } finally { $archive.Dispose() }
+        $null = Invoke-SampleAzure -Arguments @('functionapp', 'deployment', 'source', 'config-zip',
+            '--name', $FunctionAppName, '--resource-group', $Plan.resourceGroup, '--subscription', $Plan.subscriptionId,
+            '--src', $zipPath, '--build-remote', 'true', '--timeout', '1200') -Sensitive
+        for ($attempt = 1; $attempt -le 30; $attempt++) {
+            $functions = @(Invoke-SampleAzure -Arguments @('functionapp', 'function', 'list', '--name', $FunctionAppName,
+                '--resource-group', $Plan.resourceGroup, '--subscription', $Plan.subscriptionId, '--query', '[].name') -Sensitive)
+            if (@($functions | Where-Object { ($_ -split '/')[-1] -ceq 'queue_trigger' }).Count -eq 1) {
+                return
+            }
+            if ($attempt -lt 30) {
+                Write-Host ('Waiting for queue_trigger indexing after publication (check {0}/30).' -f $attempt)
+                Start-Sleep -Seconds 10
+            }
+        }
+        throw 'The published Function App did not index queue_trigger after 30 checks; sample execution is disabled.'
+    } finally {
+        if (Test-Path -LiteralPath $zipPath) { Remove-Item -LiteralPath $zipPath -Force }
+    }
 }
 
 function Assert-SampleBatchCapacity {
@@ -423,14 +421,8 @@ function Assert-SampleBatchCapacity {
         throw 'A test batch must contain one to four distinct queue plans.'
     }
     $first = $Plans[0]
-    $nodes = @()
     foreach ($plan in $Plans) {
         Assert-SampleRunPlan -Plan $plan -QueueName $plan.queueName
-        $selected = @($plan['selectedTests'] | Where-Object { $null -ne $_ })
-        if ($selected.Count -eq 0 -or @($selected | Where-Object { [string]::IsNullOrWhiteSpace($_['node_id']) }).Count -gt 0) {
-            throw 'Each test queue must contain a nonempty selection of unique test nodes.'
-        }
-        $nodes += @($selected | ForEach-Object { $_['node_id'] })
         foreach ($key in @('subscriptionId', 'tenantId', 'definitionId', 'buildId', 'location', 'identityResourceGroup')) {
             if ($plan[$key] -cne $first[$key]) { throw 'Test queues must share one explicit target and pipeline run.' }
         }
@@ -448,9 +440,6 @@ function Assert-SampleBatchCapacity {
                 if ($plan.sampleModel[$key] -cne $first.sampleModel[$key]) { throw 'Test queues must use the same sample model configuration.' }
             }
         }
-    }
-    if (@($nodes | Sort-Object -Unique -CaseSensitive).Count -ne $nodes.Count) {
-        throw 'Test queues must partition unique test nodes without repeats.'
     }
     $leftovers = @(Invoke-SampleAzure -Arguments @('group', 'list', '--subscription', $first.subscriptionId,
         '--query', "[?tags.purpose=='azure-ai-projects-sample-ci'].{id:id,name:name}" ) -Sensitive)
