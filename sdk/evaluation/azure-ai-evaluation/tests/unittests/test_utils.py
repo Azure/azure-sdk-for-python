@@ -25,6 +25,7 @@ from azure.ai.evaluation._common.utils import (
     _get_tool_calls_results,
     _reformat_tool_calls_results,
     _preprocess_messages,
+    filter_to_used_tools,
 )
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorMessage, ErrorTarget
 
@@ -1227,6 +1228,38 @@ class TestUtils(unittest.TestCase):
         result = _get_agent_response(_preprocess_messages(messages), include_tool_messages=True)
 
         self.assertEqual(result, ["[TOOL_CALL] lookup(id=1)", "[TOOL_RESULT] ok"])
+
+    def test_helpers_read_openai_chat_messages_without_preprocessing(self):
+        """Each message helper gives the same result for raw OpenAI chat input as for preprocessed input."""
+        conversation = [
+            {"role": "user", "content": "Find order 1"},
+            {
+                "role": "assistant",
+                "content": None,
+                "tool_calls": [{"id": "call_1", "function": {"name": "lookup", "arguments": '{"id": 1}'}}],
+            },
+            {"role": "tool", "tool_call_id": "call_1", "content": "shipped"},
+            {"role": "assistant", "content": "Order 1 has shipped."},
+            {"role": "user", "content": "Thanks"},
+        ]
+        response = conversation[1:4]
+        tools = [{"name": "lookup"}, {"name": "unused"}]
+        preprocessed = _preprocess_messages(conversation)
+        cases = {
+            "history_tool_messages": lambda c: reformat_conversation_history(c, include_tool_messages=True),
+            "history_tool_calls": lambda c: reformat_conversation_history(c, include_tool_calls=True),
+            "agent_response": lambda c: reformat_agent_response(c[1:4], include_tool_messages=True),
+            "tool_calls_results": lambda c: _reformat_tool_calls_results(c[1:4]),
+            "used_tools": lambda c: filter_to_used_tools(tools, [c[1:4]]),
+        }
+
+        for name, call in cases.items():
+            with self.subTest(helper=name):
+                expected = call(preprocessed)
+                self.assertNotEqual(expected, conversation)
+                self.assertNotEqual(expected, response)
+                self.assertEqual(call(conversation), expected)
+        self.assertEqual(filter_to_used_tools(tools, [preprocessed[1:4]]), [{"name": "lookup"}])
 
     def test_reformat_conversation_history_multiple_tool_calls(self):
         """Test reformat_conversation_history with multiple tool calls in one message"""

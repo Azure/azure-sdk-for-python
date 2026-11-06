@@ -645,7 +645,7 @@ def filter_to_used_tools(tool_definitions, msgs_lists, logger=None):
         used_tool_names = set()
         any_tools_used = False
         for msgs in msgs_lists:
-            for msg in msgs:
+            for msg in _normalize_openai_chat_messages(msgs):
                 if msg.get("role") == "assistant" and "content" in msg:
                     for content in msg.get("content", []):
                         if content.get("type") == "tool_call":
@@ -671,6 +671,7 @@ def filter_to_used_tools(tool_definitions, msgs_lists, logger=None):
 def _get_conversation_history(
     query, include_system_messages=False, include_tool_messages=False, include_tool_calls=False
 ):
+    query = _normalize_openai_chat_messages(query)
     if include_tool_calls:
         return _get_conversation_history_with_tool_calls(query, include_system_messages=include_system_messages)
     all_user_queries, all_agent_responses = [], []
@@ -793,6 +794,7 @@ def _format_value(v):
 
 def _get_agent_response(agent_response_msgs, include_tool_messages=False):
     """Extracts formatted agent response including text, and optionally tool calls/results."""
+    agent_response_msgs = _normalize_openai_chat_messages(agent_response_msgs)
     agent_response_text = []
     tool_results = {}
 
@@ -1143,6 +1145,7 @@ def _get_tool_calls_results(agent_response_msgs):
     :return: A list of formatted tool-call/result lines.
     :rtype: List[str]
     """
+    agent_response_msgs = _normalize_openai_chat_messages(agent_response_msgs)
     agent_response_text = []
     tool_results = {}
 
@@ -1681,7 +1684,7 @@ def _has_typed_tool_calls(content):
 
 
 def _normalize_openai_chat_message(msg):
-    """Return an SDK-block copy of an OpenAI chat tool message, or the message unchanged."""
+    """Return an SDK-block copy of an OpenAI chat message, or the message unchanged."""
     if not isinstance(msg, dict):
         return msg
     role, content = msg.get("role"), msg.get("content")
@@ -1695,7 +1698,16 @@ def _normalize_openai_chat_message(msg):
         return converted
     if role == "tool" and isinstance(content, str):
         return {**msg, "content": [{"type": "tool_result", "tool_result": content}]}
+    if role in ("user", "assistant") and isinstance(content, str):
+        return {**msg, "content": [{"type": "text", "text": content}] if content else []}
     return msg
+
+
+def _normalize_openai_chat_messages(messages):
+    """Normalize a message list for the readers below; other values pass through unchanged."""
+    if not isinstance(messages, list):
+        return messages
+    return [_normalize_openai_chat_message(msg) for msg in messages]
 
 
 def _preprocess_messages(messages):
@@ -1708,8 +1720,7 @@ def _preprocess_messages(messages):
     :return: The preprocessed messages.
     :rtype: List[dict]
     """
-    if isinstance(messages, list):
-        messages = [_normalize_openai_chat_message(msg) for msg in messages]
+    messages = _normalize_openai_chat_messages(messages)
     messages = _drop_mcp_approval_messages(messages)
     messages = _normalize_function_call_types(messages)
     return messages
