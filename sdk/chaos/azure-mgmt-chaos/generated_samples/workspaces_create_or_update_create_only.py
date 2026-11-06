@@ -15,7 +15,7 @@ from azure.mgmt.chaos import ChaosManagementClient
     pip install azure-identity
     pip install azure-mgmt-chaos
 # USAGE
-    python private_accesses_list_private_endpoint_connections.py
+    python workspaces_create_or_update_create_only.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,17 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.private_accesses.list_private_endpoint_connections(
-        resource_group_name="myResourceGroup",
-        private_access_name="myPrivateAccess",
-    )
-    for item in response:
-        print(item)
+    response = client.workspaces.begin_create_or_update(
+        resource_group_name="exampleRG",
+        workspace_name="exampleWorkspace",
+        resource={
+            "location": "westus2",
+            "properties": {"scopes": ["/subscriptions/6b052e15-03d3-4f17-b2e1-be7f07588291/resourceGroups/exampleRG"]},
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-08-01-preview/PrivateAccesses_ListPrivateEndpointConnections.json
+# x-ms-original-file: 2026-11-01/Workspaces_CreateOrUpdate_CreateOnly.json
 if __name__ == "__main__":
     main()

@@ -15,7 +15,7 @@ from azure.mgmt.chaos import ChaosManagementClient
     pip install azure-identity
     pip install azure-mgmt-chaos
 # USAGE
-    python private_accesses_update.py
+    python scenario_templates_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,11 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.private_accesses.begin_update(
-        resource_group_name="myResourceGroup",
-        private_access_name="myPrivateAccess",
-        properties={"tags": {"tag1": "value1", "tag2": "value2"}},
-    ).result()
-    print(response)
+    response = client.scenario_templates.list()
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-08-01-preview/PrivateAccesses_Update.json
+# x-ms-original-file: 2026-11-01/ScenarioTemplates_List.json
 if __name__ == "__main__":
     main()

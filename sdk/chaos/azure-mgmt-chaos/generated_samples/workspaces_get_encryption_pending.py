@@ -15,7 +15,7 @@ from azure.mgmt.chaos import ChaosManagementClient
     pip install azure-identity
     pip install azure-mgmt-chaos
 # USAGE
-    python private_accesses_delete.py
+    python workspaces_get_encryption_pending.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.private_accesses.begin_delete(
-        resource_group_name="myResourceGroup",
-        private_access_name="myPrivateAccess",
-    ).result()
+    response = client.workspaces.get(
+        resource_group_name="exampleRG",
+        workspace_name="exampleWorkspace",
+    )
+    print(response)
 
 
-# x-ms-original-file: 2026-08-01-preview/PrivateAccesses_Delete.json
+# x-ms-original-file: 2026-11-01/Workspaces_Get_EncryptionPending.json
 if __name__ == "__main__":
     main()

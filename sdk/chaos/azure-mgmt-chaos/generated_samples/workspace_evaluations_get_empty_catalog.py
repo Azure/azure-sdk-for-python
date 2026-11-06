@@ -15,7 +15,7 @@ from azure.mgmt.chaos import ChaosManagementClient
     pip install azure-identity
     pip install azure-mgmt-chaos
 # USAGE
-    python private_accesses_get_aprivate_endpoint_connection.py
+    python workspace_evaluations_get_empty_catalog.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.private_accesses.get_a_private_endpoint_connection(
-        resource_group_name="myResourceGroup",
-        private_access_name="myPrivateAccess",
-        private_endpoint_connection_name="myPrivateEndpointConnection",
+    response = client.workspace_evaluations.get(
+        resource_group_name="exampleRG",
+        workspace_name="exampleWorkspace",
+        evaluation_name="00000000-0000-0000-0000-000000000003",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-08-01-preview/PrivateAccesses_GetAPrivateEndpointConnection.json
+# x-ms-original-file: 2026-11-01/WorkspaceEvaluations_Get_EmptyCatalog.json
 if __name__ == "__main__":
     main()
