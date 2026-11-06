@@ -276,6 +276,25 @@ class TestToolCallSuccessWithoutToolCalls:
             [{"role": "user", "content": "Hi.", "tool_call_id": None}, {"role": "assistant", "content": "Hello."}],
             [OPENAI_TEXT_REPLY],
             [{"role": "assistant", "content": "Next action: wait for the forecast.\nAction items: none."}],
+            [
+                {
+                    "role": "assistant",
+                    "content": [
+                        {"type": "mcp_approval_request", "name": "search", "arguments": "{}"},
+                        {"type": "output_text", "text": "Action: search\nObservation: It timed out."},
+                    ],
+                }
+            ],
+            [
+                {"role": "user", "content": "Weather in Paris?"},
+                {
+                    "role": "assistant",
+                    "content": [
+                        {"type": "mcp_approval_request", "name": "search", "arguments": "{}"},
+                        {"type": "output_text", "text": "Action: search\nObservation: It timed out."},
+                    ],
+                },
+            ],
         ],
         ids=[
             "text-items",
@@ -288,6 +307,8 @@ class TestToolCallSuccessWithoutToolCalls:
             "null-tool-call-id",
             "openai-model-dump",
             "mentions-actions",
+            "transcript-only-beside-an-mcp-approval",
+            "user-turn-and-transcript-beside-an-mcp-approval",
         ],
     )
     def test_a_response_without_tool_calls_is_not_applicable_without_a_judge_call(self, config, response):
@@ -400,6 +421,12 @@ class TestToolCallSuccessWithoutToolCalls:
             "**Action:** fetch_weather\n**Observation:** It timed out.",
             "> observation: It timed out.",
             "1. Action: fetch_weather\n2. Observation: It timed out.",
+            "1) Action: fetch_weather\n2) Observation: It timed out.",
+            "(1) Action: fetch_weather\n(2) Observation: It timed out.",
+            "a) Action: fetch_weather\nb) Observation: It timed out.",
+            "\u2022 Action: fetch_weather\n\u2022 Observation: It timed out.",
+            "\u00a0Action: fetch_weather\n\u00a0Observation: It timed out.",
+            "Action\uff1a fetch_weather\nObservation\uff1a It timed out.",
             "Thought: Retrying.\r\nObservation: It timed out.\r\n",
             "Tool Calls:\n  fetch_weather (call_1)\n Call ID: call_1\n  Args:\n    city: Paris\nIt timed out.",
             "Tool result: It timed out.",
@@ -424,6 +451,12 @@ class TestToolCallSuccessWithoutToolCalls:
             "react-markdown-bold",
             "react-quoted-lowercase",
             "react-numbered-list",
+            "react-parenthesized-number-list",
+            "react-enclosed-number-list",
+            "react-lettered-list",
+            "react-bullet-list",
+            "react-no-break-space-indent",
+            "react-fullwidth-colon",
             "react-crlf",
             "langchain-printed-messages",
             "tool-result-label",
@@ -641,6 +674,9 @@ class TestToolCallSuccessWithoutToolCalls:
             "Toolbox: a hammer.",
             "Tools: none.",
             "Calling a tool would not help here.",
+            "(action: see below)",
+            "\u2014 action: none needed.",
+            "a) The next action: wait.",
         ],
     )
     def test_text_that_only_mentions_actions_or_tools_has_no_tool_calls(self, text):

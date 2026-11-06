@@ -17,7 +17,7 @@ from azure.ai.evaluation._exceptions import (
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy, with_probability_threshold
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
-from azure.ai.evaluation._common.utils import _log_safe_summary, _stringify_tool_result
+from azure.ai.evaluation._common.utils import _drop_mcp_approval_messages, _log_safe_summary, _stringify_tool_result
 from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
@@ -34,12 +34,13 @@ _TOOL_TRACE_MARKER = re.compile(
     re.IGNORECASE,
 )
 # A line that starts with a tool step label, as ReAct agents ("Action:", "Observation 2:") and LangChain's printed
-# messages ("Tool Calls:") write it, also in a Markdown list, quote, heading or emphasis. The character classes hold
-# no line breaks, so a search takes time linear in the length of the text.
+# messages ("Tool Calls:") write it, also in a Markdown list, quote, heading or emphasis, after a bullet or a list
+# marker such as "1)", "(2)" or "a)", and with a fullwidth colon. The character classes hold no line breaks and the
+# list marker is bounded, so a search takes time linear in the length of the text.
 _TOOL_STEP_LABEL = re.compile(
-    r"^[ \t>*_#+`.\d-]*"
+    r"^[ \t\u00a0>*_#+`.\u2022\d-]*(?:\(?(?:\d{1,3}|[a-z])\)[ \t\u00a0]*)?"
     r"(?:action|observation|(?:tool|function)[ _-]?(?:call|result|response|output)s?)"
-    r"[ \t\d*_#.()`]*:",
+    r"[ \t\d*_#.()`]*[:\uff1a]",
     re.IGNORECASE | re.MULTILINE,
 )
 _APPROVAL_TYPES = frozenset({"mcp_approval_request", "mcp_approval_response"})
@@ -235,7 +236,8 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         transcript = None
         if isinstance(eval_input.get("response"), list):
-            # Decided before preprocessing, which drops whole messages that hold an MCP approval.
+            # Decided on the raw list, so a list of only MCP approvals stays not applicable; the text of a message
+            # that preprocessing drops for holding an MCP approval is not counted.
             if _has_no_tool_calls(eval_input["response"]):
                 return self._return_not_applicable_result(_NO_TOOL_CALLS_MESSAGE, self._threshold)
             eval_input["response"] = _preprocess_messages(eval_input["response"])
@@ -351,7 +353,8 @@ def _texts_of_text_messages(messages) -> Optional[List[Tuple[str, str]]]:
 
     A tool_calls, function_call or tool_call_id field that holds nothing, such as the None that OpenAI's model_dump()
     writes, counts as absent. A list in any other format may hold tool activity this evaluator does not parse, so the
-    judge assesses it.
+    judge assesses it. The text of a message that preprocessing drops for holding an MCP approval is left out, as no
+    judge input includes it.
     """
     if not isinstance(messages, list) or not messages:
         return None
@@ -384,7 +387,8 @@ def _texts_of_text_messages(messages) -> Optional[List[Tuple[str, str]]]:
             return None
         if not all(isinstance(text, str) for text in message_texts):
             return None
-        texts.extend((role, text) for text in message_texts)
+        if _drop_mcp_approval_messages([message]):
+            texts.extend((role, text) for text in message_texts)
     return texts
 
 
