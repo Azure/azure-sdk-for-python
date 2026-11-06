@@ -3,9 +3,11 @@
 # ---------------------------------------------------------
 import asyncio  # pylint: disable=do-not-import-asyncio
 import contextlib
+import hmac
 import json
 import logging
 import os
+import re
 import signal
 import urllib.parse
 from collections.abc import (  # pylint: disable=import-error
@@ -53,6 +55,211 @@ _AFTER_RESTORE_ALIAS_PATH = "/_after_restore"
 _SESSION_ID_ENV = "FOUNDRY_AGENT_SESSION_ID"
 _SESSION_GUID_ENV = "FOUNDRY_AGENT_SESSION_GUID"
 _MISSING_ENV = object()
+
+# Lifecycle endpoint authentication. The platform provisions the shared token
+# through ``FOUNDRY_LIFECYCLE_TOKEN`` and presents it on every lifecycle call.
+_LIFECYCLE_TOKEN_ENV = "FOUNDRY_LIFECYCLE_TOKEN"
+_LIFECYCLE_TOKEN_HEADER = "x-foundry-lifecycle-token"
+_LIFECYCLE_ALLOW_UNAUTHENTICATED_ENV = "FOUNDRY_LIFECYCLE_ALLOW_UNAUTHENTICATED"
+_SESSION_ENV_ALLOWED_KEYS_ENV = "FOUNDRY_SESSION_ENV_ALLOWED_KEYS"
+
+# Lifecycle request body and environment override limits.
+_MAX_LIFECYCLE_BODY_BYTES = 1024 * 1024
+_MAX_ENV_OVERRIDE_COUNT = 256
+_MAX_ENV_KEY_LENGTH = 256
+_MAX_ENV_VALUE_LENGTH = 32 * 1024
+# Hard per-entry ceiling for ``KEY=VALUE\0`` enforced by the Windows process environment block.
+_MAX_ENV_ENTRY_BYTES = 32767
+_MAX_ENV_OVERRIDES_TOTAL_BYTES = 256 * 1024
+_ENV_KEY_PATTERN = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
+
+# Environment variables that influence the process loader, interpreter,
+# network egress, TLS trust, telemetry, platform identity, or credentials.
+# They are never accepted as session overrides. Matching is case-insensitive.
+_DENIED_ENV_KEYS = frozenset(
+    {
+        "PATH",
+        "HOME",
+        "BASH_ENV",
+        "ENV",
+        "PROMPT_COMMAND",
+        "NODE_OPTIONS",
+        "NODE_EXTRA_CA_CERTS",
+        "PERL5OPT",
+        "RUBYOPT",
+        "JAVA_TOOL_OPTIONS",
+        "_JAVA_OPTIONS",
+        "JDK_JAVA_OPTIONS",
+        "DOTNET_STARTUP_HOOKS",
+        "GIT_SSH_COMMAND",
+        "GIT_EXEC_PATH",
+        "AWS_SHARED_CREDENTIALS_FILE",
+        "AWS_CONFIG_FILE",
+        "GOOGLE_APPLICATION_CREDENTIALS",
+        "SSL_CERT_FILE",
+        "SSL_CERT_DIR",
+        "HTTP_PROXY",
+        "HTTPS_PROXY",
+        "ALL_PROXY",
+        "NO_PROXY",
+        "REQUESTS_CA_BUNDLE",
+        "CURL_CA_BUNDLE",
+        "AZURE_TENANT_ID",
+        "AZURE_FEDERATED_TOKEN_FILE",
+        "AZURE_AUTHORITY_HOST",
+        "AZURE_USERNAME",
+        "AZURE_PASSWORD",
+        "AZURE_TOKEN_CREDENTIALS",
+        "AZURE_AI_PROJECT_ENDPOINT",
+        "FOUNDRY_AGENT_NAME",
+        "FOUNDRY_AGENT_ID",
+        "FOUNDRY_AGENT_INSTANCE_CLIENT_ID",
+        "FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID",
+        "FOUNDRY_AGENT_TENANT_ID",
+        "FOUNDRY_HOSTING_ENVIRONMENT",
+        _LIFECYCLE_TOKEN_ENV,
+        _LIFECYCLE_ALLOW_UNAUTHENTICATED_ENV,
+        _SESSION_ENV_ALLOWED_KEYS_ENV,
+        "COPILOT_CLI_PATH",
+        "TOOL_ACL_PATH",
+    }
+)
+_DENIED_ENV_KEY_PREFIXES = (
+    "LD_",
+    "DYLD_",
+    "PYTHON",
+    "DOTNET_",
+    "GIT_CONFIG",
+    "AGENTSERVER_",
+    "OTEL_EXPORTER_",
+    "APPLICATIONINSIGHTS_",
+    "FOUNDRY_PROJECT_",
+    "AZURE_CLIENT_",
+    "MSI_",
+    "IDENTITY_",
+    "IMDS_",
+    "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__",
+)
+_DENIED_CONNECTION_IDENTITY_SUFFIXES = (
+    "__AUTHORITY",
+    "__AUTHORITY_HOST",
+    "__AUTHORITYHOST",
+    "__CLIENT_ID",
+    "__CLIENTID",
+    "__CLIENT_SECRET",
+    "__CLIENTSECRET",
+    "__FEDERATED_TOKEN_FILE",
+    "__FEDERATEDTOKENFILE",
+    "__TENANT_ID",
+    "__TENANTID",
+    "__TOKEN_CREDENTIALS",
+    "__TOKENCREDENTIALS",
+    "__USERNAME",
+    "__PASSWORD",
+)
+_DENIED_CREDENTIAL_KEY_FRAGMENTS = (
+    "KEY",
+    "SECRET",
+    "TOKEN",
+    "PASSWORD",
+    "CREDENTIAL",
+    "CONNECTION_STRING",
+)
+
+
+def _is_denied_env_key(key: str) -> bool:
+    """Return True when ``key`` must never be applied as a session override.
+
+    :param key: Environment variable name.
+    :type key: str
+    :return: Whether the key is denied.
+    :rtype: bool
+    """
+    upper = key.upper()
+    return (
+        upper in _DENIED_ENV_KEYS
+        or upper.startswith(_DENIED_ENV_KEY_PREFIXES)
+        or upper.endswith("_PROXY")
+        or any(fragment in upper for fragment in _DENIED_CREDENTIAL_KEY_FRAGMENTS)
+        or (
+            upper.startswith("CONNECTIONS__")
+            and upper.endswith(_DENIED_CONNECTION_IDENTITY_SUFFIXES)
+        )
+    )
+
+
+def _encoded_env_entry_size(key: str, value: str) -> int:
+    """Return the encoded environment entry size, including separator and terminator.
+
+    :param key: Environment variable name.
+    :type key: str
+    :param value: Environment variable value.
+    :type value: str
+    :return: Encoded size of ``KEY=VALUE\\0`` in bytes.
+    :rtype: int
+    :raises ValueError: When the key or value is malformed or oversized.
+    """
+    try:
+        encoded_key = key.encode("utf-8", "strict")
+        encoded_value = value.encode("utf-8", "strict")
+    except UnicodeEncodeError as exc:
+        raise ValueError(f"environment override {key!r} is not valid UTF-8") from exc
+    if len(encoded_key) > _MAX_ENV_KEY_LENGTH or _ENV_KEY_PATTERN.fullmatch(key) is None:
+        raise ValueError(f"environment override {key!r} has an invalid key")
+    if len(encoded_value) > _MAX_ENV_VALUE_LENGTH or "\0" in value:
+        raise ValueError(f"environment override {key!r} has an invalid value")
+    entry_size = len(encoded_key) + len(encoded_value) + 2
+    if entry_size > _MAX_ENV_ENTRY_BYTES:
+        raise ValueError(f"environment override {key!r} is too large")
+    return entry_size
+
+
+def _validate_env_overrides(
+    overrides: Any,
+    allowed_keys: frozenset[str],
+    session_id: str,
+) -> dict[str, str]:
+    """Validate session environment overrides, rejecting the whole mapping on any violation.
+
+    :param overrides: Raw ``session_env_overrides`` value from the request body.
+    :type overrides: Any
+    :param allowed_keys: Environment variable names the operator has allowed to be overridden.
+    :type allowed_keys: frozenset[str]
+    :param session_id: Session identifier used for diagnostics.
+    :type session_id: str
+    :return: The validated overrides.
+    :rtype: dict[str, str]
+    :raises ValueError: When any entry is malformed, oversized, or denied.
+    """
+    if not isinstance(overrides, dict):
+        raise ValueError("session_env_overrides must map strings to strings")
+    if len(overrides) > _MAX_ENV_OVERRIDE_COUNT:
+        raise ValueError("session_env_overrides contains too many entries")
+    validated: dict[str, str] = {}
+    total_size = 0
+    for key, value in overrides.items():
+        if not isinstance(key, str) or not isinstance(value, str):
+            raise ValueError("session_env_overrides must map strings to strings")
+        entry_size = _encoded_env_entry_size(key, value)
+        if _is_denied_env_key(key):
+            raise ValueError(f"environment override {key!r} is reserved")
+        if key not in allowed_keys:
+            raise ValueError(f"environment override {key!r} is not allowed")
+        validated[key] = value
+        total_size += entry_size
+
+    override_session_id = validated.get(_SESSION_ID_ENV)
+    if override_session_id is not None and override_session_id != session_id:
+        raise ValueError("FOUNDRY_AGENT_SESSION_ID must match session_id")
+    if override_session_id is None:
+        total_size += _encoded_env_entry_size(_SESSION_ID_ENV, session_id)
+    if total_size > _MAX_ENV_OVERRIDES_TOTAL_BYTES:
+        raise ValueError("session environment overrides are too large")
+    return validated
+
+
+class _LifecycleBodyTooLarge(ValueError):
+    """Raised when a lifecycle request body exceeds its byte limit."""
 
 
 def _read_task_manager_shutdown_grace() -> float:
@@ -196,7 +403,7 @@ class _PlatformHeaderMiddleware:
 _SENTINEL_ACCESS_LOG = object()
 
 
-class AgentServerHost(Starlette):
+class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attributes
     """Agent server host framework for Azure AI Hosted Agent containers.
 
     A :class:`~starlette.applications.Starlette` subclass providing the
@@ -298,6 +505,25 @@ class AgentServerHost(Starlette):
 
         # Resolved configuration (accessible as self.config)
         self.config: _config.AgentConfig = _config.AgentConfig.from_env()
+
+        # Lifecycle endpoint posture is fixed at startup so later environment
+        # or configuration updates cannot change it.
+        self._lifecycle_is_hosted: bool = self.config.is_hosted
+        self._lifecycle_token: Optional[str] = os.environ.get(_LIFECYCLE_TOKEN_ENV) or None
+        self._lifecycle_allow_unauthenticated: bool = (
+            os.environ.get(_LIFECYCLE_ALLOW_UNAUTHENTICATED_ENV, "").strip().lower() == "true"
+        )
+        platform_allowed_keys = {
+            key.strip()
+            for key in os.environ.get(_SESSION_ENV_ALLOWED_KEYS_ENV, "").split(",")
+            if key.strip()
+        }
+        self._lifecycle_allowed_env_keys: frozenset[str] = (
+            frozenset(os.environ)
+            | frozenset(platform_allowed_keys)
+            | frozenset({_SESSION_ID_ENV, _SESSION_GUID_ENV, "OTEL_RESOURCE_ATTRIBUTES"})
+        )
+        self._lifecycle_routes_enabled: bool = self._lifecycle_is_hosted or self._lifecycle_token is not None
 
         # Observability (logging + tracing) --------------------------------
         _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
@@ -468,32 +694,60 @@ class AgentServerHost(Starlette):
 
         # Bind reserved routes to the framework implementation so subclasses
         # can extend only through the protected lifecycle hooks.
-        all_routes: list[Any] = [
-            Route(
-                _BEFORE_SNAPSHOT_PATH,
-                _before_snapshot_route,
-                methods=["POST"],
-                name="before_snapshot",
-            ),
-            Route(
-                _AFTER_RESTORE_PATH,
-                _after_restore_route,
-                methods=["POST"],
-                name="after_restore",
-            ),
-            Route(
-                _BEFORE_SNAPSHOT_ALIAS_PATH,
-                _before_snapshot_route,
-                methods=["POST"],
-                name="before_snapshot_alias",
-            ),
-            Route(
-                _AFTER_RESTORE_ALIAS_PATH,
-                _after_restore_route,
-                methods=["POST"],
-                name="after_restore_alias",
-            ),
-        ]
+        all_routes: list[Any] = []
+        if self._lifecycle_routes_enabled:
+            all_routes.extend(
+                [
+                    Route(
+                        _BEFORE_SNAPSHOT_PATH,
+                        _before_snapshot_route,
+                        methods=["POST"],
+                        name="before_snapshot",
+                    ),
+                    Route(
+                        _AFTER_RESTORE_PATH,
+                        _after_restore_route,
+                        methods=["POST"],
+                        name="after_restore",
+                    ),
+                    Route(
+                        _BEFORE_SNAPSHOT_ALIAS_PATH,
+                        _before_snapshot_route,
+                        methods=["POST"],
+                        name="before_snapshot_alias",
+                    ),
+                    Route(
+                        _AFTER_RESTORE_ALIAS_PATH,
+                        _after_restore_route,
+                        methods=["POST"],
+                        name="after_restore_alias",
+                    ),
+                ]
+            )
+            if (
+                self._lifecycle_is_hosted
+                and self._lifecycle_token is None
+                and not self._lifecycle_allow_unauthenticated
+            ):
+                logger.error(
+                    "Snapshot lifecycle authentication is not configured: hosted lifecycle "
+                    "requests will be rejected until %s is set. %s=true temporarily permits "
+                    "unauthenticated requests.",
+                    _LIFECYCLE_TOKEN_ENV,
+                    _LIFECYCLE_ALLOW_UNAUTHENTICATED_ENV,
+                )
+            elif self._lifecycle_token is None:
+                logger.warning(
+                    "Snapshot lifecycle routes are registered without %s because %s=true; "
+                    "this temporary compatibility mode permits unauthenticated lifecycle requests.",
+                    _LIFECYCLE_TOKEN_ENV,
+                    _LIFECYCLE_ALLOW_UNAUTHENTICATED_ENV,
+                )
+        else:
+            logger.info(
+                "Snapshot lifecycle routes are disabled: not running in a hosted environment and %s is not set.",
+                _LIFECYCLE_TOKEN_ENV,
+            )
         all_routes.extend(routes or [])
         all_routes.append(
             Route("/readiness", self._readiness_endpoint, methods=["GET"], name="readiness"),
@@ -710,6 +964,32 @@ class AgentServerHost(Starlette):
     # Snapshot lifecycle endpoints
     # ------------------------------------------------------------------
 
+    def _authorize_lifecycle_request(self, request: Request) -> Optional[Response]:
+        """Validate the lifecycle token presented on a lifecycle request.
+
+        :param request: Incoming lifecycle request.
+        :type request: Request
+        :return: An error response when the request is not authorized, else ``None``.
+        :rtype: Optional[Response]
+        """
+        expected = self._lifecycle_token
+        if expected is None:
+            if self._lifecycle_is_hosted and not self._lifecycle_allow_unauthenticated:
+                return create_error_response(
+                    "lifecycle_authentication_not_configured",
+                    "Lifecycle authentication is required but is not configured.",
+                    status_code=403,
+                )
+            return None
+        provided = request.headers.get(_LIFECYCLE_TOKEN_HEADER)
+        if provided is None or not hmac.compare_digest(provided.encode("utf-8"), expected.encode("utf-8")):
+            return create_error_response(
+                "unauthorized_lifecycle_request",
+                "The lifecycle request is not authorized.",
+                status_code=401,
+            )
+        return None
+
     @staticmethod
     async def _read_json_object(request: Request) -> dict[str, Any]:
         """Read and validate a lifecycle request body.
@@ -722,16 +1002,30 @@ class AgentServerHost(Starlette):
         content_type = request.headers.get("content-type", "").split(";", 1)[0].strip().lower()
         if content_type != "application/json":
             raise ValueError("content type must be application/json")
+        declared_length = request.headers.get("content-length")
+        if declared_length is not None:
+            try:
+                length = int(declared_length)
+            except ValueError:
+                raise ValueError("content length is invalid") from None
+            if length > _MAX_LIFECYCLE_BODY_BYTES:
+                raise _LifecycleBodyTooLarge("body is too large")
+        chunks: list[bytes] = []
+        received = 0
+        async for chunk in request.stream():
+            received += len(chunk)
+            if received > _MAX_LIFECYCLE_BODY_BYTES:
+                raise _LifecycleBodyTooLarge("body is too large")
+            chunks.append(chunk)
         try:
-            payload = await request.json()
+            payload = json.loads(b"".join(chunks))
         except (json.JSONDecodeError, UnicodeDecodeError) as exc:
             raise ValueError("body must be valid JSON") from exc
         if not isinstance(payload, dict):
             raise ValueError("body must be a JSON object")
         return payload
 
-    @staticmethod
-    def _parse_session_context(payload: dict[str, Any]) -> AgentSessionContext:
+    def _parse_session_context(self, payload: dict[str, Any]) -> AgentSessionContext:
         """Parse and validate the after-restore session context.
 
         :param payload: Parsed after-restore request body.
@@ -745,20 +1039,15 @@ class AgentServerHost(Starlette):
 
         session_id = raw_context.get("session_id")
         restore_id = raw_context.get("restore_id")
-        raw_overrides = raw_context.get("session_env_overrides", {})
         if not isinstance(session_id, str) or not session_id or "\0" in session_id:
             raise ValueError("session_id must be a non-empty string")
         if not isinstance(restore_id, str) or not restore_id:
             raise ValueError("restore_id must be a non-empty string")
-        if not isinstance(raw_overrides, dict) or any(
-            not isinstance(key, str) or not isinstance(value, str) for key, value in raw_overrides.items()
-        ):
-            raise ValueError("session_env_overrides must map strings to strings")
-        if any(not key or "=" in key or "\0" in key or "\0" in value for key, value in raw_overrides.items()):
-            raise ValueError("session_env_overrides contains an invalid environment entry")
-        override_session_id = raw_overrides.get(_SESSION_ID_ENV)
-        if override_session_id is not None and override_session_id != session_id:
-            raise ValueError("FOUNDRY_AGENT_SESSION_ID must match session_id")
+        raw_overrides = _validate_env_overrides(
+            raw_context.get("session_env_overrides", {}),
+            self._lifecycle_allowed_env_keys,
+            session_id,
+        )
         return AgentSessionContext(
             session_id=session_id,
             restore_id=restore_id,
@@ -766,8 +1055,17 @@ class AgentServerHost(Starlette):
         )
 
     async def _before_snapshot_endpoint(self, request: Request) -> Response:
+        unauthorized = AgentServerHost._authorize_lifecycle_request(self, request)
+        if unauthorized is not None:
+            return unauthorized
         try:
             await AgentServerHost._read_json_object(request)
+        except _LifecycleBodyTooLarge:
+            return create_error_response(
+                "lifecycle_request_too_large",
+                "The lifecycle request body is too large.",
+                status_code=413,
+            )
         except ValueError:
             return create_error_response(
                 "invalid_before_snapshot_request",
@@ -795,17 +1093,29 @@ class AgentServerHost(Starlette):
             self._lifecycle.before_snapshot_completed = True
             return JSONResponse({"status": "ok"})
 
-    async def _after_restore_endpoint(self, request: Request) -> Response:
+    async def _after_restore_endpoint(  # pylint: disable=too-many-return-statements,too-many-statements
+        self, request: Request
+    ) -> Response:
+        unauthorized = AgentServerHost._authorize_lifecycle_request(self, request)
+        if unauthorized is not None:
+            return unauthorized
         try:
             payload = await AgentServerHost._read_json_object(request)
-            context = AgentServerHost._parse_session_context(payload)
+            context = AgentServerHost._parse_session_context(self, payload)
             session_guid = context.session_env_overrides.get(_SESSION_GUID_ENV)
             if session_guid is not None:
-                _config._validate_session_guid(session_guid, self.config.is_hosted)  # pylint: disable=protected-access
-        except ValueError:
+                is_hosted = self._lifecycle_is_hosted
+                _config._validate_session_guid(session_guid, is_hosted)  # pylint: disable=protected-access
+        except _LifecycleBodyTooLarge:
+            return create_error_response(
+                "lifecycle_request_too_large",
+                "The lifecycle request body is too large.",
+                status_code=413,
+            )
+        except ValueError as exc:
             return create_error_response(
                 "invalid_after_restore_request",
-                "The after-restore request is invalid.",
+                f"The after-restore request is invalid: {exc}",
                 status_code=400,
             )
 
@@ -840,7 +1150,7 @@ class AgentServerHost(Starlette):
                         os.environ.pop(key, None)
                     else:
                         os.environ[key] = value
-                restored_config = _config.AgentConfig.from_env()
+                restored_config = _config.AgentConfig.from_env(hosted=self._lifecycle_is_hosted)
                 vars(self.config).update(vars(restored_config))
                 if task_manager is not None:
                     task_manager._rehydrate_session_state(context.restore_id)  # pylint: disable=protected-access
