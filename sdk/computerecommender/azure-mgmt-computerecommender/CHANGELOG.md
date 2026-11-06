@@ -20,7 +20,7 @@
   - `SpotPlacementScoresInput.desired_sizes` is now required.
   - Deleted or renamed model `ComputeDiagnosticBase`
   - Deleted or renamed model `DiagnosticProperties`
-  - Model `ComputePlacementScoresBase` changed type of its property `properties` from `DiagnosticProperties` to `PlacementScoresProperties`
+  - Model `PlacementScore` changed type of property `score` from `Optional[str]` to `Optional[Union[str, PlacementScoreValue]]`
   - Method `SpotPlacementScoresOperations.get` changed return type from `ComputeDiagnosticBase` to `SpotPlacementScoresBase`
 
 ## 1.0.0b3 (2026-08-28)
