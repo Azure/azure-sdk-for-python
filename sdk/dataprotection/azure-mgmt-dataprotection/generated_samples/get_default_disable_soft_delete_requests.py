@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-01/ResourceGuardCRUD/GetDefaultDisableSoftDeleteRequests.json
+# x-ms-original-file: 2026-08-31-preview/ResourceGuardCRUD/GetDefaultDisableSoftDeleteRequests.json
 if __name__ == "__main__":
     main()

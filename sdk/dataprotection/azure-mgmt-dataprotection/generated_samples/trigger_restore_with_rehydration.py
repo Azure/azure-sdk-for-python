@@ -70,6 +70,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-01/BackupInstanceOperations/TriggerRestoreWithRehydration.json
+# x-ms-original-file: 2026-08-31-preview/BackupInstanceOperations/TriggerRestoreWithRehydration.json
 if __name__ == "__main__":
     main()
