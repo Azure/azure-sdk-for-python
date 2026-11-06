@@ -31,7 +31,7 @@ class CommunicationIdentityClient(object):
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Identity API version.
-        Default value is "2022-10-01". Note that overriding this default value may result in unsupported behavior.
+        Default value is "2026-09-23". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
 
     .. admonition:: Example:
