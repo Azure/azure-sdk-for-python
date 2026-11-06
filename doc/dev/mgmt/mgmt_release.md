@@ -140,7 +140,7 @@ Usually the merged report is enough, but you might need to select individual cod
 
 You need to check the version in:
 ```
-/azure-mgmt-myservice/azure/mgmt/myservice/version.py
+/azure-mgmt-myservice/azure/mgmt/myservice/_version.py
 ```
 
 Python SDK _strictly_ follows [semver](https://semver.org/). A few notes:
