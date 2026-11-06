@@ -716,6 +716,9 @@ class BreakingChangesTracker:
                     return _members(node.left) | _members(node.right)
                 if isinstance(node, ast.Subscript):
                     name = ast.unparse(node.value).removeprefix("typing.")
+                    if name == "Literal":
+                        items = node.slice.elts if isinstance(node.slice, ast.Tuple) else [node.slice]
+                        return frozenset({("Literal", frozenset(ast.dump(item) for item in items))})
                     if name == "Optional":
                         return _members(node.slice) | frozenset({"None"})
                     if name == "Union":
@@ -763,8 +766,16 @@ class BreakingChangesTracker:
             current_members = _normalize_property_type(current_type)
             if stable_members == current_members:
                 continue
-            if "None" in stable_members and stable_members - {"None"} == current_members:
-                continue
+            if (
+                 "None" in stable_members
+                 and stable_members - {"None"} == current_members
+                 and any(
+                     change[1] == BreakingChangeType.REQUIRED_PROPERTY
+                     and change[2:] == (self._module_name, self._class_name, key)
+                     for change in self.breaking_changes
+                 )
+             ):
+                 continue
 
             bc = (
                 self.CHANGED_PROPERTY_TYPE_MSG,
