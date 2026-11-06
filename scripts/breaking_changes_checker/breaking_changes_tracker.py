@@ -740,6 +740,8 @@ class BreakingChangesTracker:
                     }.get(name, name)
                     items = node.slice.elts if isinstance(node.slice, ast.Tuple) else [node.slice]
                     return frozenset({(name, tuple(_members(item) for item in items))})
+                if isinstance(node, ast.List):
+                    return frozenset({("arguments", tuple(_members(item) for item in node.elts))})
                 return frozenset({ast.unparse(node).removeprefix("typing.")})
 
             try:
