@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01/EventHubs/EHEventHubAuthorizationRuleListKey.json
+# x-ms-original-file: 2026-07-01-preview/EventHubs/EHEventHubAuthorizationRuleListKey.json
 if __name__ == "__main__":
     main()
