@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixes AadClientBase.get_cached_access_token to use home_account_id and environment for app-only credentials
 
 ### Other Changes
 
