@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-02-09-preview",
+  "apiVersions": {
+    "Microsoft.Network": "2026-02-09-preview"
+  },
+  "commit": "d8e20b2d2c2761a4cb7c22f5a222524d59a9e9dc",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/azureserviceconnectioncontroller/resource-manager/Microsoft.Network/AzureServiceConnectionController",
+  "emitterVersion": "0.63.10",
+  "httpClientPythonVersion": "0.39.0"
+}

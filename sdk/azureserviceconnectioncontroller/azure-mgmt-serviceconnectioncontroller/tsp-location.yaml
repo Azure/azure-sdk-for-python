@@ -1,0 +1,4 @@
+directory: specification/azureserviceconnectioncontroller/resource-manager/Microsoft.Network/AzureServiceConnectionController
+commit: d8e20b2d2c2761a4cb7c22f5a222524d59a9e9dc
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
