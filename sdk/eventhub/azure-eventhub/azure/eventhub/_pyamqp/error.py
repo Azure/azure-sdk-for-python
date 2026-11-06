@@ -80,6 +80,9 @@ class ErrorCondition(bytes, Enum):
     #: The link has been attached elsewhere, causing the existing attachment to be forcibly closed.
     LinkStolen = b"amqp:link:stolen"
 
+    #: The requested offset is invalid after replica movement.
+    InvalidOffset = b"com.microsoft:georeplication:invalid-offset"
+
     # Customized symbols used to indicate client error conditions.
     # TODO: check whether Client/Unknown/Vendor Error are exposed in EH/SB as users might be depending
     #  on the code for error handling
