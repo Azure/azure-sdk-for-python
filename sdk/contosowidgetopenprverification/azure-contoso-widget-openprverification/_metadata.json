@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2022-12-01",
+  "apiVersions": {
+    "Azure.Contoso.WidgetOpenPrVerification": "2022-12-01"
+  },
+  "commit": "391e0f61267339afca6cf70589a7e8c5f36c5890",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/contosowidgetmanager/data-plane/Contoso.WidgetOpenPrVerification",
+  "emitterVersion": "0.63.10",
+  "httpClientPythonVersion": "0.39.0"
+}
